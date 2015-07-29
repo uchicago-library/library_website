@@ -1,0 +1,8 @@
+.DS_Store
+*.pyc
+*.swp
+
+/library_website/settings/local.py
+/library_website/settings/__init__.py
+/static
+/media
