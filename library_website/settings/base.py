@@ -144,17 +144,3 @@ MEDIA_URL = '/media/'
 
 WAGTAIL_SITE_NAME = "library_website"
 
-# Shibboleth setup 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.RemoteUserBackend',
-    'shibboleth.backends.ShibbolethRemoteUserBackend',
-)
-
-SHIBBOLETH_ATTRIBUTE_MAP = {
-    "uid": (True, "username"),
-    "givenName": (True, "first_name"),
-    "sn": (True, "last_name"),
-    "mail": (False, "email"),
-}
-
-LOGIN_URL = '/Shibboleth.sso/Login'
