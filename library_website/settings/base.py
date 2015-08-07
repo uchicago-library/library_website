@@ -51,6 +51,9 @@ INSTALLED_APPS = (
     'search',
     'home',
     'shibboleth',
+    'base',
+    'public',
+    'staffweb',
 )
 
 MIDDLEWARE_CLASSES = (
