@@ -19,6 +19,21 @@ class StandardPage(BasePage):
         ('image', ImageChooserBlock(icon='image / picture')),
     ])
 
-StandardPage.content_panels += [
-    StreamFieldPanel('body'),
-]
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('body'),
+        FieldPanel('location'),
+    ]
+
+class LocationPage(BasePage):
+    """
+    Location and building pages.
+    """
+    # Model fields 
+    name = models.CharField(max_length=45, blank=False)
+    is_building = models.BooleanField(default=False)
+
+    # Set what appears in the admin
+    content_panels = Page.content_panels + [
+        FieldPanel('name'),
+        FieldPanel('is_building'),
+    ]
