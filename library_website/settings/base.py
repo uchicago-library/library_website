@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'base',
     'public',
     'staffweb',
+    'lib_collections',
 )
 
 MIDDLEWARE_CLASSES = (
