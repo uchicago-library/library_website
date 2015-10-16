@@ -12,9 +12,6 @@ class BasePage(Page):
     Most other content types should extend this model
     instead of Page.
     """
-    # Wagtail convention for excluding page from admin interface.
-    is_creatable = True
-    
     # Fields 
     description = models.TextField(null=False, blank=True)
     last_reviewed = models.DateTimeField('Last Reviewed', 
