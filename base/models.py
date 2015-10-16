@@ -13,8 +13,7 @@ class BasePage(Page):
     instead of Page.
     """
     # Wagtail convention for excluding page from admin interface.
-    # IMPORTANT: is_abstract changes to is_creatable in wagtail 1.1.
-    is_abstract = True
+    is_creatable = True
     
     # Fields 
     description = models.TextField(null=False, blank=True)

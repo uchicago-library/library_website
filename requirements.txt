@@ -1,5 +1,5 @@
 Django>=1.8,<1.9
-wagtail==1.0
+wagtail==1.1
 -e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@uchicago#egg=django-shibboleth-remoteuser
 beautifulsoup4==4.4.0
 DateTime==4.0.1
