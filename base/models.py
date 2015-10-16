@@ -17,7 +17,7 @@ class BasePage(Page):
     is_abstract = True
     
     # Fields 
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=False, blank=True)
     last_reviewed = models.DateTimeField('Last Reviewed', 
         null=True, blank=True)
     location = models.ForeignKey('public.LocationPage', 
