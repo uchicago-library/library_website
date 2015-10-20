@@ -8,6 +8,7 @@ django-compressor==1.5
 django-modelcluster==0.6.2
 django-taggit==0.16.2
 django-treebeard==3.0
+elasticsearch==1.7.0
 html5lib==0.999
 Pillow==2.9.0
 psycopg2==2.6.1

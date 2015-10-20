@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load core_staff_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+	<article>
+		<h1>{{ self.display_name }}</h1>
+		<p><a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
+		<p>{{ self.libguide_url }}</p>
+		<p>{{ self.bio }}</p>
+		<p>{{ self.grouppage_get }}</p>
+
+		<h2>Group membership</h2>
+		<ul>
+		{% staff_groups %}
+		</ul>
+	</article>
+{% endblock %}

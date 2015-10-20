@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load core_group_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+	<p><a href="/">Home</a></p>
+	<article>
+		<h1>{{ self.title }}</h1>
+
+		<p>{{ self.intro }}</p>
+
+		<ul>
+			{% group_index %}
+		</ul>
+	</article>
+{% endblock %}

@@ -51,10 +51,14 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailsearchpromotions',
 
     'search',
+    'intranethome',
     'home',
     'shibboleth',
     'base',
+    'group',
+    'news',
     'public',
+    'staff',
     'staffweb',
     'units',
     'lib_collections',
@@ -148,11 +152,19 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Phone number format
+PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
+PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
 
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "library_website"
 
-# Phone number format
-PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
-PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch.ElasticSearch',
+    	'URLS': ['http://localhost:9200'],
+        'INDEX': 'wagtail',
+        'TIMEOUT': 5,
+    }
+}
