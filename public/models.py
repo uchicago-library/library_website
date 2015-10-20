@@ -122,3 +122,13 @@ class LocationPage(BasePage):
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
     ]
+
+class DonorPage(BasePage):
+    """
+    Donor page model.
+    """
+    foobar = models.CharField(max_length=255)
+        
+    content_panels = Page.content_panels + [
+        FieldPanel('foobar'),
+    ] 
