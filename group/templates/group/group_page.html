@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load core_group_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+	<article>
+		<h1>{{ self.title }}</h1>
+		<p>{{ self.acronym }}</p>
+		<p>{{ self.intro }}</p>
+		<p>{{ self.location }}</p>
+		<p>{{ self.meeting_time }}</p>
+		<p><a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
+		{% if self.chair %}
+			<h2>Who's the boss?</h2>
+			<p><a href="{{ self.chair.url }}">{{ self.chair }}</a></p>
+		{% endif %}
+		<h2>Who's in the group?</h2>
+		<ul>
+		{% group_members %}
+		</ul>
+	</article>
+{% endblock %}

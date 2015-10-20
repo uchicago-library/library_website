@@ -50,10 +50,14 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailstyleguide',
 
     'search',
+    'intranethome',
     'home',
     'shibboleth',
     'base',
+    'group',
+    'news',
     'public',
+    'staff',
     'staffweb',
 )
 
@@ -150,3 +154,11 @@ MEDIA_URL = '/media/'
 
 WAGTAIL_SITE_NAME = "library_website"
 
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch.ElasticSearch',
+    	'URLS': ['http://localhost:9200'],
+        'INDEX': 'wagtail',
+        'TIMEOUT': 5,
+    }
+}

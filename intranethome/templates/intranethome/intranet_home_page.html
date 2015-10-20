@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load core_homepage_tags %}
+
+{% block content %}
+	<h1>Staffweb</h1>
+
+	<h2><a href="/news/">The News</a></h2>
+	{% top_stories %}
+
+	<h2><a href="/departments/">Departments</a></h2>
+
+	<h2><a href="/groups/">Groups</a></h2>
+
+	<h2>Resources</h2>
+
+	<h2>Technical Support</h2>
+
+	<h2><a href="/staff/">Staff Directory</a></h2>
+{% endblock %}

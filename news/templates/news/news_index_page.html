@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+	<article>
+		<h1>{{ self.title }}</h1>
+		<p>{{ self.intro }}</p>
+	</article>
+{% endblock %}
