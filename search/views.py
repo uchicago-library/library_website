@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailsearch.models import Query, EditorsPick
-
+from wagtail.wagtailsearch.models import Query
+from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
 def search(request):
     search_query = request.GET.get('query', None)
@@ -21,7 +21,7 @@ def search(request):
         search_picks = query.editors_picks.all()
     else:
         search_results = Page.objects.none()
-        search_picks = EditorsPick.objects.none()
+        search_picks = SearchPromotion.objects.none()
 
     # Pagination
     paginator = Paginator(search_results, 10)

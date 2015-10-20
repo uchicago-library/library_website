@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'wagtail.wagtailredirects',
     'wagtail.wagtailforms',
     'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.wagtailsearchpromotions',
 
     'search',
     'intranethome',
@@ -59,6 +60,7 @@ INSTALLED_APPS = (
     'public',
     'staff',
     'staffweb',
+    'lib_collections',
 )
 
 MIDDLEWARE_CLASSES = (
