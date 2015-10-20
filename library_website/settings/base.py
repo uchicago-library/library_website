@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'base',
     'public',
     'staffweb',
+    'units',
     'lib_collections',
 )
 
@@ -152,3 +153,6 @@ MEDIA_URL = '/media/'
 
 WAGTAIL_SITE_NAME = "library_website"
 
+# Phone number format
+PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
+PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
