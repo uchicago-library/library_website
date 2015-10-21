@@ -27,7 +27,7 @@ class StaffPage(Page):
 		max_length=255,
 		null=True,
 		blank=True)
-        profile_picture = models.ForeignKey(
+	profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
                 null=True,
                 blank=True,

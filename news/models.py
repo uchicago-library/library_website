@@ -12,7 +12,7 @@ class NewsPage(Page):
                 blank=True,
                 on_delete=models.SET_NULL,
                 related_name='+')
-	body = RichTextField();
+        body = RichTextField();
         excerpt = models.TextField(blank=True)
         thumbnail_image = models.ForeignKey(
                 'wagtailimages.Image',
