@@ -35,6 +35,14 @@ class BasePage(Page):
         related_name='%(app_label)s_%(class)s_related'
     )
 
+    page_maintainer = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_related'
+    )
+
     # Searchable fields
     search_fields = Page.search_fields + (
         index.SearchField('description'),
