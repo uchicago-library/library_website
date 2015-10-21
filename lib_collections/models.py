@@ -8,6 +8,7 @@ from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from base.models import BasePage
 from public.models import DonorPage
+from staff.models import StaffPage
 
 # The abstract model for related links, complete with panels
 class AccessLink(models.Model):
@@ -140,6 +141,8 @@ class CollectionPage(BasePage):
     ) 
     collection_location = models.ForeignKey('public.LocationPage',
         null=True, blank=True, on_delete=models.SET_NULL)
+    staff_contact = models.ForeignKey('staff.StaffPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
 
     content_panels = Page.content_panels + [
         InlinePanel('alternate_name', label='Alternate Names'),
@@ -152,5 +155,6 @@ class CollectionPage(BasePage):
         InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
+        FieldPanel('staff_contact'),
         FieldPanel('unit'),
     ]
