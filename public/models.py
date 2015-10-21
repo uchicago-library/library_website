@@ -22,7 +22,7 @@ class StandardPage(BasePage):
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
-        FieldPanel('location'),
+        FieldPanel('unit'),
     ]
 
 class LocationPage(BasePage):

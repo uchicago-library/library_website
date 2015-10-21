@@ -111,6 +111,13 @@ class UnitPage(BasePage):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
+    )
+    location = models.ForeignKey(
+        'public.LocationPage',
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='%(app_label)s_%(class)s_related'
     ) 
 
     content_panels = Page.content_panels + [
@@ -125,6 +132,6 @@ class UnitPage(BasePage):
             heading="Online Contact Information",
         ),
         InlinePanel('fax_numbers', label='Fax Numbers'),
-        FieldPanel('location'), # Needs to swap with unit in the abstract class
+        FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
     ]

@@ -152,4 +152,5 @@ class CollectionPage(BasePage):
         InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
+        FieldPanel('unit'),
     ]

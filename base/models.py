@@ -14,11 +14,24 @@ class BasePage(Page):
     """
     # Fields 
     description = models.TextField(null=False, blank=True)
-    last_reviewed = models.DateTimeField('Last Reviewed', 
-        null=True, blank=True)
-    location = models.ForeignKey('public.LocationPage', 
-        null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True}, 
-        related_name='%(app_label)s_%(class)s_related')
+
+    last_reviewed = models.DateTimeField(
+        'Last Reviewed', 
+        null=True, 
+        blank=True
+    )
+
+    #location = models.ForeignKey('public.LocationPage', 
+    #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True}, 
+    #    related_name='%(app_label)s_%(class)s_related')
+
+    unit = models.ForeignKey(
+        'units.UnitPage', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='%(app_label)s_%(class)s_related'
+    )
 
     # Searchable fields
     search_fields = Page.search_fields + (
