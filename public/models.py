@@ -8,19 +8,16 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiF
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
-from base.models import BasePage
+from base.models import BasePage, DefaultBodyField
 
 class StandardPage(BasePage):
     """
     A standard basic page.
     """
-    body = StreamField([
-        ('heading', blocks.CharBlock(classname="full title", icon='title')),
-        ('paragraph', blocks.RichTextBlock(icon='pilcrow')),
-        ('image', ImageChooserBlock(icon='image / picture')),
-    ])
+    body = DefaultBodyField()
 
     content_panels = Page.content_panels + [
+        FieldPanel('description'),
         StreamFieldPanel('body'),
         FieldPanel('unit'),
     ]

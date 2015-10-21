@@ -1,13 +1,14 @@
 from django.db import models
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG
 from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, PageChooserPanel
+from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage
+from base.models import BasePage, DefaultBodyField
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -118,7 +119,8 @@ class UnitPage(BasePage):
         blank=True, 
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
-    ) 
+    )
+    body = DefaultBodyField(null=True, blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('display_in_directory'),
@@ -134,4 +136,5 @@ class UnitPage(BasePage):
         InlinePanel('fax_numbers', label='Fax Numbers'),
         FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
+        StreamFieldPanel('body'),
     ]

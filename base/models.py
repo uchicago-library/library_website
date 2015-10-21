@@ -2,7 +2,9 @@ from django.db import models
 from django import forms
 from django.utils import timezone
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore import blocks
+from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailsearch import index
 
@@ -40,6 +42,25 @@ class BasePage(Page):
 
     class Meta:
         abstract = True
+
+
+class DefaultBodyField(StreamField):
+    """
+    Standard default streamfield options to be shared 
+    across content types.
+    """
+    def __init__(self, block_types=None, **kwargs):
+        """
+        Default block types to include.
+        """
+        block_types = [
+            ('heading', blocks.CharBlock(classname="full title", icon='title')),
+            ('paragraph', blocks.RichTextBlock(icon='pilcrow')),
+            ('image', ImageChooserBlock(icon='image / picture')),
+        ]
+
+        super(DefaultBodyField, self).__init__(block_types, **kwargs)
+
 
 class ContactFields(models.Model):
     telephone = models.CharField(max_length=20, blank=True)
