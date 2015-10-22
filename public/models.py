@@ -23,14 +23,6 @@ class StandardPage(BasePage):
     ] + BasePage.content_panels
 
 
-#class LocationPagePhoneNumbers(Orderable, PhoneNumber):
-#    """
-#    Create a through table for linking phone numbers
-#    to LocationPage content types.
-#    """
-#    page = ParentalKey('public.LocationPage', related_name='phone_numbers') 
-
- 
 class LocationPage(BasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.

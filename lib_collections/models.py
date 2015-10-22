@@ -159,19 +159,35 @@ class CollectionPage(BasePage):
     ] + BasePage.content_panels
 
 
+class SubjectSpecialistPlacement(Orderable, models.Model):
+    """
+    Creates a through table that connects StaffPage objects to
+    the CollectionAreaPages as subject specialists .
+    """
+    parent = ParentalKey(
+        'lib_collections.CollectingAreaPage',
+        related_name='subject_specialist_placement',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    subject_specialist = models.ForeignKey(
+        'staff.StaffPage',
+        related_name='subject_specialist',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+
 class CollectingAreaPage(BasePage):
     """
     Content type for collecting areas.
     """
     collecting_statement = models.TextField(null=False, blank=False)
-    subject_specialist = models.ForeignKey(
-        'staff.StaffPage',
-        null=True,
-        blank=False,
-        on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_subject_specialist'
-    )
 
     content_panels = Page.content_panels + [
         FieldPanel('collecting_statement'),
+        InlinePanel('subject_specialist_placement', label='Subject Specialist'),
     ] + BasePage.content_panels
