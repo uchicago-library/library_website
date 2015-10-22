@@ -137,4 +137,4 @@ class UnitPage(BasePage):
         FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
         StreamFieldPanel('body'),
-    ]
+    ] + BasePage.content_panels

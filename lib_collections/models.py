@@ -156,5 +156,4 @@ class CollectionPage(BasePage):
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         FieldPanel('staff_contact'),
-        FieldPanel('unit'),
-    ]
+    ] + BasePage.content_panels

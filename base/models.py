@@ -48,6 +48,11 @@ class BasePage(Page):
         index.SearchField('description'),
     )
 
+    content_panels = [
+        FieldPanel('page_maintainer'),
+        FieldPanel('unit'),
+    ]
+
     class Meta:
         abstract = True
 

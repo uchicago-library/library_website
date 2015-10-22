@@ -19,9 +19,8 @@ class StandardPage(BasePage):
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         StreamFieldPanel('body'),
-        FieldPanel('unit'),
-    ]
-
+    ] + BasePage.content_panels 
+ 
 class LocationPage(BasePage):
     """
     Location and building pages.
@@ -118,7 +117,7 @@ class LocationPage(BasePage):
             FieldPanel('has_lockers', classname=ROW_CLASS),
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
-    ]
+    ] + BasePage.content_panels
 
 class DonorPage(BasePage):
     """
@@ -128,4 +127,4 @@ class DonorPage(BasePage):
         
     content_panels = Page.content_panels + [
         FieldPanel('foobar'),
-    ] 
+    ] + BasePage.content_panels 
