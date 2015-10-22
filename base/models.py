@@ -129,10 +129,8 @@ class PhoneNumber(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
     panels = [
-        FieldRowPanel([
-            FieldPanel('label', classname='col6'),
-            FieldPanel('number', classname='col6'),
-        ])
+        FieldPanel('phone_label'),
+        FieldPanel('phone_number'),
     ]
 
     class Meta:

@@ -127,7 +127,6 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
         MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
-        #InlinePanel('phone_numbers', label='Phone Numbers'),
     ] + Email.content_panels + Address.content_panels + BasePage.content_panels
 
 
