@@ -157,3 +157,21 @@ class CollectionPage(BasePage):
         InlinePanel('donor_page_list_placement', label='Donor'),
         FieldPanel('staff_contact'),
     ] + BasePage.content_panels
+
+
+class CollectingAreaPage(BasePage):
+    """
+    Content type for collecting areas.
+    """
+    collecting_statement = models.TextField(null=False, blank=False)
+    subject_specialist = models.ForeignKey(
+        'staff.StaffPage',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_subject_specialist'
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('collecting_statement'),
+    ] + BasePage.content_panels

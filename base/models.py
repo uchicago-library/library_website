@@ -43,7 +43,7 @@ class BasePage(Page):
         null=True, 
         blank=True, 
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_related'
+        related_name='%(app_label)s_%(class)s_maintainer'
     )
 
     # Searchable fields

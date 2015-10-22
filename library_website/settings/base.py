@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailstyleguide',
     'wagtail.contrib.wagtailsearchpromotions',
 
+    'subjects',
     'search',
     'intranethome',
     'home',
