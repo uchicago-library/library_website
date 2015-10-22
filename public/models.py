@@ -1,14 +1,15 @@
 from django.db import models
 from django import forms
 from django.utils import timezone
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore import blocks
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
-from base.models import BasePage, DefaultBodyField
+from modelcluster.fields import ParentalKey
+from base.models import BasePage, DefaultBodyField, Address, Email, PhoneNumber
 
 class StandardPage(BasePage):
     """
@@ -19,9 +20,18 @@ class StandardPage(BasePage):
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         StreamFieldPanel('body'),
-    ] + BasePage.content_panels 
+    ] + BasePage.content_panels
+
+
+#class LocationPagePhoneNumbers(Orderable, PhoneNumber):
+#    """
+#    Create a through table for linking phone numbers
+#    to LocationPage content types.
+#    """
+#    page = ParentalKey('public.LocationPage', related_name='phone_numbers') 
+
  
-class LocationPage(BasePage):
+class LocationPage(BasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
     """
@@ -75,7 +85,6 @@ class LocationPage(BasePage):
     # Set what appears in the admin
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        FieldPanel('last_reviewed', None),
         FieldPanel('parent_building'),
         FieldPanel('library_floorplan_link'),
         FieldPanel('libcal_library_id'),
@@ -117,7 +126,10 @@ class LocationPage(BasePage):
             FieldPanel('has_lockers', classname=ROW_CLASS),
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
-    ] + BasePage.content_panels
+        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
+        #InlinePanel('phone_numbers', label='Phone Numbers'),
+    ] + Email.content_panels + Address.content_panels + BasePage.content_panels
+
 
 class DonorPage(BasePage):
     """

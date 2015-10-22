@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyField
+from base.models import BasePage, DefaultBodyField, PhoneNumber, FaxNumber
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -48,25 +48,6 @@ class UnitPageRolePlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.role.text
 
 
-class PhoneNumber(models.Model):
-    """
-    Abstract phone number type.
-    """
-    label = models.CharField(max_length=25)
-    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
-    number = models.CharField(validators=[phone_regex], max_length=12)
-
-    panels = [
-        FieldRowPanel([
-            FieldPanel('label', classname='col6'),
-            FieldPanel('number', classname='col6'),
-        ])
-    ]
-
-    class Meta:
-        abstract = True
-
-
 class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     """
     Create a through table for linking phone numbers 
@@ -75,30 +56,7 @@ class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     page = ParentalKey('units.UnitPage', related_name='phone_numbers')
 
 
-class FaxNumber(models.Model):
-    """
-    Abstract phone number type.
-    """
-    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
-    number = models.CharField(validators=[phone_regex], max_length=12)
-
-    panels = [
-        FieldPanel('number'),
-    ]
-
-    class Meta:
-        abstract = True
-
-
-class UnitPageFaxNumbers(Orderable, FaxNumber):
-    """
-    Create a through table for linking fax numbers 
-    to UnitPage content types.
-    """
-    page = ParentalKey('units.UnitPage', related_name='fax_numbers')
-
-
-class UnitPage(BasePage):
+class UnitPage(BasePage, FaxNumber):
     """
     Basic structure for units and departments.
     """
@@ -133,7 +91,12 @@ class UnitPage(BasePage):
             ],
             heading="Online Contact Information",
         ),
-        InlinePanel('fax_numbers', label='Fax Numbers'),
+        MultiFieldPanel(
+            [
+                FieldPanel('fax_number'),
+            ],
+            heading='Fax Number'
+        ),
         FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
         StreamFieldPanel('body'),

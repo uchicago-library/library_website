@@ -1,12 +1,15 @@
 from django.db import models
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG
 from django import forms
 from django.utils import timezone
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore import blocks
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
 from wagtail.wagtailsearch import index
+from django.core.validators import RegexValidator
+from library_website.settings.base import POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 
 class BasePage(Page):
     """
@@ -51,6 +54,7 @@ class BasePage(Page):
     content_panels = [
         FieldPanel('page_maintainer'),
         FieldPanel('unit'),
+        FieldPanel('last_reviewed', None),
     ]
 
     class Meta:
@@ -75,24 +79,76 @@ class DefaultBodyField(StreamField):
         super(DefaultBodyField, self).__init__(block_types, **kwargs)
 
 
-class ContactFields(models.Model):
-    telephone = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(blank=True)
+class Address(models.Model):
+    """
+    Reusable address fields.
+    """
     address_1 = models.CharField(max_length=255, blank=True)
     address_2 = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True)
     country = models.CharField(max_length=255, blank=True)
-    post_code = models.CharField(max_length=10, blank=True)
+    postal_code_regex = RegexValidator(regex=POSTAL_CODE_FORMAT, message=POSTAL_CODE_ERROR_MSG)
+    postal_code = models.CharField(validators=[postal_code_regex], max_length=5, blank=True)
 
-    panels = [
-        FieldPanel('telephone'),
-        FieldPanel('email'),
-        FieldPanel('address_1'),
-        FieldPanel('address_2'),
-        FieldPanel('city'),
-        FieldPanel('country'),
-        FieldPanel('post_code'),
+    content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('address_1'),
+                FieldPanel('address_2'),
+                FieldPanel('city'),
+                FieldPanel('postal_code'),
+            ],
+            heading='Address'
+        ),
     ]
 
     class Meta:
         abstract = True
+
+
+class Email(models.Model):
+    """
+    Reusable email address.
+    """
+    email = models.EmailField(max_length=254, blank=True)
+    
+    content_panels = [
+        FieldPanel('email'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class PhoneNumber(models.Model):
+    """
+    Abstract phone number type.
+    """
+    phone_label = models.CharField(max_length=25, blank=True)
+    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
+    phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel('label', classname='col6'),
+            FieldPanel('number', classname='col6'),
+        ])
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class FaxNumber(models.Model):
+    """
+    Abstract phone number type.
+    """
+    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
+    fax_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
+
+    panels = [
+        FieldPanel('number'),
+    ]
+
+    class Meta:
+        abstract = True 
