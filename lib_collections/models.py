@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from base.models import BasePage
 from public.models import DonorPage
-from staff.models import StaffPage
+from staff.models import StaffPage, StaffPageSubjectPlacement
 
 # The abstract model for related links, complete with panels
 class AccessLink(models.Model):
