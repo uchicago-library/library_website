@@ -88,8 +88,26 @@ class StaffPage(Page):
     )
     is_public_persona = BooleanField(default=False)
 
+    @property
+    def get_staff_subjects(self):
+        """
+        Get the subjects beloning to the 
+        staff member - UNTESTED 
+        """
+        return StaffPageSubjectPlacement.objects
+
+    @property
+    def is_subject_specialist(self):
+        """
+        See if the staff member is a subject
+        specialist - PLACEHOLDER
+        """
+        subjects = self.get_subjects()
+        return None
+
+
     content_panels = Page.content_panels + [
-                ImageChooserPanel('profile_picture'),
+        ImageChooserPanel('profile_picture'),
         FieldPanel('alphabetize_name_as'),
         FieldPanel('bio'),
         DocumentChooserPanel('cv'),
