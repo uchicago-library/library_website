@@ -7,8 +7,9 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from base.models import BasePage
-from public.models import DonorPage
+from public.models import DonorPage, LocationPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
+from subjects.models import Subject
 
 # The abstract model for related links, complete with panels
 class AccessLink(models.Model):
@@ -101,7 +102,7 @@ class CollectionPageAlternateNames(Orderable, AlternateName):
     """
     page = ParentalKey('lib_collections.CollectionPage', related_name='alternate_name')
 
-# Interstitial model for linking the ollection RelatedPages to the CollectionPage
+# Interstitial model for linking the collection RelatedPages to the CollectionPage
 class RelatedCollectionPagePlacement(Orderable, models.Model):
     """
     Creates a through table for RelatedPages that attach to 
@@ -181,13 +182,118 @@ class SubjectSpecialistPlacement(Orderable, models.Model):
     )
 
 
+class StacksRange(models.Model):
+    """
+    Abstract model for call number ranges.
+    """
+    stacks_range = models.CharField(max_length=100, blank=True) 
+    stacks_URL = models.URLField(max_length=254, blank=True, default='')
+
+    panels = [
+        FieldPanel('stacks_range'),
+        FieldPanel('stacks_URL'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectingAreaPageStacksRanges(Orderable, StacksRange):
+    """
+    Create a through table for call number stacks ranges
+    linked to the CollectingAreaPages.
+    """
+    page = ParentalKey('lib_collections.CollectingAreaPage', related_name='stacks_ranges')
+
+
+class CollectingAreaReferenceLocationPlacement(Orderable, models.Model):
+    """
+    Through table for repeatable reference locations in the
+    CollectingAreaPage content type.
+    """
+    parent = ParentalKey(
+        'lib_collections.CollectingAreaPage',
+        related_name='reference_location_placements',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    related_collection = models.ForeignKey(
+        'public.LocationPage',
+        related_name='reference_location',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+
+class HighlightedCollectionsPlacement(Orderable, models.Model):
+    """
+    Through table for repeatable highlighted collections
+    in the CollectingAreaPage content type.
+    """
+    parent = ParentalKey(
+        'lib_collections.CollectingAreaPage', 
+        related_name='highlighted_collection_placements', 
+        null=True, 
+        blank=False, 
+        on_delete=models.SET_NULL
+    )
+
+    collection = models.ForeignKey(
+        'CollectionPage', 
+        related_name='highlighted_collections', 
+        null=True, 
+        blank=False, 
+        on_delete=models.SET_NULL
+    )
+
+
+class RegionalCollection(models.Model):
+    """
+    Abstract model for regional collections.
+    """
+    collection_name = models.CharField(max_length=254, blank=True) 
+    collection_description =  models.TextField(blank=True)
+
+    panels = [
+        FieldPanel('collection_name'),
+        FieldPanel('collection_description'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+
+class RegionalCollectionPlacements(Orderable, RegionalCollection):
+    """
+    Through table for repeatable regional collection fields.
+    """
+    page = ParentalKey('lib_collections.CollectingAreaPage', related_name='regional_collections')
+
+
 class CollectingAreaPage(BasePage):
     """
-    Content type for collecting areas.
+    Content type for collecting area pages.
     """
+    subject = models.ForeignKey(
+        'subjects.Subject',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_related'
+    )
     collecting_statement = models.TextField(null=False, blank=False)
 
     content_panels = Page.content_panels + [
+        FieldPanel('subject'),
         FieldPanel('collecting_statement'),
         InlinePanel('subject_specialist_placement', label='Subject Specialist'),
+        InlinePanel('stacks_ranges', label='Stacks Ranges'),
+        InlinePanel('reference_location_placements', label='Reference Locations'),
+        InlinePanel('highlighted_collection_placements', label='Highlighted Collections'),
+        InlinePanel('regional_collections', label='Regional Collections'),
+
     ] + BasePage.content_panels
