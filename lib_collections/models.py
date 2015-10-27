@@ -1,6 +1,6 @@
 from django.db import models
 from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
@@ -266,7 +266,6 @@ class RegionalCollection(models.Model):
         abstract = True
 
 
-
 class RegionalCollectionPlacements(Orderable, RegionalCollection):
     """
     Through table for repeatable regional collection fields.
@@ -274,7 +273,31 @@ class RegionalCollectionPlacements(Orderable, RegionalCollection):
     page = ParentalKey('lib_collections.CollectingAreaPage', related_name='regional_collections')
 
 
-class CollectingAreaPage(BasePage):
+
+class LibGuide(models.Model):
+    """
+    Abstract model for lib guides.
+    """
+    guide_link_text = models.CharField(max_length=255, blank=False, default='')
+    guide_link_url = models.URLField("Libguide URL", blank=False, default='')
+
+    panels = [
+        FieldPanel('guide_link_text'),
+        FieldPanel('guide_link_url'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectingAreaPageLibGuides(Orderable, LibGuide):
+    """
+    Through table for repeatable "Other guides".
+    """
+    page = ParentalKey('lib_collections.CollectingAreaPage', related_name='lib_guides')
+
+
+class CollectingAreaPage(BasePage, LibGuide):
     """
     Content type for collecting area pages.
     """
@@ -286,6 +309,7 @@ class CollectingAreaPage(BasePage):
         related_name='%(app_label)s_%(class)s_related'
     )
     collecting_statement = models.TextField(null=False, blank=False)
+    #primary_guide
 
     content_panels = Page.content_panels + [
         FieldPanel('subject'),
@@ -295,5 +319,12 @@ class CollectingAreaPage(BasePage):
         InlinePanel('reference_location_placements', label='Reference Locations'),
         InlinePanel('highlighted_collection_placements', label='Highlighted Collections'),
         InlinePanel('regional_collections', label='Regional Collections'),
-
+        MultiFieldPanel(
+            [
+                FieldPanel('guide_link_text'),
+                FieldPanel('guide_link_url'),
+            ],
+            heading='Primary Guide'
+        ),
+        InlinePanel('lib_guides', label='Other Guides'),
     ] + BasePage.content_panels
