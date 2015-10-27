@@ -41,9 +41,25 @@ class BasePage(Page):
     page_maintainer = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
-        blank=True, 
+        blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_maintainer'
+    )
+
+    editor = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, 
+        blank=False, 
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_editor'
+    )
+
+    content_specialist = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, 
+        blank=False, 
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_content_specialist'
     )
 
     # Searchable fields
@@ -52,9 +68,16 @@ class BasePage(Page):
     )
 
     content_panels = [
-        FieldPanel('page_maintainer'),
-        FieldPanel('unit'),
-        FieldPanel('last_reviewed', None),
+        MultiFieldPanel(
+            [
+                FieldPanel('page_maintainer'),
+                FieldPanel('editor'),
+                FieldPanel('content_specialist'),
+                FieldPanel('unit'),
+                FieldPanel('last_reviewed', None),
+            ],
+            heading='Page Management'
+        ),
     ]
 
     class Meta:
