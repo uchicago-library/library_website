@@ -18,8 +18,6 @@ class BasePage(Page):
     instead of Page.
     """
     # Fields 
-    description = models.TextField(null=False, blank=True)
-
     last_reviewed = models.DateTimeField(
         'Last Reviewed', 
         null=True, 
