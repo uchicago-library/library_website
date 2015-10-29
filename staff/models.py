@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, TextField
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -11,6 +11,7 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
+from base.models import PhoneNumber, Email
 
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
@@ -30,18 +31,40 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
     def __str__(self):
         return self.page.title + ' -> ' + self.subject.name
 
-class StaffTitle(models.Model):
-    staff = models.ForeignKey('staff.StaffPage')
+
+class VCard(Email, PhoneNumber):
+    """
+    VCard model for repeatable VCards on the 
+    StaffPage.
+    """
     title = CharField(
-        max_length=255)
-    department = CharField(
-        max_length=255)
-    sub_department = CharField(
-        max_length=255)
-    phone = CharField(
-        max_length=255)
+        max_length=255, 
+        blank=False)
+    unit = models.ForeignKey(
+        'units.UnitPage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_related'
+    )
     faculty_exchange = CharField(
-        max_length=255)
+        max_length=255, 
+        blank=True)
+
+    content_panels = [
+        FieldPanel('title'),
+        FieldPanel('unit'),
+        FieldPanel('faculty_exchange'),
+    ]
+
+
+class StaffPagePageVCards(Orderable, VCard):
+    """
+    Create a through table for linking vcards
+    to StaffPage content types.
+    """
+    page = ParentalKey('staff.StaffPage', related_name='vcards')
+
 
 class StaffPage(Page):
     cnetid = CharField(
@@ -64,11 +87,6 @@ class StaffPage(Page):
         blank=True)
     alphabetize_name_as = CharField(
         max_length=255,
-        null=True,
-        blank=True)
-    email = CharField(
-        max_length=255,
-        validators=[EmailValidator()],
         null=True,
         blank=True)
     #supervisor = pointer to another staff person.
@@ -113,6 +131,7 @@ class StaffPage(Page):
         DocumentChooserPanel('cv'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
+        InlinePanel('vcards', label='VCards'),
     ]
 
 class StaffIndexPage(Page):

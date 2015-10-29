@@ -140,7 +140,7 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
             FieldPanel('has_lockers', classname=ROW_CLASS),
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
-        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
+        MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + BasePage.content_panels
 

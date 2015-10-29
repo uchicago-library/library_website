@@ -149,7 +149,7 @@ class PhoneNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    panels = [
+    content_panels = [
         FieldPanel('phone_label'),
         FieldPanel('phone_number'),
     ]
