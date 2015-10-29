@@ -23,6 +23,27 @@ class StandardPage(BasePage):
     ] + BasePage.content_panels
 
 
+class LocationPageDonorPlacement(Orderable, models.Model):
+    """
+    Create a through table for linking donor pages to location pages
+    """
+    parent = ParentalKey(
+        'public.LocationPage',
+        related_name='location_donor_page_placements',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL
+    )
+
+    donor = models.ForeignKey(
+        'public.DonorPage',
+        related_name='location_donor_page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+
 class LocationPage(BasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
@@ -120,6 +141,7 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
         MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
+        InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + BasePage.content_panels
 
 
