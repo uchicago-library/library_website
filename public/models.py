@@ -27,7 +27,8 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
     """
-    # Model fields 
+    # Model fields
+    description = models.TextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
     library_floorplan_link = models.URLField(max_length=200, blank=True, default='')
