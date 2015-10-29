@@ -127,8 +127,16 @@ class DonorPage(BasePage):
     """
     Donor page model.
     """
-    foobar = models.CharField(max_length=255)
+    description = models.TextField(null=False, blank=False)
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
         
     content_panels = Page.content_panels + [
-        FieldPanel('foobar'),
+        FieldPanel('description'),
+        ImageChooserPanel('image'),
     ] + BasePage.content_panels 
