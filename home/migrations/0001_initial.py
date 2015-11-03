@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '__latest__'),
+        ('wagtailcore', '0019_verbose_names_cleanup'),
     ]
 
     operations = [

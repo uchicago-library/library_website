@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags %}
+{% load core_search_tags %}
 
 {% block body_class %}template-searchresults{% endblock %}
 
@@ -23,7 +24,7 @@
         <ul>
             {% for result in search_results %}
                 <li>
-                    <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+                    <h4><a href="{% pageurl result %}">{{ result }}</a> <span class="badge">{% pagetype result %}</span> {{ result.slug }}</h4>
                     {% if result.search_description %}
                         {{ result.search_description|safe }}
                     {% endif %}

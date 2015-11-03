@@ -9,8 +9,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailimages', '0006_add_verbose_names'),
-        ('wagtailcore', '0001_squashed_0016_change_page_url_path_to_text_field'),
+        ('wagtailimages', '0008_image_created_at_index'),
+        ('wagtailcore', '0019_verbose_names_cleanup'),
     ]
 
     operations = [

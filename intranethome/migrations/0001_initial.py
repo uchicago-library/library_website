@@ -8,7 +8,7 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0001_squashed_0016_change_page_url_path_to_text_field'),
+        ('wagtailcore', '0019_verbose_names_cleanup'),
     ]
 
     operations = [

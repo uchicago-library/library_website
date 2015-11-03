@@ -9,8 +9,9 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailimages', '0006_add_verbose_names'),
-        ('wagtailcore', '0001_squashed_0016_change_page_url_path_to_text_field'),
+        ('wagtailimages', '0008_image_created_at_index'),
+        ('wagtailcore', '0019_verbose_names_cleanup'),
+        ('wagtaildocs', '0003_add_verbose_names'),
     ]
 
     operations = [
@@ -29,17 +30,32 @@ class Migration(migrations.Migration):
             name='StaffPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_name', models.CharField(max_length=255)),
-                ('first_name', models.CharField(max_length=255)),
-                ('job_title', models.CharField(max_length=255)),
-                ('room', models.CharField(max_length=255)),
-                ('email', models.CharField(max_length=255, validators=[django.core.validators.EmailValidator()])),
-                ('phone', models.CharField(blank=True, max_length=8, validators=[django.core.validators.RegexValidator(b'^[0-9]{3}-[0-9]{4}$', b'Enter phone numbers in the following form: 702-1234.')])),
-                ('portrait_image', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtailimages.Image', null=True)),
+                ('cnetid', models.CharField(max_length=255, null=True, blank=True)),
+                ('official_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('display_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('alphabetize_name_as', models.CharField(max_length=255, null=True, blank=True)),
+                ('email', models.CharField(blank=True, max_length=255, null=True, validators=[django.core.validators.EmailValidator()])),
+                ('libguide_url', models.CharField(max_length=255, null=True, blank=True)),
+                ('bio', models.TextField(null=True, blank=True)),
+                ('is_public_persona', models.BooleanField(default=False)),
+                ('cv', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtaildocs.Document', null=True)),
+                ('profile_picture', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtailimages.Image', null=True)),
             ],
             options={
                 'abstract': False,
             },
             bases=('wagtailcore.page',),
+        ),
+        migrations.CreateModel(
+            name='StaffTitle',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=255)),
+                ('department', models.CharField(max_length=255)),
+                ('sub_department', models.CharField(max_length=255)),
+                ('phone', models.CharField(max_length=255)),
+                ('faculty_exchange', models.CharField(max_length=255)),
+                ('staff', models.ForeignKey(to='staff.StaffPage')),
+            ],
         ),
     ]
