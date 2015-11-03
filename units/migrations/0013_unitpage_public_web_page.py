@@ -7,12 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('public', '0001_initial'),
+        ('units', '0012_unitpage_room_number'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='locationpage',
-            name='name',
+        migrations.AddField(
+            model_name='unitpage',
+            name='public_web_page',
+            field=models.URLField(blank=True, default=''),
         ),
     ]

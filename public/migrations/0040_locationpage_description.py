@@ -7,12 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('public', '0001_initial'),
+        ('public', '0039_auto_20151029_1448'),
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.AddField(
             model_name='locationpage',
-            name='name',
+            name='description',
+            field=models.TextField(default='This is a test description'),
+            preserve_default=False,
         ),
     ]

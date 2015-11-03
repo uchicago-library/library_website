@@ -7,12 +7,12 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('public', '0001_initial'),
+        ('lib_collections', '0038_auto_20151022_2011'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='locationpage',
-            name='name',
+            model_name='subjectspecialistplacement',
+            name='subject_specialist',
         ),
     ]

@@ -1,35 +1,55 @@
 from django.db import models
 from django import forms
 from django.utils import timezone
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore import blocks
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
-from base.models import BasePage
+from modelcluster.fields import ParentalKey
+from base.models import BasePage, DefaultBodyField, Address, Email, PhoneNumber
 
 class StandardPage(BasePage):
     """
     A standard basic page.
     """
-    body = StreamField([
-        ('heading', blocks.CharBlock(classname="full title", icon='title')),
-        ('paragraph', blocks.RichTextBlock(icon='pilcrow')),
-        ('image', ImageChooserBlock(icon='image / picture')),
-    ])
+    body = DefaultBodyField()
 
     content_panels = Page.content_panels + [
+        FieldPanel('description'),
         StreamFieldPanel('body'),
-        FieldPanel('location'),
-    ]
+    ] + BasePage.content_panels
 
-class LocationPage(BasePage):
+
+class LocationPageDonorPlacement(Orderable, models.Model):
+    """
+    Create a through table for linking donor pages to location pages
+    """
+    parent = ParentalKey(
+        'public.LocationPage',
+        related_name='location_donor_page_placements',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL
+    )
+
+    donor = models.ForeignKey(
+        'public.DonorPage',
+        related_name='location_donor_page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+
+class LocationPage(BasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
     """
-    # Model fields 
+    # Model fields
+    description = models.TextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
     library_floorplan_link = models.URLField(max_length=200, blank=True, default='')
@@ -79,7 +99,6 @@ class LocationPage(BasePage):
     # Set what appears in the admin
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        FieldPanel('last_reviewed', None),
         FieldPanel('parent_building'),
         FieldPanel('library_floorplan_link'),
         FieldPanel('libcal_library_id'),
@@ -121,4 +140,25 @@ class LocationPage(BasePage):
             FieldPanel('has_lockers', classname=ROW_CLASS),
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
-    ]
+        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
+        InlinePanel('location_donor_page_placements', label='Donor'),
+    ] + Email.content_panels + Address.content_panels + BasePage.content_panels
+
+
+class DonorPage(BasePage):
+    """
+    Donor page model.
+    """
+    description = models.TextField(null=False, blank=False)
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+        
+    content_panels = Page.content_panels + [
+        FieldPanel('description'),
+        ImageChooserPanel('image'),
+    ] + BasePage.content_panels 

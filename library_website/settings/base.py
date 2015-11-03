@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailsitemaps',
     'wagtail.contrib.wagtailstyleguide',
 
+    'subjects',
     'search',
     'intranethome',
     'home',
@@ -61,6 +62,7 @@ INSTALLED_APPS = (
     'public',
     'staff',
     'staffweb',
+    'units',
     'lib_collections',
 )
 
@@ -152,6 +154,13 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Phone number format
+PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
+PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
+
+# Postal code format
+POSTAL_CODE_FORMAT = '^[0-9]{5}$'
+POSTAL_CODE_ERROR_MSG = 'Please enter the postal code as a five digit number, e.g. 60637'
 
 # Wagtail settings
 
