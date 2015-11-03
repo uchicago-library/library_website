@@ -3,7 +3,7 @@ from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG
 from django import forms
 from django.utils import timezone
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore import blocks
+from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, RichTextBlock, RawHTMLBlock
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
@@ -81,6 +81,16 @@ class BasePage(Page):
     class Meta:
         abstract = True
 
+class DefaultBodyFields(StreamBlock):
+    """
+    Standard default streamfield options to be shared 
+    across content types.
+    """
+    h2 = CharBlock(icon="title", classname="title")
+    h3 = CharBlock(icon="title", classname="title")
+    h4 = CharBlock(icon="title", classname="title")
+    paragraph = RichTextBlock(icon="pilcrow")
+
 
 class DefaultBodyField(StreamField):
     """
@@ -92,8 +102,8 @@ class DefaultBodyField(StreamField):
         Default block types to include.
         """
         block_types = [
-            ('heading', blocks.CharBlock(classname="full title", icon='title')),
-            ('paragraph', blocks.RichTextBlock(icon='pilcrow')),
+            ('heading', CharBlock(classname="full title", icon='title')),
+            ('paragraph', RichTextBlock(icon='pilcrow')),
             ('image', ImageChooserBlock(icon='image / picture')),
         ]
 

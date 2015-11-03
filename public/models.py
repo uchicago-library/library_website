@@ -9,13 +9,13 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import BasePage, DefaultBodyField, Address, Email, PhoneNumber
+from base.models import BasePage, DefaultBodyFields, Address, Email, PhoneNumber
 
 class StandardPage(BasePage):
     """
     A standard basic page.
     """
-    body = DefaultBodyField()
+    body = StreamField(DefaultBodyFields()) 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),

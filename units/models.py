@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyField, PhoneNumber, FaxNumber
+from base.models import BasePage, DefaultBodyFields, PhoneNumber, FaxNumber
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -78,7 +78,7 @@ class UnitPage(BasePage, FaxNumber):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
-    body = DefaultBodyField(null=True, blank=True)
+    body = StreamField(DefaultBodyFields())
 
     content_panels = Page.content_panels + [
         FieldPanel('display_in_directory'),
@@ -101,3 +101,9 @@ class UnitPage(BasePage, FaxNumber):
         PageChooserPanel('public_web_page'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
+
+    search_fields = Page.search_fields + (
+        index.SearchField('body'),
+    )
+
+    subpage_types = ['public.StandardPage', 'public.LocationPage']
