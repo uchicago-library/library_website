@@ -12,7 +12,6 @@ from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
-from staffweb.models import GroupCommitteePage
 
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
@@ -47,7 +46,7 @@ class GroupPagePlacement(Orderable, models.Model):
     )
 
     group_or_committee = models.ForeignKey(
-        'staffweb.GroupCommitteePage',
+        'group.GroupPage',
         related_name='group_page',
         null=True,
         blank=True,
@@ -118,7 +117,7 @@ class StaffPage(Page):
         blank=True)
     supervisor = models.ForeignKey(
         'staff.StaffPage',
-        null=True, blank=False, on_delete=models.SET_NULL)
+        null=True, blank=True, on_delete=models.SET_NULL)
     profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
                 null=True,

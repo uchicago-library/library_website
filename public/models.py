@@ -18,7 +18,6 @@ class StandardPage(BasePage):
     body = DefaultBodyField()
 
     content_panels = Page.content_panels + [
-        FieldPanel('description'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 

@@ -1,44 +1,35 @@
 from django.db import models
 from django.db.models.fields import CharField, TextField
+from django.utils import timezone
 from staff.models import StaffPage
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailcore.models import Page
 
-class GroupMember(models.Model):
-	group = models.ForeignKey('GroupPage')
-	role = CharField(
-		blank=True,
-		max_length=255)
-	staff = models.ForeignKey('staff.StaffPage')
-
 class GroupPage(Page):
-	name = TextField(
-		blank=True)
-	email = CharField(
-		blank=True,
-		max_length=255)
-	intro = TextField(
-		blank=True)
-	meeting_location = CharField(
-		blank=True,
-		max_length=255)
-	meeting_time = CharField(
-		blank=True,
-		max_length=255)
+    """
+    Content type for group and committee pages.
+    """
+    meeting_location = CharField(
+        blank=True,
+        max_length=255)
+    meeting_time = models.TimeField(
+        auto_now=False, 
+        auto_now_add=False,
+        default=timezone.now,
+        blank=True) 
+    description = models.TextField(null=True, blank=True)
 
-GroupPage.content_panels = Page.content_panels + [
-	FieldPanel('name'),
-	FieldPanel('email'),
-	FieldPanel('intro'),
-	FieldPanel('meeting_location'),
-	FieldPanel('meeting_time')
-]
+    content_panels = Page.content_panels + [
+        FieldPanel('description'),
+        FieldPanel('meeting_time'),
+    ]
+
 
 class GroupIndexPage(Page):
-	intro = TextField()
+    intro = TextField()
 
-	content_panels = Page.content_panels + [
-		FieldPanel('intro')
-	]
+    content_panels = Page.content_panels + [
+        FieldPanel('intro')
+    ]
 
-	subpage_types = ['group.GroupPage']
+    subpage_types = ['group.GroupPage']
