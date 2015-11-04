@@ -32,28 +32,6 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.subject.name
 
 
-class GroupPagePlacement(Orderable, models.Model):
-    """
-    Through table for linking group and committee pages
-    to StaffPage objects.
-    """
-    parent = ParentalKey(
-        'staff.StaffPage',
-        related_name='group_page_placements',
-        null=True,
-        blank=False,
-        on_delete=models.SET_NULL
-    )
-
-    group_or_committee = models.ForeignKey(
-        'group.GroupPage',
-        related_name='group_page',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-
 class VCard(Email, PhoneNumber):
     """
     VCard model for repeatable VCards on the 
@@ -177,7 +155,6 @@ class StaffPage(Page):
         DocumentChooserPanel('cv'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
-        InlinePanel('group_page_placements', label='Groups and Committees'),
         InlinePanel('vcards', label='VCards'),
     ]
 

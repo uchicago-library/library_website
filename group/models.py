@@ -40,6 +40,31 @@ class GroupPageReports(Orderable, Report):
     page = ParentalKey('group.GroupPage', related_name='group_reports')
 
 
+class GroupMembers(Orderable, models.Model):
+    """
+    Through table for linking staff pages to 
+    groups and committees.
+    """
+    parent = ParentalKey(
+        'group.GroupPage',
+        related_name='group_members',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL
+    )
+
+    group_member = models.ForeignKey(
+        'staff.StaffPage',
+        related_name='member',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    class Meta:
+        verbose_name = 'Member'
+        verbose_name_plural = 'Members'
+
+
 class GroupPage(Page, Email):
     """
     Content type for group and committee pages.
@@ -60,7 +85,7 @@ class GroupPage(Page, Email):
     body = StreamField(DefaultBodyFields())
 
 
-    content_panels = Page.content_panels + [
+    content_panels = Page.content_panels + Email.content_panels + [
         MultiFieldPanel(
             [
                FieldPanel('meeting_time'),
@@ -72,9 +97,10 @@ class GroupPage(Page, Email):
         FieldPanel('description'),
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
         InlinePanel('group_reports', label='Reports'),
+        InlinePanel('group_members', label='Group Members'),
         FieldPanel('is_active'),
         StreamFieldPanel('body'),
-    ] + Email.content_panels
+    ] 
 
 
 class GroupIndexPage(Page):
