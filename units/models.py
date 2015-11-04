@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyFields, PhoneNumber, FaxNumber
+from base.models import BasePage, DefaultBodyFields, PhoneNumber, FaxNumber, Report
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -56,6 +56,13 @@ class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     page = ParentalKey('units.UnitPage', related_name='phone_numbers')
 
 
+class UnitPageReports(Orderable, Report):
+    """
+    Reports for unit pages.
+    """
+    page = ParentalKey('units.UnitPage', related_name='unit_reports')
+
+
 class UnitPage(BasePage, FaxNumber):
     """
     Basic structure for units and departments.
@@ -78,6 +85,7 @@ class UnitPage(BasePage, FaxNumber):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
+    is_hub_page = models.BooleanField(default=False)
     body = StreamField(DefaultBodyFields())
 
     content_panels = Page.content_panels + [
@@ -99,6 +107,8 @@ class UnitPage(BasePage, FaxNumber):
         ),
         FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
+        InlinePanel('unit_reports', label='Reports'),
+        FieldPanel('is_hub_page'), 
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
