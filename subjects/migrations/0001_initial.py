@@ -15,9 +15,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Subject',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
-                ('parent_location', models.ForeignKey(blank=True, null=True, to='subjects.Subject', on_delete=django.db.models.deletion.SET_NULL)),
+                ('parent', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='subjects.Subject', null=True)),
             ],
             bases=(models.Model, wagtail.wagtailsearch.index.Indexed),
         ),

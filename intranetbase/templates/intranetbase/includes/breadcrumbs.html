@@ -1,0 +1,16 @@
+{% load wagtailcore_tags %}
+
+<p>
+{% for breadcrumb in breadcrumbs %}
+    <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+    {% if not forloop.last %} &gt; {% endif %}
+{% endfor %}
+
+{{ self.get_ancestors.length }}
+
+{% for page in self.get_ancestors %}
+        {% if page.is_root == False %}
+            <li><a nref="{% pageurl page %}">{{ page.title }}</a></li>
+        {% endif %}
+{% endfor %}
+</p>

@@ -1,14 +1,39 @@
-{% extends "base.html" %}
+{% extends "intranetbase/base.html" %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
+    <div class="row-fluid">
+        <div class="col-md-12 breadcrumbs">
+            <small>
+                <a href="/">Staffweb Home</a>
+                &gt;
+                <a href="/news/">News</a>
+                &gt;
+                {{ self.title }}
+            </small>
+        </div>
+    </div>
 	<article>
 		<h1>{{ self.title }}</h1>
+        {% if self.feature_image %}
 		{% image self.feature_image original as feature_image %}
 		<img src="{{ feature_image.url }}"/>
-		<div>{{ self.body|richtext }}</div>
+        {% endif %}
+        {% for block in self.body %}
+            {% if block.block_type == 'h2' %}
+                <h2>{{ block.value }}</h2>
+            {% elif block.block_type == 'h3' %}
+                <h3>{{ block.value }}</h3>
+            {% elif block.block_type == 'h4' %}
+                <h4>{{ block.value }}</h4>
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {{ block }}
+                </section>
+            {% endif %}
+        {% endfor %}
 	</article>
 {% endblock %}

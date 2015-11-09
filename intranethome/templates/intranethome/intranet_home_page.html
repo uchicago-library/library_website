@@ -1,20 +1,85 @@
-{% extends "base.html" %}
+{% extends "intranetbase/base.html" %}
 {% load wagtailcore_tags %}
 {% load core_homepage_tags %}
 
 {% block content %}
-	<h1>Staffweb</h1>
+  <div class="row-fluid "> <!-- Main Row -->
+    <div class="col-xs-12 col-sm-12 col-md-8 swnews">
+	    <h1>News</h1>
+        {% for news_page in news_pages %}
+            <div class="media-body">
+            <span class="date">{{ news_page.date }}</span>
+            <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+            <p>{{ news_page.intro }}</p>
+            </div>
+        {% endfor %}
+    </div>
 
-	<h2><a href="/news/">The News</a></h2>
-	{% top_stories %}
+  <div class="col-xs-12 col-sm-12 col-md-4 swside-home"> <!-- Right Sidebar -->
 
-	<h2><a href="/departments/">Departments</a></h2>
+    <div class="row-fluid"> <!-- Quicklinks Row -->
+      <h1>Quicklinks</h1>
+      <p><a href="https://workday.uchicago.edu/">WorkDay</a> &nbsp; | &nbsp; <a href="http://uchicagotime.uchicago.edu/">UChicago Time</a> &nbsp; | &nbsp; <a href="https://humanresources.uchicago.edu/benefits/">Benefits</a> &nbsp; | &nbsp; <a href="https://xmail.uchicago.edu/">Xmail</a></p>
+    </div> <!-- / Quicklinks Row -->
 
-	<h2><a href="/groups/">Groups</a></h2>
+    <hr/>
 
-	<h2>Resources</h2>
+    <div class="row-fluid" style="padding: 5px 0 20px 0;"> <!-- Bugzilla Row --> <!-- Dev note: Remove styling for production? -->
+      <h1>Report a Problem</h1>
+      <a href="http://trouble.lib.uchicago.edu" class="btn btn-bugzilla" aria-label="Bugzilla" role="button">Bugzilla</a>
+    </div><!-- // Bugzilla Row -->
 
-	<h2>Technical Support</h2>
+    <hr>
 
-	<h2><a href="/staff/">Staff Directory</a></h2>
+    <div class="row-fluid"> <!-- Updates Row -->
+      <h1>StaffWeb Updates</h1>
+      <strong>Meeting Minutes</strong>
+      <div class="list-group">
+        <a href="#" class="list-group-item"><span class="badge">PDF</span>September Staff Meeting</a>
+        <a href="#" class="list-group-item"><span class="badge">PDF</span>Web Content Group</a>
+        <a href="#" class="list-group-item"><span class="badge">PDF</span>University of Chicago Magical Knowledge Project: October Meeting</a>
+        <a href="#" class="list-group-item"><span class="badge">Word</span>Magical Hippogriff Tactical Comittee</a>
+        <a href="#" class="list-group-item">View All Meeting Minutes >></a>
+      </div>  
+      <strong>Policies</strong>
+      <div class="list-group">
+        <a href="#" class="list-group-item"><span class="badge">HTML</span>LibGuides Policies</a>
+        <a href="#" class="list-group-item"><span class="badge">Box</span>Staff Web Content Policies</a>
+        <a href="#" class="list-group-item"><span class="badge">PDF</span>Magical Hippogriff Feeding Policy</a>
+        <a href="#" class="list-group-item"><span class="badge">HTML</span>Library Food Policy</a>
+      </div>           
+    </div> <!-- // Updates Row -->
+
+    <hr/>
+    
+    
+    <div class="row-fluid"><!-- Work/Life -->
+      <h1>Food, Etc.</h1>
+      <p><strong>Acquisitions Item of the Week</strong><br/>
+      <img class="media-object" src="images/fpo-sqrimage.gif" width="150" alt="..."></p>
+
+      <p><strong>On Campus Food Options</strong><br/>
+      <a href="https://dining.uchicago.edu/page/locations-hours">Campus Dining: locations &amp; hours</a> (Updated for Fall)<br/>
+      <a href="https://twitter.com/uchiNOMgo?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">Hyde Park Food Trucks Twitter Feed</a></p>
+
+      <p><strong>On Campus Interests</strong><br/>
+        <a href="https://itservices.uchicago.edu/page/university-webcams">Campus Camera Feeds</a><br/>
+        <a href="https://wellness.uchicago.edu/page/mindfulness-meditation">Meditation on Campus</a><br/>
+        <a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a><br/>
+        <a href="http://marketplace.uchicago.edu/">UChicago Marketplace</a><br/>
+      <a href="http://events.uchicago.edu/cal/main/showMain.rdo;jsessionid=C22CCF8F17687AD9F8616251F7EBF532.bw04">Campus Events</a></p>
+      
+      <p><strong>Social Media</strong><br/>
+      <a href="https://twitter.com/UChicagoReg">Regenstein Twitter</a><br/>
+      <a href="https://instagram.com/uchicagoscrc/">SCRC Instagram</a><br/>
+      <a href="https://instagram.com/Rockefeller_Chapel/">Rockefeller Chapel Instagram</a><br/>
+      <a href="#">view all</a> >></p>
+
+      <p><strong>Non-Affiliated Links</strong><br/>
+        <a href="https://twitter.com/FakeLibStats?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">Fake Library Stats Twitter</a><br/>
+      <a href="https://twitter.com/uofc_overheard">Overheard at UChicago</a></p>
+    </div> <!-- // Work/Life -->
+           
+ </div><!-- // Right Sidebar -->
+</div> <!-- // Main row -->
 {% endblock %}

@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models.fields import CharField, TextField, IntegerField
 from django.utils.translation import ugettext_lazy
 
+from intranetbase.models import IntranetBasePage
+
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore import blocks
@@ -13,11 +15,11 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
-class IntranetHomePage(Page):
+class IntranetHomePage(IntranetBasePage):
 	body = RichTextField()
 
 	content_panels = Page.content_panels + [
 		FieldPanel('body')
 	]
 
-	subpage_types = ['group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage']
+	subpage_types = ['department.DepartmentIndexPage', 'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage']

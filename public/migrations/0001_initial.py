@@ -2,26 +2,45 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import wagtail.wagtailcore.fields
 import wagtail.wagtailimages.blocks
-import django.db.models.deletion
+import base.models
 import wagtail.wagtailcore.blocks
+import django.core.validators
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailimages', '0008_image_created_at_index'),
         ('wagtailcore', '0019_verbose_names_cleanup'),
     ]
 
     operations = [
         migrations.CreateModel(
+            name='DonorPage',
+            fields=[
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
+                ('description', models.TextField()),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=('wagtailcore.page',),
+        ),
+        migrations.CreateModel(
             name='LocationPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('description', models.TextField(blank=True)),
                 ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
+                ('address_1', models.CharField(max_length=255, blank=True)),
+                ('address_2', models.CharField(max_length=255, blank=True)),
+                ('city', models.CharField(max_length=255, blank=True)),
+                ('country', models.CharField(max_length=255, blank=True)),
+                ('postal_code', models.CharField(blank=True, max_length=5, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{5}$', message=b'Please enter the postal code as a five digit number, e.g. 60637')])),
+                ('email', models.EmailField(max_length=254, blank=True)),
+                ('phone_label', models.CharField(max_length=25, blank=True)),
+                ('phone_number', models.CharField(blank=True, max_length=12, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message=b'Please enter the phone number using the format 773-123-4567')])),
+                ('description', models.TextField()),
                 ('library_floorplan_link', models.URLField(default=b'', blank=True)),
                 ('libcal_library_id', models.IntegerField(null=True, blank=True)),
                 ('google_map_link', models.URLField(default=b'', blank=True)),
@@ -54,23 +73,29 @@ class Migration(migrations.Migration):
                 ('has_standing_desk', models.BooleanField(default=False)),
                 ('has_lockers', models.BooleanField(default=False)),
                 ('has_day_lockers', models.BooleanField(default=False)),
-                ('location', models.ForeignKey(related_name='public_locationpage_related', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='public.LocationPage', null=True)),
-                ('location_photo', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtailimages.Image', null=True)),
-                ('parent_building', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='public.LocationPage', null=True)),
             ],
             options={
                 'abstract': False,
             },
-            bases=('wagtailcore.page',),
+            bases=('wagtailcore.page', models.Model),
+        ),
+        migrations.CreateModel(
+            name='LocationPageDonorPlacement',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+            ],
+            options={
+                'ordering': ['sort_order'],
+                'abstract': False,
+            },
         ),
         migrations.CreateModel(
             name='StandardPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('description', models.TextField(blank=True)),
                 ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
-                ('body', wagtail.wagtailcore.fields.StreamField([(b'heading', wagtail.wagtailcore.blocks.CharBlock(classname=b'full title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow')), (b'image', wagtail.wagtailimages.blocks.ImageChooserBlock(icon=b'image / picture'))])),
-                ('location', models.ForeignKey(related_name='public_standardpage_related', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='public.LocationPage', null=True)),
+                ('body', base.models.DefaultBodyField([(b'heading', wagtail.wagtailcore.blocks.CharBlock(classname=b'full title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow')), (b'image', wagtail.wagtailimages.blocks.ImageChooserBlock(icon=b'image / picture'))])),
             ],
             options={
                 'abstract': False,

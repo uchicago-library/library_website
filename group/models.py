@@ -12,26 +12,23 @@ class GroupMember(models.Model):
 	staff = models.ForeignKey('staff.StaffPage')
 
 class GroupPage(Page):
-	name = TextField(
-		blank=True)
-	email = CharField(
-		blank=True,
-		max_length=255)
 	intro = TextField(
 		blank=True)
-	meeting_location = CharField(
+	email = CharField(
 		blank=True,
 		max_length=255)
 	meeting_time = CharField(
 		blank=True,
 		max_length=255)
+	meeting_location = CharField(
+		blank=True,
+		max_length=255)
 
 GroupPage.content_panels = Page.content_panels + [
-	FieldPanel('name'),
-	FieldPanel('email'),
 	FieldPanel('intro'),
-	FieldPanel('meeting_location'),
-	FieldPanel('meeting_time')
+	FieldPanel('email'),
+	FieldPanel('meeting_time'),
+	FieldPanel('meeting_location')
 ]
 
 class GroupIndexPage(Page):

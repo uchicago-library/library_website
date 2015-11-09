@@ -1,0 +1,11 @@
+<li><a href="{{ department.url }}">{{ department.title }}</a>
+{% if department.children %}
+    <ul>
+    {% for department in department.children %}
+        {% with node=department template_name="department/department_tree.html" %}
+            {% include template_name %}
+        {% endwith %}
+    {% endfor %}
+    </ul>
+{% endif %}
+</li>

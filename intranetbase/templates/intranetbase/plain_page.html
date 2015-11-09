@@ -1,0 +1,12 @@
+{% extends "intranetbase/base.html" %}
+{% load wagtailcore_tags %}
+{% load core_homepage_tags %}
+
+{% block content %}
+  <div class="row-fluid "> <!-- Main Row -->
+    <div class="col-xs-12 col-sm-12 col-md-8 swnews">
+       <h1>{{ self.title }}</h1>
+       {{ self.body|richtext }}
+    </div>
+  </div> <!-- // Main row -->
+{% endblock %}

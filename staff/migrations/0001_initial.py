@@ -4,12 +4,14 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import django.db.models.deletion
 import django.core.validators
+import modelcluster.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailimages', '0008_image_created_at_index'),
+        ('subjects', '0001_initial'),
         ('wagtailcore', '0019_verbose_names_cleanup'),
         ('wagtaildocs', '0003_add_verbose_names'),
     ]
@@ -45,6 +47,19 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
             bases=('wagtailcore.page',),
+        ),
+        migrations.CreateModel(
+            name='StaffPageSubjectPlacement',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('page', modelcluster.fields.ParentalKey(related_name='staff_subject_placements', to='staff.StaffPage')),
+                ('subject', models.ForeignKey(related_name='+', to='subjects.Subject')),
+            ],
+            options={
+                'verbose_name': 'Subject Placement',
+                'verbose_name_plural': 'Subject Placements',
+            },
         ),
         migrations.CreateModel(
             name='StaffTitle',

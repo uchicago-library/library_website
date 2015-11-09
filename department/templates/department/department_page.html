@@ -1,6 +1,5 @@
 {% extends "intranetbase/base.html" %}
 {% load wagtailcore_tags %}
-{% load core_group_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -10,26 +9,23 @@
             <small>
                 <a href="/">Staffweb Home</a>
                 &gt;
-                <a href="/groups/">Groups</a>
+                <a href="/departments/">Departments</a>
                 &gt;
                 {{ self.title }}
             </small>
-        </div>
+         </div>
     </div>
+
 	<article>
 		<h1>{{ self.title }}</h1>
 		<p>{{ self.intro }}</p>
-		<p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
 
-        <h2>Meetings</h2>
-		<p>{{ self.meeting_time }}</p>
-		<p>{{ self.meeting_location }}</p>
+        <h2>Department Contact</h2>
+        <p>{{ self.location }}</p>
+        <p>{{ self.telephone }} | <a href="{{ self.email }}">mailto:{{ self.email }}</a></p>
 
-		<h2>Current Members</h2>
-		<ul>
-		{% group_members %}
-		</ul>
+        <h2>Staff</h2>
 
-        <h2>Recent Meeting Minutes</h2>
+        {{ self.body|richtext }}
 	</article>
 {% endblock %}
