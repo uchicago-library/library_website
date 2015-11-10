@@ -9,16 +9,15 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import BasePage, DefaultBodyField, Address, Email, PhoneNumber
+from base.models import BasePage, DefaultBodyFields, Address, Email, PhoneNumber
 
 class StandardPage(BasePage):
     """
     A standard basic page.
     """
-    body = DefaultBodyField()
+    body = StreamField(DefaultBodyFields()) 
 
     content_panels = Page.content_panels + [
-        FieldPanel('description'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
@@ -140,7 +139,7 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
             FieldPanel('has_lockers', classname=ROW_CLASS),
             FieldPanel('has_day_lockers', classname=ROW_CLASS),
         ]),
-        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
+        MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + BasePage.content_panels
 

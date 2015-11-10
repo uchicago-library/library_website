@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailimages', '0008_image_created_at_index'),
-        ('public', '0002_auto_20151104_1849'),
+        ('public', '0002_auto_20151110_1511'),
         ('staff', '0001_initial'),
         ('units', '0001_initial'),
     ]

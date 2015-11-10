@@ -15,7 +15,7 @@
     </div>
 	<article>
 	    <h1>News</h1>
-		<p>{{ self.intro }}</p>
+		{{ self.intro|richtext }}
 
         {% for news_page in news_pages %}
             <div class="media-body">

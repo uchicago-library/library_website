@@ -2,7 +2,8 @@ from django.db import models
 from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, TextField
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -11,6 +12,7 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
+from base.models import PhoneNumber, Email
 
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
@@ -30,51 +32,80 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
     def __str__(self):
         return self.page.title + ' -> ' + self.subject.name
 
-class StaffTitle(models.Model):
-    staff = models.ForeignKey('staff.StaffPage')
+
+class VCard(Email, PhoneNumber):
+    """
+    VCard model for repeatable VCards on the 
+    StaffPage.
+    """
     title = CharField(
-        max_length=255)
-    department = CharField(
-        max_length=255)
-    sub_department = CharField(
-        max_length=255)
-    phone = CharField(
-        max_length=255)
+        max_length=255, 
+        blank=False)
+    unit = models.ForeignKey(
+       'units.UnitPage',
+       null=True,
+       blank=True,
+       on_delete=models.SET_NULL,
+       related_name='%(app_label)s_%(class)s_related'
+    )
     faculty_exchange = CharField(
-        max_length=255)
+        max_length=255, 
+        blank=True)
+
+    content_panels = [
+        FieldPanel('title'),
+        FieldPanel('unit'),
+        FieldPanel('faculty_exchange'),
+    ]
+
+
+class StaffPagePageVCards(Orderable, VCard):
+    """
+    Create a through table for linking vcards
+    to StaffPage content types.
+    """
+    page = ParentalKey('staff.StaffPage', related_name='vcards')
+
 
 class StaffPage(Page):
+    """
+    Staff profile content type.
+    """
     cnetid = CharField(
+        max_length=255,
+        blank=False)
+    display_name = CharField(
         max_length=255,
         null=True,
         blank=True)
+    official_name = CharField(
+        max_length=255,
+        null=True,
+        blank=True)
+    first_name = CharField(
+        max_length=255,
+        null=True,
+        blank=True)
+    middle_name = CharField(
+        max_length=255,
+        null=True,
+        blank=True)
+    last_name = CharField(
+        max_length=255,
+        null=True,
+        blank=True)
+    supervisor = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
     profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
                 null=True,
                 blank=True,
                 on_delete=models.SET_NULL,
                 related_name='+')
-    official_name = CharField(
-        max_length=255,
-        null=True,
-        blank=True)
-    display_name = CharField(
-        max_length=255,
-        null=True,
-        blank=True)
-    alphabetize_name_as = CharField(
-        max_length=255,
-        null=True,
-        blank=True)
-    email = CharField(
-        max_length=255,
-        validators=[EmailValidator()],
-        null=True,
-        blank=True)
-    #supervisor = pointer to another staff person.
-    libguide_url = CharField(
-        max_length = 255,
-        null=True,
+    libguide_url = models.URLField(
+        max_length=255, 
+        null=True, 
         blank=True)
     bio = TextField(
         null=True,
@@ -107,16 +138,32 @@ class StaffPage(Page):
 
 
     content_panels = Page.content_panels + [
+        FieldPanel('cnetid'),
+        MultiFieldPanel(
+            [
+                FieldPanel('official_name'),
+                FieldPanel('display_name'),
+                FieldPanel('first_name'),
+                FieldPanel('middle_name'),
+                FieldPanel('last_name'),
+            ],
+            heading='Name'
+        ),
+        FieldPanel('supervisor'),
+        FieldPanel('libguide_url'),
         ImageChooserPanel('profile_picture'),
-        FieldPanel('alphabetize_name_as'),
         FieldPanel('bio'),
         DocumentChooserPanel('cv'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
+        InlinePanel('vcards', label='VCards'),
     ]
 
 class StaffIndexPage(Page):
-    intro = TextField()
+    """
+    Staff index page content type.
+    """
+    intro = RichTextField()
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ]

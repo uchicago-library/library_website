@@ -91,15 +91,12 @@ class DefaultBodyFields(StreamBlock):
     h4 = CharBlock(icon="title", classname="title")
     paragraph = RichTextBlock(icon="pilcrow")
 
+
 class DefaultBodyField(StreamField):
     """
-    Standard default streamfield options to be shared 
-    across content types.
+    We need to get rid of this! Don't use this! 
     """
     def __init__(self, block_types=None, **kwargs):
-        """
-        Default block types to include.
-        """
         block_types = [
             ('heading', CharBlock(classname="full title", icon='title')),
             ('paragraph', RichTextBlock(icon='pilcrow')),
@@ -158,7 +155,7 @@ class PhoneNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    panels = [
+    content_panels = [
         FieldPanel('phone_label'),
         FieldPanel('phone_number'),
     ]
@@ -176,6 +173,24 @@ class FaxNumber(models.Model):
 
     panels = [
         FieldPanel('number'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class Report(models.Model):
+    """
+    Model for group and unit reports
+    """
+    date = models.DateField(blank=False)
+    summary = models.TextField(null=False, blank=False)
+    link = models.URLField(max_length=254, blank=False, default='')
+
+    panels = [
+        FieldPanel('date'),
+        FieldPanel('summary'),
+        FieldPanel('link'),
     ]
 
     class Meta:

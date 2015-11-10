@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailimages', '0008_image_created_at_index'),
+        ('subjects', '0001_initial'),
         ('public', '0001_initial'),
         ('staff', '0001_initial'),
         ('lib_collections', '0001_initial'),
@@ -55,6 +56,16 @@ class Migration(migrations.Migration):
             model_name='donorpageplacement',
             name='parent',
             field=modelcluster.fields.ParentalKey(related_name='donor_page_list_placement', on_delete=django.db.models.deletion.SET_NULL, to='lib_collections.CollectionPage', null=True),
+        ),
+        migrations.AddField(
+            model_name='collectionpagesubjectplacement',
+            name='page',
+            field=modelcluster.fields.ParentalKey(related_name='collection_subject_placements', to='lib_collections.CollectionPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpagesubjectplacement',
+            name='subject',
+            field=models.ForeignKey(related_name='+', to='subjects.Subject'),
         ),
         migrations.AddField(
             model_name='collectionpageformatplacement',

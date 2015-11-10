@@ -2,18 +2,14 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django.db.models.deletion
+import wagtail.wagtailcore.fields
 import django.core.validators
-import modelcluster.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailimages', '0008_image_created_at_index'),
-        ('subjects', '0001_initial'),
         ('wagtailcore', '0019_verbose_names_cleanup'),
-        ('wagtaildocs', '0003_add_verbose_names'),
     ]
 
     operations = [
@@ -21,7 +17,7 @@ class Migration(migrations.Migration):
             name='StaffIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('intro', models.TextField()),
+                ('intro', wagtail.wagtailcore.fields.RichTextField()),
             ],
             options={
                 'abstract': False,
@@ -32,16 +28,15 @@ class Migration(migrations.Migration):
             name='StaffPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('cnetid', models.CharField(max_length=255, null=True, blank=True)),
-                ('official_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('cnetid', models.CharField(max_length=255)),
                 ('display_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('alphabetize_name_as', models.CharField(max_length=255, null=True, blank=True)),
-                ('email', models.CharField(blank=True, max_length=255, null=True, validators=[django.core.validators.EmailValidator()])),
-                ('libguide_url', models.CharField(max_length=255, null=True, blank=True)),
+                ('official_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('first_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('middle_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('last_name', models.CharField(max_length=255, null=True, blank=True)),
+                ('libguide_url', models.URLField(max_length=255, null=True, blank=True)),
                 ('bio', models.TextField(null=True, blank=True)),
                 ('is_public_persona', models.BooleanField(default=False)),
-                ('cv', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtaildocs.Document', null=True)),
-                ('profile_picture', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtailimages.Image', null=True)),
             ],
             options={
                 'abstract': False,
@@ -53,8 +48,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
-                ('page', modelcluster.fields.ParentalKey(related_name='staff_subject_placements', to='staff.StaffPage')),
-                ('subject', models.ForeignKey(related_name='+', to='subjects.Subject')),
             ],
             options={
                 'verbose_name': 'Subject Placement',
@@ -62,15 +55,29 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='StaffTitle',
+            name='VCard',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email', models.EmailField(max_length=254, blank=True)),
+                ('phone_label', models.CharField(max_length=25, blank=True)),
+                ('phone_number', models.CharField(blank=True, max_length=12, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message=b'Please enter the phone number using the format 773-123-4567')])),
                 ('title', models.CharField(max_length=255)),
-                ('department', models.CharField(max_length=255)),
-                ('sub_department', models.CharField(max_length=255)),
-                ('phone', models.CharField(max_length=255)),
-                ('faculty_exchange', models.CharField(max_length=255)),
-                ('staff', models.ForeignKey(to='staff.StaffPage')),
+                ('faculty_exchange', models.CharField(max_length=255, blank=True)),
             ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='StaffPagePageVCards',
+            fields=[
+                ('vcard_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='staff.VCard')),
+                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+            ],
+            options={
+                'ordering': ['sort_order'],
+                'abstract': False,
+            },
+            bases=('staff.vcard', models.Model),
         ),
     ]

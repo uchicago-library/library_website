@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'intranetbase',
     'intranethome',
     'lib_collections',
+    'library_website',
     'news',
     'public',
     'search',

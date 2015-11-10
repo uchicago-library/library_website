@@ -17,7 +17,7 @@
 	<article>
 		<h1>{{ self.title }}</h1>
 
-		<p>{{ self.intro }}</p>
+		{{ self.intro|richtext }}
 
         <ul>
         {% for department in departments.children %}

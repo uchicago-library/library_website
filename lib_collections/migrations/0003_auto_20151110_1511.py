@@ -10,10 +10,10 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('subjects', '0001_initial'),
-        ('public', '0002_auto_20151104_1849'),
+        ('public', '0002_auto_20151110_1511'),
         ('staff', '0001_initial'),
         ('units', '0001_initial'),
-        ('lib_collections', '0002_auto_20151104_1849'),
+        ('lib_collections', '0002_auto_20151110_1511'),
     ]
 
     operations = [

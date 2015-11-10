@@ -15,11 +15,6 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
-class IntranetHomePage(IntranetBasePage):
-	body = RichTextField()
-
-	content_panels = Page.content_panels + [
-		FieldPanel('body')
-	]
+class IntranetHomePage(Page):
 
 	subpage_types = ['department.DepartmentIndexPage', 'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage']

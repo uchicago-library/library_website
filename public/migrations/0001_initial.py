@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import wagtail.wagtailimages.blocks
-import base.models
+import wagtail.wagtailcore.fields
 import wagtail.wagtailcore.blocks
 import django.core.validators
 
@@ -95,7 +94,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
-                ('body', base.models.DefaultBodyField([(b'heading', wagtail.wagtailcore.blocks.CharBlock(classname=b'full title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow')), (b'image', wagtail.wagtailimages.blocks.ImageChooserBlock(icon=b'image / picture'))])),
+                ('body', wagtail.wagtailcore.fields.StreamField([(b'h2', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h3', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h4', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow'))])),
             ],
             options={
                 'abstract': False,

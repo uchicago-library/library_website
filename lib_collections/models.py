@@ -63,6 +63,23 @@ class CollectionPageFormatPlacement(Orderable, models.Model):
     def __str__(self):
         return self.page.title + " -> " + self.format.text
 
+
+class CollectionPageSubjectPlacement(Orderable, models.Model):
+    page = ParentalKey('lib_collections.CollectionPage', related_name='collection_subject_placements')
+    subject = models.ForeignKey('subjects.Subject', related_name='+')
+
+    class Meta:
+        verbose_name = "Subject Placement"
+        verbose_name_plural = "Subbject Placements"
+
+    panels = [
+        SnippetChooserPanel('subject'),
+    ]
+
+    def __str__(self):
+        return self.page.title + " -> " + Subject.name
+
+
 # Interstitial model for linking the DonorPages to the CollectionPage
 class DonorPagePlacement(Orderable, models.Model):
     """
@@ -150,7 +167,8 @@ class CollectionPage(BasePage):
         FieldPanel('short_abstract'),
         FieldPanel('full_description'),
         ImageChooserPanel('thumbnail'),
-        InlinePanel('collection_placements', label='Format'),
+        InlinePanel('collection_subject_placements', label='Subjects'),
+        InlinePanel('collection_placements', label='Formats'),
         FieldPanel('access_instructions'),
         InlinePanel('access_links', label='Access Links'),
         InlinePanel('related_collection_placement', label='Related Collection'),

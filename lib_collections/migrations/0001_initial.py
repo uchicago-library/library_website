@@ -116,6 +116,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='CollectionPageSubjectPlacement',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+            ],
+            options={
+                'verbose_name': 'Subject Placement',
+                'verbose_name_plural': 'Subbject Placements',
+            },
+        ),
+        migrations.CreateModel(
             name='DonorPagePlacement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),

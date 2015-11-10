@@ -9,6 +9,8 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from base.models import DefaultBodyFields
+from django.utils import timezone
 
 class NewsPage(IntranetBasePage):
     """
@@ -22,6 +24,7 @@ class NewsPage(IntranetBasePage):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+')
+    sticky_until = models.DateField(blank=False, default=timezone.now)
 
     content_panels = Page.content_panels + [ 
         FieldPanel('excerpt'),
@@ -30,14 +33,14 @@ class NewsPage(IntranetBasePage):
         FieldPanel('sticky_until')
     ] + IntranetBasePage.content_panels
 
-class NewsIndexPage(IntranetBasePage):
+class NewsIndexPage(Page):
     """
     Index page for intranet news stories.
     """
-    intro = TextField()
+    intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ] + IntranetBasePage.content_panels
+    ] 
 
     subpage_types = ['news.NewsPage']
