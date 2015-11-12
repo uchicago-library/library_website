@@ -6,7 +6,7 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
-from base.models import BasePage
+from base.models import PublicBasePage
 from public.models import DonorPage, LocationPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
@@ -143,7 +143,7 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
 
  
 # Collection page content type
-class CollectionPage(BasePage):
+class CollectionPage(PublicBasePage):
     """
     Pages for individual collections.
     """
@@ -175,7 +175,7 @@ class CollectionPage(BasePage):
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         FieldPanel('staff_contact'),
-    ] + BasePage.content_panels
+    ] + PublicBasePage.content_panels
 
 
 class SubjectSpecialistPlacement(Orderable, models.Model):
@@ -315,7 +315,7 @@ class CollectingAreaPageLibGuides(Orderable, LibGuide):
     page = ParentalKey('lib_collections.CollectingAreaPage', related_name='lib_guides')
 
 
-class CollectingAreaPage(BasePage, LibGuide):
+class CollectingAreaPage(PublicBasePage, LibGuide):
     """
     Content type for collecting area pages.
     """
@@ -345,4 +345,4 @@ class CollectingAreaPage(BasePage, LibGuide):
             heading='Primary Guide'
         ),
         InlinePanel('lib_guides', label='Other Guides'),
-    ] + BasePage.content_panels
+    ] + PublicBasePage.content_panels

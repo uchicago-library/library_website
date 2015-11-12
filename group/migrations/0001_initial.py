@@ -41,11 +41,12 @@ class Migration(migrations.Migration):
             name='GroupPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
                 ('email', models.EmailField(max_length=254, blank=True)),
                 ('meeting_location', models.CharField(max_length=255, blank=True)),
                 ('meeting_time', models.TimeField(default=django.utils.timezone.now, blank=True)),
                 ('meeting_frequency', models.CharField(max_length=255, blank=True)),
-                ('description', models.TextField(null=True, blank=True)),
+                ('intro', wagtail.wagtailcore.fields.RichTextField()),
                 ('is_active', models.BooleanField(default=False)),
                 ('body', wagtail.wagtailcore.fields.StreamField([(b'h2', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h3', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h4', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow'))])),
             ],

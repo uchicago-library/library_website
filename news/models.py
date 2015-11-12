@@ -2,36 +2,38 @@ from base.models import DefaultBodyFields
 
 from django.db import models
 from django.db.models.fields import TextField
+from django.utils import timezone
 
-from intranetbase.models import IntranetBasePage
+from base.models import BasePage
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from base.models import DefaultBodyFields
-from django.utils import timezone
 
-class NewsPage(IntranetBasePage):
+class NewsPage(BasePage):
     """
     News story content type used on intranet pages.
     """
-    body = StreamField(DefaultBodyFields());
-    excerpt = models.TextField(blank=True)
+    excerpt = RichTextField(blank=True, null=True)
     thumbnail_image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+')
-    sticky_until = models.DateField(blank=False, default=timezone.now)
+    body = StreamField(DefaultBodyFields(), blank=False, null=False)
+    publish_on = models.DateField(default=timezone.now)
+    sticky_until = models.DateField(blank=True, null=True)
 
     content_panels = Page.content_panels + [ 
         FieldPanel('excerpt'),
-        FieldPanel('body'),
         ImageChooserPanel('thumbnail_image'),
+        StreamFieldPanel('body'),
+        FieldPanel('publish_on'),
         FieldPanel('sticky_until')
-    ] + IntranetBasePage.content_panels
+    ] + BasePage.content_panels
 
 class NewsIndexPage(Page):
     """

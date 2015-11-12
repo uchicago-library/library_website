@@ -9,9 +9,9 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import BasePage, DefaultBodyFields, Address, Email, PhoneNumber
+from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber
 
-class StandardPage(BasePage):
+class StandardPage(PublicBasePage):
     """
     A standard basic page.
     """
@@ -19,7 +19,7 @@ class StandardPage(BasePage):
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
-    ] + BasePage.content_panels
+    ] + PublicBasePage.content_panels
 
 
 class LocationPageDonorPlacement(Orderable, models.Model):
@@ -43,7 +43,7 @@ class LocationPageDonorPlacement(Orderable, models.Model):
     )
 
 
-class LocationPage(BasePage, Email, Address, PhoneNumber):
+class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
     """
@@ -141,10 +141,10 @@ class LocationPage(BasePage, Email, Address, PhoneNumber):
         ]),
         MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
-    ] + Email.content_panels + Address.content_panels + BasePage.content_panels
+    ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
 
-class DonorPage(BasePage):
+class DonorPage(PublicBasePage):
     """
     Donor page model.
     """
@@ -160,4 +160,4 @@ class DonorPage(BasePage):
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         ImageChooserPanel('image'),
-    ] + BasePage.content_panels 
+    ] + PublicBasePage.content_panels 

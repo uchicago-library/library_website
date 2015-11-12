@@ -1,13 +1,14 @@
-{% extends "intranetbase/base.html" %}
+{% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 
 {% block content %}
   <div class="row-fluid "> <!-- Main Row -->
     <div class="col-xs-12 col-sm-12 col-md-8 swnews">
-	    <h1>News</h1>
+	    <h1><a href="{{ news_link }}">News</a></h1>
+        <p>some stuff here</p> 
         {% for news_page in news_pages %}
             <div class="media-body">
-            <span class="date">{{ news_page.date }}</span>
+            <span class="date">{{ news_page.publish_on }}</span>
             <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
             <p>{{ news_page.intro }}</p>
             </div>

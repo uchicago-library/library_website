@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, TextField
-
+from base.models import BasePage
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page, Orderable
@@ -107,9 +107,10 @@ class StaffPage(Page):
         max_length=255, 
         null=True, 
         blank=True)
-    bio = TextField(
+    bio = RichTextField(
         null=True,
-        blank=True)
+        blank=True
+    )
     cv = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
@@ -157,7 +158,7 @@ class StaffPage(Page):
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
         InlinePanel('vcards', label='VCards'),
-    ]
+    ] 
 
 class StaffIndexPage(Page):
     """

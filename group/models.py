@@ -3,6 +3,7 @@ from django.db.models.fields import CharField, TextField
 from django.utils import timezone
 
 from base.models import DefaultBodyFields, Email, Report
+from base.models import BasePage
 from staff.models import StaffPage
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
@@ -65,7 +66,7 @@ class GroupMembers(Orderable, models.Model):
         verbose_name = 'Member'
         verbose_name_plural = 'Members'
 
-class GroupPage(Page, Email):
+class GroupPage(BasePage, Email):
     """
     Content type for group and committee pages.
     """
@@ -80,7 +81,7 @@ class GroupPage(Page, Email):
     meeting_frequency = CharField(
         blank=True,
         max_length=255)
-    description = models.TextField(null=True, blank=True)
+    intro = RichTextField()
     is_active = models.BooleanField(default=False)
     body = StreamField(DefaultBodyFields())
 
@@ -94,13 +95,13 @@ class GroupPage(Page, Email):
             ],
             heading='Meeting Information'
         ),
-        FieldPanel('description'),
+        FieldPanel('intro'),
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
         InlinePanel('group_reports', label='Reports'),
         InlinePanel('group_members', label='Group Members'),
         FieldPanel('is_active'),
         StreamFieldPanel('body'),
-    ] 
+    ] + BasePage.content_panels 
 
 class GroupIndexPage(Page):
     intro = RichTextField()

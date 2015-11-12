@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
             name='StaffPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
                 ('cnetid', models.CharField(max_length=255)),
                 ('display_name', models.CharField(max_length=255, null=True, blank=True)),
                 ('official_name', models.CharField(max_length=255, null=True, blank=True)),

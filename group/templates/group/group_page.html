@@ -1,4 +1,4 @@
-{% extends "intranetbase/base.html" %}
+{% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
@@ -17,7 +17,7 @@
     </div>
 	<article>
 		<h1>{{ self.title }}</h1>
-		<p>{{ self.intro }}</p>
+		{{ self.intro|richtext }}
 		<p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
 
         <h2>Meetings</h2>
@@ -26,7 +26,6 @@
 
 		<h2>Current Members</h2>
 		<ul>
-		{% group_members %}
 		</ul>
 
         <h2>Recent Meeting Minutes</h2>

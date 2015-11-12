@@ -32,6 +32,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'debug_toolbar',
+
     'taggit',
     'compressor',
     'modelcluster',
@@ -52,11 +54,10 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailstyleguide',
 
     'base',
-    'department',
     'group',
     'home',
-    'intranetbase',
     'intranethome',
+    'intranetunits',
     'lib_collections',
     'library_website',
     'news',
@@ -64,7 +65,6 @@ INSTALLED_APPS = (
     'search',
     'shibboleth',
     'staff',
-    'staffweb',
     'subjects',
     'units',
 )

@@ -1,6 +1,7 @@
 .DS_Store
 *.pyc
 *.swp
+.sass-cache
 
 /library_website/settings/local.py
 /static

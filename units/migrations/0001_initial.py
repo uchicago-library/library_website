@@ -13,7 +13,7 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('public', '0002_auto_20151110_1511'),
+        ('public', '0002_auto_20151111_2026'),
         ('wagtailcore', '0019_verbose_names_cleanup'),
         ('staff', '0001_initial'),
     ]
@@ -39,12 +39,10 @@ class Migration(migrations.Migration):
                 ('room_number', models.CharField(max_length=32, blank=True)),
                 ('is_hub_page', models.BooleanField(default=False)),
                 ('body', wagtail.wagtailcore.fields.StreamField([(b'h2', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h3', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h4', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow'))])),
-                ('content_specialist', models.ForeignKey(related_name='units_unitpage_content_specialist', on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage', null=True)),
                 ('editor', models.ForeignKey(related_name='units_unitpage_editor', on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage', null=True)),
                 ('location', models.ForeignKey(related_name='units_unitpage_related', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='public.LocationPage', null=True)),
                 ('page_maintainer', models.ForeignKey(related_name='units_unitpage_maintainer', on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage', null=True)),
                 ('public_web_page', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtailcore.Page', null=True)),
-                ('unit', models.ForeignKey(related_name='units_unitpage_related', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='units.UnitPage', null=True)),
             ],
             options={
                 'abstract': False,

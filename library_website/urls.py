@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^$', 'intranethome.views.index', name='index'),
-    url(r'^departments/$', 'department.views.index', name='index'),
+    url(r'^departments/$', 'intranetunits.views.index', name='index'),
     url(r'^news/$', 'news.views.index', name='index'),
     url(r'^search/$', 'search.views.search', name='search'),
 

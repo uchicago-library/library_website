@@ -1,15 +1,16 @@
-from django.db import models
-from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG
 from django import forms
-from django.utils import timezone
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, RichTextBlock, RawHTMLBlock
-from wagtail.wagtailimages.blocks import ImageChooserBlock
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
-from wagtail.wagtailsearch import index
 from django.core.validators import RegexValidator
-from library_website.settings.base import POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
+from django.db import models
+from django.db.models.fields import IntegerField
+from django.utils import timezone
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
+from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, RichTextBlock, RawHTMLBlock
+from wagtail.wagtailcore.fields import RichTextField, StreamField
+from wagtail.wagtailcore.models import Page
+from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailsearch import index
+
 
 class BasePage(Page):
     """
@@ -22,18 +23,6 @@ class BasePage(Page):
         'Last Reviewed', 
         null=True, 
         blank=True
-    )
-
-    #location = models.ForeignKey('public.LocationPage', 
-    #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True}, 
-    #    related_name='%(app_label)s_%(class)s_related')
-
-    unit = models.ForeignKey(
-        'units.UnitPage', 
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
-        related_name='%(app_label)s_%(class)s_related'
     )
 
     page_maintainer = models.ForeignKey(
@@ -50,6 +39,66 @@ class BasePage(Page):
         blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_editor'
+    )
+
+    sort_order = IntegerField(blank=True, default=0)
+
+    # Searchable fields
+    search_fields = Page.search_fields + (
+        index.SearchField('description'),
+    )
+
+    content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('page_maintainer'),
+                FieldPanel('editor'),
+                FieldPanel('last_reviewed', None),
+                FieldPanel('sort_order')
+            ],
+            heading='Page Management'
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+class IntranetPlainPage(BasePage):
+    body = RichTextField()
+
+    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
+
+IntranetPlainPage.content_panels = Page.content_panels + [
+    FieldPanel('body')
+] + BasePage.content_panels
+
+class IntranetSidebarPage(BasePage):
+    body = RichTextField()
+
+    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
+
+IntranetSidebarPage.content_panels = Page.content_panels + [
+    FieldPanel('body')
+] + BasePage.content_panels
+
+class PublicBasePage(BasePage):
+    """
+    Adds additional fields to the wagtail Page model.
+    Most other content types should extend this model
+    instead of Page.
+    """
+    # Fields 
+
+    #location = models.ForeignKey('public.LocationPage', 
+    #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True}, 
+    #    related_name='%(app_label)s_%(class)s_related')
+
+    unit = models.ForeignKey(
+        'units.UnitPage', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='%(app_label)s_%(class)s_related'
     )
 
     content_specialist = models.ForeignKey(
