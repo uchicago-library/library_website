@@ -52,7 +52,9 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailsearchpromotions',
     'wagtail.contrib.wagtailsitemaps',
     'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.wagtailapi',
 
+    'rest_framework',
     'base',
     'group',
     'home',

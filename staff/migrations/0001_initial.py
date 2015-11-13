@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import wagtail.wagtailcore.fields
+from django.db import migrations, models
 import django.core.validators
+import wagtail.wagtailcore.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0019_verbose_names_cleanup'),
+        ('wagtailcore', '0020_add_index_on_page_first_published_at'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='StaffIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
                 ('intro', wagtail.wagtailcore.fields.RichTextField()),
             ],
             options={
@@ -27,16 +27,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StaffPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
                 ('cnetid', models.CharField(max_length=255)),
-                ('display_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('official_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('first_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('middle_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('last_name', models.CharField(max_length=255, null=True, blank=True)),
-                ('libguide_url', models.URLField(max_length=255, null=True, blank=True)),
-                ('bio', models.TextField(null=True, blank=True)),
+                ('display_name', models.CharField(null=True, max_length=255, blank=True)),
+                ('official_name', models.CharField(null=True, max_length=255, blank=True)),
+                ('first_name', models.CharField(null=True, max_length=255, blank=True)),
+                ('middle_name', models.CharField(null=True, max_length=255, blank=True)),
+                ('last_name', models.CharField(null=True, max_length=255, blank=True)),
+                ('libguide_url', models.URLField(null=True, max_length=255, blank=True)),
+                ('bio', wagtail.wagtailcore.fields.RichTextField(blank=True, null=True)),
                 ('is_public_persona', models.BooleanField(default=False)),
             ],
             options={
@@ -47,8 +46,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StaffPageSubjectPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'verbose_name': 'Subject Placement',
@@ -58,10 +57,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='VCard',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('email', models.EmailField(max_length=254, blank=True)),
                 ('phone_label', models.CharField(max_length=25, blank=True)),
-                ('phone_number', models.CharField(blank=True, max_length=12, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message=b'Please enter the phone number using the format 773-123-4567')])),
+                ('phone_number', models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message='Please enter the phone number using the format 773-123-4567')], max_length=12, blank=True)),
                 ('title', models.CharField(max_length=255)),
                 ('faculty_exchange', models.CharField(max_length=255, blank=True)),
             ],
@@ -72,8 +71,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StaffPagePageVCards',
             fields=[
-                ('vcard_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='staff.VCard')),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('vcard_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='staff.VCard', auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],

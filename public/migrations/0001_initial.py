@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 import wagtail.wagtailcore.fields
 import wagtail.wagtailcore.blocks
 import django.core.validators
@@ -10,15 +10,16 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0019_verbose_names_cleanup'),
+        ('wagtailcore', '0020_add_index_on_page_first_published_at'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='DonorPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
+                ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('description', models.TextField()),
             ],
             options={
@@ -29,21 +30,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LocationPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
+                ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('address_1', models.CharField(max_length=255, blank=True)),
                 ('address_2', models.CharField(max_length=255, blank=True)),
                 ('city', models.CharField(max_length=255, blank=True)),
                 ('country', models.CharField(max_length=255, blank=True)),
-                ('postal_code', models.CharField(blank=True, max_length=5, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{5}$', message=b'Please enter the postal code as a five digit number, e.g. 60637')])),
+                ('postal_code', models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{5}$', message='Please enter the postal code as a five digit number, e.g. 60637')], max_length=5, blank=True)),
                 ('email', models.EmailField(max_length=254, blank=True)),
                 ('phone_label', models.CharField(max_length=25, blank=True)),
-                ('phone_number', models.CharField(blank=True, max_length=12, validators=[django.core.validators.RegexValidator(regex=b'^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message=b'Please enter the phone number using the format 773-123-4567')])),
+                ('phone_number', models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message='Please enter the phone number using the format 773-123-4567')], max_length=12, blank=True)),
                 ('description', models.TextField()),
-                ('library_floorplan_link', models.URLField(default=b'', blank=True)),
-                ('libcal_library_id', models.IntegerField(null=True, blank=True)),
-                ('google_map_link', models.URLField(default=b'', blank=True)),
-                ('reservation_url', models.URLField(default=b'', blank=True)),
+                ('library_floorplan_link', models.URLField(default='', blank=True)),
+                ('libcal_library_id', models.IntegerField(blank=True, null=True)),
+                ('google_map_link', models.URLField(default='', blank=True)),
+                ('reservation_url', models.URLField(default='', blank=True)),
                 ('reservation_display_text', models.CharField(max_length=45, blank=True)),
                 ('is_building', models.BooleanField(default=False)),
                 ('is_phone_zone', models.BooleanField(default=False)),
@@ -81,8 +83,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LocationPageDonorPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -92,9 +94,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StandardPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
-                ('body', wagtail.wagtailcore.fields.StreamField([(b'h2', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h3', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'h4', wagtail.wagtailcore.blocks.CharBlock(classname=b'title', icon=b'title')), (b'paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon=b'pilcrow'))])),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
+                ('sort_order', models.IntegerField(blank=True, default=0)),
+                ('body', wagtail.wagtailcore.fields.StreamField((('h2', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon='pilcrow'))))),
             ],
             options={
                 'abstract': False,

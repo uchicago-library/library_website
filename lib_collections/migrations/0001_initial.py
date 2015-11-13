@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import django.db.models.deletion
+from django.db import migrations, models
 import wagtail.wagtailsearch.index
 import modelcluster.fields
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wagtailcore', '0019_verbose_names_cleanup'),
+        ('wagtailcore', '0020_add_index_on_page_first_published_at'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='CollectingAreaPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
-                ('guide_link_text', models.CharField(default=b'', max_length=255)),
-                ('guide_link_url', models.URLField(default=b'', verbose_name=b'Libguide URL')),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
+                ('sort_order', models.IntegerField(blank=True, default=0)),
+                ('guide_link_text', models.CharField(max_length=255, default='')),
+                ('guide_link_url', models.URLField(verbose_name='Libguide URL', default='')),
                 ('collecting_statement', models.TextField()),
             ],
             options={
@@ -31,10 +32,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectingAreaPageLibGuides',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
-                ('guide_link_text', models.CharField(default=b'', max_length=255)),
-                ('guide_link_url', models.URLField(default=b'', verbose_name=b'Libguide URL')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
+                ('guide_link_text', models.CharField(max_length=255, default='')),
+                ('guide_link_url', models.URLField(verbose_name='Libguide URL', default='')),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -44,10 +45,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectingAreaPageStacksRanges',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
                 ('stacks_range', models.CharField(max_length=100, blank=True)),
-                ('stacks_URL', models.URLField(default=b'', max_length=254, blank=True)),
+                ('stacks_URL', models.URLField(max_length=254, default='', blank=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -57,8 +58,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectingAreaReferenceLocationPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -68,11 +69,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateTimeField(null=True, verbose_name=b'Last Reviewed', blank=True)),
-                ('short_abstract', models.TextField(default=b'')),
-                ('full_description', models.TextField(default=b'')),
-                ('access_instructions', models.TextField(default=b'', blank=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
+                ('sort_order', models.IntegerField(blank=True, default=0)),
+                ('short_abstract', models.TextField(default='')),
+                ('full_description', models.TextField(default='')),
+                ('access_instructions', models.TextField(blank=True, default='')),
             ],
             options={
                 'abstract': False,
@@ -82,10 +84,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPageAccessLinks',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
                 ('access_link_label', models.CharField(max_length=255)),
-                ('access_link_url', models.URLField(verbose_name=b'Access link URL')),
+                ('access_link_url', models.URLField(verbose_name='Access link URL')),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -95,8 +97,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPageAlternateNames',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
                 ('alternate_name', models.CharField(max_length=255, blank=True)),
             ],
             options={
@@ -107,8 +109,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPageFormatPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'verbose_name': 'Collection Placement',
@@ -118,8 +120,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPageSubjectPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'verbose_name': 'Subject Placement',
@@ -129,8 +131,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DonorPagePlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -140,7 +142,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Format',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('text', models.CharField(max_length=255)),
             ],
             bases=(models.Model, wagtail.wagtailsearch.index.Indexed),
@@ -148,8 +150,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HighlightedCollectionsPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -159,8 +161,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RegionalCollectionPlacements',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
                 ('collection_name', models.CharField(max_length=254, blank=True)),
                 ('collection_description', models.TextField(blank=True)),
             ],
@@ -172,8 +174,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RelatedCollectionPagePlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -183,9 +185,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SubjectSpecialistPlacement',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
-                ('parent', modelcluster.fields.ParentalKey(related_name='subject_specialist_placement', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='lib_collections.CollectingAreaPage', null=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
+                ('parent', modelcluster.fields.ParentalKey(to='lib_collections.CollectingAreaPage', on_delete=django.db.models.deletion.SET_NULL, related_name='subject_specialist_placement', blank=True, null=True)),
             ],
             options={
                 'ordering': ['sort_order'],
