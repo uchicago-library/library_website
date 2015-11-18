@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'staff',
     'subjects',
     'units',
+    'infotech',
 )
 
 MIDDLEWARE_CLASSES = (
