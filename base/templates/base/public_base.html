@@ -1,0 +1,40 @@
+{% load cache compress static wagtailuserbar %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_postfix %} | Wagtail Demo{% endblock %}</title>
+
+        <meta name="description" content="{% if self.search_description %}{{ self.search_description }}{% endif %}">
+
+        {# Local static assets such as css, images and javascrpt should be stored at [yourapp]/static/[yourapp]/... #}
+        {% compress css %}
+            {# Custom stylesheets #}
+            {# SCSS compilation relies on django compressor #}
+            <link rel="stylesheet" type="text/x-scss" href="{% static "base/css/main.scss" %}" /> 
+        {% endcompress %}
+
+        {% block extra_css %}{% endblock %} {# Override this block in individual templates in order to add stylesheets on a template by template basis #}
+
+        {# Javascript that needs to be called from head e.g. google analytics snippet and bootstrap shivs #}
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <![endif]-->
+
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}"> {# Override this block to set custom body classes on a template by template basis #}
+
+        <div class="container-fluid"> <!-- main container -->
+            {% block content %}{% endblock %}
+        </div> <!-- /main container -->
+
+    </body>
+</html>

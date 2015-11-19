@@ -142,11 +142,12 @@ class ImageBlock(StructBlock):
     alignment = ImageFormatChoiceBlock()
 
 class BlockQuoteBlock(StructBlock):
-    quote = TextBlock("quote title")
+    quote = TextBlock('quote title')
     attribution = CharBlock()
 
     class Meta:
-        icon = "openquote"
+        icon = 'openquote'
+        template = 'base/blocks/blockquote.html'
 
 class ParagraphBlock(StructBlock):
     paragraph = RichTextBlock()
@@ -154,20 +155,20 @@ class ParagraphBlock(StructBlock):
     class Meta:
         icon = 'pilcrow'
         form_classname = 'paragraph-block struct-block'
-
+        template = 'base/blocks/paragraph.html'
 
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared 
     across content types.
     """
-    h2 = CharBlock(icon="title", classname="title")
-    h3 = CharBlock(icon="title", classname="title")
-    h4 = CharBlock(icon="title", classname="title")
-    h5 = CharBlock(icon="title", classname="title")
-    h6 = CharBlock(icon="title", classname="title")
+    h2 = CharBlock(icon='title', classname='title', template='base/blocks/h2.html')
+    h3 = CharBlock(icon='title', classname='title', template='base/blocks/h3.html')
+    h4 = CharBlock(icon='title', classname='title', template='base/blocks/h4.html')
+    h5 = CharBlock(icon='title', classname='title', template='base/blocks/h5.html')
+    h6 = CharBlock(icon='title', classname='title', template='base/blocks/h6.html')
     paragraph = ParagraphBlock()
-    image = ImageBlock(label="Image", icon="image")
+    image = ImageBlock(label='Image', icon='image')
     blockquote = BlockQuoteBlock()
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
@@ -178,7 +179,7 @@ class DefaultBodyField(StreamField):
     """
     def __init__(self, block_types=None, **kwargs):
         block_types = [
-            ('heading', CharBlock(classname="full title", icon='title')),
+            ('heading', CharBlock(classname='full title', icon='title')),
             ('paragraph', RichTextBlock(icon='pilcrow')),
             ('image', ImageChooserBlock(icon='image / picture')),
         ]
