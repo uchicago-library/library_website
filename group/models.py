@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from django.utils import timezone
+from datetime import timedelta
 
 from base.models import DefaultBodyFields, Email, Report
 from base.models import BasePage
@@ -73,10 +74,15 @@ class GroupPage(BasePage, Email):
     meeting_location = CharField(
         blank=True,
         max_length=255)
-    meeting_time = models.TimeField(
+    meeting_start_time = models.TimeField(
         auto_now=False, 
         auto_now_add=False,
         default=timezone.now,
+        blank=True)
+    meeting_end_time = models.TimeField(
+        auto_now=False, 
+        auto_now_add=False,
+        default=timezone.now() + timedelta(hours=1),
         blank=True) 
     meeting_frequency = CharField(
         blank=True,
@@ -89,7 +95,8 @@ class GroupPage(BasePage, Email):
     content_panels = Page.content_panels + Email.content_panels + [
         MultiFieldPanel(
             [
-               FieldPanel('meeting_time'),
+               FieldPanel('meeting_start_time'),
+               FieldPanel('meeting_end_time'),              
                FieldPanel('meeting_location'), 
                FieldPanel('meeting_frequency'),
             ],
