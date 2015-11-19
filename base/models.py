@@ -5,10 +5,10 @@ from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
-from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, RichTextBlock, RawHTMLBlock
+from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 
 
@@ -130,6 +130,32 @@ class PublicBasePage(BasePage):
     class Meta:
         abstract = True
 
+# Global streamfield definitions
+class ImageFormatChoiceBlock(FieldBlock):
+    field = forms.ChoiceField(choices=(
+        ('left', 'Wrap left'), ('right', 'Wrap right'), ('center', 'Center'), ('full', 'Full width'),
+    ))
+
+class ImageBlock(StructBlock):
+    image = ImageChooserBlock()
+    caption = RichTextBlock()
+    alignment = ImageFormatChoiceBlock()
+
+class BlockQuoteBlock(StructBlock):
+    quote = TextBlock("quote title")
+    attribution = CharBlock()
+
+    class Meta:
+        icon = "openquote"
+
+class ParagraphBlock(StructBlock):
+    paragraph = RichTextBlock()
+
+    class Meta:
+        icon = 'pilcrow'
+        form_classname = 'paragraph-block struct-block'
+
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared 
@@ -138,8 +164,13 @@ class DefaultBodyFields(StreamBlock):
     h2 = CharBlock(icon="title", classname="title")
     h3 = CharBlock(icon="title", classname="title")
     h4 = CharBlock(icon="title", classname="title")
-    paragraph = RichTextBlock(icon="pilcrow")
-
+    h5 = CharBlock(icon="title", classname="title")
+    h6 = CharBlock(icon="title", classname="title")
+    paragraph = ParagraphBlock()
+    image = ImageBlock(label="Image", icon="image")
+    blockquote = BlockQuoteBlock()
+    #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
+    #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
 class DefaultBodyField(StreamField):
     """
