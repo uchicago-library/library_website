@@ -160,4 +160,21 @@ class DonorPage(PublicBasePage):
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         ImageChooserPanel('image'),
-    ] + PublicBasePage.content_panels 
+    ] + PublicBasePage.content_panels
+
+
+class FloorPlanPage(PublicBasePage):
+    """
+    Floor plan page model.
+    """ 
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image'),
+    ] + PublicBasePage.content_panels
