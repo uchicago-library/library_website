@@ -74,6 +74,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     is_study_space = models.BooleanField(default=False)
     is_teaching_space = models.BooleanField(default=False)
     is_event_space = models.BooleanField(default=False)
+    is_open_space = models.BooleanField(default=False)
     is_24_hours = models.BooleanField(default=False)
     is_reservable = models.BooleanField(default=False)
     has_carrels = models.BooleanField(default=False)
@@ -120,6 +121,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             FieldPanel('is_study_space', classname=ROW_CLASS),
             FieldPanel('is_teaching_space', classname=ROW_CLASS),
             FieldPanel('is_event_space', classname=ROW_CLASS),
+            FieldPanel('is_open_space', classname=ROW_CLASS),
             FieldPanel('is_24_hours', classname=ROW_CLASS),
             FieldPanel('is_reservable', classname=ROW_CLASS),
             FieldPanel('has_carrels', classname=ROW_CLASS),
