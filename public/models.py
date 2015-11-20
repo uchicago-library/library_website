@@ -51,7 +51,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     description = models.TextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
-    library_floorplan_link = models.URLField(max_length=200, blank=True, default='')
+    library_floorplan_link = models.ForeignKey('public.FloorPlanPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
     location_photo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
