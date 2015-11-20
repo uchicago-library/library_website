@@ -87,7 +87,7 @@ class GroupPage(BasePage, Email):
     meeting_frequency = CharField(
         blank=True,
         max_length=255)
-    intro = StreamField(DefaultBodyFields())
+    intro = StreamField(DefaultBodyFields(), blank=True)
     is_active = models.BooleanField(default=False)
     body = StreamField(DefaultBodyFields())
 
@@ -102,7 +102,7 @@ class GroupPage(BasePage, Email):
             ],
             heading='Meeting Information'
         ),
-        FieldPanel('intro'),
+        StreamFieldPanel('intro'),
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
         InlinePanel('group_reports', label='Reports'),
         InlinePanel('group_members', label='Group Members'),
