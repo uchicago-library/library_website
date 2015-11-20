@@ -12,6 +12,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE_TIMEOUT = 3
+COMPRESS_REBUILD_TIMEOUT = 3
 
 try:
     from .local import *
