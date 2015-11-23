@@ -4,7 +4,7 @@ from base.models import BasePage
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from django.utils import timezone
 
-class InfoTechProjectPage(BasePage):
+class ProjectPage(BasePage):
     """
     Model for InfoTech project pages.
     """
@@ -14,7 +14,7 @@ class InfoTechProjectPage(BasePage):
     COMPLETED = 'completed'
     CANCELLED = 'cancelled'
     DISCUSSION = 'discussion'
-    
+
     # Choices for size
     SMALL = 'small'
     MEDIUM = 'medium'
@@ -60,7 +60,7 @@ class InfoTechProjectPage(BasePage):
     ] + BasePage.content_panels
 
 
-class InfoTechIndexPage(Page):
+class ProjectIndexPage(Page):
     """
     Homepage for infotech stuff.
     """

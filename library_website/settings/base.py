@@ -64,12 +64,12 @@ INSTALLED_APPS = (
     'library_website',
     'news',
     'public',
+    'projects',
     'search',
     'shibboleth',
     'staff',
     'subjects',
     'units',
-    'infotech',
 )
 
 MIDDLEWARE_CLASSES = (
