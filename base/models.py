@@ -138,7 +138,9 @@ class ImageFormatChoiceBlock(FieldBlock):
 
 class ImageBlock(StructBlock):
     image = ImageChooserBlock()
-    caption = RichTextBlock()
+    caption = TextBlock(required=False)
+    citation = CharBlock(required=False)
+    alt_text = CharBlock(required=True)
     alignment = ImageFormatChoiceBlock()
 
 class BlockQuoteBlock(StructBlock):
