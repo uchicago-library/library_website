@@ -140,8 +140,12 @@ class ImageBlock(StructBlock):
     image = ImageChooserBlock()
     caption = TextBlock(required=False)
     citation = CharBlock(required=False)
-    alt_text = CharBlock(required=True)
+    alt_text = CharBlock(required=False) #Img title in the system is a fallback. 
     alignment = ImageFormatChoiceBlock()
+
+    class Meta:
+        icon = 'image'
+        template ='base/blocks/img.html'
 
 class BlockQuoteBlock(StructBlock):
     quote = TextBlock('quote title')
@@ -170,7 +174,7 @@ class DefaultBodyFields(StreamBlock):
     h5 = CharBlock(icon='title', classname='title', template='base/blocks/h5.html')
     h6 = CharBlock(icon='title', classname='title', template='base/blocks/h6.html')
     paragraph = ParagraphBlock()
-    image = ImageBlock(label='Image', icon='image')
+    image = ImageBlock(label='Image')
     blockquote = BlockQuoteBlock()
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
