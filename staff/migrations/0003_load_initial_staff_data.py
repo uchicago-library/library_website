@@ -120,22 +120,36 @@ def create_staffindexpage(apps, schema_editor):
     StaffIndexPage = apps.get_model('staff.StaffIndexPage')
     staffindexpage_content_type = apps.get_model('contenttypes.ContentType').objects.get(model='staffindexpage', app_label='staff')
 
+    # Get an available child path, like "00010002". 
+    # Assume the intranet homepage has been set up already and that there is only one of them. 
+    intranet_home_page_path = IntranetHomePage.objects.all()[0].path
+    tmp = sorted(map(lambda p: p.path, IntranetHomePage.objects.all()[0].get_children()))
+    if tmp:
+        tmp = tmp.pop()
+        available_child_path = "%s%04d" % (intranet_home_page_path, int(tmp[-4:]) + 1)
+    else:
+        available_child_path = "%s0001" % intranet_home_page_path
+        
+    # copy code from the intranethomepage migration.
+    # step through the children of the intranet homepage to find the next open slot. 
+    # then do this same thing for each staff page. 
+    # rather than find gaps, sort all of the paths under there, pop the last one off,
+    # and add one to it to keep things simple. Fix it if it turns out to be a problem. 
+
     StaffIndexPage.objects.create(
         title='Staff',
         slug='staff',
         content_type=staffindexpage_content_type,
-        path='000100020001',
-        depth=3,
+        path=available_child_path,
+        depth=len(available_child_path) / 4,
         numchild=0,
         url_path='/staff/',
     )
 
 def remove_staffindexpage(apps, schema_editor):
     StaffIndexPage = apps.get_model('staff.StaffIndexPage')
-    try:
-        StaffIndexPage.objects.all()[0].delete()
-    except IndexError:
-        pass
+    for s in StaffIndexPage.objects.all():
+        s.delete()
 
 def create_staffpages(apps, schema_editor):
     staff_index_path = StaffIndexPage.objects.all()[0].path
@@ -147,9 +161,15 @@ def create_staffpages(apps, schema_editor):
     StaffPage = apps.get_model('staff.StaffPage')
     staffpage_content_type = apps.get_model('contenttypes.ContentType').objects.get(model='staffpage', app_label='staff')
 
-    cnetids = get_all_library_cnetids()
+    # get an index to build page paths from- like the "0004" in "000100020004". 
+    tmp = sorted(map(lambda p: p.path, StaffIndexPage.objects.all()[0].get_children()))
+    if tmp:
+        tmp = tmp[0].get_children().pop()
+        i = int(tmp[-4:]) + 1
+    else:
+        i = 1
 
-    i = 1
+    cnetids = get_all_library_cnetids()
     for cnetid in cnetids:
         info = get_individual_info(cnetid)
 
@@ -157,8 +177,8 @@ def create_staffpages(apps, schema_editor):
             title=info['displayName'],
             slug=make_slug(info['displayName']),
             content_type=staffpage_content_type,
-            path="000100020001%04d" % (i),
-            depth=4,
+            path="%s%04d" % (staff_index_path, i),
+            depth=len(staff_index_path) / 4 + 1,
             numchild=0,
             url_path='/staff/' + make_slug(info['displayName']) + '/',
             cnetid=info['cnetid'],
