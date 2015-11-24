@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import base64, urllib2
+import base64
+import urllib.request
 from xml.etree import ElementTree
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, migrations
+from http.client import HTTPSConnection
 from intranethome.models import IntranetHomePage
 from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from staff.models import StaffIndexPage, StaffPage
@@ -23,14 +25,15 @@ def make_slug(s):
     return s
 
 def get_all_library_cnetids():
-    # retrieve data from the university directory.
-    r = urllib2.Request("https://directory.uchicago.edu/api/v2/divisions/16.xml")
-
-    # deal with authentication.
-    r.add_header("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (DIRECTORY_USERNAME, DIRECTORY_PASSWORD)).replace('\n', ''))
+    c = HTTPSConnection("directory.uchicago.edu")
+    b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
+    userAndPass = base64.b64encode(b).decode("ascii")
+    headers = { 'Authorization' : 'Basic %s' %  userAndPass } 
+    c.request('GET', '/api/v2/divisions/16.xml', headers=headers)
+    result = c.getresponse()
 
     # get xml element tree.
-    x = ElementTree.fromstring(urllib2.urlopen(r).read())
+    x = ElementTree.fromstring(result.read())
 
     # get cnetids.
     cnetids = set()
@@ -43,14 +46,15 @@ def get_individual_info(cnetid):
         "cnetid": cnetid
     }
 
-    # retrieve data from the university directory.
-    r = urllib2.Request("https://directory.uchicago.edu/api/v2/individuals/" + cnetid + ".xml")
-
-    # deal with authentication.
-    r.add_header("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (DIRECTORY_USERNAME, DIRECTORY_PASSWORD)).replace('\n', ''))
+    c = HTTPSConnection("directory.uchicago.edu")
+    b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
+    userAndPass = base64.b64encode(b).decode("ascii")
+    headers = { 'Authorization' : 'Basic %s' %  userAndPass } 
+    c.request('GET', "/api/v2/individuals/" + cnetid + ".xml", headers=headers)
+    result = c.getresponse()
 
     # get xml element tree.
-    x = ElementTree.fromstring(urllib2.urlopen(r).read())
+    x = ElementTree.fromstring(result.read())
 
     # name is slightly more formal- e.g. "John E. Jung"
     info['officialName'] = x.find("individuals/individual/name").text
@@ -110,7 +114,7 @@ def get_individual_info(cnetid):
             phone = vcard.find('phone')
             title_department_subdepartment['phone'] = phone.text if phone is not None else ''
         except:
-            print cnetid
+            print(cnetid)
             sys.exit()
         info['title_department_subdepartments'].append(title_department_subdepartment)
 
@@ -141,7 +145,7 @@ def create_staffindexpage(apps, schema_editor):
         slug='staff',
         content_type=staffindexpage_content_type,
         path=available_child_path,
-        depth=len(available_child_path) / 4,
+        depth=len(available_child_path) // 4,
         numchild=0,
         url_path='/staff/',
     )
@@ -178,7 +182,7 @@ def create_staffpages(apps, schema_editor):
             slug=make_slug(info['displayName']),
             content_type=staffpage_content_type,
             path="%s%04d" % (staff_index_path, i),
-            depth=len(staff_index_path) / 4 + 1,
+            depth=len(staff_index_path) // 4 + 1,
             numchild=0,
             url_path='/staff/' + make_slug(info['displayName']) + '/',
             cnetid=info['cnetid'],
