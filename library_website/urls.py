@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^departments/$', 'intranetunits.views.index', name='index'),
     url(r'^news/$', 'news.views.index', name='index'),
     url(r'^search/$', 'search.views.search', name='search'),
+    url(r'^staff/$', 'staff.views.index', name='index'),
 
     url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
 
