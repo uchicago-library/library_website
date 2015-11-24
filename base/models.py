@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
@@ -62,24 +62,6 @@ class BasePage(Page):
 
     class Meta:
         abstract = True
-
-class IntranetPlainPage(BasePage):
-    body = RichTextField()
-
-    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
-
-IntranetPlainPage.content_panels = Page.content_panels + [
-    FieldPanel('body')
-] + BasePage.content_panels
-
-class IntranetSidebarPage(BasePage):
-    body = RichTextField()
-
-    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
-
-IntranetSidebarPage.content_panels = Page.content_panels + [
-    FieldPanel('body')
-] + BasePage.content_panels
 
 class PublicBasePage(BasePage):
     """
@@ -192,6 +174,23 @@ class DefaultBodyField(StreamField):
 
         super(DefaultBodyField, self).__init__(block_types, **kwargs)
 
+class IntranetPlainPage(BasePage):
+    body = StreamField(DefaultBodyFields())
+
+    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
+
+IntranetPlainPage.content_panels = Page.content_panels + [
+    StreamFieldPanel('body')
+] + BasePage.content_panels
+
+class IntranetSidebarPage(BasePage):
+    body = StreamField(DefaultBodyFields())
+
+    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
+
+IntranetSidebarPage.content_panels = Page.content_panels + [
+    StreamFieldPanel('body')
+] + BasePage.content_panels
 
 class Address(models.Model):
     """
