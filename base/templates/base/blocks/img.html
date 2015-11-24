@@ -1,0 +1,13 @@
+{% load wagtailimages_tags %}
+{% image value.image original as tmp_img %}
+<figure class="imgcaption">
+   {{value.image}}
+    <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
+    <figcaption>
+        <em>{{value.citation}}</em>
+        <br/>
+        <strong>Ferdinand Barbedienne (1810-1892)</strong>
+        <br/>
+        {{value.caption}}
+    </figcaption>
+</figure>

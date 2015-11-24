@@ -51,7 +51,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     description = models.TextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
-    library_floorplan_link = models.URLField(max_length=200, blank=True, default='')
+    library_floorplan_link = models.ForeignKey('public.FloorPlanPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
     location_photo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -73,6 +74,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     is_study_space = models.BooleanField(default=False)
     is_teaching_space = models.BooleanField(default=False)
     is_event_space = models.BooleanField(default=False)
+    is_open_space = models.BooleanField(default=False)
     is_24_hours = models.BooleanField(default=False)
     is_reservable = models.BooleanField(default=False)
     has_carrels = models.BooleanField(default=False)
@@ -119,6 +121,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             FieldPanel('is_study_space', classname=ROW_CLASS),
             FieldPanel('is_teaching_space', classname=ROW_CLASS),
             FieldPanel('is_event_space', classname=ROW_CLASS),
+            FieldPanel('is_open_space', classname=ROW_CLASS),
             FieldPanel('is_24_hours', classname=ROW_CLASS),
             FieldPanel('is_reservable', classname=ROW_CLASS),
             FieldPanel('has_carrels', classname=ROW_CLASS),
@@ -160,4 +163,21 @@ class DonorPage(PublicBasePage):
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         ImageChooserPanel('image'),
-    ] + PublicBasePage.content_panels 
+    ] + PublicBasePage.content_panels
+
+
+class FloorPlanPage(PublicBasePage):
+    """
+    Floor plan page model.
+    """ 
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('image'),
+    ] + PublicBasePage.content_panels

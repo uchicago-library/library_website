@@ -5,10 +5,10 @@ from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel
-from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, RichTextBlock, RawHTMLBlock
+from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 
 
@@ -19,7 +19,7 @@ class BasePage(Page):
     instead of Page.
     """
     # Fields 
-    last_reviewed = models.DateTimeField(
+    last_reviewed = models.DateField(
         'Last Reviewed', 
         null=True, 
         blank=True
@@ -130,16 +130,54 @@ class PublicBasePage(BasePage):
     class Meta:
         abstract = True
 
+# Global streamfield definitions
+class ImageFormatChoiceBlock(FieldBlock):
+    field = forms.ChoiceField(choices=(
+        ('left', 'Wrap left'), ('right', 'Wrap right'), ('center', 'Center'), ('full', 'Full width'),
+    ))
+
+class ImageBlock(StructBlock):
+    image = ImageChooserBlock()
+    caption = TextBlock(required=False)
+    citation = CharBlock(required=False)
+    alt_text = CharBlock(required=False) #Img title in the system is a fallback. 
+    alignment = ImageFormatChoiceBlock()
+
+    class Meta:
+        icon = 'image'
+        template ='base/blocks/img.html'
+
+class BlockQuoteBlock(StructBlock):
+    quote = TextBlock('quote title')
+    attribution = CharBlock()
+
+    class Meta:
+        icon = 'openquote'
+        template = 'base/blocks/blockquote.html'
+
+class ParagraphBlock(StructBlock):
+    paragraph = RichTextBlock()
+
+    class Meta:
+        icon = 'pilcrow'
+        form_classname = 'paragraph-block struct-block'
+        template = 'base/blocks/paragraph.html'
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared 
     across content types.
     """
-    h2 = CharBlock(icon="title", classname="title")
-    h3 = CharBlock(icon="title", classname="title")
-    h4 = CharBlock(icon="title", classname="title")
-    paragraph = RichTextBlock(icon="pilcrow")
-
+    h2 = CharBlock(icon='title', classname='title', template='base/blocks/h2.html')
+    h3 = CharBlock(icon='title', classname='title', template='base/blocks/h3.html')
+    h4 = CharBlock(icon='title', classname='title', template='base/blocks/h4.html')
+    h5 = CharBlock(icon='title', classname='title', template='base/blocks/h5.html')
+    h6 = CharBlock(icon='title', classname='title', template='base/blocks/h6.html')
+    paragraph = ParagraphBlock()
+    image = ImageBlock(label='Image')
+    blockquote = BlockQuoteBlock()
+    #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
+    #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
 class DefaultBodyField(StreamField):
     """
@@ -147,7 +185,7 @@ class DefaultBodyField(StreamField):
     """
     def __init__(self, block_types=None, **kwargs):
         block_types = [
-            ('heading', CharBlock(classname="full title", icon='title')),
+            ('heading', CharBlock(classname='full title', icon='title')),
             ('paragraph', RichTextBlock(icon='pilcrow')),
             ('image', ImageChooserBlock(icon='image / picture')),
         ]
