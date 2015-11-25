@@ -28,7 +28,11 @@ def make_slug(s):
     s = ' '.join(s.split()) # replace multiple spaces with a single space.
     s = s.strip()
     s = s.replace('.', '')
+    s = s.replace(',', '')
     s = s.replace('\'', '')
+    s = s.replace('(', '')
+    s = s.replace(')', '')
+    s = s.replace('&', 'and')
     s = s.replace(' ', '-')
     return s
 
