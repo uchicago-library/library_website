@@ -12,7 +12,15 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     Content type for department pages on the intranet. 
     """
 
-    intro = RichTextField()
+    unit = models.ForeignKey(
+        'units.UnitPage',
+        related_name='intranet_unit_page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    intro = StreamField(DefaultBodyFields(), blank=True)
     # internal location
     # staff-only phone number
     staff_only_email = models.EmailField(max_length=254, blank=True)
@@ -23,7 +31,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     subpage_types = ['intranetunits.IntranetUnitsPage', 'base.IntranetPlainPage', 'base.IntranetSidebarPage']
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
-    FieldPanel('intro'),
+    StreamFieldPanel('intro'),
     InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
 ] + BasePage.content_panels
