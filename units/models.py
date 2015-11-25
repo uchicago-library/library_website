@@ -1,7 +1,7 @@
 from django.db import models
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG
 from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
@@ -117,3 +117,12 @@ class UnitPage(BasePage, FaxNumber):
     )
 
     subpage_types = ['public.StandardPage', 'public.LocationPage']
+
+class UnitIndexPage(Page):
+    intro = RichTextField()
+   
+    content_panels = Page.content_panels + [
+        FieldPanel('intro')
+    ]
+   
+    subpage_types = ['units.UnitPage']
