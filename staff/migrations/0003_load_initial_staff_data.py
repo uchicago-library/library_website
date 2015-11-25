@@ -5,6 +5,7 @@ import base64
 import urllib.request
 from xml.etree import ElementTree
 
+from base.models import make_slug
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, migrations
 from http.client import HTTPSConnection
@@ -13,16 +14,6 @@ from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWOR
 from staff.models import StaffIndexPage, StaffPage
 from unidecode import unidecode
 from wagtail.wagtailcore.models import Page
-
-def make_slug(s):
-    s = unidecode(s)
-    s = s.lower()
-    s = ' '.join(s.split()) # replace multiple spaces with a single space.
-    s = s.strip()
-    s = s.replace('.', '')
-    s = s.replace('\'', '')
-    s = s.replace(' ', '-')
-    return s
 
 def get_all_library_cnetids():
     c = HTTPSConnection("directory.uchicago.edu")

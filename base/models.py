@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
+from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
@@ -11,6 +12,16 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 
+
+def make_slug(s):
+    s = unidecode(s)
+    s = s.lower()
+    s = ' '.join(s.split()) # replace multiple spaces with a single space.
+    s = s.strip()
+    s = s.replace('.', '')
+    s = s.replace('\'', '')
+    s = s.replace(' ', '-')
+    return s
 
 class BasePage(Page):
     """
