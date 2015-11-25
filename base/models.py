@@ -1,4 +1,5 @@
 from django import forms
+from django.apps import apps
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.fields import IntegerField
@@ -12,6 +13,14 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 
+# e.g. path "00010002" returns "000100020004", when "000100020003" is the highest path number that currently exists. 
+def get_available_path_under(path):
+    child_pages = filter(lambda p: p.path.startswith(path) and len(p.path) == len(path) + 4, apps.get_model('wagtailcore.Page').objects.all())
+    child_paths = sorted(map(lambda c: c.path, child_pages))
+    if child_paths:
+        return "%s%04d" % (path, int(child_paths.pop()[-4:]) + 1)
+    else:
+        return "%s0001" % path
 
 def make_slug(s):
     s = unidecode(s)

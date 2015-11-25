@@ -5,7 +5,7 @@ import base64
 import urllib.request
 from xml.etree import ElementTree
 
-from base.models import make_slug
+from base.models import get_available_path_under, make_slug
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, migrations
 from http.client import HTTPSConnection
@@ -118,12 +118,7 @@ def create_staffindexpage(apps, schema_editor):
     # Get an available child path, like "00010002". 
     # Assume the intranet homepage has been set up already and that there is only one of them. 
     intranet_home_page_path = IntranetHomePage.objects.all()[0].path
-    tmp = sorted(map(lambda p: p.path, IntranetHomePage.objects.all()[0].get_children()))
-    if tmp:
-        tmp = tmp.pop()
-        available_child_path = "%s%04d" % (intranet_home_page_path, int(tmp[-4:]) + 1)
-    else:
-        available_child_path = "%s0001" % intranet_home_page_path
+    available_child_path = get_available_path_under(intranet_home_page_path)
         
     # copy code from the intranethomepage migration.
     # step through the children of the intranet homepage to find the next open slot. 
@@ -156,24 +151,17 @@ def create_staffpages(apps, schema_editor):
     StaffPage = apps.get_model('staff.StaffPage')
     staffpage_content_type = apps.get_model('contenttypes.ContentType').objects.get(model='staffpage', app_label='staff')
 
-    # get an index to build page paths from- like the "0004" in "000100020004". 
-    tmp = sorted(map(lambda p: p.path, StaffIndexPage.objects.all()[0].get_children()))
-    if tmp:
-        tmp = tmp[0].get_children().pop()
-        i = int(tmp[-4:]) + 1
-    else:
-        i = 1
-
     cnetids = get_all_library_cnetids()
     for cnetid in cnetids:
         info = get_individual_info(cnetid)
+        next_available_path = get_available_path_under(staff_index_path)
 
         StaffPage.objects.create(
             title=info['displayName'],
             slug=make_slug(info['displayName']),
             content_type=staffpage_content_type,
-            path="%s%04d" % (staff_index_path, i),
-            depth=len(staff_index_path) // 4 + 1,
+            path=next_available_path,
+            depth=len(next_available_path) // 4,
             numchild=0,
             url_path='/staff/' + make_slug(info['displayName']) + '/',
             cnetid=info['cnetid'],
@@ -218,8 +206,6 @@ def create_staffpages(apps, schema_editor):
         '''
     
         # skip StaffPageSubjectPlacement- people can add this themselves. 
-    
-        i = i + 1
 
 def remove_staffpages(apps, schema_editor):
     StaffPage = apps.get_model('staff.StaffPage')
