@@ -210,6 +210,9 @@ def create_staffpages(apps, schema_editor):
 def remove_staffpages(apps, schema_editor):
     StaffPage = apps.get_model('staff.StaffPage')
     for s in StaffPage.objects.all():
+        # check to see if someone edited this page. If they did, throw an error. 
+        if not s.first_published_at is None:
+            raise ValueError
         s.delete()
 
 class Migration(migrations.Migration):
