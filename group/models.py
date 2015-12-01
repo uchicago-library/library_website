@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from base.models import DefaultBodyFields, Email, Report
 from base.models import BasePage
@@ -10,6 +10,9 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.models import Orderable, Page
 from modelcluster.fields import ParentalKey
+
+def default_end_time():
+    return datetime.now() + timedelta(hours=1)
 
 class MeetingMinutes(models.Model):
     """
@@ -82,7 +85,7 @@ class GroupPage(BasePage, Email):
     meeting_end_time = models.TimeField(
         auto_now=False, 
         auto_now_add=False,
-        default=timezone.now() + timedelta(hours=1),
+        default=default_end_time,
         blank=True) 
     meeting_frequency = CharField(
         blank=True,
