@@ -28,7 +28,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     
     body = StreamField(DefaultBodyFields(), null=True, blank=True)
 
-    subpage_types = ['intranetunits.IntranetUnitsPage', 'base.IntranetPlainPage', 'base.IntranetSidebarPage']
+    subpage_types = ['intranetunits.IntranetUnitsPage', 'base.IntranetPlainPage']
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),

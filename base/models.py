@@ -201,18 +201,9 @@ class DefaultBodyField(StreamField):
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
 
-    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
+    subpage_types = ['base.IntranetPlainPage']
 
 IntranetPlainPage.content_panels = Page.content_panels + [
-    StreamFieldPanel('body')
-] + BasePage.content_panels
-
-class IntranetSidebarPage(BasePage):
-    body = StreamField(DefaultBodyFields())
-
-    subpage_types = ['base.IntranetPlainPage', 'base.IntranetSidebarPage']
-
-IntranetSidebarPage.content_panels = Page.content_panels + [
     StreamFieldPanel('body')
 ] + BasePage.content_panels
 
