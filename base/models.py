@@ -43,6 +43,11 @@ class BasePage(Page):
     instead of Page.
     """
     # Fields 
+
+    subsection_start = models.BooleanField(default=False)
+
+    show_sidebar = models.BooleanField(default=False)
+
     last_reviewed = models.DateField(
         'Last Reviewed', 
         null=True, 
@@ -81,6 +86,13 @@ class BasePage(Page):
                 FieldPanel('sort_order')
             ],
             heading='Page Management'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('subsection_start'),
+                FieldPanel('show_sidebar'),
+            ],
+            heading='Sidebar Menus'
         ),
     ]
 
