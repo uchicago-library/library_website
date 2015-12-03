@@ -113,6 +113,12 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
+    def get_context(self, request):
+        context = super(GroupPage, self).get_context(request)
+        group_members = sorted(self.group_members.all(), key=lambda m: m.group_member.title)
+        context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'url': m.group_member.url }, group_members))
+        return context
+
 class GroupIndexPage(BasePage):
     intro = RichTextField()
 
