@@ -17,22 +17,30 @@ class NewsPage(BasePage):
     News story content type used on intranet pages.
     """
     excerpt = RichTextField(blank=True, null=True)
-    thumbnail_image = models.ForeignKey(
+    author = models.ForeignKey(
+        'staff.StaffPage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='news_stories'
+    )
+    story_date = models.DateField(default=timezone.now)
+    sticky_until = models.DateField(blank=True, null=True)
+    image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+')
     body = StreamField(DefaultBodyFields(), blank=False, null=False)
-    publish_on = models.DateField(default=timezone.now)
-    sticky_until = models.DateField(blank=True, null=True)
 
     content_panels = Page.content_panels + [ 
         FieldPanel('excerpt'),
-        ImageChooserPanel('thumbnail_image'),
+        FieldPanel('author'),
+        FieldPanel('story_date'),
+        FieldPanel('sticky_until'),
+        ImageChooserPanel('image'),
         StreamFieldPanel('body'),
-        FieldPanel('publish_on'),
-        FieldPanel('sticky_until')
     ] + BasePage.content_panels
 
 class NewsIndexPage(BasePage):
@@ -46,3 +54,11 @@ class NewsIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['news.NewsPage']
+
+    def get_context(self, request):
+        context = super(NewsIndexPage, self).get_context(request)
+        # need to add order_by('story_date')
+        news_pages = sorted(self.get_children().live())
+        # need to add author name and url, and excerpt.
+        context['news_pages'] = list(map(lambda s: { 'story_date': s.specific_class().story_date.strftime('%B %d').replace(' 0', ' '), 'author_title': 'Author', 'author_url': '/', 'excerpt': 'excerpt.', 'title': s.title, 'url': s.url }, news_pages))
+        return context

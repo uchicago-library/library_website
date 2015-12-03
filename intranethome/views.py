@@ -20,7 +20,10 @@ def index(request):
         for child in news_index_page.get_descendants():
             # is it that get_descendants gets the page, but not the object?
             news_pages.append({
-                'publish_on': NewsPage.objects.get(pk=child.pk).publish_on.strftime('%B %d').replace(' 0', ' '),
+                'story_date': NewsPage.objects.get(pk=child.pk).story_date.strftime('%B %d').replace(' 0', ' '),
+                'author_title': NewsPage.objects.get(pk=child.pk).author.title,
+                'author_url': NewsPage.objects.get(pk=child.pk).author.url,
+                'excerpt': NewsPage.objects.get(pk=child.pk).excerpt,
                 'title': child.title,
                 'url':   child.url
             })

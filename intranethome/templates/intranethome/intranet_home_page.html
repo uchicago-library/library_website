@@ -8,9 +8,9 @@
         <p>some stuff here</p> 
         {% for news_page in news_pages %}
             <div class="media-body">
-            <span class="date">{{ news_page.publish_on }}</span>
             <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-            <p>{{ news_page.intro }}</p>
+            <p>{{ news_page.excerpt|richtext }}</p>
+            <p><span class="date">Posted by <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a> on {{ news_page.story_date }}</span></p>
             </div>
         {% endfor %}
     </div>
