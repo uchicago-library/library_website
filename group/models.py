@@ -113,11 +113,11 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-class GroupIndexPage(Page):
+class GroupIndexPage(BasePage):
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ]
+    ] + BasePage.content_panels
 
-    subpage_types = ['group.GroupPage']
+    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage']

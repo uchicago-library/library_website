@@ -13,6 +13,9 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 
+import logging
+import sys
+
 # e.g. path "00010002" returns "000100020004", when "000100020003" is the highest path number that currently exists. 
 def get_available_path_under(path):
     child_pages = filter(lambda p: p.path.startswith(path) and len(p.path) == len(path) + 4, apps.get_model('wagtailcore.Page').objects.all())
@@ -57,7 +60,7 @@ class BasePage(Page):
     page_maintainer = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
-        blank=False, 
+        blank=True, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_maintainer'
     )
@@ -65,7 +68,7 @@ class BasePage(Page):
     editor = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
-        blank=False, 
+        blank=True, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_editor'
     )
@@ -98,6 +101,37 @@ class BasePage(Page):
 
     class Meta:
         abstract = True
+
+    def get_context(self, request):
+        context = super(BasePage, self).get_context(request)
+
+        breadcrumbs = list(map(lambda p: {'title': p.title, 'url': p.url}, self.get_ancestors(True)))
+        # hack to remove the default root page.
+        breadcrumbs.pop(0)
+        context['breadcrumbs'] = breadcrumbs
+
+        # JEJ- fix this later to remove logic from the template. 
+        '''
+        sidebar = [] 
+        if self.show_sidebar:
+            ancestors = self.get_ancestors(True)
+            while ancestors:
+                sidebar_parent = ancestors.pop()
+                if sidebar_parent.subsection_start:
+                    break
+
+            for child in sidebar_parent.get_children().in_menu().order_by('title').order_by('sort_order'):
+                grandchildren = []
+                for grandchild in child.get_children:
+                    sidebar.append({
+                        'title': child.title,
+                        'url': child.url,
+                        'children': [],
+                    })
+        '''
+        
+        return context
+
 
 class PublicBasePage(BasePage):
     """

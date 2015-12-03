@@ -67,7 +67,7 @@ class StaffPagePageVCards(Orderable, VCard):
     page = ParentalKey('staff.StaffPage', related_name='vcards')
 
 
-class StaffPage(Page):
+class StaffPage(BasePage):
     """
     Staff profile content type.
     """
@@ -158,19 +158,21 @@ class StaffPage(Page):
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
         InlinePanel('vcards', label='VCards'),
-    ] 
+    ] + BasePage.content_panels
 
-class StaffIndexPage(Page):
+    subpage_types = ['base.IntranetPlainPage']
+
+class StaffIndexPage(BasePage):
     """
     Staff index page content type.
     """
     intro = RichTextField()
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ]
+    ] + BasePage.content_panels
 
     search_fields = Page.search_fields + ( # Inherit search_fields from Page
         index.SearchField('intro'),
     )
 
-    subpage_types = ['staff.StaffPage']
+    subpage_types = ['base.IntranetPlainPage', 'staff.StaffPage']

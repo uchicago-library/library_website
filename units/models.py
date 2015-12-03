@@ -118,11 +118,11 @@ class UnitPage(BasePage, FaxNumber):
 
     subpage_types = ['public.StandardPage', 'public.LocationPage']
 
-class UnitIndexPage(Page):
+class UnitIndexPage(BasePage):
     intro = RichTextField()
    
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ]
+    ] + BasePage.content_panels
    
     subpage_types = ['units.UnitPage']

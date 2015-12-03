@@ -12,7 +12,6 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('units', '0015_load_initial_unit_data'),
         ('intranetunits', '0014_auto_20151124_0008'),
     ]
 

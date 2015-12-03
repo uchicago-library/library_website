@@ -35,7 +35,7 @@ class NewsPage(BasePage):
         FieldPanel('sticky_until')
     ] + BasePage.content_panels
 
-class NewsIndexPage(Page):
+class NewsIndexPage(BasePage):
     """
     Index page for intranet news stories.
     """
@@ -43,6 +43,6 @@ class NewsIndexPage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ] 
+    ] + BasePage.content_panels
 
     subpage_types = ['news.NewsPage']

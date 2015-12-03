@@ -60,7 +60,7 @@ class ProjectPage(BasePage):
     ] + BasePage.content_panels
 
 
-class ProjectIndexPage(Page):
+class ProjectIndexPage(BasePage):
     """
     Homepage for infotech stuff.
     """

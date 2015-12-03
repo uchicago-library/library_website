@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('units', '0015_load_initial_unit_data'),
+        ('units', '0014_unitindexpage'),
     ]
 
     operations = [

@@ -42,11 +42,11 @@ class IntranetUnitPageReports(Orderable, Report):
     """
     page = ParentalKey('intranetunits.IntranetUnitsPage', related_name='intranet_unit_reports')
 
-class IntranetUnitsIndexPage(Page):
+class IntranetUnitsIndexPage(BasePage):
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
-    ]
+    ] + BasePage.content_panels
 
-    subpage_types = ['intranetunits.IntranetUnitsPage']
+    subpage_types = ['base.IntranetPlainPage', 'intranetunits.IntranetUnitsPage']

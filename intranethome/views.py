@@ -10,10 +10,10 @@ import datetime, string
 
 def index(request):
 
-    committees_and_groups_link = GroupIndexPage.objects.live()[0].url if GroupIndexPage.objects.exists() else []
-    departments_link = IntranetUnitsIndexPage.objects.live()[0].url if IntranetUnitsIndexPage.objects.exists() else []
-    news_link = NewsIndexPage.objects.live()[0].url if NewsIndexPage.objects.exists() else []
-    news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.exists() else []
+    committees_and_groups_link = GroupIndexPage.objects.live()[0].url if GroupIndexPage.objects.live().exists() else []
+    departments_link = IntranetUnitsIndexPage.objects.live()[0].url if IntranetUnitsIndexPage.objects.live().exists() else []
+    news_link = NewsIndexPage.objects.live()[0].url if NewsIndexPage.objects.live().exists() else []
+    news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.live().exists() else []
 
     news_pages = []
     if NewsIndexPage.objects.exists():
