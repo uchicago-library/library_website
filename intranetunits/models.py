@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
 from staff.models import StaffPage
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 
@@ -21,10 +21,14 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     )
 
     intro = StreamField(DefaultBodyFields(), blank=True)
-    # internal location
-    # staff-only phone number
+
+    internal_location = models.CharField(max_length=255, blank=True)
+
+    internal_phone_number = models.CharField(max_length=255, blank=True)
+
+    internal_email = models.EmailField(max_length=255, blank=True)
+
     staff_only_email = models.EmailField(max_length=254, blank=True)
-    # reports. 
     
     body = StreamField(DefaultBodyFields(), null=True, blank=True)
 
@@ -32,6 +36,14 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),
+    MultiFieldPanel(
+        [
+            FieldPanel('internal_location'),
+            FieldPanel('internal_phone_number'),
+            FieldPanel('internal_email'),
+        ],
+        heading="Staff-only Contact Information",
+    ),
     InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
 ] + BasePage.content_panels

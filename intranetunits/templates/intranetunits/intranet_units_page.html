@@ -35,8 +35,8 @@
     {% endfor %}
 
     <h2>Department Contact</h2>
-    <p>{{ self.location }}</p>
-    <p>{{ self.telephone }} | <a href="{{ self.email }}">mailto:{{ self.email }}</a></p>
+    <p>{{ self.internal_location }}</p>
+    <p>{{ self.internal_phone_number }} | <a href="mailto:{{ self.internal_email }}">{{ self.internal_email }}</a></p>
 
     <h2>Staff</h2>
 
