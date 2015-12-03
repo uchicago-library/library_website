@@ -127,3 +127,8 @@ class GroupIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetPlainPage', 'group.GroupPage']
+
+    def get_context(self, request):
+        context = super(GroupIndexPage, self).get_context(request)
+        context['groups'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, self.get_children().live().order_by('title')))
+        return context

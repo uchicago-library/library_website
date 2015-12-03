@@ -8,5 +8,11 @@
 		<h1>{{ self.title }}</h1>
 
 		<p>{{ self.intro|richtext }}</p>
+
+        <ul>
+            {% for group in groups %}
+                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
+            {% endfor %}
+        </ul>
 	</article>
 {% endblock %}
