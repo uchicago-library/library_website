@@ -21,6 +21,10 @@ class Role(models.Model, index.Indexed):
         FieldPanel('text'),
     ]
 
+    class Meta:
+        verbose_name = 'Unit Role'
+        verbose_name_plural = 'Unit Roles'
+
     def __str__(self):
         return self.text
 
