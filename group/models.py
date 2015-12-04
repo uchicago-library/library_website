@@ -13,6 +13,9 @@ from modelcluster.fields import ParentalKey
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 
+from wagtail.wagtaildocs.models import Document
+from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+
 def default_end_time():
     """
     Callback function for setting the default
@@ -46,11 +49,19 @@ class MeetingMinutes(models.Model):
     """
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
-    link = models.URLField(max_length=254, blank=False, default='')
+    link = models.URLField(max_length=254, blank=True, default='')
+    document = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    ) 
 
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
+        DocumentChooserPanel('document'),
         FieldPanel('link'),
     ]
 

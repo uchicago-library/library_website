@@ -12,6 +12,8 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
+from wagtail.wagtaildocs.models import Document
+from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 
 import logging
 import sys
@@ -335,10 +337,18 @@ class Report(models.Model):
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
     link = models.URLField(max_length=254, blank=False, default='')
+    document = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
 
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
+        DocumentChooserPanel('document'),
         FieldPanel('link'),
     ]
 
