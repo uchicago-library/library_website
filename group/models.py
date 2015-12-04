@@ -10,6 +10,8 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.models import Orderable, Page
 from modelcluster.fields import ParentalKey
+from wagtail.wagtailsearch import index
+from wagtail.wagtailsnippets.models import register_snippet
 
 def default_end_time():
     """
@@ -17,6 +19,26 @@ def default_end_time():
     meeting end time.
     """
     return datetime.now() + timedelta(hours=1)
+
+
+@register_snippet
+class GroupMemberRole(models.Model, index.Indexed):
+    """
+    Snippet for group member roles.
+    """
+    text = models.CharField(max_length=255, blank=False)
+
+    panels = [
+        FieldPanel('text'),
+    ]
+
+    def __str__(self):
+        return self.text
+
+    search_fields = [
+        index.SearchField('text', partial_match=True),
+    ]
+
 
 class MeetingMinutes(models.Model):
     """
@@ -70,6 +92,13 @@ class GroupMembers(Orderable, models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    role = models.ForeignKey(
+        'group.GroupMemberRole', 
+        null=True,
+        blank=True,
+        related_name='+'
+    )    
+
     class Meta:
         verbose_name = 'Member'
         verbose_name_plural = 'Members'
