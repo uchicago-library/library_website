@@ -7,7 +7,7 @@ from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, StreamFieldPanel
-from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, RawHTMLBlock
+from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
@@ -185,15 +185,17 @@ class PublicBasePage(BasePage):
 # Global streamfield definitions
 class ImageFormatChoiceBlock(FieldBlock):
     field = forms.ChoiceField(choices=(
-        ('left', 'Wrap left'), ('right', 'Wrap right'), ('center', 'Center'), ('full', 'Full width'),
+        ('pull-left', 'Wrap left'), ('pull-right', 'Wrap right'), ('center-block', 'Center'),
     ))
 
 class ImageBlock(StructBlock):
     image = ImageChooserBlock()
-    caption = TextBlock(required=False)
     citation = CharBlock(required=False)
+    caption = TextBlock(required=False)
     alt_text = CharBlock(required=False) #Img title in the system is a fallback. 
     alignment = ImageFormatChoiceBlock()
+    source = CharBlock(required=False)
+    lightbox = BooleanBlock(default=False, required=False)
 
     class Meta:
         icon = 'image'

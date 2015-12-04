@@ -7,20 +7,7 @@
 	<article>
 		<h1>{{ self.title }}</h1>
         {% for block in self.intro %}
-            {% if block.block_type == 'h2' %}
-                <h2>{{ block.value }}</h2>
-            {% elif block.block_type == 'h3' %}
-                <h3>{{ block.value }}</h3>
-            {% elif block.block_type == 'h4' %}
-                <h4>{{ block.value }}</h4>
-                {{ block.value|richtext }}
-            {% elif block.block_type == 'paragraph' %}
-                {{ block.value }}
-            {% else %}
-                <section class="block-{{ block.block_type }}">
-                    {{ block }}
-                </section>
-            {% endif %}
+            {{ block }}
         {% endfor %}
 		<p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
 
@@ -36,7 +23,9 @@
             {% endfor %}
           </tbody>
 		</table>
-
+        {% for block in self.body %}
+            {{ block }}
+        {% endfor %}
         <h2>Recent Meeting Minutes</h2>
 	</article>
 {% endblock %}

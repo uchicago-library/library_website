@@ -1,12 +1,18 @@
 {% load wagtailimages_tags %}
-{% image value.image original as tmp_img %}
-<figure class="imgcaption">
-   {{value.image}}
-    <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
+{% image value.image original as original %}
+{% image value.image width-400 as tmp_img %}
+<figure class="imgcaption {{ value.alignment }}">
+    {% if value.lightbox %}
+        <a href="{{ original.url }}">
+            <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
+        </a>
+    {% else %}
+        <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
+    {% endif %}
+   
     <figcaption>
-        <em>{{value.citation}}</em>
-        <br/>
-        <strong>Ferdinand Barbedienne (1810-1892)</strong>
+        <em>{{value.image}}</em><br/>
+        <strong>{{value.citation}}</strong>
         <br/>
         {{value.caption}}
     </figcaption>
