@@ -12,6 +12,10 @@ from wagtail.wagtailcore.models import Orderable, Page
 from modelcluster.fields import ParentalKey
 
 def default_end_time():
+    """
+    Callback function for setting the default
+    meeting end time.
+    """
     return datetime.now() + timedelta(hours=1)
 
 class MeetingMinutes(models.Model):
