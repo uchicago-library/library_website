@@ -19,7 +19,16 @@
         <table class="table table-striped">
           <tbody>
             {% for group_member in group_members %}
-              <tr><td><a href="{{ group_member.url }}">{{ group_member.title }}</a></td><td/><td/></tr>
+              <tr>
+                <td>
+                  <a href="{{ group_member.url }}">{{ group_member.title }}</a>
+                </td>
+                <td>
+                  {% if group_member.role %}
+                    {{ group_member.role }}
+                  {% endif %}
+                <td/>
+            </tr>
             {% endfor %}
           </tbody>
 		</table>
