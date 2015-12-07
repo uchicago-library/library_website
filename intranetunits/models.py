@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
 from staff.models import StaffPage
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 
@@ -34,8 +34,50 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
     subpage_types = ['intranetunits.IntranetUnitsPage', 'base.IntranetPlainPage']
 
+    def get_context(self, request):
+        context = super(IntranetUnitsPage, self).get_context(request)
+
+        if self.specific.internal_phone_number:
+            context['phone'] = self.specific.internal_phone_number
+        elif self.specific.unit:
+            # JEJ deal with multiple phone numbers later.
+            if self.specific.unit.phone_numbers.all():
+                context['phone'] = self.specific.unit.phone_numbers.all()[0]
+
+        if self.specific.internal_location: 
+            context['location'] = self.specific.internal_location
+        elif self.specific.unit:
+            context['location'] = self.specific.unit.room_number
+
+        if  self.specific.internal_email:
+            context['email'] = self.specific.internal_email
+        elif self.specific.unit:
+            context['email'] = self.specific.unit.email
+
+        department_members = []
+        # pay attention to the difference between unit pages and intranet unit pages.
+        # if this intranet unit page (self) is attached to a unit page...
+        if self.specific.unit:
+            for s in StaffPage.objects.live():
+                for v in s.vcards.all():
+                    for u in self.specific.unit.get_descendants(True):
+                        if u.id == v.unit.id:
+                            department_members.append({
+                                'title': s.title,
+                                'url': s.url,
+                                'jobtitle': v.title,
+                                'email': v.email,
+                                'phone': v.phone_number,
+                            })
+                            break
+
+        department_members = sorted(department_members, key=lambda s: s['title'])
+        context['department_members'] = department_members
+        return context
+
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),
+    PageChooserPanel('unit', 'units.UnitPage'),
     MultiFieldPanel(
         [
             FieldPanel('internal_location'),
@@ -47,6 +89,7 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
     InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
 ] + BasePage.content_panels
+
 
 class IntranetUnitPageReports(Orderable, Report):
     """

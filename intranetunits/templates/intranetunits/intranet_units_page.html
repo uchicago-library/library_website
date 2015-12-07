@@ -23,10 +23,22 @@
     {% endfor %}
 
     <h2>Department Contact</h2>
-    <p>{{ self.internal_location }}</p>
-    <p>{{ self.internal_phone_number }} | <a href="mailto:{{ self.internal_email }}">{{ self.internal_email }}</a></p>
+    <p>{{ location }}</p>
+    <p>{{ phone }} | <a href="mailto:{{ email }}">{{ email }}</a></p>
 
     <h2>Staff</h2>
+    <table class="table table-striped">
+        <tbody>
+        {% for s in department_members %}
+            <tr>
+                <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
+                <td>{{ s.jobtitle }}</td>
+                <td><a href="mailto:{{ s.url }}">{{ s.email }}</a></td>
+                <td>{{ s.phone }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     {% for block in self.body %}
         {% if block.block_type == 'h2' %}
