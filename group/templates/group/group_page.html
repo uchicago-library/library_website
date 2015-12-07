@@ -28,6 +28,11 @@
                     {{ group_member.role }}
                   {% endif %}
                 <td/>
+                <td>
+                  {% if group_member.unit %}
+                    {{ group_member.unit|richtext }}
+                  {% endif %}
+                <td/>
             </tr>
             {% endfor %}
           </tbody>

@@ -122,6 +122,19 @@ class UnitPage(BasePage, FaxNumber):
 
     subpage_types = ['public.StandardPage', 'public.LocationPage']
 
+    def get_full_name(self):
+        chunks = []
+        unit = self
+        while True:
+            if unit == None:
+                break
+            if not isinstance(unit.specific_class(), UnitPage):
+                break
+            chunks.append(unit.title)
+            unit = unit.get_parent()
+        return ' - '.join(list(reversed(chunks)))
+
+
 class UnitIndexPage(BasePage):
     intro = RichTextField()
    
