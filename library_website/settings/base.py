@@ -56,6 +56,7 @@ INSTALLED_APPS = (
 
     'rest_framework',
     'base',
+    'directory_unit',
     'group',
     'home',
     'intranethome',

@@ -42,7 +42,7 @@ class VCard(Email, PhoneNumber):
         max_length=255, 
         blank=False)
     unit = models.ForeignKey(
-       'units.UnitPage',
+       'directory_unit.DirectoryUnit',
        null=True,
        blank=True,
        on_delete=models.SET_NULL,
