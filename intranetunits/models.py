@@ -2,8 +2,8 @@ from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
-from staff.models import StaffPage
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+from staff.models import StaffPage, VCard
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 
@@ -13,7 +13,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     """
 
     unit = models.ForeignKey(
-        'units.UnitPage',
+        'directory_unit.DirectoryUnit',
         related_name='intranet_unit_page',
         null=True,
         blank=True,
@@ -37,39 +37,29 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
 
+        context['phone'] = ''
         if self.specific.internal_phone_number:
             context['phone'] = self.specific.internal_phone_number
-        elif self.specific.unit:
-            # JEJ deal with multiple phone numbers later.
-            if self.specific.unit.phone_numbers.all():
-                context['phone'] = self.specific.unit.phone_numbers.all()[0]
 
+        context['location'] = ''
         if self.specific.internal_location: 
             context['location'] = self.specific.internal_location
-        elif self.specific.unit:
-            context['location'] = self.specific.unit.room_number
 
+        context['email'] = ''
         if  self.specific.internal_email:
             context['email'] = self.specific.internal_email
-        elif self.specific.unit:
-            context['email'] = self.specific.unit.email
 
         department_members = []
-        # pay attention to the difference between unit pages and intranet unit pages.
-        # if this intranet unit page (self) is attached to a unit page...
-        if self.specific.unit:
-            for s in StaffPage.objects.live():
-                for v in s.vcards.all():
-                    for u in self.specific.unit.get_descendants(True):
-                        if u.id == v.unit.id:
-                            department_members.append({
-                                'title': s.title,
-                                'url': s.url,
-                                'jobtitle': v.title,
-                                'email': v.email,
-                                'phone': v.phone_number,
-                            })
-                            break
+        for u in IntranetUnitsPage.objects.descendant_of(self, True):
+            for v in VCard.objects.filter(unit=u.specific.unit):
+                if u.specific.unit == v.staffpagepagevcards.unit:
+                    department_members.append({
+                        'title': v.staffpagepagevcards.page.title,
+                        'url': v.staffpagepagevcards.page.url,
+                        'jobtitle': v.title,
+                        'email': v.email,
+                        'phone': v.phone_number,
+                    })
 
         department_members = sorted(department_members, key=lambda s: s['title'])
         context['department_members'] = department_members
@@ -77,7 +67,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),
-    PageChooserPanel('unit', 'units.UnitPage'),
+    FieldPanel('unit'),
     MultiFieldPanel(
         [
             FieldPanel('internal_location'),

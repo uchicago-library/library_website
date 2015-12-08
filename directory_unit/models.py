@@ -13,4 +13,7 @@ class DirectoryUnit(models.Model):
 
     # the source of this data in the directory api. 
     xmlUrl = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.fullName
     
