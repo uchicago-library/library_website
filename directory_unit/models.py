@@ -16,4 +16,26 @@ class DirectoryUnit(models.Model):
 
     def __str__(self):
         return self.fullName
+
+    def get_descendants(self, include_self = False):
+        need_to_check = [self]
+        checked = []
+        descendants = []
+
+        while True: 
+            if not need_to_check:
+                break
+
+            current_unit = need_to_check.pop()
+            for child in DirectoryUnit.objects.filter(parentUnit=current_unit):
+                if not child in descendants:
+                    descendants.append(child)
+                if not child in checked and not child in need_to_check:
+                    need_to_check.append(child)
+            checked.append(current_unit)
+
+        if include_self:
+            descendants.append(self)
+
+        return descendants
     

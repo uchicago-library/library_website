@@ -2,7 +2,7 @@ from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
-from staff.models import StaffPage, VCard
+from staff.models import StaffPage, StaffPagePageVCards, VCard
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
@@ -50,16 +50,39 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
             context['email'] = self.specific.internal_email
 
         department_members = []
-        for u in IntranetUnitsPage.objects.descendant_of(self, True):
-            for v in VCard.objects.filter(unit=u.specific.unit):
-                if u.specific.unit == v.staffpagepagevcards.unit:
-                    department_members.append({
-                        'title': v.staffpagepagevcards.page.title,
-                        'url': v.staffpagepagevcards.page.url,
-                        'jobtitle': v.title,
-                        'email': v.email,
-                        'phone': v.phone_number,
-                    })
+        if self.specific.unit:
+            units = self.specific.unit.get_descendants(True)
+    
+            staff_pages = []
+            for v in StaffPagePageVCards.objects.filter(unit__in=units):
+                staff_page = v.staffpagepagevcards.page
+                if staff_page not in staff_pages:
+                    staff_pages.append(staff_page)
+
+            for staff_page in staff_pages:
+                titles = []
+                emails = []
+                phone_numbers = []
+                for v in StaffPagePageVCards.objects.filter(page=staff_page, unit__in=units):
+                    if not v.title in titles:
+                        titles.append(v.title)
+                    if not v.email in emails:
+                        emails.append(v.email)
+                    if not v.phone_number in phone_numbers:
+                        phone_numbers.append(v.phone_number)
+
+                if len(emails) > 0:
+                    email = emails[0]
+                else:
+                    email = ''
+
+                department_members.append({
+                    'title': staff_page.title,
+                    'url': staff_page.url,
+                    'jobtitle': "<br/>".join(titles),
+                    'email': email,
+                    'phone': "<br/>".join(phone_numbers),
+                })
 
         department_members = sorted(department_members, key=lambda s: s['title'])
         context['department_members'] = department_members
