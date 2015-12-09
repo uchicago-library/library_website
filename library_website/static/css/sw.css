@@ -111,12 +111,12 @@ h5 {
  */
 /* line 126, sw.scss */
 .navbar-brand {
-  max-width: 175px;
+  max-width: 100px;
 }
 @media (min-width: 768px) {
   /* line 126, sw.scss */
   .navbar-brand {
-    padding: 15px;
+    padding: 5px 0 0 10px;
   }
 }
 
