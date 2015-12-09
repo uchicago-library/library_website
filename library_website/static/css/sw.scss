@@ -46,7 +46,7 @@ $accentlink-light: #ADB17D;
 
 body {
   font-family: 'ProximaNova-Regular', "Arial", sans-serif;
-  margin-bottom: 60px; /* For sticky footer: Margin bottom by footer height */
+  margin-bottom: 70px; /* For sticky footer: Margin bottom by footer height */
 }
 
 html { // For sticky footer
@@ -123,10 +123,19 @@ h5 {
  * --------------------------------------------------
  */
 
-.navbar-brand {
-	max-width: 100px;
+.navbar>.container-fluid .navbar-brand {
+	max-width: 75px;
+	padding: 0;
+	margin-top: 5px;
+	margin-left: 10px;
 		@media (min-width: 768px) {
-			padding: 5px 0 0 10px;
+			max-width: 100px;
+			margin-left: 20px;
+		}
+}
+
+.container-fluid>.navbar-header {
+	@media (min-width: 768px) {
 		}
 }
 
@@ -265,7 +274,7 @@ h5 {
 	ul {
 			@include plainlist;
 			&>li {
-				line-height: 1.5em;
+				margin-top: 5px;
 				a {
 					color: #725663;
 					font-weight: 600;
@@ -273,6 +282,7 @@ h5 {
 				}
 				&>ul>li {
 					line-height: 2em;
+					margin-top: 0;
 					a {
 						color: #767676;
 						font-weight: 300;
@@ -422,8 +432,13 @@ h5 {
 	}
 }
 
+/*
+ *  Tables
+ * --------------------------------------------------
+ */
+
 table, tbody {
-	@media screen and (max-width: 640px) {
+	@media (max-width: 640px) {
     	display: block;
         width: 100%;
         & tr, & th, & td {
@@ -442,6 +457,12 @@ table, tbody {
 	        margin-bottom: 6px;
 	        color: #444;
 	    }
+	}
+}
+
+.stafflist>tbody>tr>td {
+	@media screen and (min-width: 640px) {
+		width: 25%;
 	}
 }
 
