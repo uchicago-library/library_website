@@ -160,7 +160,7 @@ class GroupPage(BasePage, Email):
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
         group_members = sorted(self.group_members.all(), key=lambda m: m.group_member.title)
-        context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.get_full_name(), m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
+        context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
 class GroupIndexPage(BasePage):
