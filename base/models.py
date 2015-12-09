@@ -112,6 +112,15 @@ class BasePage(Page):
         breadcrumbs.pop(0)
         context['breadcrumbs'] = breadcrumbs
 
+        context['sidebartitle'] = 'Browse this Section'
+        if self.specific_class.get_verbose_name() == 'Intranet Units Page':
+            for p in list(reversed(self.get_ancestors(True))):
+                try:
+                    if p.specific.subsection_start:
+                        context['sidebartitle'] = p.title
+                except:
+                    pass
+                
         # JEJ- fix this later to remove logic from the template. 
         '''
         sidebar = [] 

@@ -91,7 +91,7 @@
   {% if page.show_sidebar %}
     <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
     <div class="col-sm-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar"> <!-- Start side div -->
-      <h3>Browse this Section</h3>
+      <h3>{{ sidebartitle }}</h3>
       {% if page.subsection_start %}
         <ul>
           {% for child in page.get_children %}
