@@ -49,7 +49,7 @@ class BasePage(Page):
     """
     # Fields 
 
-    subsection_start = models.BooleanField(default=False)
+    start_sidebar_from_here = models.BooleanField(default=False)
 
     show_sidebar = models.BooleanField(default=False)
 
@@ -94,7 +94,7 @@ class BasePage(Page):
         ),
         MultiFieldPanel(
             [
-                FieldPanel('subsection_start'),
+                FieldPanel('start_sidebar_from_here'),
                 FieldPanel('show_sidebar'),
             ],
             heading='Sidebar Menus'
@@ -116,7 +116,7 @@ class BasePage(Page):
         if self.specific_class.get_verbose_name() == 'Intranet Units Page':
             for p in list(reversed(self.get_ancestors(True))):
                 try:
-                    if p.specific.subsection_start:
+                    if p.specific.start_sidebar_from_here:
                         context['sidebartitle'] = p.title
                 except:
                     pass
@@ -128,7 +128,7 @@ class BasePage(Page):
             ancestors = self.get_ancestors(True)
             while ancestors:
                 sidebar_parent = ancestors.pop()
-                if sidebar_parent.subsection_start:
+                if sidebar_parent.start_sidebar_from_here:
                     break
 
             for child in sidebar_parent.get_children().in_menu().order_by('title').order_by('sort_order'):
