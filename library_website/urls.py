@@ -13,10 +13,8 @@ urlpatterns = [
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
-    url(r'^$', 'intranethome.views.index', name='index'),
     url(r'^departments/$', 'intranetunits.views.index', name='index'),
     url(r'^search/$', 'search.views.search', name='search'),
-    url(r'^staff/$', 'staff.views.index', name='index'),
 
     url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
 

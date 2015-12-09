@@ -10,5 +10,11 @@
 
 		{{ self.intro|richtext }}
 
+        <ul>
+            {% for staff_page in staff_pages %}
+                <li><a href="{{ staff_page.url }}">{{ staff_page.title }}</a></li>
+            {% endfor %}
+        </ul>
+
 	</article>
 {% endblock %}

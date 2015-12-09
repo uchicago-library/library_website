@@ -176,3 +176,15 @@ class StaffIndexPage(BasePage):
     )
 
     subpage_types = ['base.IntranetPlainPage', 'staff.StaffPage']
+
+    def get_context(self, request):
+        staff_pages = []
+        for s in StaffPage.objects.live():
+            staff_pages.append({
+            'title': s.title,
+            'url': s.url
+        })
+
+        context = super(StaffIndexPage, self).get_context(request)
+        context['staff_pages'] = staff_pages
+        return context
