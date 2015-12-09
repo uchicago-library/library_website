@@ -10,11 +10,13 @@
 
 		{{ self.intro|richtext }}
 
+        <div class="col-md-12 deptlist"> 
         <ul>
         {% for unit in units.children %}
             {% include "intranetunits/intranetunits_tree.html" %}
         {% endfor %}
         </ul>
+        </div>
 
 	</article>
 {% endblock %}

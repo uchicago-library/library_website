@@ -22,12 +22,15 @@ $accentlink-light: #ADB17D;
 		list-style-type: none;
 		line-height: 1.7em;
 		padding-left: 0;
-		margin-bottom: 30px;
+		//margin-bottom: 30px;
 	}
 
 // -- Start Styling ---
 
-// -- Global Styles --
+/*
+ *  Global Items
+ * --------------------------------------------------
+ */
 
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
@@ -49,6 +52,10 @@ body {
 html { // For sticky footer
   position: relative;
   min-height: 100%;
+}
+
+html, body {
+  overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
 }
 
 a {
@@ -94,9 +101,10 @@ h3 {
 }
 
 h4 {
-  font-size: 0.9em;
-  font-weight: 600;
-  line-height: 1.5em;
+  font-size: 1.1em;
+  font-style: italic;
+  line-height: 0.8em;
+  color:#725663;
 }
 
 h5 {
@@ -110,7 +118,10 @@ h5 {
 	color: $darkgray;
 }
 
-// -- Start top navigation --
+/*
+ *  Top Navigation
+ * --------------------------------------------------
+ */
 
 .navbar-brand {
 	max-width: 175px;
@@ -137,7 +148,10 @@ h5 {
 }
 
 .breadcrumbs {
-	padding-bottom: 20px;
+	padding-bottom: 5px;
+	@media (min-width: 768px) {
+		padding-bottom: 20px;
+	}
 }
 
 // -- Navigation links --
@@ -176,6 +190,7 @@ h5 {
 
 /* Navbar links to fill the entire space of the .navbar */
 .navbar {
+	margin-bottom: 5px;
 	& .navbar-inner {
 		@media (min-width: 768px) {
 	    padding: 0;
@@ -197,7 +212,7 @@ h5 {
 			    text-align: center;
 			    padding-bottom: 10px;
 			}
-		    &:hover {
+		    &:hover, &.current {
 	    		background-color: $accentlink;
 	    	}		    	
 	    	a {
@@ -235,10 +250,114 @@ h5 {
 	}
 }
 
-// -- End top navigation --
+/*
+ * Sidebar and Off Canvas (Sidebar Mobile Toggle)
+ * --------------------------------------------------
+ */
+
+.swside {
+	border-right: 1px solid $accentlink-light;
+	margin-bottom: 20px;
+	& h3 {
+		font-style: italic;
+		font-weight: 600;
+	}
+	ul {
+			@include plainlist;
+			&>li {
+				line-height: 1.5em;
+				a {
+					color: #725663;
+					font-weight: 600;
+					font-size: 1.1em;
+				}
+				&>ul>li {
+					line-height: 2em;
+					a {
+						color: #767676;
+						font-weight: 300;
+						font-size: 1em;
+					}
+				}
+			}
+		}
+	@media screen and (max-width: 767px) {
+		padding-left: 25px;
+	}
+}
+
+.btn-sidebar {
+	background: $accentlink-light;
+	color: #fff;
+	position: absolute;
+	padding: 10px;
+	left: 0;
+	border-color: $accentlink;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	margin-left: 0;
+	& a, &:hover {
+		color: #fff;
+		background: $accentlink;
+		}
+}
+
+.row-offcanvas {
+	@media screen and (max-width: 767px) {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+	}
+}
+
+.row-offcanvas-right {
+  	@media screen and (max-width: 767px) {
+    right: 0;
+	    .sidebar-offcanvas {
+		    right: -50%; /* 6 columns */
+		}
+		&.active {
+		    right: 50%; /* 6 columns */
+		}
+	}
+}
+
+.row-offcanvas-left {
+	@media screen and (max-width: 767px) {
+    left: 0;
+	    .sidebar-offcanvas {
+		    left: -50%; /* 6 columns */
+		}
+		&.active {
+		    left: 50%; /* 6 columns */
+		}
+	}
+}
+
+.sidebar-offcanvas {
+	@media screen and (max-width: 767px) {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+	}
+}
+
+.toggle-side {
+	@media (max-width: 767px) { //Mobile
+		padding-bottom: 20px;
+		margin-bottom: 20px;
+	}
+}
 
 
-// -- Start content --
+
+
+
+/*
+ *  Content
+ * --------------------------------------------------
+ */
 
 .sw-toc {
 	text-align: center;
@@ -264,6 +383,11 @@ h5 {
 	}
 }
 
+.sticky {
+	background-color: lighten( $accentlink-light, 20% );
+	padding: 15px;
+}
+
 .swside-home {
 	@media (min-width: 768px) {
 	border-left: 1px solid $accentlink-light;
@@ -271,63 +395,6 @@ h5 {
 	margin-bottom: 20px;
 	}
 }
-
-.swside {
-	@media (min-width: 768px) {
-	border-right: 1px solid $accentlink-light;
-	margin-bottom: 20px;
-	}
-	ul {
-			@include plainlist;
-			line-height: 2.2em;
-		}
-}
-
-.label {
-	font-weight: 500;
-	letter-spacing: .1em;
-	&.libnews {
-		color: #C16622;
-		border: 1px solid #C16622;
-		background-color: #fff;
-		font-weight: 200;
-	    &:hover {
-	    	background-color: #C16622;
-	    	color: #fff;
-	    }
-	}
-	&.staff {
-	    border: 1px solid $accentlink;
-	    background-color: #fff;
-	    color: $accentlink;
-	    font-weight: 200;
-	    &:hover {
-	    	background-color: $accentlink;
-	    	color: #fff;
-	    }
-	}
-	&.swnotice {
-	    border: 1px solid #800000;
-	    background-color: #fff;
-	    color: #800000;
-	    font-weight: 200;
-	    &:hover {
-	    	background-color: #800000;
-	    	color: #fff;
-	    }
-	}
-	&.director {
-	    border: 1px solid #725663;
-	    background-color: #fff;
-	    color: #725663;
-	    font-weight: 200;
-	    &:hover {
-	    	background-color: #725663;
-	    	color: #fff;
-	    }
-	}
-}
-
 
 .list-group {
 	@media (min-width: 768px) {
@@ -377,12 +444,62 @@ table, tbody {
 	    }
 	}
 }
-        
 
-// -- End content --
+/*
+ *  Dept Home Page
+ * --------------------------------------------------
+ */
+ .deptlist {
+ 	@media (min-width: 768px) {
+    -webkit-column-count: 2;
+    -webkit-column-gap: 0;
+	}
+ }
+ .deptlist ul {
+	 	list-style: none;
+		padding-left: 20px;
+	&>li {
+		margin: 15px 0 0 0;
+		a {
+		  font-size: 1.3em;
+		  font-weight: 700;
+		  color:$accentlink;
+		  padding-bottom: 5px;
+		}
+		&>ul>li {
+		margin: 0 0;
+			a {
+			  font-size: 1.2em;
+			  font-weight: 600;
+			  color:$darkgray;
+			  line-height: 2em;
+			}
+			&>ul>li {
+				a {
+				  font-size: 1.1em;
+				  font-weight: 300;
+				  color:#9A5324;
+				  line-height: 1.5em;
+				}
+				&>ul>li {
+					a {
+					  font-size: 1.1em;
+					  font-weight: 300;
+					  color:$darkgray;
+					  line-height: 1.5em;
+					  font-style: italic;
+					}
+				}
+			}
+		}
+	}
+ }
 
 
-// -- Start Footer --
+/*
+ *  Footer
+ * --------------------------------------------------
+ */
 
 .footer {
   position: absolute;
@@ -431,4 +548,4 @@ table, tbody {
 }
 
 
-// -- End Footer --
+
