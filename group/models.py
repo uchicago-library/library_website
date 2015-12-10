@@ -189,5 +189,6 @@ class GroupIndexPage(BasePage):
 
     def get_context(self, request):
         context = super(GroupIndexPage, self).get_context(request)
-        context['groups'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, self.get_children().live().order_by('title')))
+        context['groups_active'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, GroupPage.objects.live().filter(is_active=True).order_by('title')))
+        context['groups_inactive'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, GroupPage.objects.live().filter(is_active=False).order_by('title')))
         return context

@@ -10,9 +10,18 @@
 		<p>{{ self.intro|richtext }}</p>
 
         <ul>
-            {% for group in groups %}
+            {% for group in groups_active %}
                 <li><a href="{{ group.url }}">{{ group.title }}</a></li>
             {% endfor %}
         </ul>
+
+        <h2>Inactive Groups</h2>
+        <div class="inactive-groups">
+          <ul>
+            {% for group in groups_inactive %}
+                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
 	</article>
 {% endblock %}
