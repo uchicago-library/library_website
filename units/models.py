@@ -89,7 +89,6 @@ class UnitPage(BasePage, FaxNumber):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
-    is_hub_page = models.BooleanField(default=False)
     body = StreamField(DefaultBodyFields())
 
     content_panels = Page.content_panels + [
@@ -112,7 +111,6 @@ class UnitPage(BasePage, FaxNumber):
         FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
         InlinePanel('unit_reports', label='Reports'),
-        FieldPanel('is_hub_page'), 
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
