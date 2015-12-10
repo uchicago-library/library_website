@@ -1,4 +1,5 @@
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
+from directory_unit.models import UnitSupervisor
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
@@ -59,6 +60,12 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                 if staff_page not in staff_pages:
                     staff_pages.append(staff_page)
 
+            # sorting: supervisors first, alphabetically; then non-supervisors, alphabetically. 
+            supervisors = list(map(lambda u: u.supervisor, UnitSupervisor.objects.filter(unit=self.specific.unit)))
+            supervisor_staff = sorted(list(set(staff_pages).intersection(supervisors)), key=lambda s: s.title)
+            non_supervisor_staff = sorted(list(set(staff_pages).difference(supervisors)), key=lambda s: s.title)
+            staff_pages = supervisor_staff + non_supervisor_staff 
+
             for staff_page in staff_pages:
                 titles = []
                 emails = []
@@ -84,7 +91,6 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                     'phone': "<br/>".join(phone_numbers),
                 })
 
-        department_members = sorted(department_members, key=lambda s: s['title'])
         context['department_members'] = department_members
         return context
 
