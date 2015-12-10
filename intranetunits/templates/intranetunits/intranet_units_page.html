@@ -22,10 +22,27 @@
         {% endif %}
     {% endfor %}
 
-    <h2>Department Contact</h2>
-    <p>{{ location }}</p>
-    <p>{{ phone }} | <a href="mailto:{{ email }}">{{ email }}</a></p>
+    {% if location or phone or email %}
+      <h2>Department Contact</h2>
+      {% if location %}
+        <p>{{ location }}</p>
+      {% endif %}
+      {% if phone or email %}
+        <p>
+        {% if phone %}
+          {{ phone }}
+        {% endif %}
+        {% if phone and email %}
+          |
+        {% endif %}
+        {% if email %}
+          <a href="mailto:{{ email }}">{{ email }}</a>
+        {% endif %}
+        </p>
+      {% endif %}
+    {% endif %}
 
+    {% if show_staff %}
     <h2>Staff</h2>
     <table class="table table-striped stafflist">
         <tbody>
@@ -39,6 +56,42 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
+
+    {% if show_departments %}
+    <h2>Sub-units</h2>
+      {% for department_unit_row in department_unit_rows %}
+        <div class="row">
+          {% for department_unit in department_unit_row %}
+          <div class="col-md-3">
+            <h3 style="margin-top: 0px;"><a href="{{ department_unit.url }}">{{ department_unit.title }}</a></h3>
+            {% if department_unit.location or department_unit.phone_number or department_unit.email %}
+            <p>
+              {% if department_unit.location %}
+                {{ department_unit.location }}
+                {% if department_unit.phone_number or department_unit.email %}<br/>{% endif %}
+              {% endif %}
+              {% if department_unit.phone_number %}
+                {{ department_unit.phone_number }}
+                {% if department_unit.email %}|{% endif %}
+              {% endif %}
+              {% if department_unit.email %}
+                <a href="mailto:{{ department_unit.email }}">{{ department_unit.email }}</a>
+              {% endif %}
+            </p>
+            {% endif %}
+            {% if department_unit.supervisors %}
+              <p><strong>Supervisor:</strong>
+              {% for supervisor in department_unit.supervisors %}
+                <br/><a href="{{ supervisor.url }}">{{ supervisor.title }}</a><br/>{{ supervisor.phone_number }} | <a href="mailto:{{ supervisor.email }}">{{ supervisor.email }}</a>
+              {% endfor %}
+              </p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% endif %}
 
     {% for block in self.body %}
         {% if block.block_type == 'h2' %}

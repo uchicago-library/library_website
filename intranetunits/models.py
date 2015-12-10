@@ -1,5 +1,5 @@
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
-from directory_unit.models import UnitSupervisor
+from directory_unit.models import DirectoryUnit, UnitSupervisor
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
@@ -33,6 +33,10 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     
     body = StreamField(DefaultBodyFields(), null=True, blank=True)
 
+    show_staff = models.BooleanField(default=False)
+
+    show_departments = models.BooleanField(default=False)
+
     subpage_types = ['intranetunits.IntranetUnitsPage', 'base.IntranetPlainPage']
 
     def get_context(self, request):
@@ -49,6 +53,10 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         context['email'] = ''
         if  self.specific.internal_email:
             context['email'] = self.specific.internal_email
+
+        context['show_staff'] = self.show_staff
+
+        context['show_departments'] = self.show_departments
 
         department_members = []
         if self.specific.unit:
@@ -92,6 +100,34 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                 })
 
         context['department_members'] = department_members
+
+        department_units = []
+        if self.unit:
+            for directory_unit in DirectoryUnit.objects.filter(parentUnit=self.unit):
+                intranet_unit_pages = directory_unit.intranet_unit_page.live()
+                if intranet_unit_pages:
+                    unit = {
+                        'title': intranet_unit_pages[0].title,
+                        'url': intranet_unit_pages[0].url,
+                        'location': intranet_unit_pages[0].internal_location,
+                        'phone_number': intranet_unit_pages[0].internal_phone_number,
+                        'email': intranet_unit_pages[0].internal_email
+                    }
+                   
+                    supervisors = [] 
+                    for s in UnitSupervisor.objects.filter(unit=directory_unit):
+                        supervisors.append({
+                            'title': s.supervisor.title,
+                            'url': s.supervisor.url,
+                            'phone_number': s.supervisor.vcards.all()[0].phone_number,
+                            'email': s.supervisor.vcards.all()[0].email,
+                        })
+                    unit['supervisors'] = supervisors
+                department_units.append(unit)
+
+        # split the department units into lists of lists, each inner list containing 4 or less items.
+        context['department_unit_rows'] = [department_units[i:i+4] for i in range(0, len(department_units), 4)]
+                
         return context
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
@@ -107,7 +143,15 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
     ),
     InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
-] + BasePage.content_panels
+] + BasePage.content_panels + [
+    MultiFieldPanel(
+        [
+        FieldPanel('show_staff'),
+        FieldPanel('show_departments'),
+        ],
+        heading="Show staff or subdepartments on this page"
+    )
+]
 
 
 class IntranetUnitPageReports(Orderable, Report):
