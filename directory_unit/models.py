@@ -1,5 +1,7 @@
 from django.db import models
 
+from staff.models import StaffPage
+
 # Create your models here.
 class DirectoryUnit(models.Model):
     # e.g. Administration
@@ -38,4 +40,10 @@ class DirectoryUnit(models.Model):
             descendants.append(self)
 
         return descendants
-    
+   
+class UnitSupervisor(models.Model): 
+    # when a unit is deleted, columns in this table that refer to it are automatically deleted as well.
+    unit = models.ForeignKey('DirectoryUnit', null=True, on_delete=models.CASCADE)
+
+    # when a supervisor is removed from the system, leave the row in this table. 
+    supervisor = models.ForeignKey(StaffPage, null=True, on_delete=models.SET_NULL)
