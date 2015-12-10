@@ -159,7 +159,22 @@ class GroupPage(BasePage, Email):
 
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
-        group_members = sorted(self.group_members.all(), key=lambda m: m.group_member.title)
+
+        group_members = self.group_members.all()
+
+        # sorting: chairs or co-chairs first, alphabetically; then others, alphabetically. 
+        group_member_chairs = []
+        non_group_member_chairs = []
+        for g in group_members:
+            if g.role and g.role.text in ['Chair', 'Co-Chair']:
+                group_member_chairs.append(g)
+            else:
+                non_group_member_chairs.append(g)
+        group_member_chairs = sorted(group_member_chairs, key=lambda g: g.group_member.title)
+        non_group_member_chairs = sorted(non_group_member_chairs, key=lambda g: g.group_member.title)
+
+        group_members = group_member_chairs + non_group_member_chairs
+
         context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
