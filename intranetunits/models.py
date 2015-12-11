@@ -123,7 +123,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                             'email': s.supervisor.vcards.all()[0].email,
                         })
                     unit['supervisors'] = supervisors
-                department_units.append(unit)
+                    department_units.append(unit)
 
         # split the department units into lists of lists, each inner list containing 4 or less items.
         context['department_unit_rows'] = [department_units[i:i+4] for i in range(0, len(department_units), 4)]
