@@ -7,13 +7,18 @@ from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.wagtailcore.blocks import TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock
+from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock 
 from wagtail.wagtailsearch import index
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+
+from django.utils.safestring import mark_safe
+from pygments import highlight
+from pygments.formatters import get_formatter_by_name
+from pygments.lexers import get_lexer_by_name
 
 import logging
 import sys
@@ -195,11 +200,17 @@ class PublicBasePage(BasePage):
 
 # Global streamfield definitions
 class ImageFormatChoiceBlock(FieldBlock):
+    """
+    Alignment options to use with the ImageBlock.
+    """
     field = forms.ChoiceField(choices=(
         ('pull-left', 'Wrap left'), ('pull-right', 'Wrap right'), ('center-block', 'Center'),
     ))
 
 class ImageBlock(StructBlock):
+    """
+    Image streamfield block.
+    """
     image = ImageChooserBlock()
     citation = CharBlock(required=False)
     caption = TextBlock(required=False)
@@ -213,6 +224,9 @@ class ImageBlock(StructBlock):
         template ='base/blocks/img.html'
 
 class BlockQuoteBlock(StructBlock):
+    """
+    Blockquote streamfield block.
+    """
     quote = TextBlock('quote title')
     attribution = CharBlock()
 
@@ -221,12 +235,54 @@ class BlockQuoteBlock(StructBlock):
         template = 'base/blocks/blockquote.html'
 
 class ParagraphBlock(StructBlock):
+    """
+    Paragraph streamfield block.
+    """
     paragraph = RichTextBlock()
 
     class Meta:
         icon = 'pilcrow'
         form_classname = 'paragraph-block struct-block'
         template = 'base/blocks/paragraph.html'
+
+class CodeBlock(StructBlock):
+    """
+    Code Highlighting Block
+    """
+
+    LANGUAGE_CHOICES = (
+        ('bash', 'Bash/Shell'),
+        ('css', 'CSS'),
+        ('html', 'HTML'),
+        ('javascript', 'Javascript'),
+        ('json', 'JSON'),
+        ('ocaml', 'OCaml'),
+        ('php5', 'PHP'),
+        ('html+php', 'PHP/HTML'),
+        ('python', 'Python'),
+        ('scss', 'SCSS'),
+        ('yaml', 'YAML'),
+    )
+
+    language = ChoiceBlock(choices=LANGUAGE_CHOICES)
+    code = TextBlock()
+
+    class Meta:
+        icon = 'code'
+
+    def render(self, value):
+        src = value['code'].strip('\n')
+        lang = value['language']
+
+        lexer = get_lexer_by_name(lang)
+        formatter = get_formatter_by_name(
+            'html',
+            linenos=None,
+            cssclass='codehilite',
+            style='default',
+            noclasses=False,
+        )
+        return mark_safe(highlight(src, lexer, formatter))
 
 class DefaultBodyFields(StreamBlock):
     """
@@ -241,6 +297,7 @@ class DefaultBodyFields(StreamBlock):
     paragraph = ParagraphBlock()
     image = ImageBlock(label='Image')
     blockquote = BlockQuoteBlock()
+    code = CodeBlock()
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
