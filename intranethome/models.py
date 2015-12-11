@@ -10,7 +10,7 @@ from news.models import NewsIndexPage, NewsPage
 class IntranetHomePage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
 
-    subpage_types = ['base.IntranetPlainPage', 'intranetunits.IntranetUnitsIndexPage', 'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage', 'units.UnitIndexPage']
+    subpage_types = ['base.IntranetPlainPage', 'intranetunits.IntranetUnitsIndexPage', 'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage', 'units.UnitIndexPage', 'intranettocs.TOCPage']
 
     def get_context(self, request):
         committees_and_groups_link = GroupIndexPage.objects.live()[0].url if GroupIndexPage.objects.live().exists() else []
