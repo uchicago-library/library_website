@@ -157,6 +157,8 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
+    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage']
+
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
 
@@ -189,6 +191,44 @@ class GroupIndexPage(BasePage):
 
     def get_context(self, request):
         context = super(GroupIndexPage, self).get_context(request)
-        context['groups_active'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, GroupPage.objects.live().filter(is_active=True).order_by('title')))
+
+        groups_active = [{
+            'title': GroupIndexPage.objects.first().title,
+            'url': GroupIndexPage.objects.first().url,
+            'children': [],
+        }]
+
+        # for each group page get a list of the page's "group page" or "group
+        # index page" ancestors. Check to see if this particular ancestor
+        # already exists in the groups_active tree. If it doesn't exist,
+        # create it. Then continue on, one descendant at a time, either adding
+        # new levels or using the existing ones if they're already there 
+        # from previous group pages. 
+        for grouppage in GroupPage.objects.live().filter(is_active=True):
+            ancestors = [GroupIndexPage.objects.first()] + list(GroupPage.objects.ancestor_of(grouppage)) + [grouppage]
+            currentlevel = groups_active
+            while ancestors:
+                ancestor = ancestors.pop(0)
+                if str(ancestor.content_type) in ['group page', 'group index page']:
+                    nextlevels = list(filter(lambda g: g['url'] == ancestor.url, currentlevel))
+                    if nextlevels:
+                        currentlevel = nextlevels[0]['children']
+                    else:
+                        newnode = {
+                            'title': ancestor.title,
+                            'url': ancestor.url,
+                            'children': [],
+                        }
+                        currentlevel.append(newnode)
+                        currentlevel = newnode['children']
+
+        def get_html(currentlevel):
+            if not currentlevel:
+                return ''
+            else:
+                return "<ul>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+        groups_active_html = get_html(groups_active[0]['children'])
+        
+        context['groups_active_html'] = groups_active_html
         context['groups_inactive'] = list(map(lambda g: { 'title': g.title, 'url': g.url }, GroupPage.objects.live().filter(is_active=False).order_by('title')))
         return context

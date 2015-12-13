@@ -7,13 +7,9 @@
 	<article>
 		<h1>{{ self.title }}</h1>
 
-		<p>{{ self.intro|richtext }}</p>
+		{{ self.intro|richtext }}
 
-        <ul>
-            {% for group in groups_active %}
-                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
-            {% endfor %}
-        </ul>
+        {{ groups_active_html|richtext }}
 
         <h2>Inactive Groups</h2>
         <div class="inactive-groups">
