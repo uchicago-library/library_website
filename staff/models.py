@@ -67,6 +67,15 @@ class StaffPagePageVCards(Orderable, VCard):
     page = ParentalKey('staff.StaffPage', related_name='vcards')
 
 
+class StaffPageManager(models.Manager):
+    def get_query_set(self):
+        return (
+            super(StaffPageManager, self)
+            .get_query_set()
+            .order_by('title')
+        )
+
+
 class StaffPage(BasePage):
     """
     Staff profile content type.
@@ -137,6 +146,7 @@ class StaffPage(BasePage):
         subjects = self.get_subjects()
         return None
 
+    objects = StaffPageManager
 
     content_panels = Page.content_panels + [
         FieldPanel('cnetid'),
@@ -161,6 +171,9 @@ class StaffPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetPlainPage']
+
+    class Meta:
+        ordering = ['title']
 
 class StaffIndexPage(BasePage):
     """

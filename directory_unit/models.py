@@ -40,6 +40,9 @@ class DirectoryUnit(models.Model):
             descendants.append(self)
 
         return descendants
+    
+    class Meta:
+        ordering = ['fullName']
    
 class UnitSupervisor(models.Model): 
     # when a unit is deleted, columns in this table that refer to it are automatically deleted as well.
