@@ -222,6 +222,12 @@ class GroupIndexPage(BasePage):
                         currentlevel.append(newnode)
                         currentlevel = newnode['children']
 
+        def alphabetize_groups(currentlevel):
+            for node in currentlevel:
+                node['children'] = alphabetize_groups(node['children'])
+            return sorted(currentlevel, key=lambda c: c['title'])
+        groups_active = alphabetize_groups(groups_active)
+
         def get_html(currentlevel):
             if not currentlevel:
                 return ''
