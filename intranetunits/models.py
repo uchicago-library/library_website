@@ -168,3 +168,52 @@ class IntranetUnitsIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetPlainPage', 'intranetunits.IntranetUnitsPage']
+
+    def get_context(self, request):
+        context = super(IntranetUnitsIndexPage, self).get_context(request)
+
+        units = [{
+            'title': IntranetUnitsIndexPage.objects.first().title,
+            'url': IntranetUnitsIndexPage.objects.first().url,
+            'children': [],
+        }]
+
+        # for each unit page get a list of the page's "intranet units page" or
+        # "intranet units index page" ancestors. Check to see if this
+        # particular ancestor already exists in the units tree. If it doesn't
+        # exist, create it. Then continue on, one descendant at a time, either
+        # adding new levels or using the existing ones if they're already there
+        # from previous unit pages. 
+        for intranetunitspage in IntranetUnitsPage.objects.live():
+            ancestors = [IntranetUnitsIndexPage.objects.first()] + list(IntranetUnitsPage.objects.ancestor_of(intranetunitspage)) + [intranetunitspage]
+            currentlevel = units
+            while ancestors:
+                ancestor = ancestors.pop(0)
+                if str(ancestor.content_type) in ['intranet units page', 'intranet units index page']:
+                    nextlevels = list(filter(lambda g: g['url'] == ancestor.url, currentlevel))
+                    if nextlevels:
+                        currentlevel = nextlevels[0]['children']
+                    else:
+                        newnode = {
+                            'title': ancestor.title,
+                            'url': ancestor.url,
+                            'children': [],
+                        }
+                        currentlevel.append(newnode)
+                        currentlevel = newnode['children']
+
+        def alphabetize_units(currentlevel):
+            for node in currentlevel:
+                node['children'] = alphabetize_units(node['children'])
+            return sorted(currentlevel, key=lambda c: c['title'])
+        units = alphabetize_units(units)
+
+        def get_html(currentlevel):
+            if not currentlevel:
+                return ''
+            else:
+                return "<ul>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+        units_html = get_html(units[0]['children'])
+        context['units_html'] = units_html
+        return context
+
