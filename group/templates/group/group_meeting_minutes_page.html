@@ -1,0 +1,15 @@
+{% extends "base/intranet_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+	<article>
+		<h1>{{ self.title }}</h1>
+
+        <h2>Recent Meeting Minutes</h2>
+        {% for m in self.meeting_minutes.all %}
+            <li>{{ m.summary }} {{ m.date }} need an external link or link to a document.</li>
+        {% endfor %}
+	</article>
+{% endblock %}

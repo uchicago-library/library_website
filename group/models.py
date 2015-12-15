@@ -67,20 +67,21 @@ class MeetingMinutes(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['-date']
 
 
-class GroupPageMeetingMinutes(Orderable, MeetingMinutes):
+class GroupMeetingMinutesPageTable(Orderable, MeetingMinutes):
     """
     Meeting minutes for group pages.
     """
-    page = ParentalKey('group.GroupPage', related_name='meeting_minutes')
+    page = ParentalKey('group.GroupMeetingMinutesPage', related_name='meeting_minutes')
 
 
-class GroupPageReports(Orderable, Report):
+class GroupReportsPageTable(Orderable, Report):
     """
     Reports for group pages.
     """
-    page = ParentalKey('group.GroupPage', related_name='group_reports')
+    page = ParentalKey('group.GroupReportsPage', related_name='group_reports')
 
 
 class GroupMembers(Orderable, models.Model):
@@ -150,14 +151,12 @@ class GroupPage(BasePage, Email):
             heading='Meeting Information'
         ),
         StreamFieldPanel('intro'),
-        InlinePanel('meeting_minutes', label='Meeting Minutes'),
-        InlinePanel('group_reports', label='Reports'),
         InlinePanel('group_members', label='Group Members'),
         FieldPanel('is_active'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage']
+    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesPage', 'group.GroupReportsPage']
 
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
@@ -179,6 +178,21 @@ class GroupPage(BasePage, Email):
 
         context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
+
+class GroupMeetingMinutesPage(BasePage):
+    content_panels = Page.content_panels + [
+        InlinePanel('meeting_minutes', label='Meeting Minutes'),
+    ] + BasePage.content_panels 
+
+    subpage_types = []
+
+class GroupReportsPage(BasePage):
+    content_panels = Page.content_panels + [
+        InlinePanel('group_reports', label='Reports'),
+    ] + BasePage.content_panels 
+
+    subpage_types = []
+
 
 class GroupIndexPage(BasePage):
     intro = RichTextField()

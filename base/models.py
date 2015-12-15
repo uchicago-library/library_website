@@ -402,7 +402,7 @@ class Report(models.Model):
     """
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
-    link = models.URLField(max_length=254, blank=False, default='')
+    link = models.URLField(max_length=254, blank=True, default='')
     document = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
