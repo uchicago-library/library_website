@@ -170,7 +170,7 @@ class StaffPage(BasePage):
         InlinePanel('vcards', label='VCards'),
     ] + BasePage.content_panels
 
-    subpage_types = ['base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
 
     class Meta:
         ordering = ['title']
@@ -188,7 +188,7 @@ class StaffIndexPage(BasePage):
         index.SearchField('intro'),
     )
 
-    subpage_types = ['base.IntranetPlainPage', 'staff.StaffPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'staff.StaffPage']
 
     def get_context(self, request):
         staff_pages = []

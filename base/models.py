@@ -317,11 +317,92 @@ class DefaultBodyField(StreamField):
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
 
-    subpage_types = ['base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
 
 IntranetPlainPage.content_panels = Page.content_panels + [
     StreamFieldPanel('body')
 ] + BasePage.content_panels
+
+class IntranetIndexPage(BasePage):
+    intro = StreamField(DefaultBodyFields())
+    display_hierarchical_listing = models.BooleanField(default=False)
+    body = StreamField(DefaultBodyFields())
+
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('intro'),
+        FieldPanel('display_hierarchical_listing'),
+        StreamFieldPanel('body')
+    ] + BasePage.content_panels
+
+    def get_context(self, request):
+        context = super(IntranetIndexPage, self).get_context(request)
+
+        pages = [{
+            'title': self.title,
+            'url': self.url,
+            'children': [],
+        }]
+
+        if self.display_hierarchical_listing:
+            def recursively_add_children(page):
+                return {
+                    'title': page.title,
+                    'url': page.url,
+                    'children': list(map(lambda p: recursively_add_children(p), page.get_children().live()))
+                }
+            pages[0]['children'] = list(map(lambda p: recursively_add_children(p), self.get_children().live()))
+                
+            ''''
+            for page in self.get_descendants():
+                pages[0]['children'].append({
+                    'title': page.title,
+                    'url': page.url,
+                    'children': []
+                })
+                ancestors = list(Page.objects.ancestor_of(page)) + [page]
+                while True:
+                    if not ancestors:
+                        break
+                    if ancestors.pop(0) == self:
+                        break
+                currentlevel = pages
+                while ancestors:
+                    ancestor = ancestors.pop(0)
+                    nextlevels = list(filter(lambda g: g['url'] == ancestor.url, currentlevel))
+                    if nextlevels:
+                        currentlevel = nextlevels[0]['children']
+                    else:
+                        newnode = {
+                            'title': ancestor.title,
+                            'url': ancestor.url,
+                            'children': [],
+                        }
+                        currentlevel.append(newnode)
+                        currentlevel = newnode['children']
+            '''
+        else:
+            pages[0]['children'] = list(map(lambda p: {'title': p.title, 'url': p.url, 'children': []}, self.get_children()))
+
+        def alphabetize_pages(currentlevel):
+            for node in currentlevel:
+                node['children'] = alphabetize_pages(node['children'])
+            return sorted(currentlevel, key=lambda c: c['title'])
+        pages = alphabetize_pages(pages)
+
+        def get_html(currentlevel):
+            if not currentlevel:
+                return ''
+            else:
+                return "<ul>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+        pages_html = get_html(pages[0]['children'])
+        
+        context['pages_html'] = pages_html
+
+        context['pages'] = pages[0]['children']
+        context['pages_html'] = pages_html
+        return context
 
 class Address(models.Model):
     """
