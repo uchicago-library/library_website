@@ -84,7 +84,6 @@ MIDDLEWARE_CLASSES = (
 
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
