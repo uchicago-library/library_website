@@ -7,8 +7,8 @@
 	<article>
 		<h1>{{ self.title }}</h1>
 
-        {% for minute in minutes %}
-            <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
+        {% for report in reports %}
+            <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
         {% endfor %}
 	</article>
 {% endblock %}

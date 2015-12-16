@@ -173,9 +173,40 @@ class GroupPage(BasePage, Email):
                 non_group_member_chairs.append(g)
         group_member_chairs = sorted(group_member_chairs, key=lambda g: g.group_member.title)
         non_group_member_chairs = sorted(non_group_member_chairs, key=lambda g: g.group_member.title)
-
         group_members = group_member_chairs + non_group_member_chairs
 
+        # minutes
+        minutes = []
+        for m in GroupMeetingMinutesPage.objects.descendant_of(self).first().meeting_minutes.order_by('-date')[:3]:
+            if not m.link and not m.document.url:
+                continue
+            minute = {
+                'summary': m.summary,
+                'date': m.date.strftime("%b. %-d, %Y")
+            }
+            if m.link:
+                minute['url'] = m.link
+            elif m.document.url:
+                minute['url'] = m.document.url
+            minutes.append(minute)
+
+        #reports
+        reports = []
+        for r in GroupReportsPage.objects.descendant_of(self).first().group_reports.order_by('-date')[:3]:
+            if not r.link and not r.document.url:
+                continue
+            report = {
+                'summary': r.summary,
+                'date': r.date.strftime("%b. %-d, %Y")
+            }
+            if r.link:
+                report['url'] = r.link
+            elif r.document.url:
+                report['url'] = r.document.url
+            reports.append(report)
+
+        context['minutes'] = minutes
+        context['reports'] = reports
         context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
@@ -186,6 +217,26 @@ class GroupMeetingMinutesPage(BasePage):
 
     subpage_types = []
 
+    def get_context(self, request):
+        context = super(GroupMeetingMinutesPage, self).get_context(request)
+
+        minutes = []
+        for m in self.meeting_minutes.order_by('-date'):
+            if not m.link and not m.document.url:
+                continue
+            minute = {
+                'summary': m.summary,
+                'date': m.date.strftime("%b. %-d, %Y")
+            }
+            if m.link:
+                minute['url'] = m.link
+            elif m.document.url:
+                minute['url'] = m.document.url
+            minutes.append(minute)
+
+        context['minutes'] = minutes
+        return context
+
 class GroupReportsPage(BasePage):
     content_panels = Page.content_panels + [
         InlinePanel('group_reports', label='Reports'),
@@ -193,6 +244,25 @@ class GroupReportsPage(BasePage):
 
     subpage_types = []
 
+    def get_context(self, request):
+        context = super(GroupReportsPage, self).get_context(request)
+
+        reports = []
+        for r in self.group_reports.order_by('-date'):
+            if not r.link and not r.document.url:
+                continue
+            report = {
+                'summary': r.summary,
+                'date': r.date.strftime("%b. %-d, %Y")
+            }
+            if r.link:
+                report['url'] = r.link
+            elif r.document.url:
+                report['url'] = r.document.url
+            reports.append(report)
+
+        context['reports'] = reports
+        return context
 
 class GroupIndexPage(BasePage):
     intro = RichTextField()
