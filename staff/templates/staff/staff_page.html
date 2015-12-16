@@ -6,5 +6,11 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
+        {% if self.bio %}
+          <h2>Bio</h2>
+          {% for block in self.bio %}
+            {{ block }}
+          {% endfor %}
+        {% endif %}
 	</article>
 {% endblock %}
