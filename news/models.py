@@ -26,7 +26,7 @@ class NewsPage(BasePage):
     )
     story_date = models.DateField(default=timezone.now)
     sticky_until = models.DateField(blank=True, null=True)
-    image = models.ForeignKey(
+    thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
@@ -39,7 +39,7 @@ class NewsPage(BasePage):
         FieldPanel('author'),
         FieldPanel('story_date'),
         FieldPanel('sticky_until'),
-        ImageChooserPanel('image'),
+        ImageChooserPanel('thumbnail'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 

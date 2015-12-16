@@ -22,10 +22,15 @@ class IntranetHomePage(BasePage):
         if NewsIndexPage.objects.exists():
             for news_page in NewsPage.objects.live():
                 # is it that get_descendants gets the page, but not the object?
+                # author or published by person.
+                # story date or page date. 
                 news_pages.append({
-                    'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' '),
-                    'author_title': news_page.author.title,
-                    'author_url': news_page.author.url,
+                    #'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' '),
+                    'story_date': '',
+                    #'author_title': news_page.author.title,
+                    'author_title': '',
+                    #'author_url': news_page.author.url,
+                    'author_url': '',
                     'excerpt': news_page.excerpt,
                     'title': news_page.title,
                     'url': news_page.url
