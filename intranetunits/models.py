@@ -193,7 +193,6 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
         ],
         heading="Staff-only Contact Information",
     ),
-    InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
 ] + BasePage.content_panels + [
     MultiFieldPanel(
