@@ -193,3 +193,9 @@ WAGTAILSEARCH_BACKENDS = {
         'TIMEOUT': 5,
     }
 }
+
+# Lock down specific nodes to wagtail groups. Sections are locked down
+# by page ID. In order to see any page, a user must belong to all groups
+# set in all page ancestors. This works as a blacklist. 
+# PERMISSIONS_MAPPING = {6: ['Library'], 319: ['Foo', 'Bar']}
+PERMISSIONS_MAPPING = {6: ['Library']}
