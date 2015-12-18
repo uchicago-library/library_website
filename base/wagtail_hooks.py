@@ -2,7 +2,7 @@ from django.utils.html import format_html
 from django.conf import settings
 from wagtail.wagtailcore import hooks
 from django.shortcuts import redirect
-from library_website.settings.base import PERMISSIONS_MAPPING 
+from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL 
 
 def get_required_groups(page):
     """
@@ -60,5 +60,5 @@ def redirect_users_without_permissions(page, request, serve_args, serve_kwargs):
     group permission to see a given node.
     """
     if not has_permission(request.user, get_required_groups(page)): 
-        return redirect('http://duckduckgo.com')
+        return redirect(NO_PERMISSIONS_REDIRECT_URL)
 

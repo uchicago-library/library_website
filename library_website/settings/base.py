@@ -199,3 +199,7 @@ WAGTAILSEARCH_BACKENDS = {
 # set in all page ancestors. This works as a blacklist. 
 # PERMISSIONS_MAPPING = {6: ['Library'], 319: ['Foo', 'Bar']}
 PERMISSIONS_MAPPING = {6: ['Library']}
+
+# Where to send users that aren't members of the necessary groups to
+# view a page.
+NO_PERMISSIONS_REDIRECT_URL = 'https://duckduckgo.com'
