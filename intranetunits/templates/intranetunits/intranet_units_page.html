@@ -42,22 +42,6 @@
       {% endif %}
     {% endif %}
 
-    {% if show_staff %}
-    <h2>Staff</h2>
-    <table class="table table-striped stafflist">
-        <tbody>
-        {% for s in department_members %}
-            <tr>
-                <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
-                <td>{{ s.jobtitle|richtext }}</td>
-                <td><a href="mailto:{{ s.url }}">{{ s.email }}</a></td>
-                <td>{{ s.phone|richtext }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
     {% if show_departments %}
     <h2>Sub-units</h2>
       {% for department_unit_row in department_unit_rows %}
@@ -91,6 +75,22 @@
           {% endfor %}
         </div>
       {% endfor %}
+    {% endif %}
+
+    {% if show_staff %}
+    <h2>Staff</h2>
+    <table class="table table-striped stafflist">
+        <tbody>
+        {% for s in department_members %}
+            <tr>
+                <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
+                <td>{{ s.jobtitle|richtext }}</td>
+                <td><a href="mailto:{{ s.url }}">{{ s.email }}</a></td>
+                <td>{{ s.phone|richtext }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
     {% endif %}
     
     {% if reports %}

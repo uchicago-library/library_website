@@ -156,7 +156,7 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesPage', 'group.GroupReportsPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesPage', 'group.GroupReportsPage']
 
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
@@ -271,7 +271,7 @@ class GroupIndexPage(BasePage):
         FieldPanel('intro')
     ] + BasePage.content_panels
 
-    subpage_types = ['base.IntranetPlainPage', 'group.GroupPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage']
 
     def get_context(self, request):
         context = super(GroupIndexPage, self).get_context(request)
