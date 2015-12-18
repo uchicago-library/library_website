@@ -6,11 +6,9 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
-        {% if self.bio %}
-          <h2>Bio</h2>
-          {% for block in self.bio %}
-            {{ block }}
-          {% endfor %}
-        {% endif %}
+
+        {% for minute in minutes %}
+            <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
+        {% endfor %}
 	</article>
 {% endblock %}

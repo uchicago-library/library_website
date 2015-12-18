@@ -8,6 +8,41 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFie
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 
+class IntranetUnitsReportsPageTable(Orderable, Report):
+    """
+    Reports for intranet unit pages.
+    """
+    page = ParentalKey('intranetunits.IntranetUnitsReportsPage', related_name='intranet_units_reports')
+
+
+class IntranetUnitsReportsPage(BasePage):
+    content_panels = Page.content_panels + [
+        InlinePanel('intranet_units_reports', label='Reports'),
+    ] + BasePage.content_panels 
+
+    subpage_types = []
+
+    def get_context(self, request):
+        context = super(IntranetUnitsReportsPage, self).get_context(request)
+
+        reports = []
+        for r in self.intranet_units_reports.order_by('-date'):
+            if not r.link and not r.document.url:
+                continue
+            report = {
+                'summary': r.summary,
+                'date': r.date.strftime("%b. %-d, %Y")
+            }
+            if r.link:
+                report['url'] = r.link
+            elif r.document.url:
+                report['url'] = r.document.url
+            reports.append(report)
+
+        context['reports'] = reports
+        return context
+
+
 class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     """
     Content type for department pages on the intranet. 
@@ -127,6 +162,23 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
         # split the department units into lists of lists, each inner list containing 4 or less items.
         context['department_unit_rows'] = [department_units[i:i+4] for i in range(0, len(department_units), 4)]
+
+        #reports
+        reports = []
+        for r in IntranetUnitsReportsPage.objects.child_of(self).first().intranet_units_reports.order_by('-date')[:3]:
+            if not r.link and not r.document.url:
+                continue
+            report = {
+                'summary': r.summary,
+                'date': r.date.strftime("%b. %-d, %Y")
+            }
+            if r.link:
+                report['url'] = r.link
+            elif r.document.url:
+                report['url'] = r.document.url
+            reports.append(report)
+
+        context['reports'] = reports
                 
         return context
 
@@ -141,7 +193,6 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
         ],
         heading="Staff-only Contact Information",
     ),
-    InlinePanel('intranet_unit_reports', label='Staff-Only Reports'),
     StreamFieldPanel('body')
 ] + BasePage.content_panels + [
     MultiFieldPanel(
@@ -152,13 +203,6 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
         heading="Show staff or subdepartments on this page"
     )
 ]
-
-
-class IntranetUnitPageReports(Orderable, Report):
-    """
-    Reports for intranet unit pages.
-    """
-    page = ParentalKey('intranetunits.IntranetUnitsPage', related_name='intranet_unit_reports')
 
 class IntranetUnitsIndexPage(BasePage):
     intro = RichTextField()

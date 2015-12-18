@@ -92,6 +92,16 @@
         </tbody>
     </table>
     {% endif %}
+    
+    {% if reports %}
+      <h2>Recent Reports</h2>
+      <ul>
+      {% for report in reports %}
+        <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
+      {% endfor %}
+      <li><a href="reports/">more...</a></li>
+      </ul>
+    {% endif %}
 
     {% for block in self.body %}
         {% if block.block_type == 'h2' %}

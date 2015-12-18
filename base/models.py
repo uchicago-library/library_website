@@ -23,12 +23,42 @@ from pygments.lexers import get_lexer_by_name
 import logging
 import sys
 
+def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+    """Converts an integer to a base36 string."""
+    if not isinstance(number, int):
+        raise TypeError('number must be an integer')
+
+    base36 = ''
+    sign = ''
+
+    if number < 0:
+        sign = '-'
+        number = -number
+
+    if 0 <= number < len(alphabet):
+        return sign + alphabet[number]
+
+    while number != 0:
+        number, i = divmod(number, len(alphabet))
+        base36 = alphabet[i] + base36
+
+    return sign + base36
+
+def base36decode(number):
+    return int(number, 36)
+
 # e.g. path "00010002" returns "000100020004", when "000100020003" is the highest path number that currently exists. 
 def get_available_path_under(path):
     child_pages = filter(lambda p: p.path.startswith(path) and len(p.path) == len(path) + 4, apps.get_model('wagtailcore.Page').objects.all())
     child_paths = sorted(map(lambda c: c.path, child_pages))
     if child_paths:
-        return "%s%04d" % (path, int(child_paths.pop()[-4:]) + 1)
+        # strip off leading zeros from base 36 number: returns something like "Z"
+        p = child_paths.pop()[-4:].lstrip("0")
+        # turn it into an integer and add one to it.
+        p = base36decode(p) + 1
+        # turn it back to base 36 and pad the string with zeros so it's four characters long.
+        p = base36encode(p).zfill(4)
+        return "%s%s" % (path, p)
     else:
         return "%s0001" % path
 
@@ -483,7 +513,7 @@ class Report(models.Model):
     """
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
-    link = models.URLField(max_length=254, blank=False, default='')
+    link = models.URLField(max_length=254, blank=True, default='')
     document = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
