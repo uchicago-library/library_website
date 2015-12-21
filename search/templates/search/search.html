@@ -25,7 +25,7 @@
         <ul>
             {% for result in search_results %}
                 <li>
-                    <h4><a href="{% pageurl result %}">{{ result }}</a> <span class="badge">{% pagetype result %}</span></h4>
+                    <h4><a href="{% pageurl result %}">{{ result }}</a> {% pagetype result %}</h4>
                     {% if result.latest_revision_created_at %}
                         <p>{{ result.latest_revision_created_at }}</p>
                     {% endif %}
