@@ -12,18 +12,26 @@ register = template.Library()
 
 @register.simple_tag(name='pagetype', takes_context=True)
 def pagetype(context, page):
+    # add class g-search.
     if type(page.specific_class()) is GroupPage:
-        return 'Group Page'
+        return 'Groups'
     elif type(page.specific_class()) is IntranetPlainPage:
         return 'Loop Page'
+    # add class dept-search
     elif type(page.specific_class()) is IntranetUnitsPage:
-        return 'Unit Page'
+        return 'Departments'
     elif type(page.specific_class()) is NewsPage:
         return 'News Page'
+    # add class staff-search
     elif type(page.specific_class()) is StaffPage:
-        return 'Staff Page'
+        return 'Staff'
     else:
         return 'Unknown page type'
+
+    # add class f-search, "Forms"
+    # add class doc-search "Documents"
+    # add class tech-search "Tech Support"
+    # add class hr-search "HR"
 
 @register.filter
 @stringfilter

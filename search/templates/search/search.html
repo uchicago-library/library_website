@@ -7,6 +7,7 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
+  <div class="deptlist">
     <h1>Search Results</h1>
 
     {% if search_picks %}
@@ -49,4 +50,5 @@
     {% elif search_query %}
         No results found
     {% endif %}
+  </div>
 {% endblock %}
