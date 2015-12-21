@@ -1,17 +1,45 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
+{% load core_search_tags %}
 
 {% block content %}
   <div class="row-fluid "> <!-- Main Row -->
     <div class="col-xs-12 col-sm-12 col-md-8 swnews">
 	    <h1><a href="{{ news_link }}">News</a></h1>
-        <p>some stuff here</p> 
-        {% for news_page in news_pages %}
-            <div class="media-body">
-            <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-            <p>{{ news_page.excerpt|richtext }}</p>
-            <p><span class="date">Posted by <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a> on {{ news_page.story_date }}</span></p>
+        {% for sticky_page in sticky_pages %}
+          <div class="sticky">
+            <div class="media">
+              {% if sticky_page.thumbnail %}
+                <div class="media-left">
+                  <img class="media-object" width="150px" alt="" src="{{ sticky_page.thumbnail }}"/>
+                </div>
+              {% endif %}
+              <div class="media-body">
+                <span class="date">{{ sticky_page.story_date }}</span>
+                <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
+                {% if sticky_page.excerpt %}
+                  {{ sticky_page.excerpt|richtext }}
+                {% else %}
+                  {{ sticky_page.body|snippet }}
+                {% endif %}
+              </div>
             </div>
+          </div>
+          <hr/>
+        {% endfor %}
+        {% for news_page in news_pages %}
+          <div class="media">
+            <div class="media-body">
+              <span class="date">{{ news_page.story_date }}</span>
+              <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+              {% if news_page.excerpt %}
+                {{ news_page.excerpt|richtext }}
+              {% else %}
+                {{ news_page.body|snippet }}
+              {% endif %}
+            </div>
+          </div>
+          <hr/>
         {% endfor %}
     </div>
 
