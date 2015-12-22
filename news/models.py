@@ -12,6 +12,8 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
+import re
+
 class NewsPage(BasePage):
     """
     News story content type used on intranet pages.
@@ -43,6 +45,15 @@ class NewsPage(BasePage):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
+    def get_context(self, request):
+        context = super(NewsPage, self).get_context(request)
+
+        details = get_story_summary(self)
+        context['story_date'] = details['story_date']
+        context['author_title'] = details['author_title']
+        context['author_url'] = details['author_url']
+        return context
+
 class NewsIndexPage(BasePage):
     """
     Index page for intranet news stories.
@@ -59,79 +70,60 @@ class NewsIndexPage(BasePage):
         context = super(NewsIndexPage, self).get_context(request)
         # need to add order_by('story_date')
 
-        sticky_pages = []
-        for sticky_page in NewsPage.objects.live().exclude(sticky_until=None):
-
-            # skip sticky stories that have 'expired'.
-            if sticky_page.sticky_until and datetime.date(datetime.now()) > sticky_page.sticky_until:
-                continue
-
-            day = int(sticky_page.story_date.strftime('%d'))
-            if 4 <= day <= 20 or 24 <= day <= 30:
-                suffix = "th"
-            else:
-                suffix = ["st", "nd", "rd"][day % 10 - 1]
-
-            if sticky_page.author:
-                author_title = sticky_page.author.title
-                author_url = sticky_page.author.url
-            else:
-                cnetid = sticky_page.owner.username
-                author_title = StaffPage.objects.get(cnetid=cnetid).title
-                author_url = StaffPage.objects.get(cnetid=cnetid).url
-
-            sticky_pages.append({
-                'story_date_sort': sticky_page.story_date,
-                'story_date': sticky_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
-                'author_title': author_title,
-                'author_url': author_url,
-                'excerpt': sticky_page.excerpt,
-                'title': sticky_page.title,
-                'url': sticky_page.url,
-                'body': sticky_page.body
-            })
-        sticky_pages = sorted(sticky_pages, key=lambda p: p['story_date_sort'] )
+        sticky_pages = get_stories(sticky=True)
         if sticky_pages:
             sticky_pages = [sticky_pages.pop(0)]
 
-        news_pages = []
-        for news_page in NewsPage.objects.live():
-            # skip stories that are in the future. 
-            if news_page.story_date > datetime.date(datetime.now()):
-                continue
-
-            # skip active sticky stories. 
-            if news_page.sticky_until and datetime.date(datetime.now()) < news_page.sticky_until:
-                continue
-
-            day = int(news_page.story_date.strftime('%d'))
-            if 4 <= day <= 20 or 24 <= day <= 30:
-                suffix = "th"
-            else:
-                suffix = ["st", "nd", "rd"][day % 10 - 1]
-
-            if news_page.author:
-                author_title = news_page.author.title
-                author_url = news_page.author.url
-            else:
-                cnetid = news_page.owner.username
-                author_title = StaffPage.objects.get(cnetid=cnetid).title
-                author_url = StaffPage.objects.get(cnetid=cnetid).url
-
-            # sticky_until
-            
-            news_pages.append({
-                'story_date_sort': news_page.story_date,
-                'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
-                'author_title': author_title,
-                'author_url': author_url,
-                'excerpt': news_page.excerpt,
-                'title': news_page.title,
-                'url': news_page.url,
-                'body': news_page.body
-            })
-        news_pages = sorted(news_pages, key=lambda p: p['story_date_sort'])
+        news_pages = get_stories()
 
         context['sticky_pages'] = sticky_pages
         context['news_pages'] = news_pages
         return context
+
+def get_stories(sticky=False):
+    pages = []
+    if sticky:
+        for page in NewsPage.objects.live().exclude(sticky_until=None):
+            # skip stories that are in the future. 
+            if page.story_date > datetime.date(datetime.now()):
+                continue
+            # skip sticky stories that have 'expired'.
+            if page.sticky_until and datetime.date(datetime.now()) > page.sticky_until:
+                continue
+            pages.append(get_story_summary(page))
+    else:
+        for page in NewsPage.objects.live().filter(sticky_until=None):
+            # skip stories that are in the future. 
+            if page.story_date > datetime.date(datetime.now()):
+                continue
+            pages.append(get_story_summary(page))
+
+    return sorted(pages, key=lambda p: p['story_date_sort'], reverse=True)
+
+def get_story_summary(news_page):
+    day = int(news_page.story_date.strftime('%d'))
+    if 4 <= day <= 20 or 24 <= day <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][day % 10 - 1]
+
+    if news_page.author:
+        author_title = news_page.author.title
+        author_url = news_page.author.url
+    else:
+        cnetid = news_page.owner.username
+        author_title = StaffPage.objects.get(cnetid=cnetid).title
+        author_url = StaffPage.objects.get(cnetid=cnetid).url
+
+
+    return {
+        'story_date_sort': news_page.story_date,
+        'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
+        'author_title': author_title,
+        'author_url': author_url,
+        'excerpt': re.sub('<[^>]*>', '', news_page.excerpt).strip(),
+        'title': news_page.title,
+        'url': news_page.url,
+        'body': news_page.body,
+        'thumbnail': news_page.thumbnail
+    }

@@ -1,6 +1,7 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 {% load core_search_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -14,12 +15,13 @@
             <div class="media">
               {% if sticky_page.thumbnail %}
                 <div class="media-left">
-                  <img class="media-object" width="150px" alt="" src="{{ sticky_page.thumbnail }}"/>
+                  {% image sticky_page.thumbnail fill-150x150 class="media-object" %}
                 </div>
               {% endif %}
               <div class="media-body">
                 <span class="date">{{ sticky_page.story_date }}</span>
                 <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
+                <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
                 {% if sticky_page.excerpt %}
                   {{ sticky_page.excerpt|richtext }}
                 {% else %}
@@ -33,14 +35,22 @@
 
         {% for news_page in news_pages %}
           <div class="news">
-            <div class="media-body">
-            <span class="date">{{ news_page.story_date }}</span>
-            <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-            {% if news_page.excerpt %}
-              {{ news_page.excerpt|richtext }}
-            {% else %}
-              {{ news_page.body|snippet }}
-            {% endif %}
+            <div class="media">
+              {% if news_page.thumbnail %}
+                <div class="media-left">
+                  {% image news_page.thumbnail fill-150x150 class="media-object" %}
+                </div>
+              {% endif %}
+              <div class="media-body">
+              <span class="date">{{ news_page.story_date }}</span>
+              <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+              <p><em>By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></em></p>
+              {% if news_page.excerpt %}
+                {{ news_page.excerpt|richtext }}
+              {% else %}
+                {{ news_page.body|snippet }}
+              {% endif %}
+              </div>
             </div>
           </div>
           <hr/>

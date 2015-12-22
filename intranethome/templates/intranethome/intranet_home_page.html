@@ -1,6 +1,7 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 {% load core_search_tags %}
+{% load wagtailimages_tags %}
 
 {% block content %}
   <div class="row-fluid "> <!-- Main Row -->
@@ -11,12 +12,13 @@
             <div class="media">
               {% if sticky_page.thumbnail %}
                 <div class="media-left">
-                  <img class="media-object" width="150px" alt="" src="{{ sticky_page.thumbnail }}"/>
+                  {% image sticky_page.thumbnail fill-150x150 class="media-object" %}
                 </div>
               {% endif %}
               <div class="media-body">
                 <span class="date">{{ sticky_page.story_date }}</span>
                 <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
+                <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
                 {% if sticky_page.excerpt %}
                   {{ sticky_page.excerpt|richtext }}
                 {% else %}
@@ -29,9 +31,15 @@
         {% endfor %}
         {% for news_page in news_pages %}
           <div class="media">
+            {% if news_page.thumbnail %}
+              <div class="media-left">
+                {% image news_page.thumbnail fill-150x150 class="media-object" %}
+              </div>
+            {% endif %}
             <div class="media-body">
               <span class="date">{{ news_page.story_date }}</span>
               <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+              <p><em>By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></em></p>
               {% if news_page.excerpt %}
                 {{ news_page.excerpt|richtext }}
               {% else %}
@@ -91,10 +99,15 @@
 
       <p><strong>On Campus Interests</strong><br/>
         <a href="https://itservices.uchicago.edu/page/university-webcams">Campus Camera Feeds</a><br/>
-        <a href="https://wellness.uchicago.edu/page/mindfulness-meditation">Meditation on Campus</a><br/>
+        <a href="http://events.uchicago.edu/cal/main/showMain.rdo;jsessionid=C22CCF8F17687AD9F8616251F7EBF532.bw04">Campus Events</a><br/>
         <a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a><br/>
-        <a href="http://marketplace.uchicago.edu/">UChicago Marketplace</a><br/>
-      <a href="http://events.uchicago.edu/cal/main/showMain.rdo;jsessionid=C22CCF8F17687AD9F8616251F7EBF532.bw04">Campus Events</a></p>
+        <a href="http://www.law.uchicago.edu/students/students-with-families#facilities">Childcare Facilities</a><br/>
+        <a href="https://wellness.uchicago.edu/page/mindfulness-meditation">Meditation on Campus</a><br/>
+        <a href="https://instagram.com/Rockefeller_Chapel/">Rockefeller Chapel Instagram</a><br/>
+        <a href="http://arts.uchicago.edu/">UChicago Arts</a><br/>
+        <a href="http://chicagopresents.uchicago.edu/">UChicago Presents</a>
+        <!--<a href="http://marketplace.uchicago.edu/">UChicago Marketplace</a><br/>-->
+        </p>
       
       <p><strong>Social Media</strong><br/>
       <a href="https://twitter.com/BusEconLib">BusEcon Twitter</a><br/>
@@ -106,11 +119,9 @@
       <a href="https://loop.lib.uchicago.edu/library-social-media/">More &gt;&gt;</a></p>
 
       <p><strong>Non-Affiliated Links</strong><br/>
-      <a href="https://twitter.com/chicagopresents">Chicago Presents</a><br/>
       <a href="https://twitter.com/FakeLibStats?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">Fake Library Stats Twitter</a><br/>
+      <a href="https://hppsn.wordpress.com/">Hyde Park Parents Support Network</a><br/>
       <a href="https://twitter.com/uofc_overheard">Overheard at UChicago</a><br/>
-      <a href="https://instagram.com/Rockefeller_Chapel/">Rockefeller Chapel Instagram</a><br/>
-      <a href="https://twitter.com/UChicagoArts">UChicago Arts</a><br/>
       <a href="https://twitter.com/UChicagoScav">UChicago SCAV</a></p>
     </div> <!-- // Work/Life -->
            

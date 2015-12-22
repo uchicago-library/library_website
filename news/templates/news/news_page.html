@@ -6,7 +6,9 @@
 
 {% block content %}
 	<article>
+        <p><span class="date">{{ story_date }}</span></p>
 		<h1>{{ self.title }}</h1>
+        <p><em>By <a href="{{ author_url }}">{{ author_title }}</a></p>
         {% if self.feature_image %}
 		{% image self.feature_image original as feature_image %}
 		<img src="{{ feature_image.url }}"/>
@@ -24,5 +26,8 @@
                 </section>
             {% endif %}
         {% endfor %}
+
+        <hr/>
+        <p>Read more <a href="/news/">news stories</a>.</p>
 	</article>
 {% endblock %}
