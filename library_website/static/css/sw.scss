@@ -20,11 +20,24 @@ $accentlink-light: #ADB17D;
 }
 
 @mixin plainlist {
-		list-style-type: none;
-		line-height: 1.7em;
-		padding-left: 0;
-		//margin-bottom: 30px;
-	}
+	list-style-type: none;
+	line-height: 1.7em;
+	padding-left: 0;
+	//margin-bottom: 30px;
+}
+
+@mixin linkicons {
+	font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #000;
+    font-size: 1em;
+    padding-left: 0.5em;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
 
 // -- Start Styling ---
 
@@ -113,6 +126,16 @@ h5 {
   line-height: 1.5em;
 }
 
+.media-heading {
+	margin-top: 5px;
+	margin-bottom: 3px;
+    font-size: 1.1em;
+    color: #9A5324;
+    & a {
+    	color: #9A5324;
+    }
+}
+
 .date {
 	font-weight: 100;
 	font-size: 1.1em;
@@ -143,7 +166,7 @@ h5 {
 .navbar-right {
 	padding: 15px 30px;
 	@media (min-width: 768px) {
-		margin: 20px 20px 0 0;
+		margin: 20px 40px 0 0;
 		padding: 0px;
 	}
 }
@@ -247,7 +270,7 @@ h5 {
 	}
 }
 
-.navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
+.navbar-default .navbar-nav>li>a:focus {
 	color: $accentlink-light;
 }
 
@@ -445,7 +468,7 @@ figure {
 		@include plainlist;
 	}
 	.fa {
-		color: #ADB17D;
+		color: $accentlink-light;
 	}
 	h3 {
 		margin-top: 5px;
@@ -464,6 +487,10 @@ figure {
 }
 
 .swside-home {
+	a {
+		color: $accentlink;
+		text-decoration: none;
+	}
 	@media (min-width: 768px) {
 	border-left: 1px solid $accentlink-light;
 	padding-left: 30px;
@@ -483,13 +510,16 @@ figure {
 
 .btn-bugzilla {
 	background-color: #800000;
-	color: #fff;
+	color: #fff !important;
 	width: 100%;
 	letter-spacing: 2px;
 	font-size: 1.2em;
 	margin: 10px 0 10px 0;
 	@media (min-width: 768px) {
 		width: 50%;
+	}
+	a {
+		color: #fff;
 	}
 	&:hover {
 	    color: #fff;
@@ -529,6 +559,43 @@ blockquote:after {
 blockquote p {
   display: inline;
 }
+
+/*
+ * Link and File Extension Icons
+ * --------------------------------------------------
+
+
+// a[href^="http://"] {
+// 	content: "\f08e";
+//     @include linkicons;
+// }
+
+a[href^="mailto:"] {
+    content: "\f1d9";
+    @include linkicons;    
+}
+
+a[href$=".pdf"]:after {
+	content: "\f1c1";
+    @include linkicons;
+}
+
+a[href$=".pptx"]:after, a[href$=".ppt"]:after {
+	content: "\f1c4";
+    @include linkicons;
+}
+
+a[href$=".xlsx"]:after {
+	content: "\f1c3";
+    @include linkicons;
+}
+
+a[href$=".docx"]:after, a[href$=".doc"]:after {
+	content: "\f1c2";
+    @include linkicons;
+}
+
+ */
 
 /*
  *  Tables
@@ -578,9 +645,9 @@ table, tbody {
 		margin: 15px 0 0 0;
 		a {
 		  font-size: 1.1em;
-		  font-weight: 700;
+		  font-weight: 400;
 		  color:$darkaccent;
-		  padding-bottom: 5px;
+		  padding-bottom: 3px;
 		}
 		&>ul>li {
 		margin: 0 0;
@@ -629,15 +696,15 @@ table, tbody {
 		margin: 15px 0 0 0;
 		a {
 		  font-size: 1.1em;
-		  font-weight: 700;
+		  font-weight: 400;
 		  color:$darkaccent;
-		  padding-bottom: 5px;
+		  padding-bottom: 3px;
 		}
 		&>ul>li {
 		margin: 0 0;
 			a {
 			  font-size: 1em;
-			  font-weight: 600;
+			  font-weight: 400;
 			  color:$darkgray;
 			  line-height: 2em;
 			}
@@ -652,7 +719,7 @@ table, tbody {
 		margin: 15px 0 0 0;
 		a {
 		  font-size: 1em;
-		  font-weight: 700;
+		  font-weight: 400;
 		  color:$darkgray;
 		  padding-bottom: 5px;
 		}
@@ -660,7 +727,7 @@ table, tbody {
 		margin: 0 0;
 			a {
 			  font-size: 1em;
-			  font-weight: 600;
+			  font-weight: 400;
 			  color:$darkergray;
 			  line-height: 2em;
 			}
