@@ -17,6 +17,11 @@ class Command(BaseCommand):
     help = 'Create a user in the auth_user table.'
 
     REQUIRED_GROUP_NAMES = {1: 'Library', 2: 'Editors'}
+
+    # Exception table for non-standard names.   
+    # Should be removed when first_name and 
+    # last_name are returned in the directory feed
+    PROTECTED_NAMES = {'nelson3': {0:'Tonya', 1:'Mullins-Nelson'}}
     
     def add_arguments(self, parser):
         """
@@ -57,6 +62,11 @@ class Command(BaseCommand):
                        'is_staff': options['is_staff'][0] }
         except:
             sys.exit(1)
+
+        # Fix non-standard names in the execption table
+        if kwargs['username'] in self.PROTECTED_NAMES:
+            kwargs['first_name'] = self.PROTECTED_NAMES[kwargs['username']][0]
+            kwargs['last_name'] = self.PROTECTED_NAMES[kwargs['username']][1]
 
         # Get required groups all Library fulltime staff 
         # must belong to both of these groups. 
@@ -100,8 +110,6 @@ class Command(BaseCommand):
                 library_group.user_set.add(user)
             if not user.groups.filter(name=self.REQUIRED_GROUP_NAMES[2]).exists():           
                 editors_group.user_set.add(user)
-            #self.stdout.write('The user "%s" was found in the system.' % kwargs['username'])
-            #self.stdout.write('This user\'s account has been updated.' )
             retval = '(0, "%s")' % kwargs['username']
 
         # Create the user if he or she didn't exist.
@@ -109,8 +117,7 @@ class Command(BaseCommand):
             user = User.objects.create(**kwargs)
             library_group.user_set.add(user)
             editors_group.user_set.add(user)
-            #self.stdout.write('The user "%s" was not found in the system.' % kwargs['username'])
-            #self.stdout.write('A new account has been successfully created for this user.')
             retval = '(1, "%s")' % kwargs['username'] 
 
         return retval
+
