@@ -167,10 +167,13 @@ class GroupPage(BasePage, Email):
         group_member_chairs = []
         non_group_member_chairs = []
         for g in group_members:
+            if g.group_member == None:
+                continue
             if g.role and g.role.text in ['Chair', 'Co-Chair']:
                 group_member_chairs.append(g)
             else:
                 non_group_member_chairs.append(g)
+
         group_member_chairs = sorted(group_member_chairs, key=lambda g: g.group_member.title)
         non_group_member_chairs = sorted(non_group_member_chairs, key=lambda g: g.group_member.title)
         group_members = group_member_chairs + non_group_member_chairs
