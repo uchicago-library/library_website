@@ -14,6 +14,8 @@ from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
 
+import json, re
+
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
     Through table for linking Subject snippets to StaffPages.
@@ -171,6 +173,65 @@ class StaffPage(BasePage):
 
     class Meta:
         ordering = ['title']
+
+    def get_context(self, request):
+        vcard_titles = set()
+        faculty_exchanges = set()
+        emails = set()
+        phones = set()
+        units = set()
+    
+        for vcard in self.vcards.all():
+            vcard_titles.add(re.sub('\s+', ' ', vcard.title).strip())
+            faculty_exchanges.add(re.sub('\s+', ' ', vcard.faculty_exchange).strip())
+            emails.add(vcard.email)
+            phones.add(vcard.phone_number)
+
+            try:
+                unit_title = vcard.unit.fullName
+            except:
+                unit_title = None
+            try:
+                unit_url = vcard.unit.intranet_unit_page.first().url
+            except:
+                unit_url = None
+            units.add(json.dumps({
+                'title': unit_title,
+                'url': unit_url
+            }))
+
+        vcard_titles = list(vcard_titles)
+        faculty_exchanges = list(faculty_exchanges)
+        emails = list(emails)
+        phones = list(phones)
+        units = list(map(json.loads, list(units)))
+
+        subjects = []
+        for subject in self.staff_subject_placements.all():
+            subjects.append({
+                'name': subject.subject.name,
+                'url': ''
+            })
+
+        group_memberships = []
+        for group_membership in self.member.all():
+            group_memberships.append({
+                'group': {
+                    'title': group_membership.parent.title,
+                    'url': group_membership.parent.url
+                },
+                'role': group_membership.role
+            })
+            
+        context = super(StaffPage, self).get_context(request)
+        context['vcard_titles'] = vcard_titles
+        context['faculty_exchanges'] = faculty_exchanges
+        context['emails'] = emails
+        context['phones'] = phones
+        context['units'] = units
+        context['subjects'] = subjects
+        context['group_memberships'] = group_memberships
+        return context
 
 class StaffIndexPage(BasePage):
     """

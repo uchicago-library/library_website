@@ -1,16 +1,105 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
 	<article>
-		<h1>{{ self.title }}</h1>
-        {% if self.bio %}
-          <h2>Bio</h2>
-          {% for block in self.bio %}
-            {{ block }}
-          {% endfor %}
+      {% if self.profile_picture %}
+        <div class="col-md-3 col-sm-12">
+          <div class="media">
+            <div class="media-left">
+              {% image self.profile_picture width-200 class="img-responsive" %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if self.profile_picture %}
+        <div class="col-md-9 col-sm-12">
+      {% else %}
+        <div class="col-md-12 col-sm-12">
+      {% endif %}
+
+	  <h1>{{ self.title }}</h1>
+
+      {% for vcard_title in vcard_titles %}
+        <h2 class="staffpage-title">{{ vcard_title }}</h2>
+      {% endfor %}
+
+      <p>
+      {% for unit in units %}
+          <span class="staffpage-department">
+          {% if unit.url %}
+            <a href="{{ unit.url }}">{{ unit.title }}</a>
+          {% else %}
+            {{ unit.title }}
+          {% endif %}
+          </span>
+          {% if not forloop.last %}
+            <br/>
+          {% endif %}
+      {% endfor %}
+      </p>
+
+    </div>
+    <div class="col-md-12 col-sm-12">
+      <hr/>
+
+      <h2>Contact</h2>
+      <p>
+        {% for email in emails %}
+          <a href="mailto:{{ email }}">{{ email }}</a><br/>
+        {% endfor %}
+        {% for phone in phones %}
+          <a href="tel:{{ phone }}">{{ phone }}</a><br/>
+        {% endfor %}
+        {% for faculty_exchange in faculty_exchanges %}
+          <span class="staffpage-faculty-exchange">{{ faculty_exchange }}</span><br/>
+        {% endfor %}
+
+      {% if self.bio or self.libguide_url or self.cv %}
+        <h2>Bio</h2>
+        {% for block in self.bio %}
+          {{ block }}
+        {% endfor %}
+        {% if self.libguide_url or self.cv %}
+          <p>
+          {% if self.cv %}
+            <a href="{{ self.cv.url }}">CV</a>
+          {% endif %}
+          {% if self.libguide_url and self.cv %}&nbsp;&nbsp;|&nbsp;&nbsp;{% endif %}
+          {% if self.libguide_url %}
+            <a href="{{ self.libguide_url }}">LibGuides Profile</a>
+          {% endif %}
         {% endif %}
+      {% endif %}
+
+      {% if subjects %}
+        <h2>Subjects</h2>
+        <ul>
+          {% for subject in subjects %}
+          <li>{{ subject.name }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if group_memberships %}
+        <h2>Committees &amp; Groups</h2>
+        <div class="grouplist">
+          <ul>
+            {% for group_membership in group_memberships %}
+              <li>
+                <a href="{{ group_membership.group.url }}">
+                  {{ group_membership.group.title }}
+                  {% if group_membership.role %}{{ group_membership.role }}{% endif %}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      </div>
 	</article>
 {% endblock %}
