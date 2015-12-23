@@ -153,6 +153,7 @@ class BasePage(Page):
                 try:
                     if p.specific.start_sidebar_from_here:
                         context['sidebartitle'] = p.title
+                        break
                 except:
                     pass
                 
