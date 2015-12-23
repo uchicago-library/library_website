@@ -5,24 +5,28 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
-      <div class="media">
-        {% if thumbnail %}
-          <div class="media-left">
-            {% image thumbnail width-200 class="img-responsive media-object" %}
+  <div class="row-fluid">
+    <div class="div.col-xs-12 col-sm-12 col-md-12 swnews">
+  	  <article>
+        <div class="media">
+          {% if thumbnail %}
+            <div class="media-left">
+              {% image thumbnail width-200 class="img-responsive media-object" %}
+            </div>
+          {% endif %}
+          <div class="media-body">
+            <p><span class="date">{{ story_date }}</span></p>
+            <h1>{{ self.title }}</h1>
+            <p><em>By <a href="{{ author_url }}">{{ author_title }}</a></em></p>
+            {% for block in self.body %}
+              {{ block }}
+            {% endfor %}
+      
+            <hr/>
+            <p>Read more <a href="/news/">news stories</a>.</p>
           </div>
-        {% endif %}
-        <div class="media-body">
-          <p><span class="date">{{ story_date }}</span></p>
-          <h1>{{ self.title }}</h1>
-          <p><em>By <a href="{{ author_url }}">{{ author_title }}</a></em></p>
-          {% for block in self.body %}
-            {{ block }}
-          {% endfor %}
-    
-          <hr/>
-          <p>Read more <a href="/news/">news stories</a>.</p>
         </div>
-      </div>
-	</article>
+  	  </article>
+    </div>
+  </div>
 {% endblock %}

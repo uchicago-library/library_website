@@ -6,7 +6,9 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
+  <div class="row-fluid">
+    <div class="div.col-xs-12 col-sm-12 col-md-12 swnews">
+	  <article>
 	    <h1>News</h1>
 		{{ self.intro|richtext }}
 
@@ -53,6 +55,7 @@
           </div>
           <hr/>
         {% endfor %}
-
-	</article>
+  	  </article>
+    </div>
+  </div>
 {% endblock %}

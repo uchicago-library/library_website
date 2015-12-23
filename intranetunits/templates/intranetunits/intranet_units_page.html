@@ -4,119 +4,125 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<h1>{{ self.title }}</h1>
-    {% for block in self.intro %}
-        {% if block.block_type == 'h2' %}
-            <h2>{{ block.value }}</h2>
-        {% elif block.block_type == 'h3' %}
-            <h3>{{ block.value }}</h3>
-        {% elif block.block_type == 'h4' %}
-            <h4>{{ block.value }}</h4>
-            {{ block.value|richtext }}
-        {% elif block.block_type == 'paragraph' %}
-            {{ block.value }}
-        {% else %}
-            <section class="block-{{ block.block_type }}">
-                {{ block }}
-            </section>
-        {% endif %}
-    {% endfor %}
-
-    {% if location or phone or email %}
-      <h2>Department Contact</h2>
-      {% if location %}
-        <p>{{ location }}</p>
-      {% endif %}
-      {% if phone or email %}
-        <p>
-        {% if phone %}
-          {{ phone }}
-        {% endif %}
-        {% if phone and email %}
-          |
-        {% endif %}
-        {% if email %}
-          <a href="mailto:{{ email }}">{{ email }}</a>
-        {% endif %}
-        </p>
-      {% endif %}
-    {% endif %}
-
-    {% if show_departments %}
-    <h2>Sub-units</h2>
-      {% for department_unit_row in department_unit_rows %}
-        <div class="row">
-          {% for department_unit in department_unit_row %}
-          <div class="col-md-3">
-            <h3 style="margin-top: 0px;"><a href="{{ department_unit.url }}">{{ department_unit.title }}</a></h3>
-            {% if department_unit.location or department_unit.phone_number or department_unit.email %}
-            <p>
-              {% if department_unit.location %}
-                {{ department_unit.location }}
-                {% if department_unit.phone_number or department_unit.email %}<br/>{% endif %}
-              {% endif %}
-              {% if department_unit.phone_number %}
-                {{ department_unit.phone_number }}
-                {% if department_unit.email %}|{% endif %}
-              {% endif %}
-              {% if department_unit.email %}
-                <a href="mailto:{{ department_unit.email }}">{{ department_unit.email }}</a>
-              {% endif %}
-            </p>
+  <div class="row-fluid">
+    <div class="div.col-xs-12 col-sm-12 col-md-12 swnews">
+  	  <article>
+    	<h1>{{ self.title }}</h1>
+        {% for block in self.intro %}
+            {% if block.block_type == 'h2' %}
+                <h2>{{ block.value }}</h2>
+            {% elif block.block_type == 'h3' %}
+                <h3>{{ block.value }}</h3>
+            {% elif block.block_type == 'h4' %}
+                <h4>{{ block.value }}</h4>
+                {{ block.value|richtext }}
+            {% elif block.block_type == 'paragraph' %}
+                {{ block.value }}
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {{ block }}
+                </section>
             {% endif %}
-            {% if department_unit.supervisors %}
-              <p><strong>Supervisor:</strong>
-              {% for supervisor in department_unit.supervisors %}
-                <br/><a href="{{ supervisor.url }}">{{ supervisor.title }}</a><br/>{{ supervisor.phone_number }} | <a href="mailto:{{ supervisor.email }}">{{ supervisor.email }}</a>
-              {% endfor %}
-              </p>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    {% if show_staff %}
-    <h2>Staff</h2>
-    <table class="table table-striped stafflist">
-        <tbody>
-        {% for s in department_members %}
-            <tr>
-                <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
-                <td>{{ s.jobtitle|richtext }}</td>
-                <td><a href="mailto:{{ s.url }}">{{ s.email }}</a></td>
-                <td>{{ s.phone|richtext }}</td>
-            </tr>
         {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
     
-    {% if reports %}
-      <h2>Recent Reports</h2>
-      <ul>
-      {% for report in reports %}
-        <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
-      {% endfor %}
-      <li><a href="reports/">more...</a></li>
-      </ul>
-    {% endif %}
-
-    {% for block in self.body %}
-        {% if block.block_type == 'h2' %}
-            <h2>{{ block.value }}</h2>
-        {% elif block.block_type == 'h3' %}
-            <h3>{{ block.value }}</h3>
-        {% elif block.block_type == 'h4' %}
-            <h4>{{ block.value }}</h4>
-            {{ block.value|richtext }}
-        {% elif block.block_type == 'paragraph' %}
-            {{ block.value }}
-        {% else %}
-            <section class="block-{{ block.block_type }}">
-                {{ block }}
-            </section>
+        {% if location or phone or email %}
+          <h2>Department Contact</h2>
+          {% if location %}
+            <p>{{ location }}</p>
+          {% endif %}
+          {% if phone or email %}
+            <p>
+            {% if phone %}
+              {{ phone }}
+            {% endif %}
+            {% if phone and email %}
+              |
+            {% endif %}
+            {% if email %}
+              <a href="mailto:{{ email }}">{{ email }}</a>
+            {% endif %}
+            </p>
+          {% endif %}
         {% endif %}
-    {% endfor %}
+    
+        {% if show_departments %}
+        <h2>Sub-units</h2>
+          {% for department_unit_row in department_unit_rows %}
+            <div class="row">
+              {% for department_unit in department_unit_row %}
+              <div class="col-md-3">
+                <h3 style="margin-top: 0px;"><a href="{{ department_unit.url }}">{{ department_unit.title }}</a></h3>
+                {% if department_unit.location or department_unit.phone_number or department_unit.email %}
+                <p>
+                  {% if department_unit.location %}
+                    {{ department_unit.location }}
+                    {% if department_unit.phone_number or department_unit.email %}<br/>{% endif %}
+                  {% endif %}
+                  {% if department_unit.phone_number %}
+                    {{ department_unit.phone_number }}
+                    {% if department_unit.email %}|{% endif %}
+                  {% endif %}
+                  {% if department_unit.email %}
+                    <a href="mailto:{{ department_unit.email }}">{{ department_unit.email }}</a>
+                  {% endif %}
+                </p>
+                {% endif %}
+                {% if department_unit.supervisors %}
+                  <p><strong>Supervisor:</strong>
+                  {% for supervisor in department_unit.supervisors %}
+                    <br/><a href="{{ supervisor.url }}">{{ supervisor.title }}</a><br/>{{ supervisor.phone_number }} | <a href="mailto:{{ supervisor.email }}">{{ supervisor.email }}</a>
+                  {% endfor %}
+                  </p>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        {% endif %}
+    
+        {% if show_staff %}
+        <h2>Staff</h2>
+        <table class="table table-striped stafflist">
+            <tbody>
+            {% for s in department_members %}
+                <tr>
+                    <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
+                    <td>{{ s.jobtitle|richtext }}</td>
+                    <td><a href="mailto:{{ s.url }}">{{ s.email }}</a></td>
+                    <td>{{ s.phone|richtext }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        
+        {% if reports %}
+          <h2>Recent Reports</h2>
+          <ul>
+          {% for report in reports %}
+            <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
+          {% endfor %}
+          <li><a href="reports/">more...</a></li>
+          </ul>
+        {% endif %}
+    
+        {% for block in self.body %}
+            {% if block.block_type == 'h2' %}
+                <h2>{{ block.value }}</h2>
+            {% elif block.block_type == 'h3' %}
+                <h3>{{ block.value }}</h3>
+            {% elif block.block_type == 'h4' %}
+                <h4>{{ block.value }}</h4>
+                {{ block.value|richtext }}
+            {% elif block.block_type == 'paragraph' %}
+                {{ block.value }}
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {{ block }}
+                </section>
+            {% endif %}
+        {% endfor %}
+  	  </article>
+    </div>
+  </div>
 {% endblock %}

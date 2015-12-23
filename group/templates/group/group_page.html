@@ -4,61 +4,65 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <article>
-    <h1>{{ self.title }}</h1>
-    {% for block in self.intro %}
-      {{ block }}
-    {% endfor %}
-    <p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
-
-    <h2>Meetings</h2>
-    <p>{{ self.meeting_frequency }}</p>
-    <p>{{ self.meeting_location }}, {{ self.meeting_start_time }}-{{ self.meeting_end_time }}</p>
-
-    <h2>Current Members</h2>
-    <table class="table table-striped">
-      <tbody>
-        {% for group_member in group_members %}
-          <tr>
-            <td>
-              <a href="{{ group_member.url }}">{{ group_member.title }}</a>
-            </td>
-            <td>
-              {% if group_member.role %}
-                {{ group_member.role }}
-              {% endif %}
-            <td/>
-            <td>
-              {% if group_member.unit %}
-                {{ group_member.unit|richtext }}
-              {% endif %}
-            <td/>
-          </tr>
+  <div class="row-fluid">
+    <div class="div.col-xs-12 col-sm-12 col-md-12">
+      <article>
+        <h1>{{ self.title }}</h1>
+        {% for block in self.intro %}
+          {{ block }}
         {% endfor %}
-      </tbody>
-    </table>
-    {% if minutes %}
-      <h2>Recent Meeting Minutes</h2>
-      <ul>
-        {% for minute in minutes %}
-          <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
+        <p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
+    
+        <h2>Meetings</h2>
+        <p>{{ self.meeting_frequency }}</p>
+        <p>{{ self.meeting_location }}, {{ self.meeting_start_time }}-{{ self.meeting_end_time }}</p>
+    
+        <h2>Current Members</h2>
+        <table class="table table-striped">
+          <tbody>
+            {% for group_member in group_members %}
+              <tr>
+                <td>
+                  <a href="{{ group_member.url }}">{{ group_member.title }}</a>
+                </td>
+                <td>
+                  {% if group_member.role %}
+                    {{ group_member.role }}
+                  {% endif %}
+                <td/>
+                <td>
+                  {% if group_member.unit %}
+                    {{ group_member.unit|richtext }}
+                  {% endif %}
+                <td/>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if minutes %}
+          <h2>Recent Meeting Minutes</h2>
+          <ul>
+            {% for minute in minutes %}
+              <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
+            {% endfor %}
+            <li><a href="meeting-minutes/">more...</a></li>
+          </ul>
+        {% endif %}
+    
+        {% if reports %}
+          <h2>Recent Reports</h2>
+          <ul>
+            {% for report in reports %}
+              <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
+            {% endfor %}
+            <li><a href="reports/">more...</a></li>
+          </ul>
+        {% endif %}
+    
+        {% for block in self.body %}
+          {{ block }}
         {% endfor %}
-        <li><a href="meeting-minutes/">more...</a></li>
-      </ul>
-    {% endif %}
-
-    {% if reports %}
-      <h2>Recent Reports</h2>
-      <ul>
-        {% for report in reports %}
-          <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
-        {% endfor %}
-        <li><a href="reports/">more...</a></li>
-      </ul>
-    {% endif %}
-
-    {% for block in self.body %}
-      {{ block }}
-    {% endfor %}
-  </article>
+      </article>
+    </div>
+  </div>
 {% endblock %}
