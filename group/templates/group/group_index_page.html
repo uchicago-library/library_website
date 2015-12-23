@@ -4,22 +4,22 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
-		<h1>{{ self.title }}</h1>
+  <article>
+    <h1>{{ self.title }}</h1>
 
-		{{ self.intro|richtext }}
+    {{ self.intro|richtext }}
     
-        <div class="grouplist">
-          {{ groups_active_html|richtext }}
-        </div>
+    <div class="grouplist">
+      {{ groups_active_html|richtext }}
+    </div>
 
-        <h2>Inactive Groups</h2>
-        <div class="inactive-groups">
-          <ul>
-            {% for group in groups_inactive %}
-                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-	</article>
+    <h2>Inactive Groups</h2>
+    <div class="inactive-groups">
+      <ul>
+        {% for group in groups_inactive %}
+          <li><a href="{{ group.url }}">{{ group.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </article>
 {% endblock %}
