@@ -15,7 +15,7 @@
         <div class="media-body">
           <p><span class="date">{{ story_date }}</span></p>
           <h1>{{ self.title }}</h1>
-          <p><em>By <a href="{{ author_url }}">{{ author_title }}</a></p>
+          <p><em>By <a href="{{ author_url }}">{{ author_title }}</a></em></p>
           {% for block in self.body %}
             {{ block }}
           {% endfor %}

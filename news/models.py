@@ -103,6 +103,12 @@ def get_stories(sticky=False):
     return sorted(pages, key=lambda p: p['story_date_sort'], reverse=True)
 
 def get_story_summary(news_page):
+    def simplify_text(s):
+        # strip out every HTML tag except opening and closing <a> tags. 
+        s = re.sub(r"<(?!\/?a(?=>|\s.*>))\/?.*?>", " ", s)
+        s = re.sub(r"\s+", " ", s)
+        return s.strip()
+    
     day = int(news_page.story_date.strftime('%d'))
     if 4 <= day <= 20 or 24 <= day <= 30:
         suffix = "th"
@@ -117,13 +123,26 @@ def get_story_summary(news_page):
         author_title = StaffPage.objects.get(cnetid=cnetid).title
         author_url = StaffPage.objects.get(cnetid=cnetid).url
 
+    simplified_text = simplify_text(news_page.excerpt)
+    if not simplified_text:
+        simplified_text = simplify_text(" ".join([s.render() for s in news_page.body]))
+
+    words = simplified_text.split(" ")
+    excerpt = " ".join(words[:50])
+
+    if len(words) > 50:
+        excerpt = excerpt + "..."
+        read_more = True
+    else:
+        read_more = False
 
     return {
         'story_date_sort': news_page.story_date,
         'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
         'author_title': author_title,
         'author_url': author_url,
-        'excerpt': re.sub('<[^>]*>', '', news_page.excerpt).strip(),
+        'excerpt': excerpt,
+        'read_more': read_more,
         'title': news_page.title,
         'url': news_page.url,
         'body': news_page.body,

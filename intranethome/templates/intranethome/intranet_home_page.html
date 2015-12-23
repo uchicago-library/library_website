@@ -19,10 +19,9 @@
                 <span class="date">{{ sticky_page.story_date }}</span>
                 <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
                 <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
-                {% if sticky_page.excerpt %}
-                  {{ sticky_page.excerpt|richtext }}
-                {% else %}
-                  {{ sticky_page.body|snippet }}
+                {{ sticky_page.excerpt|richtext }}
+                {% if sticky_page.read_more %}
+                  <p><a href="{{ sticky_page.url }}">Read more &gt;&gt;</a></p>
                 {% endif %}
               </div>
             </div>
@@ -40,10 +39,9 @@
               <span class="date">{{ news_page.story_date }}</span>
               <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
               <p><em>By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></em></p>
-              {% if news_page.excerpt %}
-                {{ news_page.excerpt|richtext }}
-              {% else %}
-                {{ news_page.body|snippet }}
+              {{ news_page.excerpt|richtext }}
+              {% if news_page.read_more %}
+                <p><a href="{{ news_page.url }}">Read more &gt;&gt;</a></p>
               {% endif %}
             </div>
           </div>
