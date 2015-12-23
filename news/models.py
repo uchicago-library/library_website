@@ -52,6 +52,8 @@ class NewsPage(BasePage):
         context['story_date'] = details['story_date']
         context['author_title'] = details['author_title']
         context['author_url'] = details['author_url']
+        context['thumbnail'] = details['thumbnail']
+
         return context
 
 class NewsIndexPage(BasePage):
