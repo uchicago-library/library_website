@@ -148,25 +148,12 @@ class StaffPage(BasePage):
     objects = StaffPageManager
 
     content_panels = Page.content_panels + [
-        FieldPanel('cnetid'),
-        MultiFieldPanel(
-            [
-                FieldPanel('official_name'),
-                FieldPanel('display_name'),
-                FieldPanel('first_name'),
-                FieldPanel('middle_name'),
-                FieldPanel('last_name'),
-            ],
-            heading='Name'
-        ),
-        FieldPanel('supervisor'),
-        FieldPanel('libguide_url'),
         ImageChooserPanel('profile_picture'),
         StreamFieldPanel('bio'),
         DocumentChooserPanel('cv'),
+        FieldPanel('libguide_url'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
-        InlinePanel('vcards', label='VCards'),
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
