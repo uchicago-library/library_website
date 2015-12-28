@@ -10,7 +10,8 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, Fiel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailimages.blocks import ImageChooserBlock 
+from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailembeds.blocks import EmbedBlock 
 from wagtail.wagtailsearch import index
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -328,6 +329,7 @@ class DefaultBodyFields(StreamBlock):
     paragraph = ParagraphBlock()
     image = ImageBlock(label='Image')
     blockquote = BlockQuoteBlock()
+    video = EmbedBlock(icon='media')
     code = CodeBlock()
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
