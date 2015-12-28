@@ -121,24 +121,8 @@ WSGI_APPLICATION = 'library_website.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+# Don't put database information here!!!
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lib_www_dev',
-        'USER': 'lib_www_dev',
-        'PASSWORD': 'K4unH5Z7',
-        'HOST': '127.0.0.1',  # Set to empty string for localhost.
-        'PORT': '',  # Set to empty string for default.
-        'CONN_MAX_AGE': 600,  # number of seconds database connections should persist for
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
