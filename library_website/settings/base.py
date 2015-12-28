@@ -186,4 +186,4 @@ PERMISSIONS_MAPPING = {6: ['Library']}
 
 # Where to send users that aren't members of the necessary groups to
 # view a page.
-NO_PERMISSIONS_REDIRECT_URL = 'https://duckduckgo.com'
+NO_PERMISSIONS_REDIRECT_URL = 'https://motacilla.lib.uchicago.edu/no-permission/'
