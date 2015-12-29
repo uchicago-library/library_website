@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
+from django.views.generic.base import RedirectView
 
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -10,16 +11,20 @@ from wagtail.wagtailcore import urls as wagtail_urls
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
 
+    url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^search/$', 'search.views.search', name='search'),
 
-    url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
 
     url(r'', include(wagtail_urls)),
 ]
 
+# Prepend the shibboleth logout url if the application
+# is configured for shibboleth 
+if settings.SHIBBOLETH_LOGOUT_URL:
+    urlpatterns.insert(0, url(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
 
 if settings.DEBUG:
     from django.conf.urls.static import static
