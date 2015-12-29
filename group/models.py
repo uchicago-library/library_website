@@ -126,12 +126,14 @@ class GroupPage(BasePage, Email):
         auto_now=False, 
         auto_now_add=False,
         default=timezone.now,
-        blank=True)
+        blank=True,
+        null=True)
     meeting_end_time = models.TimeField(
         auto_now=False, 
         auto_now_add=False,
         default=default_end_time,
-        blank=True) 
+        blank=True,
+        null=True) 
     meeting_frequency = CharField(
         blank=True,
         max_length=255)

@@ -12,10 +12,17 @@
           {{ block }}
         {% endfor %}
         <p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
-    
-        <h2>Meetings</h2>
-        <p>{{ self.meeting_frequency }}</p>
-        <p>{{ self.meeting_location }}, {{ self.meeting_start_time }}-{{ self.meeting_end_time }}</p>
+   
+        {% if self.meeting_frequency or self.meeting_location or self.meeting_start_time %} 
+            <h2>Meetings</h2>
+            <p>{{ self.meeting_frequency }}</p>
+            <p>{% if self.meeting_location %}
+                 {{ self.meeting_location }}, 
+               {% endif %}
+               {% if self.meeting_start_time and self.meeting_end_time %}
+                 {{ self.meeting_start_time }}-{{ self.meeting_end_time }}
+               {% endif %}</p>
+        {% endif %}
     
         <h2>Current Members</h2>
         <table class="table table-striped">
