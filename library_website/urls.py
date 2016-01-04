@@ -23,8 +23,8 @@ urlpatterns = [
 
 # Prepend the shibboleth logout url if the application
 # is configured for shibboleth 
-if settings.SHIBBOLETH_LOGOUT_URL:
-    urlpatterns.insert(0, url(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
+#if settings.SHIBBOLETH_LOGOUT_URL:
+#    urlpatterns.insert(0, url(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
 
 if settings.DEBUG:
     from django.conf.urls.static import static
