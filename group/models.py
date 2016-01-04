@@ -182,33 +182,37 @@ class GroupPage(BasePage, Email):
 
         # minutes
         minutes = []
-        for m in GroupMeetingMinutesPage.objects.descendant_of(self).first().meeting_minutes.order_by('-date')[:3]:
-            if not m.link and not m.document.url:
-                continue
-            minute = {
-                'summary': m.summary,
-                'date': m.date.strftime("%b. %-d, %Y")
-            }
-            if m.link:
-                minute['url'] = m.link
-            elif m.document.url:
-                minute['url'] = m.document.url
-            minutes.append(minute)
+        group_meeting_min_page = GroupMeetingMinutesPage.objects.descendant_of(self).first()
+        if group_meeting_min_page:
+            for m in group_meeting_min_page.meeting_minutes.order_by('-date')[:3]:
+                if not m.link and not m.document.url:
+                    continue
+                minute = {
+                    'summary': m.summary,
+                    'date': m.date.strftime("%b. %-d, %Y")
+                }
+                if m.link:
+                    minute['url'] = m.link
+                elif m.document.url:
+                    minute['url'] = m.document.url
+                minutes.append(minute)
 
         #reports
         reports = []
-        for r in GroupReportsPage.objects.descendant_of(self).first().group_reports.order_by('-date')[:3]:
-            if not r.link and not r.document.url:
-                continue
-            report = {
-                'summary': r.summary,
-                'date': r.date.strftime("%b. %-d, %Y")
-            }
-            if r.link:
-                report['url'] = r.link
-            elif r.document.url:
-                report['url'] = r.document.url
-            reports.append(report)
+        group_reports_page = GroupReportsPage.objects.descendant_of(self).first()
+        if group_reports_page:
+            for r in group_reports_page.group_reports.order_by('-date')[:3]:
+                if not r.link and not r.document.url:
+                    continue
+                report = {
+                    'summary': r.summary,
+                    'date': r.date.strftime("%b. %-d, %Y")
+                }
+                if r.link:
+                    report['url'] = r.link
+                elif r.document.url:
+                    report['url'] = r.document.url
+                reports.append(report)
 
         context['minutes'] = minutes
         context['reports'] = reports
