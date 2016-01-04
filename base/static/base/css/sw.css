@@ -2,6 +2,15 @@
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
 @import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
 /*
+ *  Wagtail Changes
+ * --------------------------------------------------
+ */
+/* line 49, sw.scss */
+.menu-item a[href="/admin/logout/"] {
+  display: none;
+}
+
+/*
  *  Global Items
  * --------------------------------------------------
  */
@@ -11,50 +20,49 @@
   src: url("fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded- opentype"), url("Content/fonts/glyphicons-halflings-regular.woff") format("woff"), url("Content/fonts/glyphicons-halflings-regular.ttf") format("truetype"), url("Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular") format("svg");
 }
 
-/* line 58, sw.scss */
+/* line 67, sw.scss */
 .font-secondary {
   font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif;
 }
 
-/* line 61, sw.scss */
+/* line 70, sw.scss */
 body {
   font-family: 'ProximaNova-Regular', "Arial", sans-serif;
-  margin-bottom: 70px;
-  /* For sticky footer: Margin bottom by footer height */
+  margin-bottom: 100px;
 }
 
-/* line 66, sw.scss */
+/* line 75, sw.scss */
 html {
   position: relative;
   min-height: 100%;
 }
 
-/* line 71, sw.scss */
+/* line 80, sw.scss */
 html, body {
   overflow-x: hidden;
   /* Off Canvas: Prevent scroll on narrow devices */
 }
 
-/* line 75, sw.scss */
+/* line 84, sw.scss */
 a {
   color: #565a25;
 }
-/* line 77, sw.scss */
+/* line 86, sw.scss */
 a:hover {
   color: #8a9045;
 }
-/* line 80, sw.scss */
+/* line 89, sw.scss */
 p a {
   color: #5B8FA8;
   text-decoration: underline;
 }
-/* line 84, sw.scss */
+/* line 93, sw.scss */
 a.list-group-item:hover {
   background-color: #adb17d;
   color: #fff;
 }
 
-/* line 90, sw.scss */
+/* line 99, sw.scss */
 h1 {
   font-size: 1.3em;
   line-height: .8em;
@@ -63,7 +71,7 @@ h1 {
   font-weight: 600;
 }
 
-/* line 98, sw.scss */
+/* line 107, sw.scss */
 h2 {
   font-size: 1.2em;
   margin: 15px 0 5px 0;
@@ -71,20 +79,20 @@ h2 {
   color: #9A5324;
 }
 
-/* line 106, sw.scss */
+/* line 115, sw.scss */
 h3 {
   font-size: 1.1em;
   margin: 10px 0 5px 0;
   color: #565a25;
   font-weight: 600;
 }
-/* line 111, sw.scss */
+/* line 120, sw.scss */
 h3.description {
   margin-top: 0px;
   padding-bottom: 10px;
 }
 
-/* line 117, sw.scss */
+/* line 126, sw.scss */
 h4 {
   font-size: 1.1em;
   font-style: italic;
@@ -92,25 +100,25 @@ h4 {
   color: #725663;
 }
 
-/* line 124, sw.scss */
+/* line 133, sw.scss */
 h5 {
   font-weight: 100;
   line-height: 1.5em;
 }
 
-/* line 129, sw.scss */
+/* line 138, sw.scss */
 .media-heading {
   margin-top: 5px;
   margin-bottom: 3px;
   font-size: 1.1em;
   color: #9A5324;
 }
-/* line 134, sw.scss */
+/* line 143, sw.scss */
 .media-heading a {
   color: #9A5324;
 }
 
-/* line 139, sw.scss */
+/* line 148, sw.scss */
 .date {
   font-weight: 100;
   font-size: 1.1em;
@@ -121,19 +129,19 @@ h5 {
  *  Top Navigation
  * --------------------------------------------------
  */
-/* line 150, sw.scss */
+/* line 159, sw.scss */
 #wagtail-userbar {
   position: absolute;
-  z-index: 0;
+  z-index: 1;
 }
 
-/* line 154, sw.scss */
+/* line 164, sw.scss */
 .navbar-header .navbar-toggle {
   position: relative;
   z-index: 2;
 }
 
-/* line 159, sw.scss */
+/* line 169, sw.scss */
 .navbar > .container-fluid .navbar-brand {
   max-width: 75px;
   padding: 0;
@@ -141,113 +149,120 @@ h5 {
   margin-left: 10px;
 }
 @media (min-width: 768px) {
-  /* line 159, sw.scss */
+  /* line 169, sw.scss */
   .navbar > .container-fluid .navbar-brand {
     max-width: 100px;
     margin-left: 20px;
   }
 }
 
-/* line 175, sw.scss */
+/* line 185, sw.scss */
 .navbar-right {
-  padding: 15px 30px;
+  padding: 15px 50px 15px 15px;
 }
 @media (min-width: 768px) {
-  /* line 175, sw.scss */
+  /* line 185, sw.scss */
   .navbar-right {
+    padding: 15px 30px;
     margin: 20px 40px 0 0;
     padding: 0px;
   }
 }
+@media (max-width: 768px) {
+  /* line 192, sw.scss */
+  .navbar-right > .input-group {
+    width: 250px;
+  }
+}
 
-/* line 183, sw.scss */
+/* line 199, sw.scss */
 .btn-default {
   color: #fff;
   background-color: #8a9045;
   border-color: #ccc;
 }
-/* line 187, sw.scss */
+/* line 203, sw.scss */
 .btn-default:hover {
   background-color: #adb17d;
 }
 
-/* line 192, sw.scss */
+/* line 208, sw.scss */
 .breadcrumbs {
   padding-bottom: 5px;
 }
 @media (min-width: 768px) {
-  /* line 192, sw.scss */
+  /* line 208, sw.scss */
   .breadcrumbs {
     padding-bottom: 20px;
   }
 }
 
-/* line 202, sw.scss */
+/* line 218, sw.scss */
 .navbar-default {
   border: 0px;
   background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
   color: #dadada;
 }
 @media (min-width: 768px) {
-  /* line 206, sw.scss */
+  /* line 222, sw.scss */
   .navbar-default .divider-vertical {
     height: 100%;
     border-right: 1px solid #282828;
   }
 }
-/* line 211, sw.scss */
+/* line 227, sw.scss */
 .navbar-default .licaption {
   font-style: italic;
   font-size: 0.8em;
   color: #D6D6CE;
 }
-/* line 216, sw.scss */
+/* line 232, sw.scss */
 .navbar-default .navbar-toggle {
   margin-right: 55px;
 }
-/* line 218, sw.scss */
+/* line 234, sw.scss */
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #fff;
 }
-/* line 221, sw.scss */
+/* line 237, sw.scss */
 .navbar-default .navbar-toggle:hover {
   background-color: #8a9045;
 }
-/* line 224, sw.scss */
+/* line 240, sw.scss */
 .navbar-default .navbar-toggle:visited, .navbar-default .navbar-toggle:focus {
   background-color: #adb17d;
 }
 
-/* line 230, sw.scss */
+/* line 246, sw.scss */
 .navbar-form, .navbar-collapse {
   border: 0px;
 }
 
 /* Navbar links to fill the entire space of the .navbar */
-/* line 235, sw.scss */
+/* line 251, sw.scss */
 .navbar {
   margin-bottom: 5px;
 }
 @media (min-width: 768px) {
-  /* line 237, sw.scss */
+  /* line 253, sw.scss */
   .navbar .navbar-inner {
     padding: 0;
   }
 }
 @media (min-width: 768px) {
-  /* line 243, sw.scss */
+  /* line 259, sw.scss */
   .navbar .nav {
     margin: 0;
     display: table;
     width: 100%;
   }
 }
-/* line 249, sw.scss */
+/* line 265, sw.scss */
 .navbar .nav li {
   color: #fff;
 }
 @media (min-width: 768px) {
-  /* line 249, sw.scss */
+  /* line 265, sw.scss */
   .navbar .nav li {
     display: table-cell;
     width: auto;
@@ -256,48 +271,48 @@ h5 {
     padding-bottom: 10px;
   }
 }
-/* line 258, sw.scss */
+/* line 274, sw.scss */
 .navbar .nav li:hover, .navbar .nav li.current {
   background-color: #8a9045;
 }
-/* line 261, sw.scss */
+/* line 277, sw.scss */
 .navbar .nav li a {
   color: #fff;
 }
 @media (min-width: 768px) {
-  /* line 261, sw.scss */
+  /* line 277, sw.scss */
   .navbar .nav li a {
     font-size: 1.1em;
     padding-bottom: 3px;
   }
 }
-/* line 267, sw.scss */
+/* line 283, sw.scss */
 .navbar .nav li a:hover {
   color: #fff;
 }
-/* line 270, sw.scss */
+/* line 286, sw.scss */
 .navbar .nav li a:first-child a {
   border-left: 0;
   border-radius: 3px 0 0 3px;
 }
-/* line 275, sw.scss */
+/* line 291, sw.scss */
 .navbar .nav li:last-child a {
   border-right: 0;
   border-radius: 0 3px 3px 0;
 }
 
-/* line 283, sw.scss */
+/* line 299, sw.scss */
 .navbar-default .navbar-nav > li > a:focus {
-  color: #adb17d;
+  color: #fff;
 }
 
-/* line 288, sw.scss */
+/* line 304, sw.scss */
 #bs-example-navbar-collapse-1 {
   background-color: #404040;
   font-size: 1.1em;
 }
 @media (min-width: 768px) {
-  /* line 288, sw.scss */
+  /* line 304, sw.scss */
   #bs-example-navbar-collapse-1 {
     margin-top: 75px;
     margin-left: -15px;
@@ -313,52 +328,51 @@ h5 {
  * Sidebar and Off Canvas (Sidebar Mobile Toggle)
  * --------------------------------------------------
  */
-/* line 305, sw.scss */
+/* line 321, sw.scss */
 .swside {
   border-right: 1px solid #adb17d;
   margin-bottom: 20px;
-  margin-right: 15px;
 }
-/* line 309, sw.scss */
+/* line 325, sw.scss */
 .swside h3 {
   font-style: italic;
   font-weight: 600;
 }
-/* line 313, sw.scss */
+/* line 329, sw.scss */
 .swside ul {
   list-style-type: none;
   line-height: 1.7em;
   padding-left: 0;
 }
-/* line 315, sw.scss */
+/* line 331, sw.scss */
 .swside ul > li {
   margin-top: 5px;
 }
-/* line 317, sw.scss */
+/* line 333, sw.scss */
 .swside ul > li a {
   color: #725663;
   font-weight: 600;
   font-size: 1.1em;
 }
-/* line 322, sw.scss */
+/* line 338, sw.scss */
 .swside ul > li > ul > li {
   line-height: 2em;
   margin-top: 0;
 }
-/* line 325, sw.scss */
+/* line 341, sw.scss */
 .swside ul > li > ul > li a {
   color: #767676;
   font-weight: 300;
   font-size: 1em;
 }
 @media screen and (max-width: 767px) {
-  /* line 305, sw.scss */
+  /* line 321, sw.scss */
   .swside {
     padding-left: 25px;
   }
 }
 
-/* line 338, sw.scss */
+/* line 354, sw.scss */
 .btn-sidebar {
   background: #adb17d;
   color: #fff;
@@ -370,14 +384,14 @@ h5 {
   border-bottom-left-radius: 0px;
   margin-left: 0;
 }
-/* line 348, sw.scss */
+/* line 364, sw.scss */
 .btn-sidebar a, .btn-sidebar:hover {
   color: #fff;
   background: #8a9045;
 }
 
 @media screen and (max-width: 767px) {
-  /* line 354, sw.scss */
+  /* line 370, sw.scss */
   .row-offcanvas {
     position: relative;
     -webkit-transition: all .25s ease-out;
@@ -387,16 +401,16 @@ h5 {
 }
 
 @media screen and (max-width: 767px) {
-  /* line 363, sw.scss */
+  /* line 379, sw.scss */
   .row-offcanvas-right {
     right: 0;
   }
-  /* line 366, sw.scss */
+  /* line 382, sw.scss */
   .row-offcanvas-right .sidebar-offcanvas {
     right: -50%;
     /* 6 columns */
   }
-  /* line 369, sw.scss */
+  /* line 385, sw.scss */
   .row-offcanvas-right.active {
     right: 50%;
     /* 6 columns */
@@ -404,16 +418,16 @@ h5 {
 }
 
 @media screen and (max-width: 767px) {
-  /* line 375, sw.scss */
+  /* line 391, sw.scss */
   .row-offcanvas-left {
     left: 0;
   }
-  /* line 378, sw.scss */
+  /* line 394, sw.scss */
   .row-offcanvas-left .sidebar-offcanvas {
     left: -50%;
     /* 6 columns */
   }
-  /* line 381, sw.scss */
+  /* line 397, sw.scss */
   .row-offcanvas-left.active {
     left: 50%;
     /* 6 columns */
@@ -421,7 +435,7 @@ h5 {
 }
 
 @media screen and (max-width: 767px) {
-  /* line 387, sw.scss */
+  /* line 403, sw.scss */
   .sidebar-offcanvas {
     position: absolute;
     top: 0;
@@ -431,7 +445,7 @@ h5 {
 }
 
 @media (max-width: 767px) {
-  /* line 395, sw.scss */
+  /* line 411, sw.scss */
   .toggle-side {
     padding-bottom: 20px;
     margin-bottom: 20px;
@@ -442,50 +456,52 @@ h5 {
  * Images, Video, and other Media
  * --------------------------------------------------
  */
-/* line 407, sw.scss */
+/* line 423, sw.scss */
 img {
   max-width: 250px;
   height: auto;
 }
 @media (min-width: 768px) {
-  /* line 407, sw.scss */
+  /* line 423, sw.scss */
   img {
     max-width: 500px;
     height: auto;
   }
 }
 
-/* line 416, sw.scss */
+/* line 432, sw.scss */
 figure.imgcaption {
   max-width: 270px;
   border: 1px solid #8A8B79;
   padding: 15px;
   float: left;
 }
-/* line 421, sw.scss */
+/* line 437, sw.scss */
 figure.imgcaption figcaption {
   padding-top: 15px;
   color: #58593F;
 }
 
-/* line 428, sw.scss */
+/* line 444, sw.scss */
 figure.pull-right {
   margin: 10px 0 10px 20px;
 }
-/* line 431, sw.scss */
+/* line 447, sw.scss */
 figure.pull-left {
   margin: 10px 20px 10px 0;
 }
-/* line 434, sw.scss */
+/* line 450, sw.scss */
 figure.center-block {
   margin: 10px;
 }
+
+/* line 455, sw.scss */
 .responsive-object {
   position: relative;
 }
-.responsive-object iframe,
-.responsive-object object,
-.responsive-object embed {
+
+/* line 459, sw.scss */
+.responsive-object iframe, .responsive-object object, .responsive-object embed {
   position: absolute;
   top: 0;
   left: 0;
@@ -497,80 +513,99 @@ figure.center-block {
  *  Content
  * --------------------------------------------------
  */
-/* line 447, sw.scss */
+/* line 473, sw.scss */
 .badge .g-search {
   background-color: #725663;
 }
-/* line 450, sw.scss */
+/* line 476, sw.scss */
 .badge .dept-search {
   background-color: #8A9045;
 }
-/* line 453, sw.scss */
+/* line 479, sw.scss */
 .badge .f-search {
   background-color: #777;
 }
-/* line 456, sw.scss */
+/* line 482, sw.scss */
 .badge .doc-search {
   background-color: #9A5324;
 }
-/* line 459, sw.scss */
+/* line 485, sw.scss */
 .badge .staff-search {
   background-color: #0F425C;
 }
-/* line 462, sw.scss */
+/* line 488, sw.scss */
 .badge .tech-search {
   background-color: #CC8214;
 }
-/* line 465, sw.scss */
+/* line 491, sw.scss */
 .badge .hr-search {
   background-color: #8F3931;
 }
 
-/* line 470, sw.scss */
+/* line 496, sw.scss */
 .sw-toc {
   text-align: center;
   display: flex;
   flex-wrap: wrap;
 }
-/* line 474, sw.scss */
+/* line 500, sw.scss */
+.sw-toc a {
+  color: #767676;
+  text-decoration: none;
+}
+/* line 504, sw.scss */
 .sw-toc > .col-md-4 {
   padding-bottom: 20px;
 }
-/* line 477, sw.scss */
+/* line 507, sw.scss */
 .sw-toc ul {
   list-style-type: none;
   line-height: 1.7em;
   padding-left: 0;
 }
-/* line 480, sw.scss */
+/* line 510, sw.scss */
 .sw-toc .fa {
   color: #adb17d;
 }
-/* line 483, sw.scss */
+/* line 513, sw.scss */
 .sw-toc h3 {
   margin-top: 5px;
 }
 
 @media (min-width: 768px) {
-  /* line 488, sw.scss */
+  /* line 518, sw.scss */
   .swnews {
     padding-right: 60px;
   }
 }
 
-/* line 494, sw.scss */
+@media (max-width: 768px) {
+  /* line 524, sw.scss */
+  .media-body, .media-left, .media-right {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  /* line 530, sw.scss */
+  .media-body {
+    width: initial;
+  }
+}
+
+/* line 536, sw.scss */
 .sticky {
   background-color: #d5d7bd;
   padding: 15px;
 }
 
-/* line 500, sw.scss */
+/* line 542, sw.scss */
 .swside-home a {
   color: #8a9045;
   text-decoration: none;
 }
 @media (min-width: 768px) {
-  /* line 499, sw.scss */
+  /* line 541, sw.scss */
   .swside-home {
     border-left: 1px solid #adb17d;
     padding-left: 30px;
@@ -579,44 +614,44 @@ figure.center-block {
 }
 
 @media (min-width: 768px) {
-  /* line 511, sw.scss */
+  /* line 553, sw.scss */
   .list-group {
     width: 80%;
     padding-bottom: 10px;
   }
 }
-/* line 516, sw.scss */
+/* line 558, sw.scss */
 .list-group .badge {
   margin-left: 5px;
 }
 
-/* line 521, sw.scss */
+/* line 563, sw.scss */
 .btn-bugzilla {
   background-color: #800000;
-  color: #fff;
+  color: #fff !important;
   width: 100%;
   letter-spacing: 2px;
   font-size: 1.2em;
   margin: 10px 0 10px 0;
 }
 @media (min-width: 768px) {
-  /* line 521, sw.scss */
+  /* line 563, sw.scss */
   .btn-bugzilla {
     width: 50%;
   }
 }
-/* line 531, sw.scss */
+/* line 573, sw.scss */
 .btn-bugzilla a {
   color: #fff;
 }
-/* line 534, sw.scss */
+/* line 576, sw.scss */
 .btn-bugzilla:hover {
   color: #fff;
   background-color: #B1746F;
 }
 
 /* Blockquote */
-/* line 542, sw.scss */
+/* line 584, sw.scss */
 blockquote {
   margin: 0 50px;
   padding: 0.5em 5px;
@@ -626,7 +661,7 @@ blockquote {
   border-left: 0px;
 }
 
-/* line 551, sw.scss */
+/* line 593, sw.scss */
 blockquote:before {
   color: #767676;
   content: open-quote;
@@ -636,7 +671,7 @@ blockquote:before {
   vertical-align: -0.4em;
 }
 
-/* line 560, sw.scss */
+/* line 602, sw.scss */
 blockquote:after {
   color: #767676;
   content: close-quote;
@@ -646,7 +681,7 @@ blockquote:after {
   vertical-align: -0.4em;
 }
 
-/* line 569, sw.scss */
+/* line 611, sw.scss */
 blockquote p {
   display: inline;
 }
@@ -655,30 +690,30 @@ blockquote p {
  *  Tables
  * --------------------------------------------------
  */
-/* line 616, sw.scss */
+/* line 658, sw.scss */
 table a, tbody a {
   color: #5B8FA8;
 }
 @media (max-width: 640px) {
-  /* line 615, sw.scss */
+  /* line 657, sw.scss */
   table, tbody {
     display: block;
     width: 100%;
   }
-  /* line 622, sw.scss */
+  /* line 664, sw.scss */
   table tr, table th, table td, tbody tr, tbody th, tbody td {
     display: block;
     padding: 0;
     text-align: left;
     white-space: normal;
   }
-  /* line 628, sw.scss */
+  /* line 670, sw.scss */
   table tr, tbody tr {
     border-bottom: 1px solid #eee;
     padding-bottom: 11px;
     margin-bottom: 11px;
   }
-  /* line 633, sw.scss */
+  /* line 675, sw.scss */
   table td, tbody td {
     border: none;
     margin-bottom: 6px;
@@ -687,7 +722,7 @@ table a, tbody a {
 }
 
 @media screen and (min-width: 640px) {
-  /* line 641, sw.scss */
+  /* line 683, sw.scss */
   .stafflist > tbody > tr > td {
     width: 25%;
   }
@@ -697,41 +732,41 @@ table a, tbody a {
  *  Dept Home Page
  * --------------------------------------------------
  */
-/* line 651, sw.scss */
+/* line 693, sw.scss */
 .deptlist ul {
   list-style: none;
   padding-left: 20px;
 }
-/* line 654, sw.scss */
+/* line 696, sw.scss */
 .deptlist ul > li {
   margin: 15px 0 0 0;
 }
-/* line 656, sw.scss */
+/* line 698, sw.scss */
 .deptlist ul > li a {
   font-size: 1.1em;
-  font-weight: 400;
-  color: #565a25;
+  font-weight: 600;
+  color: #9A5324;
   padding-bottom: 3px;
 }
-/* line 662, sw.scss */
+/* line 704, sw.scss */
 .deptlist ul > li > ul > li {
   margin: 0 0;
 }
-/* line 664, sw.scss */
+/* line 706, sw.scss */
 .deptlist ul > li > ul > li a {
   font-size: 1.1em;
-  font-weight: 600;
+  font-weight: 400;
   color: #767676;
   line-height: 2em;
 }
-/* line 671, sw.scss */
+/* line 713, sw.scss */
 .deptlist ul > li > ul > li > ul > li a {
   font-size: 1.1em;
   font-weight: 300;
-  color: #9A5324;
+  color: #5B8FA8;
   line-height: 1.5em;
 }
-/* line 678, sw.scss */
+/* line 720, sw.scss */
 .deptlist ul > li > ul > li > ul > li > ul > li a {
   font-size: 1.1em;
   font-weight: 300;
@@ -744,63 +779,55 @@ table a, tbody a {
 *  Group Home Page
 * --------------------------------------------------
 */
-@media (min-width: 768px) {
-  /* line 696, sw.scss */
-  .grouplist, .inactive-groups {
-    -webkit-column-count: 2;
-    -webkit-column-gap: 0;
-  }
-}
-
-/* line 702, sw.scss */
+/* line 738, sw.scss */
 .grouplist ul {
   list-style: none;
   padding-left: 20px;
 }
-/* line 705, sw.scss */
+/* line 741, sw.scss */
 .grouplist ul > li {
   margin: 15px 0 0 0;
 }
-/* line 707, sw.scss */
+/* line 743, sw.scss */
 .grouplist ul > li a {
   font-size: 1.1em;
   font-weight: 400;
-  color: #565a25;
+  color: #767676;
   padding-bottom: 3px;
 }
-/* line 713, sw.scss */
+/* line 749, sw.scss */
 .grouplist ul > li > ul > li {
   margin: 0 0;
 }
-/* line 715, sw.scss */
+/* line 751, sw.scss */
 .grouplist ul > li > ul > li a {
   font-size: 1em;
   font-weight: 400;
-  color: #767676;
+  color: #5B8FA8;
   line-height: 2em;
 }
 
-/* line 725, sw.scss */
+/* line 761, sw.scss */
 .inactive-groups ul {
   list-style: none;
   padding-left: 20px;
 }
-/* line 728, sw.scss */
+/* line 764, sw.scss */
 .inactive-groups ul > li {
   margin: 15px 0 0 0;
 }
-/* line 730, sw.scss */
+/* line 766, sw.scss */
 .inactive-groups ul > li a {
   font-size: 1em;
   font-weight: 400;
-  color: #767676;
+  color: #565a25;
   padding-bottom: 5px;
 }
-/* line 736, sw.scss */
+/* line 772, sw.scss */
 .inactive-groups ul > li > ul > li {
   margin: 0 0;
 }
-/* line 738, sw.scss */
+/* line 774, sw.scss */
 .inactive-groups ul > li > ul > li a {
   font-size: 1em;
   font-weight: 400;
@@ -812,7 +839,7 @@ table a, tbody a {
  *  Footer
  * --------------------------------------------------
  */
-/* line 754, sw.scss */
+/* line 790, sw.scss */
 .footer {
   position: absolute;
   bottom: 0;
@@ -823,36 +850,36 @@ table a, tbody a {
   color: #dadada;
 }
 @media (max-width: 768px) {
-  /* line 754, sw.scss */
+  /* line 790, sw.scss */
   .footer {
     padding-top: 20px;
     padding-bottom: 5px;
   }
 }
-/* line 765, sw.scss */
+/* line 801, sw.scss */
 .footer a {
   color: #fff;
   font-size: 0.85em;
   padding: 7px;
 }
-/* line 769, sw.scss */
+/* line 805, sw.scss */
 .footer a:hover {
   color: #8a9045;
   text-decoration: none;
 }
 @media (min-width: 768px) {
-  /* line 765, sw.scss */
+  /* line 801, sw.scss */
   .footer a {
     padding: 10px;
     font-size: 1em;
   }
 }
-/* line 778, sw.scss */
+/* line 814, sw.scss */
 .footer ul {
   margin: 0;
   padding-left: 0;
 }
-/* line 781, sw.scss */
+/* line 817, sw.scss */
 .footer ul li {
   display: inline-block;
   padding-left: 0;
@@ -860,17 +887,16 @@ table a, tbody a {
   list-style: none;
 }
 @media (max-width: 768px) {
-  /* line 788, sw.scss */
+  /* line 824, sw.scss */
   .footer .divider-vertical:after {
     content: "|\00a0";
   }
 }
 @media (min-width: 768px) {
-  /* line 786, sw.scss */
+  /* line 822, sw.scss */
   .footer .divider-vertical {
     height: 100%;
     border-right: 1px solid #282828;
     padding: 20px;
   }
 }
-
