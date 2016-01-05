@@ -23,29 +23,32 @@
                  {{ self.meeting_start_time }}-{{ self.meeting_end_time }}
                {% endif %}</p>
         {% endif %}
-    
-        <h2>Current Members</h2>
-        <table class="table table-striped">
-          <tbody>
-            {% for group_member in group_members %}
-              <tr>
-                <td>
-                  <a href="{{ group_member.url }}">{{ group_member.title }}</a>
-                </td>
-                <td>
-                  {% if group_member.role %}
-                    {{ group_member.role }}
-                  {% endif %}
-                <td/>
-                <td>
-                  {% if group_member.unit %}
-                    {{ group_member.unit|richtext }}
-                  {% endif %}
-                <td/>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+   
+        {% if group_members %}
+          <h2>Current Members</h2>
+          <table class="table table-striped">
+            <tbody>
+              {% for group_member in group_members %}
+                <tr>
+                  <td>
+                    <a href="{{ group_member.url }}">{{ group_member.title }}</a>
+                  </td>
+                  <td>
+                    {% if group_member.role %}
+                      {{ group_member.role }}
+                    {% endif %}
+                  <td/>
+                  <td>
+                    {% if group_member.unit %}
+                      {{ group_member.unit|richtext }}
+                    {% endif %}
+                  <td/>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+
         {% if minutes %}
           <h2>Recent Meeting Minutes</h2>
           <ul>
