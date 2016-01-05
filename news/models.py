@@ -124,17 +124,20 @@ def get_story_summary(news_page):
         author_url = StaffPage.objects.get(cnetid=cnetid).url
 
     simplified_text = simplify_text(news_page.excerpt)
-    if not simplified_text:
-        simplified_text = simplify_text(" ".join([s.render() for s in news_page.body]))
-
-    words = simplified_text.split(" ")
-    excerpt = " ".join(words[:50])
-
-    if len(words) > 50:
-        excerpt = excerpt + "..."
+    if simplified_text:
+        words = simplified_text.split(" ")
+        excerpt = " ".join(words[:50])
         read_more = True
     else:
-        read_more = False
+        simplified_text = simplify_text(" ".join([s.render() for s in news_page.body]))
+        words = simplified_text.split(" ")
+        excerpt = " ".join(words[:50])
+
+        if len(words) > 50:
+            excerpt = excerpt + "..."
+            read_more = True
+        else:
+            read_more = False
 
     return {
         'story_date_sort': news_page.story_date,
