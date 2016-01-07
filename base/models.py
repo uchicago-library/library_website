@@ -245,7 +245,7 @@ class ImageFormatChoiceBlock(FieldBlock):
     Alignment options to use with the ImageBlock.
     """
     field = forms.ChoiceField(choices=(
-        ('pull-left', 'Wrap left'), ('pull-right', 'Wrap right'), ('center-block', 'Center'),
+        ('pull-left', 'Wrap left'), ('pull-right', 'Wrap right'), ('fullwidth', 'Full width'),
     ))
 
 class ImageBlock(StructBlock):

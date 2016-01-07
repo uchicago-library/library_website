@@ -332,6 +332,7 @@ h5 {
                 &>ul>li {
                     line-height: 2em;
                     margin-top: 0;
+                    margin-left: 10px;
                     a {
                         color: #767676;
                         font-weight: 300;
@@ -428,6 +429,11 @@ figure.imgcaption {
       border: 1px solid #8A8B79;
       padding: 15px;
       float: left;
+      &.fullwidth {
+        max-width: 100%;
+        border: 0px;
+        float: none;
+      }
       figcaption {
         padding-top:15px;
         color: #58593F;

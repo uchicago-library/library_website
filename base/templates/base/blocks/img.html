@@ -1,6 +1,12 @@
 {% load wagtailimages_tags %}
 {% image value.image original as original %}
-{% image value.image width-400 as tmp_img %}
+
+{% if value.alignment == 'fullwidth' %}
+   {% image value.image width-800 as tmp_img %}
+{% else %}
+    {% image value.image width-400 as tmp_img %}
+{% endif %}
+
 <figure class="imgcaption {{ value.alignment }}">
     {% if value.lightbox %}
         <a href="{{ original.url }}">
