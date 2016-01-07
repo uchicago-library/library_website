@@ -387,36 +387,8 @@ class IntranetIndexPage(BasePage):
                 }
             pages[0]['children'] = list(map(lambda p: recursively_add_children(p), self.get_children().live()))
                 
-            ''''
-            for page in self.get_descendants():
-                pages[0]['children'].append({
-                    'title': page.title,
-                    'url': page.url,
-                    'children': []
-                })
-                ancestors = list(Page.objects.ancestor_of(page)) + [page]
-                while True:
-                    if not ancestors:
-                        break
-                    if ancestors.pop(0) == self:
-                        break
-                currentlevel = pages
-                while ancestors:
-                    ancestor = ancestors.pop(0)
-                    nextlevels = list(filter(lambda g: g['url'] == ancestor.url, currentlevel))
-                    if nextlevels:
-                        currentlevel = nextlevels[0]['children']
-                    else:
-                        newnode = {
-                            'title': ancestor.title,
-                            'url': ancestor.url,
-                            'children': [],
-                        }
-                        currentlevel.append(newnode)
-                        currentlevel = newnode['children']
-            '''
         else:
-            pages[0]['children'] = list(map(lambda p: {'title': p.title, 'url': p.url, 'children': []}, self.get_children()))
+            pages[0]['children'] = list(map(lambda p: {'title': p.title, 'url': p.url, 'children': []}, self.get_children().live()))
 
         def alphabetize_pages(currentlevel):
             for node in currentlevel:
