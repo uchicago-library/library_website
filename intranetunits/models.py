@@ -20,7 +20,7 @@ class IntranetUnitsReportsPage(BasePage):
         InlinePanel('intranet_units_reports', label='Reports'),
     ] + BasePage.content_panels 
 
-    subpage_types = []
+    subpage_types = ['base.IntranetPlainPage']
 
     def get_context(self, request):
         context = super(IntranetUnitsReportsPage, self).get_context(request)

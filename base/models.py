@@ -491,32 +491,6 @@ class FaxNumber(models.Model):
         abstract = True
 
 
-class Report(models.Model):
-    """
-    Model for group and unit reports
-    """
-    date = models.DateField(blank=False)
-    summary = models.TextField(null=False, blank=False)
-    link = models.URLField(max_length=254, blank=True, default='')
-    document = models.ForeignKey(
-        'wagtaildocs.Document',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )
-
-    panels = [
-        FieldPanel('date'),
-        FieldPanel('summary'),
-        DocumentChooserPanel('document'),
-        FieldPanel('link'),
-    ]
-
-    class Meta:
-        abstract = True
-
-
 class LinkFields(models.Model):
     """
     Reusable abstract class for general links.
@@ -549,6 +523,22 @@ class LinkFields(models.Model):
         PageChooserPanel('link_page'),
         DocumentChooserPanel('link_document'),
     ]
+
+    class Meta:
+        abstract = True
+
+
+class Report(LinkFields):
+    """
+    Model for group and unit reports
+    """
+    date = models.DateField(blank=False)
+    summary = models.TextField(null=False, blank=False)
+
+    panels = [
+        FieldPanel('date'),
+        FieldPanel('summary'),
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True 

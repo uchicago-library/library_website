@@ -3,8 +3,7 @@ from django.db.models.fields import CharField, TextField
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from base.models import DefaultBodyFields, Email, Report
-from base.models import BasePage
+from base.models import BasePage, LinkFields, DefaultBodyFields, Email, Report
 from staff.models import StaffPage
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
@@ -43,27 +42,17 @@ class GroupMemberRole(models.Model, index.Indexed):
     ]
 
 
-class MeetingMinutes(models.Model):
+class MeetingMinutes(LinkFields):
     """
     Meeting minutes content type.
     """
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
-    link = models.URLField(max_length=254, blank=True, default='')
-    document = models.ForeignKey(
-        'wagtaildocs.Document',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    ) 
 
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
-        DocumentChooserPanel('document'),
-        FieldPanel('link'),
-    ]
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -227,7 +216,7 @@ class GroupMeetingMinutesPage(BasePage):
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
     ] + BasePage.content_panels 
 
-    subpage_types = []
+    subpage_types = ['base.IntranetPlainPage']
 
     def get_context(self, request):
         context = super(GroupMeetingMinutesPage, self).get_context(request)
@@ -254,7 +243,7 @@ class GroupReportsPage(BasePage):
         InlinePanel('group_reports', label='Reports'),
     ] + BasePage.content_panels 
 
-    subpage_types = []
+    subpage_types = ['base.IntranetPlainPage']
 
     def get_context(self, request):
         context = super(GroupReportsPage, self).get_context(request)
