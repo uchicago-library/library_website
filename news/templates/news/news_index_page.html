@@ -55,6 +55,21 @@
           </div>
           <hr/>
         {% endfor %}
+
+        {% if prev_link or next_link %}
+          <p>
+            {% if prev_link %}
+              <a href="{{ prev_link }}">Newer Stories</a>
+            {% endif %}
+            {% if prev_link and next_link %}
+              |
+            {% endif %}
+            {% if next_link %}
+              <a href="{{ next_link }}">Older Stories</a>
+            {% endif %}
+               
+          </p>
+        {% endif %}
   	  </article>
     </div>
   </div>

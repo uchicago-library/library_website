@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.paginator import Paginator
 from django.db import models
 from django.db.models.fields import TextField
 from django.utils import timezone
@@ -78,8 +79,20 @@ class NewsIndexPage(BasePage):
 
         news_pages = get_stories()
 
+        page = int(request.GET.get('page', 1))
+        news_pages = get_stories_by_page(page)
+
+        prev_link = None 
+        if page > 1:
+            prev_link = "%s?page=%s" % (request.path, str(page - 1))
+        next_link = None
+        if get_story_count() > page * get_stories_by_page.page_length:
+            next_link = "%s?page=%s" % (request.path, str(page + 1))
+
         context['sticky_pages'] = sticky_pages
         context['news_pages'] = news_pages
+        context['prev_link'] = prev_link
+        context['next_link'] = next_link
         return context
 
 def get_stories(sticky=False):
@@ -101,6 +114,17 @@ def get_stories(sticky=False):
             pages.append(get_story_summary(page))
 
     return sorted(pages, key=lambda p: p['story_date_sort'], reverse=True)
+
+def get_stories_by_page(page=1, sticky=False):
+    get_stories_by_page.page_length = 10
+
+    stories = get_stories(sticky)
+    start_page = (page - 1) * get_stories_by_page.page_length
+    end_page = start_page + get_stories_by_page.page_length
+    return stories[start_page:end_page]
+
+def get_story_count(sticky=False):
+    return len(get_stories(sticky))
 
 def get_story_summary(news_page):
     def simplify_text(s):

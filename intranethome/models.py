@@ -7,7 +7,7 @@ from wagtail.wagtailcore.models import Page
 
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
-from news.models import get_stories, get_story_summary, NewsIndexPage, NewsPage
+from news.models import get_stories_by_page, get_story_summary, NewsIndexPage, NewsPage
 from staff.models import StaffPage
 
 class IntranetHomePage(BasePage):
@@ -21,11 +21,11 @@ class IntranetHomePage(BasePage):
         news_link = NewsIndexPage.objects.live()[0].url if NewsIndexPage.objects.live().exists() else []
         news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.live().exists() else []
 
-        sticky_pages = get_stories(sticky=True)
+        sticky_pages = get_stories_by_page(1, sticky=True)
         if sticky_pages:
             sticky_pages = [sticky_pages.pop(0)]
 
-        news_pages = get_stories()
+        news_pages = get_stories_by_page(1)
 
         context = super(IntranetHomePage, self).get_context(request)
         context['human_resources_link'] = '#'
@@ -37,4 +37,5 @@ class IntranetHomePage(BasePage):
         context['news_link'] = news_link
         context['sticky_pages'] = sticky_pages
         context['news_pages'] = news_pages
+        
         return context
