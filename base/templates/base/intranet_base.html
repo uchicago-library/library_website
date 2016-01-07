@@ -89,49 +89,22 @@
     {% if page.show_sidebar %}
       <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
         <div class="col-sm-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar"> <!-- Start side div -->
-          <h3>{{ sidebartitle }}</h3>
-            {% if page.start_sidebar_from_here %}
-              <ul>
-                {% for child in page.get_children %}
-                  {% if child.show_in_menus %}
-                    <li><a href="{{ child.url }}">{{ child.title }}</a>
-                      {% if child.get_children %}
-                        <ul>
-                          {% for grandchild in child.get_children %}
-                            {% if grandchild.show_in_menus %}
-                              <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                            {% endif %}
-                          {% endfor %}
-                        </ul>
-                      {% endif %}
-                    </li>
+          {% if sidebar %}
+            <h3>{{ sidebartitle }}</h3>
+            <ul>
+              {% for child in sidebar %}
+                <li><a href="{{ child.url }}">{{ child.title }}</a>
+                  {% if child.children %}
+                    <ul>
+                      {% for grandchild in child.children %}
+                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                      {% endfor %}
+                    </ul>
                   {% endif %}
-                {% endfor %}
-              </ul>
-            {% else %}
-              {% for page in page.get_ancestors.specific reversed %}
-                {% if page.start_sidebar_from_here %}
-                  <ul>
-                    {% for child in page.get_children %}
-                      {% if child.show_in_menus %}
-                        <li><a href="{{ child.url }}">{{ child.title }}</a>
-                          {% if child.get_children %}
-                            <ul>
-                              {% for grandchild in child.get_children %}
-                                {% if grandchild.show_in_menus %}
-                                  <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                                {% endif %}
-                              {% endfor %}
-                            </ul>
-                          {% endif %}
-                        {% endif %}
-                      </li>
-                    {% endfor %}
-                  </ul>
-                  {{ forloop|break }}
-                {% endif %}
+                </li>
               {% endfor %}
-            {% endif %}
+            </ul>
+          {% endif %}
           </div><!-- // End body -->
           <div class="row visible-xs toggle-side">
             <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>

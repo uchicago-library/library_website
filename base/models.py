@@ -159,24 +159,33 @@ class BasePage(Page):
                     pass
                 
         # JEJ- fix this later to remove logic from the template. 
-        '''
         sidebar = [] 
         if self.show_sidebar:
-            ancestors = self.get_ancestors(True)
-            while ancestors:
-                sidebar_parent = ancestors.pop()
+            ancestors = self.get_ancestors(True).specific()
+            a = len(ancestors) - 1
+            while a > 0:
+                sidebar_parent = ancestors[a]
                 if sidebar_parent.start_sidebar_from_here:
                     break
+                a = a - 1
 
-            for child in sidebar_parent.get_children().in_menu().order_by('title').order_by('sort_order'):
-                grandchildren = []
-                for grandchild in child.get_children:
-                    sidebar.append({
-                        'title': child.title,
-                        'url': child.url,
+            children = sorted(sidebar_parent.get_children().in_menu().live().specific(), key=lambda c: (c.sort_order, c.title))
+            for child in children:
+                new_child = {
+                    'title': child.title,
+                    'url': child.url,
+                    'children': []
+                }
+                grandchildren = sorted(child.get_children().in_menu().live().specific(), key=lambda c: (c.sort_order, c.title))
+                for grandchild in grandchildren:
+                    new_child['children'].append({
+                        'title': grandchild.title,
+                        'url': grandchild.url,
                         'children': [],
                     })
-        '''
+
+                sidebar.append(new_child)
+        context['sidebar'] = sidebar
         
         return context
 
