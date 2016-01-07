@@ -185,7 +185,10 @@ class GroupPage(BasePage, Email):
         group_meeting_min_page = GroupMeetingMinutesPage.objects.descendant_of(self).first()
         if group_meeting_min_page:
             for m in group_meeting_min_page.meeting_minutes.order_by('-date')[:3]:
-                if not m.link and not m.document.url:
+                try:
+                    if not m.link and not m.document.url:
+                        continue
+                except AttributeError:
                     continue
                 minute = {
                     'summary': m.summary,
