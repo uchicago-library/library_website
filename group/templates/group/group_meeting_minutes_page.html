@@ -7,8 +7,12 @@
 	<article>
 		<h1>{{ self.title }}</h1>
 
-        {% for minute in minutes %}
-            <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
-        {% endfor %}
+        {% if minutes %}
+          <ul>
+            {% for minute in minutes %}
+              <li><a href="{{ minute.url }}">{{ minute.date }}- {{ minute.summary }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
 	</article>
 {% endblock %}
