@@ -15,6 +15,9 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 
+from django.core.exceptions import ValidationError
+import re
+
 def default_end_time():
     """
     Callback function for setting the default
@@ -147,7 +150,7 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesPage', 'group.GroupReportsPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsPage']
 
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
@@ -211,14 +214,48 @@ class GroupPage(BasePage, Email):
         context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
+class GroupMeetingMinutesIndexPage(BasePage):
+    """
+    Index page for holding meeting minute pages.
+    """
+    content_panels = Page.content_panels + BasePage.content_panels
+    subpage_types = ['group.GroupMeetingMinutesPage']
+
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        if not self.title.strip() == "Meeting Minutes":
+            raise ValidationError({'title': ('The title should be "Meeting Minutes"')})
+
 class GroupMeetingMinutesPage(BasePage):
+    """
+    Page class that acts as a receptacle for meeting minutes.
+    Objects created with this class should represent a year
+    and they should hold all of the meeting minutes for the 
+    given year.
+    """
     content_panels = Page.content_panels + [
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
     ] + BasePage.content_panels 
 
     subpage_types = ['base.IntranetPlainPage']
 
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        if not re.match('^[0-9]{4}$', self.title):
+            raise ValidationError({'title': ('Please enter the year as \
+                a four digit number, e.g. 2016')})
+
     def get_context(self, request):
+        """
+        Override the core get_context method in order to
+        provide templates with piles of goodness.
+        """
         context = super(GroupMeetingMinutesPage, self).get_context(request)
 
         minutes = []
