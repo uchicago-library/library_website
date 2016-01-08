@@ -85,41 +85,38 @@
       </div><!-- / .col -->
     </div><!-- / Breadcrumbs row -->
 
-  <div class="row-fluid">
-    {% if page.show_sidebar %}
-      <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-        <div class="col-sm-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar"> <!-- Start side div -->
-          {% if sidebar %}
-            <h3>{{ sidebartitle }}</h3>
+    <div class="row-fluid">
+{% if page.show_sidebar and sidebar %}
+    <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
+      <div class="col-sm-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar"> <!-- Start side div -->
+        <h3>{{ sidebartitle }}</h3>
+        <ul>
+  {% for child in sidebar %}
+          <li><a href="{{ child.url }}">{{ child.title }}</a>
+    {% if child.children %}
             <ul>
-              {% for child in sidebar %}
-                <li><a href="{{ child.url }}">{{ child.title }}</a>
-                  {% if child.children %}
-                    <ul>
-                      {% for grandchild in child.children %}
-                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                </li>
-              {% endfor %}
+      {% for grandchild in child.children %}
+              <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+      {% endfor %}
             </ul>
-          {% endif %}
-          </div><!-- // End body -->
-          <div class="row visible-xs toggle-side">
-            <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
-          </div>
-          <div class="col-sm-12 col-md-9 unit-body">
-        {% else %}
-          <div class="col-sm-12 col-md-offset-1 col-md-10 unit-body">
-        {% endif %}
-        {% block content %}{% endblock %}
-        </div><!-- /.col -->
-      </div><!-- /.row-fluid -->
-    {% if page.show_sidebar %}
-      </div> <!-- // End Off Canvas Wrapper Row -->
     {% endif %}
-
+          </li>
+  {% endfor %}
+        </ul>
+      </div><!-- // End #sidebar -->
+      <div class="row visible-xs toggle-side">
+        <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
+      </div>
+      <div class="col-sm-12 col-md-9 unit-body">
+{% else %}
+      <div class="col-sm-12 col-md-offset-1 col-md-10 unit-body">
+{% endif %}
+{% block content %}{% endblock %}
+      </div><!-- /.col --> 
+{% if page.show_sidebar and sidebar %}
+    </div> <!-- // End Off Canvas Wrapper Row -->
+{% endif %}
+    </div><!-- /.row-fluid -->
   </div> <!-- /main container -->
 
   <!-- Footer Section -->
