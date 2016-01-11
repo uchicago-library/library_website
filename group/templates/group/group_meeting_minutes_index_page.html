@@ -1,14 +1,16 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 
-{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
-
 {% block content %}
-	<article>
-		<h1>{{ self.title }}</h1>
+  <div class="row-fluid "> <!-- Main Row -->
+    <div class="col-xs-12 col-sm-12 col-md-8">
+      <h1>{{ self.title }}</h1>
+
+        {% for year, table in data %}
+            <h2>{{ year}}</h2>
             <table class="table table-striped stafflist">
               <tbody>
-                {% for date, minutes in self.get_meeting_minutes_grouped_by_date.items %}
+                {% for date, minutes in table.items %}
                   <tr>
                     <td>{{ date }}</td>
                     <td>
@@ -20,5 +22,7 @@
                 {% endfor %}
               </tbody>
             </table>
-	</article>
+        {% endfor %}
+    </div>
+  </div> <!-- // Main row -->
 {% endblock %}

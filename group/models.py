@@ -15,8 +15,10 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 
+from collections import OrderedDict
 from django.core.exceptions import ValidationError
 import re
+import sys
 
 def default_end_time():
     """
@@ -43,6 +45,84 @@ class GroupMemberRole(models.Model, index.Indexed):
     search_fields = [
         index.SearchField('text', partial_match=True),
     ]
+
+
+def enforce_name_as_year(title):
+    """
+    Helper function for making sure 
+    page titles adhere to a strict 
+    formatting policy.
+    """
+    if not re.match('^[0-9]{4}$', title):
+        raise ValidationError({'title': ('Please enter the year as \
+            a four digit number, e.g. 2016')})
+
+
+
+def get_page_objects_grouped_by_date(obj):
+    """
+    Helper function for getting page objects and 
+    child objects grouped by date.
+    Used for meeting minutes and reports.
+
+    Args:
+        obj: Page.child_object that belongs to a Page type.
+        Must have "date" and "summary" fields associated 
+        with it. Other optional fields on the object
+        can be "link" and "document" (wagtail doc obj). 
+    
+    Returns:
+        OrderedDict
+    """
+    retval = OrderedDict()
+    for i in obj.order_by('-date'):
+        if not i.link and not i.document.url:
+            continue
+
+        date = i.date.strftime("%b. %-d, %Y")
+        item = {'summary': i.summary}
+
+        if i.link:
+            item['url'] = i.link
+        elif m.document.url:
+            item['url'] = i.document.url
+
+        if date in retval:
+            retval[date].append(item)
+        else:
+            retval[date] = [item]
+    return retval
+
+
+def get_page_objects_as_list(obj):
+    """
+    Helper function for getting page objects and 
+    child objects as a list.
+    Used for meeting minutes and reports.
+
+    Args:
+        obj: Page.child_object that belongs to a Page type.
+        Must have "date" and "summary" fields associated 
+        with it. Other optional fields on the object
+        can be "link" and "document" (wagtail doc obj). 
+    
+    Returns: list
+    """
+    retval = []
+    for i in obj.order_by('-date'):
+        if not i.link and not i.document.url:
+            continue
+        item = {
+            'summary': i.summary,
+            'date': i.date.strftime("%b. %-d, %Y")
+        }
+        if i.link:
+            item['url'] = i.link
+        elif m.document.url:
+            item['url'] = m.document.url
+        retval.append(item)
+
+    return retval
 
 
 class MeetingMinutes(LinkFields):
@@ -150,7 +230,7 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', 'group.GroupReportsPage']
 
     def get_context(self, request):
         context = super(GroupPage, self).get_context(request)
@@ -214,6 +294,7 @@ class GroupPage(BasePage, Email):
         context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
+
 class GroupMeetingMinutesIndexPage(BasePage):
     """
     Index page for holding meeting minute pages.
@@ -228,6 +309,24 @@ class GroupMeetingMinutesIndexPage(BasePage):
         """
         if not self.title.strip() == "Meeting Minutes":
             raise ValidationError({'title': ('The title should be "Meeting Minutes"')})
+
+    def get_context(self, request):
+        """
+        Get meeting minutes from children.
+        """
+        context = super(GroupMeetingMinutesIndexPage, self).get_context(request)
+
+        year_pages = self.get_children().order_by('-title')
+        
+        data = []
+        for page in year_pages:
+            year_title = page.title
+            year_minutes = page.groupmeetingminutespage.get_meeting_minutes_grouped_by_date()
+            data.append((year_title, year_minutes))
+
+        context['data'] = data
+        return context
+
 
 class GroupMeetingMinutesPage(BasePage):
     """
@@ -247,62 +346,121 @@ class GroupMeetingMinutesPage(BasePage):
         Make sure page titles adhere to strict
         formatting policy.
         """
-        if not re.match('^[0-9]{4}$', self.title):
-            raise ValidationError({'title': ('Please enter the year as \
-                a four digit number, e.g. 2016')})
+        enforce_name_as_year(self.title)
+
+    def get_meeting_minutes(self):
+        """
+        Get meeting minutes as a list.
+        
+        Returns: list
+        """
+        return get_page_objects_as_list(self.meeting_minutes)
+
+    def get_meeting_minutes_grouped_by_date(self):
+        """
+        Get meeting minutes grouped by date.
+        
+        Returns:
+            OrderedDict
+        """
+        return get_page_objects_grouped_by_date(self.meeting_minutes)
 
     def get_context(self, request):
         """
-        Override the core get_context method in order to
-        provide templates with piles of goodness.
+        Override get_context.
         """
         context = super(GroupMeetingMinutesPage, self).get_context(request)
-
-        minutes = []
-        for m in self.meeting_minutes.order_by('-date'):
-            if not m.link and not m.document.url:
-                continue
-            minute = {
-                'summary': m.summary,
-                'date': m.date.strftime("%b. %-d, %Y")
-            }
-            if m.link:
-                minute['url'] = m.link
-            elif m.document.url:
-                minute['url'] = m.document.url
-            minutes.append(minute)
-
+        minutes = self.get_meeting_minutes()
         context['minutes'] = minutes
         return context
 
+
+class GroupReportsIndexPage(BasePage):
+    """
+    Index page for holding reports.
+    """
+    content_panels = Page.content_panels + BasePage.content_panels
+    subpage_types = ['group.GroupReportsPage']
+
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        if not self.title.strip() == "Reports":
+            raise ValidationError({'title': ('The title should be "Reports"')})
+
+    def get_context(self, request):
+        """
+        Get reports from children.
+        """
+        context = super(GroupReportsIndexPage, self).get_context(request)
+
+        year_pages = self.get_children().order_by('-title')
+        
+        data = []
+        for page in year_pages:
+            year_title = page.title
+            year_reports = page.groupreportspage.get_reports_grouped_by_date()
+            data.append((year_title, year_reports))
+
+        context['data'] = data
+        return context
+
+
 class GroupReportsPage(BasePage):
+    """
+    Page class that acts as a receptacle for reports.
+    Objects created with this class should represent a year
+    and they should hold all of the reports for the 
+    given year.
+    """
     content_panels = Page.content_panels + [
         InlinePanel('group_reports', label='Reports'),
     ] + BasePage.content_panels 
 
     subpage_types = ['base.IntranetPlainPage']
 
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        enforce_name_as_year(self.title)
+
     def get_context(self, request):
+        """
+        Override get_context
+        """
         context = super(GroupReportsPage, self).get_context(request)
-
-        reports = []
-        for r in self.group_reports.order_by('-date'):
-            if not r.link and not r.document.url:
-                continue
-            report = {
-                'summary': r.summary,
-                'date': r.date.strftime("%b. %-d, %Y")
-            }
-            if r.link:
-                report['url'] = r.link
-            elif r.document.url:
-                report['url'] = r.document.url
-            reports.append(report)
-
+        reports = self.get_reports_grouped_by_date()
         context['reports'] = reports
         return context
 
+
+    def get_reports(self):
+        """
+        Get group reports as a list.
+        
+        Returns:
+            list
+        """
+        return get_page_objects_as_list(self.group_reports)
+
+    def get_reports_grouped_by_date(self):
+        """
+        Get reports grouped by date.
+
+        Returns:
+            OrderedDict
+        """
+        return get_page_objects_grouped_by_date(self.group_reports)
+
+
 class GroupIndexPage(BasePage):
+    """
+    Receptacle page for holding groups.
+    """
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
