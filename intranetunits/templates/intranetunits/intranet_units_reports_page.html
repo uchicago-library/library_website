@@ -4,11 +4,21 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
-		<h1>{{ self.title }}</h1>
-
-        {% for report in reports %}
-            <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
-        {% endfor %}
-	</article>
+    <article>
+        <h1>{{ self.title }}</h1>
+            <table class="table table-striped stafflist">
+              <tbody>
+                {% for date, reports in self.get_reports_grouped_by_date.items %}
+                  <tr>
+                    <td>{{ date }}</td>
+                    <td>
+                    {% for report in reports %}
+                      <a href="{{ report.url }}">{{ report.summary }}</a><br/>
+                    {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+    </article>
 {% endblock %}

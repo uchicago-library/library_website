@@ -528,9 +528,9 @@ class LinkFields(models.Model):
         abstract = True
 
 
-class Report(LinkFields):
+class AbstractReport(LinkFields):
     """
-    Model for group and unit reports
+    Abstract base type for meeting minutes and reports.
     """
     date = models.DateField(blank=False)
     summary = models.TextField(null=False, blank=False)
@@ -539,6 +539,17 @@ class Report(LinkFields):
         FieldPanel('date'),
         FieldPanel('summary'),
     ] + LinkFields.panels
+
+    class Meta:
+        abstract = True
+        ordering = ['-date']
+
+
+class Report(AbstractReport):
+    """
+    Model for group and unit reports
+    """
+    panels = AbstractReport.panels
 
     class Meta:
         abstract = True 

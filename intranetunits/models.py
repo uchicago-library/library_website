@@ -1,4 +1,5 @@
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
+from group.models import get_page_objects_grouped_by_date, get_page_objects_as_list, enforce_name_as_year, enforce_name_as_reports
 from directory_unit.models import DirectoryUnit, UnitSupervisor
 from django.db import models
 from django.db.models.fields import CharField, TextField
@@ -7,12 +8,44 @@ from staff.models import StaffPage, StaffPagePageVCards, VCard
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
+from django.core.exceptions import ValidationError
 
 class IntranetUnitsReportsPageTable(Orderable, Report):
     """
     Reports for intranet unit pages.
     """
     page = ParentalKey('intranetunits.IntranetUnitsReportsPage', related_name='intranet_units_reports')
+
+
+class IntranetUnitsReportsIndexPage(BasePage):
+    """
+    Index page for holding reports.
+    """
+    content_panels = Page.content_panels + BasePage.content_panels
+    subpage_types = ['intranetunits.IntranetUnitsReportsPage']
+
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        enforce_name_as_reports(self.title)
+
+    def get_context(self, request):
+        """
+        Get reports from children.
+        """
+        context = super(IntranetUnitsReportsIndexPage, self).get_context(request)
+        year_pages = self.get_children().order_by('-title')
+
+        data = []
+        for page in year_pages:
+            year_title = page.title
+            year_reports = page.intranetunitsreportspage.get_reports_grouped_by_date()
+            data.append((year_title, year_reports))
+
+        context['data'] = data
+        return context
 
 
 class IntranetUnitsReportsPage(BasePage):
@@ -22,25 +55,39 @@ class IntranetUnitsReportsPage(BasePage):
 
     subpage_types = ['base.IntranetPlainPage']
 
+    def clean(self):
+        """
+        Make sure page titles adhere to strict
+        formatting policy.
+        """
+        enforce_name_as_year(self.title)
+
     def get_context(self, request):
+        """
+        Override get_context
+        """
         context = super(IntranetUnitsReportsPage, self).get_context(request)
-
-        reports = []
-        for r in self.intranet_units_reports.order_by('-date'):
-            if not r.link and not r.document.url:
-                continue
-            report = {
-                'summary': r.summary,
-                'date': r.date.strftime("%b. %-d, %Y")
-            }
-            if r.link:
-                report['url'] = r.link
-            elif r.document.url:
-                report['url'] = r.document.url
-            reports.append(report)
-
+        reports = self.get_reports_grouped_by_date()
         context['reports'] = reports
         return context
+
+    def get_reports(self):
+        """
+        Get group reports as a list.
+
+        Returns:
+            list
+        """
+        return get_page_objects_as_list(self.intranet_units_reports)
+
+    def get_reports_grouped_by_date(self):
+        """
+        Get reports grouped by date.
+
+        Returns:
+            OrderedDict
+        """
+        return get_page_objects_grouped_by_date(self.intranet_units_reports)
 
 
 class IntranetUnitsPage(BasePage, Email, PhoneNumber):
@@ -72,7 +119,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
     show_departments = models.BooleanField(default=False)
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetunits.IntranetUnitsPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetunits.IntranetUnitsReportsIndexPage']
 
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
@@ -165,18 +212,20 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
         #reports
         reports = []
-        for r in IntranetUnitsReportsPage.objects.child_of(self).first().intranet_units_reports.order_by('-date')[:3]:
-            if not r.link and not r.document.url:
-                continue
-            report = {
-                'summary': r.summary,
-                'date': r.date.strftime("%b. %-d, %Y")
-            }
-            if r.link:
-                report['url'] = r.link
-            elif r.document.url:
-                report['url'] = r.document.url
-            reports.append(report)
+        unit_reports_page = IntranetUnitsReportsPage.objects.descendant_of(self).first()
+        if unit_reports_page:
+            for r in unit_reports_page.intranet_units_reports.order_by('-date')[:3]:
+                if not r.link and not r.document.url:
+                    continue
+                report = {
+                    'summary': r.summary,
+                    'date': r.date.strftime("%b. %-d, %Y")
+                }
+                if r.link:
+                    report['url'] = r.link
+                elif r.document.url:
+                    report['url'] = r.document.url
+                reports.append(report)
 
         context['reports'] = reports
                 

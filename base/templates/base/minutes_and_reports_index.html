@@ -1,0 +1,23 @@
+<div class="row-fluid "> <!-- Main Row -->
+  <div class="col-xs-12 col-sm-12 col-md-8">
+    <h1>{{ self.title }}</h1>
+
+      {% for year, table in data %}
+          <h2>{{ year}}</h2>
+          <table class="table table-striped stafflist">
+            <tbody>
+              {% for date, items in table.items %}
+                <tr>
+                  <td>{{ date }}</td>
+                  <td>
+                  {% for item in items %}
+                    <a href="{{ item.url }}">{{ item.summary }}</a><br/>
+                  {% endfor %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      {% endfor %}
+  </div>
+</div> <!-- // Main row -->

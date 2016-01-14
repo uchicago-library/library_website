@@ -3,7 +3,7 @@ from django.db.models.fields import CharField, TextField
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from base.models import BasePage, LinkFields, DefaultBodyFields, Email, Report
+from base.models import BasePage, LinkFields, DefaultBodyFields, Email, AbstractReport, Report
 from staff.models import StaffPage
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
@@ -57,6 +57,15 @@ def enforce_name_as_year(title):
         raise ValidationError({'title': ('Please enter the year as \
             a four digit number, e.g. 2016')})
 
+
+def enforce_name_as_reports(title):
+    """
+    Helper function for making sure
+    page titles adhere to a strict
+    formatting policy.
+    """
+    if not title.strip() == "Reports":
+        raise ValidationError({'title': ('The title should be "Reports"')})
 
 
 def get_page_objects_grouped_by_date(obj):
@@ -125,21 +134,14 @@ def get_page_objects_as_list(obj):
     return retval
 
 
-class MeetingMinutes(LinkFields):
+class MeetingMinutes(AbstractReport):
     """
     Meeting minutes content type.
     """
-    date = models.DateField(blank=False)
-    summary = models.TextField(null=False, blank=False)
-
-    panels = [
-        FieldPanel('date'),
-        FieldPanel('summary'),
-    ] + LinkFields.panels
+    panels = AbstractReport.panels
 
     class Meta:
         abstract = True
-        ordering = ['-date']
 
 
 class GroupMeetingMinutesPageTable(Orderable, MeetingMinutes):
@@ -233,8 +235,8 @@ class GroupPage(BasePage, Email):
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', 'group.GroupReportsPage']
 
     def get_context(self, request):
-        context = super(GroupPage, self).get_context(request)
 
+        context = super(GroupPage, self).get_context(request)
         group_members = self.group_members.all()
 
         # sorting: chairs or co-chairs first, alphabetically; then others, alphabetically. 
@@ -387,8 +389,7 @@ class GroupReportsIndexPage(BasePage):
         Make sure page titles adhere to strict
         formatting policy.
         """
-        if not self.title.strip() == "Reports":
-            raise ValidationError({'title': ('The title should be "Reports"')})
+        enforce_name_as_reports(self.title)
 
     def get_context(self, request):
         """
