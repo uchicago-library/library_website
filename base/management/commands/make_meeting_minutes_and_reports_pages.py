@@ -119,7 +119,7 @@ class Command (BaseCommand):
             except:
                 return "The department page could not be found."
 
-            if IntranetUnitsReportsIndexPage.objects.descendant_of(department_page).count() == 0:
+            if IntranetUnitsReportsIndexPage.objects.child_of(department_page).count() == 0:
                 department_reports_page.title = '2016'
                 department_reports_page.slug = '2016'
                 department_reports_page.set_url_path(department_page)
