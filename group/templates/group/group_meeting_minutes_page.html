@@ -6,19 +6,8 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
-            <table class="table table-striped stafflist">
-              <tbody>
-                {% for date, minutes in self.get_meeting_minutes_grouped_by_date.items %}
-                  <tr>
-                    <td>{{ date }}</td>
-                    <td>
-                    {% for minute in minutes %}
-                      <a href="{{ minute.url }}">{{ minute.summary }}</a><br/>
-                    {% endfor %}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+        {% with table=self.get_meeting_minutes_grouped_by_date %}
+            {% include "base/minutes_and_reports_outer_table.html" %}
+        {% endwith %}
 	</article>
 {% endblock %}
