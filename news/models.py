@@ -74,9 +74,6 @@ class NewsIndexPage(BasePage):
         # need to add order_by('story_date')
 
         sticky_pages = get_stories(sticky=True)
-        if sticky_pages:
-            sticky_pages = [sticky_pages.pop(0)]
-
         news_pages = get_stories()
 
         page = int(request.GET.get('page', 1))

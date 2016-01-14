@@ -22,9 +22,6 @@ class IntranetHomePage(BasePage):
         news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.live().exists() else []
 
         sticky_pages = get_stories_by_page(1, sticky=True)
-        if sticky_pages:
-            sticky_pages = [sticky_pages.pop(0)]
-
         news_pages = get_stories_by_page(1)
 
         context = super(IntranetHomePage, self).get_context(request)
