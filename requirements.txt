@@ -5,7 +5,7 @@ django-appconf==1.0.1
 django-compressor==2.0
 django-debug-toolbar==1.4
 django-modelcluster==1.1
--e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@9e3d400ebc3f3c51d29796235bc8572a77eb5937#egg=django_shibboleth_remoteuser-origin_uchicago
+-e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@7111b478183af6ceb61d6d633ae346d5b6429962#egg=django_shibboleth_remoteuser-origin_uchicago
 django-taggit==0.17.6
 django-treebeard==3.0
 djangorestframework==3.3.2
