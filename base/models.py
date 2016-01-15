@@ -343,19 +343,6 @@ class DefaultBodyFields(StreamBlock):
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
-class DefaultBodyField(StreamField):
-    """
-    We need to get rid of this! Don't use this! 
-    """
-    def __init__(self, block_types=None, **kwargs):
-        block_types = [
-            ('heading', CharBlock(classname='full title', icon='title')),
-            ('paragraph', RichTextBlock(icon='pilcrow')),
-            ('image', ImageChooserBlock(icon='image / picture')),
-        ]
-
-        super(DefaultBodyField, self).__init__(block_types, **kwargs)
-
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
 
