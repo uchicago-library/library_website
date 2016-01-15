@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class ProjectPage(BasePage):
     """
-    Model for InfoTech project pages.
+    Model for project pages.
     """
     # Choices for status
     ACTIVE = 'active'
@@ -62,6 +62,6 @@ class ProjectPage(BasePage):
 
 class ProjectIndexPage(BasePage):
     """
-    Homepage for infotech stuff.
+    Homepage for projects.
     """
-    subpage_types = ['infotech.InfoTechProjectPage']
+    subpage_types = ['projects.ProjectPage']

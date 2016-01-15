@@ -49,55 +49,6 @@ def continue_(loop):
     raise StopLoopException(loop, True)
 
 
-# monkeypatch NodeList to handle break/continue
-def render(self, context):
-    from django.utils.safestring import mark_safe
-    from django.utils.encoding import force_text
-
-    return mark_safe(''.join(map(force_text, _render_nodelist_items(self,context))))
-template.NodeList.render = render
-
-
-# monkeypatch ForNode to handle break/continue
-def render(self, context):
-    try:
-        values = self.sequence.resolve(context, True)
-    except template.VariableDoesNotExist:
-        values = []
-    if values is None:
-        values = []
-    if not hasattr(values, '__len__'):
-        values = list(values)
-    len_values = len(values)
-    if len_values < 1:
-        return self.nodelist_empty.render(context)
-    if self.is_reversed:
-        values = reversed(values)
-    unpack = len(self.loopvars) > 1
-    # push a forloop value onto the context
-    loop = BoundedLoop('forloop', context, self.nodelist_loop, len_values)
-    for value in values:
-        if unpack:
-            # if there are multiple loop variables, unpack the value into them
-            context.update(dict(zip(self.loopvars, value)))
-        else:
-            context[self.loopvars[0]] = value
-        status = loop.next()
-        if unpack and status is loop.PASS:
-            # The loop variables were pushed on to the context so pop them
-            # off again. This is necessary because the tag lets the length
-            # of loopvars differ to the length of each set of items and we
-            # don't want to leave any vars from the previous loop on the
-            # context. If status is not PASS, all the additional dicts,
-            # including the one with the loop variables, have already been
-            # popped off in loop.next() so we don't have to pop it here
-            context.pop()
-        if status is loop.BREAK:
-            break
-    return loop.render(close=True)
-template.defaulttags.ForNode.render = render
-
-
 class StopLoopException(Exception):
     def __init__(self, loop, continue_, nodelist=None):
         if not isinstance(loop, Loop):
