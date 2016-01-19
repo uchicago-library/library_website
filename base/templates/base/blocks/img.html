@@ -16,10 +16,17 @@
         <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
     {% endif %}
    
-    <figcaption>
-        <em>{{value.image}}</em><br/>
-        <strong>{{value.citation}}</strong>
-        <br/>
-        {{value.caption}}
-    </figcaption>
+    {% if value.title or value.citation or value.caption %}
+        <figcaption>
+            {% if value.title %}
+                <em>{{value.title}}</em><br/>
+            {% endif %}
+            {% if value.citation %}
+                <strong>{{value.citation}}</strong><br/>
+            {% endif %}
+            {% if value.caption %}
+                {{value.caption}}
+            {% endif %}
+        </figcaption>
+    {% endif %}
 </figure>

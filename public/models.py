@@ -43,6 +43,27 @@ class LocationPageDonorPlacement(Orderable, models.Model):
     )
 
 
+class LocationPageFloorPlacement(Orderable, models.Model):
+    """
+    Create a through table for linking location pages to floors.
+    """
+    parent = ParentalKey(
+        'public.LocationPage',
+        related_name='location_floor_placements',
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL
+    )
+
+    floor = models.ForeignKey(
+        'public.FloorPlanPage',
+        related_name='location_floor',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+
 class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
@@ -52,8 +73,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     long_description = RichTextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
-    library_floorplan_link = models.ForeignKey('public.FloorPlanPage',
-        null=True, blank=True, on_delete=models.SET_NULL)
     location_photo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -103,7 +122,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         FieldPanel('short_description'),
         FieldPanel('long_description'),
         FieldPanel('parent_building'),
-        FieldPanel('library_floorplan_link'),
+        InlinePanel('location_floor_placements', label='Floor'),
         FieldPanel('libcal_library_id'),
         FieldPanel('google_map_link'),
         MultiFieldPanel(

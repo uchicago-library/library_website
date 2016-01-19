@@ -253,6 +253,7 @@ class ImageBlock(StructBlock):
     Image streamfield block.
     """
     image = ImageChooserBlock()
+    title = CharBlock(required=False)
     citation = CharBlock(required=False)
     caption = TextBlock(required=False)
     alt_text = CharBlock(required=False) #Img title in the system is a fallback. 
