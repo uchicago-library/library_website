@@ -148,19 +148,19 @@ def get_individual_info_from_wagtail(cnetid):
 
         title = v.title
         if title:
-            tmp.append(title)
+            tmp.append(re.sub('\s+', ' ', title).strip())
 
         department = v.unit.name
         if department:
-            tmp.append(department)
+            tmp.append(re.sub('\s+', ' ', department).strip())
 
         facultyexchange = v.faculty_exchange
         if facultyexchange:
-            tmp.append(facultyexchange)
+            tmp.append(re.sub('\s+', ' ', facultyexchange).strip())
 
         phone = v.phone_number
         if phone:
-            tmp.append(phone)
+            tmp.append(re.sub('\s+', ' ', phone).strip())
 
         output['title_department_subdepartments'].add("\n".join(tmp))
 
