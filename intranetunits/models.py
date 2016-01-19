@@ -186,7 +186,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         department_units = []
         if self.unit:
             for directory_unit in DirectoryUnit.objects.filter(parentUnit=self.unit):
-                intranet_unit_pages = directory_unit.intranet_unit_page.live()
+                intranet_unit_pages = directory_unit.intranet_unit_page.filter(live=True)
                 if intranet_unit_pages:
                     unit = {
                         'title': intranet_unit_pages[0].title,
