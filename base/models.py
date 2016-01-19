@@ -310,7 +310,8 @@ class CodeBlock(StructBlock):
     code = TextBlock()
 
     class Meta:
-        icon = 'code'
+        icon = 'cog'
+        label = '_SRC'
 
     def render(self, value):
         src = value['code'].strip('\n')
