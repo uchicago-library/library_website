@@ -48,7 +48,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     Location and building pages.
     """
     # Model fields
-    description = models.TextField(null=False, blank=False) 
+    short_description = models.TextField(null=False, blank=False)
+    long_description = RichTextField(null=False, blank=False) 
     parent_building = models.ForeignKey('self',
         null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
     library_floorplan_link = models.ForeignKey('public.FloorPlanPage',
@@ -99,7 +100,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
     # Set what appears in the admin
     content_panels = Page.content_panels + [
-        FieldPanel('description'),
+        FieldPanel('short_description'),
+        FieldPanel('long_description'),
         FieldPanel('parent_building'),
         FieldPanel('library_floorplan_link'),
         FieldPanel('libcal_library_id'),

@@ -71,7 +71,7 @@ class UnitPage(BasePage, FaxNumber):
     """
     Basic structure for units and departments.
     """
-    display_in_directory = models.BooleanField(default=False)
+    display_in_directory = models.BooleanField(default=True)
     email = models.EmailField(max_length=254, blank=True)
     contact_url = models.URLField(max_length=200, blank=True, default='')
     room_number = models.CharField(max_length=32, blank=True)
