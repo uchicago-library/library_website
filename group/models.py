@@ -232,7 +232,9 @@ class GroupPage(BasePage, Email):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels 
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', 'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', 'group.GroupReportsPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', \
+                     'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', \
+                     'group.GroupReportsPage', 'projects.ProjectPage']
 
     def get_context(self, request):
 
