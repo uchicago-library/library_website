@@ -5,6 +5,7 @@ from wagtail.wagtailcore.blocks import CharBlock, ListBlock, RichTextBlock
 from base.models import BasePage
 from icon_list_boxes.models import IconListBlock, IconListCluster
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.wagtailsearch import index
 
 class TOCPage(BasePage):
     """
@@ -17,3 +18,7 @@ class TOCPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+    
+    search_fields = BasePage.search_fields + (
+        index.SearchField('body'),
+    )
