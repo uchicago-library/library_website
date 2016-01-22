@@ -94,12 +94,23 @@ def get_individual_info_from_directory(cnetid):
         except:
             pass
         
+        chunks = []
         try:      
-            department = re.sub('\s+', ' ', vcard.find('subDepartment/name').text).strip()
+            department = re.sub('\s+', ' ', vcard.find('department/name').text).strip()
             if department:
-                output.append(department.split(" | ").pop())
+                chunks.append(department)
         except:
             pass
+
+        try:
+            subdepartment = re.sub('\s+', ' ', vcard.find('subDepartment/name').text).strip()
+            if subdepartment:
+                chunks = chunks + subdepartment.split(" | ")
+        except:
+            pass
+
+        if chunks:
+            output.append(chunks.pop())
 
         try:
             facultyexchange = re.sub('\s+', ' ', vcard.find('facultyExchange').text).strip()
@@ -148,19 +159,19 @@ def get_individual_info_from_wagtail(cnetid):
 
         title = v.title
         if title:
-            tmp.append(title)
+            tmp.append(re.sub('\s+', ' ', title).strip())
 
         department = v.unit.name
         if department:
-            tmp.append(department)
+            tmp.append(re.sub('\s+', ' ', department).strip())
 
         facultyexchange = v.faculty_exchange
         if facultyexchange:
-            tmp.append(facultyexchange)
+            tmp.append(re.sub('\s+', ' ', facultyexchange).strip())
 
         phone = v.phone_number
         if phone:
-            tmp.append(phone)
+            tmp.append(re.sub('\s+', ' ', phone).strip())
 
         output['title_department_subdepartments'].add("\n".join(tmp))
 
@@ -187,6 +198,15 @@ class Command (BaseCommand):
         wag_staff = set(get_all_library_cnetids_from_wagtail())
 
         output = []
+
+        '''
+        # JEJ
+        print(
+        get_individual_info_from_directory('amybuckland')
+        )
+        import sys
+        sys.exit()
+        '''
 
         missing_in_api = wag_staff.difference(api_staff)
         if missing_in_api:

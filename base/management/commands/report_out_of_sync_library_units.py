@@ -8,6 +8,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'library_website.settings'
 import sys
 
 from http.client import HTTPSConnection
+from intranetunits.models import IntranetUnitsPage
 from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from xml.etree import ElementTree
 
@@ -214,6 +215,32 @@ class Command (BaseCommand):
             output.append("THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
             output = output + sorted(wu)
             output.append("")
+
+        # report DirectoryUnits that are not used in any IntranetUnitsPage. 
+        # I commented this code out because we have a huge list of DirectoryUnits with no
+        # associated page. There is no way to report this neatly, because of the number of 
+        # DirectoryUnits that refer to a bibliographer's subject area, but not necessarily
+        # a "unit" that should have reports, etc. 
+        '''
+        directory_unit_full_names = set(DirectoryUnit.objects.all().values_list('fullName', flat=True))
+        intranetu_unit_full_names = set()
+        for i in IntranetUnitsPage.objects.all():
+            if i.unit:
+                intranetu_unit_full_names.add(i.unit.fullName)
+
+        output.append("ALL DIRECTORY UNIT FULL NAMES")
+        output = output + sorted(list(directory_unit_full_names))
+        output.append("")
+
+        output.append("ALL INTRANET UNIT PAGE FULL NAMES")
+        output = output + sorted(list(intranetu_unit_full_names))
+        output.append("")
+
+        diffs = directory_unit_full_names.difference(intranetu_unit_full_names)
+        if diffs:
+            output.append("THE FOLLOWING WAGTAIL DIRECTORY UNITS DO NOT HAVE INTRANETUNIT PAGES:")
+            output = output + sorted(list(diffs)) + [""]
+        '''
 
         return "\n".join(output)
 
