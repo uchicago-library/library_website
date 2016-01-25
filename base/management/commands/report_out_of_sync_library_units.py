@@ -2,14 +2,11 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-import base64
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'library_website.settings'
 import sys
 
-from http.client import HTTPSConnection
+from base.utils import get_xml_from_directory_api
 from intranetunits.models import IntranetUnitsPage
-from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from xml.etree import ElementTree
 
 from directory_unit.models import DirectoryUnit
@@ -41,21 +38,9 @@ def get_full_name_for_node(tree, node):
     return " - ".join(full_name[1:])
 
 def get_data(tree, node=None):
-    def get_xml_from_api(url):
-        xml_path = url.replace('https://directory.uchicago.edu', '')
-        c = HTTPSConnection("directory.uchicago.edu")
-        b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
-        userAndPass = base64.b64encode(b).decode("ascii")
-        headers = { 'Authorization' : 'Basic %s' %  userAndPass } 
-        c.request('GET', xml_path, headers=headers)
-        result = c.getresponse()
-    
-        return ElementTree.fromstring(result.read())
-
     if node == None:
         node = tree
-
-    x = get_xml_from_api(node['xml'])
+    x = ElementTree.fromstring(get_xml_from_directory_api(node['xml']))
 
     # no matter what, name is in the same place- but sometimes it gets split into chunks. 
     node['name'] = x.find(".//organizations/organization/name").text

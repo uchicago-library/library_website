@@ -8,11 +8,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'library_website.settings'
 import re
 import sys
 
+from base.utils import get_xml_from_directory_api
 from directory_unit.models import DirectoryUnit
 from django.contrib.auth.models import User
 from django.db.models import F
-from http.client import HTTPSConnection
-from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from staff.models import StaffPage
 from xml.etree import ElementTree
 
@@ -20,15 +19,8 @@ from xml.etree import ElementTree
 # this thing needs to deal with VCards. 
 
 def get_all_library_cnetids_from_directory():
-    c = HTTPSConnection("directory.uchicago.edu")
-    b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
-    userAndPass = base64.b64encode(b).decode("ascii")
-    headers = { 'Authorization' : 'Basic %s' %  userAndPass } 
-    c.request('GET', '/api/v2/divisions/16.xml', headers=headers)
-    result = c.getresponse()
-
     # get xml element tree.
-    x = ElementTree.fromstring(result.read())
+    x = ElementTree.fromstring(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
 
     # get cnetids.
     cnetids = set()
@@ -41,15 +33,8 @@ def get_individual_info_from_directory(cnetid):
         "cnetid": cnetid
     }
 
-    c = HTTPSConnection("directory.uchicago.edu")
-    b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
-    userAndPass = base64.b64encode(b).decode("ascii")
-    headers = { 'Authorization' : 'Basic %s' %  userAndPass } 
-    c.request('GET', "/api/v2/individuals/" + cnetid + ".xml", headers=headers)
-    result = c.getresponse()
-
     # get xml element tree.
-    x = ElementTree.fromstring(result.read())
+    x = ElementTree.fromstring(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetid + '.xml'))
 
     # name is slightly more formal- e.g. "John E. Jung"
     info['officialName'] = x.find("individuals/individual/name").text
