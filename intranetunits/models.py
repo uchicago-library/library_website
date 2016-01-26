@@ -211,21 +211,23 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         context['department_unit_rows'] = [department_units[i:i+4] for i in range(0, len(department_units), 4)]
 
         #reports
-        reports = []
-        unit_reports_page = IntranetUnitsReportsPage.objects.descendant_of(self).first()
-        if unit_reports_page:
-            for r in unit_reports_page.intranet_units_reports.order_by('-date')[:3]:
+        tmp = []
+        unit_reports_pages = IntranetUnitsReportsPage.objects.descendant_of(self)
+        for unit_reports_page in unit_reports_pages:
+            for r in unit_reports_page.intranet_units_reports.all():
                 if not r.link and not r.document.url:
                     continue
                 report = {
                     'summary': r.summary,
-                    'date': r.date.strftime("%b. %-d, %Y")
+                    'date': r.date.strftime("%b. %-d, %Y"),
+                    'sortdate': r.date.strftime("%Y%m%d")
                 }
                 if r.link:
                     report['url'] = r.link
                 elif r.document.url:
                     report['url'] = r.document.url
-                reports.append(report)
+                tmp.append(report)
+        reports = sorted(tmp, key=lambda r: r['sortdate'], reverse=True)[:3]
 
         context['reports'] = reports
                 

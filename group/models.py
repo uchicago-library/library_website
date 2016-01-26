@@ -257,10 +257,10 @@ class GroupPage(BasePage, Email):
         group_members = group_member_chairs + non_group_member_chairs
 
         # minutes
-        minutes = []
-        group_meeting_min_page = GroupMeetingMinutesPage.objects.descendant_of(self).first()
-        if group_meeting_min_page:
-            for m in group_meeting_min_page.meeting_minutes.order_by('-date')[:3]:
+        tmp = []
+        group_meeting_min_pages = GroupMeetingMinutesPage.objects.descendant_of(self)
+        for group_meeting_min_page in group_meeting_min_pages:
+            for m in group_meeting_min_page.meeting_minutes.all():
                 try:
                     if not m.link and not m.document.url:
                         continue
@@ -268,30 +268,34 @@ class GroupPage(BasePage, Email):
                     continue
                 minute = {
                     'summary': m.summary,
-                    'date': m.date.strftime("%b. %-d, %Y")
+                    'date': m.date.strftime("%b. %-d, %Y"),
+                    'sortdate': m.date.strftime("%Y%m%d")
                 }
                 if m.link:
                     minute['url'] = m.link
                 elif m.document.url:
                     minute['url'] = m.document.url
-                minutes.append(minute)
+                tmp.append(minute)
+        minutes = sorted(tmp, key=lambda m: m['sortdate'], reverse=True)[:3]
 
         #reports
-        reports = []
-        group_reports_page = GroupReportsPage.objects.descendant_of(self).first()
-        if group_reports_page:
-            for r in group_reports_page.group_reports.order_by('-date')[:3]:
+        tmp = []
+        group_reports_pages = GroupReportsPage.objects.descendant_of(self)
+        for group_reports_page in group_reports_pages:
+            for r in group_reports_page.group_reports.all():
                 if not r.link and not r.document.url:
                     continue
                 report = {
                     'summary': r.summary,
-                    'date': r.date.strftime("%b. %-d, %Y")
+                    'date': r.date.strftime("%b. %-d, %Y"),
+                    'sortdate': r.date.strftime("%Y%m%d")
                 }
                 if r.link:
                     report['url'] = r.link
                 elif r.document.url:
                     report['url'] = r.document.url
-                reports.append(report)
+                tmp.append(report)
+        reports = sorted(tmp, key=lambda r: r['sortdate'], reverse=True)[:3]
 
         context['minutes'] = minutes
         context['reports'] = reports
