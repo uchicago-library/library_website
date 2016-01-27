@@ -156,7 +156,7 @@ class StaffPage(BasePage):
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
     ] + BasePage.content_panels
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
     class Meta:
         ordering = ['title']

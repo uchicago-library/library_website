@@ -234,7 +234,7 @@ class GroupPage(BasePage, Email):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', \
                      'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', \
-                     'group.GroupReportsPage', 'projects.ProjectPage']
+                     'group.GroupReportsPage', 'intranettocs.TOCPage', 'projects.ProjectPage']
 
     def get_context(self, request):
 

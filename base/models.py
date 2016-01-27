@@ -348,7 +348,7 @@ class DefaultBodyFields(StreamBlock):
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
 IntranetPlainPage.content_panels = Page.content_panels + [
     StreamFieldPanel('body')
@@ -359,7 +359,7 @@ class IntranetIndexPage(BasePage):
     display_hierarchical_listing = models.BooleanField(default=False)
     body = StreamField(DefaultBodyFields())
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('intro'),

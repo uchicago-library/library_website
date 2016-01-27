@@ -17,7 +17,7 @@ class TOCPage(BasePage):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
     
     search_fields = BasePage.search_fields + (
         index.SearchField('body'),
