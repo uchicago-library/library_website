@@ -6,3 +6,5 @@
 /library_website/settings/local.py
 /static
 /media
+
+*test.json
