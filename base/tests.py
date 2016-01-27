@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import AnonymousUser
 import sys
 
+# Helper functions
 def create_user_with_privileges():
     """
     Create a user that belongs to the proper groups
@@ -41,8 +42,8 @@ def loggin_user_with_privileges(user):
     user.client.login(username='geordilaforge', password='broken_visor!')
     return user
 
-
-class TestLivePages(TestCase):
+# Tests
+class TestUsersAndServingLivePages(TestCase):
     """
     Tests to run on a json dump of the database. 
 
