@@ -1,0 +1,24 @@
+<!ELEMENT responseData    (response, totalResults, organizations)>
+<!ELEMENT response        (#PCDATA)>
+<!ELEMENT totalResults    (#PCDATA)>
+<!ELEMENT organizations   (organization+)>
+<!ELEMENT organization    (name, type, departments, members, resources)>
+<!ELEMENT name            (#PCDATA)>
+<!ELEMENT type            (#PCDATA)>
+<!ELEMENT departments     (department+)>
+<!ELEMENT department      (name, resources)>
+<!--      name (see above) -->
+<!ELEMENT resources       (directoryURL, xmlURL)>
+<!ELEMENT directoryURL    (#PCDATA)>
+<!ELEMENT xmlURL          (#PCDATA)>
+<!ELEMENT members         (member+)>
+<!ELEMENT member          (name, displayName, cnetid, chicagoid, title, email, phone, facultyExchange, resources)>
+<!--      name (see above) -->
+<!ELEMENT displayName     (#PCDATA)>
+<!ELEMENT cnetid          (#PCDATA)>
+<!ELEMENT chicagoid       (#PCDATA)>
+<!ELEMENT title           (#PCDATA)>
+<!ELEMENT email           (#PCDATA)>
+<!ELEMENT phone           (#PCDATA)>
+<!ELEMENT facultyExchange (#PCDATA)>
+<!--      resources (see above) -->
