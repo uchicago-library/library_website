@@ -130,7 +130,6 @@ class TestUsersAndServingLivePages(TestCase):
             response = user.client.get(page.url, HTTP_HOST=site.hostname)
             self.assertEqual(response.status_code, 200)
 
-
     def test_loop_page_with_anonymous_user(self):
         """
         Should redirect.
@@ -140,6 +139,51 @@ class TestUsersAndServingLivePages(TestCase):
         user.client = Client()
         response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
         self.assertEqual(response.status_code, 302)
+
+class TestPageModels(TestCase):
+    """
+    Test the page model itself.
+    """
+
+    def test_page_models_have_subpage_types(self):
+        """
+        All page content types should have subpage_types 
+        explicitly set. This test won't tell us if they're 
+        set correctly but it will make sure we've at least
+        done something.
+        """
+        # We get rid of the first element because it is a wagtailcore.Page
+        content_types = Page.allowed_subpage_models()[1:]
+        #number_of_content_types = len(content_types)
+ 
+        no_subpagetypes = set([])
+        for page_type in content_types:
+            #num = len(page_type.allowed_subpage_models())
+            try:
+                #self.assertNotEqual(num, number_of_content_types, 'This content type is missing a subpage_types declaration')
+                #assert page_type.subpage_types, 'This content type is missing a subpage_types declaration'
+                page_type.subpage_types
+            except:
+                no_subpagetypes.add(page_type.__name__)
+
+        self.assertEqual(len(no_subpagetypes), 0, 'The following content types don\'t have a subpages_type declaration: ' + str(no_subpagetypes))
+
+    def test_page_models_have_search_fields(self):
+        """
+        All page content types should have search_tables.
+        This doesn't tell us if we've set them correctly
+        but it ensures we've done something. THIS TEST
+        IS BROKEN - IT PASSES WHEN IT SHOULD FAIL!
+        """
+        # We get rid of the first element because it is a wagtailcore.Page
+        content_types = Page.allowed_subpage_models()[1:]
+        default_search_fields = set(Page.search_fields)
+        no_search_fields = set([])
+        for page_type in content_types:
+            if not len(set(page_type.search_fields)) > len(default_search_fields):
+                no_search_fields.add(page_type.__name__)
+
+        self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration: ' + str(no_search_fields))
 
 
 class ValidXMLTestCase(TestCase):
