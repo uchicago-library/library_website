@@ -11,6 +11,7 @@ from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, Stre
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailembeds.blocks import EmbedBlock 
 from wagtail.wagtailsearch import index
 from wagtail.wagtaildocs.models import Document
@@ -512,6 +513,84 @@ class LinkFields(models.Model):
         PageChooserPanel('link_page'),
         DocumentChooserPanel('link_document'),
     ]
+
+    class Meta:
+        abstract = True
+
+
+class LinkedText(LinkFields):
+    """
+    Generic link with text.
+    """
+    link_text = models.CharField(max_length=255, blank=True) 
+
+    panels = [
+        FieldPanel('link_text'),
+    ] + LinkFields.panels
+    
+    class Meta:
+        abstract = True
+
+
+class LinkedTextOrLogo(LinkedText):
+    """
+    Generic linked text or image/logo.
+    """
+    logo = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
+    @property
+    def content(self):
+        if self.logo:
+            return self.logo
+        elif self.link_text:
+            return self.link_text
+        else:
+            return ''
+
+    panels = [
+        ImageChooserPanel('logo'),
+    ] + LinkedText.panels
+    
+    class Meta:
+        abstract = True
+
+
+class AbstractButton(LinkFields):
+    """
+    Link with special styling and shorter 
+    user editable text.
+    """
+    button_text = models.CharField(max_length=20, blank=False) 
+
+    panels = [
+        FieldPanel('button_text'),
+    ] + LinkFields.panels
+    
+    class Meta:
+        abstract = True
+
+
+class Button(AbstractButton):
+    """
+    A simple button.
+    """
+
+    BUTTON_CHOICES = (
+        ('btn-primary', 'Primary'), 
+        ('btn-default', 'Subtle'), 
+    )
+
+    button_type = forms.ChoiceField(choices=BUTTON_CHOICES)
+
+    panels = [
+        FieldPanel('button_type'),
+    ] + AbstractButton.panels
 
     class Meta:
         abstract = True

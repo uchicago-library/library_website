@@ -56,6 +56,7 @@ INSTALLED_APPS = (
 
     'rest_framework',
     'base',
+    'conferences',
     'directory_unit',
     'group',
     'home',
