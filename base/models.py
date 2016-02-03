@@ -330,7 +330,7 @@ class BlockQuoteBlock(StructBlock):
     Blockquote streamfield block.
     """
     quote = TextBlock('quote title')
-    attribution = CharBlock()
+    attribution = CharBlock(required=False)
 
     class Meta:
         icon = 'openquote'
