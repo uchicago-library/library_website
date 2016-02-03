@@ -154,4 +154,10 @@ class ConferenceSubPage(PublicBasePage):
     most of their template "goodness" from 
     parent ConferencePage.
     """
+    body = StreamField(DefaultBodyFields())
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('body'),
+    ] + PublicBasePage.content_panels
+
     subpage_types = ['conferences.ConferenceSubPage']
