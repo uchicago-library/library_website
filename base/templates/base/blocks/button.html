@@ -1,1 +1,1 @@
-<button type="button" class="btn {{value.button_type}}">{{value.button_text}}</button>
+<a type="button" href="{% firstof value.link_page.url value.link_external value.link_document.url %}" class="btn {{value.button_type}}" role="button">{{value.button_text}}</a>
