@@ -614,7 +614,7 @@ class PublicBasePage(BasePage):
             ],
             heading='Page Management'
         ),
-    ]
+    ] + BasePage.content_panels
 
     class Meta:
         abstract = True
