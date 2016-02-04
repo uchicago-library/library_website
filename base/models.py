@@ -7,7 +7,7 @@ from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock
+from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
 from wagtail.wagtaildocs.blocks import DocumentChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
@@ -404,6 +404,37 @@ class CodeBlock(StructBlock):
         return mark_safe(highlight(src, lexer, formatter))
 
 
+class AgendaInnerBlock(StructBlock):
+    """
+    Block definition for the repeatable inner 
+    portion of the AgendaItem streamfield.
+    """
+    title = CharBlock(required=False, 
+        help_text='Talk title, workshop title, etc.')
+    presenters = CharBlock(required=False,
+        help_text='Comma separated list of presenters \
+            (if more than one)')
+    room_number = CharBlock(required=False)
+    description = RichTextBlock(required=False)
+
+
+class AgendaItemFields(StructBlock):
+    """
+    Make the AgendaInnerBlock repeatable.
+    """
+    start_time = TimeBlock(required=False, icon='time')
+    end_time = TimeBlock(required=False, icon='time')
+    session_title = CharBlock(required=False, 
+        icon='title',
+        help_text='Title of the session. \
+            Can be used as title of the talk in some situations.')
+    event = ListBlock(AgendaInnerBlock(), 
+        icon="edit",
+        help_text='A talk or event with a title, presenter \
+            room number, and description',
+        label=' ')
+        
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared 
@@ -420,6 +451,7 @@ class DefaultBodyFields(StreamBlock):
     button = ButtonBlock()
     video = EmbedBlock(icon='media')
     code = CodeBlock()
+    agenda_item = AgendaItemFields(icon='date', template='base/blocks/agenda.html')
     #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
