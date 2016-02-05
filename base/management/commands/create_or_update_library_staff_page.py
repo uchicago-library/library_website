@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 from django.db import models, migrations
 from staff.models import StaffIndexPage, StaffPage, StaffPagePageVCards
 from staff.utils import get_individual_info_from_directory
+from xml.etree import ElementTree
 
 class Command (BaseCommand):
     """
@@ -44,8 +45,9 @@ class Command (BaseCommand):
         staff_index_url = StaffIndexPage.objects.first().url
         staff_index_content_type_pk = ContentType.objects.get(model='staffindexpage').pk
         staff_content_type_pk = ContentType.objects.get(model='staffpage').pk
-    
-        info = get_individual_info_from_directory(cnetid)
+  
+        xml_string = get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetid + '.xml') 
+        info = get_individual_info_from_directory(xml_string)
         next_available_path = get_available_path_under(staff_index_path)
 
         # Update a StaffPage
