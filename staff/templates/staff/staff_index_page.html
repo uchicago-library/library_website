@@ -1,20 +1,151 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
 	<p><a href="/">Home</a></p>
-	<article>
-		<h1>{{ self.title }}</h1>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+        	<article>
+        		<h1 style="padding: 15px 0 0 0; margin-bottom: 0;">Library Directory</h1>
+        
+        		{{ self.intro|richtext }}
 
-		{{ self.intro|richtext }}
+                <form action="." method="GET">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a class="btn btn-directory{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Department View</a>
+                            <a class="btn btn-directory{% if view == 'staff' and not query %} active{% endif %}" style="padding: 5px 15px;" href=".">Staff View</a>
+                        </div><!--/col-->
+                        <div class="col-md-6">
+                            <div class="col-xs-12 col-sm-12 col-md-5 bg-directory dir-header">
+                                <h4>Search Directory</h4>
+                            </div><!--/col-->
+                            <div class="col-xs-12 col-sm-12 col-md-7" style="padding: 15px 0 7px 0;">
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" placeholder="professor snape" value="{% if query %}{{ query }}{% endif %}" name="query" aria-label="..."/>
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-searchtype btn-default" style="padding: 7px 14px;" type="button">Find </button>
+                                        </div><!--/input-group-btn-->
+                                    </div><!--/input-group-->
+                            </div><!--/col-->
+                        </div><!--/col-->
+                    </div><!--/row-->
+    
+                    <hr/>
+    
+                    {% if not query %}
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <h3 style="margin:10px 0 20px 0;">
+                                    All Library Staff
+                                </h3>
+                            </div><!--/col-->
+                        </div><!--/row-->
+                        <hr/>
+                    {% endif %}
+    
+                    {% if view == 'staff' %} 
+                        <div class="row">
+                            <div class="col-md-2 dir-header">
+                                <h4>Browse by</h4>
+                            </div><!--/col-->
+                            <div class="col-md-10">
+                                <select name="library">
+                                    {% if library and not library == '' %}
+                                        <option value="">All Libraries</option>
+                                    {% else %}
+                                        <option value="">Library</option>
+                                    {% endif %}
+                                    {% for l in libraries %}
+                                        <option{% if l == library %} selected="selected"{% endif %}>{{ l }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="subject">
+                                    {% if subject and not subject == '' %}
+                                        <option value="">All Subject Specialties</option>
+                                    {% else %}
+                                        <option value="">Subject Specialty</option>
+                                    {% endif %}
+                                    {% for s in subjects %}
+                                        <option{% if s == subject %} selected="selected"{% endif %}>{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="submit"/>
+                            </div><!--/col-->
+                        </div><!--/row-->
+                    {% endif %}
+                </form>
 
-        <ul>
-            {% for staff_page in staff_pages %}
-                <li><a href="{{ staff_page.url }}">{{ staff_page.title }}</a></li>
-            {% endfor %}
-        </ul>
+                <hr/>
+      
+                    {% if staff_pages %}
+                        <table class="table table-striped">
+                            <tbody>
+                                {% for staff_page in staff_pages %}
+                                    <tr>
+                                        <td>
+                                            {# image staff_page.profile_picture #}
+                                        </td>
+                                        <td>
+                                            <a href="{{ staff_page.url }}">
+                                                <strong>{{ staff_page.title }}</strong>
+                                            </a>
+                                            <br/>
+                                            {% regroup staff_page.vcards.all by unit as vcards %}
+                                            {% for vcard in vcards %}
+                                                {{ vcard.grouper.name }}
+                                                <br/>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <strong>Contact</strong>
+                                            <br/>
+                                            {% regroup staff_page.vcards.all by email as vcards %}
+                                            {% for vcard in vcards %}
+                                                {% if vcard.grouper != '' %}
+                                                    <a href="mailto:{{ vcard.grouper }}">{{ vcard.grouper }}</a>
+                                                    <br/>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% regroup staff_page.vcards.all by phone_number as vcards %}
+                                            {% for vcard in vcards %}
+                                                {% if vcard.grouper != '' %}
+                                                    {{ vcard.grouper }}
+                                                    <br/>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% regroup staff_page.vcards.all by faculty_exchange as vcards %}
+                                            {% for vcard in vcards %}
+                                                {% if vcard.grouper != '' %}
+                                                    {{ vcard.grouper }}
+                                                    <br/>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        {% if query %}
+                            <p>There are no results for your search.</p>
+                        {% endif %}
+                    {% endif %}
 
-	</article>
+                    {% if staff_pages.has_previous %}
+                        <a href=".?page={{ staff_pages.previous_page_number }}">Previous</a>
+                    {% endif %}
+                    {% if staff_pages.has_previous and staff_pages.has_next %} 
+                        | 
+                    {% endif %}
+                    {% if staff_pages.has_next %}
+                        <a href=".?page={{ staff_pages.next_page_number }}">Next</a>
+                    {% endif %}
+        	</article>
+        </div><!--/col-->
+    </div><!--/row-->
 {% endblock %}
