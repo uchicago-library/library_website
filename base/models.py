@@ -29,7 +29,8 @@ import sys
 # Helper functions and constants
 BUTTON_CHOICES = (
     ('btn-primary', 'Primary'),
-    ('btn-default', 'Subtle'),
+    ('btn-default', 'Secondary'),
+    ('btn-reserve', 'Reservation'),
 )
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
@@ -197,6 +198,44 @@ class LinkFields(models.Model):
         abstract = True
 
 
+
+class SocialMediaFields(models.Model):
+    """
+    Social media links and buttons.
+    """
+    twitter_page = models.URLField(blank=True) 
+    facebook_page = models.URLField(blank=True) 
+    hashtag = models.CharField(max_length=45, blank=True) 
+    hashtag_page = models.URLField(blank=True, \
+        help_text='Link to twitter page using a hashtag')
+
+    @property
+    def has_socail_media(self):
+        if self.twitter_page:
+            return True
+        elif self.facebook_page:
+            return True
+        elif self.hashtag and self.hashtag_page:
+            return True
+        else:
+            return False
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('twitter_page'),
+                FieldPanel('facebook_page'),
+                FieldPanel('hashtag'),
+                FieldPanel('hashtag_page'),
+            ],
+            heading='Social media'
+        ),
+    ]
+ 
+    class Meta:
+        abstract = True
+
+
 class LinkedText(LinkFields):
     """
     Generic link with text.
@@ -341,7 +380,7 @@ class ButtonBlock(StructBlock):
     """
     Button streamfield block.
     """
-    button_type = ChoiceBlock(choices=BUTTON_CHOICES)
+    button_type = ChoiceBlock(choices=BUTTON_CHOICES, default=BUTTON_CHOICES[0][0])
     button_text = CharBlock(max_length=20)
     link_external = URLBlock(required=False)
     link_page = PageChooserBlock(required=False)
@@ -614,7 +653,14 @@ class PublicBasePage(BasePage):
             ],
             heading='Page Management'
         ),
-    ] + BasePage.content_panels
+        MultiFieldPanel(
+            [
+                FieldPanel('start_sidebar_from_here'),
+                FieldPanel('show_sidebar'),
+            ],
+            heading='Sidebar Menus'
+        ),
+    ] 
 
     class Meta:
         abstract = True

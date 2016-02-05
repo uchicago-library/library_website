@@ -1,7 +1,7 @@
 from django.db import models
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import StreamField
-from base.models import PublicBasePage, AbstractButton, LinkedTextOrLogo, DefaultBodyFields
+from base.models import PublicBasePage, AbstractButton, LinkedTextOrLogo, DefaultBodyFields, SocialMediaFields
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from django.core.validators import RegexValidator
@@ -64,7 +64,7 @@ class ConferenceIndexPage(PublicBasePage):
     subpage_types = ['conferences.ConferencePage']
 
 
-class ConferencePage(PublicBasePage):
+class ConferencePage(PublicBasePage, SocialMediaFields):
     """
     Main page for creating conferences.
     """
@@ -90,8 +90,8 @@ class ConferencePage(PublicBasePage):
         related_name='%(app_label)s_%(class)s_related')
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    inactive = models.BooleanField(default=False, \
-        help_text="Check this when the conference has transpired")
+    current = models.BooleanField(default=True, \
+        help_text="Uncheck this when the conference has transpired")
     conference_logo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -99,6 +99,8 @@ class ConferencePage(PublicBasePage):
         on_delete=models.SET_NULL,
         related_name='+',
     )
+    secondary_registration_heading = models.CharField(max_length=40, blank=True)
+    secondary_registration_description = models.TextField(blank=True)
     body = StreamField(DefaultBodyFields())
 
     # Panels and subpage types
@@ -116,23 +118,33 @@ class ConferencePage(PublicBasePage):
                 FieldPanel('branding_color'),
                 ImageChooserPanel('conference_logo'),
             ],
-            heading='Branding'
+            heading='Branding',
+            classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ],
-            heading='Dates and Times'
+            heading='Dates and Times',
+            classname='collapsible collapsed'
         ),
-        FieldPanel('location'),
-        FieldPanel('inactive'),
+        FieldPanel('location', classname='collapsible collapsed multi-field'),
+        FieldPanel('current'),
         InlinePanel('main_registration', label='Main Registration Link'),
-        InlinePanel('sub_registration', label='Sub-Registration Link'),
+        MultiFieldPanel(
+            [
+                FieldPanel('secondary_registration_heading'),
+                FieldPanel('secondary_registration_description'),
+                InlinePanel('sub_registration', label='Secondary Registration Link'),
+            ],
+            heading='Secondary Registration Links',
+            classname='collapsible collapsed'
+        ),
         InlinePanel('sponsors', label='Sponsors'),
         InlinePanel('organizers', label='Organizers'),
         StreamFieldPanel('body'),
-    ] + PublicBasePage.content_panels
+    ] + SocialMediaFields.panels + PublicBasePage.content_panels
 
     subpage_types = ['conferences.ConferenceSubPage']
 
@@ -142,7 +154,7 @@ class ConferencePage(PublicBasePage):
         index.SearchField('banner_image'),
         index.SearchField('branding_color'),
         index.SearchField('location'),
-        index.SearchField('inactive'),
+        index.SearchField('current'),
         index.SearchField('conference_logo'),
         index.SearchField('body'),
     )
