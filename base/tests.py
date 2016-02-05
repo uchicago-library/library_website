@@ -1,3 +1,4 @@
+from base.utils import get_xml_from_directory_api
 from django.test import TestCase, Client
 from wagtail.wagtailcore.models import Page, Site
 from django.contrib.auth.models import User
@@ -5,8 +6,10 @@ from django.http import HttpRequest
 from news.models import NewsPage
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import AnonymousUser
-from base.utils import get_xml_from_directory_api
-from io import BytesIO
+from io import StringIO
+from lxml import etree
+from staff.utils import get_all_library_cnetids_from_directory
+from tempfile import NamedTemporaryFile
 import subprocess
 import sys
 
@@ -188,13 +191,62 @@ class TestPageModels(TestCase):
 
 class ValidXMLTestCase(TestCase):
     def test_directory_xml_validates(self):
-        from tempfile import NamedTemporaryFile
+        dtd = etree.DTD(StringIO("""
+        <!ELEMENT responseData    (response, totalResults, organizations)>
+        <!ELEMENT response        (#PCDATA)>
+        <!ELEMENT totalResults    (#PCDATA)>
+        <!ELEMENT organizations   (organization+)>
+        <!ELEMENT organization    (name, type, departments, members, resources)>
+        <!ELEMENT name            (#PCDATA)>
+        <!ELEMENT type            (#PCDATA)>
+        <!ELEMENT departments     (department+)>
+        <!ELEMENT department      (name, resources)>
+        <!--      name (see above) -->
+        <!ELEMENT resources       (directoryURL, xmlURL)>
+        <!ELEMENT directoryURL    (#PCDATA)>
+        <!ELEMENT xmlURL          (#PCDATA)>
+        <!ELEMENT members         (member+)>
+        <!ELEMENT member          (name, displayName, cnetid, chicagoid, title, email, phone, facultyExchange, resources)>
+        <!--      name (see above) -->
+        <!ELEMENT displayName     (#PCDATA)>
+        <!ELEMENT cnetid          (#PCDATA)>
+        <!ELEMENT chicagoid       (#PCDATA)>
+        <!ELEMENT title           (#PCDATA)>
+        <!ELEMENT email           (#PCDATA)>
+        <!ELEMENT phone           (#PCDATA)>
+        <!ELEMENT facultyExchange (#PCDATA)>
+        <!--      resources (see above) -->
+        """))
 
-        temp_xml = NamedTemporaryFile()
-        temp_xml.write(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
+        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
+        self.assertEqual(dtd.validate(root), True)
 
-        response = subprocess.check_output(['xmllint', '--noout', '--dtdvalid', 'tests-directory-xml.dtd', temp_xml.name])
+    def test_individual_xml_validates(self):
+        dtd = etree.DTD(StringIO("""
+        <!ELEMENT responseData    (response, totalResults, individuals)>
+        <!ELEMENT response        (#PCDATA)>
+        <!ELEMENT totalResults    (#PCDATA)>
+        <!ELEMENT individuals     (individual+)>
+        <!ELEMENT individual      (name, displayName, cnetid, chicagoid, contacts, resources)>
+        <!ELEMENT name            (#PCDATA)>
+        <!ELEMENT displayName     (#PCDATA)>
+        <!ELEMENT cnetid          (#PCDATA)>
+        <!ELEMENT chicagoid       (#PCDATA)>
+        <!ELEMENT contacts        (contact)>
+        <!ELEMENT contact         (title, division, department, subDepartment, email, phone, facultyExchange)>
+        <!ELEMENT title           (#PCDATA)>
+        <!ELEMENT division        (name, resources)>
+        <!ELEMENT resources       (directoryURL, xmlURL)>
+        <!ELEMENT directoryURL    (#PCDATA)>
+        <!ELEMENT xmlURL          (#PCDATA)>
+        <!ELEMENT department      (name, resources)>
+        <!ELEMENT subDepartment   (name, resources)>
+        <!ELEMENT email           (#PCDATA)>
+        <!ELEMENT phone           (#PCDATA)>
+        <!ELEMENT facultyExchange (#PCDATA)>
+        """))
 
-        self.assertEqual(response, b'')
-
+        cnetids = get_all_library_cnetids_from_directory()
+        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetids[0] + '.xml'))
+        self.assertEqual(dtd.validate(root), True)
 
