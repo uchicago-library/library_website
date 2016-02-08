@@ -46,16 +46,16 @@ def staff(request):
             staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=mansueto).values_list('page', flat=True).distinct()
             
         # get StaffPages themselves from the pk list. 
-        staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks)
+        staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
 
     if subject:
         subject_pk = Subject.objects.get(name=subject).pk
         staff_pks = StaffPageSubjectPlacement.objects.filter(subject=1).values_list('page', flat=True).distinct()
 
         if staff_pages_all:
-            staff_pages_all = staff_pages_all.filter(pk__in=staff_pks)
+            staff_pages_all = staff_pages_all.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
         else:
-            staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks)
+            staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
 
     if query:
         if staff_pages_all:
@@ -64,7 +64,7 @@ def staff(request):
             staff_pages_all = StaffPage.objects.live().search(query)
 
     if not staff_pages_all:
-        staff_pages_all = StaffPage.objects.live().order_by('title')
+        staff_pages_all = StaffPage.objects.live().order_by('title').order_by('last_name', 'first_name')
 
     # Set up paging. 
     paginator = Paginator(staff_pages_all, 50)
