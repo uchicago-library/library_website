@@ -1,4 +1,5 @@
 from directory_unit.models import DirectoryUnit
+from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from subjects.models import Subject
@@ -40,6 +41,10 @@ def staff(request):
         elif library == 'Special Collections Research Center':
             scrc = DirectoryUnit.objects.get(name='Special Collections Research Center').get_descendants(True)
             staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=scrc).values_list('page', flat=True).distinct()
+        elif library == 'Mansueto':
+            mansueto = DirectoryUnit.objects.filter(Q(name='Mansueto') | Q(name='Mansueto Library'))
+            staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=mansueto).values_list('page', flat=True).distinct()
+            
         # get StaffPages themselves from the pk list. 
         staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks)
 
@@ -97,7 +102,7 @@ def staff(request):
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
 
     return render(request, 'staff/staff_index_page.html', {
-        'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Library", "Eckhart Library", "Special Collections Research Center", "SSA Library"],
+        'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
         'library': library,
         'query': query,
         'subject': subject,
