@@ -37,6 +37,9 @@ def staff(request):
             dangelo = DirectoryUnit.objects.get(name='D\'Angelo Law Library').get_descendants(True)
             ssa = DirectoryUnit.objects.get(name='Social Service Administration Library (SSA)').get_descendants(True)
             staff_pks = StaffPagePageVCards.objects.all().exclude(unit__in=crerar).exclude(unit__in=dangelo).exclude(unit__in=ssa).values_list('page', flat=True).distinct()
+        elif library == 'Special Collections Research Center':
+            scrc = DirectoryUnit.objects.get(name='Special Collections Research Center').get_descendants(True)
+            staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=scrc).values_list('page', flat=True).distinct()
         # get StaffPages themselves from the pk list. 
         staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks)
 
@@ -94,7 +97,7 @@ def staff(request):
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
 
     return render(request, 'staff/staff_index_page.html', {
-        'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Library", "Eckhart Library", "SSA Library"],
+        'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Library", "Eckhart Library", "Special Collections Research Center", "SSA Library"],
         'library': library,
         'query': query,
         'subject': subject,
