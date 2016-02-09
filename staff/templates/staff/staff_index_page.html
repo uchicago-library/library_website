@@ -1,4 +1,5 @@
 {% extends "base/intranet_base.html" %}
+{% load static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
@@ -63,16 +64,7 @@
                                         <option{% if l == library %} selected="selected"{% endif %}>{{ l }}</option>
                                     {% endfor %}
                                 </select>
-                                <select name="subject">
-                                    {% if subject and not subject == '' %}
-                                        <option value="">All Subject Specialties</option>
-                                    {% else %}
-                                        <option value="">Subject Specialty</option>
-                                    {% endif %}
-                                    {% for s in subjects %}
-                                        <option{% if s == subject %} selected="selected"{% endif %}>{{ s }}</option>
-                                    {% endfor %}
-                                </select>
+                                <input id="subjectspecialty" name="subject" type="text"/>
                                 <input type="submit"/>
                             </div><!--/col-->
                         </div><!--/row-->
@@ -148,4 +140,45 @@
         	</article>
         </div><!--/col-->
     </div><!--/row-->
+    <script type="text/javascript">
+    var subjects = [
+        {% for s in subjects %}'{{ s }}',{% endfor %}
+    ];
+    </script>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'base/js/typeahead.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substringRegex;
+
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str)) {
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+$('#subjectspecialty').typeahead({
+  hint: true,
+  highlight: true,
+  minLength: 1
+},
+{
+  name: 'subjects',
+  source: substringMatcher(subjects)
+});
+</script>
 {% endblock %}

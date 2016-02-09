@@ -50,7 +50,7 @@ def staff(request):
 
     if subject:
         subject_pk = Subject.objects.get(name=subject).pk
-        staff_pks = StaffPageSubjectPlacement.objects.filter(subject=1).values_list('page', flat=True).distinct()
+        staff_pks = StaffPageSubjectPlacement.objects.filter(subject=subject_pk).values_list('page', flat=True).distinct()
 
         if staff_pages_all:
             staff_pages_all = staff_pages_all.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
@@ -63,7 +63,7 @@ def staff(request):
         else:
             staff_pages_all = StaffPage.objects.live().search(query)
 
-    if not staff_pages_all:
+    if not library and not subject and not query:
         staff_pages_all = StaffPage.objects.live().order_by('title').order_by('last_name', 'first_name')
 
     # Set up paging. 
