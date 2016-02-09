@@ -1,0 +1,94 @@
+$darkgray: #767676;
+$divider: 1px solid $darkgray;
+@mixin center {
+        	display:block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+@mixin flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+
+.footer {
+  bottom: 0;
+  position: sticky;
+  width: 100%;
+  background: #eeeeee;
+  padding-top: 20px;
+  padding-bottom: 20px;
+    &>hr {
+      border-top: 1px solid $darkgray;
+    }
+    a {
+      color: #767676;
+      line-height: 1.7em;
+      text-decoration: none;
+    }
+    h5 {
+      margin-bottom: 0px;
+    }
+  @media (min-width: 768px) { // Full width footer div
+    margin: 0;
+    display: table;
+    width: 100%;
+      li {
+        display: table-cell;
+        width: 1%;
+        float: none;
+      }
+
+      li a {
+        font-weight: bold;
+        text-align: center;
+        border-left: 1px solid rgba(255, 255, 255, .75);
+        border-right: 1px solid rgba(0, 0, 0, .1);
+      }
+
+      li:first-child a {
+        border-left: 0;
+        border-radius: 3px 0 0 3px;
+      }
+
+      li:last-child a {
+        border-right: 0;
+        border-radius: 0 3px 3px 0;
+      }
+
+      .col-md-2 {
+        @include flex;
+      }
+
+      .divider-vertical { // Lines between link blocks
+        height: 100%;
+        border-right: 1px solid #282828;
+        border-left: 1px solid #282828;
+      }
+    }
+}
+
+@media (min-width: 768px) { //Temp fix for approval process - needs to fixed for production
+  .example-footer {
+        position: fixed;
+      }
+}
+      
+
+.centerdiv {
+  @media (min-width: 768px) {
+    @include center;
+    text-align: center;
+      p {
+        color: $darkgray;
+       }
+      img {
+          @include center;
+          padding-bottom:20px;
+       }
+  }
+}
+ 
+

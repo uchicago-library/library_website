@@ -1,0 +1,57 @@
+//Remove?
+footer {
+  padding: 30px 0;
+}
+
+/*
+ * Fancy Splash Image (Jumbotron)
+ * --------------------------------------------------
+ */
+
+.jumbotron {
+	@media (min-width: 768px) {	
+		min-height: 75px;
+		background-image: url("../images/crerar-header.jpg");
+		background-size: cover;
+	    padding-top: 0px;
+	    margin-bottom: 0;
+		    .container {
+			    position: relative;
+			    margin: 0px;
+			}
+	}
+}
+
+.fancyheader {
+	background-color: #767676;
+	padding: .5em 0 .3em 4em;
+	margin-right: -15px;
+    margin-left: -15px;
+     &.crerar {
+     	background-color: #155F83;
+     }
+	    h2 {
+			color: #fff;
+			margin: 0px;
+		}
+}
+
+.overlaywrap {
+	@media (min-width: 768px) {
+		background-color: rgba(0,0,0,0.5);
+		position: absolute;
+		left: 0;
+		top: 0;
+		min-width: 50%;
+		padding-right: 3em;
+		padding-left: 2em;
+		&.crerar {
+			background-color: rgba(21, 95, 131,0.8);
+		}
+			h2 {
+			    color: #fff;
+			    font-size: 1.7em;
+			    margin-top: 10px;
+			}
+	}
+}

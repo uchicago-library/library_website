@@ -1,0 +1,222 @@
+body {
+	font-family: 'ProximaNova-Regular', "Arial", sans-serif;
+	margin-bottom: 0;
+}
+
+// right menu
+
+.navbar-right {
+	@media (min-width: 768px){
+		padding-right: 1.5em;
+	}
+}
+
+.mob-fa {
+	text-align: center;
+	background-color: #eeeeee;
+	padding: 5px 0 5px 0;
+		a {
+		color: #767676;
+	}
+}
+
+// main nav
+
+.fluid-top {
+	@media (min-width: 768px) {
+		padding: 0px;
+	}
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border: 0px;
+}
+
+
+#bs-example-navbar-collapse-1 {
+	background-color: #eeeeee;
+	font-size: 1.1em;
+	@media (min-width: 768px)  {
+		margin-top: 75px;
+	}
+}
+
+.navbar-brand {
+	max-width: 175px;
+	padding: 5px 15px 15px 15px;
+	@media (min-width: 768px) {
+		padding-left: 2.5em;
+		max-width: 250px;
+		padding-top: 15px;
+	}
+}
+
+.navbar-default {
+    border: 0px;
+
+    .navbar-nav {
+	    >li>a {
+		    color: #000;
+			    &:hover {
+				    color: #555;
+				}
+		}
+		.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+		    color: #555;
+		    background-color: #e7e7e7;
+		}
+		.open .dropdown-menu {
+		    background-color: #e7e7e7;
+		}
+	}
+}
+
+
+// Drop downs
+
+.dropdown-menu .divider {
+    background-color: #767676;
+}
+
+.twocol-drop {
+	background-color: #767676;
+	@media (min-width: 768px) {
+    	min-width: 500px;
+    	background-color: #e7e7e7;
+		padding: 10px 0 10px 0;
+	}
+
+	>li>ul>li>a, >ul>li>a {
+		color: #767676;
+		line-height: 2.2em;
+		text-decoration: none;
+	}
+}
+
+.twocol-head {
+	font-size: .8em;
+	line-height: 2.4em;
+	color: #000;
+	text-transform: uppercase;
+}
+
+.tworow .navbar-collapse {
+	@media (min-width: 768px) {
+	    clear: left;		
+	}
+}
+
+.ul-left {
+	padding-bottom: 1.5em;
+	@media (min-width: 768px) {
+    	padding-bottom: 0px;
+		border-right: 1px solid black;
+	}
+}
+
+.open>.dropdown-menu {
+	@media (min-width: 768px) {
+		background-color: #e7e7e7;
+	}
+}
+
+
+
+// Content
+
+.body-container {
+	//max-width: 970px;
+	padding-top: 15px;
+		h1 {
+		color: #434343;			
+			}
+	@media (min-width: 768px) {
+		padding: 40px 0 20px 60px;
+	}
+}
+
+
+
+.sidebar {
+	//border-right: 1px solid #767676;
+	background: #ddd;
+	padding-bottom: 40px;
+	// padding: 15px 20px 40px 40px;
+		& a {
+		color: #767676;
+		font-size: 1.1em;
+		line-height: 1.7em;
+		}
+		h2 {
+			color: #5D5D5D;			
+		}
+}
+
+.crerar-sidebar {
+	top: 0;
+	left: 0;
+	position: fixed;
+}
+
+
+
+
+
+/* Fancy Page Alts */
+.navbar {
+	margin-bottom:0px;
+}
+
+.jumbotron {
+	@media (min-width: 768px) {	
+		min-height: 200px;
+		background-image: url("../images/crerar-header.jpg");
+		background-size: cover;
+	    padding-top: 0px;
+	    margin-bottom: 0;
+		    .container {
+			    position: relative;
+			    margin: 0px;
+			}
+	}
+}
+
+.fancyheader {
+	background-color: #767676;
+	padding: .5em 0 .3em 4em;
+	margin-right: -15px;
+    margin-left: -15px;
+	    h2 {
+			color: #fff;
+			margin: 0px;
+		}
+}
+
+.overlaywrap {
+	@media (min-width: 768px) {
+		background-color: rgba(0,0,0,0.5);
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 150%;
+		padding-right: 3em;
+		padding-left: 2em;
+			h2 {
+			    color: #fff;
+			    font-size: 1.7em;
+			    margin-top: 10px;
+			}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+

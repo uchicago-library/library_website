@@ -210,7 +210,7 @@ class SocialMediaFields(models.Model):
         help_text='Link to twitter page using a hashtag')
 
     @property
-    def has_socail_media(self):
+    def has_social_media(self):
         if self.twitter_page:
             return True
         elif self.facebook_page:

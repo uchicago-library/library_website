@@ -21,7 +21,7 @@ class ConferencePageMainRegistrationLinks(Orderable, AbstractButton):
         verbose_name_plural = 'Main Registration Links'
 
 
-class ConferencePageMainRegistrationLinks(Orderable, AbstractButton):
+class ConferencePageSecondaryRegistrationLinks(Orderable, AbstractButton):
     """
     Creates a through table for the lesser 
     registration buttons on conference pages.
@@ -159,6 +159,28 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         index.SearchField('body'),
     )
 
+    # Context
+    def get_context(self, request):
+        context = super(ConferencePage, self).get_context(request)
+        context['banner_image'] = self.banner_image
+        context['branding_color'] = self.branding_color
+        context['conference_logo'] = self.conference_logo
+        context['conference_title'] = self.title
+        context['conference_subtitle'] = self.subtitle
+        context['conference_tagline'] = self.tagline
+        context['has_social_media'] = self.has_social_media
+        context['main_registration'] = self.main_registration.all()
+        context['sponsors'] = self.sponsors.all()
+        context['organizers'] = self.organizers.all()
+        context['twitter_page'] = self.twitter_page 
+        context['facebook_page'] = self.facebook_page
+        context['hashtag_page'] = self.hashtag_page
+        context['hashtag'] = self.hashtag
+        context['secondary_registration'] = self.sub_registration.all()
+        context['secondary_registration_heading'] = self.secondary_registration_heading
+        context['secondary_registration_description'] = self.secondary_registration_description
+        context['home'] = self.url
+        return context
 
 class ConferenceSubPage(PublicBasePage):
     """
@@ -173,3 +195,27 @@ class ConferenceSubPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     subpage_types = ['conferences.ConferenceSubPage']
+
+
+    # Context
+    def get_context(self, request):
+        context = super(ConferenceSubPage, self).get_context(request)
+        context['banner_image'] = self.get_parent().conferencepage.banner_image
+        context['branding_color'] = self.get_parent().conferencepage.branding_color
+        context['conference_logo'] = self.get_parent().conferencepage.conference_logo 
+        context['conference_title'] = self.get_parent().title
+        context['conference_subtitle'] = self.get_parent().conferencepage.subtitle
+        context['conference_tagline'] = self.get_parent().conferencepage.tagline
+        context['has_social_media'] = self.get_parent().conferencepage.has_social_media
+        context['main_registration'] = self.get_parent().conferencepage.main_registration.all()
+        context['sponsors'] = self.get_parent().conferencepage.sponsors.all()
+        context['organizers'] = self.get_parent().conferencepage.organizers.all()
+        context['twitter_page'] = self.get_parent().conferencepage.twitter_page 
+        context['facebook_page'] = self.get_parent().conferencepage.facebook_page
+        context['hashtag_page'] = self.get_parent().conferencepage.hashtag_page
+        context['hashtag'] = self.get_parent().conferencepage.hashtag
+        context['secondary_registration'] = self.get_parent().conferencepage.sub_registration.all()
+        context['secondary_registration_heading'] = self.get_parent().conferencepage.secondary_registration_heading
+        context['secondary_registration_description'] = self.get_parent().conferencepage.secondary_registration_description
+        context['home'] = self.get_parent().conferencepage.url
+        return context

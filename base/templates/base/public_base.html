@@ -9,16 +9,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static "base/css/normalize.css" %}" rel="stylesheet">
 
         <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_postfix %} | Wagtail Demo{% endblock %}</title>
 
         <meta name="description" content="{% if self.search_description %}{{ self.search_description }}{% endif %}">
-
         {# Local static assets such as css, images and javascrpt should be stored at [yourapp]/static/[yourapp]/... #}
         {% compress css %}
             {# Custom stylesheets #}
             {# SCSS compilation relies on django compressor #}
-            <link rel="stylesheet" type="text/x-scss" href="{% static "base/css/main.scss" %}" /> 
+            <link href="{% static "base/css/uclib.scss" %}" rel="stylesheet">
+            <link href="{% static "base/css/libnav.scss" %}" rel="stylesheet">
+            <link href="{% static "base/css/footer.scss" %}" rel="stylesheet">
+            <link href="{% static "base/css/nav-color.scss" %}" rel="stylesheet"> 
         {% endcompress %}
 
         {% block extra_css %}{% endblock %} {# Override this block in individual templates in order to add stylesheets on a template by template basis #}
