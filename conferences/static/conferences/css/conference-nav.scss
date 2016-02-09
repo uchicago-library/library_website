@@ -1,26 +1,26 @@
 body {
-	background-color: #f9f7f4;
+    background-color: #f9f7f4;
 }
 
 h1 {
-	color: #434343;
+    color: #434343;
 }
 
 h4 {
-	color: #747d7c;
-	font-style: italic;
-	&.rightside {
-		font-style: normal;
-		color: #635D5A;
-	}
+    color: #747d7c;
+    font-style: italic;
+    &.rightside {
+        font-style: normal;
+        color: #635D5A;
+    }
 }
 
 h5 {
-	color: #635D5A;
+    color: #635D5A;
 }
 
 h6 {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .overlaywrap span {
@@ -28,10 +28,10 @@ h6 {
 }
 
 .centermain {
-	padding-top: 15px;
-	@media (min-width: 768px) {	
-		padding-top: 0px;
-	}
+    padding-top: 15px;
+    @media (min-width: 768px) { 
+        padding-top: 0px;
+    }
 }
 
 .home-rightside ul li {
@@ -39,7 +39,7 @@ h6 {
 }
 
 .btn-reserve {
-	padding: 10px 20px;
+    padding: 10px 20px;
   &:hover {
       background-color: #8A9045;     
       }
@@ -67,25 +67,25 @@ footer {
     font-size: 1em;
     font-weight: 600;
     a {
-    	color: white;
-    	&:hover {
-    		color: #eceae9;
-    	}
+        color: white;
+        &:hover {
+            color: #eceae9;
+        }
     }
-	@media (min-width: 768px) {	
-		background: transparent;
-		margin-top: 30px;
-		border-right: 1px dotted #767676;
-	    color: #434343;
-	    font-size: 1.1em;
-	    font-weight: 600;
-	    a {
-	    	color: #434343;
-	    	&:hover {
-	    		color: #909090;
-	    	}
-	    }
-	}
+    @media (min-width: 768px) { 
+        background: transparent;
+        margin-top: 30px;
+        border-right: 1px dotted #767676;
+        color: #434343;
+        font-size: 1.1em;
+        font-weight: 600;
+        a {
+            color: #434343;
+            &:hover {
+                color: #909090;
+            }
+        }
+    }
 }
 
 .btn-sidebar {
@@ -99,7 +99,7 @@ footer {
 }
 
 .conf-logo {
-	max-width: 75%;
+    max-width: 75%;
     padding-bottom: 15px;
 }
 
@@ -109,58 +109,58 @@ footer {
  */
 
 .jumbotron {
-	padding-bottom: 10px; //must be seperated to override bootstrap css
+    padding-bottom: 10px; //must be seperated to override bootstrap css
     padding-top: 10px; //must be seperated to override bootstrap css
-	margin-right: -15px; //must be seperated to override bootstrap css
+    margin-right: -15px; //must be seperated to override bootstrap css
     margin-left: -15px; //must be seperated to override bootstrap css
     margin-bottom: 0;
-	background-color: #642822;
-	@media (min-width: 768px) {	
-		min-height: 150px;
-	    padding-top: 0px;
-	    margin-bottom: 0;
-		    .container {
-			    position: relative;
-			    margin: 0px;
-			}
-		}
+    background-color: #642822;
+    @media (min-width: 768px) { 
+        min-height: 150px;
+        padding-top: 0px;
+        margin-bottom: 0;
+            .container {
+                position: relative;
+                margin: 0px;
+            }
+        }
 }
 
 .overlaywrap {
-	padding-left: 2em;
-		.banner-title {
-		    color: #fff;
-		    font-size: 1.5em;
-		    padding-bottom: 0px;
-		}
-		.banner-subtitle {
-			color: #c0c6c9;
-			font-size: 1.1em;
-			padding-bottom:5px;
-		}
-		.banner-tagline {
-			color: #e0dddb;
-			font-style: italic;
-			font-size: 1em;
-		}
-	@media (min-width: 768px) {
-		background-color: rgba(0,0,0,0.5);
-		position: absolute;
-		left: 0;
-		top: 0;
-		min-width: 50%;
-		padding: 1em 1em 1em 3em;
-		.banner-title {
-		    font-size: 2em;
-		    padding-bottom: 0px;
-		}
-		.banner-subtitle {
-			font-size: 1.3em;
-			padding-bottom:15px;
-		}
-		.banner-tagline {
-			font-size: 1.1em;
-		}
-	}
+    padding-left: 2em;
+        .banner-title {
+            color: #fff;
+            font-size: 1.5em;
+            padding-bottom: 0px;
+        }
+        .banner-subtitle {
+            color: #c0c6c9;
+            font-size: 1.1em;
+            padding-bottom:5px;
+        }
+        .banner-tagline {
+            color: #e0dddb;
+            font-style: italic;
+            font-size: 1em;
+        }
+    @media (min-width: 768px) {
+        background-color: rgba(0,0,0,0.5);
+        position: absolute;
+        left: 0;
+        top: 0;
+        min-width: 50%;
+        padding: 1em 1em 1em 3em;
+        .banner-title {
+            font-size: 2em;
+            padding-bottom: 0px;
+        }
+        .banner-subtitle {
+            font-size: 1.3em;
+            padding-bottom:15px;
+        }
+        .banner-tagline {
+            font-size: 1.1em;
+        }
+    }
 }
 
