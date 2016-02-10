@@ -119,7 +119,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
     show_departments = models.BooleanField(default=False)
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage', 'intranetunits.IntranetUnitsReportsIndexPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage', 'intranetunits.IntranetUnitsPage', 'intranetunits.IntranetUnitsReportsIndexPage']
 
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
