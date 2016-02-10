@@ -37,11 +37,20 @@
     
                     <hr/>
     
-                    {% if not query %}
+                    {% if view == 'staff' and not query %}
                         <div class="row">
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <h3 style="margin:10px 0 20px 0;">
                                     All Library Staff
+                                </h3>
+                            </div><!--/col-->
+                        </div><!--/row-->
+                        <hr/>
+                    {% elif view == 'department' %}
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12 col-sm-12">
+                                <h3 style="margin:10px 0 20px 0;">
+                                    All Library Departments
                                 </h3>
                             </div><!--/col-->
                         </div><!--/row-->
@@ -72,7 +81,8 @@
                 </form>
 
                 <hr/>
-      
+     
+                {% if view == 'staff' %} 
                     {% if staff_pages %}
                         <table class="table table-striped">
                             <tbody>
@@ -137,6 +147,9 @@
                     {% if staff_pages.has_next %}
                         <a href=".?page={{ staff_pages.next_page_number }}">Next</a>
                     {% endif %}
+                {% elif view == 'department' %}
+                    {{ intranetunits_html|safe }}
+                {% endif %}
         	</article>
         </div><!--/col-->
     </div><!--/row-->

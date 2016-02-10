@@ -2,6 +2,7 @@ from directory_unit.models import DirectoryUnit
 from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from subjects.models import Subject
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement
 
@@ -75,16 +76,58 @@ def staff(request):
     except EmptyPage:
         staff_pages = paginator.page(paginator.num_pages)
 
-    # Search
+    units = [{
+        'title': IntranetUnitsIndexPage.objects.first().title,
+        'url': IntranetUnitsIndexPage.objects.first().url,
+        'children': [],
+    }]
+
+    # for each unit page get a list of the page's "intranet units page" or
+    # "intranet units index page" ancestors. Check to see if this
+    # particular ancestor already exists in the units tree. If it doesn't
+    # exist, create it. Then continue on, one descendant at a time, either
+    # adding new levels or using the existing ones if they're already there
+    # from previous unit pages. 
+    for intranetunitspage in IntranetUnitsPage.objects.live():
+        ancestors = [IntranetUnitsIndexPage.objects.first()] + list(IntranetUnitsPage.objects.ancestor_of(intranetunitspage)) + [intranetunitspage]
+        currentlevel = units
+        while ancestors:
+            ancestor = ancestors.pop(0)
+            if str(ancestor.content_type) in ['intranet units page', 'intranet units index page']:
+                nextlevels = list(filter(lambda g: g['url'] == ancestor.url, currentlevel))
+                if nextlevels:
+                    currentlevel = nextlevels[0]['children']
+                else:
+                    newnode = {
+                        'title': ancestor.title,
+                        'url': ancestor.url,
+                        'internal_location': ancestor.internal_location,
+                        'internal_phone_number': ancestor.internal_phone_number,
+                        'children': [],
+                    }
+                    currentlevel.append(newnode)
+                    currentlevel = newnode['children']
+
+    def alphabetize_units(currentlevel):
+        for node in currentlevel:
+            node['children'] = alphabetize_units(node['children'])
+        return sorted(currentlevel, key=lambda c: c['title'])
+    units = alphabetize_units(units)
+
+    def get_html(currentlevel):
+        if not currentlevel:
+            return ''
+        else:
+            return "<ul>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + ("<br/>" + n['internal_phone_number'] if n['internal_phone_number'] else "") + ("<br/>" + n['internal_location'] if n['internal_location'] else "") + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+    intranetunits_html = get_html(units[0]['children'])
+
+    # JEJ
+    # annotate IntranetUnitsPage objects with unit.fullName
     '''
-    if search_query:
-        search_results = Page.objects.live().search(search_query)
-        query = Query.get(search_query)
-        query.add_hit()
-        search_picks = query.editors_picks.all()
-    else:
-        search_results = Page.objects.none()
+    for i in IntranetUnitsPage.objects.live().order_by
     '''
+
+    
 
     # Pagination
     '''
@@ -102,6 +145,7 @@ def staff(request):
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
 
     return render(request, 'staff/staff_index_page.html', {
+        'intranetunits_html': intranetunits_html,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
         'library': library,
         'query': query,
