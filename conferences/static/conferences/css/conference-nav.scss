@@ -40,15 +40,23 @@ h6 {
 
 .btn-reserve {
     padding: 10px 20px;
-  &:hover {
-      background-color: #8A9045;     
-      }
+    &:hover {
+        background-color: #8A9045;     
+    }
+}
+
+a.btn-reserve {
+    color: #fff !important;
 }
 
 .btn-subreserve {
     &:hover {
       color: #58593F;     
     }
+}
+
+a.btn-subreserve {
+    color: #58593F !important;
 }
 
 footer {
@@ -163,4 +171,5 @@ footer {
         }
     }
 }
+
 

@@ -10,7 +10,7 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, Fiel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
 from wagtail.wagtaildocs.blocks import DocumentChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Site
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailembeds.blocks import EmbedBlock 
@@ -577,7 +577,8 @@ class BasePage(Page):
                 except:
                     pass
                 
-        # JEJ- fix this later to remove logic from the template. 
+        # JEJ- fix this later to remove logic from the template.
+        current_site = Site.find_for_request(request)
         sidebar = [] 
         if self.show_sidebar:
             ancestors = self.get_ancestors(True).specific()
@@ -592,14 +593,14 @@ class BasePage(Page):
             for child in children:
                 new_child = {
                     'title': child.title,
-                    'url': child.url,
+                    'url': child.relative_url(current_site),
                     'children': []
                 }
                 grandchildren = sorted(child.get_children().in_menu().live().specific(), key=lambda c: (c.sort_order, c.title))
                 for grandchild in grandchildren:
                     new_child['children'].append({
                         'title': grandchild.title,
-                        'url': grandchild.url,
+                        'url': grandchild.relative_url(current_site),
                         'children': [],
                     })
 

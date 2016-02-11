@@ -42,12 +42,14 @@ $(function() {
 <style type="text/css">
     {% block css %}
         .jumbotron {
-            {% if branding_color %}
-                background-color:{{branding_color}};
-            {% endif %}
             {% if banner_image %}
-                background-image: url("{{banner.url}}");
+                background: url("{{banner.url}}");
+            {% elif branding_color %}
+                background:{{branding_color}};
+            {% else %}
+                background: url("{% static "conferences/images/conference-page-banner.gif" %}");
             {% endif %}
+
             background-size: cover;
         }
     {% endblock %}

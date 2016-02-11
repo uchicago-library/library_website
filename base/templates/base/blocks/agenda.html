@@ -17,26 +17,29 @@
     </div>
 
     <div class="col-xs-12 col-sm-12 col-md-offset-3 col-md-9 agenda-body">
-        {% if value.title or value.room_numbers %}
-            <div class="row">
-                {% if value.title %}
-                    <span class="session-subtitle">{{value.title}}</span>
-                {% endif %}
-                {% if value.room_numbers %}
-                    <span class="location">{{value.room_numbers}}</span>
-                {% endif %}
-            </div>
-        {% endif %} 
-        {% if value.presenters %}
-            <div class="row agenda-presenters">
-                {{value.presenters}}
-            </div>
-        {% endif %}
+        {# p.conferencesubpage.body.stream_data[7]['value']['event'][0]['room_number'] #}
+        {% for event in value.event %}
+            {% if event.title or event.room_number %}
+                <div class="row">
+                    {% if event.title %}
+                        <span class="session-subtitle">{{event.title}}</span>
+                    {% endif %}
+                    {% if event.room_number %}
+                        <span class="location">{{event.room_number}}</span>
+                    {% endif %}
+                </div>
+            {% endif %} 
+            {% if event.presenters %}
+                <div class="row agenda-presenters">
+                    {{event.presenters}}
+                </div>
+            {% endif %}
 
-        {% if value.description %}
-            <div class="row">
-                {{value.description}}
-            </div>
-        {% endif %}
+            {% if event.description %}
+                <div class="row">
+                    {{event.description}}
+                </div>
+            {% endif %}
+       {% endfor %}
     </div>
 </div>

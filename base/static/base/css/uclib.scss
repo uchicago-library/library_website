@@ -358,6 +358,73 @@ p q {
 }
 
 /*
+ * Agenda
+ * --------------------------------------------------
+ */
+
+.agenda {
+  padding: 0;
+}
+
+.agenda-header {
+  color: #000;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.end-time {
+  padding-right: 10px;
+  &:before {
+    content: "\2013";
+  }
+}
+
+.agenda-body {
+  padding: 0;
+  &>.row {
+    padding-top: 10px;
+  }
+}
+
+.location {
+  padding: 0;
+  color: #767676;
+  font-size: 1.1em;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.session-title {
+  padding-left: 15px;
+  @media (min-width: 768px) {
+    padding-left: 0;
+    margin-left: -10px;
+  }
+
+}
+
+.session-subtitle {
+  color: #767676;
+  font-size: 1.1em;
+  font-weight: 600;
+  padding-right: 20px;
+}
+
+.agenda-body {
+  padding-left: 2.2em;
+  @media (min-width: 768px) {
+    padding-left: 0;
+  }
+}
+
+.agenda-presenters {
+  color: #635D5A;
+  font-size: 1em;
+  font-weight: 600;
+  padding-right: 20px;
+}
+
+/*
  * Forms
  * --------------------------------------------------
  */
@@ -887,3 +954,4 @@ figure.embed {
   border-color: red;
   background: #ffbebe;
 }
+
