@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from wagtail.wagtailcore.models import Page, Site
+from base.models import BasePage, PublicBasePage
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from news.models import NewsPage
@@ -170,14 +171,16 @@ class TestPageModels(TestCase):
 
     def test_page_models_have_search_fields(self):
         """
-        All page content types should have search_tables.
+        All page content types should have search_fields.
         This doesn't tell us if we've set them correctly
-        but it ensures we've done something. THIS TEST
-        IS BROKEN - IT PASSES WHEN IT SHOULD FAIL!
+        but it ensures we've done something. 
         """
         # We get rid of the first element because it is a wagtailcore.Page
         content_types = Page.allowed_subpage_models()[1:]
-        default_search_fields = set(Page.search_fields)
+        page_search_fields = Page.search_fields
+        base_page_search_fields = BasePage.search_fields
+        public_base_search_fields = PublicBasePage.search_fields
+        default_search_fields = set(page_search_fields + base_page_search_fields + public_base_search_fields)
         no_search_fields = set([])
         for page_type in content_types:
             if not len(set(page_type.search_fields)) > len(default_search_fields):
