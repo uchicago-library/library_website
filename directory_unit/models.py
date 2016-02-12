@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from staff.models import StaffPage
 
@@ -18,6 +19,24 @@ class DirectoryUnit(models.Model):
 
     def __str__(self):
         return self.fullName
+
+    def get_parent_library_name(self):
+        special_names = {
+            'Science Libraries': 'Crerar Library',
+            'Mansueto': 'Mansueto Library'
+        }
+
+        ancestors = self.get_ancestors(True)
+        while True:
+            if not ancestors:
+                return 'Regenstein Library'
+
+            ancestor = ancestors.pop(0)
+            if ancestor.name in ['Science Libraries', 'D\'Angelo Law Library', 'Eckhart Library', 'Social Service Administration Library (SSA)', 'Special Collections Research Center', 'Mansueto', 'Mansueto Library']:
+                if ancestor.name in special_names:
+                    return special_names[ancestor.name]
+                else:
+                    return ancestor.name
 
     def get_descendants(self, include_self = False):
         need_to_check = [self]
@@ -40,6 +59,22 @@ class DirectoryUnit(models.Model):
             descendants.append(self)
 
         return descendants
+
+    def get_ancestors(self, include_self = False):
+        ancestors = []
+
+        if include_self:
+            current_unit = self
+        else:
+            current_unit = self.parentUnit
+
+        while True:
+            if not current_unit:
+                break
+            ancestors.append(current_unit)
+            current_unit = current_unit.parentUnit
+
+        return ancestors
     
     class Meta:
         ordering = ['fullName']
