@@ -158,6 +158,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         index.SearchField('conference_logo'),
         index.SearchField('body'),
     )
+    api_fields = ('body',)
 
     # Context
     def get_context(self, request):
@@ -196,6 +197,8 @@ class ConferenceSubPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     subpage_types = ['conferences.ConferenceSubPage']
+
+    api_fields = ('body',)
 
 
     # Context

@@ -192,3 +192,8 @@ PERMISSIONS_MAPPING = {6: ['Library']}
 # Where to send users that aren't members of the necessary groups to
 # view a page.
 NO_PERMISSIONS_REDIRECT_URL = 'https://motacilla.lib.uchicago.edu/no-permission/'
+
+
+# Settings for RESTful API and frontend cache invalidation
+WAGTAILAPI_SEARCH_ENABLED = True
+WAGTAILAPI_MAX_RESULTS = 60
