@@ -1,5 +1,5 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page, Orderable
+from wagtail.wagtailcore.models import Page, Orderable, Site
 from wagtail.wagtailcore.fields import StreamField
 from base.models import PublicBasePage, AbstractButton, LinkedTextOrLogo, DefaultBodyFields, SocialMediaFields
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
@@ -162,6 +162,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     # Context
     def get_context(self, request):
         context = super(ConferencePage, self).get_context(request)
+        current_site = Site.find_for_request(request)
         context['banner_image'] = self.banner_image
         context['branding_color'] = self.branding_color
         context['conference_logo'] = self.conference_logo
@@ -179,7 +180,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         context['secondary_registration'] = self.sub_registration.all()
         context['secondary_registration_heading'] = self.secondary_registration_heading
         context['secondary_registration_description'] = self.secondary_registration_description
-        context['home'] = self.url
+        context['home'] = self.relative_url(current_site)
         return context
 
 class ConferenceSubPage(PublicBasePage):
@@ -200,6 +201,7 @@ class ConferenceSubPage(PublicBasePage):
     # Context
     def get_context(self, request):
         context = super(ConferenceSubPage, self).get_context(request)
+        current_site = Site.find_for_request(request)
         context['banner_image'] = self.get_parent().conferencepage.banner_image
         context['branding_color'] = self.get_parent().conferencepage.branding_color
         context['conference_logo'] = self.get_parent().conferencepage.conference_logo 
@@ -217,5 +219,5 @@ class ConferenceSubPage(PublicBasePage):
         context['secondary_registration'] = self.get_parent().conferencepage.sub_registration.all()
         context['secondary_registration_heading'] = self.get_parent().conferencepage.secondary_registration_heading
         context['secondary_registration_description'] = self.get_parent().conferencepage.secondary_registration_description
-        context['home'] = self.get_parent().conferencepage.url
+        context['home'] = self.get_parent().conferencepage.relative_url(current_site)
         return context
