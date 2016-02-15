@@ -1,8 +1,10 @@
 from base.utils import get_xml_from_directory_api
+from directory_unit.models import DirectoryUnit
 from django.test import TestCase
 from io import StringIO
 from lxml import etree
-from staff.utils import get_all_library_cnetids_from_directory
+from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
+
 
 class UniversityDirectoryTestCase(TestCase):
     def test_directory_xml_validates(self):
@@ -126,4 +128,97 @@ class UniversityDirectoryTestCase(TestCase):
 
         self.assertEqual(set(cnetids), set(('lovelee', 'danger')))
 
-        
+    def assertInfoEqual(self, a, b):
+        for field in ['cnetid', 'officialName', 'displayName']:
+            if not a[field] == b[field]:
+                return False
+
+        tds_a = sorted([a['title_department_subdepartments']])
+        tds_b = sorted([b['title_department_subdepartments']])
+
+        if not len(tds_a) == len(tds_b):
+            return False
+
+        t = 0
+        while t < len(tds_a):
+            if not tds_a[t] == tds_b[t]:
+                return False
+            t = t + 1
+
+        tds_a = sorted(a['title_department_subdepartments_dicts'], key = lambda t: t['title'] + t['department'])
+        tds_b = sorted(b['title_department_subdepartments_dicts'], key = lambda t: t['title'] + t['department'])
+
+        if not len(tds_a) == len(tds_b):
+            return False
+
+        t = 0
+        while t < len(tds_a):
+            for field in ['department', 'title', 'email', 'facultyexchange', 'phone']:
+                if not tds_a[t][field] == tds_b[t][field]:
+                    return False
+            t = t + 1
+
+        return True
+
+    def test_get_individual_info_from_directory(self):
+        self.maxDiff = None
+
+        xml = """<?xml version="1.0" encoding="UTF-8"?>
+        <responseData>
+          <response>Success</response>
+          <totalResults>1</totalResults>
+          <individuals>
+            <individual>
+              <name>Scooter McDanger</name>
+              <displayName>Scooter McDanger</displayName>
+              <cnetid>scootermcdanger</cnetid>
+              <chicagoid>12345678X</chicagoid>
+              <contacts>
+                <contact>
+                  <title>Programmer Analyst</title>
+                  <division>
+                    <name>Library</name>
+                    <resources>
+                      <directoryURL>https://directory.uchicago.edu/organizations/16?type=divisions</directoryURL>
+                      <xmlURL>https://directory.uchicago.edu/api/v2/divisions/16</xmlURL>
+                    </resources>
+                  </division>
+                  <email>scootermcdanger@uchicago.edu</email>
+                  <phone>(773) 702-1234</phone>
+                  <facultyExchange>JRL 220</facultyExchange>
+                </contact>
+              </contacts>
+              <resources>
+                <directoryURL>https://directory.uchicago.edu/individuals/12345678X</directoryURL>
+                <xmlURL>https://directory.uchicago.edu/api/v2/individuals/12345678X</xmlURL>
+              </resources>
+            </individual>
+          </individuals>
+        </responseData>
+        """
+
+        DirectoryUnit.objects.create(
+            name = "Library",
+            fullName = "Library",
+            parentUnit = None,
+            xmlUrl = "https://directory.uchicago.edu/api/v2/divisions/16"
+        )
+
+        info = {
+            'cnetid': 'scootermcdanger',
+            'officialName': 'Scooter McDanger',
+            'displayName': 'Scooter McDanger',
+            'title_department_subdepartments': {'Programmer Analyst\nLibrary\nJRL 220\n773-702-1234'},
+            'title_department_subdepartments_dicts': [{
+                'department': DirectoryUnit.objects.get(name='Library'),
+                'title': 'Programmer Analyst',
+                'email': 'scootermcdanger@uchicago.edu',
+                'facultyexchange': 'JRL 220',
+                'phone': '773-702-1234'
+            }]
+        }
+
+        self.assertInfoEqual(get_individual_info_from_directory(xml), info)
+    
+
+
