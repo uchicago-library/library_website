@@ -1,0 +1,29 @@
+@media print {
+    div.breadcrumbs {
+        display: none;
+    }
+    div#sidebar {
+        display: none;
+    }
+    div.container, div.container-fluid {
+        margin: none;
+        padding: none;
+    }
+    div.row, div.row-fluid {
+        margin: none;
+        padding: none;
+    }
+    div.col-lg-12, div.col-lg-11, div.col-lg-10, div.col-lg-9, div.col-lg-8, div.col-lg-7,
+    div.col-lg-6, div.col-lg-5, div.col-lg-4, div.col-lg-3, div.col-lg-2, div.col-lg-1,
+    div.col-md-12, div.col-md-11, div.col-md-10, div.col-md-9, div.col-md-8, div.col-md-7,
+    div.col-md-6, div.col-md-5, div.col-md-4, div.col-md-3, div.col-md-2, div.col-md-1,
+    div.col-sm-12, div.col-sm-11, div.col-sm-10, div.col-sm-9, div.col-sm-8, div.col-sm-7,
+    div.col-sm-6, div.col-sm-5, div.col-sm-4, div.col-sm-3, div.col-sm-2, div.col-sm-1,
+    div.col-xs-12, div.col-xs-11, div.col-xs-10, div.col-xs-9, div.col-xs-8, div.col-xs-7,
+    div.col-xs-6, div.col-xs-5, div.col-xs-4, div.col-xs-3, div.col-xs-2, div.col-xs-1 {
+        margin: none;
+        padding: none;
+        width: 100%;
+    }
+}
+
