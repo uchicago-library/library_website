@@ -28,7 +28,7 @@ class NewsPage(BasePage):
         related_name='news_stories'
     )
     story_date = models.DateField(default=timezone.now)
-    sticky_until = models.DateField(blank=True, null=True)
+    sticky_until = models.DateField(blank=True, null=True, help_text='While a story is "sticky" it will appear at the top of the news feed with a special background color.')
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
