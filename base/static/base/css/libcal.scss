@@ -1,0 +1,22 @@
+#mini-calendar {
+    border: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+.cal-mini-hasevent a {
+    background-color: #ADB17D;
+}
+
+#calevent-mini-list {
+    padding-top: 5px;
+}
+
+.calevent-mini li {
+ padding: 5px 5px;
+ & a {
+    font-weight: 300;
+    font-size: 1.1em;
+    color: #5B8FA8;
+    }
+}
