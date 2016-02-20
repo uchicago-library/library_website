@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'base',
     'conferences',
     'directory_unit',
+    'fancypages',
     'group',
     'home',
     'icon_list_boxes',
