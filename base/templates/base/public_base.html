@@ -207,11 +207,29 @@
     <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
     
     <!-- Sidebar (Optional) -->
-    <!--<div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar" id="sidebar">
-    </div>-->
+    {% if self.show_sidebar and sidebar %}
+        <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar" id="sidebar">
+            <ul>
+                {% for child in sidebar %}
+                    <li><a href="{{ child.url }}">{{ child.title }}</a>
+                    {% if child.children %}
+                    <ul>
+                        {% for grandchild in child.children %}
+                            <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <!-- // Sidebar -->
-
-    <div class="container body-container col-xs-12 col-md-10"> <!-- Content Container -->
+    {% if self.show_sidebar and sidebar %}
+        <div class="container body-container col-xs-6 col-md-8"> <!-- Content Container -->
+    {% else %}
+        <div class="container body-container col-xs-12 col-md-10"> <!-- Content Container -->
+    {% endif %}
         <!-- Off-Canvas Toggle Button -->
         <div class="row visible-xs toggle-side">
             <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
@@ -230,8 +248,8 @@
         </div> <!-- // Center Content -->
 
         <!-- Right Sidebar Content -->
-        <!--<div class="col-xs-12 xol-sm-12 col-md-3 home-rightside"> 
-        </div>-->
+        <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside"> 
+        </div>
         <!-- // Right Sidebar Content -->
 
     </div> <!-- // Content Container -->
