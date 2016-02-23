@@ -4,6 +4,11 @@ body {
 
 h1 {
     color: #434343;
+    font-weight: 600;
+}
+
+h2 {
+    font-weight: 300;
 }
 
 h4 {
@@ -34,8 +39,17 @@ h6 {
     }
 }
 
-.home-rightside ul li {
-    margin-bottom: 5px;
+.rich-text ul {
+    list-style: inherit;
+    margin-left: 20px;
+    padding-left: 20px;
+}
+
+.home-rightside ul {
+    list-style: none;
+    & li {
+        margin-bottom: 5px;
+    }
 }
 
 .btn-reserve {
@@ -171,5 +185,3 @@ footer {
         }
     }
 }
-
-
