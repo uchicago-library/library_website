@@ -15,7 +15,10 @@ class StandardPage(PublicBasePage):
     """
     A standard basic page.
     """
-    body = StreamField(DefaultBodyFields()) 
+    body = StreamField(DefaultBodyFields())
+
+    subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
+        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -171,6 +174,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
+    subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
+
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('short_description'),
         index.SearchField('long_description'),
@@ -193,6 +198,8 @@ class DonorPage(PublicBasePage):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+
+    subpage_types = ['public.StandardPage']
         
     content_panels = Page.content_panels + [
         FieldPanel('description'),
@@ -216,6 +223,8 @@ class FloorPlanPage(PublicBasePage):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+
+    subpage_types = ['public.StandardPage']
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('image'),

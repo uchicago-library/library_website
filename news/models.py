@@ -37,6 +37,8 @@ class NewsPage(BasePage):
         related_name='+')
     body = StreamField(DefaultBodyFields(), blank=False, null=False)
 
+    subpage_types = []
+
     content_panels = Page.content_panels + [ 
         FieldPanel('excerpt'),
         FieldPanel('author'),

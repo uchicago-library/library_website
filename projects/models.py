@@ -49,6 +49,8 @@ class ProjectPage(BasePage):
     completion = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
 
+    subpage_types = ['public.StandardPage']
+
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         FieldPanel('requestor'),

@@ -162,6 +162,8 @@ class CollectionPage(PublicBasePage):
     staff_contact = models.ForeignKey('staff.StaffPage',
         null=True, blank=True, on_delete=models.SET_NULL)
 
+    subpage_types = []
+
     content_panels = Page.content_panels + [
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
@@ -342,7 +344,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         related_name='%(app_label)s_%(class)s_related'
     )
     collecting_statement = models.TextField(null=False, blank=False)
-    #primary_guide
+    
+    subpage_types = []
 
     content_panels = Page.content_panels + [
         FieldPanel('subject'),

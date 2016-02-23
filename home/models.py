@@ -6,4 +6,4 @@ from wagtail.wagtailcore.models import Page
 
 
 class HomePage(Page):
-    pass
+    subpage_types = ['public.StandardPage', 'conferences.ConferenceIndexPage']
