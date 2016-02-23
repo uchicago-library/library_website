@@ -115,7 +115,7 @@ class TestUsersAndServingLivePages(TestCase):
         for page in pages:
             url = page.relative_url(site)
             response = user.client.get(page.url, HTTP_HOST=site.hostname)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
 
     def test_all_live_public_pages_for_200_with_anonymous_user(self):
         """
