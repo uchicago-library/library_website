@@ -212,12 +212,13 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                    
                     supervisors = [] 
                     for s in UnitSupervisor.objects.filter(unit=directory_unit):
-                        supervisors.append({
-                            'title': s.supervisor.title,
-                            'url': s.supervisor.url,
-                            'phone_number': s.supervisor.vcards.all()[0].phone_number,
-                            'email': s.supervisor.vcards.all()[0].email,
-                        })
+                        if s.supervisor != None:
+                            supervisors.append({
+                                'title': s.supervisor.title,
+                                'url': s.supervisor.url,
+                                'phone_number': s.supervisor.vcards.all()[0].phone_number,
+                                'email': s.supervisor.vcards.all()[0].email,
+                            })
                     unit['supervisors'] = supervisors
                     department_units.append(unit)
 
