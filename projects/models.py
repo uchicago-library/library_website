@@ -2,6 +2,7 @@ from django.db import models
 from wagtail.wagtailcore.models import Page
 from base.models import BasePage
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.wagtailsearch import index
 from django.utils import timezone
 
 class ProjectPage(BasePage):
@@ -59,9 +60,20 @@ class ProjectPage(BasePage):
         FieldPanel('notes'),
     ] + BasePage.content_panels
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('description'),
+        index.SearchField('requestor'),
+        index.SearchField('status'),
+        index.SearchField('size'),
+        index.SearchField('staff'),
+        index.SearchField('notes'),
+    )
+
 
 class ProjectIndexPage(BasePage):
     """
     Homepage for projects.
     """
     subpage_types = ['projects.ProjectPage']
+
+    search_fields = BasePage.search_fields 

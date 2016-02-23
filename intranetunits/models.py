@@ -8,6 +8,7 @@ from staff.models import StaffPage, StaffPagePageVCards, VCard
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailsearch import index
 from django.core.exceptions import ValidationError
 
 class IntranetUnitsReportsPageTable(Orderable, Report):
@@ -54,6 +55,10 @@ class IntranetUnitsReportsPage(BasePage):
     ] + BasePage.content_panels 
 
     subpage_types = ['base.IntranetPlainPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intranet_units_reports'),
+    )
 
     def clean(self):
         """
@@ -120,6 +125,15 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     show_departments = models.BooleanField(default=False)
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage', 'intranetunits.IntranetUnitsPage', 'intranetunits.IntranetUnitsReportsIndexPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+        index.SearchField('internal_location'),
+        index.SearchField('internal_phone_number'),
+        index.SearchField('internal_email'),
+        index.SearchField('staff_only_email'),
+        index.SearchField('body'),
+    )
 
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
@@ -263,6 +277,10 @@ class IntranetUnitsIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetunits.IntranetUnitsPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+    )
 
     def get_context(self, request):
         context = super(IntranetUnitsIndexPage, self).get_context(request)

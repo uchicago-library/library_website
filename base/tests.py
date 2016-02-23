@@ -179,11 +179,12 @@ class TestPageModels(TestCase):
         content_types = Page.allowed_subpage_models()[1:]
         page_search_fields = Page.search_fields
         base_page_search_fields = BasePage.search_fields
-        public_base_search_fields = PublicBasePage.search_fields
-        default_search_fields = set(page_search_fields + base_page_search_fields + public_base_search_fields)
+        default_search_fields = set(page_search_fields + base_page_search_fields)
+        ignore = set(['ConferenceIndexPage', 'GroupMeetingMinutesIndexPage', 'GroupReportsIndexPage', \
+                      'HomePage', 'IntranetHomePage', 'IntranetUnitsReportsIndexPage', 'ProjectIndexPage'])
         no_search_fields = set([])
         for page_type in content_types:
-            if not len(set(page_type.search_fields)) > len(default_search_fields):
+            if not len(set(page_type.search_fields)) > len(default_search_fields) and not page_type.__name__ in ignore:
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration: ' + str(no_search_fields))

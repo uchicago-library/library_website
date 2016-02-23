@@ -114,7 +114,19 @@ class UnitPage(BasePage, FaxNumber):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
-    search_fields = Page.search_fields + (
+    search_fields = BasePage.search_fields + (
+        index.SearchField('unit_role_placements'),
+        index.SearchField('phone_numbers'),
+        index.SearchField('email'),
+        index.SearchField('contact_url'),
+        index.SearchField('fax_number'),
+        index.SearchField('location'),
+        index.SearchField('public_web_page'),
+        index.SearchField('unit_reports'),
+        index.SearchField('body'),
+    )
+
+    search_fields = BasePage.search_fields + (
         index.SearchField('body'),
     )
 
@@ -139,5 +151,9 @@ class UnitIndexPage(BasePage):
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ] + BasePage.content_panels
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+    )
    
     subpage_types = ['units.UnitPage']

@@ -21,6 +21,10 @@ class StandardPage(PublicBasePage):
         StreamFieldPanel('body'),
     ] + PublicBasePage.content_panels
 
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('body'),
+    )
+
 
 class LocationPageDonorPlacement(Orderable, models.Model):
     """
@@ -167,6 +171,15 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('short_description'),
+        index.SearchField('long_description'),
+        index.SearchField('parent_building'),
+        index.SearchField('location_photo'),
+        index.SearchField('reservation_display_url'),
+        index.SearchField('reservation_display_text'),
+    )
+
 
 class DonorPage(PublicBasePage):
     """
@@ -186,6 +199,11 @@ class DonorPage(PublicBasePage):
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
 
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('description'),
+        index.SearchField('image'),
+    )
+
 
 class FloorPlanPage(PublicBasePage):
     """
@@ -202,3 +220,7 @@ class FloorPlanPage(PublicBasePage):
     content_panels = Page.content_panels + [
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
+
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('image'),
+    )

@@ -198,6 +198,10 @@ class ConferenceSubPage(PublicBasePage):
 
     subpage_types = ['conferences.ConferenceSubPage']
 
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('body'),
+    )
+
     api_fields = ('body',)
 
 

@@ -5,14 +5,14 @@ from django.db import models
 from django.db.models.fields import TextField
 from django.utils import timezone
 
-from base.models import BasePage, DefaultBodyFields
+from base.models import BasePage, PublicBasePage, DefaultBodyFields
 from staff.models import StaffPage
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-
+from wagtail.wagtailsearch import index
 import re
 
 class NewsPage(BasePage):
@@ -46,6 +46,13 @@ class NewsPage(BasePage):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('excerpt'),
+        index.SearchField('author'),
+        index.SearchField('thumbnail'),
+        index.SearchField('body'),
+    )
+
     def get_context(self, request):
         context = super(NewsPage, self).get_context(request)
 
@@ -68,6 +75,10 @@ class NewsIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['news.NewsPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+    )
 
     def get_context(self, request):
         context = super(NewsIndexPage, self).get_context(request)

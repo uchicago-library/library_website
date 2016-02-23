@@ -156,6 +156,14 @@ class StaffPage(BasePage):
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
     ] + BasePage.content_panels
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('profile_picture'),
+        index.SearchField('bio'),
+        index.SearchField('cv'),
+        index.SearchField('libguide_url'),
+        index.SearchField('staff_subject_placements'),
+    )
+
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
     class Meta:
@@ -234,6 +242,10 @@ class StaffIndexPage(BasePage):
     )
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'staff.StaffPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+    )
 
     def get_context(self, request):
         staff_pages = []

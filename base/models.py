@@ -639,9 +639,7 @@ class PublicBasePage(BasePage):
     )
 
     # Searchable fields
-    search_fields = Page.search_fields + (
-        index.SearchField('description'),
-    )
+    search_fields = Page.search_fields + BasePage.search_fields 
 
     content_panels = [
         MultiFieldPanel(
@@ -672,6 +670,10 @@ class IntranetPlainPage(BasePage):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('body'),
+    )
+
 IntranetPlainPage.content_panels = Page.content_panels + [
     StreamFieldPanel('body')
 ] + BasePage.content_panels
@@ -689,6 +691,11 @@ class IntranetIndexPage(BasePage):
         FieldPanel('display_hierarchical_listing'),
         StreamFieldPanel('body')
     ] + BasePage.content_panels
+
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('intro'),
+        index.SearchField('body'),
+    )
 
     def get_context(self, request):
         context = super(IntranetIndexPage, self).get_context(request)

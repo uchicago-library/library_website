@@ -236,6 +236,14 @@ class GroupPage(BasePage, Email):
                      'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', \
                      'group.GroupReportsPage', 'intranettocs.TOCPage', 'projects.ProjectPage']
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('meeting_location'),
+        index.SearchField('meeting_frequency'),
+        index.SearchField('intro'),
+        index.SearchField('group_members'),
+        index.SearchField('body'),
+    )
+
     def get_context(self, request):
 
         context = super(GroupPage, self).get_context(request)
@@ -349,6 +357,10 @@ class GroupMeetingMinutesPage(BasePage):
 
     subpage_types = ['base.IntranetPlainPage']
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('meeting_minutes'),
+    )
+
     def clean(self):
         """
         Make sure page titles adhere to strict
@@ -428,6 +440,10 @@ class GroupReportsPage(BasePage):
 
     subpage_types = ['base.IntranetPlainPage']
 
+    search_fields = BasePage.search_fields + (
+        index.SearchField('group_reports'),
+    )
+
     def clean(self):
         """
         Make sure page titles adhere to strict
@@ -475,6 +491,10 @@ class GroupIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage']
+
+    search_fields = BasePage.search_fields + (
+        index.SearchField('intro'),
+    )
 
     def get_context(self, request):
         context = super(GroupIndexPage, self).get_context(request)
