@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from base.utils import get_xml_from_directory_api
 from django.core.management.base import BaseCommand
 
 #import os
@@ -51,7 +52,8 @@ class Command (BaseCommand):
             # if this happens, report that a new user needs to be created.
 
         for s in sorted(list(api_staff.intersection(wag_staff))):
-            api = get_individual_info_from_directory(s)
+            xml_string = xml_string = get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + s + '.xml')
+            api = get_individual_info_from_directory(xml_string)
             wag = get_individual_info_from_wagtail(s)
 
             if not api['officialName'] == wag['officialName']:

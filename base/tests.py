@@ -1,3 +1,4 @@
+from base.utils import get_xml_from_directory_api
 from django.test import TestCase, Client
 from wagtail.wagtailcore.models import Page, Site
 from base.models import BasePage, PublicBasePage
@@ -6,8 +7,10 @@ from django.http import HttpRequest
 from news.models import NewsPage
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import AnonymousUser
-from base.utils import get_xml_from_directory_api
-from io import BytesIO
+from io import StringIO
+from lxml import etree
+from staff.utils import get_all_library_cnetids_from_directory
+from tempfile import NamedTemporaryFile
 import subprocess
 import sys
 
@@ -188,17 +191,5 @@ class TestPageModels(TestCase):
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration: ' + str(no_search_fields))
-
-
-class ValidXMLTestCase(TestCase):
-    def test_directory_xml_validates(self):
-        from tempfile import NamedTemporaryFile
-
-        temp_xml = NamedTemporaryFile()
-        temp_xml.write(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
-
-        response = subprocess.check_output(['xmllint', '--noout', '--dtdvalid', 'tests-directory-xml.dtd', temp_xml.name])
-
-        self.assertEqual(response, b'')
 
 

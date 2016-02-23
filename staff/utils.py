@@ -15,9 +15,12 @@ from xml.etree import ElementTree
 # need a list of all individuals. 
 # this thing needs to deal with VCards. 
 
-def get_all_library_cnetids_from_directory():
+def get_all_library_cnetids_from_directory(xml_string = None):
+    if not xml_string:
+        xml_string = get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml')
+
     # get xml element tree.
-    x = ElementTree.fromstring(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
+    x = ElementTree.fromstring(xml_string)
 
     # get cnetids.
     cnetids = set()
@@ -25,13 +28,12 @@ def get_all_library_cnetids_from_directory():
         cnetids.add(cnetid.text)
     return sorted(list(cnetids))
 
-def get_individual_info_from_directory(cnetid):
-    info = {
-        "cnetid": cnetid
-    }
+def get_individual_info_from_directory(xml_string):
+    x = ElementTree.fromstring(xml_string)
 
-    # get xml element tree.
-    x = ElementTree.fromstring(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetid + '.xml'))
+    info = {}
+
+    info['cnetid'] = x.find("individuals/individual/cnetid").text
 
     # name is slightly more formal- e.g. "John E. Jung"
     info['officialName'] = x.find("individuals/individual/name").text

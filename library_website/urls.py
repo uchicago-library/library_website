@@ -9,6 +9,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 
 from search.views import search as search_view 
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
+from staff.views import staff
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -19,6 +20,7 @@ urlpatterns = [
 
     url(r'^search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),
+    url(r'^staff/$', staff, name='staff'),
 
     url(r'', include(wagtail_urls)),
 ]
