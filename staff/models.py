@@ -161,7 +161,6 @@ class StaffPage(BasePage):
         index.SearchField('bio'),
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
-        index.SearchField('staff_subject_placements'),
     )
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']

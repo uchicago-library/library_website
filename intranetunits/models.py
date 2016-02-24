@@ -56,10 +56,6 @@ class IntranetUnitsReportsPage(BasePage):
 
     subpage_types = ['base.IntranetPlainPage']
 
-    search_fields = BasePage.search_fields + (
-        index.SearchField('intranet_units_reports'),
-    )
-
     def clean(self):
         """
         Make sure page titles adhere to strict

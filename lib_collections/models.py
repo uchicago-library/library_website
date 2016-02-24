@@ -181,16 +181,10 @@ class CollectionPage(PublicBasePage):
 
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('short_abstract'),
-        index.SearchField('alternate_name'),
         index.SearchField('full_description'),
         index.SearchField('thumbnail'),
-        index.SearchField('collection_subject_placements'),
-        index.SearchField('collection_placements'),
         index.SearchField('access_instructions'),
-        index.SearchField('access_links'),
-        index.SearchField('related_collection_placement'),
         index.SearchField('collection_location'),
-        index.SearchField('donor_page_list_placement'),
         index.SearchField('staff_contact'),
     )
 
@@ -368,12 +362,6 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('subject'),
         index.SearchField('collecting_statement'),
-        index.SearchField('subject_specialist_placement'),
-        index.SearchField('stacks_ranges'),
-        index.SearchField('reference_location_placements'),
-        index.SearchField('highlighted_collection_placements'),
-        index.SearchField('regional_collections'),
         index.SearchField('guide_link_text'),
         index.SearchField('guide_link_url'),
-        index.SearchField('lib_guides'),
     )
