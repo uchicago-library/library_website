@@ -25,7 +25,7 @@ class StandardPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + (
-        index.SearchField('body'),
+        index.SearchField('body', partial_match=True),
     )
 
 
@@ -177,8 +177,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
     search_fields = PublicBasePage.search_fields + (
-        index.SearchField('short_description'),
-        index.SearchField('long_description'),
+        index.SearchField('short_description', partial_match=True),
+        index.SearchField('long_description', partial_match=True),
         index.SearchField('parent_building'),
         index.SearchField('location_photo'),
         index.SearchField('reservation_display_url'),
