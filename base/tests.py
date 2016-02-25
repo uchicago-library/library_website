@@ -184,7 +184,8 @@ class TestPageModels(TestCase):
         base_page_search_fields = BasePage.search_fields
         default_search_fields = set(page_search_fields + base_page_search_fields)
         ignore = set(['ConferenceIndexPage', 'GroupMeetingMinutesIndexPage', 'GroupReportsIndexPage', \
-                      'HomePage', 'IntranetHomePage', 'IntranetUnitsReportsIndexPage', 'ProjectIndexPage'])
+                      'HomePage', 'IntranetHomePage', 'IntranetUnitsReportsIndexPage', 'ProjectIndexPage', \
+                      'GroupMeetingMinutesPage', 'GroupReportsPage', 'IntranetUnitsReportsPage'])
         no_search_fields = set([])
         for page_type in content_types:
             if not len(set(page_type.search_fields)) > len(default_search_fields) and not page_type.__name__ in ignore:
