@@ -17,12 +17,15 @@ from wagtail.wagtailembeds.blocks import EmbedBlock
 from wagtail.wagtailsearch import index
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from localflavor.us.us_states import STATE_CHOICES
+from localflavor.us.models import USStateField
+from base.utils import get_json_for_library, get_hours_by_id
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
-
+import json
 import logging
 import sys
 
@@ -95,6 +98,7 @@ class Address(models.Model):
     address_1 = models.CharField(max_length=255, blank=True)
     address_2 = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True)
+    state = USStateField(choices = STATE_CHOICES, default='IL')
     country = models.CharField(max_length=255, blank=True)
     postal_code_regex = RegexValidator(regex=POSTAL_CODE_FORMAT, message=POSTAL_CODE_ERROR_MSG)
     postal_code = models.CharField(validators=[postal_code_regex], max_length=5, blank=True)
@@ -105,6 +109,7 @@ class Address(models.Model):
                 FieldPanel('address_1'),
                 FieldPanel('address_2'),
                 FieldPanel('city'),
+                FieldPanel('state'),
                 FieldPanel('postal_code'),
             ],
             heading='Address'
@@ -617,9 +622,8 @@ class PublicBasePage(BasePage):
     instead of Page.
     """
     # Fields 
-
-    #location = models.ForeignKey('public.LocationPage', 
-    #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True}, 
+    #location = models.ForeignKey('public.LocationPage',  
+    #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True},
     #    related_name='%(app_label)s_%(class)s_related')
 
     unit = models.ForeignKey(
@@ -663,6 +667,23 @@ class PublicBasePage(BasePage):
 
     class Meta:
         abstract = True
+
+    def get_context(self, request):
+        context = super(PublicBasePage, self).get_context(request)
+
+        unit = self.unit
+        location = unit.location
+
+        context['page_unit'] = str(self.unit) 
+        context['page_location'] = str(location)
+        context['address_1'] = location.address_1
+        context['address_2'] = location.address_2
+        context['city'] = location.city
+        context['state'] = location.state
+        context['postal_code'] = str(location.postal_code)
+        context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
+
+        return context
 
 
 class IntranetPlainPage(BasePage):

@@ -193,7 +193,9 @@ PERMISSIONS_MAPPING = {6: ['Library']}
 # view a page.
 NO_PERMISSIONS_REDIRECT_URL = 'https://motacilla.lib.uchicago.edu/no-permission/'
 
-
 # Settings for RESTful API and frontend cache invalidation
 WAGTAILAPI_SEARCH_ENABLED = True
 WAGTAILAPI_MAX_RESULTS = 60
+
+# Institutional ID for libcal
+LIBCAL_IID = 482

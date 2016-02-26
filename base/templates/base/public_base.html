@@ -52,7 +52,7 @@
 
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-          <li><a href="#"><i class="fa fa-clock-o"></i> Branch Library: 8:00am-10:30pm</a></li> <!-- Location dependent -->
+          <li><a href="#"><i class="fa fa-clock-o"></i> {{page_location}}: {{hours_for_today}}</a></li> <!-- Location dependent -->
           <li><a href="#"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
           <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
           <li><a href="#"><i class="fa fa-user"></i> My Accounts</a></li>
@@ -317,8 +317,12 @@
         <div class="centerdiv">
             <img src="{% static "base/images/univ-logo.gif" %}" width="150px" height="auto">
             <!-- Library Location: Address -->
-            <p>The John Crerar Library<br/>
-            5730 S Ellis Ave, Chicago, IL 60637</p>
+            <p>{{page_location}}<br/>
+                {{address_1}}, {% if address_2 %}{{address_2}}, {% endif %}
+                {{city}},
+                {{state}}
+                {{postal_code}}
+            </p>
 
             <small><a href="#">Privacy Policy</a><br/>
             © University of Chicago</small>
