@@ -1,0 +1,32 @@
+/*
+ * Print Styling
+ * --------------------------------------------------
+ */
+
+@media print {
+    background-color: #fff;
+    .navbar, .footer, .breadcrumbs, .sidebar, iframe {
+        display: none;
+    }
+    img {
+        max-width: 100%;
+    }
+    @page {
+        margin: 0.5cm;
+    }
+    .container-fluid:before {
+        content: "University of Chicago Library";
+        margin-bottom: 10px;
+        border: 1px solid #bbb;
+        padding: 3px 5px;
+    }
+
+    .rich-text a {
+        color: #000;
+        word-wrap: break-word;
+        &:after {
+            content: " (" attr(href) ")";
+            font-size: 80%;
+        }
+    }
+}
