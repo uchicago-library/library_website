@@ -18,7 +18,7 @@ class StandardPage(PublicBasePage):
     body = StreamField(DefaultBodyFields())
 
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
-        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage'] 
+        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'units.UnitPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
