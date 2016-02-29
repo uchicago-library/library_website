@@ -108,18 +108,25 @@ class NewsIndexPage(BasePage):
 def get_stories(sticky=False):
     pages = []
     if sticky:
-        for page in NewsPage.objects.live().exclude(sticky_until=None):
+        for page in NewsPage.objects.live():
             # skip stories that are in the future. 
             if page.story_date > datetime.date(datetime.now()):
+                continue
+            # skip stories that do not have a "sticky until" date.
+            if page.sticky_until == None:
                 continue
             # skip sticky stories that have 'expired'.
             if page.sticky_until and datetime.date(datetime.now()) > page.sticky_until:
                 continue
             pages.append(get_story_summary(page))
     else:
-        for page in NewsPage.objects.live().filter(sticky_until=None):
+        for page in NewsPage.objects.live():
             # skip stories that are in the future. 
             if page.story_date > datetime.date(datetime.now()):
+                continue
+            # skip pages that are still sticky. 
+            # pages that have a sticky_until set to None or a date in the past fall through.
+            if page.sticky_until and datetime.date(datetime.now()) <= page.sticky_until:
                 continue
             pages.append(get_story_summary(page))
 
