@@ -9,10 +9,13 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import AnonymousUser
 from io import StringIO
 from lxml import etree
-from staff.utils import get_all_library_cnetids_from_directory
+from base.utils import get_json_for_library, get_hours_by_id
 from tempfile import NamedTemporaryFile
+from library_website.settings.base import LIBCAL_IID
+from file_parsing import is_json
 import subprocess
 import sys
+import json
 
 # Helper functions
 def create_user_with_privileges():
@@ -194,3 +197,25 @@ class TestPageModels(TestCase):
         self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration: ' + str(no_search_fields))
 
 
+class TestUtilityFunctions(TestCase):
+    """
+    Utility functions in base/utils.py.
+    """
+
+    def test_get_json_for_library(self):
+        """
+        Should return valid json always. If a bad library id is 
+        passed a string, 'null' should come back. 
+        """
+        crerar = 1373
+        self.assertEqual(is_json(json.dumps(get_json_for_library(crerar))), True, 'Not valid json')
+        self.assertEqual(json.dumps(get_json_for_library(999)), 'null', 'Should be a null json value')
+
+
+    def test_get_hours_by_id(self):
+        """
+        Very basic test, needs more.
+        """
+        crerar = 1373
+        assert(len(get_hours_by_id(crerar)) > 1)
+        self.assertEqual(get_hours_by_id(999), '')

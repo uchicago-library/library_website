@@ -7,6 +7,7 @@ django-debug-toolbar==1.4
 django-libsass==0.6
 django-localflavor==1.2
 django-modelcluster==1.1
+-e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
 -e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@7111b478183af6ceb61d6d633ae346d5b6429962#egg=django_shibboleth_remoteuser-origin_uchicago
 django-taggit==0.17.6
 django-treebeard==3.0

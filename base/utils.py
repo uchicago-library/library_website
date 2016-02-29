@@ -50,4 +50,4 @@ def get_hours_by_id(lid):
     try:
         return data['rendered']
     except:
-        return 'Hours not found'
+        return ''
