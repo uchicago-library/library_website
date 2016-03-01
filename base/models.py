@@ -124,9 +124,11 @@ class Email(models.Model):
     """
     Reusable email address.
     """
+    email_label = models.CharField(max_length=254, blank=True)
     email = models.EmailField(max_length=254, blank=True)
     
     content_panels = [
+        FieldPanel('email_label'),
         FieldPanel('email'),
     ]
 
@@ -138,7 +140,7 @@ class PhoneNumber(models.Model):
     """
     Abstract phone number type.
     """
-    phone_label = models.CharField(max_length=25, blank=True)
+    phone_label = models.CharField(max_length=254, blank=True)
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 

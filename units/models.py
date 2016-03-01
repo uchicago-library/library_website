@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyFields, PhoneNumber, FaxNumber, Report
+from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, FaxNumber, Report
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -52,6 +52,14 @@ class UnitPageRolePlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.role.text
 
 
+class UnitPageEmail(Orderable, Email):
+    """
+    Create a through table for linking email addresses
+    to UnitPage content types.
+    """
+    page = ParentalKey('units.UnitPage', related_name='email')
+
+
 class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     """
     Create a through table for linking phone numbers 
@@ -72,7 +80,6 @@ class UnitPage(BasePage, FaxNumber):
     Basic structure for units and departments.
     """
     display_in_directory = models.BooleanField(default=True)
-    email = models.EmailField(max_length=254, blank=True)
     contact_url = models.URLField(max_length=200, blank=True, default='')
     room_number = models.CharField(max_length=32, blank=True)
     public_web_page = models.ForeignKey(
@@ -95,9 +102,9 @@ class UnitPage(BasePage, FaxNumber):
         FieldPanel('display_in_directory'),
         InlinePanel('unit_role_placements', label='Role'),
         InlinePanel('phone_numbers', label='Phone Numbers'),
+        InlinePanel('email', label='Email Addresses'),
         MultiFieldPanel(
             [
-                FieldPanel('email'),
                 FieldPanel('contact_url'),
             ],
             heading="Online Contact Information",
