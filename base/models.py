@@ -19,7 +19,7 @@ from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
-from base.utils import get_json_for_library, get_hours_by_id
+from base.utils import get_json_for_library, get_hours_by_id, get_chat_status
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -682,6 +682,8 @@ class PublicBasePage(BasePage):
         context['state'] = location.state
         context['postal_code'] = str(location.postal_code)
         context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
+
+        #get_chat_status('law')
 
         return context
 
