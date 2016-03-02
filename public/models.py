@@ -108,7 +108,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     has_board = models.BooleanField(default=False)
     has_printing = models.BooleanField(default=False)
     has_soft_seating = models.BooleanField(default=False)
-    has_cps = models.BooleanField(default=False)
     has_dual_monitors = models.BooleanField(default=False)
     has_single_tables = models.BooleanField(default=False)
     has_large_tables = models.BooleanField(default=False)
