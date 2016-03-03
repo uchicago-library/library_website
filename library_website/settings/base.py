@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailapi',
 
     'rest_framework',
+    'ask_a_librarian',
     'base',
     'conferences',
     'directory_unit',
