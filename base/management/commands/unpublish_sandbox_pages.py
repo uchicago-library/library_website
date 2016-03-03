@@ -21,7 +21,7 @@ class Command (BaseCommand):
 
         output = ""
         try:
-            for p in Page.objects.get(title='Welcome to the Sandbox - Enter Here').get_descendants():
+            for p in Page.objects.get(title='Sandbox').get_descendants():
                 p.unpublish()
         except Exception as e:
             output = str(e)
