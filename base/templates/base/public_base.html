@@ -53,7 +53,7 @@
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
           <li><a href="#"><i class="fa fa-clock-o"></i> {{page_location}}{% if hours_for_today %}: {{hours_for_today}}{% endif %}</a></li> <!-- Location dependent -->
-          <li><a href="#"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
+          <li><a href="#" class="{{chat_status}}"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
           <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
           <li><a href="#"><i class="fa fa-user"></i> My Accounts</a></li>
         </ul> 
