@@ -673,17 +673,26 @@ class PublicBasePage(BasePage):
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
 
-        unit = self.unit
-        location = unit.location
+        try:
+            unit = self.unit
+            location = unit.location
+        except(AttributeError):
+            unit = ''
+            location = ''
+   
+        try: 
+            context['page_unit'] = str(self.unit) 
+            context['page_location'] = str(location)
+            context['address_1'] = location.address_1
+            context['address_2'] = location.address_2
+            context['city'] = location.city
+            context['state'] = location.state
+            context['postal_code'] = str(location.postal_code)
+            context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
+        except(AttributeError):
+            logger = logging.getLogger(__name__)
+            logger.error('Context variables not set in PublicBasePage.')
 
-        context['page_unit'] = str(self.unit) 
-        context['page_location'] = str(location)
-        context['address_1'] = location.address_1
-        context['address_2'] = location.address_2
-        context['city'] = location.city
-        context['state'] = location.state
-        context['postal_code'] = str(location.postal_code)
-        context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
         context['chat_status'] = get_chat_status_css('uofc-ask') 
 
         return context
