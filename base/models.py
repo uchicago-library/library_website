@@ -128,8 +128,13 @@ class Email(models.Model):
     email = models.EmailField(max_length=254, blank=True)
     
     content_panels = [
-        FieldPanel('email_label'),
-        FieldPanel('email'),
+        MultiFieldPanel(
+            [
+                FieldPanel('email_label'),
+                FieldPanel('email'),
+            ],
+            heading='Email'
+        ),
     ]
 
     class Meta:
@@ -145,8 +150,13 @@ class PhoneNumber(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
     content_panels = [
-        FieldPanel('phone_label'),
-        FieldPanel('phone_number'),
+        MultiFieldPanel(
+            [
+                FieldPanel('phone_label'),
+                FieldPanel('phone_number'),
+            ],
+            heading='Phone Number'
+        ),
     ]
 
     class Meta:
@@ -177,13 +187,15 @@ class LinkFields(models.Model):
         'wagtailcore.Page',
         null=True,
         blank=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL
     )
     link_document = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
         blank=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL
     )
 
     @property
@@ -204,6 +216,14 @@ class LinkFields(models.Model):
     class Meta:
         abstract = True
 
+
+class ContactFields(Email, PhoneNumber, FaxNumber, LinkFields):
+    """
+    Reusable general contact fields.
+    """
+
+    class Meta:
+        abstract = True
 
 
 class SocialMediaFields(models.Model):
