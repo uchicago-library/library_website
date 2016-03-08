@@ -89,6 +89,12 @@ def make_slug(s):
     s = s.replace(' ', '-')
     return s
 
+def get_breadcrumbs(page):
+    breadcrumbs = list(map(lambda p: {'title': p.title, 'url': p.url}, page.get_ancestors(True)))
+    # hack to remove the default root page.
+    breadcrumbs.pop(0)
+    return breadcrumbs
+
 
 # Abstract classes
 class Address(models.Model):
@@ -589,10 +595,7 @@ class BasePage(Page):
     def get_context(self, request):
         context = super(BasePage, self).get_context(request)
 
-        breadcrumbs = list(map(lambda p: {'title': p.title, 'url': p.url}, self.get_ancestors(True)))
-        # hack to remove the default root page.
-        breadcrumbs.pop(0)
-        context['breadcrumbs'] = breadcrumbs
+        context['breadcrumbs'] = get_breadcrumbs(self)
 
         context['sidebartitle'] = 'Browse this Section'
         if self.specific_class.get_verbose_name() == 'Intranet Units Page':
