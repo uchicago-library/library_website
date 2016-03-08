@@ -163,7 +163,7 @@ class StaffPage(BasePage):
         index.SearchField('libguide_url'),
     )
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
 
     class Meta:
         ordering = ['title']

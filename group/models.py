@@ -234,7 +234,8 @@ class GroupPage(BasePage, Email):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage', \
                      'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage', \
-                     'group.GroupReportsPage', 'intranettocs.TOCPage', 'projects.ProjectPage']
+                     'group.GroupReportsPage', 'intranetforms.IntranetFormPage', \
+                     'intranettocs.TOCPage', 'projects.ProjectPage']
 
     search_fields = BasePage.search_fields + (
         index.SearchField('meeting_location'),

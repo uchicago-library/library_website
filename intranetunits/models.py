@@ -120,7 +120,8 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
     show_departments = models.BooleanField(default=False)
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage', 'intranetunits.IntranetUnitsPage', 'intranetunits.IntranetUnitsReportsIndexPage']
+    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', \
+    'intranettocs.TOCPage', 'intranetunits.IntranetUnitsPage', 'intranetunits.IntranetUnitsReportsIndexPage']
 
     search_fields = BasePage.search_fields + (
         index.SearchField('intro'),

@@ -62,6 +62,7 @@ INSTALLED_APPS = (
     'group',
     'home',
     'icon_list_boxes',
+    'intranetforms',
     'intranethome',
     'intranettocs',
     'intranetunits',
