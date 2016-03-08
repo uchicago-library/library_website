@@ -2,7 +2,9 @@
 {% load wagtailcore_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
-{% block content_div_classes %}col-xs-12 xol-sm-12 col-md-8 col-md-offset-1 centermain{% endblock %}
+
+{% block content_div_classes %}{% endblock %}
+
 {% block content %}
     {{ self.body }}
 {% endblock %}

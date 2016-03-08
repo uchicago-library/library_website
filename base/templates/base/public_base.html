@@ -237,7 +237,7 @@
         <!-- // End Off-Canvas Toggle Button -->
 
         <!-- Main Content -->
-        <div class="col-xs-12 xol-sm-12 col-md-8 col-md-offset-1 centermain"> <!-- Center Content -->
+        <div class="{% block content_div_classes %}{% endblock %}"> <!-- Center Content -->
             <h1>{{self.title}}</h1>
 
             {% block content %}
