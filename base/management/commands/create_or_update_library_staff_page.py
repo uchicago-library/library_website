@@ -81,13 +81,27 @@ class Command (BaseCommand):
 
         # Add new VCards
         for vcard in info['title_department_subdepartments_dicts']:
+            faculty_exchange = ''
+            if hasattr(vcard, 'facultyexchange'):
+                faculty_exchange = vcard['facultyexchange']
+
+            email = ''
+            if hasattr(vcard, 'email'):
+                email = vcard['email']
+
+            phone_label = ''
+            phone_number = ''
+            if hasattr(vcard, 'phone'):
+                phone_label = 'work'
+                phone_number = vcard['phone']
+
             v, created = StaffPagePageVCards.objects.get_or_create(
                 title=vcard['title'], 
                 unit=DirectoryUnit.objects.get(pk=vcard['department']), 
-                faculty_exchange=vcard['facultyexchange'],
-                email=vcard['email'],
-                phone_label='work',
-                phone_number=vcard['phone'],
+                faculty_exchange=faculty_exchange,
+                email=email,
+                phone_label=phone_label,
+                phone_number=phone_number,
                 page=StaffPage.objects.get(cnetid=cnetid))
 
         # Delete unnecesary VCards
