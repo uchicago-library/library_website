@@ -7,11 +7,21 @@ import datetime
 
 class Command (BaseCommand):
     """
-    Produce a summary of news stories for the day. 
+    Produce a summary of news stories for a given day.
 
     Example: 
-        python manage.py report_daily_news_stories
+        python manage.py report_daily_news_stories yyyy m d
     """
+
+    def add_arguments(self, parser):
+        """
+        Add required positional options and optional
+        named arguments.
+        """
+        # Required positional options
+        parser.add_argument('year', type=int)
+        parser.add_argument('month', type=int)
+        parser.add_argument('day', type=int)
 
     def handle(self, *args, **options):
         """
@@ -21,9 +31,17 @@ class Command (BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
+        try:
+            year = options['year']
+            month = options['month']
+            day = options['day']
+
+        except:
+            sys.exit(1)
+
         output = []
-       
-        for news_page in NewsPage.objects.filter(story_date = datetime.date(2016, 3, 7)):
+      
+        for news_page in NewsPage.objects.filter(story_date = datetime.date(year, month, day)):
             summary = get_story_summary(news_page)
             output.append(news_page.title)
             output.append(summary['story_date'])
