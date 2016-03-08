@@ -161,8 +161,8 @@ def get_story_summary(news_page):
         author_url = news_page.author.url
     else:
         cnetid = news_page.owner.username
-        author_title = StaffPage.objects.get(cnetid=cnetid).title
-        author_url = StaffPage.objects.get(cnetid=cnetid).url
+        author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
+        author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
 
     simplified_text = simplify_text(news_page.excerpt)
     if simplified_text:
