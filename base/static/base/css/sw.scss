@@ -334,6 +334,8 @@ h6 {
     }
     ul {
             @include plainlist;
+            padding-left: 2em;
+            text-indent: -2em;
             &>li {
                 margin-top: 5px;
                 a {
@@ -665,6 +667,28 @@ a[href$=".docx"]:after, a[href$=".doc"]:after {
 }
 
  */
+
+
+ /*
+ * Forms
+ * --------------------------------------------------
+ */
+
+.unit-body form {
+  & label {
+    display: flex;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding-top: 10px;
+  }
+  & ul {
+    @include plainlist;
+  }
+}
+
+ input[type=checkbox], input[type=radio] {
+    margin: 4px 10px 0 0;
+}
 
 
 
