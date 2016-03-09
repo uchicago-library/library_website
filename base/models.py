@@ -87,6 +87,7 @@ def make_slug(s):
     s = s.replace(')', '')
     s = s.replace('&', 'and')
     s = s.replace(' ', '-')
+    s = s.replace('---', '-')
     return s
 
 def get_breadcrumbs(page):
