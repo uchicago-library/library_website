@@ -8,7 +8,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, FaxNumber, Report
+from base.models import BasePage, ContactFields, DefaultBodyFields
 
 @register_snippet
 class Role(models.Model, index.Indexed):
@@ -52,35 +52,14 @@ class UnitPageRolePlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.role.text
 
 
-class UnitPageEmail(Orderable, Email):
-    """
-    Create a through table for linking email addresses
-    to UnitPage content types.
-    """
-    page = ParentalKey('units.UnitPage', related_name='email')
-
-
-class UnitPagePhoneNumbers(Orderable, PhoneNumber):
-    """
-    Create a through table for linking phone numbers 
-    to UnitPage content types.
-    """
-    page = ParentalKey('units.UnitPage', related_name='phone_numbers')
-
-
-class UnitPageReports(Orderable, Report):
-    """
-    Reports for unit pages.
-    """
-    page = ParentalKey('units.UnitPage', related_name='unit_reports')
-
-
-class UnitPage(BasePage, FaxNumber):
+class UnitPage(BasePage, ContactFields):
     """
     Basic structure for units and departments.
     """
+    contact_point_title = models.CharField(max_length=255, blank=True)
+    friendly_name = models.CharField(max_length=255, blank=True)
     display_in_directory = models.BooleanField(default=True)
-    contact_url = models.URLField(max_length=200, blank=True, default='')
+    display_in_dropdown = models.BooleanField(default=False)
     room_number = models.CharField(max_length=32, blank=True)
     public_web_page = models.ForeignKey(
         'wagtailcore.Page',
@@ -96,46 +75,25 @@ class UnitPage(BasePage, FaxNumber):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
-    body = StreamField(DefaultBodyFields())
+    directory_unit = models.ForeignKey(
+        'directory_unit.DirectoryUnit',
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='%(app_label)s_%(class)s_related'
+    )
 
     content_panels = Page.content_panels + [
+        FieldPanel('contact_point_title'),
+        FieldPanel('friendly_name'),
         FieldPanel('display_in_directory'),
+        FieldPanel('display_in_dropdown'),
+        FieldPanel('room_number'),
         InlinePanel('unit_role_placements', label='Role'),
-        InlinePanel('phone_numbers', label='Phone Numbers'),
-        InlinePanel('email', label='Email Addresses'),
-        MultiFieldPanel(
-            [
-                FieldPanel('contact_url'),
-            ],
-            heading="Online Contact Information",
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('fax_number'),
-            ],
-            heading='Fax Number'
-        ),
-        FieldPanel('location'), 
         PageChooserPanel('public_web_page'),
-        InlinePanel('unit_reports', label='Reports'),
-        StreamFieldPanel('body'),
-    ] + BasePage.content_panels
-
-    search_fields = BasePage.search_fields + (
-        index.SearchField('unit_role_placements'),
-        index.SearchField('phone_numbers'),
-        index.SearchField('email'),
-        index.SearchField('contact_url'),
-        index.SearchField('fax_number'),
-        index.SearchField('location'),
-        index.SearchField('public_web_page'),
-        index.SearchField('unit_reports'),
-        index.SearchField('body'),
-    )
-
-    search_fields = BasePage.search_fields + (
-        index.SearchField('body'),
-    )
+        FieldPanel('location'), 
+        FieldPanel('directory_unit'), 
+    ] + BasePage.content_panels + ContactFields.content_panels
 
     subpage_types = ['public.StandardPage', 'public.LocationPage']
 

@@ -176,8 +176,8 @@ class FaxNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     fax_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    panels = [
-        FieldPanel('number'),
+    content_panels = [
+        FieldPanel('fax_number'),
     ]
 
     class Meta:
@@ -213,7 +213,7 @@ class LinkFields(models.Model):
         else:
             return self.link_external
 
-    panels = [
+    content_panels = [
         FieldPanel('link_external'),
         PageChooserPanel('link_page'),
         DocumentChooserPanel('link_document'),
@@ -223,10 +223,26 @@ class LinkFields(models.Model):
         abstract = True
 
 
-class ContactFields(Email, PhoneNumber, FaxNumber, LinkFields):
+class LinkedText(LinkFields):
+    """
+    Generic link with text.
+    """
+    link_text = models.CharField(max_length=255, blank=True) 
+
+    content_panels = [
+        FieldPanel('link_text'),
+    ] + LinkFields.content_panels
+    
+    class Meta:
+        abstract = True
+
+
+class ContactFields(Email, PhoneNumber, FaxNumber, LinkedText):
     """
     Reusable general contact fields.
     """
+
+    content_panels = Email.content_panels + PhoneNumber.content_panels + FaxNumber.content_panels + LinkedText.content_panels
 
     class Meta:
         abstract = True
@@ -269,20 +285,6 @@ class SocialMediaFields(models.Model):
         abstract = True
 
 
-class LinkedText(LinkFields):
-    """
-    Generic link with text.
-    """
-    link_text = models.CharField(max_length=255, blank=True) 
-
-    panels = [
-        FieldPanel('link_text'),
-    ] + LinkFields.panels
-    
-    class Meta:
-        abstract = True
-
-
 class LinkedTextOrLogo(LinkedText):
     """
     Generic linked text or image/logo.
@@ -306,7 +308,7 @@ class LinkedTextOrLogo(LinkedText):
 
     panels = [
         ImageChooserPanel('logo'),
-    ] + LinkedText.panels
+    ] + LinkedText.content_panels
     
     class Meta:
         abstract = True
@@ -321,7 +323,7 @@ class AbstractButton(LinkFields):
 
     panels = [
         FieldPanel('button_text'),
-    ] + LinkFields.panels
+    ] + LinkFields.content_panels
     
     class Meta:
         abstract = True
@@ -354,7 +356,7 @@ class AbstractReport(LinkFields):
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
-    ] + LinkFields.panels
+    ] + LinkFields.content_panels
 
     class Meta:
         abstract = True
@@ -784,7 +786,7 @@ class IntranetIndexPage(BasePage):
             if not currentlevel:
                 return ''
             else:
-                return "<ul>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+                return "<ul class='index-list'>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_html(n['children']) + "</li>", currentlevel))) + "</ul>"
         pages_html = get_html(pages[0]['children'])
         
         context['pages_html'] = pages_html
