@@ -155,7 +155,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             FieldPanel('has_board', classname=ROW_CLASS),
             FieldPanel('has_printing', classname=ROW_CLASS),
             FieldPanel('has_soft_seating', classname=ROW_CLASS),
-            FieldPanel('has_cps', classname=ROW_CLASS),
             FieldPanel('has_dual_monitors', classname=ROW_CLASS),
             FieldPanel('has_single_tables', classname=ROW_CLASS),
             FieldPanel('has_large_tables', classname=ROW_CLASS),
