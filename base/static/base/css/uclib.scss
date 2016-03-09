@@ -9,11 +9,21 @@
 
 $darkgray: #767676;
 
+img.desaturate { 
+-webkit-filter: grayscale(100%);
+filter: grayscale(100%);
+}
 
 /*
  * Content
  * --------------------------------------------------
  */
+
+ .main-container {
+  @media screen and (min-width: 767px) {
+    //padding-top: 30px;
+  }
+ }
 
 .cal-date {
   border: 2px solid #725663;
@@ -44,6 +54,21 @@ $darkgray: #767676;
   clear:both;
 }
 
+/*
+ * Event List (Sidebar)
+ * --------------------------------------------------
+ */
+
+a#event-header {
+    color: #616530; 
+    font-weight: 400;
+    font-size: 1.1em;
+  }
+
+.event-date {
+  color: #767676;
+  font-weight: 600;
+}
 
 /*
  * Global Elements
@@ -165,6 +190,13 @@ h5 {
   color: #616530;
 }
 
+h6 {
+  font-size: 1em;
+  font-weight: 600;
+  color: #767676;
+  margin: 15px 0 5px 0;
+}
+
 
 p {
   margin-bottom: 1em;
@@ -284,9 +316,22 @@ blockquote {
     }
 }
 
+.home-modwrapper {
+  & h6 {
+      margin: 0 0 5px 0;
+    }
+  & ul {
+    padding-left: 15px;
+  }
+  & img {
+    margin-top: -15px;
+  }
+}
+
 .home-module {
     border-bottom: 1px solid #767676;
     padding: 0px 0px 10px 15px;
+    margin-bottom: 15px;
  }
 
 
@@ -687,6 +732,12 @@ table.ask>tbody>tr>td {
   line-height: 1.8em;
 }
 
+.askoptions {
+  @media screen and (min-width: 640px) {
+    padding-right: 60px;
+  }
+}
+
 //Ask right-side link styling is under ".quicklinkfloat"
 
 //Ask button styling is under Buttons section, ".btn-ask"
@@ -698,7 +749,7 @@ table.ask>tbody>tr>td {
  */
 
 table, tbody {
-  @media screen and (max-width: 640px) { //mobile
+  @media (max-width: 640px) { //mobile
       display: block;
         width: 100%;
         & tr, & th, & td {
@@ -956,3 +1007,4 @@ figure.embed {
   border-color: red;
   background: #ffbebe;
 }
+

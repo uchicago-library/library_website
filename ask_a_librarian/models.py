@@ -1,9 +1,10 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Site
 from base.models import PublicBasePage, DefaultBodyFields, ContactFields
 from wagtail.wagtailsearch import index
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+from .utils import get_chat_status, get_chat_status_css
 
 class AskPage(PublicBasePage, ContactFields):
     """
@@ -11,6 +12,7 @@ class AskPage(PublicBasePage, ContactFields):
     """
 
     ask_widget_name = models.CharField(max_length=100, blank=True)
+    friendly_name = models.CharField(max_length=75, blank=True)
     reference_resources = RichTextField()
     body = StreamField(DefaultBodyFields())
 
@@ -18,6 +20,7 @@ class AskPage(PublicBasePage, ContactFields):
 
     content_panels = Page.content_panels + [
         FieldPanel('ask_widget_name'),
+        FieldPanel('friendly_name'),
         FieldPanel('reference_resources'),
         MultiFieldPanel(
             [
@@ -33,6 +36,7 @@ class AskPage(PublicBasePage, ContactFields):
 
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('ask_widget_name'),
+        index.SearchField('friendly_name'),
         index.SearchField('reference_resources'),
         index.SearchField('body'),
         index.SearchField('email'),
@@ -40,3 +44,41 @@ class AskPage(PublicBasePage, ContactFields):
         index.SearchField('phone_number'),
         index.SearchField('body'),
     )
+
+    @property
+    def chat_status(self):
+        """
+        Wrapper method for getting the 
+        chat status of a library chat 
+        widget.
+        """
+        return get_chat_status(self.ask_widget_name)
+
+    @property 
+    def chat_status_css(self):
+        """
+        Wrapper method for getting the 
+        css class for the chat status of
+        a library chat widget.
+        """
+        return get_chat_status_css(self.ask_widget_name)
+
+    @property
+    def contact_link(self):
+        """
+        Return an html link for contacting 
+        a librarian by email.
+        """
+        text = '<i class="fa fa-envelope-o fa-2x"></i> Email' 
+        if self.link_page:
+            return '<a href="%s">%s</a>' % (self.link_page.url, text)
+        elif self.email:
+            return '<a href="mailto:%s">%s</a>' % (self.email, text)
+        else:
+            return False
+
+    def get_context(self, request):
+        context = super(AskPage, self).get_context(request)
+        context['ask_pages'] = AskPage.objects.live()
+ 
+        return context

@@ -19,7 +19,9 @@ from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
-from base.utils import get_json_for_library, get_hours_by_id, get_chat_status_css
+from base.utils import get_json_for_library, get_hours_by_id
+from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
+from units.utils import get_default_unit
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -701,11 +703,11 @@ class PublicBasePage(BasePage):
 
         try:
             unit = self.unit
-            location = unit.location
+            location = self.unit.location
         except(AttributeError):
-            unit = ''
-            location = ''
-   
+            unit = get_default_unit()
+            location = unit.location
+
         try: 
             context['page_unit'] = str(self.unit) 
             context['page_location'] = str(location)
@@ -715,11 +717,14 @@ class PublicBasePage(BasePage):
             context['state'] = location.state
             context['postal_code'] = str(location.postal_code)
             context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
+            context['chat_url'] = get_unit_chat_link(unit, request)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
 
-        context['chat_status'] = get_chat_status_css('uofc-ask') 
+
+        context['chat_status'] = get_chat_status('uofc-ask')
+        context['chat_status_css'] = get_chat_status_css('uofc-ask') 
 
         return context
 

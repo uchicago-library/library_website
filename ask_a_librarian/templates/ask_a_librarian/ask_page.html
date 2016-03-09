@@ -3,8 +3,55 @@
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
-{% block content_div_classes %}{% endblock %}
-
 {% block content %}
     {{ self.body }}
+    <div class="libraryh3lp" data-lh3-jid="{{self.ask_widget_name}}@chat.libraryh3lp.com">
+        <iframe src="https://us.libraryh3lp.com/chat/{{self.ask_widget_name}}@chat.libraryh3lp.com?identity=Librarian&skin=13697"></iframe>
+    </div>
+{% endblock %}
+
+{% block right_sidebar %}
+    <h3>Other Ways to Ask</h3>
+    <ul>
+      {% if self.contact_link %}
+      <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
+      {% endif %}
+      {% if self.phone_number %}
+      <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
+      {% endif %}
+    </ul>
+    {% if self.reference_resources %}
+        <hr/>
+        {% autoescape off %}{{self.reference_resources}}{% endautoescape %}
+    {% endif %}
+{% endblock %}
+
+{% block btm_content %}
+    <h2>Consult a Specific Library</h2>
+    <table class="table table-striped ask">
+        <tbody>
+        {% for p in ask_pages %}
+            {{p.href}}
+            <tr>
+              <td>
+                {{p.unit.location}}<br/>
+                {{p.unit.location.address_1}}, {% if p.unit.location.address_2 %}{{p.unit.location.address_2}}, {% endif %}
+                {{p.unit.location.city}},
+                {{p.unit.location.state}}
+                {{p.unit.location.postal_code}}
+              </td>
+              <td>
+                {% autoescape off %}
+                {{p.reference_resources}}
+                {% endautoescape %}
+              </td>
+              <td style="text-align:center;">
+                <strong>Ask a {% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</strong><br/>
+                <a class="btn btn-ask {{p.chat_status_css}}" href="{{p.url}}"><i class="fa fa-comment fa-lg"></i> Chat {% if p.chat_status %}Now {% else %}Offline {% endif %} </a><br/>
+                <a href="{{p.url}}">Other Ways to Ask a{% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</a>
+              </td> 
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

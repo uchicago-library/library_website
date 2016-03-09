@@ -201,3 +201,6 @@ WAGTAILAPI_MAX_RESULTS = 60
 
 # Institutional ID for libcal
 LIBCAL_IID = 482
+
+# Fallback unit for pages that don't have one
+DEFAULT_UNIT = 1616

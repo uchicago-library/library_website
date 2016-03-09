@@ -53,7 +53,7 @@
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
           <li><a href="#"><i class="fa fa-clock-o"></i> {{page_location}}{% if hours_for_today %}: {{hours_for_today}}{% endif %}</a></li> <!-- Location dependent -->
-          <li><a href="#" class="{{chat_status}}"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
+          <li><a href="{{chat_url}}" class="{{chat_status_css}}"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
           <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
           <li><a href="#"><i class="fa fa-user"></i> My Accounts</a></li>
         </ul> 
@@ -237,9 +237,8 @@
         <!-- // End Off-Canvas Toggle Button -->
 
         <!-- Main Content -->
-        <div class="{% block content_div_classes %}{% endblock %}"> <!-- Center Content -->
+        <div class="col-xs-12 xol-sm-12 col-md-8 col-md-offset-1 centermain"> <!-- Center Content -->
             <h1>{{self.title}}</h1>
-
             {% block content %}
                 {% for block in self.body %}
                     {{ block }}
@@ -248,10 +247,15 @@
         </div> <!-- // Center Content -->
 
         <!-- Right Sidebar Content -->
-        <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside"> 
+        <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside">
+            {% block right_sidebar %}{% endblock %}
         </div>
         <!-- // Right Sidebar Content -->
 
+        <div class="col-xs-12 col-sm-12 col-md-11 col-md-offset-1 askoptions">
+            {% block btm_content %}
+            {% endblock %}
+        </div>
     </div> <!-- // Content Container -->
 
     </div> <!-- // Off Canvas Wrapper Row -->
@@ -267,7 +271,7 @@
         <p>Connect &amp; Share<br/>
         <a href="#">Contact Us</a><br/>
         <a href="#">Phone Numbers</a><br/>
-        <a href="#"><a href="#">Library Directory</a><br/></p>
+        <a href="#">Library Directory</a><br/></p>
     </div>
     <!-- // Contact -->
 
@@ -279,7 +283,7 @@
         <a href="#">Faculty</a><br/>
         <a href="#">Students</a><br/>
         <a href="#">University Staff</a><br/>
-        <a href="#"><a href="#">Alumni &amp; Library Friends</a><br/>
+        <a href="#">Alumni &amp; Library Friends</a><br/>
         <a href="#">Patrons with Disabilities</a></p>
     </div>
     <!-- // Information -->
@@ -315,7 +319,7 @@
     <!-- Address / Logo Text for Desktop-->
     <div class="col-md-4 col-md-pull-4">
         <div class="centerdiv">
-            <img src="{% static "base/images/univ-logo.gif" %}" width="150px" height="auto">
+            <img alt="The University of Chicago Library" src="{% static "base/images/univ-logo.gif" %}" width="150"/>
             <!-- Library Location: Address -->
             <p>{{page_location}}<br/>
                 {{address_1}}, {% if address_2 %}{{address_2}}, {% endif %}
