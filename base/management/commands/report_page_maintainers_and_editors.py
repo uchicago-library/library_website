@@ -42,7 +42,7 @@ class Command (BaseCommand):
         display_all = False
         
         records = []
-        records.append(('URL', 'Page Title', 'Last Modified', 'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor', 'Content Specialist CNetID', 'Content Specialist'))
+        records.append(('URL', 'Page Title', 'Last Modified', 'Last Reviewed', 'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor', 'Content Specialist CNetID', 'Content Specialist'))
         for p in Page.objects.all():
             # Skip pages that aren't live. 
             if not p.specific.full_url:
@@ -85,7 +85,7 @@ class Command (BaseCommand):
                     continue
             
             # Append to output.
-            records.append((p.specific.full_url, p.title, p.latest_revision_created_at, page_maintainer_cnetid, page_maintainer_title, editor_cnetid, editor_title, content_specialist_cnetid, content_specialist_title))
+            records.append((p.specific.full_url, p.title, p.latest_revision_created_at, p.specific.last_reviewed, page_maintainer_cnetid, page_maintainer_title, editor_cnetid, editor_title, content_specialist_cnetid, content_specialist_title))
        
         output = io.StringIO() 
         writer = csv.writer(output)
