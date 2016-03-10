@@ -12,7 +12,6 @@ class AskPage(PublicBasePage, ContactFields):
     """
 
     ask_widget_name = models.CharField(max_length=100, blank=True)
-    friendly_name = models.CharField(max_length=75, blank=True)
     reference_resources = RichTextField()
     body = StreamField(DefaultBodyFields())
 
@@ -20,7 +19,6 @@ class AskPage(PublicBasePage, ContactFields):
 
     content_panels = Page.content_panels + [
         FieldPanel('ask_widget_name'),
-        FieldPanel('friendly_name'),
         FieldPanel('reference_resources'),
         MultiFieldPanel(
             [
@@ -36,7 +34,6 @@ class AskPage(PublicBasePage, ContactFields):
 
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('ask_widget_name'),
-        index.SearchField('friendly_name'),
         index.SearchField('reference_resources'),
         index.SearchField('body'),
         index.SearchField('email'),
