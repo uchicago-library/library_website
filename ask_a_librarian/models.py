@@ -12,7 +12,7 @@ class AskPage(PublicBasePage, ContactFields):
     """
 
     ask_widget_name = models.CharField(max_length=100, blank=True)
-    reference_resources = RichTextField()
+    reference_resources = RichTextField(blank=True)
     body = StreamField(DefaultBodyFields())
 
     subpage_types = ['public.StandardPage']
