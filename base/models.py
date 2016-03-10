@@ -375,6 +375,65 @@ class Report(AbstractReport):
     class Meta:
         abstract = True
 
+class AbstractBase(models.Model):
+    """
+    General fields to add to all page types.
+    """ 
+    start_sidebar_from_here = models.BooleanField(default=False)
+
+    show_sidebar = models.BooleanField(default=False)
+
+    last_reviewed = models.DateField(
+        'Last Reviewed', 
+        null=True, 
+        blank=True
+    )
+
+    page_maintainer = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_maintainer'
+    )
+
+    editor = models.ForeignKey(
+        'staff.StaffPage',
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        related_name='%(app_label)s_%(class)s_editor'
+    )
+
+    sort_order = IntegerField(blank=True, default=0)
+
+    # Searchable fields
+    search_fields = (
+        index.SearchField('description'),
+    )
+
+    content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('page_maintainer'),
+                FieldPanel('editor'),
+                FieldPanel('last_reviewed', None),
+                FieldPanel('sort_order')
+            ],
+            heading='Page Management'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('start_sidebar_from_here'),
+                FieldPanel('show_sidebar'),
+            ],
+            heading='Sidebar Menus'
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
 
 # Global streamfield definitions
 class ImageFormatChoiceBlock(FieldBlock):
@@ -534,65 +593,17 @@ class DefaultBodyFields(StreamBlock):
 
 
 # Page definitions
-class BasePage(Page):
+class BasePage(Page, AbstractBase):
     """
     Adds additional fields to the wagtail Page model.
     Most other content types should extend this model
     instead of Page.
     """
-    # Fields 
-
-    start_sidebar_from_here = models.BooleanField(default=False)
-
-    show_sidebar = models.BooleanField(default=False)
-
-    last_reviewed = models.DateField(
-        'Last Reviewed', 
-        null=True, 
-        blank=True
-    )
-
-    page_maintainer = models.ForeignKey(
-        'staff.StaffPage',
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_maintainer'
-    )
-
-    editor = models.ForeignKey(
-        'staff.StaffPage',
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_editor'
-    )
-
-    sort_order = IntegerField(blank=True, default=0)
 
     # Searchable fields
-    search_fields = Page.search_fields + (
-        index.SearchField('description'),
-    )
+    search_fields = Page.search_fields + AbstractBase.search_fields
 
-    content_panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel('page_maintainer'),
-                FieldPanel('editor'),
-                FieldPanel('last_reviewed', None),
-                FieldPanel('sort_order')
-            ],
-            heading='Page Management'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('start_sidebar_from_here'),
-                FieldPanel('show_sidebar'),
-            ],
-            heading='Sidebar Menus'
-        ),
-    ]
+    content_panels = AbstractBase.content_panels
 
     class Meta:
         abstract = True
@@ -704,7 +715,7 @@ class PublicBasePage(BasePage):
         try:
             unit = self.unit
             location = self.unit.location
-        except(AttributeError):
+        except:
             unit = get_default_unit()
             location = unit.location
 
