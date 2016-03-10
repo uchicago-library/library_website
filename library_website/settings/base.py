@@ -203,4 +203,4 @@ WAGTAILAPI_MAX_RESULTS = 60
 LIBCAL_IID = 482
 
 # Fallback unit for pages that don't have one
-DEFAULT_UNIT = 1616
+DEFAULT_UNIT = 2235
