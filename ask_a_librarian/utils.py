@@ -66,14 +66,17 @@ def get_unit_chat_link(unit, request):
         request: object
 
     Returns:
-        string, url
+        string, url. Returns an empty string 
+        upon failure.
     """
     from .models import AskPage
     from units.models import UnitPage
     current_site = Site.find_for_request(request)
     try:
-        return AskPage.objects.live().filter(unit=unit)[0].relative_url(current_site)
+        try:
+            return AskPage.objects.live().filter(unit=unit)[0].relative_url(current_site)
+        except(IndexError):
+            fallback = UnitPage.objects.live().filter(id=DEFAULT_UNIT)
+            return AskPage.objects.live().filter(unit=fallback)[0].relative_url(current_site)
     except(IndexError):
-        fallback = UnitPage.objects.live().filter(id=DEFAULT_UNIT)
-        return AskPage.objects.live().filter(unit=fallback)[0].relative_url(current_site)
-
+        return ''
