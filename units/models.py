@@ -122,3 +122,18 @@ class UnitIndexPage(BasePage):
     )
    
     subpage_types = ['units.UnitPage']
+
+    def get_context(self, request):
+        context = super(UnitIndexPage, self).get_context(request)
+
+        context['units_hierarchical'] = []
+        for u in UnitPage.objects.filter(display_in_directory = True):
+            unit_page = {} 
+            if u.contact_point_title:
+                unit_page['full_name'] = u.directory_unit.fullName + ' - ' + u.contact_point_title
+            else:
+                unit_page['full_name'] = u.directory_unit.fullName
+            context['units_hierarchical'].append(unit_page)
+
+        return context
+            

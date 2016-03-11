@@ -1,4 +1,3 @@
-{% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
@@ -6,6 +5,10 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
+   
+        {% for u in units_hierarchical %} 
+            <li>{{ u.full_name }}</li>
+        {% endfor %}
 
 		<p>{{ self.intro|richtext }}</p>
 	</article>
