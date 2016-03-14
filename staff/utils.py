@@ -147,8 +147,7 @@ def get_all_library_cnetids_from_wagtail():
     return output
 
 def get_individual_info_from_wagtail(cnetid):
-    # deal with the case of Scooter Mc Danger here. Make sure the display_name and title are equal. 
-    staff_page = StaffPage.objects.get(cnetid=cnetid, title=F('display_name'))
+    staff_page = StaffPage.objects.get(cnetid=cnetid)
        
     # officialName is slightly more formal- e.g. "John E. Jung"
     # displayName is a bit more casual- e.g. "John Jung"
