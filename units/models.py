@@ -95,7 +95,7 @@ class UnitPage(BasePage, ContactFields):
         FieldPanel('directory_unit'), 
     ] + BasePage.content_panels + ContactFields.content_panels
 
-    subpage_types = ['public.StandardPage', 'public.LocationPage']
+    subpage_types = []
 
     def get_full_name(self):
         chunks = []
