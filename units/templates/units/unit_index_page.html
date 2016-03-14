@@ -5,10 +5,8 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
-   
-        {% for u in units_hierarchical %} 
-            <li>{{ u.full_name }}</li>
-        {% endfor %}
+
+        {{ units_html|safe }}
 
 		<p>{{ self.intro|richtext }}</p>
 	</article>
