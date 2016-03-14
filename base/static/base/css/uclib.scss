@@ -422,7 +422,7 @@ p q {
 .end-time {
   padding-right: 10px;
   &:before {
-    content: "\2013";
+    content: "\2013\0020";
   }
 }
 
