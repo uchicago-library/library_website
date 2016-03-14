@@ -109,6 +109,9 @@ class UnitPage(BasePage, ContactFields):
             unit = unit.get_parent()
         return ' - '.join(list(reversed(chunks)))
 
+    class Meta:
+        ordering = ['title']
+
 
 class UnitIndexPage(BasePage):
     intro = RichTextField()
