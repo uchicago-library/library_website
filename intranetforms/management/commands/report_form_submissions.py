@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import csv
 from django.core.management.base import BaseCommand
 import hashlib
-from sys import stdout
+import sys
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailforms.models import FormSubmission
 
@@ -15,6 +15,14 @@ class Command (BaseCommand):
         python manage.py report_form_submissions /staff/john-jung/contact-john/
     """
 
+    def add_arguments(self, parser):
+        """
+        Add required positional options and optional
+        named arguments.
+        """
+        # Required positional options
+        parser.add_argument('url_path', type=str)
+
     def handle(self, *args, **options):
         """
         The actual logic of the command. Subclasses must implement this 
@@ -23,6 +31,11 @@ class Command (BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
+        try:
+            kwargs = { 'url_path': options['url_path'] }
+        except:
+            sys.exit(1)
+            
         output = []
 
         '''
