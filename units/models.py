@@ -96,6 +96,7 @@ class UnitPage(BasePage, ContactFields):
     ] + BasePage.content_panels + ContactFields.content_panels
 
     subpage_types = []
+    search_fields = []
 
     def get_full_name(self):
         chunks = []
