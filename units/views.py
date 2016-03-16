@@ -31,10 +31,7 @@ def units(request):
     # ...
     records = []
     for u in UnitPage.objects.filter(display_in_directory=True):
-        fields = u.directory_unit.fullName.split(' - ')
-        if u.contact_point_title:
-            fields.append(u.contact_point_title)
-        records.append([fields, u])
+        records.append([u.get_full_name().split(' - '), u])
 
     # hierarchical units. e.g.,
     # Administration

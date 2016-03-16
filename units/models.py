@@ -110,6 +110,34 @@ class UnitPage(BasePage, ContactFields):
             unit = unit.get_parent()
         return ' - '.join(list(reversed(chunks)))
 
+    def get_contact_info_html(self):
+        h = ''
+
+        # phone number
+        if self.phone_number:
+            if self.phone_label:
+                h = h + '<em>' + self.phone_label + ':' + '</em> '
+            h = h + self.phone_number 
+            h = h + '<br/>'
+
+        # fax_number  
+        if self.fax_number:
+            h = h + 'Fax: ' + self.fax_number + '<br/>'
+
+        # email_label, email
+        if self.email:
+            if self.email_label:
+                h = h + self.email_label + ': '
+            h = h + self.email
+
+        # link_text, link_page
+        if self.link_page:
+            if self.link_text:
+                h = h + self.link_text + ': '
+            h = h + self.link_page.url
+
+        return h
+
     class Meta:
         ordering = ['title']
 
