@@ -5,8 +5,11 @@
 {% block content %}
 	<article>
 		<h1>{{ self.title }}</h1>
+            <h2>Alphabetical Units</h2>
+            {{ alphabetical_units|safe }}
 
-        {{ units_html|safe }}
+            <h2>Hierarchical Units</h2>
+            {{ hierarchical_units|safe }}
 
 		<p>{{ self.intro|richtext }}</p>
 	</article>
