@@ -3,8 +3,9 @@ from django.utils.html import escape
 from units.models import UnitPage
 
 class Tree(object):
-    def __init__(self, name='root', children=None):
+    def __init__(self, name='root', unit_page=None, children=None):
         self.name = name
+        self.unit_page = unit_page
         self.children = []
         if children is not None:
             for child in children:
@@ -33,7 +34,7 @@ def units(request):
         fields = u.directory_unit.fullName.split(' - ')
         if u.contact_point_title:
             fields.append(u.contact_point_title)
-        records.append(fields)
+        records.append([fields, u])
 
     # hierarchical units. e.g.,
     # Administration
@@ -41,15 +42,44 @@ def units(request):
     #    - Administration
     # ...
     hierarchical_units = Tree()
-    for record in records:
+    for record, unit_page in records:
         t = hierarchical_units
         for field in record:
             new_child = t.get_child(field)
             if not new_child:
-                new_child = Tree(field)
+                new_child = Tree(field, unit_page)
                 t.add_child(new_child)
             t = new_child
 
+    # JEJ
+    def get_unit_info(tree):
+        h = ''
+        h = h + tree.name + "<br/>"
+
+        # phone number
+        if tree.unit_page.phone_number:
+            if tree.unit_page.phone_label:
+                h = h + '<em>' + tree.unit_page.phone_label + ':' + '</em> '
+            h = h + tree.unit_page.phone_number 
+            h = h + '<br/>'
+
+        # fax_number  
+        if tree.unit_page.fax_number:
+            h = h + 'Fax: ' + tree.unit_page.fax_number + '<br/>'
+
+        # email_label, email
+        if tree.unit_page.email:
+            if tree.unit_page.email_label:
+                h = h + tree.unit_page.email_label + ': '
+            h = h + tree.unit_page.email
+
+        # link_text, link_page
+        if tree.unit_page.link_page:
+            if tree.unit_page.link_text:
+                h = h + tree.unit_page.link_text + ': '
+            h = h + tree.unit_page.link_page.url
+        return h
+        
     # hierarchical html. e.g.,
     # <ul>
     #   <li>Administration</li>
@@ -61,7 +91,7 @@ def units(request):
         if not tree:
             return ''
         else:
-            return "<ul>" + "".join(list(map(lambda t: "<li>" + escape(t.name) + get_html(t) + "</li>", tree.children))) + "</ul>"
+            return "<ul>" + "".join(list(map(lambda t: "<li>" + get_unit_info(t) + get_html(t) + "</li>", tree.children))) + "</ul>"
     hierarchical_html = get_html(hierarchical_units)
 
     # alphabetical units. 
@@ -69,7 +99,7 @@ def units(request):
     # reverse the breadcrumb trail. 
     r = 0
     while r < len(records):
-        records[r] = list(reversed(records[r]))
+        records[r][0] = list(reversed(records[r][0]))
         r = r + 1
 
     # find the shortest way to uniquely describe each unit. 
@@ -91,7 +121,7 @@ def units(request):
     r = 0
     while r < len(records):
         # jej 
-        alphabetical_records.append((get_shortest_unique_breadcrumb_trail(records, records[r]), records[r]))
+        alphabetical_records.append((get_shortest_unique_breadcrumb_trail(list(map(lambda r: r[0], records)), records[r][0]), records[r]))
         r = r + 1
     alphabetical_records.sort(key=lambda r: r[0])
 
@@ -101,10 +131,32 @@ def units(request):
         alphabetical_html = alphabetical_html + '<tr>'
         alphabetical_html = alphabetical_html + '<td><strong>' + ', '.join(r[0]) + '</strong></td>'
         alphabetical_html = alphabetical_html + '<td>'
-        # phone_label, phone_number
+    
+        alphabetical_html = alphabetical_html + '<td>'
+        # phone number
+        if r[1][1].phone_number:
+            if r[1][1].phone_label:
+                alphabetical_html = alphabetical_html + '<em>' + r[1][1].phone_label + ':' + '</em> '
+            alphabetical_html = alphabetical_html + r[1][1].phone_number 
+            alphabetical_html = alphabetical_html + '<br/>'
+
         # fax_number  
+        if r[1][1].fax_number:
+            alphabetical_html = alphabetical_html + 'Fax: ' + r[1][1].fax_number + '<br/>'
+
         # email_label, email
+        if r[1][1].email:
+            if r[1][1].email_label:
+                alphabetical_html = alphabetical_html + r[1][1].email_label + ': '
+            alphabetical_html = alphabetical_html + r[1][1].email
+
         # link_text, link_page
+        if r[1][1].link_page:
+            if r[1][1].link_text:
+                alphabetical_html = alphabetical_html + r[1][1].link_text + ': '
+            alphabetical_html = alphabetical_html + r[1][1].link_page.url
+
+        alphabetical_html = alphabetical_html + '</td>'
         alphabetical_html = alphabetical_html + '</tr>'
     alphabetical_html = alphabetical_html + '</table>'
 
