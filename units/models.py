@@ -57,6 +57,7 @@ class UnitPage(BasePage, ContactFields):
     Basic structure for units and departments.
     """
     contact_point_title = models.CharField(max_length=255, blank=True)
+    alphabetical_directory_name = models.CharField(max_length=255, blank=True)
     friendly_name = models.CharField(max_length=255, blank=True)
     display_in_directory = models.BooleanField(default=True)
     display_in_dropdown = models.BooleanField(default=False)
@@ -98,6 +99,46 @@ class UnitPage(BasePage, ContactFields):
     subpage_types = []
     search_fields = []
 
+    @staticmethod
+    def heirarchical_units():
+        class Tree(object):
+            def __init__(self, name='root', unit_page=None, children=None):
+                self.name = name
+                self.unit_page = unit_page
+                self.children = []
+                if children is not None:
+                    for child in children:
+                        self.add_child(child)
+            def __repr__(self):
+                return self.name
+            def add_child(self, node):
+                assert isinstance(node, Tree)
+                self.children.append(node)
+                self.children.sort(key=lambda t: t.name)
+            def get_child(self, name):
+                c = 0
+                while c < len(self.children):
+                    if self.children[c].name == name:
+                        return self.children[c]
+                    c = c + 1
+                return None
+
+        records = []
+        for u in UnitPage.objects.filter(display_in_directory=True):
+            records.append([u.get_full_name().split(' - '), u])
+
+        hierarchical_units = Tree()
+        for record, unit_page in records:
+            t = hierarchical_units
+            for field in record:
+                new_child = t.get_child(field)
+                if not new_child:
+                    new_child = Tree(field, unit_page)
+                    t.add_child(new_child)
+                t = new_child
+
+        return hierarchical_units
+
     def get_full_name(self):
         chunks = []
         unit = self
@@ -110,33 +151,11 @@ class UnitPage(BasePage, ContactFields):
             unit = unit.get_parent()
         return ' - '.join(list(reversed(chunks)))
 
-    def get_contact_info_html(self):
-        h = ''
-
-        # phone number
-        if self.phone_number:
-            if self.phone_label:
-                h = h + '<em>' + self.phone_label + ':' + '</em> '
-            h = h + self.phone_number 
-            h = h + '<br/>'
-
-        # fax_number  
-        if self.fax_number:
-            h = h + 'Fax: ' + self.fax_number + '<br/>'
-
-        # email_label, email
-        if self.email:
-            if self.email_label:
-                h = h + self.email_label + ': '
-            h = h + self.email
-
-        # link_text, link_page
-        if self.link_page:
-            if self.link_text:
-                h = h + self.link_text + ': '
-            h = h + self.link_page.url
-
-        return h
+    def get_short_name(self):
+        if self.contact_point_title:
+            return self.contact_point_title
+        else:
+            return self.get_full_name().split(' - ')[-1]
 
     class Meta:
         ordering = ['title']
