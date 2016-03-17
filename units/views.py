@@ -27,11 +27,11 @@ def units(request):
                 h = h + unit_page.email_label + ': '
             h = h + unit_page.email
 
-        # link_text, link_page
-        if unit_page.link_page:
+        # link_text, link_external
+        if unit_page.link_external:
             if unit_page.link_text:
                 h = h + unit_page.link_text + ': '
-            h = h + unit_page.link_page.url
+            h = h + unit_page.link_external
         return h
         
     # hierarchical html. e.g.,
@@ -49,12 +49,15 @@ def units(request):
     hierarchical_html = get_html(hierarchical_units)
 
     # alphabetical units. 
-    alphabetical_html = '<table>'
+    alphabetical_html = '<table cellpadding="2" cellspacing="2" border="1">'
     for unit_page in UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc'):
         alphabetical_html = alphabetical_html + '<tr>'
         alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + '</strong></td>'
         alphabetical_html = alphabetical_html + '<td>'
         alphabetical_html = alphabetical_html + get_unit_info(unit_page)
+        alphabetical_html = alphabetical_html + '</td>'
+        alphabetical_html = alphabetical_html + '<td>'
+        alphabetical_html = alphabetical_html + unit_page.directory_unit.get_parent_library_name()
         alphabetical_html = alphabetical_html + '</td>'
         alphabetical_html = alphabetical_html + '</tr>'
     alphabetical_html = alphabetical_html + '</table>'
