@@ -28,7 +28,7 @@ class Command (BaseCommand):
             while True:
                 # just in case.
                 if column > 10:
-                    raise RuntimeError
+                    return ', '.join(trail)
                 checking_trails = list(filter(lambda t, trail = trail, column = column: t[0:column] == trail[0:column], checking_trails)) 
                 if len(checking_trails) == 1:
                     return ', '.join(checking_trails[0][0:column])
