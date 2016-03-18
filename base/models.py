@@ -260,6 +260,11 @@ class SocialMediaFields(models.Model):
     hashtag = models.CharField(max_length=45, blank=True) 
     hashtag_page = models.URLField(blank=True, \
         help_text='Link to twitter page using a hashtag')
+    instagram_page = models.URLField(blank=True)
+    youtube_page = models.URLField(blank=True)
+    blog_page = models.URLField(blank=True)
+    tumblr_page = models.URLField(blank=True)
+    snapchat_page = models.URLField(blank=True)
 
     @property
     def has_social_media(self):
@@ -268,6 +273,9 @@ class SocialMediaFields(models.Model):
         elif self.facebook_page:
             return True
         elif self.hashtag and self.hashtag_page:
+            return True
+        elif self.instagram_page or self.youtube_page or \
+        blog_page or tumblr_page or snapchat_page:
             return True
         else:
             return False
@@ -279,6 +287,11 @@ class SocialMediaFields(models.Model):
                 FieldPanel('facebook_page'),
                 FieldPanel('hashtag'),
                 FieldPanel('hashtag_page'),
+                FieldPanel('instagram_page'),
+                FieldPanel('youtube_page'),
+                FieldPanel('blog_page'),
+                FieldPanel('tumblr_page'),
+                FieldPanel('snapchat_page'),
             ],
             heading='Social media'
         ),

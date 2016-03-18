@@ -178,6 +178,11 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         context['facebook_page'] = self.facebook_page
         context['hashtag_page'] = self.hashtag_page
         context['hashtag'] = self.hashtag
+        context['instagram_page'] = self.instagram_page
+        context['youtube_page'] = self.youtube_page
+        context['blog_page'] = self.blog_page
+        context['tumblr_page'] = self.tumblr_page
+        context['snapchat_page'] = self.snapchat_page
         context['secondary_registration'] = self.sub_registration.all()
         context['secondary_registration_heading'] = self.secondary_registration_heading
         context['secondary_registration_description'] = self.secondary_registration_description
@@ -223,6 +228,11 @@ class ConferenceSubPage(PublicBasePage):
         context['facebook_page'] = self.get_parent().conferencepage.facebook_page
         context['hashtag_page'] = self.get_parent().conferencepage.hashtag_page
         context['hashtag'] = self.get_parent().conferencepage.hashtag
+        context['instagram_page'] = self.get_parent().conferencepage.instagram_page
+        context['youtube_page'] = self.get_parent().conferencepage.youtube_page
+        context['blog_page'] = self.get_parent().conferencepage.blog_page
+        context['tumblr_page'] = self.get_parent().conferencepage.tumblr_page
+        context['snapchat_page'] = self.get_parent().conferencepage.snapchat_page
         context['secondary_registration'] = self.get_parent().conferencepage.sub_registration.all()
         context['secondary_registration_heading'] = self.get_parent().conferencepage.secondary_registration_heading
         context['secondary_registration_description'] = self.get_parent().conferencepage.secondary_registration_description

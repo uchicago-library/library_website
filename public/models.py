@@ -9,9 +9,9 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber
+from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields
 
-class StandardPage(PublicBasePage):
+class StandardPage(PublicBasePage, SocialMediaFields):
     """
     A standard basic page.
     """
@@ -39,7 +39,7 @@ class StandardPage(PublicBasePage):
             ], 
             heading='Quicklinks'
         ),
-    ]
+    ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('body', partial_match=True),

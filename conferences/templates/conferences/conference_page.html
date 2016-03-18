@@ -333,6 +333,21 @@
             {% if hashtag_page and hashtag %}
             <li><a href="{{hashtag_page}}"><strong>{{hashtag}}</strong></a></li>
             {% endif %}
+            {% if instagram_page %}
+            <li><a href="{{instagram_page}}"><i class="fa fa-instagram"></i> &nbsp; Instagram</a></li>
+            {% endif %}
+            {% if youtube_page %}
+            <li><a href="{{youtube_page}}"><i class="fa fa-youtube-square"></i> &nbsp; YouTube</a></li>
+            {% endif %}
+            {% if blog_page %}
+            <li><a href="{{blog_page}}"><i class="fa fa-rss"></i> &nbsp; Blog</a></li>
+            {% endif %}
+            {% if tumblr_page %}
+            <li><a href="{{tumblr_page}}"><i class="fa fa-tumblr-square"></i> &nbsp; Tumblr</a></li>
+            {% endif %}
+            {% if snapchat_page %}
+            <li><a href="{{snapchat_page}}"><i class="fa fa-fa-weixin"></i> &nbsp; Snapchat</a></li>
+            {% endif %}
         </ul>
 
         {% if secondary_registration_heading %}
