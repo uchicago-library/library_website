@@ -4,7 +4,7 @@ from django.utils import timezone
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore import blocks
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
@@ -16,6 +16,10 @@ class StandardPage(PublicBasePage):
     A standard basic page.
     """
     body = StreamField(DefaultBodyFields())
+    quicklinks = RichTextField(blank=True) 
+    quicklinks_title = models.CharField(max_length=100, blank=True)
+    view_more_link = models.URLField(max_length=255, blank=True, default='')
+    view_more_link_label = models.CharField(max_length=100, blank=True)
 
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'units.UnitPage', \
@@ -25,9 +29,28 @@ class StandardPage(PublicBasePage):
         StreamFieldPanel('body'),
     ] + PublicBasePage.content_panels
 
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('quicklinks_title'),
+                FieldPanel('quicklinks'),
+                FieldPanel('view_more_link_label'),
+                FieldPanel('view_more_link'),
+            ], 
+            heading='Quicklinks'
+        ),
+    ]
+
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('body', partial_match=True),
     )
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+        ObjectList(widget_content_panels, heading='Widgets'),
+    ])
 
 
 class LocationPageDonorPlacement(Orderable, models.Model):
