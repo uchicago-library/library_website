@@ -6,7 +6,7 @@ from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
 from unidecode import unidecode
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
 from wagtail.wagtaildocs.blocks import DocumentChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
@@ -422,12 +422,15 @@ class AbstractBase(models.Model):
             ],
             heading='Page Management'
         ),
+    ]
+
+    left_sidebar_panels = [
         MultiFieldPanel(
             [
                 FieldPanel('start_sidebar_from_here'),
                 FieldPanel('show_sidebar'),
             ],
-            heading='Sidebar Menus'
+            heading='Left Sidebar Menus'
         ),
     ]
 
@@ -604,6 +607,8 @@ class BasePage(Page, AbstractBase):
     search_fields = Page.search_fields + AbstractBase.search_fields
 
     content_panels = AbstractBase.content_panels
+    left_sidebar_panels = AbstractBase.left_sidebar_panels
+    promote_panels = Page.promote_panels + left_sidebar_panels
 
     class Meta:
         abstract = True
@@ -698,14 +703,10 @@ class PublicBasePage(BasePage):
             ],
             heading='Page Management'
         ),
-        MultiFieldPanel(
-            [
-                FieldPanel('start_sidebar_from_here'),
-                FieldPanel('show_sidebar'),
-            ],
-            heading='Sidebar Menus'
-        ),
-    ] 
+    ]
+
+    left_sidebar_panels = BasePage.left_sidebar_panels
+    promote_panels = BasePage.promote_panels
 
     class Meta:
         abstract = True

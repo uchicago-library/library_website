@@ -47,10 +47,11 @@ class StandardPage(PublicBasePage):
 
     edit_handler = TabbedInterface([
         ObjectList(content_panels, heading='Content'),
-        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(PublicBasePage.promote_panels, heading='Promote'),
         ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
         ObjectList(widget_content_panels, heading='Widgets'),
     ])
+
 
 
 class LocationPageDonorPlacement(Orderable, models.Model):

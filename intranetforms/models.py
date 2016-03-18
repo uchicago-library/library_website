@@ -25,6 +25,8 @@ class IntranetFormPage(AbstractEmailForm, AbstractBase):
         ], "Email")
     ] + AbstractBase.content_panels
 
+    promote_panels = AbstractEmailForm.promote_panels + AbstractBase.left_sidebar_panels
+
     def get_context(self, request):
         context = super(IntranetFormPage, self).get_context(request)
         context['breadcrumbs'] = get_breadcrumbs(self)
