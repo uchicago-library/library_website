@@ -3,12 +3,10 @@ from django.utils.html import escape
 from units.models import UnitPage
 
 def units(request):
-    hierarchical_units = UnitPage.heirarchical_units()
+    hierarchical_units = UnitPage.hierarchical_units()
 
-    # JEJ
     def get_unit_info(unit_page):
         h = ''
-        #h = h + unit_page.get_short_name() + "<br/>"
 
         # phone number
         if unit_page.phone_number:
@@ -45,7 +43,7 @@ def units(request):
         if not tree:
             return ''
         else:
-            return "<ul>" + "".join(list(map(lambda t: "<li>" + (t.unit_page.get_short_name() + "<br/>" if t.unit_page else "") + get_unit_info(t.unit_page) + get_html(t) + "</li>", tree.children))) + "</ul>"
+            return "<ul>" + "".join(list(map(lambda t: "<li>" + t.name + "<br/>" + get_unit_info(t.unit_page) + get_html(t) + "</li>", tree.children))) + "</ul>"
     hierarchical_html = get_html(hierarchical_units)
 
     # alphabetical units. 

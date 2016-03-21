@@ -100,7 +100,7 @@ class UnitPage(BasePage, ContactFields):
     search_fields = []
 
     @staticmethod
-    def heirarchical_units():
+    def hierarchical_units():
         class Tree(object):
             def __init__(self, name='root', unit_page=None, children=None):
                 self.name = name
@@ -113,8 +113,9 @@ class UnitPage(BasePage, ContactFields):
                 return self.name
             def add_child(self, node):
                 assert isinstance(node, Tree)
-                self.children.append(node)
-                self.children.sort(key=lambda t: t.name)
+                if self.get_child(node.name) == None:
+                    self.children.append(node)
+                    self.children.sort(key=lambda t: t.name)
             def get_child(self, name):
                 c = 0
                 while c < len(self.children):
@@ -130,12 +131,14 @@ class UnitPage(BasePage, ContactFields):
         hierarchical_units = Tree()
         for record, unit_page in records:
             t = hierarchical_units
-            for field in record:
-                new_child = t.get_child(field)
-                if not new_child:
-                    new_child = Tree(field, unit_page)
-                    t.add_child(new_child)
-                t = new_child
+            f = 0
+            while f < len(record):
+                next_child = t.get_child(record[f])
+                if next_child == None:
+                    next_child = Tree(record[f], unit_page)
+                    t.add_child(next_child)
+                t = next_child
+                f = f + 1
 
         return hierarchical_units
 
