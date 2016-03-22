@@ -3,10 +3,7 @@ from django.utils.html import escape
 from units.models import UnitPage
 
 def units(request):
-    hierarchical_units = UnitPage.hierarchical_units()
-
-    def get_unit_info(unit_page):
-
+    def get_unit_info_from_unit_page(unit_page):
         h = ''
         # phone number
         if unit_page.phone_number:
@@ -36,6 +33,17 @@ def units(request):
         if unit_page.directory_unit:
             h = h + unit_page.directory_unit.get_parent_library_name() + "<br/>"
 
+        return h
+
+    def get_unit_info(t):
+        h = ''
+
+        # intercept this in the future to link to unit pages. 
+        if t.name:
+            h = h + "<strong>" + t.name + "</strong><br/>"
+        if t.unit_page:
+            h = h + get_unit_info_from_unit_page(t.unit_page)
+
         if h:
             h = '<p>' + h + '</p>'
         return h
@@ -51,7 +59,15 @@ def units(request):
         if not tree:
             return ''
         else:
-            return "<ul>" + "".join(list(map(lambda t: "<li><strong>" + t.name + "</strong><br/>" + get_unit_info(t.unit_page) + get_html(t) + "</li>", tree.children))) + "</ul>"
+            return "<ul>" + "".join(list(map(lambda t: "<li>" + get_unit_info(t) + get_html(t) + "</li>", tree.children))) + "</ul>"
+
+    # 
+    # MAIN
+    #
+    
+    sort = request.GET.get('sort', 'alphabetical')
+    
+    hierarchical_units = UnitPage.hierarchical_units()
     hierarchical_html = get_html(hierarchical_units)
     # replace first ul. 
     if len(hierarchical_html) > 4:
@@ -63,7 +79,7 @@ def units(request):
         alphabetical_html = alphabetical_html + '<tr>'
         alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + '</strong></td>'
         alphabetical_html = alphabetical_html + '<td>'
-        alphabetical_html = alphabetical_html + get_unit_info(unit_page)
+        alphabetical_html = alphabetical_html + get_unit_info_from_unit_page(unit_page)
         alphabetical_html = alphabetical_html + '</td>'
         alphabetical_html = alphabetical_html + '<td>'
         alphabetical_html = alphabetical_html + unit_page.directory_unit.get_parent_library_name()
@@ -73,5 +89,6 @@ def units(request):
 
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
-        'hierarchical_units': hierarchical_html
+        'hierarchical_units': hierarchical_html,
+        'sort': sort
     })

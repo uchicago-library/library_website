@@ -5,13 +5,16 @@
 
 {% block content %}
 	<article>
-		<h1>{{ self.title }}</h1>
-            <h2>Alphabetical Units</h2>
-            {{ alphabetical_units|safe }}
-
-            <h2>Hierarchical Units</h2>
-            {{ hierarchical_units|safe }}
-
-		{{ self.intro|richtext }}
+		<h1 style="padding: 15px 0 0 0; margin-bottom: 0;">Library Directory</h1>
+        <hr/>
+        <h3 style="margin:10px 0 20px 0; display: inline;">Departments, Divisions, & Units</h3>
+            {% if sort == 'alphabetical' %}
+                <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i>Re-sort by Department Hierarchy</a>
+                {{ alphabetical_units|safe }}
+            {% else %}
+                <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i>Re-sort Alphabetically</a>
+                {{ hierarchical_units|safe }}
+            {% endif %}
+        </a>
 	</article>
 {% endblock %}
