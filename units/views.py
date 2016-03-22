@@ -6,13 +6,13 @@ def units(request):
     hierarchical_units = UnitPage.hierarchical_units()
 
     def get_unit_info(unit_page):
-        h = ''
 
+        h = ''
         # phone number
         if unit_page.phone_number:
             if unit_page.phone_label:
                 h = h + '<em>' + unit_page.phone_label + ':' + '</em> '
-            h = h + unit_page.phone_number 
+            h = h + "<a href='tel:'" + unit_page.phone_number + ">" + unit_page.phone_number + "</a>"
             h = h + '<br/>'
 
         # fax_number  
@@ -22,14 +22,22 @@ def units(request):
         # email_label, email
         if unit_page.email:
             if unit_page.email_label:
-                h = h + unit_page.email_label + ': '
-            h = h + unit_page.email
+                h = h + "<a href='mailto:" + unit_page.email + "'>" + unit_page.email_label + "</a><br/>"
+            else:
+                h = h + "<a href='mailto:" + unit_page.email + "'>" + unit_page.email + "</a><br/>"
 
         # link_text, link_external
         if unit_page.link_external:
             if unit_page.link_text:
-                h = h + unit_page.link_text + ': '
-            h = h + unit_page.link_external
+                h = h + "<a href='" + unit_page.link_external + "'>" + unit_page.link_text + "</a><br/>"
+            else:
+                h = h + "<a href='" + unit_page.link_external + "'>" + unit_page.link_external + "</a><br/>"
+
+        if unit_page.directory_unit:
+            h = h + unit_page.directory_unit.get_parent_library_name() + "<br/>"
+
+        if h:
+            h = '<p>' + h + '</p>'
         return h
         
     # hierarchical html. e.g.,
@@ -43,11 +51,14 @@ def units(request):
         if not tree:
             return ''
         else:
-            return "<ul>" + "".join(list(map(lambda t: "<li>" + t.name + "<br/>" + get_unit_info(t.unit_page) + get_html(t) + "</li>", tree.children))) + "</ul>"
+            return "<ul>" + "".join(list(map(lambda t: "<li><strong>" + t.name + "</strong><br/>" + get_unit_info(t.unit_page) + get_html(t) + "</li>", tree.children))) + "</ul>"
     hierarchical_html = get_html(hierarchical_units)
+    # replace first ul. 
+    if len(hierarchical_html) > 4:
+        hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
 
     # alphabetical units. 
-    alphabetical_html = '<table cellpadding="2" cellspacing="2" border="1">'
+    alphabetical_html = "<table class='table table-striped'>"
     for unit_page in UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc'):
         alphabetical_html = alphabetical_html + '<tr>'
         alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + '</strong></td>'
