@@ -1,5 +1,7 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.utils.html import escape
+from staff.models import StaffPage
 from units.models import UnitPage
 
 def units(request):
@@ -30,9 +32,6 @@ def units(request):
             else:
                 h = h + "<a href='" + unit_page.link_external + "'>" + unit_page.link_external + "</a><br/>"
 
-        if unit_page.directory_unit:
-            h = h + unit_page.directory_unit.get_parent_library_name() + "<br/>"
-
         return h
 
     def get_unit_info(t):
@@ -43,6 +42,9 @@ def units(request):
             h = h + "<strong>" + t.name + "</strong><br/>"
         if t.unit_page:
             h = h + get_unit_info_from_unit_page(t.unit_page)
+
+        if t.unit_page.directory_unit:
+            h = h + t.unit_page.directory_unit.get_parent_library_name() + "<br/>"
 
         if h:
             h = '<p>' + h + '</p>'
@@ -65,7 +67,21 @@ def units(request):
     # MAIN
     #
     
+    page = request.GET.get('page', 1)
     sort = request.GET.get('sort', 'alphabetical')
+    view = request.GET.get('view', 'department')
+
+    # staff pages
+    staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
+    staff_pages = []
+
+    paginator = Paginator(staff_pages_all, 50)
+    try:
+        staff_pages = paginator.page(page)
+    except PageNotAnInteger:
+        staff_pages = paginator.page(1)
+    except EmptyPage:
+        staff_pages = paginator.page(paginator.num_pages)
     
     hierarchical_units = UnitPage.hierarchical_units()
     hierarchical_html = get_html(hierarchical_units)
@@ -90,5 +106,7 @@ def units(request):
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
         'hierarchical_units': hierarchical_html,
-        'sort': sort
+        'sort': sort,
+        'staff_pages': staff_pages,
+        'view': view
     })

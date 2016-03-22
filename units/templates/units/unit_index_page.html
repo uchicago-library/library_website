@@ -6,15 +6,38 @@
 {% block content %}
 	<article>
 		<h1 style="padding: 15px 0 0 0; margin-bottom: 0;">Library Directory</h1>
-        <hr/>
-        <h3 style="margin:10px 0 20px 0; display: inline;">Departments, Divisions, & Units</h3>
-            {% if sort == 'alphabetical' %}
-                <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i>Re-sort by Department Hierarchy</a>
-                {{ alphabetical_units|safe }}
-            {% else %}
-                <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i>Re-sort Alphabetically</a>
-                {{ hierarchical_units|safe }}
-            {% endif %}
-        </a>
+        <div class="col-sm-12 col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="btn-group bg-directory">
+                        <a class="btn btn-directory{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href="?view=department">Department View</a>
+                        <a class="btn btn-directory{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href="?view=staff">Staff View</a>
+                    </div><!-- /btn-group-->
+                </div><!-- / col-md-6-->
+                <div class="col-md-6">
+                    <div class="col-xs-12 col-sm-12 col-md-5 bg-directory dir-header">
+                        <h4>Search Directory</h4>
+                    </div><!-- /.col-lg-3 -->
+                    <div style="padding: 15px 0 7px 0;" class="col-xs-12 col-sm-12 col-md-7">
+                        <div class="input-group">
+                            <input type="text" placeholder="professor snape" aria-label="..." class="form-control"/>
+                            <div class="input-group-btn">
+                                <button style="padding: 7px 14px;" class="btn btn-searchtype btn-default" type="button">Find </button>
+                            </div><!-- /btn-group -->
+                        </div><!-- /input-group -->
+                    </div><!-- /.col-xs-12 -->
+                </div><!-- /.col-md-6 -->
+            </div><!-- /.row -->
+            <hr/>
+            <h3 style="margin:10px 20px 20px 0; display: inline;">Departments, Divisions, & Units</h3>
+                {% if sort == 'alphabetical' %}
+                    <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
+                    {{ alphabetical_units|safe }}
+                {% else %}
+                    <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
+                    {{ hierarchical_units|safe }}
+                {% endif %}
+            </a>
+        </div><!-- /.col-sm-12 -->
 	</article>
 {% endblock %}
