@@ -29,7 +29,8 @@
                 </div><!-- /.col-md-6 -->
             </div><!-- /.row -->
             <hr/>
-            <h3 style="margin:10px 20px 20px 0; display: inline;">Departments, Divisions, & Units</h3>
+            {% if view == 'department' %}
+                <h3 style="margin:10px 20px 20px 0; display: inline;">Departments, Divisions, & Units</h3>
                 {% if sort == 'alphabetical' %}
                     <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
                     {{ alphabetical_units|safe }}
@@ -37,6 +38,60 @@
                     <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
                     {{ hierarchical_units|safe }}
                 {% endif %}
+            {% elif view == 'staff' %} 
+                {% if staff_pages %}
+                    <table class="table table-striped">
+                        <tbody>
+                            {% for staff_page in staff_pages %}
+                                <tr>
+                                    <td>
+                                        {# image staff_page.profile_picture #}
+                                    </td>
+                                    <td>
+                                        <strong>{{ staff_page.title }}</strong>
+                                        <br/>
+                                        {% regroup staff_page.vcards.all by unit as vcards %}
+                                        {% for vcard in vcards %}
+                                            {{ vcard.grouper.name }}
+                                            <br/>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <strong>Contact</strong>
+                                        <br/>
+                                        {% regroup staff_page.vcards.all by email as vcards %}
+                                        {% for vcard in vcards %}
+                                            {% if vcard.grouper != '' %}
+                                                <a href="mailto:{{ vcard.grouper }}">{{ vcard.grouper }}</a>
+                                                <br/>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% regroup staff_page.vcards.all by phone_number as vcards %}
+                                        {% for vcard in vcards %}
+                                            {% if vcard.grouper != '' %}
+                                                {{ vcard.grouper }}
+                                                <br/>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% regroup staff_page.vcards.all by faculty_exchange as vcards %}
+                                        {% for vcard in vcards %}
+                                            {% if vcard.grouper != '' %}
+                                                {{ vcard.grouper }}
+                                                <br/>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    {% if query %}
+                        <p>There are no results for your search.</p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
             </a>
         </div><!-- /.col-sm-12 -->
 	</article>
