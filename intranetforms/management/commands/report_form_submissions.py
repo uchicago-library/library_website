@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from collections import OrderedDict
 import csv
 from django.core.management.base import BaseCommand
 import hashlib
+from io import StringIO
 import sys
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailforms.models import FormSubmission
@@ -32,18 +34,10 @@ class Command (BaseCommand):
         """
 
         try:
-            kwargs = { 'url_path': options['url_path'] }
+            url_path = options['url_path']
+            pk = Page.objects.get(url_path='/loop' + url_path).pk
         except:
             sys.exit(1)
-            
-        output = []
-
-        '''
-        # get a url_path from the command line. 
-        try:
-            pk = Page.object.get(url_path='/loop' + url_path).pk
-        except:
-            pass
 
         # People may have edited the form over time. The resulting 
         # spreadsheet should group like submissions together. 
@@ -51,7 +45,7 @@ class Command (BaseCommand):
         for s in FormSubmission.objects.filter(page_id=pk):
             # hash the sorted field names for each submission. 
             md5 = hashlib.md5()
-            md5.update(''.join(sorted(s.keys())))
+            md5.update(''.join(sorted(s.get_data().keys())).encode('utf-8'))
             h = md5.hexdigest()
 
             # group submissions by hash. 
@@ -59,24 +53,27 @@ class Command (BaseCommand):
                 forms[h] = []
             forms[h].append(s.get_data())
 
-        csv_writer = csv.writer(stdout)
+        output = StringIO()
+        csv_writer = csv.writer(output)
         very_first_row = True
         for h in forms:
             first_row = True
             for data in forms[h]:
+                sorted_data = sorted(data.items())
+                k = list(map(lambda d: str(d[0]).encode('utf-8'), sorted_data))
+                v = list(map(lambda d: str(d[1]).encode('utf-8'), sorted_data))
                 if first_row:
                     if not very_first_row:
                         csv_writer.writerow([])
-                    csv_writer.writerow(sorted(data.keys()))
+                    csv_writer.writerow(k)
                     very_first_row = False
                     first_row = False
-                csv_writer.writerow(data.values
+                csv_writer.writerow(v)
 
         # each column gets a question, each row is a set of answers. 
         # put it in a .csv and export. 
-        '''
 
-        return "\n".join(output)
+        return output.getvalue()
     
 
 
