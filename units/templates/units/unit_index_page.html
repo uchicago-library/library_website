@@ -20,7 +20,7 @@
                     </div><!-- /.col-lg-3 -->
                     <div style="padding: 15px 0 7px 0;" class="col-xs-12 col-sm-12 col-md-7">
                         <div class="input-group">
-                            <input type="text" placeholder="professor snape" aria-label="..." class="form-control"/>
+                            <input type="text" placeholder="professor snape" name="query" aria-label="..." class="form-control"/>
                             <div class="input-group-btn">
                                 <button style="padding: 7px 14px;" class="btn btn-searchtype btn-default" type="button">Find </button>
                             </div><!-- /btn-group -->
@@ -39,6 +39,13 @@
                     {{ hierarchical_units|safe }}
                 {% endif %}
             {% elif view == 'staff' %} 
+                <div class="col-md-3 col-xs-12 col-sm-12">
+                    <h3 style="margin:10px 20px 20px 0;">All Library Staff</h3>
+                </div>
+                <div class="col-md-2 dir-header">
+                    <h4>Browse by</h4>
+                </div>
+                {% include "units/browse_by_pulldowns.html" %}
                 {% if staff_pages %}
                     <table class="table table-striped">
                         <tbody>
@@ -90,6 +97,16 @@
                     {% if query %}
                         <p>There are no results for your search.</p>
                     {% endif %}
+                {% endif %}
+
+                {% if staff_pages.has_previous %}
+                    <a href=".?view=staff&amp;page={{ staff_pages.previous_page_number }}">Previous</a>
+                {% endif %}
+                {% if staff_pages.has_previous and staff_pages.has_next %} 
+                    | 
+                {% endif %}
+                {% if staff_pages.has_next %}
+                    <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
                 {% endif %}
             {% endif %}
             </a>
