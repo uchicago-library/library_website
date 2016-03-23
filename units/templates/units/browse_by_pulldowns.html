@@ -1,0 +1,93 @@
+<div class="col-md-7 col-xs-12 col-sm-12">
+    <!-- Split button -->
+    <div class="btn-group bg-filter">
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if library %}{{ library }}{% else %}Library{% endif %}</button>
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{% endif %}">All Libraries</a></li>
+        {% for l in libraries %}
+          <li><a href=".?view=staff&library={{ l|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ l }}</a></li>
+        {% endfor %}
+        <!--
+        <li><a href=".">All Libraries</a></li>
+        <li><a href=".?view=staff&amp;library=Regenstein%20Library">Regenstein Library</a></li>
+        <li><a href=".?view=staff&amp;library=Crerar%20Library">Crerar Library</a></li>
+        <li><a href=".?view=staff&amp;library=D%27Angelo%20Law%20Library">D'Angelo Law Library</a></li>
+        <li><a href=".?view=staff&amp;library=Eckhart%20Library">Eckhart Library</a></li>
+        <li><a href=".?view=staff&amp;library=Mansueto">Mansueto</a></li>
+        <li><a href=".?view=staff&amp;library=Special%20Collections%20Research%20Center">Special Collections Research Center</a></li>
+        <li><a href=".?view=staff&amp;library=SSA%20Library">SSA Library</a></li>
+        -->
+      </ul>
+    </div>
+
+    <!-- Split button -->
+    <!--
+    <div class="btn-group bg-filter">
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">Department</button>
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="#">Administrative and Desktop Systems (ADS)</a></li>
+        <li><a href="#">Access Services and Assessment</a></li>
+        <li><a href="#">Budget &amp; Facilities</a></li>
+        <li><a href="#">Collection Management  &amp; Special Projects</a></li>
+        <li><a href="#">Collection Services</a></li>
+        <li><a href="#">Collection Support</a></li>
+        <li><a href="#">Communications</a></li>
+        <li><a href="#">Development</a></li>
+        <li><a href="#">Digital Library Development Center (DLDC)</a></li>
+        <li><a href="#">Digital Services</a></li>
+        <li><a href="#">Dissertation Office</a></li>
+        <li><a href="#">E-Research Services</a></li>
+        <li><a href="#">E-Resources Management</a></li>
+        <li><a href="#">Human Resources</a></li>
+        <li><a href="#">Humanities, Social Sciences, &amp; Area Studies</a></li>
+        <li><a href="#">Integrated Library Systems (ILS)</a></li>
+        <li><a href="#">Law</a></li>
+        <li><a href="#">Law, Technical Services</a></li>
+        <li><a href="directory-staffdept.html">* * Law, User Services</a></li>
+        <li><a href="#">Preservation</a></li>
+        <li><a href="#">Reference, Instruction, and Outreach (RIO)</a></li>
+        <li><a href="#">Sciences</a></li>
+        <li><a href="#">Sciences, Access Services</a></li>
+        <li><a href="#">Sciences, Technical Services</a></li>
+        <li><a href="#">Special Collections Research Center</a></li>
+        <li><a href="#">Technical Services</a></li>
+        <li><a href="#">User Services</a></li>
+      </ul>
+    </div>
+    -->
+
+    <!-- Split button -->
+    <!--
+    <div class="btn-group">
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">Subject Specialty</button>
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="directory-staffsub.html">* Area &amp; Cultural Studies</a></li>
+        <li><a href="#">Arts</a></li>
+        <li><a href="#">Business</a></li>
+        <li><a href="#">Humanities</a></li>
+        <li><a href="#">Law</a></li>
+        <li><a href="#">Literature</a></li>
+        <li><a href="#">Medicine</a></li>
+        <li><a href="#">Sciences, Biological</a></li>
+        <li><a href="#">Sciences, Physical</a></li>
+        <li><a href="#">Social Sciences</a></li>
+        <li><a href="#">Social Services / Social Work</a></li>
+        <li><a href="#">Special Collections</a></li>
+        <li class="divider" role="separator"></li>
+        <li><a href="#">View All Subject Specialists</a></li>
+      </ul>
+    </div>
+    -->
+</div>
