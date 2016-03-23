@@ -68,6 +68,7 @@ def units(request):
     #
     
     page = request.GET.get('page', 1)
+    query = request.GET.get('query', None)
     sort = request.GET.get('sort', 'alphabetical')
     view = request.GET.get('view', 'department')
 
@@ -75,6 +76,14 @@ def units(request):
     staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
     staff_pages = []
 
+    # search staff pages.
+    if query:
+        if staff_pages_all:
+            staff_pages_all = staff_pages_all.search(query)
+        else:
+            staff_pages_all = StaffPage.objects.live().search(query)
+    
+    # add paging.
     paginator = Paginator(staff_pages_all, 50)
     try:
         staff_pages = paginator.page(page)
@@ -106,6 +115,7 @@ def units(request):
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
         'hierarchical_units': hierarchical_html,
+        'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
         'view': view
