@@ -3,7 +3,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils.html import escape
-from staff.models import StaffPage, StaffPagePageVCards
+from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement
+from subjects.models import Subject
 from units.models import UnitPage
 
 def units(request):
@@ -77,6 +78,10 @@ def units(request):
     query = request.GET.get('query', None)
     sort = request.GET.get('sort', 'alphabetical')
     view = request.GET.get('view', 'department')
+
+    # subjects
+    subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
+    subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
 
     # staff pages
     staff_pages_all = []
@@ -162,5 +167,6 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
+        'subjects': subjects,
         'view': view
     })
