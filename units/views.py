@@ -73,15 +73,22 @@ def units(request):
     alphabetical_html = ''
     hierarchical_html = ''
     
+    department = request.GET.get('department', None)
     library = request.GET.get('library', None)
     page = request.GET.get('page', 1)
     query = request.GET.get('query', None)
     sort = request.GET.get('sort', 'alphabetical')
+    subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'department')
 
     # subjects
     subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
+
+    # departments
+    departments = []
+    for d in DirectoryUnit.objects.filter(parentUnit = DirectoryUnit.objects.get(parentUnit = None)):
+        departments.append(d.fullName)
 
     # staff pages
     staff_pages_all = []
@@ -161,6 +168,8 @@ def units(request):
 
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
+        'department': department,
+        'departments': departments,
         'hierarchical_units': hierarchical_html,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Law Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
         'library': library,
@@ -168,5 +177,6 @@ def units(request):
         'sort': sort,
         'staff_pages': staff_pages,
         'subjects': subjects,
+        'subject': subject,
         'view': view
     })

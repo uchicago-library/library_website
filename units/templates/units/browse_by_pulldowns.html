@@ -15,7 +15,6 @@
     </div>
 
     <!-- Split button -->
-    <!--
     <div class="btn-group bg-filter">
       <button style="padding: 5px 15px;" class="btn btn-directory" type="button">Department</button>
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
@@ -23,36 +22,13 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="#">Administrative and Desktop Systems (ADS)</a></li>
-        <li><a href="#">Access Services and Assessment</a></li>
-        <li><a href="#">Budget &amp; Facilities</a></li>
-        <li><a href="#">Collection Management  &amp; Special Projects</a></li>
-        <li><a href="#">Collection Services</a></li>
-        <li><a href="#">Collection Support</a></li>
-        <li><a href="#">Communications</a></li>
-        <li><a href="#">Development</a></li>
-        <li><a href="#">Digital Library Development Center (DLDC)</a></li>
-        <li><a href="#">Digital Services</a></li>
-        <li><a href="#">Dissertation Office</a></li>
-        <li><a href="#">E-Research Services</a></li>
-        <li><a href="#">E-Resources Management</a></li>
-        <li><a href="#">Human Resources</a></li>
-        <li><a href="#">Humanities, Social Sciences, &amp; Area Studies</a></li>
-        <li><a href="#">Integrated Library Systems (ILS)</a></li>
-        <li><a href="#">Law</a></li>
-        <li><a href="#">Law, Technical Services</a></li>
-        <li><a href="directory-staffdept.html">* * Law, User Services</a></li>
-        <li><a href="#">Preservation</a></li>
-        <li><a href="#">Reference, Instruction, and Outreach (RIO)</a></li>
-        <li><a href="#">Sciences</a></li>
-        <li><a href="#">Sciences, Access Services</a></li>
-        <li><a href="#">Sciences, Technical Services</a></li>
-        <li><a href="#">Special Collections Research Center</a></li>
-        <li><a href="#">Technical Services</a></li>
-        <li><a href="#">User Services</a></li>
+        <!-- JEJ PICK UP EHRE -->
+        <li><a href="#">Department</a></li>
+        {% for d in departments %}
+          <li><a href="?view=staff&department={{ d|urlencode }}">{{ d }}</a></li>
+        {% endfor %}
       </ul>
     </div>
-    -->
 
     <!-- Split button -->
     <div class="btn-group">
