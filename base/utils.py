@@ -2,7 +2,7 @@ import base64
 from http.client import HTTPSConnection
 from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 import requests
-from library_website.settings.base import LIBCAL_IID
+from library_website.settings.base import LIBCAL_IID, HOURS_TEMPLATE
 
 def get_xml_from_directory_api(url):
     assert url.startswith('https://')
@@ -52,3 +52,15 @@ def get_hours_by_id(lid):
     except:
         return ''
 
+
+def get_all_building_hours():
+    """
+    Get the hours for all buldings
+    in the system.
+
+    Returns:
+        list of strings.
+    """
+    from public.models import LocationPage
+    buildings = list((str(p), p.libcal_library_id) for p in LocationPage.objects.live().filter(is_building=True) if p.libcal_library_id != None)
+    return list(HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings)

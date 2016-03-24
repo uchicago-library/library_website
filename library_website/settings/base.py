@@ -204,3 +204,6 @@ LIBCAL_IID = 482
 
 # Fallback unit for pages that don't have one
 DEFAULT_UNIT = 2235
+
+# String template for hours display in header
+HOURS_TEMPLATE = '%s: %s'

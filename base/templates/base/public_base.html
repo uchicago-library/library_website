@@ -52,7 +52,15 @@
 
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-          <li><a href="#"><i class="fa fa-clock-o"></i> {{page_location}}{% if hours_for_today %}: {{hours_for_today}}{% endif %}</a></li> <!-- Location dependent -->
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> {{self.current_building_hours}} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                {% for hours in all_building_hours %}
+                    {% if hours != self.current_building_hours %}
+                    <li style="margin-bottom: 5px;"><a href="#">{{hours}}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+          </li>
           <li><a href="{{chat_url}}" class="{{chat_status_css}}"><i class="fa fa-comment"></i> Ask a Librarian</a></li> <!-- Fa has variable actions. Location dependent; Needs to state Library name before "Librarian" -->
           <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
           <li><a href="#"><i class="fa fa-user"></i> My Accounts</a></li>
@@ -246,11 +254,43 @@
             {% endblock %}
         </div> <!-- // Center Content -->
 
-        <!-- Right Sidebar Content -->
-        <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside">
-            {% block right_sidebar %}{% endblock %}
-        </div>
-        <!-- // Right Sidebar Content -->
+        {% if self.has_right_sidebar %}
+            <!-- Right Sidebar Content -->
+            <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside">
+                {% block right_sidebar %}{% endblock %}
+                
+                {% if self.has_social_media %}
+                    <h4 class="rightside">{{self.friendly_name}}Social Media</h4>
+                    <ul>
+                        {% if self.twitter_page %}
+                        <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter"></i> Twitter</a></li>
+                        {% endif %}
+                        {% if self.facebook_page %}
+                        <li><a href="{{self.facebook_page}}"><i class="fa fa-facebook-official"></i> Facebook</a></li>
+                        {% endif %}
+                        {% if self.hashtag_page and self.hashtag %}
+                        <li><a href="{{self.hashtag_page}}"><strong>{{self.hashtag}}</strong></a></li>
+                        {% endif %}
+                        {% if self.instagram_page %}
+                        <li><a href="{{self.instagram_page}}"><i class="fa fa-instagram"></i> Instagram</a></li>
+                        {% endif %}
+                        {% if self.youtube_page %}
+                        <li><a href="{{self.youtube_page}}"><i class="fa fa-youtube-square"></i> YouTube</a></li>
+                        {% endif %}
+                        {% if self.blog_page %}
+                        <li><a href="{{self.blog_page}}"><i class="fa fa-rss"></i> Blog</a></li>
+                        {% endif %}
+                        {% if self.tumblr_page %}
+                        <li><a href="{{self.tumblr_page}}"><i class="fa fa-tumblr-square"></i> Tumblr</a></li>
+                        {% endif %}
+                        {% if self.snapchat_page %}
+                        <li><a href="{{self.snapchat_page}}"><i class="fa fa-fa-weixin"></i> Snapchat</a></li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+            </div>
+            <!-- // Right Sidebar Content -->
+        {% endif %}
 
         <div class="col-xs-12 col-sm-12 col-md-11 col-md-offset-1 askoptions">
             {% block btm_content %}

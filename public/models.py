@@ -53,6 +53,24 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ])
 
 
+    @property
+    def has_right_sidebar(self):
+        """
+        Determine if a right sidebar should
+        be displayed in the template.
+
+        Returns:
+            boolean
+        """
+        fields = [self.quicklinks]
+        if self.has_social_media:
+            return True
+        else:
+            for field in fields:
+                if field:
+                    return True
+            return False
+
 
 class LocationPageDonorPlacement(Orderable, models.Model):
     """

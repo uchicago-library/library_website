@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.fields import IntegerField
 from django.utils import timezone
-from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -19,7 +19,7 @@ from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
-from base.utils import get_json_for_library, get_hours_by_id
+from base.utils import get_json_for_library, get_hours_by_id, get_all_building_hours
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from units.utils import get_default_unit
 
@@ -275,7 +275,7 @@ class SocialMediaFields(models.Model):
         elif self.hashtag and self.hashtag_page:
             return True
         elif self.instagram_page or self.youtube_page or \
-        blog_page or tumblr_page or snapchat_page:
+        self.blog_page or self.tumblr_page or self.snapchat_page:
             return True
         else:
             return False
@@ -742,18 +742,56 @@ class PublicBasePage(BasePage):
             context['city'] = location.city
             context['state'] = location.state
             context['postal_code'] = str(location.postal_code)
-            context['hours_for_today'] = get_hours_by_id(location.libcal_library_id)
+            context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
-
 
         context['chat_status'] = get_chat_status('uofc-ask')
         context['chat_status_css'] = get_chat_status_css('uofc-ask') 
 
         return context
 
+    @property
+    def current_building_hours(self):
+        """
+        Get the current building name and hours for a page.
+        If the page's unit > location is a building e.g. 
+        is_building = True, then display the name and hours 
+        for that location, otherwise pull hours from 
+        unit > location > parent_building. If for some reason 
+        nothing is found, use the hours for Regenstein. 
+
+        Returns:
+            string, hours from libcal.
+        """
+        try:
+            location = self.unit.location
+            if location.is_building:
+                return HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
+            else:
+                return HOURS_TEMPLATE % (str(location.parent_building), get_hours_by_id(location.parent_building.libcal_library_id))
+        except(AttributeError):
+            fallback = get_default_unit().location
+            return HOURS_TEMPLATE % (str(fallback), get_hours_by_id(fallback.libcal_library_id))
+
+    @property
+    def friendly_name(self):
+        """
+        Get the friendly name of the unit associated 
+        with any given page. If the unit doesn't have 
+        one, return an empty string.
+
+        Returns:
+            string, friendly name of assocaited unit
+            with an extra space appended or an empty
+            string if no friendly name is found.
+        """
+        try:
+            return self.unit.friendly_name + ' '
+        except(AttributeError):
+            return ''
 
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
