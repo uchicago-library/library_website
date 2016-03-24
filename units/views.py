@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils.html import escape
-from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement
+from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
 from subjects.models import Subject
 from units.models import UnitPage
 
@@ -122,19 +122,22 @@ def units(request):
             elif library == 'Mansueto':
                 mansueto = DirectoryUnit.objects.filter(Q(name='Mansueto') | Q(name='Mansueto Library'))
                 staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=mansueto).values_list('page', flat=True).distinct()
-                
+
         # get StaffPages themselves from the pk list. 
         if staff_pks:
             staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
         else:
             staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
 
+        # departments.
+        if department:
+            depts = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
+            vcards = VCard.objects.filter(unit__in=depts)
+            staff_pages_all = staff_pages_all.filter(vcards__in=vcards)
+
         # search staff pages.
         if query:
-            if staff_pages_all:
-                staff_pages_all = staff_pages_all.search(query)
-            else:
-                staff_pages_all = StaffPage.objects.live().search(query)
+            staff_pages_all = staff_pages_all.search(query)
         
         # add paging.
         paginator = Paginator(staff_pages_all, 50)
