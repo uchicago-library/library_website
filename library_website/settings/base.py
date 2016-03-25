@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'news',
     'public',
     'projects',
+    'redirects',
     'search',
     'shibboleth',
     'staff',
