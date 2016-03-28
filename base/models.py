@@ -405,7 +405,7 @@ class AbstractBase(models.Model):
     page_maintainer = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
-        blank=True, 
+        blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_maintainer'
     )
@@ -413,7 +413,7 @@ class AbstractBase(models.Model):
     editor = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
-        blank=True, 
+        blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_editor'
     )
@@ -688,7 +688,7 @@ class PublicBasePage(BasePage):
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
-        blank=True, 
+        blank=False, 
         limit_choices_to={'display_in_dropdown': True},
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
