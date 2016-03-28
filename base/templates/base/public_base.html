@@ -9,10 +9,8 @@
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet"/>
-    <!--[if lt IE 9]>
-        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
     <link href="{% static "base/css/normalize.css" %}" rel="stylesheet">
     {% compress css %}
@@ -52,7 +50,8 @@
 
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> {{self.current_building_hours}} <span class="caret"></span></a>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> {{self.current_building_hours}} <span class="caret"></span></a>
             <ul class="dropdown-menu">
                 {% for hours in all_building_hours %}
                     {% if hours != self.current_building_hours %}
@@ -71,35 +70,64 @@
         <div class="collapse navbar-collapse" id="global-navbar"> <!-- Global Navbar -->
             <ul class="nav navbar-nav"> <!-- Dropdown Nav -->
 
-                <!-- Search Dropdown -->
-                <li class="dropdown col-drop">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="#">Catalog</a></li>
-                      <li><a href="#">Articles Plus</a></li>
-                      <li><a href="#">WorldCat</a></li>
-                      <li><a href="#">Database Finder</a></li>
-                      <li><a href="#">EJournals</a></li>
-                      <li><a href="#">BorrowDirect</a></li>
+                <!-- Search Dropdown / 2-Col -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search<span class="caret"></span></a>
+                    <ul class="dropdown-menu twocol-drop">
+                        <li>
+                            <ul class="list-unstyled col-sm-6 ul-left">
+                                <li class="twocol-head">Catalogs</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Library Catalog</a></li>
+                                <li><a href="#">UBorrow</a></li>
+                                <li><a href="#">BorrowDirect</a></li>
+                                <li><a href="#">WorldCat</a></li>
+                                <li><a href="#">Other Catalogs</a></li>
+                            </ul>
+
+                            <ul class="list-unstyled col-sm-6">
+                                <li class="twocol-head">Other Search Tools</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Articles Plus</a></li>
+                                <li><a href="#">Database Finder</a></li>
+                                <li><a href="#">EJournals</a></li>
+                                <li><a href="#">Website Search</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
-                <!-- // Search Dropdown -->
+                <!-- // Search Dropdown / 2-Col -->
 
                 <!-- Borrow/Request Dropdown -->
-                <li class="dropdown col-drop">
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Borrow &amp; Request <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Borrowing &amp; Renewing</a></li>
-                        <li><a href="#">Interlibrary Loan</a></li>
-                        <li><a href="#">Borrow Direct</a></li>
-                        <li><a href="#">Scan &amp; Deliver</a></li>
+                    <ul class="dropdown-menu twocol-drop">
+                        <li>
+                            <ul class="list-unstyled col-sm-6 ul-left">
+                                <li class="twocol-head">Borrowing</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Borrowing &amp; Renewing</a></li>
+                                <li><a href="#">Due Dates &amp; Loan Periods</a></li>
+                                <li><a href="#">Fines &amp; Lost Items</a></li>
+                                <li><a href="#">Course Reserves</a></li>
+                                <li><a href="#">My Accounts</a></li>
+                            </ul>
+
+                            <ul class="list-unstyled col-sm-6">
+                                <li class="twocol-head">Requesting</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Request Articles &amp; Chapters</a></li>
+                                <li><a href="#">Request Books &amp; Other Media</a></li>
+                                <li><a href="#">Suggest a Purchase</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <!-- // Borrow/Request Dropdown -->
 
                 <!-- Research Dropdown / 2-Col -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Research <span class="hidden-sm">&amp; Support </span><span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Research <span class="hidden-sm">&amp; Teaching </span><span class="caret"></span></a>
                     <ul class="dropdown-menu twocol-drop">
                         <li>
                             <ul class="list-unstyled col-sm-5 ul-left">
@@ -115,6 +143,11 @@
                             </ul>
 
                             <ul class="list-unstyled col-sm-7">
+                                <li class="twocol-head">Teaching Support</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Course Reserves</a></li>
+                                <li><a href="#">Research Instruction for Courses</a></li>
+                                <hr style="border:0; border-top: 1px solid #767676;">
                                 <li class="twocol-head">Scholarly Communication &amp; Publishing</li>
                                 <li role="separator" class="divider visible-xs"></li>
                                 <li><a href="#">Dissertation Office</a></li>
@@ -127,48 +160,62 @@
                 <!-- // Research Dropdown / 2-Col -->
 
                 <!-- Collection/Exhibits Dropdown -->
-                <li class="dropdown col-drop">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits </span><span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Collecting Areas by Subject</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits <span class="caret"></span></a>
+                    <ul class="dropdown-menu twocol-drop">
+                        <li>
+                            <ul class="list-unstyled col-sm-6 ul-left">
+                                <li class="twocol-head">Collections</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Collecting Areas by Subject</a></li>
                         <li><a href="#">Unique Collections</a></li>
-                        <li><a href="#">Exhibits</a></li>
+                        <li><a href="#">Collection by Format</a></li>
+                            </ul>
+
+                            <ul class="list-unstyled col-sm-6">
+                                <li class="twocol-head">Exhibits</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">All Exhibits</a></li>
+                                <li><a href="#">Current Exhibits</a></li>
+                                <li><a href="#">Past Exhibits</a></li>
+                                <li><a href="#">Web Exhibits</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <!-- // Collection/Exhibits Dropdown -->
 
                 <!-- Locations  Dropdown / 2-Col -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="hidden-sm">Locations &amp; </span>Hours <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Using<span class="hidden-xs hidden-sm"> the Library </span><span class="caret"></span></a>
                     <ul class="dropdown-menu twocol-drop">
                         <li>
                             <ul class="list-unstyled col-sm-6 ul-left">
-                                <li class="twocol-head">Using the Library</li>
+                                <li class="twocol-head">Libraries</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Crerar</a></li>
+                                <li><a href="#">D'Angelo Law</a></li>
+                                <li><a href="#">Eckhart</a></li>
+                                <li><a href="#">Mansueto</a></li>
+                                <li><a href="#">Regenstein</a></li>
+                                <li><a href="#">Special Collections</a></li>
+                                <li><a href="#">SSA</a></li>
+                            </ul>
+                            <ul class="list-unstyled col-sm-6">
+                                <li class="twocol-head">Using Spaces &amp; Services</li>
                                 <li role="separator" class="divider visible-xs"></li>
                                 <li><a href="#">Hours</a></li>
                                 <li><a href="#">Maps &amp; Floor Plans</a></li>
                                 <li><a href="#">Visiting the Library</a></li>
-                                <li><a href="#">Available Computers</a></li>
                                 <li><a href="#">Call Number Guides</a></li>
                                 <li><a href="#">Book a Room</a></li>
+                                <li><a href="#">Places to Study</a></li>
                                 <li><a href="#">Access &amp; Privileges</a></li>
                                 <li><a href="#">Off-Campus Access</a></li>
                                 <li><a href="#">Copy, Print, Scan</a></li>
                                 <li><a href="#">Techb@r</a></li>
                             </ul>
 
-                            <ul class="list-unstyled col-sm-6">
-                                <li class="twocol-head">Libraries</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Regenstein</a></li>
-                                <li><a href="#">Crerar</a></li>
-                                <li><a href="#">D'Angelo Law</a></li>
-                                <li><a href="#">Mansueto</a></li>
-                                <li><a href="#">SSA</a></li>
-                                <li><a href="#">Eckhart</a></li>
-                                <li><a href="#">Special Collections</a></li>
-                                <li><a href="#">DLL</a></li>
-                            </ul>
                         </li>
                     </ul>
                 </li>
@@ -176,27 +223,31 @@
 
                 <!-- About Mega Dropdown / 2-Col -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="hidden-sm">the Library </span><span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="hidden-xs hidden-sm hidden-md">the Library </span><span class="caret"></span></a>
                     <ul class="dropdown-menu twocol-drop">
                         <li>
                             <ul class="list-unstyled col-sm-6 ul-left">
                                 <li class="twocol-head">About the Library</li>
                                 <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="#">Mission &amp; Strategic Plan</a></li>
+                                <li><a href="#">Facts</a></li>
                                 <li><a href="#">Departments &amp; Staff</a></li>
                                 <li><a href="#">Employment</a></li>
-                                <li><a href="#">Library Studies &amp; Reports</a></li>
-                                <li><a href="#">Mission</a></li>
-                                <li><a href="#">Support the Library</a></li>
-                                <li><a href="#">Library Policies</a></li>
                                 <li><a href="#">Visiting the Library</a></li>
+                                <li><a href="#">Support the Library</a></li>
+                                <li><a href="#">Library Sureys &amp; Reports</a></li>
+                                <li><a href="#">Library Policies</a></li>
+                                <li><a href="#">Conferences</a></li>
+                                <li><a href="#">External Boards &amp; Committees</a></li>
                             </ul>
 
                             <ul class="list-unstyled col-sm-6">
                                 <li class="twocol-head">News &amp; Events</li>
                                 <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Library News</a></li>
-                                <li><a href="#">Event Calendar</a></li>
-                                <li><a href="#">Library Social Media</a></li>
+                                <li><a href="#">News</a></li>
+                                <li><a href="#">Workshops &amp; Events</a></li>
+                                <li><a href="#">Social Media Directory</a></li>
+                                <li><a href="#">Libra</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -210,11 +261,22 @@
 </nav>
 <!-- // Top Navigation -->
 
+<!-- ** If Branch Library ** -->
+<!-- Fancy Splash Image -->
+<!--<div class="jumbotron">
+  <div class="container">
+    <div class="overlaywrap crerar">
+      <h2>Branch Library</h2>
+    </div>
+  </div>
+</div>-->
+<!-- // Fancy Splash Image -->
+
 <!-- Awesome Page Content -->
 <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
     <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
     
-    <!-- Sidebar (Optional) -->
+    <!-- Left Sidebar (Optional) -->
     {% if self.show_sidebar and sidebar %}
         <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar" id="sidebar">
             <ul>
@@ -232,10 +294,16 @@
             </ul>
         </div>
     {% endif %}
-    <!-- // Sidebar -->
+    <!-- // Left Sidebar -->
     {% if self.show_sidebar and sidebar %}
+        <div class="col-md-10 breadcrumbs hidden-xs hidden-sm"><!-- Placeholder: Breadcrumbs -->
+            {% include "base/includes/public_site_breadcrumbs.html" %}
+        </div>
         <div class="container body-container col-xs-12 col-md-10"> <!-- Content Container -->
     {% else %}
+        <div class="col-md-12 breadcrumbs hidden-xs hidden-sm"><!-- Placeholder: Breadcrumbs -->
+            {% include "base/includes/public_site_breadcrumbs.html" %}
+        </div>
         <div class="container body-container col-xs-12 col-md-12"> <!-- Content Container -->
     {% endif %}
         <!-- Off-Canvas Toggle Button -->
@@ -244,19 +312,11 @@
         </div>
         <!-- // End Off-Canvas Toggle Button -->
 
-        <!-- Main Content -->
-        <div class="col-xs-12 xol-sm-12 col-md-8 col-md-offset-1 centermain"> <!-- Center Content -->
-            <h1>{{self.title}}</h1>
-            {% block content %}
-                {% for block in self.body %}
-                    {{ block }}
-                {% endfor %}
-            {% endblock %}
-        </div> <!-- // Center Content -->
-
         {% if self.has_right_sidebar %}
+            {% include "base/includes/public_base_main_content.html" %}
+
             <!-- Right Sidebar Content -->
-            <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside">
+            <div class="col-xs-12 xol-sm-12 col-md-3 col-lg-3 home-rightside"> <!-- Right Sidebar Content -->
                 {% block right_sidebar %}{% endblock %}
                 
                 {% if self.has_social_media %}
@@ -290,8 +350,11 @@
                 {% endif %}
             </div>
             <!-- // Right Sidebar Content -->
+        {% else %}
+            {% include "base/includes/public_base_main_content.html" %}
         {% endif %}
 
+        {# This is needed #}
         <div class="col-xs-12 col-sm-12 col-md-11 col-md-offset-1 askoptions">
             {% block btm_content %}
             {% endblock %}
@@ -307,7 +370,7 @@
 <footer class="container-fluid footer">
 
     <!-- Contact -->
-    <div class="col-md-2">
+    <div class="col-sm-2 col-md-2">
         <p>Connect &amp; Share<br/>
         <a href="#">Contact Us</a><br/>
         <a href="#">Phone Numbers</a><br/>
@@ -315,25 +378,26 @@
     </div>
     <!-- // Contact -->
 
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
+    <hr class="visible-xs"> <!-- Mobile Divider -->
 
     <!-- Information -->
-    <div class="col-md-2 divider-vertical">
+    <div class="col-sm-2 col-md-2 divider-vertical">
         <p>Information for<br/>
         <a href="#">Faculty</a><br/>
         <a href="#">Students</a><br/>
         <a href="#">University Staff</a><br/>
+        <a href="#">Visitors</a><br/>
         <a href="#">Alumni &amp; Library Friends</a><br/>
         <a href="#">Patrons with Disabilities</a></p>
     </div>
     <!-- // Information -->
 
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
+    <hr class="visible-xs"> <!-- Mobile Divider -->
 
 
 
     <!-- Libraries -->
-    <div class="col-md-2 col-md-push-4 divider-vertical">
+    <div class="col-sm-2 col-md-2 col-sm-push-4 col-md-push-4 divider-vertical">
         <p>Libraries<br/>
         <a href="#">Crerar</a><br/>
         <a href="#">D’Angelo Law</a><br/>
@@ -344,22 +408,23 @@
     </div>
     <!-- // Libraries -->
 
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
+    <hr class="visible-xs"> <!-- Mobile Divider -->
 
     <!-- Social -->
-    <div class="col-md-2 col-md-push-4">
-        <p>Find Us On<br/>
+    <div class="col-sm-2 col-md-2 col-sm-push-4 col-md-push-4">
+        <p>Library Social Media<br/>
         <a href="#"><i class="fa fa-facebook-official"></i> &nbsp; Facebook</a><br/>
         <a href="#"><i class="fa fa-rss-square"></i> &nbsp; Library News</a><br/>
-        <a href="#"><i class="fa fa-clone"></i> &nbsp; More...</a></p>
+        <a href="#"><i class="fa fa-clone"></i> &nbsp; More Library Accounts...</a></p>
     </div>
     <!-- // Social -->
 
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
+    <hr class="visible-xs"> <!-- Mobile Divider -->
+
     <!-- Address / Logo Text for Desktop-->
-    <div class="col-md-4 col-md-pull-4">
+    <div class="col-md-4  col-sm-pull-4 col-md-pull-4">
         <div class="centerdiv">
-            <img alt="The University of Chicago Library" src="{% static "base/images/univ-logo.gif" %}" width="150"/>
+            <img alt="The University of Chicago Library" src="{% static "base/images/univ-logo.gif" %}" width="150" />
             <!-- Library Location: Address -->
             <p>{{page_location}}<br/>
                 {{address_1}}, {% if address_2 %}{{address_2}}, {% endif %}

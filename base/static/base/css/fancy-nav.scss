@@ -10,10 +10,21 @@ footer {
 
 .jumbotron {
     max-height: 50px;
-    background-image: url("../images/crerar-header.jpg"); //Dependent on location
-    background-size: cover;
     padding-top: 0px;
     margin-bottom: 0;
+    &.lawheader {
+        background-image: url("../images/law-banner2.jpg"); //Dependent on location
+        background-size: cover;
+    }
+    &.crerarheader {
+        background-image: url("../images/crerarbanner.jpg"); //Dependent on location
+        background-size: cover;
+    }
+    //Departments
+    &.eastasiaheader {
+        background-image: url("../images/ea-bannertemp.jpg"); //Dependent on location
+        background-size: cover;
+    }
     .container {
         padding: 0px;
     }
@@ -31,9 +42,6 @@ footer {
     padding: .5em 0 .3em 4em;
     margin-right: -15px;
     margin-left: -15px;
-    &.crerar {
-        background-color: #155F83;
-    }
     h2 {
         color: #fff;
         margin: 0px;
@@ -45,13 +53,18 @@ footer {
     left: 0;
     top: 0;
     h2 {
-        color: #fff;
+        color: #E7E5E2;
+        text-align: right;
+        font-weight: 400;
         font-size: 1.2em;
         margin-top: 0;
-        padding: 10px 0 10px 10px;
+        padding: 10px;
     }
     &.crerar {
         background-color: rgba(21, 95, 131,0.8); //Dependent on location
+    }
+    &.law, &.eastasia {
+        background-color: rgba(109, 50, 39,0.8); //Dependent on location
     }
     @media (min-width: 768px) {
         position: absolute;
@@ -59,7 +72,7 @@ footer {
         padding-right: 3em;
         padding-left: 2em;
         h2 {
-            font-size: 1.7em;
+            font-size: 1.6em;
             margin-top: 10px;
             padding: 0;
         }

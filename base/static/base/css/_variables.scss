@@ -1,0 +1,24 @@
+$darkgray: #767676;
+$lightgray: #D6D6CE;
+$darkred: #642822;
+$darkneutral: #7B4943;
+$neutral: #e2ddd7;
+$transparent: rgba(67, 67, 67, 0.95);
+$divider: 1px solid $darkgray;
+
+@mixin center {
+            display:block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+@mixin flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+img.desaturate { 
+-webkit-filter: grayscale(100%);
+filter: grayscale(100%);
+}

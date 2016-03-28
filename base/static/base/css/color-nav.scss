@@ -1,0 +1,220 @@
+@import "variables.scss";
+@import "base.scss";
+
+
+/*
+ * Top Right Navbar (time/account/ask)
+ * --------------------------------------------------
+ */
+
+.navbar-brand {
+    max-width: 125px;
+    @media (min-width: 768px) {
+        max-width: 200px;
+        padding-left: 20px;
+        padding-top: 5px;
+    }
+}
+
+.navbar-right {
+        padding-right: 1.5em;
+        // @include respond-to(medium) {
+        //     padding-right: 0;
+        //     margin-right: 0;
+        // }
+        @include respond-to(xlarge) {
+            padding-right: 15em;
+            margin-right: 30px;
+        }
+}
+
+.mob-fa {
+    text-align: center;
+    border-bottom: 1px solid #767676;
+    background-color: $transparent;
+    padding: 5px 0 5px 0;
+        a {
+        color: #fff;
+    }
+}
+
+#navbar-right {
+    font-size: 1.05em;
+    &>li>a {
+        color: #fff;
+        &:hover {
+            color:#E4E4E4;
+            background-color: $transparent;
+        }
+    }
+    &>li>.dropdown-menu {
+        color: #fff;
+        text-align: right;
+        background-color: $transparent;
+    }
+}
+
+ul#navbar-right li:hover > ul.dropdown-menu.menuhover {
+    display: block;
+}
+
+/*
+ * Main Navbar
+ * --------------------------------------------------
+ */
+
+.dropdown-menu>li>a{
+    color: #E4E4E4;
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+    color: #E4E4E4;
+    background-color: $transparent;
+}
+
+
+#global-navbar {
+    border-top: 1px solid #767676;
+    background-color: rgba(67, 67, 67, 0.4);
+}
+
+.navwrapper {
+    background-image: url("../images/warm_grey_sm.png");
+    background-repeat: repeat;
+    
+}
+
+.navbar-default{
+    & .navbar-nav>li>a {
+        color: #E4E4E4;
+        &:hover {
+            color: #CFCFCF;
+        }
+    }
+}
+
+.navbar-default .navbar-nav .open .dropdown-menu {
+    background-color: $transparent;
+}
+
+.twocol-head {
+    color: #E4E4E4;
+}
+
+.twocol-drop > li > ul > li a {
+    color: #fff;
+    &:hover {
+        color: #e4e4e4;
+    }
+}
+
+.ul-left {
+    @media (min-width: 768px) {
+        border-right: 1px solid #767676;
+    }
+}
+
+/*
+ * Sidebar (Temp until colors are finalized)
+ * --------------------------------------------------
+ */
+
+.sidebar {
+    background: #E7E5E2;
+}
+
+
+
+/*
+ * Footer
+ * --------------------------------------------------
+ */
+
+.footer {
+    bottom: 0;
+    position: sticky;
+    width: 100%;
+    background: #eeeeee;
+    background-image: url("../images/warm_grey_sm.png");
+    background-repeat: repeat;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    &>hr {
+      border-top: 1px solid $darkgray;
+    }
+    p {
+        color: #bbb;
+    }
+    & a {
+    color: #eee;
+    line-height: 1.7em;
+    text-decoration: none;
+        &:hover {
+            color: #5B8FA8;
+        }
+    }
+    h5 {
+      margin-bottom: 0px;
+    }
+    @include respond-to(small) { // Full width footer div
+    margin: 0;
+    display: table;
+    width: 100%;
+      li {
+        display: table-cell;
+        width: 1%;
+        float: none;
+      }
+
+      li a {
+        font-weight: bold;
+        text-align: center;
+        border-left: 1px solid rgba(255, 255, 255, .75);
+        border-right: 1px solid rgba(0, 0, 0, .1);
+      }
+
+      li:first-child a {
+        border-left: 0;
+        border-radius: 3px 0 0 3px;
+      }
+
+      li:last-child a {
+        border-right: 0;
+        border-radius: 0 3px 3px 0;
+      }
+
+      .col-md-2 {
+        @include flex;
+      }
+
+      .divider-vertical { // Lines between link blocks
+        height: 100%;
+        border-right: 1px solid #282828;
+        border-left: 1px solid #282828;
+      }
+    }
+}
+
+.centerdiv {
+  img {
+    padding-bottom:20px;
+  }
+  @include respond-to(small) {
+    @include center;
+    text-align: center;
+      p {
+        color: #eee;
+       }
+      img {
+          @include center;
+       }
+  }
+}
+
+@include respond-to(small) { //Temp fix for approval process - needs to fixed for production
+  .example-footer {
+        position: fixed;
+      }
+}
+      
+

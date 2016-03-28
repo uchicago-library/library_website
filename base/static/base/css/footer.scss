@@ -1,7 +1,7 @@
 $darkgray: #767676;
 $divider: 1px solid $darkgray;
 @mixin center {
-        	display:block;
+            display:block;
           margin-left: auto;
           margin-right: auto;
         }
@@ -11,7 +11,6 @@ $divider: 1px solid $darkgray;
         align-items: center;
         justify-content: center;
       }
-
 
 .footer {
   bottom: 0;
@@ -76,8 +75,10 @@ $divider: 1px solid $darkgray;
       }
 }
       
-
 .centerdiv {
+  img {
+    padding-bottom:20px;
+  }
   @media (min-width: 768px) {
     @include center;
     text-align: center;
@@ -86,9 +87,7 @@ $divider: 1px solid $darkgray;
        }
       img {
           @include center;
-          padding-bottom:20px;
        }
   }
 }
  
-

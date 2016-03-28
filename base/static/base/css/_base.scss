@@ -1,0 +1,221 @@
+/*
+ * Fonts and Headers
+ * --------------------------------------------------
+ */
+
+@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
+@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
+@import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('fonts/glyphicons-halflings-regular.eot');
+  src: url('fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded- opentype'), url('Content/fonts/glyphicons-halflings-regular.woff') format('woff'), url('Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+h1 {
+  font-size: 1.4em;
+  color: #800000;
+  font-weight: 300;
+}
+
+h2{
+  font-size: 1.3em;
+  font-weight: 600;
+    .contentalert {
+      line-height: 1.3em;
+      color: #FF3399;
+    }
+}
+
+h3 {
+  font-size: 1.2em;
+  color: #767676;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.2em;
+  //line-height: 0.8em;
+  color:#725663;
+  font-weight: 600;
+  .newsblock & {
+    margin-bottom: 3px;
+    line-height: 1.4em;
+  }
+}
+
+h5 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #616530;
+}
+
+h6 {
+  font-size: 1em;
+  font-weight: 600;
+  color: #767676;
+  margin: 15px 0 5px 0;
+}
+
+
+p {
+  margin-bottom: 1em;
+  line-height: 1.5em;
+    small {
+      color: #767676;
+  }
+}
+
+
+/*
+ * Media Queries
+ * --------------------------------------------------
+ *
+ * Use as: @include respond-to(small) { ... }
+ *      @include respond-to(medium) { ... }
+ *      @include respond-to(large) { ... }
+ */
+
+@mixin respond-to($breakpoint) {
+  // Extra small devices (phones, 544px and up)
+  @if $breakpoint == "xsmall" {
+    @media (min-width: 34em) {
+      @content;
+    }
+  }
+
+  // Small devices (landscape phones, 768px and up)
+  @else if $breakpoint == "small" {
+    @media (min-width: 48em) {
+      @content;
+    }
+  }
+  // Medium devices (crappy laptops, tablets, 992px and up)
+  @else if $breakpoint == "medium" {
+    @media (min-width: 62em) {
+      @content;
+    }
+  }
+  // Large devices (desktops, 1200px and up)
+  @else if $breakpoint == "large" {
+    @media (min-width: 75em) {
+      @content;
+    }
+  }
+
+  //Extra large devices (large desktops, 1900px and up)
+  @else if $breakpoint == "xlarge" {
+    @media (min-width: 118em) {
+      @content;
+    }
+  }
+  
+  // Short-cut to target extra small devices *only* (phones, 544px and up)
+  @else if $breakpoint == "smallonly" {
+    @media (max-width: 34em) {
+      @content;
+    }
+  }
+}
+
+
+/*
+ * Global Elements
+ * --------------------------------------------------
+ */
+
+body {
+  margin-bottom: 0;
+  font-family: 'ProximaNova-Regular', "Arial", sans-serif;
+    .font-secondary {
+      font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif;
+  }
+}
+
+html, body {
+  overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
+}
+
+.alert-high {
+    text-align: center;
+    font-size: 1.1em;
+    padding: 1em;
+    margin-bottom: 0em;
+    border: 0;
+    color: #a94442;
+    background-color: #f2dede;
+    border-bottom: 2px solid #a94442;
+    a {
+      color: #a94442;
+      text-decoration: underline;
+    }
+}
+
+.alert-low {
+    text-align: center;
+    font-size: 1.1em;
+    padding: 1em;
+    margin-bottom: 0em;
+    border: 0;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-bottom: 2px solid #31708f;
+    a {
+      color: #31708f;
+      text-decoration: underline;
+    }
+}
+
+.valid {
+  color: #089e00; }
+
+.error {
+  color: red; }
+
+.warning {
+  color: #fff664; }
+
+.information {
+  color: #000db5; }
+
+/* Links */
+a {
+  text-decoration: none;
+  outline: 0;
+    &:hover, &:focus {
+      color: #5B8FA8;
+    }
+  &.social {
+    color: #767676;
+  }
+}
+
+/* Completely remove from the flow but leave available to screen readers. */
+.is-vishidden {
+  position: absolute !important;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px); }
+
+/*
+ * Alerts
+ * --------------------------------------------------
+ */
+
+.alert {
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 0.5em;
+  border: 1px solid gray;
+  background: #f9f9f9;
+}
+
+.alert-error {
+  color: red;
+  border-color: red;
+  background: #ffbebe;
+}
+
