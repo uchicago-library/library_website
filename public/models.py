@@ -11,6 +11,14 @@ from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields
 
+# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
+from wagtail.wagtailadmin.forms import WagtailAdminPageForm
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface as OriginalTabbedInterface
+class TabbedInterface(OriginalTabbedInterface):
+
+    def __init__(self, children, base_form_class=WagtailAdminPageForm):
+        super().__init__(children, base_form_class)
+
 class StandardPage(PublicBasePage, SocialMediaFields):
     """
     A standard basic page.
