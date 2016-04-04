@@ -16,31 +16,31 @@
 
     <!-- Split button -->
     <div class="btn-group bg-filter">
-      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">Department</button>
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if department %}{{ department }}{% else %}Department{% endif %}</button>
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <!-- JEJ PICK UP EHRE -->
-        <li><a href="#">Department</a></li>
+        <!-- JEJ PICK UP HERE -->
+        <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{% endif %}">All departments</a></li>
         {% for d in departments %}
-          <li><a href="?view=staff&department={{ d|urlencode }}">{{ d }}</a></li>
+          <li><a href="?view=staff&department={{ d|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ d }}</a></li>
         {% endfor %}
       </ul>
     </div>
 
     <!-- Split button -->
     <div class="btn-group">
-      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">Subject Specialty</button>
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if subject %}{{ subject }}{% else %}Subject Specialty{% endif %}</button>
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="#">Subject Specialty</a></li>
+        <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{%endif %}">Subject Specialty</a></li>
         {% for s in subjects %}
-            <li><a href="#">subject</a></li>
+            <li><a href=".?view=staff&subject={{ s|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ s }}</a></li>
         {% endfor %}
       </ul>
     </div>
