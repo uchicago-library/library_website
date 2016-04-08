@@ -19,9 +19,8 @@ from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
-from base.utils import get_json_for_library, get_hours_by_id, get_all_building_hours
+from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
-from units.utils import get_default_unit
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -727,21 +726,14 @@ class PublicBasePage(BasePage):
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
 
-        try:
-            unit = self.unit
-            location = self.unit.location
-        except:
-            unit = get_default_unit()
-            location = unit.location
+        location_and_hours = get_hours_and_location(self)
+        unit = location_and_hours['page_unit']
 
         try: 
-            context['page_unit'] = str(self.unit) 
-            context['page_location'] = str(location)
-            context['address_1'] = location.address_1
-            context['address_2'] = location.address_2
-            context['city'] = location.city
-            context['state'] = location.state
-            context['postal_code'] = str(location.postal_code)
+            context['page_unit'] = str(unit) 
+            context['page_location'] = str(location_and_hours['page_location'])
+            context['current_building_hours'] = location_and_hours['hours']
+            context['address'] = location_and_hours['address']
             context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
         except(AttributeError):
@@ -752,29 +744,6 @@ class PublicBasePage(BasePage):
         context['chat_status_css'] = get_chat_status_css('uofc-ask') 
 
         return context
-
-    @property
-    def current_building_hours(self):
-        """
-        Get the current building name and hours for a page.
-        If the page's unit > location is a building e.g. 
-        is_building = True, then display the name and hours 
-        for that location, otherwise pull hours from 
-        unit > location > parent_building. If for some reason 
-        nothing is found, use the hours for Regenstein. 
-
-        Returns:
-            string, hours from libcal.
-        """
-        try:
-            location = self.unit.location
-            if location.is_building:
-                return HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
-            else:
-                return HOURS_TEMPLATE % (str(location.parent_building), get_hours_by_id(location.parent_building.libcal_library_id))
-        except(AttributeError):
-            fallback = get_default_unit().location
-            return HOURS_TEMPLATE % (str(fallback), get_hours_by_id(fallback.libcal_library_id))
 
     @property
     def friendly_name(self):

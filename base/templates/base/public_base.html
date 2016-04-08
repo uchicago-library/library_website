@@ -51,10 +51,10 @@
         <!-- Top right nav -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> {{self.current_building_hours}} <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> {{current_building_hours}} <span class="caret"></span></a>
             <ul class="dropdown-menu">
                 {% for hours in all_building_hours %}
-                    {% if hours != self.current_building_hours %}
+                    {% if hours != current_building_hours %}
                     <li style="margin-bottom: 5px;"><a href="#">{{hours}}</a></li>
                     {% endif %}
                 {% endfor %}
@@ -426,13 +426,7 @@
         <div class="centerdiv">
             <img alt="The University of Chicago Library" src="{% static "base/images/univ-logo.gif" %}" width="150" />
             <!-- Library Location: Address -->
-            <p>{{page_location}}<br/>
-                {{address_1}}, {% if address_2 %}{{address_2}}, {% endif %}
-                {{city}},
-                {{state}}
-                {{postal_code}}
-            </p>
-
+            <p>{{page_location}}<br/>{{address}}</p>
             <small><a href="#">Privacy Policy</a><br/>
             © University of Chicago</small>
         </div>
@@ -453,6 +447,5 @@
 
     <script src="{% static "base/js/offcanvas.js" %}"></script>
 <!-- // Scripts -->
-
 </body>
 </html>
