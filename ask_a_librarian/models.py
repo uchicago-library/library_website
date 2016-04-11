@@ -74,6 +74,21 @@ class AskPage(PublicBasePage, ContactFields):
         else:
             return False
 
+    @property
+    def has_right_sidebar(self):
+        """
+        Determine if a right sidebar should
+        be displayed on AskPages.
+
+        Returns:
+            boolean
+        """
+        fields = [self.contact_link, self.phone_number]
+        for field in fields:
+            if field:
+                return True
+        return False
+
     def get_context(self, request):
         context = super(AskPage, self).get_context(request)
         context['ask_pages'] = AskPage.objects.live()
