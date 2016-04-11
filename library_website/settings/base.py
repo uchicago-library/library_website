@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'intranetunits',
     'lib_collections',
     'library_website',
+    'macros',
     'news',
     'public',
     'projects',

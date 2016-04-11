@@ -1,5 +1,6 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
+{% load repeatedblocks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -313,12 +314,35 @@
         <!-- // End Off-Canvas Toggle Button -->
 
         {% if self.has_right_sidebar %}
-            {% include "base/includes/public_base_main_content.html" %}
+            <!-- Main Content -->
+            <div class="col-xs-12 xol-sm-12 col-md-9 col-lg-8 col-lg-offset-1 centermain"> <!-- Center Content -->
+                <h1>{{self.title}}</h1>
+                {% repeated_block content %}
+                    {% for block in self.body %}
+                        {{ block }}
+                    {% endfor %}
+                {% endblock %}
+            </div> <!-- // Center Content -->
 
             <!-- Right Sidebar Content -->
             <div class="col-xs-12 xol-sm-12 col-md-3 col-lg-3 home-rightside"> <!-- Right Sidebar Content -->
                 {% block right_sidebar %}{% endblock %}
-                
+    
+                {% if self.quicklinks %}
+                    {% if self.quicklinks_title %}
+                        <h4>{{self.quicklinks_title}}</h4>
+                    {% endif %}
+
+                    {% autoescape off %}
+                        {{self.quicklinks}}
+                    {% endautoescape %}
+
+                    {% if self.view_more_link and self.view_more_link_label %}
+                        <a href="{{self.view_more_link}}" style="color: #337ab7;" href="#">{{self.view_more_link_label}} 
+                            <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a>
+                    {% endif %}
+                {% endif %}                
+
                 {% if self.has_social_media %}
                     <h4 class="rightside">{{self.friendly_name}}Social Media</h4>
                     <ul>
@@ -351,7 +375,11 @@
             </div>
             <!-- // Right Sidebar Content -->
         {% else %}
-            {% include "base/includes/public_base_main_content.html" %}
+            <!-- Main Content -->
+            <div class="col-xs-12 xol-sm-12 col-md-9 col-lg-8 col-lg-offset-1 centermain"> <!-- Center Content -->
+                <h1>{{self.title}}</h1>
+                {% repeat content %}
+            </div> <!-- // Center Content -->
         {% endif %}
 
         {# This is needed #}
