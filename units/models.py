@@ -97,7 +97,11 @@ class UnitPage(BasePage, ContactFields):
     ] + BasePage.content_panels + ContactFields.content_panels
 
     subpage_types = []
-    search_fields = []
+
+    search_fields = (
+        index.SearchField('title'),
+        index.FilterField('display_in_directory')
+    )
 
     @staticmethod
     def hierarchical_units():

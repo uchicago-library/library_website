@@ -133,6 +133,9 @@ def units(request):
     subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'department')
 
+    if view == 'department' and query:
+        sort = 'alphabetical'
+
     # staff pages
     staff_pages_all = []
     staff_pages = []
@@ -168,7 +171,12 @@ def units(request):
     
         # alphabetical units. 
         alphabetical_html = "<table class='table table-striped'>"
-        for unit_page in UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc'):
+
+        units = UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc')
+        if query:
+            units = units.search(query)
+
+        for unit_page in units:
             alphabetical_html = alphabetical_html + '<tr>'
             alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + '</strong></td>'
             alphabetical_html = alphabetical_html + '<td>'
