@@ -135,7 +135,6 @@ class Command (BaseCommand):
             ("Area Studies, Humanities, and Social Sciences - Social Service Administration Library (SSA)", "Social Service Administration Library (SSA)"),
             ("Special Collections Research Center", "Special Collections Research Center"),
             ("Special Collections Research Center - Digital Projects", "Digital Projects, Special Collections Research Center"),
-            ("Special Collections Research Center - Manuscripts", "Manuscripts, Special Collections Research Center"),
             ("Special Collections Research Center - Preservation", "Preservation, Special Collections Research Center"),
             ("Collection Services - Technical Services - Administration", "Administration, Technical Services"),
             ("Collection Services - Technical Services - Continuing Resources Cataloging", "Continuing Resources Cataloging"),
