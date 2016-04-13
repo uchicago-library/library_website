@@ -200,5 +200,8 @@ def units(request):
         'staff_pages': staff_pages,
         'subjects': get_subjects(),
         'subject': subject,
-        'view': view
+        'view': view,
+        'self': {
+            'has_right_sidebar': True
+        }
     })
