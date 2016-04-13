@@ -35,9 +35,7 @@
             {% if view == 'department' %}
                 <h3 style="margin:10px 20px 20px 0; display: inline;">Departments, Divisions, & Units</h3>
                 {% if sort == 'alphabetical' %}
-                    {% if view == 'department' and query != '' %}
-                        {# pass #}
-                    {% else %}
+                    {% if query == None or query == '' %}
                         <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
                     {% endif %}
                     {{ alphabetical_units|safe }}

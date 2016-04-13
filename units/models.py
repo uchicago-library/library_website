@@ -99,7 +99,7 @@ class UnitPage(BasePage, ContactFields):
     subpage_types = []
 
     search_fields = (
-        index.SearchField('title'),
+        index.SearchField('alphabetical_directory_name'),
         index.FilterField('display_in_directory')
     )
 
