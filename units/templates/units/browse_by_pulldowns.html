@@ -16,18 +16,19 @@
 
     <!-- Split button -->
     <div class="btn-group bg-filter">
-      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if department %}{{ department }}{% else %}Department{% endif %}</button>
-      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button"{% if not departments %} disabled="true"{% endif %}>{% if department %}{{ department }}{% else %}Department{% endif %}</button>
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button"{% if not departments %} disabled="true"{% endif %}>
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
-      <ul class="dropdown-menu">
-        <!-- JEJ PICK UP HERE -->
-        <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{% endif %}">All departments</a></li>
-        {% for d in departments %}
-          <li><a href="?view=staff&department={{ d|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ d }}</a></li>
-        {% endfor %}
-      </ul>
+      {% if departments %}
+        <ul class="dropdown-menu">
+          <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{% endif %}">All departments</a></li>
+          {% for d in departments %}
+            <li><a href="?view=staff&department={{ d|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ d }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
 
     <!-- Split button -->
