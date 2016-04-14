@@ -25,7 +25,7 @@
         <ul class="dropdown-menu">
           <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{% endif %}">All departments</a></li>
           {% for d in departments %}
-            <li><a href="?view=staff&library={{ library|urlencode }}&department={{ d|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ d }}</a></li>
+            <li><a href="?view=staff&library={{ library|urlencode }}&department={{ d.directory_unit|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ d.label }}</a></li>
           {% endfor %}
         </ul>
       {% endif %}
