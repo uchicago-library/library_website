@@ -22,7 +22,7 @@
                         <form action="." method="GET">
                             <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
                             <div class="input-group">
-                                <input type="text" placeholder="professor snape" name="query" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
+                                <input type="text" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" name="query" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
                                 <div class="input-group-btn">
                                     <button style="padding: 7px 14px;" class="btn btn-searchtype btn-default">Find </button>
                                 </div><!-- /btn-group -->
