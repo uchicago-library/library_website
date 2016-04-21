@@ -32,21 +32,23 @@ class IconAutoListBlock(StructBlock):
 
     def get_context(self, value): 
         context = super(IconAutoListBlock, self).get_context(value) 
-        url_path = value['starting_page'].url_path
-    
+
         d = []
-        for child in sorted(list(Page.objects.get(url_path=url_path).get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
-            c = {
-                'title': child.title,
-                'url': child.url,
-                'children': []
-            }
-            for grandchild in sorted(list(child.get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
-                c['children'].append({
-                    'title': grandchild.title,
-                    'url': grandchild.url
-                })
-            d.append(c)
+        if value['starting_page']:
+            url_path = value['starting_page'].url_path
+
+            for child in sorted(list(Page.objects.get(url_path=url_path).get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
+                c = {
+                    'title': child.title,
+                    'url': child.url,
+                    'children': []
+                }
+                for grandchild in sorted(list(child.get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
+                    c['children'].append({
+                        'title': grandchild.title,
+                        'url': grandchild.url
+                    })
+                d.append(c)
         context['descendants'] = d
         return context 
 
