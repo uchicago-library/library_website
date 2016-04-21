@@ -16,13 +16,12 @@
                 </div><!-- / col-md-6-->
                 <div class="col-md-6">
                     <div class="col-xs-12 col-sm-12 col-md-5 bg-directory dir-header">
-                        <h4>Search Directory</h4>
                     </div><!-- /.col-lg-3 -->
                     <div style="padding: 15px 0 7px 0;" class="col-xs-12 col-sm-12 col-md-7">
                         <form action="." method="GET">
                             <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
                             <div class="input-group">
-                                <input type="text" placeholder="professor snape" name="query" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
+                                <input type="text" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" name="query" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
                                 <div class="input-group-btn">
                                     <button style="padding: 7px 14px;" class="btn btn-searchtype btn-default">Find </button>
                                 </div><!-- /btn-group -->

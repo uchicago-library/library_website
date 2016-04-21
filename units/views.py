@@ -14,75 +14,83 @@ def get_subjects():
 
 def get_departments(library = None):
     if library == 'Crerar Library':
-        return [
-            DirectoryUnit.objects.get(fullName='Science Libraries - Administration'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Astronomy and Astrophysics'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Biochemistry and Molecular Biology'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Chemistry'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Computer Science'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Crerar Library Access Services'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Ecology and Evolution'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Geophysical Sciences'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Human Genetics'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Mathematics'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Medicine'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Microbiology'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Molecular Genetics and Cell Biology'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Neurobiology'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Nursing'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Organismal Biology and Anatomy'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Pharmacological and Physiological Sciences'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Physics'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Science Technical Services'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Science and Medicine, History of'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Statistics'),
-            DirectoryUnit.objects.get(fullName='Science Libraries - Technology')
+        departments = [
+            'Science Libraries - Administration',
+            'Science Libraries - Astronomy and Astrophysics',
+            'Science Libraries - Biochemistry and Molecular Biology',
+            'Science Libraries - Chemistry',
+            'Science Libraries - Computer Science',
+            'Science Libraries - Crerar Library Access Services',
+            'Science Libraries - Ecology and Evolution',
+            'Science Libraries - Geophysical Sciences',
+            'Science Libraries - Human Genetics',
+            'Science Libraries - Mathematics',
+            'Science Libraries - Medicine',
+            'Science Libraries - Microbiology',
+            'Science Libraries - Molecular Genetics and Cell Biology',
+            'Science Libraries - Neurobiology',
+            'Science Libraries - Nursing',
+            'Science Libraries - Organismal Biology and Anatomy',
+            'Science Libraries - Pharmacological and Physiological Sciences',
+            'Science Libraries - Physics',
+            'Science Libraries - Science Technical Services',
+            'Science Libraries - Science and Medicine, History of',
+            'Science Libraries - Statistics',
+            'Science Libraries - Technology'
         ]
     elif library == 'D\'Angelo Law Library':
-        return [
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library'),
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library - Administration'),
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library - Law Technical Services'),
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library - Law User Services'),
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library - Law User Services - Access Services'),
-            DirectoryUnit.objects.get(fullName='D\'Angelo Law Library - Law User Services - Reference')
+        departments = [
+            'D\'Angelo Law Library',
+            'D\'Angelo Law Library - Administration',
+            'D\'Angelo Law Library - Law Technical Services',
+            'D\'Angelo Law Library - Law User Services',
+            'D\'Angelo Law Library - Law User Services - Access Services',
+            'D\'Angelo Law Library - Law User Services - Reference'
         ]
     elif library == 'Eckhart Library':
-        return []
+        departments = []
     elif library == 'Mansueto':
-        return []
+        departments = []
     elif library == 'Regenstein Library':
-        return [
-            DirectoryUnit.objects.get(fullName='Administration - Communications'),
-            DirectoryUnit.objects.get(fullName='Administration - Development'),
-            DirectoryUnit.objects.get(fullName='Administration - Director\'s Office'),
-            DirectoryUnit.objects.get(fullName='Adminstrative Services - Budget'),
-            DirectoryUnit.objects.get(fullName='Adminstrative Services - Building Services'),
-            DirectoryUnit.objects.get(fullName='Adminstrative Services - Human Resources'),
-            DirectoryUnit.objects.get(fullName='Adminstrative Services - Shipping and Receiving'),
-            DirectoryUnit.objects.get(fullName='Collection Services'),
-            DirectoryUnit.objects.get(fullName='Collection Services - Preservation'),
-            DirectoryUnit.objects.get(fullName='Collection Services - Technical Services'),
-            DirectoryUnit.objects.get(fullName='Digital Services'),
-            DirectoryUnit.objects.get(fullName='User Services - Access Services - ID & Privileges Office & Entry Control'),
-            DirectoryUnit.objects.get(fullName='User Services - Access Services - Regenstein Circulation'),
-            DirectoryUnit.objects.get(fullName='User Services - Collection Management and Special Projects - Regenstein Search Services'),
-            DirectoryUnit.objects.get(fullName='User Services - Dissertation Office'),
-            DirectoryUnit.objects.get(fullName='User Services - Reference, Instruction, and Outreach')
+        departments = [
+            'Administration - Communications',
+            'Administration - Development',
+            'Administration - Director\'s Office',
+            'Adminstrative Services - Budget',
+            'Adminstrative Services - Building Services',
+            'Adminstrative Services - Human Resources',
+            'Adminstrative Services - Shipping and Receiving',
+            'Collection Services',
+            'Collection Services - Preservation',
+            'Collection Services - Technical Services',
+            'Digital Services',
+            'User Services - Access Services - ID & Privileges Office & Entry Control',
+            'User Services - Access Services - Regenstein Circulation',
+            'User Services - Collection Management and Special Projects - Regenstein Search Services',
+            'User Services - Dissertation Office',
+            'User Services - Reference, Instruction, and Outreach'
         ]
     elif library == 'Special Collections Research Center':
-        return [
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Administration'),
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Archives and Manuscripts'),
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Collection Management'),
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Exhibits'),
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Rare Books'),
-            DirectoryUnit.objects.get(fullName='Special Collections Research Center - SCRC Reader Services')
+        departments = [
+            'Special Collections Research Center - SCRC Administration',
+            'Special Collections Research Center - SCRC Archives and Manuscripts',
+            'Special Collections Research Center - SCRC Collection Management',
+            'Special Collections Research Center - SCRC Exhibits',
+            'Special Collections Research Center - SCRC Rare Books',
+            'Special Collections Research Center - SCRC Reader Services'
         ]
     elif library == 'SSA Library':
-        return []
+        departments = []
     else:
-        return []
+        departments = []
+
+    output = []
+    for d in departments:
+        output.append({
+            'directory_unit': DirectoryUnit.objects.get(fullName=d),
+            'label': d.split(' - ').pop()
+        })
+    return sorted(output, key=lambda d: d['label'])
 
 def get_vcards_for_department(department):
     depts = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
