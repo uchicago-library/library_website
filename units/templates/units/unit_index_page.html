@@ -92,7 +92,12 @@
                                             {% endif %}
                                         {% endfor %}
                                     </td>
-                                    <td></td>
+                                    <td>
+                                        <strong>Subject Specialties</strong><br/>
+                                        {% for subject in staff_page.staff_subject_placements.all %}
+                                            <a href=".?view=staff&subject={{ subject.subject.name|urlencode }}">{{ subject.subject.name }}</a><br/>
+                                        {% endfor %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

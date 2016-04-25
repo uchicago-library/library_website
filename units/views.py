@@ -226,6 +226,10 @@ def units(request):
         # search staff pages.
         if query:
             staff_pages_all = staff_pages_all.search(query)
+
+        # subjects.
+        if subject:
+            staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
         
         # add paging.
         paginator = Paginator(staff_pages_all, 50)
