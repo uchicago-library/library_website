@@ -2,6 +2,7 @@ from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE
@@ -414,7 +415,8 @@ class AbstractBase(models.Model):
         null=True, 
         blank=False, 
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_editor'
+        related_name='%(app_label)s_%(class)s_editor',
+        limit_choices_to= Q(title="David Bietila") | Q(title="David W. Bottorff") | Q(title="Julia Gardner") | Q(title="Jennifer Hart") | Q(title="Todd Ito") | Q(title="Catherine M. Mardikes") | Q(title="Julie Piacentine") | Q(title="Rachel Rosenberg")
     )
 
     sort_order = IntegerField(blank=True, default=0)
