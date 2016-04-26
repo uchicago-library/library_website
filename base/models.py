@@ -415,8 +415,7 @@ class AbstractBase(models.Model):
         null=True, 
         blank=False, 
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_editor',
-        limit_choices_to= Q(title="Shauna Babcock") | Q(title="David Bietila") | Q(title="David W. Bottorff") | Q(title="Julia Gardner") | Q(title="Jennifer Hart") | Q(title="Todd Ito") | Q(title="Catherine M. Mardikes") | Q(title="Julie Piacentine") | Q(title="Rachel Rosenberg")
+        related_name='%(app_label)s_%(class)s_editor'
     )
 
     sort_order = IntegerField(blank=True, default=0)
