@@ -27,8 +27,14 @@ class Subject(ClusterableModel, index.Indexed):
     """
     name = models.CharField(max_length=255, blank=False)
 
+    libguide_url = models.URLField(
+        max_length=255, 
+        null=True, 
+        blank=True)
+
     panels = [
         FieldPanel('name'),
+        FieldPanel('libguide_url'),
         InlinePanel('parent_subject', label="Parent"),
     ]
 
