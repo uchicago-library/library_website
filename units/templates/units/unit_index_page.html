@@ -61,11 +61,7 @@
                                     <td>
                                         <strong>{{ staff_page.title }}</strong>
                                         <br/>
-                                        {% regroup staff_page.vcards.all by unit as vcards %}
-                                        {% for vcard in vcards %}
-                                            {{ vcard.grouper.name }}
-                                            <br/>
-                                        {% endfor %}
+                                        <p>{{ staff_page.vcards.first.title }}, {{ staff_page.vcards.first.unit.name }}</p>
                                     </td>
                                     <td>
                                         <strong>Contact</strong>
