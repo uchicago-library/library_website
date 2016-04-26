@@ -20,6 +20,11 @@ class SubjectParentRelations(Orderable, models.Model):
     ]
 
 
+class SubjectSeeAlsoTable(Orderable, models.Model):
+    alias = models.CharField(max_length=255)
+    snippet = ParentalKey('subjects.Subject', related_name='see_also')
+
+
 @register_snippet
 class Subject(ClusterableModel, index.Indexed):
     """
@@ -36,6 +41,7 @@ class Subject(ClusterableModel, index.Indexed):
         FieldPanel('name'),
         FieldPanel('libguide_url'),
         InlinePanel('parent_subject', label="Parent"),
+        InlinePanel('see_also', label="Aliases")
     ]
 
     def __str__(self):
