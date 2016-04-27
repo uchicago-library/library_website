@@ -67,39 +67,62 @@
                 </div>
             </div>
 <div class="row">
-<table class="table table-striped coll-list">
-                <tbody>
-                <tr class="etable-header">
-                    <th colspan="4">
-                    All Collections
-                    </th>
-                </tr>
-                <tr>
-                  <td><img class="img-responsive" src="images/c-thumb1.jpg"></td>
-                  <td><strong><a href="#">Awesome Collection Title</a></strong><br>Short description about collection. Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
-                  <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
-                  <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
-                </tr>
-                <tr>
-                  <td><img class="img-responsive" src="images/c-thumb2.jpg"></td>
-                  <td><strong><a href="#">Better Collection</a></strong><br>Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt.</td>
-                  <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
-                  <td><strong>Subjects</strong><br><a href="#">Herbology</a><br><a href="#">Spell Crafting</a></td>
-                </tr>
-                <tr>
-                  <td><img class="img-responsive" src="images/c-thumb3.jpg"></td>
-                  <td><strong><a href="#">Collection with Super Swell Title</a></strong><br>Nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
-                  <td><strong>Print</strong><br><a href="#">Rare Books</a><br><a href="#">Manuscripts</a><br></td>
-                  <td><strong>Subjects</strong><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
-                </tr>
-                <tr>
-                  <td><img class="img-responsive" src="images/c-thumb4.jpg"></td>
-                  <td><strong><a href="#">Small but Swell Collection</a></strong><br>Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
-                  <td><strong>Formats</strong><br><a href="#">Illustrations</a><br><a href="#">Print</a></td>
-                  <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
-                </tr>
-              </tbody>
-            </table>
+  {% if view == 'collections' %}
+    <table class="table table-striped coll-list">
+      <tbody>
+        <tr class="table-header">
+          <th colspan="4">All Collections</th>
+        </tr>
+        <tr>
+          <td><img class="img-responsive" src="images/c-thumb1.jpg"></td>
+          <td><strong><a href="#">Awesome Collection Title</a></strong><br>Short description about collection. Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+          <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
+          <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+        </tr>
+        <tr>
+          <td><img class="img-responsive" src="images/c-thumb2.jpg"></td>
+          <td><strong><a href="#">Better Collection</a></strong><br>Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt.</td>
+          <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
+          <td><strong>Subjects</strong><br><a href="#">Herbology</a><br><a href="#">Spell Crafting</a></td>
+        </tr>
+        <tr>
+          <td><img class="img-responsive" src="images/c-thumb3.jpg"></td>
+          <td><strong><a href="#">Collection with Super Swell Title</a></strong><br>Nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+          <td><strong>Print</strong><br><a href="#">Rare Books</a><br><a href="#">Manuscripts</a><br></td>
+          <td><strong>Subjects</strong><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+        </tr>
+        <tr>
+          <td><img class="img-responsive" src="images/c-thumb4.jpg"></td>
+          <td><strong><a href="#">Small but Swell Collection</a></strong><br>Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+          <td><strong>Formats</strong><br><a href="#">Illustrations</a><br><a href="#">Print</a></td>
+          <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+  {% if view == 'subjects' %}
+    <table class="table table-striped coll-list">
+      <tbody>
+        <tr class="table-header">
+          <th colspan="4">All Subjects</th>
+        </tr>
+        {% for s in subjects %}
+          {% if s.see_also %}
+            <tr class="seealso">
+              <td><strong>{{ s.name }}</strong></td>
+              <td>See: <a href=".?view=subjects#{{ s.see_also|urlencode }}">{{ s.see_also }}</a></td>
+            </tr>
+          {% else %}
+            <tr id="{{ s.name }}">
+              <td><strong>{{ s.name }}</strong></td>
+              <td>Subject specialists, exhibits, collections, subject guides</td>
+            </tr>
+          {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 </div>
   </article>
 {% endblock %}
