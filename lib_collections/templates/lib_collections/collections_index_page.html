@@ -21,9 +21,9 @@
 <div class="row">
             <div class="col-xs-12 col-sm-5">
                 <div class="btn-group spaces-toggle">
-                  <a class="btn btn-directory active" href="az-collections.html">Collections</a>
-                  <a class="btn btn-directory" href="az-exhibits.html">Exhibits</a>
-                  <a class="btn btn-directory" href="az-subjects.html">Subjects</a>
+                  <a class="btn btn-directory{% if view == 'collections' %} active{% endif %}" href="?view=collections">Collections</a>
+                  <a class="btn btn-directory{% if view == 'exhibits' %} active{% endif %}" href="?view=exhibits">Exhibits</a>
+                  <a class="btn btn-directory{% if view == 'subjects' %} active{% endif %}" href="?view=subjects">Subjects</a>
                 </div>
             </div>
 
