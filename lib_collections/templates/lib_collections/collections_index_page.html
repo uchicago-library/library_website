@@ -1,0 +1,106 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+  <article>
+<div class="row">
+    <div class="col-xs-6">
+            <h1><span class="hidden-xs">Our </span>Collections &amp; Exhibits</h1>
+        </div>
+
+        <div style="padding-top:10px;" class="col-xs-6">
+            <form class="searchbox">
+                <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections">
+                <input type="submit" class="searchbox-submit">
+                <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
+            </form>
+        </div>
+    </div>
+<div class="row">
+            <div class="col-xs-12 col-sm-5">
+                <div class="btn-group spaces-toggle">
+                  <a class="btn btn-directory active" href="az-collections.html">Collections</a>
+                  <a class="btn btn-directory" href="az-exhibits.html">Exhibits</a>
+                  <a class="btn btn-directory" href="az-subjects.html">Subjects</a>
+                </div>
+            </div>
+
+            <div class="col-xs-7 col-sm-4 nopadding">
+                <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
+            <div class="btn-group">
+              <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+                Subject <span class="caret"></span>
+              </button>
+              <div class="dropdown-menu listings-dropdown">
+                <a href="#" class="dropdown-item">Action</a><br>
+                <a href="#" class="dropdown-item">Another action</a>
+                <a href="#" class="dropdown-item">Something else here</a>
+              </div>
+            </div>
+
+                <div class="btn-group">
+                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+                    Format <span class="caret"></span>
+                  </button>
+                  <div class="dropdown-menu listings-dropdown">
+                    <a href="#" class="dropdown-item">Digital</a><br>
+                    <a href="#" class="dropdown-item">Archives &amp; Manuscripts</a><br>
+                    <a href="#" class="dropdown-item">Images</a><br>
+                    <a href="#" class="dropdown-item">Photographs</a><br>
+                    <a href="#" class="dropdown-item">Maps</a><br>
+                    <a href="#" class="dropdown-item">Music Scores</a><br>
+                    <a href="#" class="dropdown-item">Books &amp; Journals</a><br>
+                    <a href="#" class="dropdown-item">Reference Works</a><br>
+                    <a href="#" class="dropdown-item">Microform</a><br>
+                    <a href="#" class="dropdown-item">Statistics &amp; Datasets</a><br>
+                    <a href="#" class="dropdown-item">Video</a><br>
+                    <a href="#" class="dropdown-item">Audio</a>
+                  </div>
+                </div>
+                </div>
+
+                <div style="padding-top:7px" class="col-xs-5 col-sm-3">
+                    <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
+                    <input type="checkbox" value="ebooks" id="checkboxebooks"> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+                </div>
+            </div>
+<div class="row">
+<table class="table table-striped coll-list">
+                <tbody>
+                <tr class="etable-header">
+                    <th colspan="4">
+                    All Collections
+                    </th>
+                </tr>
+                <tr>
+                  <td><img class="img-responsive" src="images/c-thumb1.jpg"></td>
+                  <td><strong><a href="#">Awesome Collection Title</a></strong><br>Short description about collection. Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+                  <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
+                  <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+                </tr>
+                <tr>
+                  <td><img class="img-responsive" src="images/c-thumb2.jpg"></td>
+                  <td><strong><a href="#">Better Collection</a></strong><br>Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt.</td>
+                  <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
+                  <td><strong>Subjects</strong><br><a href="#">Herbology</a><br><a href="#">Spell Crafting</a></td>
+                </tr>
+                <tr>
+                  <td><img class="img-responsive" src="images/c-thumb3.jpg"></td>
+                  <td><strong><a href="#">Collection with Super Swell Title</a></strong><br>Nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+                  <td><strong>Print</strong><br><a href="#">Rare Books</a><br><a href="#">Manuscripts</a><br></td>
+                  <td><strong>Subjects</strong><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+                </tr>
+                <tr>
+                  <td><img class="img-responsive" src="images/c-thumb4.jpg"></td>
+                  <td><strong><a href="#">Small but Swell Collection</a></strong><br>Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
+                  <td><strong>Formats</strong><br><a href="#">Illustrations</a><br><a href="#">Print</a></td>
+                  <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
+                </tr>
+              </tbody>
+            </table>
+</div>
+  </article>
+{% endblock %}
+

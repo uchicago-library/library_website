@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def collections(request):
+    return render(request, 'lib_collections/collections_index_page.html', {})

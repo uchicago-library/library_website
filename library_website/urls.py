@@ -9,6 +9,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 from public.views import spaces as spaces_view
 from search.views import search as search_view 
 from units.views import units as unit_view
+from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
 from staff.views import staff
 
@@ -24,6 +25,7 @@ urlpatterns = [
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^units/$', unit_view, name='unit'),
+    url(r'^collections/$', collection_view, name='collection'),
 
     url(r'', include(wagtail_urls)),
 ]
