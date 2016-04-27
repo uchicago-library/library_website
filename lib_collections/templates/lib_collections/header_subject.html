@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-5">
+    <div class="btn-group spaces-toggle">
+      <a class="btn btn-directory{% if view == 'collections' %} active{% endif %}" href="?view=collections">Collections</a>
+      <a class="btn btn-directory{% if view == 'exhibits' %} active{% endif %}" href="?view=exhibits">Exhibits</a>
+      <a class="btn btn-directory active" href="?view=subjects">Subjects</a>
+    </div>
+  </div>
+
+  <div class="col-xs-7 col-sm-4 nopadding">
+    <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
+    <div class="btn-group">
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+        Subject <span class="caret"></span>
+      </button>
+      <div class="dropdown-menu listings-dropdown">
+        <a href="#" class="dropdown-item">Action</a><br>
+        <a href="#" class="dropdown-item">Another action</a>
+        <a href="#" class="dropdown-item">Something else here</a>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+        Format <span class="caret"></span>
+      </button>
+      <div class="dropdown-menu listings-dropdown">
+        <a href="#" class="dropdown-item">Digital</a><br>
+        <a href="#" class="dropdown-item">Archives &amp; Manuscripts</a><br>
+        <a href="#" class="dropdown-item">Images</a><br>
+        <a href="#" class="dropdown-item">Photographs</a><br>
+        <a href="#" class="dropdown-item">Maps</a><br>
+        <a href="#" class="dropdown-item">Music Scores</a><br>
+        <a href="#" class="dropdown-item">Books &amp; Journals</a><br>
+        <a href="#" class="dropdown-item">Reference Works</a><br>
+        <a href="#" class="dropdown-item">Microform</a><br>
+        <a href="#" class="dropdown-item">Statistics &amp; Datasets</a><br>
+        <a href="#" class="dropdown-item">Video</a><br>
+        <a href="#" class="dropdown-item">Audio</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding-top:7px" class="col-xs-5 col-sm-3">
+    <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
+    <input type="checkbox" value="ebooks" id="checkboxebooks"> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+  </div>
+</div>
