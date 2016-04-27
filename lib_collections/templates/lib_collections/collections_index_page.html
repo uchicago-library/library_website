@@ -23,6 +23,9 @@
       </table>
     </div>
   {% endif %}
+  {% if view == 'exhibits' %}
+    {% include 'lib_collections/header_exhibits.html' %}
+  {% endif %}
   {% if view == 'subjects' %}
     {% include 'lib_collections/header_subject.html' %}
       <div class="row">
