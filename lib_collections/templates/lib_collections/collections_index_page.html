@@ -5,19 +5,6 @@
 
 {% block content %}
   <article>
-<div class="row">
-    <div class="col-xs-6">
-            <h1><span class="hidden-xs">Our </span>Collections &amp; Exhibits</h1>
-        </div>
-
-        <div style="padding-top:10px;" class="col-xs-6">
-            <form class="searchbox">
-                <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections">
-                <input type="submit" class="searchbox-submit">
-                <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
-            </form>
-        </div>
-    </div>
   {% if view == 'collections' %}
     {% include 'lib_collections/header_collections.html' %}
     <div class="row">
