@@ -1,0 +1,88 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+  <article>
+    {% if self.thumbnail %}
+      {% image self.thumbnail width-200 %}
+      {% if self.thumbnail_caption %}
+        <p>{{ self.thumbnail_caption }}</p>
+      {% endif %}
+    {% endif %}
+
+    <p>{{ self.full_description }}</p>
+
+    {% if self.exhibit_open_date %}
+      <h2>Opening Date</h2>
+      {{ self.exhibit_open_date }}
+    {% endif %}
+
+    {% if self.exhibit_close_date %}
+      <h2>Closing Date</h2>
+      {{ self.exhibit_close_date }}
+    {% endif %}
+
+    {% if self.exhibit_location %}
+      <h2>Location</h2>
+      <p>{{ self.exhibit_location.title}}</p>
+    {% endif %}
+
+    {% if self.exhibit_daily_hours %}
+      <h2>Daily Hours</h2>
+      <p>{{ self.exhibit_daily_hours }}</p>
+    {% endif %}
+
+    {% if self.exhibit_cost %}
+      <h2>Exhibit Cost</h2>
+      <p>{{ self.exhibit_cost }}</p>
+    {% endif %}
+
+    {% if self.space_type %}
+      <h2>Space Type</h2>
+      <p>{{ self.space_type }}</p>
+    {% endif %}
+
+    {% if self.web_exhibit_url %}
+      <h2>Web Exhibit</h2>
+      <p><a href="{{ self.web_exhibit_url }}">Web Exhibit</a></p>
+    {% endif %}
+
+    {% if self.publication_description %}
+      <h2>Publication Description</h2>
+      <p>{{ self.publication_description }}</p>
+    {% endif %}
+
+    {% if self.publication_price %}
+      <h2>Publication Price</h2>
+      <p>{{ self.publication_price }}</p>
+    {% endif %}
+
+    {% if self.publication_url %}
+      <h2>Publication URL</h2>
+      <p><a href="{{ self.publication_url }}">Link to Publication</a></p>
+    {% endif %}
+
+    {% if self.ordering_information %}
+      <h2>Ordering Information</h2>
+      <p><a href="http://www.lib.uchicago.edu/e/scrc/exhibits/puborder.html">Ordering Information</a></p>
+    {% endif %}
+
+    {% if self.exhibit_text %}
+      <h2>Exhibit Text</h2>
+      <p><a href="{{ self.exhibit_text }}">Exhibit Text</a></p>
+    {% endif %}
+
+    {% if self.exhibit_checklist %}
+      <h2>Exhibit Checklist</h2>
+      <p><a href="{{ self.exhibit_checklist }}">Exhibit Checklist</a></p>
+    {% endif %}
+
+    {% if self.staff_contact %}
+      <h2>More Information</h2>
+      <p>For more information, contact <a href="mailto:{{ self.staff_contact.vcards.first.email }}">{{ self.staff_contact.title }}</a>.</p>
+    {% endif %}
+  </article>
+{% endblock %}
