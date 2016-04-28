@@ -30,8 +30,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     view_more_link_label = models.CharField(max_length=100, blank=True)
 
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
-        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'redirects.RedirectPage', \
-        'units.UnitPage', 'ask_a_librarian.AskPage'] 
+        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
+        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),

@@ -365,3 +365,146 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         index.SearchField('guide_link_text'),
         index.SearchField('guide_link_url'),
     )
+
+
+class ExhibitPageSubjectPlacement(Orderable, models.Model):
+    page = ParentalKey('lib_collections.ExhibitPage', related_name='exhibit_subject_placements')
+    subject = models.ForeignKey('subjects.Subject', related_name='+')
+
+    class Meta:
+        verbose_name = "Subject Placement"
+        verbose_name_plural = "Subbject Placements"
+
+    panels = [
+        SnippetChooserPanel('subject'),
+    ]
+
+    def __str__(self):
+        return self.page.title + " -> " + Subject.name
+
+
+# Interstitial model for linking ExhibitPages to related CollectionPages
+class ExhibitPageRelatedCollectionPagePlacement(Orderable, models.Model):
+    """
+    Creates a through table to attach related CollectionPages to
+    the ExhibitPage type. 
+    """
+    parent = ParentalKey(
+        'lib_collections.ExhibitPage', 
+        related_name='exhibit_page_related_collection_placement', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL
+    )
+
+    related_collection = models.ForeignKey(
+        'CollectionPage', 
+        related_name='exhibit_page_related_collection', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL
+    )
+
+
+# Interstitial model for linking the DonorPages to the ExhibitPage
+class ExhibitPageDonorPagePlacement(Orderable, models.Model):
+    """
+    Create a through table for linking donor pages to exhibit pages
+    """
+    parent = ParentalKey(
+        'lib_collections.ExhibitPage', 
+        related_name='exhibit_page_donor_page_list_placement', 
+        null=True, 
+        blank=False, 
+        on_delete=models.SET_NULL
+    )
+
+    donor = models.ForeignKey(
+        'public.DonorPage', 
+        related_name='exhibit_page_donor_page', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL
+    )
+
+
+class ExhibitPage(PublicBasePage):
+    """
+    Pages for individual exhibits.
+    """
+    short_abstract = models.TextField(null=False, blank=False, default='')
+    full_description = models.TextField(null=False, blank=False, default='')
+    thumbnail = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    ) 
+    thumbnail_caption = models.TextField(null=False, blank=True, default='')
+    staff_contact = models.ForeignKey('staff.StaffPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
+    student_exhibit = models.BooleanField(default=False)
+
+    exhibit_open_date = models.DateField(blank=True, null=True)
+    exhibit_close_date = models.DateField(blank=True, null=True)
+    exhibit_location = models.ForeignKey('public.LocationPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
+    exhibit_daily_hours = models.CharField(blank=True, null=False, default='', max_length=255)
+    exhibit_cost = models.CharField(blank=True, null=False, default='', max_length=255)
+    space_type = models.CharField(null=False, blank=True, choices=(('Case', 'Case'), ('Gallery', 'Gallery')), max_length=255)
+    web_exhibit_url = models.URLField("Web Exhibit URL", blank=True)
+    publication_description = models.CharField(null=False, blank=True, default='', max_length=255)
+    publication_price = models.CharField(null=False, blank=True, default='', max_length=255)
+    publication_url = models.URLField("Publication URL", blank=True)
+    ordering_information = models.BooleanField(default=False)
+    exhibit_text = models.URLField("Exhibit Text", blank=True)
+    exhibit_checklist = models.URLField("Exhibit Checklist", blank=True)
+
+    subpage_types = []
+
+    content_panels = Page.content_panels + [
+        FieldPanel('short_abstract'),
+        FieldPanel('full_description'),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail_caption')
+            ],
+            heading='Thumbnail'
+        ),
+        InlinePanel('exhibit_subject_placements', label='Subjects'),
+        InlinePanel('exhibit_page_related_collection_placement', label='Related Collection'),
+        InlinePanel('exhibit_page_donor_page_list_placement', label='Donor'),
+        FieldPanel('student_exhibit'),
+        FieldPanel('exhibit_open_date'),
+        FieldPanel('exhibit_close_date'),
+        FieldPanel('exhibit_location'),
+        FieldPanel('exhibit_daily_hours'),
+        FieldPanel('exhibit_cost'),
+        FieldPanel('space_type'),
+        FieldPanel('web_exhibit_url'),
+        FieldPanel('publication_description'),
+        FieldPanel('publication_price'),
+        FieldPanel('publication_url'),
+        FieldPanel('ordering_information'),
+        FieldPanel('exhibit_text'),
+        FieldPanel('exhibit_checklist'),
+        FieldPanel('staff_contact'),
+    ] + PublicBasePage.content_panels
+
+    search_fields = PublicBasePage.search_fields + (
+        index.SearchField('short_abstract'),
+        index.SearchField('full_description'),
+        index.SearchField('thumbnail'),
+        index.SearchField('thumbnail_caption'),
+        index.SearchField('exhibit_location'),
+        index.SearchField('exhibit_daily_hours'),
+        index.SearchField('exhibit_cost'),
+        index.SearchField('space_type'),
+        index.SearchField('web_exhibit_url'),
+        index.SearchField('publication_description'),
+        index.SearchField('publication_price'),
+        index.SearchField('publication_url'),
+        index.SearchField('staff_contact'),
+    )
