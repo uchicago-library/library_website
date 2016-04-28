@@ -13,12 +13,22 @@
           <tr class="table-header">
             <th colspan="4">All Collections</th>
           </tr>
-          <tr>
-            <td><img class="img-responsive" src="images/c-thumb1.jpg"></td>
-            <td><strong><a href="#">Awesome Collection Title</a></strong><br>Short description about collection. Sed quanta sit alias, nunc tantum possitne esse tanta. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quae diligentissime contra Aristonem dicuntur a Chryippo.</td>
-            <td><strong>Formats</strong><br><a href="#">Manuscripts</a><br><a href="#">Digital Photography</a><br><a href="#">Rare Books</a></td>
-            <td><strong>Subjects</strong><br><a href="#">Magical Law</a><br><a href="#">Magic Criminal History</a><br>Forbidden Spells<br><a href="#">Azkaban History</a></td>
-          </tr>
+          {% for collection_page in collections %}
+            <tr>
+              <td>{% if collection_page.thumbnail %}<img class="img-responsive" src=""/>{% endif %}</td>
+              <td><strong><a href="{{ collection_page.url_path }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
+              <td><strong>Formats</strong><br/>
+                {% for collection_placement in collection_page.collection_placements.all %}
+                  <a href="#">{{ collection_placement.format }}</a><br/>
+                {% endfor %}
+              </td>
+              <td><strong>Subjects</strong><br/>
+                {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
+                  <a href="#">{{ collection_subject_placement.subject }}</a><br/>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

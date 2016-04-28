@@ -39,18 +39,9 @@
         Format <span class="caret"></span>
       </button>
       <div class="dropdown-menu listings-dropdown">
-        <a href="#" class="dropdown-item">Digital</a><br>
-        <a href="#" class="dropdown-item">Archives &amp; Manuscripts</a><br>
-        <a href="#" class="dropdown-item">Images</a><br>
-        <a href="#" class="dropdown-item">Photographs</a><br>
-        <a href="#" class="dropdown-item">Maps</a><br>
-        <a href="#" class="dropdown-item">Music Scores</a><br>
-        <a href="#" class="dropdown-item">Books &amp; Journals</a><br>
-        <a href="#" class="dropdown-item">Reference Works</a><br>
-        <a href="#" class="dropdown-item">Microform</a><br>
-        <a href="#" class="dropdown-item">Statistics &amp; Datasets</a><br>
-        <a href="#" class="dropdown-item">Video</a><br>
-        <a href="#" class="dropdown-item">Audio</a>
+        {% for format in formats %}
+          <a href=".?view=collections&amp;format={{ format|urlencode }}" class="dropdown-item">{{ format }}</a> 
+        {% endfor %}
       </div>
     </div>
   </div>
