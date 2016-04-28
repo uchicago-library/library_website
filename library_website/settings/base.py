@@ -170,6 +170,10 @@ PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
 POSTAL_CODE_FORMAT = '^[0-9]{5}$'
 POSTAL_CODE_ERROR_MSG = 'Please enter the postal code as a five digit number, e.g. 60637'
 
+# ORCID
+ORCID_FORMAT = '^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$'
+ORCID_ERROR_MSG = 'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444'
+
 # django-compressor settings
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),

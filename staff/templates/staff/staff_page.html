@@ -76,6 +76,10 @@
         {% endif %}
       {% endif %}
 
+      {% if self.orcid %}
+        <p>ORCID: {{ self.orcid }}</p>
+      {% endif %}
+
       {% if subjects %}
         <h2>Subjects</h2>
         <ul>
