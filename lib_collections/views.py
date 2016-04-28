@@ -12,6 +12,15 @@ def collections(request):
 
     subjects = []
     # this needs to fold the see alsos in. 
+    
+    # JEJ TODO:
+    # make a new subjects list to populate the subject pulldown.
+    # list subjects whose parent has no parent, plus law. So grandchild subjects online.
+
+    # for the code below, list all subjects that are children of the subjects in the list
+    # above, plus anything with a libguide id. right now that is equal to
+    # business, medicine and law. See DB's "collections subjects" lucid chart for more 
+    # info. 
     for s in Subject.objects.all():
         subjects.append({
             'see_also': None,
