@@ -25,22 +25,24 @@
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
     <div class="btn-group">
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-        Subject <span class="caret"></span>
+        {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
       </button>
       <div class="dropdown-menu listings-dropdown">
-        <a href="#" class="dropdown-item">Action</a><br>
-        <a href="#" class="dropdown-item">Another action</a>
-        <a href="#" class="dropdown-item">Something else here</a>
+        {% if subject %}<a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a><br/>{% endif %}
+        {% for subject in subjects_pulldown %}
+          <a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a><br/>
+        {% endfor %}
       </div>
     </div>
 
     <div class="btn-group">
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-        Format <span class="caret"></span>
+        {% if format %}{{ format }}{% else %}Format{% endif %} <span class="caret"></span>
       </button>
       <div class="dropdown-menu listings-dropdown">
-        {% for format in formats %}
-          <a href=".?view=collections&amp;format={{ format|urlencode }}" class="dropdown-item">{{ format }}</a> 
+        {% if format %}<a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a><br/>{% endif %}
+        {% for format in formats_pulldown %}
+          <a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}&amp;format={{ format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ format }}</a><br/>
         {% endfor %}
       </div>
     </div>
@@ -48,6 +50,12 @@
 
   <div style="padding-top:7px" class="col-xs-5 col-sm-3">
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
-    <input type="checkbox" value="ebooks" id="checkboxebooks"> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+    <form action="." method="get">
+      <input name="digital" type="checkbox" id="checkboxebooks"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+      {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
+      {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
+      <input type="submit"/>
+    </form>
+    
   </div>
 </div>

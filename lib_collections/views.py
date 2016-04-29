@@ -3,16 +3,43 @@ from lib_collections.models import CollectionPage, CollectionPageFormatPlacement
 from subjects.models import Subject
 
 def collections(request):
-    # formats
-    collection_placement_ids = CollectionPage.objects.all().values_list('collection_placements', flat=True)
-    collection_page_format_placement_ids = CollectionPageFormatPlacement.objects.filter(id__in=collection_placement_ids)
-    format_ids = CollectionPageFormatPlacement.objects.filter(id__in=collection_page_format_placement_ids).values_list('format', flat=True).distinct()
-    formats = Format.objects.filter(id__in=format_ids).values_list('text', flat=True)
-    formats = sorted(formats)
+    # PARAMETERS
+    digital = request.GET.get('digital', None)
+    format = request.GET.get('format', None)
+    if not format in Format.objects.all().values_list('text', flat=True):
+        format = None
+    subject = request.GET.get('subject', None)
+    if not subject in Subject.objects.all().values_list('name', flat=True):
+        subject = None
+    view = request.GET.get('view', 'collections')
+    if not view in ['collections', 'exhibits', 'subjects']:
+        view = 'collections'
+
+    # filter collections.
+    collections = CollectionPage.objects.all()
+
+    if digital:
+        collections = collections.filter(collection_placements__format__text='Digital')
+
+    if format:
+        collections = collections.filter(collection_placements__format__text=format)
+
+    if subject:
+        collections = collections.filter(collection_subject_placements__subject__name=subject)
+
+    # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
+
+    # we'll need some kind of way to only get formats and subjects for things where it's possible here.  
+    # sorted(CollectionPageFormatPlacement.objects.all().values_list('format__text', flat=True).distinct())
+    formats = Format.objects.all().values_list('text', flat=True)
+
+    # the formats pulldown should skip 'Digital'. That shows up as a checkbox. 
+    tmp = sorted(list(set(CollectionPage.objects.all().values_list('collection_placements__format__text', flat=True))))
+    formats_pulldown = [f for f in tmp if f not in ['Digital']]
 
     subjects = []
     # this needs to fold the see alsos in. 
-    
+
     # JEJ TODO:
     # make a new subjects list to populate the subject pulldown.
     # list subjects whose parent has no parent, plus law. So grandchild subjects online.
@@ -33,16 +60,22 @@ def collections(request):
             })
     subjects = sorted(subjects, key=lambda s: s['name'])
 
-    # PARAMETERS
-    format = request.GET.get('format', None)
-    if not format in formats:
-        format = None
-    view = request.GET.get('view', 'collections')
+    # for the subject pulldown, find subjects that are first generation children- their parents should have no parent. 
+    # still need these:
+    # Area and Cultural Studies
+    # Social Sciences
+    # Biological Sciences
+    # Physical Sciences
+    subjects_pulldown = ['Art, Architecture and Photography', 'Business', 'Humanities and Social Science', 'Law', 'Medicine']
 
     return render(request, 'lib_collections/collections_index_page.html', {
-        'collections': CollectionPage.objects.all(),
+        'collections': collections,
+        'digital': digital,
         'format': format,
         'formats': formats,
+        'formats_pulldown': formats_pulldown,
+        'subject': subject,
         'subjects': subjects,
+        'subjects_pulldown': subjects_pulldown,
         'view': view
     })

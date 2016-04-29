@@ -19,12 +19,16 @@
               <td><strong><a href="{{ collection_page.url_path }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
               <td><strong>Formats</strong><br/>
                 {% for collection_placement in collection_page.collection_placements.all %}
-                  <a href="#">{{ collection_placement.format }}</a><br/>
+                  {% if collection_placement.format == 'Digital' %}
+                    <a href=".?view=collections&amp;digital=on{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}">Digital</a><br/>
+                  {% else %}
+                    <a href=".?view=collections&amp;format={{ collection_placement.format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}">{{ collection_placement.format }}</a><br/>
+                  {% endif %}
                 {% endfor %}
               </td>
               <td><strong>Subjects</strong><br/>
                 {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
-                  <a href="#">{{ collection_subject_placement.subject }}</a><br/>
+                  <a href=".?view=collections&amp;subject={{ collection_subject_placement.subject|urlencode }}">{{ collection_subject_placement.subject }}</a><br/>
                 {% endfor %}
               </td>
             </tr>
