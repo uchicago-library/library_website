@@ -77,7 +77,7 @@ class CollectionPageSubjectPlacement(Orderable, models.Model):
     ]
 
     def __str__(self):
-        return self.page.title + " -> " + Subject.name
+        return self.page.title + " -> " + self.subject.name
 
 
 # Interstitial model for linking the DonorPages to the CollectionPage
