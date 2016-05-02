@@ -1,5 +1,6 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -39,6 +40,43 @@
   {% endif %}
   {% if view == 'exhibits' %}
     {% include 'lib_collections/header_exhibits.html' %}
+    <div class="row">
+      <table class="table table-striped coll-list">
+        <tbody>
+          <tr class="table-header">
+            <th colspan="4">Current Exhibits</th>
+          </tr>
+          <tr class="table-header">
+            <th colspan="4">All Exhibits</th>
+          </tr>
+          {% for exhibit in exhibits %}
+            <tr>
+              <td>
+                {% image exhibit.thumbnail fill-100x100 %}
+              </td>
+              <td>
+                <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
+                <br/>
+                {{ exhibit.short_abstract }}
+              </td>
+              <td>
+                <strong>Locations</strong>
+                <br/>
+                <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a>
+              </td>
+              <td>
+                <strong>Subjects</strong>
+                <br/>
+                {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                  <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
   {% endif %}
   {% if view == 'subjects' %}
     {% include 'lib_collections/header_subject.html' %}

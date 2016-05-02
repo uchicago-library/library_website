@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, Format
+from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, ExhibitPage, Format
+from public.models import LocationPage
 from subjects.models import Subject
 
 def collections(request):
@@ -8,6 +9,9 @@ def collections(request):
     format = request.GET.get('format', None)
     if not format in Format.objects.all().values_list('text', flat=True):
         format = None
+    location = request.GET.get('location', None)
+    if not location in LocationPage.objects.live().values_list('title', flat=True):
+        location = None
     subject = request.GET.get('subject', None)
     if not subject in Subject.objects.all().values_list('name', flat=True):
         subject = None
@@ -27,6 +31,13 @@ def collections(request):
     if subject:
         collections = collections.filter(collection_subject_placements__subject__name=subject)
 
+    # fiter exhibits.
+    exhibits = ExhibitPage.objects.live()
+    if location:
+        exhibits = exhibits.filter(exhibit_location__title=location)
+    if subject:
+        exhibits = exhibits.filter(exhibit_subject_placements__subject__name=subject)
+
     # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
 
     # we'll need some kind of way to only get formats and subjects for things where it's possible here.  
@@ -36,6 +47,9 @@ def collections(request):
     # the formats pulldown should skip 'Digital'. That shows up as a checkbox. 
     tmp = sorted(list(set(CollectionPage.objects.all().values_list('collection_placements__format__text', flat=True))))
     formats_pulldown = [f for f in tmp if f not in ['Digital']]
+
+    # locations
+    locations = sorted(LocationPage.objects.live().values_list('title', flat=True))
 
     subjects = []
     # this needs to fold the see alsos in. 
@@ -71,9 +85,11 @@ def collections(request):
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
         'digital': digital,
+        'exhibits': exhibits,
         'format': format,
         'formats': formats,
         'formats_pulldown': formats_pulldown,
+        'locations': locations,
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,

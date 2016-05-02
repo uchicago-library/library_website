@@ -25,12 +25,12 @@
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
     <div class="btn-group">
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-        Subject Area <span class="caret"></span>
+        {% if subject %}{{ subject }}{% else %}Subject Area{% endif %} <span class="caret"></span>
       </button>
       <div class="dropdown-menu listings-dropdown">
-        <a href="#" class="dropdown-item">Action</a><br>
-        <a href="#" class="dropdown-item">Another action</a>
-        <a href="#" class="dropdown-item">Something else here</a>
+        {% for subject in subjects_pulldown %}
+          <a href=".?view=subject&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a><br>
+        {% endfor %}
       </div>
     </div>
   </div>

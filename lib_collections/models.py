@@ -66,7 +66,7 @@ class CollectionPageFormatPlacement(Orderable, models.Model):
 
 class CollectionPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey('lib_collections.CollectionPage', related_name='collection_subject_placements')
-    subject = models.ForeignKey('subjects.Subject', related_name='+')
+    subject = models.ForeignKey('subjects.Subject', related_name='collection_pages')
 
     class Meta:
         verbose_name = "Subject Placement"
@@ -369,7 +369,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
 
 class ExhibitPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey('lib_collections.ExhibitPage', related_name='exhibit_subject_placements')
-    subject = models.ForeignKey('subjects.Subject', related_name='+')
+    subject = models.ForeignKey('subjects.Subject', related_name='exhibit_pages')
 
     class Meta:
         verbose_name = "Subject Placement"
@@ -380,7 +380,7 @@ class ExhibitPageSubjectPlacement(Orderable, models.Model):
     ]
 
     def __str__(self):
-        return self.page.title + " -> " + Subject.name
+        return self.page.title + " -> " + self.subject.name
 
 
 # Interstitial model for linking ExhibitPages to related CollectionPages

@@ -25,22 +25,28 @@
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
     <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-      Subject <span class="caret"></span>
+      {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
     </button>
     <div class="dropdown-menu listings-dropdown">
-      <a href="#" class="dropdown-item">Action</a><br>
-      <a href="#" class="dropdown-item">Another action</a>
-      <a href="#" class="dropdown-item">Something else here</a>
+      {% if subject %}
+        <a href=".?view=exhibits" class="dropdown-item">All subjects</a><br>
+      {% endif %}
+      {% for subject in subjects_pulldown %}
+        <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a><br>
+      {% endfor %}
     </div>
   </div>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-      Location <span class="caret"></span>
+      {% if location %}{{ location }}{% else %}Location{% endif %} <span class="caret"></span>
     </button>
     <div class="dropdown-menu listings-dropdown">
-      <a href="#" class="dropdown-item">Crerar Library</a><br>
-      <a href="#" class="dropdown-item">Regenstein Library</a><br>
-      <a href="#" class="dropdown-item">Special Collections</a>
+      {% if location %}
+        <a href=".?view=exhibits" class="dropdown-item">All locations</a><br>
+      {% endif %}
+      {% for l in locations %}
+        <a href=".?view=exhibits&amp;location={{ l|urlencode }}" class="dropdown-item">{{ l }}</a><br/>
+      {% endfor %}
     </div>
   </div>
 </div>
