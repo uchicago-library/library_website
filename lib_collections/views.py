@@ -3,6 +3,7 @@ from lib_collections.models import CollectionPage, CollectionPageFormatPlacement
 from public.models import LocationPage
 from staff.models import StaffPage
 from subjects.models import Subject, SubjectParentRelations
+from wagtail.wagtailsearch.backends import get_search_backend
 
 def collections(request):
     # PARAMETERS
@@ -13,6 +14,7 @@ def collections(request):
     location = request.GET.get('location', None)
     if not location in LocationPage.objects.live().values_list('title', flat=True):
         location = None
+    search = request.GET.get('search', None)
     subject = request.GET.get('subject', None)
     if not subject in Subject.objects.all().values_list('name', flat=True):
         subject = None
@@ -21,23 +23,37 @@ def collections(request):
         view = 'collections'
 
     # filter collections.
-    collections = CollectionPage.objects.all()
+    collections = []
+    if view == 'collections':
+        collections = CollectionPage.objects.all()
+	
+        if digital:
+            collections = collections.filter(collection_placements__format__text='Digital')
 
-    if digital:
-        collections = collections.filter(collection_placements__format__text='Digital')
+        if format:
+            collections = collections.filter(collection_placements__format__text=format)
 
-    if format:
-        collections = collections.filter(collection_placements__format__text=format)
-
-    if subject:
-        collections = collections.filter(collection_subject_placements__subject__name=subject)
+        if search:
+            collections = collections.search(search)
+	
+        if subject:
+            subject_ids = Subject.objects.get(name=subject).get_descendants()
+            collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
 
     # fiter exhibits.
-    exhibits = ExhibitPage.objects.live()
-    if location:
-        exhibits = exhibits.filter(exhibit_location__title=location)
-    if subject:
-        exhibits = exhibits.filter(exhibit_subject_placements__subject__name=subject)
+    exhibits = []
+    if view == 'exhibits':
+        exhibits = ExhibitPage.objects.live()
+
+        if location:
+            exhibits = exhibits.filter(exhibit_location__title=location)
+
+        if search:
+            exhibits = exhibits.search(search)
+
+        if subject:
+            subject_ids = Subject.objects.get(name=subject).get_descendants()
+            exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids)
 
     # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
 
@@ -63,7 +79,14 @@ def collections(request):
     # above, plus anything with a libguide id. right now that is equal to
     # business, medicine and law. See DB's "collections subjects" lucid chart for more 
     # info. 
-    for s in Subject.objects.all():
+
+    subjects_queryset = Subject.objects.all()
+
+    if search:
+        s = get_search_backend()
+        subjects_queryset = s.search(search, Subject)
+
+    for s in subjects_queryset:
         parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
         subjects.append({
             'has_collections': CollectionPageSubjectPlacement.objects.filter(subject = s).exists(),
@@ -102,6 +125,7 @@ def collections(request):
         'formats': formats,
         'formats_pulldown': formats_pulldown,
         'locations': locations,
+        'search': search,
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,

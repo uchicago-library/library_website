@@ -5,7 +5,8 @@
 
   <div style="padding-top:10px;" class="col-xs-6">
     <form class="searchbox">
-      <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search subjects"/>
+      <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search subjects"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
+      <input name="view" type="hidden" value="subjects"/>
       <input type="submit" style="background-color: transparent;" class="searchbox-submit"/>
       <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
     </form>

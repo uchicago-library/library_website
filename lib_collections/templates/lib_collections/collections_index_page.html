@@ -27,7 +27,8 @@
                   {% endif %}
                 {% endfor %}
               </td>
-              <td><strong>Subjects</strong><br/>
+              <td>
+                <strong>Subjects</strong><br/>
                 {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
                   <a href=".?view=collections&amp;subject={{ collection_subject_placement.subject|urlencode }}">{{ collection_subject_placement.subject }}</a><br/>
                 {% endfor %}
@@ -65,11 +66,13 @@
                 <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a>
               </td>
               <td>
-                <strong>Subjects</strong>
-                <br/>
-                {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                  <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
-                {% endfor %}
+                {% if exhibit.exhibit_subject_placements.all %}
+                  <strong>Subjects</strong>
+                  <br/>
+                  {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                  {% endfor %}
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
