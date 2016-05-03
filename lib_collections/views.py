@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, ExhibitPage, Format
+from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, ExhibitPage, ExhibitPageSubjectPlacement, Format
 from public.models import LocationPage
-from subjects.models import Subject
+from staff.models import StaffPage
+from subjects.models import Subject, SubjectParentRelations
 
 def collections(request):
     # PARAMETERS
@@ -63,13 +64,24 @@ def collections(request):
     # business, medicine and law. See DB's "collections subjects" lucid chart for more 
     # info. 
     for s in Subject.objects.all():
+        parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
         subjects.append({
-            'see_also': None,
-            'name': s.name
+            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject = s).exists(),
+            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject = s).exists(),
+            'has_subject_specialists': StaffPage.objects.filter(staff_subject_placements__subject = s).exists(),
+            'libguide_url': s.libguide_url,
+            'name': s.name,
+            'parents': parents,
+            'see_also': None
         })
         for see_also in s.see_also.all():
             subjects.append({
+                'has_collections': False,
+                'has_exhibits': False,
+                'has_subject_specialists': False,
+                'libguide_url': None,
                 'name': see_also.alias,
+                'parents': [],
                 'see_also': see_also.snippet.name
             })
     subjects = sorted(subjects, key=lambda s: s['name'])
