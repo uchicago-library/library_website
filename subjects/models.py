@@ -44,6 +44,20 @@ class Subject(ClusterableModel, index.Indexed):
         InlinePanel('see_also', label="Aliases")
     ]
 
+    def get_descendants(self, include_self = True):
+        subject_ids_to_check = [self.id]
+        checked_subjects = []
+
+        while subject_ids_to_check:
+            s = subject_ids_to_check.pop()
+            checked_subjects.append(s)
+            subject_ids_to_check = subject_ids_to_check + list(SubjectParentRelations.objects.filter(parent__id=s).values_list("child", flat=True))
+
+        if not include_self: 
+            checked_subjects.remove(self.id)
+
+        return Subject.objects.filter(id__in=checked_subjects)
+
     def __str__(self):
         return self.name
 
