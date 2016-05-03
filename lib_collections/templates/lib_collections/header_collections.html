@@ -53,7 +53,7 @@
   <div style="padding-top:7px" class="col-xs-5 col-sm-3">
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
     <form action="." method="get">
-      <input name="digital" type="checkbox" id="checkboxebooks"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+      <input name="digital" type="checkbox" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
       {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
       {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
       <input type="submit"/>

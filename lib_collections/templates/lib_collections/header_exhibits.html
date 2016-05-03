@@ -30,10 +30,10 @@
     </button>
     <div class="dropdown-menu listings-dropdown">
       {% if subject %}
-        <a href=".?view=exhibits" class="dropdown-item">All subjects</a><br>
+        <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" class="dropdown-item">All subjects</a><br>
       {% endif %}
       {% for subject in subjects_pulldown %}
-        <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a><br>
+        <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" class="dropdown-item">{{ subject }}</a><br>
       {% endfor %}
     </div>
   </div>
@@ -54,6 +54,13 @@
 
 <div style="padding-top:7px" class="col-xs-5 col-sm-3">
   <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
-    <input type="checkbox" value="ebooks" id="checkboxebooks"> web exhibits &nbsp;
+    <form action="." method="get">
+      <input name="digital" type="checkbox" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> web exhibits &nbsp;
+      <input name="view" type="hidden" value="exhibits"/>
+      {% if location %}<input name="location" type="hidden" value="{{ location|urlencode }}"/>{% endif %}
+      {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
+      {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
+      <input type="submit"/>
+    </form>
   </div>
 </div>

@@ -4,9 +4,9 @@ $(document).ready(function(){
      */
 
     // hide the submit button if javascript is enabled. 
-    $('#checkboxebooks').closest('form').find('input[type="submit"]').hide();
+    $('#checkboxdigital').closest('form').find('input[type="submit"]').hide();
     // when the checkbox is clicked, submit the form automatically. 
-    $('#checkboxebooks').change(function() {
+    $('#checkboxdigital').change(function() {
         $(this).closest('form').submit();
     });
 });

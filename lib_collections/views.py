@@ -5,6 +5,8 @@ from staff.models import StaffPage
 from subjects.models import Subject, SubjectParentRelations
 from wagtail.wagtailsearch.backends import get_search_backend
 
+import datetime
+
 def collections(request):
     # PARAMETERS
     digital = request.GET.get('digital', None)
@@ -43,17 +45,23 @@ def collections(request):
     # fiter exhibits.
     exhibits = []
     if view == 'exhibits':
-        exhibits = ExhibitPage.objects.live()
+        exhibits = ExhibitPage.objects.live().order_by('title')
+
+        if digital:
+            exhibits = exhibits.exclude(web_exhibit_url = '')
 
         if location:
             exhibits = exhibits.filter(exhibit_location__title=location)
 
-        if search:
-            exhibits = exhibits.search(search)
-
         if subject:
             subject_ids = Subject.objects.get(name=subject).get_descendants()
             exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids)
+
+        exhibits_current = exhibits.filter(exhibit_open_date__lt = datetime.datetime.now().date()).filter(exhibit_close_date__gt = datetime.datetime.now().date())
+
+        if search:
+            exhibits = exhibits.search(search)
+            exhibits_current = exhibits_current.search(search)
 
     # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
 
@@ -89,8 +97,8 @@ def collections(request):
     for s in subjects_queryset:
         parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
         subjects.append({
-            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject = s).exists(),
-            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject = s).exists(),
+            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
+            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
             'has_subject_specialists': StaffPage.objects.filter(staff_subject_placements__subject = s).exists(),
             'libguide_url': s.libguide_url,
             'name': s.name,
@@ -121,6 +129,7 @@ def collections(request):
         'collections': collections,
         'digital': digital,
         'exhibits': exhibits,
+        'exhibits_current': exhibits_current,
         'format': format,
         'formats': formats,
         'formats_pulldown': formats_pulldown,

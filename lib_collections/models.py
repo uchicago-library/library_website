@@ -494,6 +494,10 @@ class ExhibitPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + (
+        index.FilterField('exhibit_open_date'),
+        index.FilterField('exhibit_close_date'),
+        index.FilterField('subject_id'),
+        index.FilterField('web_exhibit_url'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
         index.SearchField('thumbnail'),
