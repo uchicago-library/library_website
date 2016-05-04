@@ -46,7 +46,7 @@
         <a href=".?view=exhibits" class="dropdown-item">All locations</a><br>
       {% endif %}
       {% for l in locations %}
-        <a href=".?view=exhibits&amp;location={{ l|urlencode }}" class="dropdown-item">{{ l }}</a><br/>
+        <a href=".?view=exhibits&amp;location={{ l|urlencode }}{%if search %}&amp;search={{ search|urlencode }}{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ l }}</a><br/>
       {% endfor %}
     </div>
   </div>
