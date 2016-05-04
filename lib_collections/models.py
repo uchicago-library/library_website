@@ -497,6 +497,7 @@ class ExhibitPage(PublicBasePage):
         index.FilterField('exhibit_open_date'),
         index.FilterField('exhibit_close_date'),
         index.FilterField('subject_id'),
+        index.FilterField('title'),
         index.FilterField('web_exhibit_url'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
