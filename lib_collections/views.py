@@ -60,8 +60,8 @@ def collections(request):
         exhibits_current = exhibits.filter(exhibit_open_date__lt = datetime.datetime.now().date()).filter(exhibit_close_date__gt = datetime.datetime.now().date())
 
         if search:
-            exhibits = exhibits.search(search)
-            exhibits_current = exhibits_current.search(search)
+            exhibits = exhibits.search(search).results()
+            exhibits_current = exhibits_current.search(search).results()
 
     # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
 
@@ -133,6 +133,7 @@ def collections(request):
         'format': format,
         'formats': formats,
         'formats_pulldown': formats_pulldown,
+        'location': location,
         'locations': locations,
         'search': search,
         'subject': subject,
