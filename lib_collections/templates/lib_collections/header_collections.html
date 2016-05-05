@@ -5,8 +5,7 @@
 
   <div style="padding-top:10px;" class="col-xs-6">
     <form class="searchbox">
-      <!--<input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>-->
-      <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
+      <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
       <input name="view" type="hidden" value="collections"/>
       <input type="submit" style="background-color: transparent;" class="searchbox-submit"/>
       <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
@@ -54,7 +53,9 @@
     <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Limit to</span> &nbsp;
     <form action="." method="get">
       <input name="digital" type="checkbox" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+      <input name="view" type="hidden" value="collections"/>
       {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
+      {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
       {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
       <input type="submit"/>
     </form>

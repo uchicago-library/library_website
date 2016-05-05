@@ -10,6 +10,8 @@ import datetime
 def collections(request):
     # PARAMETERS
     digital = request.GET.get('digital', None)
+    if not digital == 'on':
+        digital = None
     format = request.GET.get('format', None)
     if not format in Format.objects.all().values_list('text', flat=True):
         format = None
@@ -30,20 +32,23 @@ def collections(request):
         collections = CollectionPage.objects.all()
 	
         if digital:
-            collections = collections.filter(collection_placements__format__text='Digital')
+            #collections = collections.filter(collection_placements__format__text='Digital')
+            collections = collections.filter(title="A Century of Progress International Exposition Publications")
+
 
         if format:
             collections = collections.filter(collection_placements__format__text=format)
 
         if search:
             collections = collections.search(search)
-	
+
         if subject:
             subject_ids = Subject.objects.get(name=subject).get_descendants()
             collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
 
     # fiter exhibits.
     exhibits = []
+    exhibits_current = []
     if view == 'exhibits':
         exhibits = ExhibitPage.objects.live().order_by('title')
 

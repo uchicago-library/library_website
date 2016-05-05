@@ -180,6 +180,8 @@ class CollectionPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + (
+        index.FilterField('text'),
+        index.FilterField('title'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
         index.SearchField('thumbnail'),

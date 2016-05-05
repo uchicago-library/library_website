@@ -23,17 +23,17 @@
   </div>
         
   <div class="col-xs-7 col-sm-4 nopadding">
-    <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Filter by</span>
+    <span style="color:#800000;font-weight:600;" class="hidden-xs hidden-sm">Browse by</span>
     <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
       {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
     </button>
     <div class="dropdown-menu listings-dropdown">
       {% if subject %}
-        <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" class="dropdown-item">All subjects</a><br>
+        <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">All subjects</a><br>
       {% endif %}
       {% for subject in subjects_pulldown %}
-        <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" class="dropdown-item">{{ subject }}</a><br>
+        <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">{{ subject }}</a><br>
       {% endfor %}
     </div>
   </div>
@@ -46,7 +46,7 @@
         <a href=".?view=exhibits" class="dropdown-item">All locations</a><br>
       {% endif %}
       {% for l in locations %}
-        <a href=".?view=exhibits&amp;location={{ l|urlencode }}{%if search %}&amp;search={{ search|urlencode }}{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ l }}</a><br/>
+        <a href=".?view=exhibits&amp;location={{ l|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ l }}</a><br/>
       {% endfor %}
     </div>
   </div>
