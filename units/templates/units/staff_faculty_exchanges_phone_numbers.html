@@ -1,8 +1,11 @@
-{% for facex_phone_pair in facex_phone_pairs %}
-  {% if facex_phone_pair.0 %}
-    {{ facex_phone_pair.0 }}<br/>
+{% for i in lib_room_phone %}
+  {% if i.0 %}
+    <a href="{{ i.0.url }}">{{ i.0.title }}</a><br/>
   {% endif %}
-  {% if facex_phone_pair.1 %}
-    {{ facex_phone_pair.1 }}<br/>
+  {% if i.1 %}
+    Room {{ i.1 }}<br/>
+  {% endif %}
+  {% if i.2 %}
+    {{ i.2 }}<br/>
   {% endif %}
 {% endfor %}
