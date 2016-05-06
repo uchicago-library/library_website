@@ -65,4 +65,7 @@ class Subject(ClusterableModel, index.Indexed):
         index.SearchField('name', partial_match=True),
     ]
 
+    class Meta:
+        ordering = ['name']
+
 
