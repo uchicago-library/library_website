@@ -192,6 +192,8 @@ def units(request):
     if view == 'department' and query:
         sort = 'alphabetical'
 
+    department_label = department.split(' - ').pop()
+
     # staff pages
     staff_pages_all = []
     staff_pages = []
@@ -254,6 +256,7 @@ def units(request):
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
         'department': department,
+        'department_label': department_label,
         'departments': get_departments(library),
         'hierarchical_units': hierarchical_html,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Law Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
