@@ -77,9 +77,7 @@
                                     <td>
                                         {% if staff_page.staff_subject_placements.all %}
                                             <strong>Subject Specialties</strong><br/>
-                                            {% for subject in staff_page.staff_subject_placements.all %}
-                                                <a href="/collections/?view=subjects#{{ subject.subject.name|urlencode }}">{{ subject.subject.name }}</a><br/>
-                                            {% endfor %}
+                                            {% staff_subjects staff_page %}
                                         {% endif %}
                                         {% if staff_page.libguide_url %}
                                             <a href="{{ staff_page.libguide_url }}" class="guide-link"><i class="fa fa-file-text-o"></i> Subject Guides</a>

@@ -1,5 +1,6 @@
 from django import template
 from public.models import LocationPage
+from staff.models import StaffPage
 
 register = template.Library()
 
@@ -49,5 +50,15 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
     
     return {
         'lib_room_phone': lib_room_phone
+    }
+    
+@register.inclusion_tag('units/staff_subjects.html')
+def staff_subjects(staff_page):
+    subjects = []
+    for s in staff_page.staff_subject_placements.all():
+        subjects.append(s.subject.name)
+    
+    return {
+        'subjects': sorted(subjects)
     }
     
