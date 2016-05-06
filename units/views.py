@@ -8,10 +8,20 @@ from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlaceme
 from subjects.models import Subject
 from units.models import UnitPage
 
-def get_subjects():
-    subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
-    subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
+def get_subjects(department = None):
+    return Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True)
+    '''
+    if department:
+        if not department.directory_unit:
+            return get_subjects()
+        units = department.directory_unit.get_descendants(True)
+        staff_pks = StaffPagePageVCards.objects.filter(unit__in=units).values_list('page', flat=True).distinct()
+        subjects = StaffPageSubjectPlacement.objects.filter(page__in=staff_pks).values_list('subject', flat=True).distinct()
+    else:
+        subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
+        subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
     return subjects
+    '''
 
 def get_departments(library = None):
     if library == 'Crerar Library':
@@ -218,7 +228,12 @@ def units(request):
             if subject == 'All Subject Specialists':
                 staff_pages_all = staff_pages_all.filter(id__in=StaffPageSubjectPlacement.objects.all().values_list('page', flat=True).distinct())
             else:
-                staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
+                # get a subject and all it's descendants. 
+                subject_and_descendants = Subject.objects.get(name=subject).get_descendants()
+                # from staff page subject placements, get all of the staff that match those subjects. 
+                subject_staff_ids = StaffPageSubjectPlacement.objects.filter(subject__in=subject_and_descendants).values_list('page', flat=True)
+                # filter staff_pages_all to only include those staff pages. 
+                staff_pages_all = staff_pages_all.filter(id__in=subject_staff_ids).order_by('last_name')
 
         # add paging.
         paginator = Paginator(staff_pages_all, 100)
@@ -266,7 +281,7 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
-        'subjects': get_subjects(),
+        'subjects': get_subjects(department),
         'subject': subject,
         'view': view,
         'self': {

@@ -37,11 +37,14 @@ class Subject(ClusterableModel, index.Indexed):
         null=True, 
         blank=True)
 
+    display_in_dropdown = models.BooleanField(default=False)
+
     panels = [
         FieldPanel('name'),
         FieldPanel('libguide_url'),
         InlinePanel('parent_subject', label="Parent"),
-        InlinePanel('see_also', label="Aliases")
+        InlinePanel('see_also', label="Aliases"),
+        FieldPanel('display_in_dropdown')
     ]
 
     def get_descendants(self, include_self = True):
