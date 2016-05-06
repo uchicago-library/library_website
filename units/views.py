@@ -192,7 +192,9 @@ def units(request):
     if view == 'department' and query:
         sort = 'alphabetical'
 
-    department_label = department.split(' - ').pop()
+    department_label = ''
+    if department:
+        department_label = department.split(' - ').pop()
 
     # staff pages
     staff_pages_all = []
