@@ -211,7 +211,10 @@ def units(request):
 
         # subjects.
         if subject:
-            staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
+            if subject == 'All Subject Specialists':
+                staff_pages_all = staff_pages_all.filter(id__in=StaffPageSubjectPlacement.objects.all().values_list('page', flat=True).distinct())
+            else:
+                staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
 
         # add paging.
         paginator = Paginator(staff_pages_all, 100)

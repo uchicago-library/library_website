@@ -39,12 +39,15 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href=".?view=staff{% if query %}&query={{ query|urlencode }}{%endif %}">Subject Specialty</a></li>
-        {% for s in subjects %}
-            <li><a href=".?view=staff&subject={{ s|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ s }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=All%20Subject%20Specialists">All Subject Specialists</a><br>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=Art%2C%20Architecture%20and%20Photography">Art, Architecture and Photography</a><br>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=Business">Business</a><br>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=Humanities%20and%20Social%20Science">Humanities and Social Science</a><br>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=Law">Law</a><br>
+        <a class="dropdown-item" href=".?view=staff&amp;subject=Medicine">Medicine</a><br>
+
+</ul>
+</div>
 
 
 </div>
