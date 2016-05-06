@@ -1,6 +1,7 @@
 from directory_unit.models import DirectoryUnit
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.db.models.expressions import RawSQL
 from django.shortcuts import render
 from django.utils.html import escape
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
@@ -16,27 +17,8 @@ def get_departments(library = None):
     if library == 'Crerar Library':
         departments = [
             'Science Libraries - Administration',
-            'Science Libraries - Astronomy and Astrophysics',
-            'Science Libraries - Biochemistry and Molecular Biology',
-            'Science Libraries - Chemistry',
-            'Science Libraries - Computer Science',
             'Science Libraries - Crerar Library Access Services',
-            'Science Libraries - Ecology and Evolution',
-            'Science Libraries - Geophysical Sciences',
-            'Science Libraries - Human Genetics',
-            'Science Libraries - Mathematics',
-            'Science Libraries - Medicine',
-            'Science Libraries - Microbiology',
-            'Science Libraries - Molecular Genetics and Cell Biology',
-            'Science Libraries - Neurobiology',
-            'Science Libraries - Nursing',
-            'Science Libraries - Organismal Biology and Anatomy',
-            'Science Libraries - Pharmacological and Physiological Sciences',
-            'Science Libraries - Physics',
-            'Science Libraries - Science Technical Services',
-            'Science Libraries - Science and Medicine, History of',
-            'Science Libraries - Statistics',
-            'Science Libraries - Technology'
+            'Science Libraries - Science Technical Services'
         ]
     elif library == 'D\'Angelo Law Library':
         departments = [
@@ -230,9 +212,9 @@ def units(request):
         # subjects.
         if subject:
             staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
-        
+
         # add paging.
-        paginator = Paginator(staff_pages_all, 50)
+        paginator = Paginator(staff_pages_all, 100)
         try:
             staff_pages = paginator.page(page)
         except PageNotAnInteger:
