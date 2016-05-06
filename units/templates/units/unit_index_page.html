@@ -1,5 +1,7 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load units_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -56,43 +58,27 @@
                             {% for staff_page in staff_pages %}
                                 <tr>
                                     <td>
-                                        {# image staff_page.profile_picture #}
+                                        {% image staff_page.profile_picture fill-100x100 %}
                                     </td>
                                     <td>
                                         <strong>{{ staff_page.title }}</strong>
                                         <br/>
-                                        <p>{{ staff_page.vcards.first.title }}, {{ staff_page.vcards.first.unit.name }}</p>
+                                        <p>
+                                          {{ staff_page.vcards.first.title }}<br/>
+                                          {{ staff_page.vcards.first.unit.name }}
+                                        </p>
                                     </td>
                                     <td>
                                         <strong>Contact</strong>
                                         <br/>
-                                        {% regroup staff_page.vcards.all by email as vcards %}
-                                        {% for vcard in vcards %}
-                                            {% if vcard.grouper != '' %}
-                                                <a href="mailto:{{ vcard.grouper }}">{{ vcard.grouper }}</a>
-                                                <br/>
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% regroup staff_page.vcards.all by phone_number as vcards %}
-                                        {% for vcard in vcards %}
-                                            {% if vcard.grouper != '' %}
-                                                {{ vcard.grouper }}
-                                                <br/>
-                                            {% endif %}
-                                        {% endfor %}
-                                        {% regroup staff_page.vcards.all by faculty_exchange as vcards %}
-                                        {% for vcard in vcards %}
-                                            {% if vcard.grouper != '' %}
-                                                {{ vcard.grouper }}
-                                                <br/>
-                                            {% endif %}
-                                        {% endfor %}
+                                        {% staff_email_addresses staff_page %}
+                                        {% staff_faculty_exchanges_phone_numbers staff_page %}
                                     </td>
                                     <td>
                                         {% if staff_page.staff_subject_placements.all %}
                                             <strong>Subject Specialties</strong><br/>
                                             {% for subject in staff_page.staff_subject_placements.all %}
-                                                <a href=".?view=staff&subject={{ subject.subject.name|urlencode }}">{{ subject.subject.name }}</a><br/>
+                                                <a href="/collections/?view=subjects#{{ subject.subject.name|urlencode }}">{{ subject.subject.name }}</a><br/>
                                             {% endfor %}
                                         {% endif %}
                                         {% if staff_page.libguide_url %}
