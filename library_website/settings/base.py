@@ -213,7 +213,7 @@ DEFAULT_UNIT = 2235
 
 # The unit for pages that are assigned to The University of Chicago Libraries.
 # In other words generic pages that are not branch library specific use this number.
-ROOT_UNIT = 2455
+ROOT_UNIT = 3378
 
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s: %s'
