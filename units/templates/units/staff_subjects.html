@@ -1,0 +1,3 @@
+{% for subject in subjects %}
+  <a href="/collections/?view=subjects#{{ subject|urlencode }}">{{ subject }}</a><br/>
+{% endfor %}

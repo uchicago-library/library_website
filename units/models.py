@@ -87,6 +87,7 @@ class UnitPage(BasePage, ContactFields):
     content_panels = Page.content_panels + [
         FieldPanel('contact_point_title'),
         FieldPanel('friendly_name'),
+        FieldPanel('alphabetical_directory_name'),
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_dropdown'),
         FieldPanel('room_number'),

@@ -1,42 +1,59 @@
 from directory_unit.models import DirectoryUnit
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.db.models.expressions import RawSQL
 from django.shortcuts import render
 from django.utils.html import escape
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
 from subjects.models import Subject
 from units.models import UnitPage
 
-def get_subjects():
-    subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
-    subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
-    return subjects
+'''
+"subject" means a subject and all of it's descendants.
+"department" means the directory unit attached to the Unit Page- and all of that directory unit's descendants. .get_descendants(True)
+
+for each subject, check to see there are any entries in the staffpage subject placement table that contain those staff. if so, this one is ok. 
+'''
+def get_subjects(department = None):
+    '''
+    return Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True)
+    '''
+
+    # JEJ make sure this works. 
+    if department and not DirectoryUnit.objects.filter(fullName=department).exists():
+        return get_subjects(None)
+
+    if department:
+        # get the department's directory unit and all of that directory unit's descendants. 
+        units = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
+        # get all staff who have vcards in those departments. 
+        staff_pks = StaffPagePageVCards.objects.filter(unit__in=units).values_list('page', flat=True).distinct()
+        # get all subjects for those staff.
+        subjects_for_department = set(StaffPageSubjectPlacement.objects.filter(page__in=staff_pks).values_list('subject__name', flat=True))
+        # only return relevant possible subjects for the pulldown. 
+        subjects = []
+        for s in Subject.objects.filter(display_in_dropdown=True):
+            subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
+            if subjects_for_department.intersection(subject_and_descendants):
+                subjects.append(s.name)
+        return list(set(subjects))
+            
+    else:
+        # this is the only part of the code that was running before. 
+        placed_subjects_and_descendants = set(StaffPageSubjectPlacement.objects.all().values_list('subject__name', flat=True))
+        subjects = []
+        for s in Subject.objects.filter(display_in_dropdown=True):
+            dropdown_subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
+            if placed_subjects_and_descendants.intersection(dropdown_subject_and_descendants):
+                subjects.append(s.name)
+        return subjects
 
 def get_departments(library = None):
     if library == 'Crerar Library':
         departments = [
             'Science Libraries - Administration',
-            'Science Libraries - Astronomy and Astrophysics',
-            'Science Libraries - Biochemistry and Molecular Biology',
-            'Science Libraries - Chemistry',
-            'Science Libraries - Computer Science',
             'Science Libraries - Crerar Library Access Services',
-            'Science Libraries - Ecology and Evolution',
-            'Science Libraries - Geophysical Sciences',
-            'Science Libraries - Human Genetics',
-            'Science Libraries - Mathematics',
-            'Science Libraries - Medicine',
-            'Science Libraries - Microbiology',
-            'Science Libraries - Molecular Genetics and Cell Biology',
-            'Science Libraries - Neurobiology',
-            'Science Libraries - Nursing',
-            'Science Libraries - Organismal Biology and Anatomy',
-            'Science Libraries - Pharmacological and Physiological Sciences',
-            'Science Libraries - Physics',
-            'Science Libraries - Science Technical Services',
-            'Science Libraries - Science and Medicine, History of',
-            'Science Libraries - Statistics',
-            'Science Libraries - Technology'
+            'Science Libraries - Science Technical Services'
         ]
     elif library == 'D\'Angelo Law Library':
         departments = [
@@ -210,6 +227,10 @@ def units(request):
     if view == 'department' and query:
         sort = 'alphabetical'
 
+    department_label = ''
+    if department:
+        department_label = department.split(' - ').pop()
+
     # staff pages
     staff_pages_all = []
     staff_pages = []
@@ -229,10 +250,18 @@ def units(request):
 
         # subjects.
         if subject:
-            staff_pages_all = staff_pages_all.filter(staff_subject_placements__in=StaffPageSubjectPlacement.objects.filter(subject=Subject.objects.get(name=subject)))
-        
+            if subject == 'All Subject Specialists':
+                staff_pages_all = staff_pages_all.filter(id__in=StaffPageSubjectPlacement.objects.all().values_list('page', flat=True).distinct())
+            else:
+                # get a subject and all it's descendants. 
+                subject_and_descendants = Subject.objects.get(name=subject).get_descendants()
+                # from staff page subject placements, get all of the staff that match those subjects. 
+                subject_staff_ids = StaffPageSubjectPlacement.objects.filter(subject__in=subject_and_descendants).values_list('page', flat=True)
+                # filter staff_pages_all to only include those staff pages. 
+                staff_pages_all = staff_pages_all.filter(id__in=subject_staff_ids).order_by('last_name')
+
         # add paging.
-        paginator = Paginator(staff_pages_all, 50)
+        paginator = Paginator(staff_pages_all, 100)
         try:
             staff_pages = paginator.page(page)
         except PageNotAnInteger:
@@ -269,6 +298,7 @@ def units(request):
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
         'department': department,
+        'department_label': department_label,
         'departments': get_departments(library),
         'hierarchical_units': hierarchical_html,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Law Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
@@ -276,7 +306,7 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
-        'subjects': get_subjects(),
+        'subjects': get_subjects(department),
         'subject': subject,
         'view': view,
         'self': {

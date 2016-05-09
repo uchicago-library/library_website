@@ -27,7 +27,8 @@
                   {% endif %}
                 {% endfor %}
               </td>
-              <td><strong>Subjects</strong><br/>
+              <td>
+                <strong>Subjects</strong><br/>
                 {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
                   <a href=".?view=collections&amp;subject={{ collection_subject_placement.subject|urlencode }}">{{ collection_subject_placement.subject }}</a><br/>
                 {% endfor %}
@@ -43,12 +44,48 @@
     <div class="row">
       <table class="table table-striped coll-list">
         <tbody>
-          <tr class="table-header">
-            <th colspan="4">Current Exhibits</th>
-          </tr>
-          <tr class="table-header">
-            <th colspan="4">All Exhibits</th>
-          </tr>
+          {% if exhibits_current %}
+            <tr class="table-header">
+              <th colspan="4">Current Exhibits</th>
+            </tr>
+          {% endif %}
+          {% for exhibit in exhibits_current %}
+            <tr>
+              <td>
+                {% image exhibit.thumbnail fill-100x100 %}
+              </td>
+              <td>
+                <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
+                <br/>
+                {{ exhibit.short_abstract }}
+              </td>
+              <td>
+                <strong>Locations</strong>
+                <br/>
+                <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
+                  <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
+                {% endif %}
+                {% if exhibit.web_exhibit_url %}
+                  <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
+                {% endif %}
+              </td>
+              <td>
+                {% if exhibit.exhibit_subject_placements.all %}
+                  <strong>Subjects</strong>
+                  <br/>
+                  {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                  {% endfor %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          {% if exhibits %}
+            <tr class="table-header">
+              <th colspan="4">All Exhibits</th>
+            </tr>
+          {% endif %}
           {% for exhibit in exhibits %}
             <tr>
               <td>
@@ -62,14 +99,22 @@
               <td>
                 <strong>Locations</strong>
                 <br/>
-                <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a>
+                <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
+                  <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
+                {% endif %}
+                {% if exhibit.web_exhibit_url %}
+                  <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
+                {% endif %}
               </td>
               <td>
-                <strong>Subjects</strong>
-                <br/>
-                {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                  <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
-                {% endfor %}
+                {% if exhibit.exhibit_subject_placements.all %}
+                  <strong>Subjects</strong>
+                  <br/>
+                  {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                  {% endfor %}
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -98,7 +143,7 @@
                   <td><strong>{{ s.name }}</strong></td>
                   <td>
                     {% if s.has_subject_specialists %}
-                      <a href="/units/?view=staff&mp;subject={{ s.name|urlencode }}"><i class="material-icons">supervisor_account</i>
+                      <a href="/units/?view=staff&amp;subject={{ s.name|urlencode }}"><i class="material-icons">supervisor_account</i>
                       Subject Specialists</a><br/>
                     {% endif %}
                     {% if s.has_exhibits %}

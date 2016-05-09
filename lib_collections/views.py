@@ -3,16 +3,22 @@ from lib_collections.models import CollectionPage, CollectionPageFormatPlacement
 from public.models import LocationPage
 from staff.models import StaffPage
 from subjects.models import Subject, SubjectParentRelations
+from wagtail.wagtailsearch.backends import get_search_backend
+
+import datetime
 
 def collections(request):
     # PARAMETERS
     digital = request.GET.get('digital', None)
+    if not digital == 'on':
+        digital = None
     format = request.GET.get('format', None)
     if not format in Format.objects.all().values_list('text', flat=True):
         format = None
     location = request.GET.get('location', None)
     if not location in LocationPage.objects.live().values_list('title', flat=True):
         location = None
+    search = request.GET.get('search', None)
     subject = request.GET.get('subject', None)
     if not subject in Subject.objects.all().values_list('name', flat=True):
         subject = None
@@ -21,23 +27,46 @@ def collections(request):
         view = 'collections'
 
     # filter collections.
-    collections = CollectionPage.objects.all()
+    collections = []
+    if view == 'collections':
+        collections = CollectionPage.objects.all()
+	
+        if digital:
+            #collections = collections.filter(collection_placements__format__text='Digital')
+            collections = collections.filter(title="A Century of Progress International Exposition Publications")
 
-    if digital:
-        collections = collections.filter(collection_placements__format__text='Digital')
 
-    if format:
-        collections = collections.filter(collection_placements__format__text=format)
+        if format:
+            collections = collections.filter(collection_placements__format__text=format)
 
-    if subject:
-        collections = collections.filter(collection_subject_placements__subject__name=subject)
+        if search:
+            collections = collections.search(search)
+
+        if subject:
+            subject_ids = Subject.objects.get(name=subject).get_descendants()
+            collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
 
     # fiter exhibits.
-    exhibits = ExhibitPage.objects.live()
-    if location:
-        exhibits = exhibits.filter(exhibit_location__title=location)
-    if subject:
-        exhibits = exhibits.filter(exhibit_subject_placements__subject__name=subject)
+    exhibits = []
+    exhibits_current = []
+    if view == 'exhibits':
+        exhibits = ExhibitPage.objects.live().order_by('title')
+
+        if digital:
+            exhibits = exhibits.exclude(web_exhibit_url = '')
+
+        if location:
+            exhibits = exhibits.filter(exhibit_location__title=location)
+
+        if subject:
+            subject_ids = Subject.objects.get(name=subject).get_descendants()
+            exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids)
+
+        exhibits_current = exhibits.filter(exhibit_open_date__lt = datetime.datetime.now().date()).filter(exhibit_close_date__gt = datetime.datetime.now().date())
+
+        if search:
+            exhibits = exhibits.search(search).results()
+            exhibits_current = exhibits_current.search(search).results()
 
     # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
 
@@ -63,11 +92,18 @@ def collections(request):
     # above, plus anything with a libguide id. right now that is equal to
     # business, medicine and law. See DB's "collections subjects" lucid chart for more 
     # info. 
-    for s in Subject.objects.all():
+
+    subjects_queryset = Subject.objects.all()
+
+    if search:
+        s = get_search_backend()
+        subjects_queryset = s.search(search, Subject)
+
+    for s in subjects_queryset:
         parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
         subjects.append({
-            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject = s).exists(),
-            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject = s).exists(),
+            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
+            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
             'has_subject_specialists': StaffPage.objects.filter(staff_subject_placements__subject = s).exists(),
             'libguide_url': s.libguide_url,
             'name': s.name,
@@ -98,10 +134,13 @@ def collections(request):
         'collections': collections,
         'digital': digital,
         'exhibits': exhibits,
+        'exhibits_current': exhibits_current,
         'format': format,
         'formats': formats,
         'formats_pulldown': formats_pulldown,
+        'location': location,
         'locations': locations,
+        'search': search,
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,
