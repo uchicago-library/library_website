@@ -197,8 +197,11 @@ def units(request):
         if t.unit_page:
             h = h + get_unit_info_from_unit_page(t.unit_page)
 
-        if t.unit_page.directory_unit:
-            h = h + t.unit_page.directory_unit.get_parent_library_name() + "<br/>"
+        # if the unit is at level one or two, or the room number is present, display the library. 
+        unit_level = len(t.unit_page.title.split(' - '))
+        if unit_level <= 2 or room_number:
+            if t.unit_page.directory_unit:
+                h = h + t.unit_page.directory_unit.get_parent_library_name() + "<br/>"
 
         if h:
             h = '<p>' + h + '</p>'
