@@ -8,6 +8,8 @@ from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlaceme
 from subjects.models import Subject
 from units.models import UnitPage
 
+import urllib.parse
+
 '''
 "subject" means a subject and all of it's descendants.
 "department" means the directory unit attached to the Unit Page- and all of that directory unit's descendants. .get_descendants(True)
@@ -283,7 +285,12 @@ def units(request):
 
         for unit_page in units:
             alphabetical_html = alphabetical_html + '<tr>'
-            alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + '</strong></td>'
+
+            staff_link = ''
+            if unit_page.directory_unit:
+                staff_link = " <a href='/units/?" + urllib.parse.urlencode({'view': 'staff', 'department': unit_page.directory_unit.fullName}) + "'>staff</a>"
+
+            alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + staff_link + '</strong></td>'
             alphabetical_html = alphabetical_html + '<td>'
             alphabetical_html = alphabetical_html + get_unit_info_from_unit_page(unit_page)
             alphabetical_html = alphabetical_html + '</td>'
