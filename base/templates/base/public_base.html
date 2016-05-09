@@ -341,7 +341,28 @@
                         <a href="{{self.view_more_link}}" style="color: #337ab7;" href="#">{{self.view_more_link_label}} 
                             <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a>
                     {% endif %}
-                {% endif %}                
+                {% endif %} 
+
+                {% if self.has_find_spaces %}
+                    <h4>Find Spaces</h4>
+                    <div class="studymod row">
+                        <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
+                            <p style="text-align: center;"><a href="{{quiet_spaces_link}}"><i class="material-icons" style="color:#767676;">local_library</i></a>
+                            <br/><span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
+                            <p style="text-align: center;"><a href="{{collaborative_spaces_link}}"><i class="material-icons" style="color:#767676;">people</i></a><br/>Collaboration</p>
+                        </div>
+                        {% if self.book_a_room_link %}
+                            <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
+                                <p style="text-align: center;"><a href="{{self.book_a_room_link}}">
+                                <i class="fa fa-calendar-plus-o fa-lg" style="color:#767676; font-size:1.5em; padding-top: 10px; padding-bottom:10px;"></i></a>
+                                <br/><span class="hidden-xs hidden-sm hidden-md">Book a Room</span><span class="hidden-lg">Reserve</span></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p><a href="{{all_spaces_link}}">View all {{self.friendly_name}} study spaces <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></p>
+                {% endif %}         
 
                 {% if self.has_social_media %}
                     <h4 class="rightside">{{self.friendly_name}}Social Media</h4>

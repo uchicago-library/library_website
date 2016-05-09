@@ -208,8 +208,12 @@ WAGTAILAPI_MAX_RESULTS = 60
 # Institutional ID for libcal
 LIBCAL_IID = 482
 
-# Fallback unit for pages that don't have one
+# Fallback unit for pages that don't have one (Library - Regenstein Library)
 DEFAULT_UNIT = 2235
+
+# The unit for pages that are assigned to The University of Chicago Libraries.
+# In other words generic pages that are not branch library specific use this number.
+ROOT_UNIT = 2455
 
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s: %s'

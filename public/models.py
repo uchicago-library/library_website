@@ -23,15 +23,23 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     """
     A standard basic page.
     """
+    # Page content
     body = StreamField(DefaultBodyFields())
+
+    # Quicklinks fields
     quicklinks = RichTextField(blank=True) 
     quicklinks_title = models.CharField(max_length=100, blank=True)
     view_more_link = models.URLField(max_length=255, blank=True, default='')
     view_more_link_label = models.CharField(max_length=100, blank=True)
 
+    # Find spaces fields
+    enable_find_spaces = models.BooleanField(default=False)
+    book_a_room_link = models.URLField(max_length=255, blank=True, default='')
+
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
-        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage'] 
+        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
+        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -47,6 +55,13 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ], 
             heading='Quicklinks'
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel('enable_find_spaces'),
+                FieldPanel('book_a_room_link'),
+            ], 
+            heading='Find Spaces'
+        ),
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + (
@@ -59,6 +74,36 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
         ObjectList(widget_content_panels, heading='Widgets'),
     ])
+
+    def has_field(self, field_list):
+        """
+        Helper method for checking the page object 
+        to see if specific fields are filled out.
+        Returns True if any one field is present
+        in the list.
+
+        Args:
+            field_list: list of page field objects. 
+
+        Returns:
+            Boolean
+        """
+        for field in field_list:
+            if field:
+                return True
+        return False
+    
+
+    @property 
+    def has_find_spaces(self):
+        """
+        Determine if there is a "Find Spaces"
+        widget on the page.
+
+        Returns:
+            Boolean
+        """
+        return self.has_field([self.enable_find_spaces])
 
 
     @property
@@ -73,16 +118,15 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         fields = [self.quicklinks]
         if self.has_social_media:
             return True
+        elif self.has_find_spaces:
+            return True
         else:
-            for field in fields:
-                if field:
-                    return True
-            return False
+            return self.has_field(fields)
 
 
 class LocationPageDonorPlacement(Orderable, models.Model):
     """
-    Create a through table for linking donor pages to location pages
+    Create a through table for linking donor pages to location pages.
     """
     parent = ParentalKey(
         'public.LocationPage',

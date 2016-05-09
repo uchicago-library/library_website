@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
-from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, ROOT_UNIT
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -741,10 +741,49 @@ class PublicBasePage(BasePage):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
 
+        context['all_spaces_link'], \
+        context['quiet_spaces_link'], \
+        context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)
         context['chat_status'] = get_chat_status('uofc-ask')
         context['chat_status_css'] = get_chat_status_css('uofc-ask') 
 
         return context
+
+    def get_spaces_links(self, data):
+        """
+        Get the all the links for the find spaces module.
+        Includes a link to the quiet study, collaborative 
+        study, and unfilterd location browses. These 
+        are filtered by building when appropriate.
+        
+        Args:
+            data: mixed dictionary or objects and strings
+            created by base.utils.get_hours_and_location.
+
+        Returns:
+            List of strings. These are links into the
+            locations browse with filtered by building,
+            and feature as needed. Links are ordered in
+            the list like this:
+
+            1. All spaces link 
+            2. Quiet spaces link 
+            3. Collaborative spaces link
+        """
+        zone = {1: 'feature=is_quiet_zone',
+                2: 'feature=is_collaboration_zone'}
+ 
+        base_url = '/spaces/'
+
+        if self.unit.id == ROOT_UNIT:
+            all_spaces = base_url 
+            quiet_spaces = '%s?%s' % (base_url, zone[1])
+            collaborative_spaces = '%s?%s' % (base_url, zone[2])
+        else:
+            all_spaces = '%s?building=%s' % (base_url, str(data['page_location']))
+            quiet_spaces = '%s?building=%s&feature=is_quiet_zone' % (base_url, str(data['page_location']))
+            collaborative_spaces = '%s?building=%s&feature=is_collaboration_zone' % (base_url, str(data['page_location']))
+        return [all_spaces, quiet_spaces, collaborative_spaces]
 
     @property
     def friendly_name(self):

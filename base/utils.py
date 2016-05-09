@@ -28,6 +28,9 @@ def get_json_for_library(lid):
     Returns:
         string, json
     """
+    url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
+        str(LIBCAL_IID) + '&lid=' + str(lid) + '&format=json'
+
     json = requests.get('https://api3.libcal.com/api_hours_today.php?iid=' + \
         str(LIBCAL_IID) + '&lid=' + str(lid) + '&format=json').json()
 
