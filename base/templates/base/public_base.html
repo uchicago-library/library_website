@@ -366,14 +366,11 @@
                 {% endif %}
                 
                 {% if self.collection_page %}
-                    {{self.collection_page.thumbnail}}
-                    {% image self.collection_page.thumbnail width-200 as collection_img %}
-                    {{ collection_img.image.url }}
-                
+                    {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
                     <h4>Featured Collection</h4>
-                    <img style="padding-bottom: 10px;" class="img-responsive" src="{{ collection_img.url }}">
+                    <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}">
                     <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
-                    <a href="#" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                    <a href="/collections/" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
                 {% endif %}  
 
                 {% if self.has_social_media %}

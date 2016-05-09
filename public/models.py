@@ -38,7 +38,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Featured collections
     collection_page = models.ForeignKey(
-        'wagtailcore.Page',
+        'lib_collections.CollectionPage',
         null=True,
         blank=True,
         related_name='+',
@@ -107,7 +107,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             if field:
                 return True
         return False
-    
+
 
     @property 
     def has_find_spaces(self):
