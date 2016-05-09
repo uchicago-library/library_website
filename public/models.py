@@ -4,7 +4,7 @@ from django.utils import timezone
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore import blocks
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel, PageChooserPanel
 from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
@@ -36,6 +36,15 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     enable_find_spaces = models.BooleanField(default=False)
     book_a_room_link = models.URLField(max_length=255, blank=True, default='')
 
+    # Featured collections
+    collection_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    ) 
+
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
@@ -61,6 +70,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 FieldPanel('book_a_room_link'),
             ], 
             heading='Find Spaces'
+        ),
+        MultiFieldPanel(
+            [
+                PageChooserPanel('collection_page', 'lib_collections.CollectionPage'),
+            ], 
+            heading='Featured Collection'
         ),
     ] + SocialMediaFields.panels
 
@@ -115,7 +130,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Returns:
             boolean
         """
-        fields = [self.quicklinks]
+        fields = [self.quicklinks, self.collection_page]
         if self.has_social_media:
             return True
         elif self.has_find_spaces:
