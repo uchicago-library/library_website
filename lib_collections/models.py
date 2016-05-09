@@ -1,6 +1,8 @@
+from base.models import LinkFields
 from django.db import models
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel
+from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
@@ -460,8 +462,38 @@ class ExhibitPage(PublicBasePage):
     publication_price = models.CharField(null=False, blank=True, default='', max_length=255)
     publication_url = models.URLField("Publication URL", blank=True)
     ordering_information = models.BooleanField(default=False)
-    exhibit_text = models.URLField("Exhibit Text", blank=True)
-    exhibit_checklist = models.URLField("Exhibit Checklist", blank=True)
+
+    exhibit_text_link_external = models.URLField("Exhibit text external link", blank=True)
+    exhibit_text_link_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    exhibit_text_document = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    
+    exhibit_checklist_link_external = models.URLField("Exhibit checklist external link", blank=True)
+    exhibit_checklist_link_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    exhibit_checklist_document = models.ForeignKey(
+        'wagtaildocs.Document',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
 
     subpage_types = []
 
@@ -490,8 +522,22 @@ class ExhibitPage(PublicBasePage):
         FieldPanel('publication_price'),
         FieldPanel('publication_url'),
         FieldPanel('ordering_information'),
-        FieldPanel('exhibit_text'),
-        FieldPanel('exhibit_checklist'),
+        MultiFieldPanel(
+            [
+                FieldPanel('exhibit_text_link_external'),
+                PageChooserPanel('exhibit_text_link_page'),
+                DocumentChooserPanel('exhibit_text_document')
+            ],
+            heading='Exhibit Text (Choose One or None)'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('exhibit_checklist_link_external'),
+                PageChooserPanel('exhibit_checklist_link_page'),
+                DocumentChooserPanel('exhibit_checklist_document')
+            ],
+            heading='Exhibit Checklist (Choose One or None)'
+        ),
         FieldPanel('staff_contact'),
     ] + PublicBasePage.content_panels
 
@@ -515,3 +561,5 @@ class ExhibitPage(PublicBasePage):
         index.SearchField('publication_url'),
         index.SearchField('staff_contact'),
     )
+
+
