@@ -19,7 +19,6 @@ def get_subjects(department = None):
     return Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True)
     '''
 
-    # JEJ make sure this works. 
     if department and not DirectoryUnit.objects.filter(fullName=department).exists():
         return get_subjects(None)
 
@@ -39,7 +38,6 @@ def get_subjects(department = None):
         return list(set(subjects))
             
     else:
-        # this is the only part of the code that was running before. 
         placed_subjects_and_descendants = set(StaffPageSubjectPlacement.objects.all().values_list('subject__name', flat=True))
         subjects = []
         for s in Subject.objects.filter(display_in_dropdown=True):

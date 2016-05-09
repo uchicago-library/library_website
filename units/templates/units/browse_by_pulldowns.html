@@ -33,17 +33,19 @@
 
     <!-- Split button -->
     <div class="btn-group">
-      <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if subject %}{{ subject }}{% else %}Subject Specialty{% endif %}</button>
+      <button style="padding: 5px 15px;" class="btn btn-directory" type="button"{% if not subjects %} disabled="true"{% endif %}>{% if subject %}{{ subject }}{% else %}Subject Specialty{% endif %}</button>
       <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
-      <ul class="dropdown-menu">
-        <a class="dropdown-item" href=".?view=staff&amp;subject=All%20Subject%20Specialists">All Subject Specialists</a><br>
-        {% for s in subjects %}
-          <a class="dropdown-item" href=".?view=staff&amp;subject={{ s|urlencode }}">{{ s }}</a><br>
-        {% endfor %}
-</ul>
+      {% if subjects %}
+        <ul class="dropdown-menu">
+          <a class="dropdown-item" href=".?view=staff{% if library and department %}&amp;library={{ library|urlencode }}{% endif %}{% if department %}&amp;department={{ department|urlencode }}{% endif %}&amp;subject=All%20Subject%20Specialists">All Subject Specialists</a><br>
+          {% for s in subjects %}
+            <a class="dropdown-item" href=".?view=staff{% if library and department %}&amp;library={{ library|urlencode }}{% endif %}{% if department %}&amp;department={{ department|urlencode }}{% endif %}&amp;subject={{ s|urlencode }}">{{ s }}</a><br>
+          {% endfor %}
+        </ul>
+      {% endif %}
 </div>
 
 
