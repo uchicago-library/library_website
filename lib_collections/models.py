@@ -1,7 +1,8 @@
-from base.models import LinkFields
+from base.models import DefaultBodyFields, LinkFields
 from django.db import models
+from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
@@ -151,7 +152,7 @@ class CollectionPage(PublicBasePage):
     """
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
-    full_description = models.TextField(null=False, blank=False, default='')
+    full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
     access_instructions = models.TextField(null=False, blank=True, default='')
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
@@ -171,7 +172,7 @@ class CollectionPage(PublicBasePage):
         FieldPanel('acknowledgments'),
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
-        FieldPanel('full_description'),
+        StreamFieldPanel('full_description'),
         ImageChooserPanel('thumbnail'),
         InlinePanel('collection_subject_placements', label='Subjects'),
         InlinePanel('collection_placements', label='Formats'),
@@ -440,7 +441,7 @@ class ExhibitPage(PublicBasePage):
     """
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
-    full_description = models.TextField(null=False, blank=False, default='')
+    full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -503,7 +504,7 @@ class ExhibitPage(PublicBasePage):
     content_panels = Page.content_panels + [
         FieldPanel('acknowledgments'),
         FieldPanel('short_abstract'),
-        FieldPanel('full_description'),
+        StreamFieldPanel('full_description'),
         MultiFieldPanel(
             [
                 ImageChooserPanel('thumbnail'),
