@@ -13,7 +13,9 @@
       {% endif %}
     {% endif %}
 
-    <p>{{ self.full_description }}</p>
+    {% for block in self.full_description %}
+      {{ block }}
+    {% endfor %}
 
     {% if self.exhibit_open_date %}
       <h2>Opening Date</h2>
