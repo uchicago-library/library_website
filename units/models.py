@@ -133,6 +133,9 @@ class UnitPage(BasePage, ContactFields):
         for u in UnitPage.objects.filter(display_in_directory=True):
             records.append([u.get_full_name().split(' - '), u])
 
+        # sort records by full name. 
+        records = sorted(records, key=lambda r: r[1].get_full_name())
+
         hierarchical_units = Tree()
         for record, unit_page in records:
             t = hierarchical_units
