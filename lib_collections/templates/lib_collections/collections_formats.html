@@ -1,0 +1,7 @@
+{% for format in formats %}
+  {% if format == 'Digital' %}
+    <a href="/collections/?view=collections&amp;digital=on">Digital</a><br/>
+  {% else %}
+    <a href="/collections/?view=collections%amp;format={{ format|urlencode }}">{{ format }}</a><br/>
+  {% endif %}
+{% endfor %}

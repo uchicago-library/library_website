@@ -1,6 +1,7 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load lib_collections_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -18,15 +19,7 @@
             <tr>
               <td>{% if collection_page.thumbnail %}<img class="img-responsive" src=""/>{% endif %}</td>
               <td><strong><a href="{{ collection_page.url_path }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
-              <td><strong>Formats</strong><br/>
-                {% for collection_placement in collection_page.collection_placements.all %}
-                  {% if collection_placement.format == 'Digital' %}
-                    <a href=".?view=collections&amp;digital=on{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}">Digital</a><br/>
-                  {% else %}
-                    <a href=".?view=collections&amp;format={{ collection_placement.format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}">{{ collection_placement.format }}</a><br/>
-                  {% endif %}
-                {% endfor %}
-              </td>
+              <td><strong>Formats</strong><br/>{% collections_formats collection_page %}</td>
               <td>
                 <strong>Subjects</strong><br/>
                 {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
