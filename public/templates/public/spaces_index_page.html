@@ -28,10 +28,10 @@
                   </button>
                   <div class="dropdown-menu">
                     {% if building %}
-                       <a href=".">All Buildings</a>
+                       <a href=".">All Buildings</a><br/>
                     {% endif %}
                     {% for b in buildings %}
-                       <a href="?building={{ b|urlencode }}" class="dropdown-item">{{ b }}</a>
+                       <a href="?building={{ b|urlencode }}" class="dropdown-item">{{ b }}</a><br/>
                     {% endfor %}
                   </div>
                 </div>
@@ -56,10 +56,10 @@
                   </button>
                   <div class="dropdown-menu">
                     {% if feature %}
-                      <a href=".">All Spaces</a>
+                      <a href=".">All Features</a><br/>
                     {% endif %}
                     {% for f in features %}
-                      <a href="?space_type={{ space_type|urlencode }}&feature={{ f.field|urlencode }}" class="dropdown-item">{{ f.label }}</a>
+                      <a href="?space_type={{ space_type|urlencode }}&feature={{ f.field|urlencode }}" class="dropdown-item">{{ f.label }}</a><br/>
                     {% endfor %}
                   </div>
                 </div>          
