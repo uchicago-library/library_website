@@ -149,6 +149,7 @@ class CollectionPage(PublicBasePage):
     """
     Pages for individual collections.
     """
+    acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = models.TextField(null=False, blank=False, default='')
     access_instructions = models.TextField(null=False, blank=True, default='')
@@ -167,6 +168,7 @@ class CollectionPage(PublicBasePage):
     subpage_types = []
 
     content_panels = Page.content_panels + [
+        FieldPanel('acknowledgments'),
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
         FieldPanel('full_description'),
@@ -174,7 +176,7 @@ class CollectionPage(PublicBasePage):
         InlinePanel('collection_subject_placements', label='Subjects'),
         InlinePanel('collection_placements', label='Formats'),
         FieldPanel('access_instructions'),
-        InlinePanel('access_links', label='Access Links'),
+        InlinePanel('access_links', label='Access Links (Top link is primary)'),
         InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
@@ -436,6 +438,7 @@ class ExhibitPage(PublicBasePage):
     """
     Pages for individual exhibits.
     """
+    acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = models.TextField(null=False, blank=False, default='')
     thumbnail = models.ForeignKey(
@@ -498,6 +501,7 @@ class ExhibitPage(PublicBasePage):
     subpage_types = []
 
     content_panels = Page.content_panels + [
+        FieldPanel('acknowledgments'),
         FieldPanel('short_abstract'),
         FieldPanel('full_description'),
         MultiFieldPanel(
