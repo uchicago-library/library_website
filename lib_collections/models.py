@@ -160,7 +160,8 @@ class CollectionPage(PublicBasePage):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
-    ) 
+    )
+    thumbnail_caption = models.TextField(null=False, blank=True) 
     collection_location = models.ForeignKey('public.LocationPage',
         null=True, blank=True, on_delete=models.SET_NULL)
     staff_contact = models.ForeignKey('staff.StaffPage',
@@ -173,7 +174,13 @@ class CollectionPage(PublicBasePage):
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
         StreamFieldPanel('full_description'),
-        ImageChooserPanel('thumbnail'),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail_caption'),
+            ],
+            heading='Thumbnail'
+        ),
         InlinePanel('collection_subject_placements', label='Subjects'),
         InlinePanel('collection_placements', label='Formats'),
         FieldPanel('access_instructions'),
@@ -190,6 +197,7 @@ class CollectionPage(PublicBasePage):
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
         index.SearchField('thumbnail'),
+        index.SearchField('thumbnail_caption'),
         index.SearchField('access_instructions'),
         index.SearchField('collection_location'),
         index.SearchField('staff_contact'),
