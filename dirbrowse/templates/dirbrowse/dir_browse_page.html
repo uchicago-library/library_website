@@ -1,0 +1,19 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+  <article>
+    {% for block in self.body %}
+      {{ block }}
+    {% endfor %}
+    <h2 id="dirbrowsetitle"></h2>
+    <dir id="dirbrowse"></div>
+  </article>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="/static/dirbrowse/js/jquery.dirbrowse.js" type="text/javascript"></script>
+  <script src="{{ self.dir_browse_script_url }}" type="text/javascript"></script>
+{% endblock %}
