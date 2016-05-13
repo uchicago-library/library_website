@@ -15,13 +15,13 @@ from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 
 # The abstract model for related links, complete with panels
-class AccessLink(models.Model):
-    access_link_label = models.CharField(max_length=255)
-    access_link_url = models.URLField("Access link URL", blank=False)
+class SupplementaryAccessLink(models.Model):
+    supplementary_access_link_label = models.CharField(max_length=255)
+    supplementary_access_link_url = models.URLField("Supplementary access link URL", blank=False)
 
     panels = [
-        FieldPanel('access_link_label'),
-        FieldPanel('access_link_url'),
+        FieldPanel('supplementary_access_link_label'),
+        FieldPanel('supplementary_access_link_url'),
     ]
 
     class Meta:
@@ -30,8 +30,8 @@ class AccessLink(models.Model):
 # The real model which combines the abstract model, an
 # Orderable helper class, and what amounts to a ForeignKey link
 # to the model we want to add related links to (CollectionPage)
-class CollectionPageAccessLinks(Orderable, AccessLink):
-    page = ParentalKey('lib_collections.CollectionPage', related_name='access_links')
+class CollectionPageSupplementaryAccessLinks(Orderable, SupplementaryAccessLink):
+    page = ParentalKey('lib_collections.CollectionPage', related_name='supplementary_access_links')
 
 
 # Model for format strings to be used on collection pages
@@ -162,6 +162,8 @@ class CollectionPage(PublicBasePage):
         related_name='+'
     )
     thumbnail_caption = models.TextField(null=False, blank=True) 
+    primary_online_access_link_label = models.CharField(max_length=255, blank=True)
+    primary_online_access_link_url = models.URLField("Primary online access link URL", blank=True)
     collection_location = models.ForeignKey('public.LocationPage',
         null=True, blank=True, on_delete=models.SET_NULL)
     staff_contact = models.ForeignKey('staff.StaffPage',
@@ -184,7 +186,14 @@ class CollectionPage(PublicBasePage):
         InlinePanel('collection_subject_placements', label='Subjects'),
         InlinePanel('collection_placements', label='Formats'),
         FieldPanel('access_instructions'),
-        InlinePanel('access_links', label='Access Links (Top link is primary)'),
+        MultiFieldPanel(
+            [
+                FieldPanel('primary_online_access_link_label'),
+                FieldPanel('primary_online_access_link_url'),
+            ],
+            heading='Primary Online Access Link'
+        ),
+        InlinePanel('supplementary_access_links', label='Supplementary Access Links'),
         InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),

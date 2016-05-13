@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'ask_a_librarian',
     'base',
     'conferences',
+    'dirbrowse',
     'directory_unit',
     'group',
     'home',
