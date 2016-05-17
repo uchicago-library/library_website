@@ -585,7 +585,18 @@ class AgendaItemFields(StructBlock):
         help_text='A talk or event with a title, presenter \
             room number, and description',
         label=' ')
-        
+
+
+class LinkBlock(StructBlock):
+    """
+    Generic block for inserting links. This is duplicate code
+    of LinkedText via LinkFields. I haven't figured out how 
+    to extend StructBlock and LinkedText at the same time.
+    """
+    link_text = CharBlock(max_length=255, required=False)
+    link_external = URLBlock('External link')
+    link_page = PageChooserBlock(required=False)
+
 
 class DefaultBodyFields(StreamBlock):
     """

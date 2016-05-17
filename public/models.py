@@ -9,7 +9,7 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields
+from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
@@ -18,6 +18,47 @@ class TabbedInterface(OriginalTabbedInterface):
 
     def __init__(self, children, base_form_class=WagtailAdminPageForm):
         super().__init__(children, base_form_class)
+
+
+class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
+    """
+    Base treamfield block for "Featured Library Experts".
+    """
+    library_expert = blocks.PageChooserBlock( # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
+        required=False, 
+    ) 
+    libguides = blocks.ListBlock(LinkBlock(),
+        icon='link') 
+
+
+class FeaturedLibraryExpertBlock(FeaturedLibraryExpertBaseBlock):
+    """
+    Streamfield block for "Featured Library Experts".
+    """
+    start_date = blocks.DateBlock(blank=True, null=True)
+    end_date = blocks.DateBlock(blank=True, null=True)
+
+class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
+    """
+    Base fields for a Featured Library Expert.
+    """
+    person = FeaturedLibraryExpertBaseBlock(
+        icon='view', 
+        required=False, 
+        template='public/blocks/featured_library_expert.html'
+    )
+
+
+class FeaturedLibraryExpertFields(blocks.StreamBlock):
+    """
+    All fields for a Featured Library Expert.
+    """
+    person = FeaturedLibraryExpertBlock(
+        icon='view', 
+        required=False, 
+        template='public/blocks/featured_library_expert.html'
+    )
+
 
 class StandardPage(PublicBasePage, SocialMediaFields):
     """
@@ -43,7 +84,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
-    ) 
+    )
+ 
+    # Featured Library Expert
+    featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(), default=[]) 
+    featured_library_experts = StreamField(FeaturedLibraryExpertFields(), default=[])
 
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
@@ -77,6 +122,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ], 
             heading='Featured Collection'
         ),
+        StreamFieldPanel('featured_library_expert_fallback'),
+        StreamFieldPanel('featured_library_experts'),
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + (
@@ -107,6 +154,33 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             if field:
                 return True
         return False
+
+
+    def has_all_fields(self, field_list):
+        """
+        Helper method for checking that *all* fields
+        in a given list exist.
+
+        Args:
+            field_list: list of page field objects. 
+
+        Returns:
+            Boolean
+        """
+        for field in field_list:
+            if not field:
+                return False
+        return True
+
+
+    @property
+    def has_featured_lib_expert_fallback(self):
+        """
+        Test to see if a page has a "Featured 
+        Library Expert" fallback set.
+        """
+        for field in field_list:
+    
 
 
     @property 

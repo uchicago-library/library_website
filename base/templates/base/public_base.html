@@ -410,6 +410,14 @@
                 <h1>{{self.title}}</h1>
                 {% repeat content %}
             </div> <!-- // Center Content -->
+
+            <div class="row">
+                {% if fooo %}
+                    {% for block in self.featured_library_experts %}
+                        {{ block }}
+                    {% endfor %}
+                {% endif %}
+            </div>
         {% endif %}
 
         {# This is needed #}
