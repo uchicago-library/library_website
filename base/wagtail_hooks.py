@@ -2,7 +2,8 @@ from django.utils.html import format_html
 from django.conf import settings
 from wagtail.wagtailcore import hooks
 from django.shortcuts import redirect
-from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL 
+from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL
+from django.contrib.staticfiles.templatetags.staticfiles import static 
 
 def get_required_groups(page):
     """
@@ -50,7 +51,7 @@ def editor_css():
     """
     return format_html('<link rel="stylesheet" href="' \
     + settings.STATIC_URL \
-    + 'css/admin.scss">')
+    + 'css/editor.scss">')
 
 
 @hooks.register('before_serve_page')
@@ -62,3 +63,10 @@ def redirect_users_without_permissions(page, request, serve_args, serve_kwargs):
     if not has_permission(request.user, get_required_groups(page)): 
         return redirect(NO_PERMISSIONS_REDIRECT_URL)
 
+
+@hooks.register('insert_global_admin_css')
+def global_admin_css():
+    """
+    Override the main admin css.
+    """
+    return format_html('<link rel="stylesheet" href="{}">', static('css/admin.css'))
