@@ -142,7 +142,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Helper method for checking the page object 
         to see if specific fields are filled out.
         Returns True if any one field is present
-        in the list.
+        in the list. Note: actually checks
+        values in practice.
 
         Args:
             field_list: list of page field objects. 
@@ -159,7 +160,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     def has_all_fields(self, field_list):
         """
         Helper method for checking that *all* fields
-        in a given list exist.
+        in a given list exist. Note: actually checks
+        values in practice.
 
         Args:
             field_list: list of page field objects. 
@@ -173,14 +175,62 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         return True
 
 
+    def streamblock_has_link(self, streamblock, field):
+        """
+        Check that a streamfield block object has a 
+        either an internal or external link when
+        base.models.LinkBlock is in use.
+
+        Args:
+            streamblock: streamfield block object, 
+            wagtail.wagtailcore.blocks.stream_block.StreamValue.StreamChild.
+
+            field: string field name that contains 
+            a ListBlock of LinkBlocks.
+        """
+        #p.featured_library_expert_fallback[0].value.get('libguides')[0].get('link_external')
+        block_list = self.streamblock.value.get(field)
+        for block in block_list:
+            val1 = block.get('link_external')
+            val2 = block.get('link_page')
+            if not val1 and not val2:
+                return False
+        return True
+
+
+    def streamblock_has_all_fields(self, streamblock, field_list):
+        """
+        Test to see if a streamfield block has a value for all 
+        fields in a given list.
+
+        Args:
+            streamblock: streamfield block object, 
+            wagtail.wagtailcore.blocks.stream_block.StreamValue.StreamChild.
+
+            field_names: list of strings, field names.
+
+        Returns:
+            Boolean
+        """
+        for field in field_list:
+            value = streamblock.value.get(field)
+            if not value:
+                return False
+        return True
+
     @property
     def has_featured_lib_expert_fallback(self):
         """
         Test to see if a page has a "Featured 
         Library Expert" fallback set.
+
+        Returns:
+            Boolean
         """
-        for field in field_list:
-            pass 
+        self.streamblock_has_all_fields(
+            self.featured_library_expert_fallback[0], 
+            ['library_expert']
+        )
 
 
     @property 

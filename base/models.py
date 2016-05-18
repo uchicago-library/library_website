@@ -594,7 +594,7 @@ class LinkBlock(StructBlock):
     to extend StructBlock and LinkedText at the same time.
     """
     link_text = CharBlock(max_length=255, required=False)
-    link_external = URLBlock('External link')
+    link_external = URLBlock(required=False)
     link_page = PageChooserBlock(required=False)
 
 
