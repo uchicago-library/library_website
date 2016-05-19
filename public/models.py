@@ -11,6 +11,7 @@ from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock
 from datetime import date
+from staff.models import StaffPage
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
@@ -94,7 +95,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
-        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage'] 
+        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
+        'public.StaffPublicPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -484,3 +486,32 @@ class FloorPlanPage(PublicBasePage):
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('image'),
     )
+
+
+class StaffPublicPage(PublicBasePage):
+    """
+    A public page for staff members.
+    """
+    subpage_types = ['public.StandardPage']
+    content_panels = Page.content_panels + PublicBasePage.content_panels
+
+    def get_bio(self):
+        """
+        Gets the bio from a loop staff page.
+
+        Returns:
+            Streamfield or empty string.
+        """
+        try:
+            return StaffPage.objects.live().filter(cnetid=self.title)[0].bio
+        except(IndexError):
+            return ''
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(PublicBasePage, self).get_context(request)
+
+        context['bio'] = self.get_bio()
+        return context
