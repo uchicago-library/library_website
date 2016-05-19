@@ -412,10 +412,8 @@
             </div> <!-- // Center Content -->
 
             <div class="row">
-                {% if fooo %}
-                    {% for block in self.featured_library_experts %}
-                        {{ block }}
-                    {% endfor %}
+                {% if has_featured_lib_expert %}
+                    {{featured_lib_expert}}
                 {% endif %}
             </div>
         {% endif %}
