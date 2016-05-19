@@ -1,7 +1,8 @@
 from django.db import models
 from django.shortcuts import redirect
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel
+from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailsearch import index
 from base.models import PublicBasePage, LinkFields
 
@@ -13,8 +14,14 @@ class RedirectPage(PublicBasePage, LinkFields):
     subpage_types = []
 
     content_panels = Page.content_panels + [
-        FieldPanel('link_page'),
-        FieldPanel('link_external'),
+        MultiFieldPanel(
+            [
+                PageChooserPanel('link_page'),
+                FieldPanel('link_external'),
+                DocumentChooserPanel('link_document'),
+            ],
+            heading='Redirect to'
+        )
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + (
