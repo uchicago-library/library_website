@@ -513,13 +513,8 @@
 
     <script src="{% static "base/js/offcanvas.js" %}"></script>
     <script src="{% static "base/js/library_website.js" %}"></script>
-    <script>
-    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-    ga('create', 'UA-15705691-1', 'auto');
-    ga('require', 'autotrack');
-    ga('send', 'pageview');
-    </script>
-    <script async src='/static/base/js/ga.public.js'></script>
+    <script src='/static/base/js/jquery.track-everything.js'></script>
+    <script src='/static/base/js/ga.public.js'></script>
     {% block extra_scripts %}{% endblock %}
 <!-- // Scripts -->
 </body>
