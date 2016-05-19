@@ -11,7 +11,8 @@
         <div class="media">
           {% if thumbnail %}
             <div class="push-left">
-              {% image thumbnail width-200 class="img-responsive media-object" %}
+              {% image thumbnail width-200 as thmb %}
+              <img src="{{ thmb.url }}" alt="{% firstof self.alt_text thumbnail.title %}" class="img-responsive media-object" />
             </div>
           {% endif %}
           <div class="media-body">

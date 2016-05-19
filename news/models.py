@@ -8,7 +8,7 @@ from django.utils import timezone
 from base.models import BasePage, PublicBasePage, DefaultBodyFields
 from staff.models import StaffPage
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel, MultiFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -35,6 +35,7 @@ class NewsPage(BasePage):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+')
+    alt_text = models.CharField(max_length=100, blank=True)
     body = StreamField(DefaultBodyFields(), blank=False, null=False)
 
     subpage_types = []
@@ -44,7 +45,13 @@ class NewsPage(BasePage):
         FieldPanel('author'),
         FieldPanel('story_date'),
         FieldPanel('sticky_until'),
-        ImageChooserPanel('thumbnail'),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('thumbnail'),
+                FieldPanel('alt_text'),
+            ],
+            heading='Thumbnail',
+        ),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
@@ -190,5 +197,6 @@ def get_story_summary(news_page):
         'title': news_page.title,
         'url': news_page.url,
         'body': news_page.body,
-        'thumbnail': news_page.thumbnail
+        'thumbnail': news_page.thumbnail,
+        'page_alt' : news_page.alt_text
     }
