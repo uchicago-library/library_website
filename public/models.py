@@ -93,7 +93,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
-        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage'] 
+        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
+        'findingaids.FindingAidsPage']
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
