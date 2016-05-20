@@ -30,6 +30,20 @@ class FindingAidsPage(PublicBasePage):
         def get_browse_links(browses):
             return sorted(list(set(map(lambda b: b[1][0], browses))))
 
+        def get_digitized_content():
+            digitized = []
+        
+            r = urllib.request.urlopen("http://marklogic:8011/admin/gimmeDigitalEADIDs.xqy")
+
+            xml_string = r.read()
+
+            e = ElementTree.fromstring(xml_string)
+            for div in e.find('body').findall('div'):
+                span = div.findall('span')
+                digitized.append([span[0].find('eadid').text, span[1].text, span[2].find('abstract').text])
+
+            return digitized
+
         def get_topics():
             topics = {}
 
@@ -70,6 +84,11 @@ class FindingAidsPage(PublicBasePage):
 
         all_topics = get_topics()
 
+        # digitized
+        digitizedlist = []
+        if digitized:
+            digitizedlist = get_digitized_content()
+
         # topics
         topiclist = []
         if topics:
@@ -84,15 +103,16 @@ class FindingAidsPage(PublicBasePage):
         # for d in e.findall('div'):
         # get the first span and second span- that's the EADID and title. 
             
-        context['searchq'] = searchq
+        context['browse'] = browse
+        context['browselinks'] = browselinks
+        context['browses'] = browses
+        context['digitized'] = digitized
+        context['digitizedlist'] = digitizedlist
         context['exactphrase'] = exactphrase
+        context['searchq'] = searchq
         context['topiclist'] = topiclist
         context['thistopiclist'] = thistopiclist
         context['topics'] = topics
         context['topic'] = topic
-        context['digitized'] = digitized
-        context['browse'] = browse
-        context['browselinks'] = browselinks
-        context['browses'] = browses
 
         return context

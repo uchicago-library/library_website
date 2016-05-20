@@ -15,10 +15,19 @@
     <p>
       <a href="?browse=A">All Finding Aids</a><br/>
       <a href="?topics=all">By Topic</a><br/>
-      <a href="#">Finding Aids with Digitized Content</a>
+      <a href="?digitized=all">Finding Aids with Digitized Content</a>
     </p>
 
-    {% if topic %}
+    {% if digitized %}
+      <h2>Browse Finding Aids with Digitized Content</h2>
+      <ul>
+        {% for d in digitizedlist %}
+          <h3><a href=""><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></h3>
+          <p>{{ d.2 }}</p>
+        {% endfor %}
+      </ul>
+
+    {% elif topic %}
 
       <h2>{{ topic }}</h2>
       <ul>
