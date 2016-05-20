@@ -10,6 +10,8 @@ from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock
+from datetime import date
+from staff.models import StaffPage
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
@@ -94,7 +96,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
         'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
-        'findingaids.FindingAidsPage']
+        'public.StaffPublicPage'] 
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -158,24 +160,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         return False
 
 
-    def has_all_fields(self, field_list):
-        """
-        Helper method for checking that *all* fields
-        in a given list exist. Note: actually checks
-        values in practice.
-
-        Args:
-            field_list: list of page field objects. 
-
-        Returns:
-            Boolean
-        """
-        for field in field_list:
-            if not field:
-                return False
-        return True
-
-
     def streamblock_has_link(self, streamblock, field):
         """
         Check that a streamfield block object has a 
@@ -189,12 +173,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             field: string field name that contains 
             a ListBlock of LinkBlocks.
         """
-        #p.featured_library_expert_fallback[0].value.get('libguides')[0].get('link_external')
-        block_list = self.streamblock.value.get(field)
+        block_list = streamblock.value.get(field)
         for block in block_list:
-            val1 = block.get('link_external')
-            val2 = block.get('link_page')
-            if not val1 and not val2:
+            val1 = block.get('link_text')
+            val2 = block.get('link_external')
+            val3 = block.get('link_page')
+            if not (val1 and val2) and not (val1 and val3):
                 return False
         return True
 
@@ -217,9 +201,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             value = streamblock.value.get(field)
             if not value:
                 return False
-        return True
+        return True  
 
-    @property
+
     def has_featured_lib_expert_fallback(self):
         """
         Test to see if a page has a "Featured 
@@ -228,10 +212,34 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Returns:
             Boolean
         """
-        self.streamblock_has_all_fields(
-            self.featured_library_expert_fallback[0], 
-            ['library_expert']
-        )
+        try:
+            return self.streamblock_has_all_fields(
+                self.featured_library_expert_fallback[0], 
+                ['library_expert']
+            ) and self.streamblock_has_link(self.featured_library_expert_fallback[0], 'libguides')
+        except(IndexError):
+            return False
+
+    def get_featured_lib_expert(self):
+        """
+        Test to see if a page has a "Featured Library Expert". 
+        In order to return True a proper fallback must also
+        be set.
+
+        Returns:
+            A mixed tuple where the first value is a boolean
+            and the second value is a streamfield block or
+            None when the first value is False.
+        """
+        fallback = self.has_featured_lib_expert_fallback()
+        today = date.today()
+        for block in self.featured_library_experts:
+            has_fields = self.streamblock_has_all_fields(block, ['library_expert', 'start_date','end_date'])
+            has_links = self.streamblock_has_link(block, 'libguides') # Could misfire, just an estimation
+            in_range = block.value.get('start_date') <= today and block.value.get('end_date') >= today
+            if (fallback and (has_fields and has_links)) and in_range:
+                return (True, block)
+        return (False, None)
 
 
     @property 
@@ -262,6 +270,18 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             return True
         else:
             return self.has_field(fields)
+
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(PublicBasePage, self).get_context(request)
+
+        context['has_featured_lib_expert'] = self.get_featured_lib_expert()[0]
+        context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
+
+        return context
 
 
 class LocationPageDonorPlacement(Orderable, models.Model):
@@ -466,3 +486,32 @@ class FloorPlanPage(PublicBasePage):
     search_fields = PublicBasePage.search_fields + (
         index.SearchField('image'),
     )
+
+
+class StaffPublicPage(PublicBasePage):
+    """
+    A public page for staff members.
+    """
+    subpage_types = ['public.StandardPage']
+    content_panels = Page.content_panels + PublicBasePage.content_panels
+
+    def get_bio(self):
+        """
+        Gets the bio from a loop staff page.
+
+        Returns:
+            Streamfield or empty string.
+        """
+        try:
+            return StaffPage.objects.live().filter(cnetid=self.title)[0].bio
+        except(IndexError):
+            return ''
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(PublicBasePage, self).get_context(request)
+
+        context['bio'] = self.get_bio()
+        return context
