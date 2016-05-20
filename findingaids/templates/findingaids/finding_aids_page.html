@@ -18,20 +18,42 @@
       <a href="#">Finding Aids with Digitized Content</a>
     </p>
 
-    <p>
-      {% for b in browselinks %}
-        {% if browse and b == browse %}
-          {{ b }}
-        {% else %}
-          <a href=".?browse={{ b|urlencode }}">{{ b }}</a>
-        {% endif %}
-        {% if not forloop.last %} | {% endif %}
-      {% endfor %}
-    </p>
-    <ul> 
-      {% for b in browses %}
-        <li><a href=".?view={{ b.0|urlencode }}">{{ b.1 }}</a></li>
-      {% endfor %}
-    </ul>
+    {% if topic %}
+
+      <h2>{{ topic }}</h2>
+      <ul>
+        {% for t in thistopiclist %}
+          <h3><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
+          <p>{{ t.2 }}</p>
+        {% endfor %}
+      </ul>
+
+    {% elif topics %}
+
+      <ul> 
+        {% for t in topiclist %}
+          <li><a href=".?topic={{ t.0|urlencode }}">{{ t.0 }} ({{ t.1 }})</a></li>
+        {% endfor %}
+      </ul>
+
+    {% else %}
+
+      <p>
+        {% for b in browselinks %}
+          {% if browse and b == browse %}
+            {{ b }}
+          {% else %}
+            <a href=".?browse={{ b|urlencode }}">{{ b }}</a>
+          {% endif %}
+          {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+      </p>
+      <ul> 
+        {% for b in browses %}
+          <li><a href=".?view={{ b.0|urlencode }}">{{ b.1 }}</a></li>
+        {% endfor %}
+      </ul>
+
+    {% endif %}
   </article>
 {% endblock %}

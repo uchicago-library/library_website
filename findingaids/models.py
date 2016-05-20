@@ -31,23 +31,33 @@ class FindingAidsPage(PublicBasePage):
             return sorted(list(set(map(lambda b: b[1][0], browses))))
 
         def get_topics():
-            topics = []
+            topics = {}
 
             r = urllib.request.urlopen("http://marklogic.lib.uchicago.edu:8011/ead/topics.xqy")
-            xml_string = "<body>" + r.read() + "</body>"
+            xml_string = "<body>" + str(r.read()) + "</body>"
 
             e = ElementTree.fromstring(xml_string)
             for div in e.findall('div'):
-                subject = div.find('subject')
-                topics.append(subject)
+                subject = div.find('subject').text
+                if not subject in topics:
+                    topics[subject] = []
+                topics[subject].append([div.find('eadid').text, div.find('title').text, div.find('abstract').find('abstract').text])
 
             return topics
+
+        def get_topic_list(topics):
+            topic_list = []
+            for t in topics.keys():
+                topic_list.append([t, len(topics[t])])
+            return sorted(topic_list, key=lambda t: t[0])
 
         context = super(FindingAidsPage, self).get_context(request)
 
         searchq = request.GET.get('searchq', None)
         exactphrase = request.GET.get('exactphrase', None)
         topics = request.GET.get('topics', None)
+        if topics and not topics == 'all':
+            topics = None
         topic = request.GET.get('topic', None)
         digitized = request.GET.get('digitized', None)
         browse = request.GET.get('browse', None)
@@ -58,9 +68,17 @@ class FindingAidsPage(PublicBasePage):
         if browse:
             browses = get_browse_list(browses, browse)
 
+        all_topics = get_topics()
+
         # topics
+        topiclist = []
         if topics:
-            topiclist = get_topics()
+            topiclist = get_topic_list(all_topics)
+
+        # topic
+        thistopiclist = []
+        if topic:
+            thistopiclist = list(sorted(all_topics[topic], key=lambda t: t[1]))
 
         # foreach /html/body/div
         # for d in e.findall('div'):
@@ -69,6 +87,7 @@ class FindingAidsPage(PublicBasePage):
         context['searchq'] = searchq
         context['exactphrase'] = exactphrase
         context['topiclist'] = topiclist
+        context['thistopiclist'] = thistopiclist
         context['topics'] = topics
         context['topic'] = topic
         context['digitized'] = digitized
