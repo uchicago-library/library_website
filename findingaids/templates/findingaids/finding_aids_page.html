@@ -1,0 +1,37 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+{% block content %}
+  <article>
+    <form action="." method="get">
+      <p>
+        Search for 
+        <input name="searchq" type="text"/>
+        <input name="digitized" type="checkbox"> search this exact phrase
+      </p>
+    </form>
+
+    <p>
+      <a href="?browse=A">All Finding Aids</a><br/>
+      <a href="?topics=all">By Topic</a><br/>
+      <a href="#">Finding Aids with Digitized Content</a>
+    </p>
+
+    <p>
+      {% for b in browselinks %}
+        {% if browse and b == browse %}
+          {{ b }}
+        {% else %}
+          <a href=".?browse={{ b|urlencode }}">{{ b }}</a>
+        {% endif %}
+        {% if not forloop.last %} | {% endif %}
+      {% endfor %}
+    </p>
+    <ul> 
+      {% for b in browses %}
+        <li><a href=".?view={{ b.0|urlencode }}">{{ b.1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </article>
+{% endblock %}

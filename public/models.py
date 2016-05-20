@@ -96,7 +96,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
         'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
-        'public.StaffPublicPage'] 
+        'public.StaffPublicPage', 'findingaids.FindingAidsPage']
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
