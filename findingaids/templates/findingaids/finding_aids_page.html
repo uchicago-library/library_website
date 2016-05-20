@@ -39,6 +39,7 @@
 
     {% elif topics %}
 
+      <h2>Browse Finding Aids by Topic</h2>
       <ul> 
         {% for t in topiclist %}
           <li><a href=".?topic={{ t.0|urlencode }}">{{ t.0 }} ({{ t.1 }})</a></li>
@@ -47,6 +48,7 @@
 
     {% else %}
 
+      <h2>Browse all Finding Aids</h2>
       <p>
         {% for b in browselinks %}
           {% if browse and b == browse %}
