@@ -44,6 +44,33 @@ class FindingAidsPage(PublicBasePage):
 
             return digitized
 
+        def get_search_results(searchq, exactphrase):
+            searchresults = []
+
+            if exactphrase:
+                u = "http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
+                urllib.parse.urlencode({'action': 'search', 'collection': 'project/SCRC', 'q': '"' + searchq + '"'})
+            else:
+                u = "http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
+                urllib.parse.urlencode({'action': 'search', 'collection': 'project/SCRC', 'q': searchq})
+
+            r = urllib.request.urlopen(u)
+
+            xml_string = r.read()
+
+            e = ElementTree.fromstring(xml_string)
+            try:
+                for div in e.find("div[@class='search-results']").findall("div[@class='search-result']"):
+                    searchresults.append({
+                        'eadid': div.find("div[@class='eadid']").text,
+                        'title': div.find("div[@class='project']").text,
+                        'abstract': div.find("div[@class='abstract']").text
+                    })
+            except AttributeError:
+                pass
+
+            return searchresults
+
         def get_topics():
             topics = {}
 
@@ -67,14 +94,14 @@ class FindingAidsPage(PublicBasePage):
 
         context = super(FindingAidsPage, self).get_context(request)
 
-        searchq = request.GET.get('searchq', None)
+        browse = request.GET.get('browse', None)
+        digitized = request.GET.get('digitized', None)
         exactphrase = request.GET.get('exactphrase', None)
+        searchq = request.GET.get('searchq', None)
+        topic = request.GET.get('topic', None)
         topics = request.GET.get('topics', None)
         if topics and not topics == 'all':
             topics = None
-        topic = request.GET.get('topic', None)
-        digitized = request.GET.get('digitized', None)
-        browse = request.GET.get('browse', None)
 
         # browse
         browses = get_browses()
@@ -88,6 +115,13 @@ class FindingAidsPage(PublicBasePage):
         digitizedlist = []
         if digitized:
             digitizedlist = get_digitized_content()
+
+        # search
+        searchresults = []
+        searchresultcount = 0
+        if searchq:
+            searchresults = get_search_results(searchq, exactphrase)
+            searchresultcount = len(searchresults)
 
         # topics
         topiclist = []
@@ -110,6 +144,8 @@ class FindingAidsPage(PublicBasePage):
         context['digitizedlist'] = digitizedlist
         context['exactphrase'] = exactphrase
         context['searchq'] = searchq
+        context['searchresultcount'] = searchresultcount
+        context['searchresults'] = searchresults
         context['topiclist'] = topiclist
         context['thistopiclist'] = thistopiclist
         context['topics'] = topics

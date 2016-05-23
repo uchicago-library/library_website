@@ -8,7 +8,7 @@
       <p>
         Search for 
         <input name="searchq" type="text"/>
-        <input name="digitized" type="checkbox"> search this exact phrase
+        <input name="exactphrase" type="checkbox"> search this exact phrase
       </p>
     </form>
 
@@ -26,6 +26,17 @@
           <p>{{ d.2 }}</p>
         {% endfor %}
       </ul>
+
+    {% elif searchq %}
+      <h2>{{ searchresultcount }} documents match your search for "{{ searchq }}"</h2>
+      {% if searchresults %}
+        {% for r in searchresults %}
+          <h3><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
+          <p>{{ r.abstract }}</p>
+        {% endfor %}
+      {% else %}
+        <p>There were no results for your search.</p>
+      {% endif %}
 
     {% elif topic %}
 
