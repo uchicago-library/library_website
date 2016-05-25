@@ -14,7 +14,6 @@ from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
-
 import json, re
 
 class StaffPageSubjectPlacement(Orderable, models.Model):
@@ -142,7 +141,7 @@ class StaffPage(BasePage):
         Get the subjects beloning to the 
         staff member - UNTESTED 
         """
-        return StaffPageSubjectPlacement.objects
+        return get_public_profile('elong')
 
     @property
     def is_subject_specialist(self):
@@ -152,6 +151,18 @@ class StaffPage(BasePage):
         """
         subjects = self.get_subjects()
         return None
+
+    @property
+    def public_page(self):
+        """
+        Get a public staff profile page for the
+        library expert if one exists.
+        """
+        from public.models import StaffPublicPage # Should try to do better
+        try:
+            return StaffPublicPage.objects.live().filter(title=self.cnetid)[0]
+        except(IndexError):
+            return None
 
     objects = StaffPageManager
 

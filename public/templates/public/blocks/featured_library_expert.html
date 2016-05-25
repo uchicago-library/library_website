@@ -1,10 +1,17 @@
+{% load wagtailimages_tags %}
+{% image self.library_expert.specific.profile_picture fill-200x200 as profile_pic %}
+
 <div class="col-xs-12 col-sm-6 home-modwrapper">
     <div class="home-module">
         <h1 style="font-size:1.2em;" class="h-inline">Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h1>
         <p class="h-inline"> &nbsp; | &nbsp; <a style="color: #767676;" href="#">View all experts <i aria-hidden="true" class="fa fa-angle-double-right"></i></a></p>
     </div>
     <div class="col-xs-8">
-        <h6>Consult <a href="staff-profile.html">{{self.library_expert}}</a> on:</h6>
+        {% if self.library_expert.specific.public_page %}
+            <h6>Consult <a href="{{self.library_expert.specific.public_page.url}}">{{self.library_expert}}</a> on:</h6>
+        {% else %}
+            <h6>Consult {{self.library_expert}} on:</h6>
+        {% endif %}
         <ul>
             {% for guide in self.libguides %} 
                 <li><a href="{% firstof guide.link_external guide.link_page%}">{{guide.link_text}}</a></li>
@@ -15,6 +22,10 @@
             <li><a href="#">Ask a Librarian</a></li>
         </ul>
     </div>
-    <div class="col-xs-4 home-profile"><img src="images/julie2.jpg" class="img-responsive"></div>
+    {% if profile_pic %}
+        <div class="col-xs-4 home-profile">
+            <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+        </div>
+    {% endif %}
 </div>
 

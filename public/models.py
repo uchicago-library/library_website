@@ -30,7 +30,7 @@ class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
         required=False, 
     ) 
     libguides = blocks.ListBlock(LinkBlock(),
-        icon='link') 
+        icon='link')
 
 
 class FeaturedLibraryExpertBlock(FeaturedLibraryExpertBaseBlock):
@@ -39,6 +39,7 @@ class FeaturedLibraryExpertBlock(FeaturedLibraryExpertBaseBlock):
     """
     start_date = blocks.DateBlock(blank=True, null=True)
     end_date = blocks.DateBlock(blank=True, null=True)
+
 
 class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
     """
@@ -222,8 +223,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     def get_featured_lib_expert(self):
         """
-        Test to see if a page has a "Featured Library Expert". 
-        In order to return True a proper fallback must also
+        Test to see if a page has a "Featured Library Expert".
+        Return a boolean and the featured library expert for
+        today's date. Return False and None if there is no
+        Featured Library Expert for today. The fallback is 
+        used if nothing is available for today's date. In 
+        order to return True a proper fallback must always 
         be set.
 
         Returns:
@@ -239,6 +244,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             in_range = block.value.get('start_date') <= today and block.value.get('end_date') >= today
             if (fallback and (has_fields and has_links)) and in_range:
                 return (True, block)
+        if (fallback):
+            return (True, self.featured_library_expert_fallback[0])
         return (False, None)
 
 
