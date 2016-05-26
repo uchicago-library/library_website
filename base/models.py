@@ -737,7 +737,6 @@ class PublicBasePage(BasePage):
 
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
-
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']
 

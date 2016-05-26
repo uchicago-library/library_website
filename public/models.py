@@ -283,7 +283,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         """
         Override the page object's get context method.
         """
-        context = super(PublicBasePage, self).get_context(request)
+        context = super(StandardPage, self).get_context(request)
 
         context['has_featured_lib_expert'] = self.get_featured_lib_expert()[0]
         context['featured_lib_expert'] = self.get_featured_lib_expert()[1]

@@ -74,6 +74,26 @@ def get_all_building_hours():
     return list(HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings)
 
 
+def recursive_get_parent_building(location):
+    """
+    Return the "highest" location level for a 
+    given sub-location. This should resolve
+    to a building if the data is setup correctly.
+
+    Args:
+        location: location page object.
+
+    Returns:
+        location page objects
+    """
+    # Base case
+    if location.is_building:
+        return location
+    # Recursive case
+    else:
+        return recursive_get_parent_building(location.parent_building)
+        
+
 def get_hours_and_location(obj):
     """
     Gets the page unit, location, hours and the address 
@@ -117,13 +137,8 @@ def get_hours_and_location(obj):
     # Set unit, location, and hours
     try:
         unit = obj.unit
-        location = unit.location
-        if location.is_building:
-            location = location # Readability
-            hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
-        else:
-            location = location.parent_building
-            hours = HOURS_TEMPLATE % (str(location.parent_building), get_hours_by_id(location.parent_building.libcal_library_id))
+        location = recursive_get_parent_building(unit.location)
+        hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
     except(AttributeError):
         from units.utils import get_default_unit
         unit = get_default_unit()
