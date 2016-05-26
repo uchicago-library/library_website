@@ -619,6 +619,13 @@ class DefaultBodyFields(StreamBlock):
     #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
 
 
+class RawHTMLBodyField(StreamBlock):
+    """
+    Streamfield for raw HTML.
+    """
+    html = RawHTMLBlock()
+
+
 # Page definitions
 class BasePage(Page, AbstractBase):
     """

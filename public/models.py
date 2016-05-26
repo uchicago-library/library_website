@@ -9,7 +9,7 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock
+from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField
 from datetime import date
 from staff.models import StaffPage
 
@@ -97,7 +97,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
         'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
-        'public.StaffPublicPage', 'findingaids.FindingAidsPage']
+        'public.StaffPublicPage', 'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage']
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -522,3 +522,15 @@ class StaffPublicPage(PublicBasePage):
 
         context['bio'] = self.get_bio()
         return context
+
+
+class PublicRawHTMLPage(PublicBasePage):
+    """
+    A public page for raw HTML.
+    """
+    html = StreamField(RawHTMLBodyField())
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('html')
+    ] + PublicBasePage.content_panels
+
