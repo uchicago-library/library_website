@@ -230,13 +230,14 @@ class StaffPage(BasePage):
 
         group_memberships = []
         for group_membership in self.member.all():
-            group_memberships.append({
-                'group': {
-                    'title': group_membership.parent.title,
-                    'url': group_membership.parent.url
-                },
-                'role': group_membership.role
-            })
+            if group_membership.parent.is_active:
+                group_memberships.append({
+                    'group': {
+                        'title': group_membership.parent.title,
+                        'url': group_membership.parent.url
+                    },
+                    'role': group_membership.role
+                })
             
         context = super(StaffPage, self).get_context(request)
         context['vcard_titles'] = vcard_titles
