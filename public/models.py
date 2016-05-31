@@ -598,7 +598,16 @@ class StaffPublicPage(PublicBasePage):
         """
         context = super(PublicBasePage, self).get_context(request)
 
+        s = StaffPage.objects.get(cnetid=self.cnetid)
+        v = s.vcards.first()
+
         context['bio'] = self.get_bio()
+        context['vcardtitle'] = v.title
+        context['email'] = v.email
+        context['phone_number'] = v.phone_number
+        context['library'] = v.unit.get_parent_library_name()
+        context['room_number'] = v.faculty_exchange.split(' ').pop()
+        context['department_name'] = v.unit.name
         return context
 
 

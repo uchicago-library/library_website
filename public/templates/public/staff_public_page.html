@@ -4,5 +4,55 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
+  <div class="page-head">
+    <h2>{{ vcardtitle }}</h2>
+  </div>
+  {# staff portrait #}
+  <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
+    <img class="staff-profile img-responsive" src=""/>
+  </div>
+  {# end staff portrait #}
+  {# right sidebar #}
+  <div class="col-xs-12 col-sm-7 col-md-3 col-md-push-6 col-lg-push-7 flex-sidebar"> 
+    <h4>Contact</h4>
+    <p>
+      <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
+      {{ phone_number }}<br/>
+      {{ library }}, Rm {{ room_number }}
+    </p>
+
+    <h4>Library &amp; Department</h4>
+    <p>
+      <strong><a href="#">{{ library }}</a></strong><br>
+      {{ department_name }}
+    </p>
+
+    <h4>Subject Specialties</h4>
+    <p style="line-height: 1.7em;">
+      <a href="#">Ancient Near East</a><br>
+      <a href="#">Classics</a><br>
+      <a href="#">Medieval Studies</a></p>
+      <a role="button" class="btn btn-morelink" href="#">View Research Guides <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
+    </p>
+
+    <h4>Expertise</h4>
+    <p style="line-height: 1.7em;">
+      <a href="#">GovDocs</a><br>
+      <a href="#">Database Administration</a><br>
+      <a href="#">Archives</a>
+    </p>
+  </div>
+  {# end right sidebar #}
+  {# main column #}
+  <div class="col-xs-12 col-md-6 col-lg-7 col-md-pull-3 col-xlg-6 col-xlg-pull-2 profile-bio">
     {{bio}}
+    <h3>Publications</h3>
+    <p><a href="">View Works List On ORCID</a></p>
+    <h3>Education</h3>
+    <p>
+      PhD Classical Magic, University of Chicago<br>
+      B.A. Practical Magic, Hogwarts Academy</p>
+      <a role="button" class="btn btn-morelink" href="#">View CV <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
+    </p>
+  </div>
 {% endblock %}
