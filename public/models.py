@@ -238,8 +238,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             None when the first value is False.
         """
         fallback = self.has_featured_lib_expert_fallback()
+        #print(self.featured_library_expert_fallback[0].value.get('library_expert'))
         today = date.today()
         for block in self.featured_library_experts:
+            #print(block.value.get('library_expert'))
             has_fields = self.streamblock_has_all_fields(block, ['library_expert', 'start_date','end_date'])
             has_links = self.streamblock_has_link(block, 'libguides') # Could misfire, just an estimation
             in_range = block.value.get('start_date') <= today and block.value.get('end_date') >= today
@@ -248,6 +250,66 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         if (fallback):
             return (True, self.featured_library_expert_fallback[0])
         return (False, None)
+
+
+    def unpack_lib_expert_block(self, block):
+        """
+        Unpack the values from a "Featured Library Expert" 
+        streamfield block and return a data structure for 
+        display in the templates. This method wouldn't be 
+        needed, however, at the moment Wagtail doesn't allow 
+        for getting the page context from a block. This is 
+        discussed in Wagtail github issue #s 1743 and 2469.
+        When a solution is implemented in the Wagtail base
+        we could get rid of this.
+
+        Args:
+            block: Featured Library Expert or fallback 
+            streamfield block.
+
+        Returns:
+            Mixed dictionary with the following values: 
+            person (StaffPage object), image (object), 
+            profile (string url), links (list of html strings).
+        """
+        person = block.value.get('library_expert')
+        libguides = block.value.get('libguides')
+        image = person.specific.profile_picture
+        profile = person.specific.public_page.url if person.specific.public_page else None
+   
+        links = [] 
+        for guide in libguides:
+            link_text = guide['link_text']
+            url = guide['link_external'] if guide['link_external'] else guide['link_page']
+            html = '<a href="%s">%s</a>' % (url, link_text)
+            links.append(html)
+
+        return {'person': person, 'image': image, 'profile': profile, 'links': links}
+
+
+    def get_directory_link_by_location(self, location):
+        """
+        Return a link into the directory limited for a 
+        given Library.
+
+        Args:
+            location: string, the building level locations 
+            for which to retrieve a link into the public 
+            directory.
+
+        Returns:
+            string, link into the public directory
+            filtered by library.
+        """
+        base = '/units/?view=staff&library='
+        links = {'The John Crerar Library': base + 'Crerar Library',
+                 'The D\'Angelo Law Library': base + 'D\'Angelo Law Library',
+                 'Eckhart Library': base + 'Eckhart Library',
+                 'The Joe and Rika Mansueto Library': base + 'Mansueto',
+                 'The Joseph Regenstein Library': base + 'Regenstein Library',
+                 'Special Collections Research Center': base + 'Special Collections Research Center',
+                 'Social Service Administration Library': base + 'SSA Library'} 
+        return links[location]     
 
 
     @property 
@@ -285,9 +347,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Override the page object's get context method.
         """
         context = super(StandardPage, self).get_context(request)
+        
+        has_featured_lib_expert = self.get_featured_lib_expert()[0]
 
-        context['has_featured_lib_expert'] = self.get_featured_lib_expert()[0]
-        context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
+        if has_featured_lib_expert:
+            lib_expert_block = self.unpack_lib_expert_block(self.get_featured_lib_expert()[1])
+            context['has_featured_lib_expert'] = has_featured_lib_expert
+            context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
+            context['featured_lib_expert_name'] = lib_expert_block['person'] 
+            context['featured_lib_expert_image'] = lib_expert_block['image']
+            context['featured_lib_expert_profile'] = lib_expert_block['profile'] 
+            context['featured_lib_expert_links'] = lib_expert_block['links']
 
         return context
 

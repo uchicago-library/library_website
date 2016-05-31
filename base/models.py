@@ -748,12 +748,14 @@ class PublicBasePage(BasePage):
         unit = location_and_hours['page_unit']
 
         try: 
+            location = str(location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
-            context['page_location'] = str(location_and_hours['page_location'])
+            context['page_location'] = location
             context['current_building_hours'] = location_and_hours['hours']
             context['address'] = location_and_hours['address']
             context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
+            context['directory_link'] = self.get_directory_link_by_location(location)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
