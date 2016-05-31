@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields import CharField
 from django import forms
 from django.utils import timezone
 from wagtail.wagtailcore.models import Page, Orderable
@@ -499,8 +500,15 @@ class StaffPublicPage(PublicBasePage):
     """
     A public page for staff members.
     """
+    cnetid = CharField(
+        max_length=255,
+        blank=False,
+        null=True)
+
     subpage_types = ['public.StandardPage']
-    content_panels = Page.content_panels + PublicBasePage.content_panels
+    content_panels = Page.content_panels + [
+        FieldPanel('cnetid')
+    ] + PublicBasePage.content_panels
 
     def get_bio(self):
         """
@@ -510,7 +518,7 @@ class StaffPublicPage(PublicBasePage):
             Streamfield or empty string.
         """
         try:
-            return StaffPage.objects.live().filter(cnetid=self.title)[0].bio
+            return StaffPage.objects.live().filter(cnetid=self.cnetid)[0].bio
         except(IndexError):
             return ''
 
