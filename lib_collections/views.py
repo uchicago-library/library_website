@@ -75,8 +75,9 @@ def collections(request):
     formats = Format.objects.all().values_list('text', flat=True)
 
     # the formats pulldown should skip 'Digital'. That shows up as a checkbox. 
-    tmp = sorted(list(set(CollectionPage.objects.all().values_list('collection_placements__format__text', flat=True))))
-    formats_pulldown = [f for f in tmp if f not in ['Digital']]
+    formats_pulldown = ['Archives & Manuscripts', 'Audio', 'Books & Journals', \
+'Images', 'Maps', 'Microform', 'Music Scores', 'Photographs', 'Reference Works', \
+'Statistics & Datasets', 'Video']
 
     # locations
     locations = sorted(LocationPage.objects.live().values_list('title', flat=True))
@@ -128,7 +129,10 @@ def collections(request):
     # Social Sciences
     # Biological Sciences
     # Physical Sciences
-    subjects_pulldown = ['Art, Architecture and Photography', 'Business', 'Humanities and Social Science', 'Law', 'Medicine']
+
+    subjects_pulldown = ['Area & Cultural Studies', 'Arts', 'Business', \
+'Humanities', 'Law', 'Literature', 'Medicine', 'Sciences, Biological', \
+'Sciences, Physical', 'Social Sciences', 'Social Services', 'Special Collections']
 
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
