@@ -27,20 +27,28 @@
       {{ department_name }}
     </p>
 
-    <h4>Subject Specialties</h4>
-    <p style="line-height: 1.7em;">
-      <a href="#">Ancient Near East</a><br>
-      <a href="#">Classics</a><br>
-      <a href="#">Medieval Studies</a></p>
-      <a role="button" class="btn btn-morelink" href="#">View Research Guides <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
-    </p>
+    {% if subjects or libguide_url %}
+      <h4>Subject Specialties</h4>
+      <p style="line-height: 1.7em;">
+        {% for s in subjects %}
+          <a href="#">{{ s }}</a><br/>
+        {% endfor %}
+      </p>
+      {% if libguide_url %}
+        <p>
+          <a role="button" class="btn btn-morelink" href="{{ libguide_url|urlencode }}">View Research Guides <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
+        </p>
+      {% endif %}
+    {% endif %}
 
-    <h4>Expertise</h4>
-    <p style="line-height: 1.7em;">
-      <a href="#">GovDocs</a><br>
-      <a href="#">Database Administration</a><br>
-      <a href="#">Archives</a>
-    </p>
+    {% if expertises %}
+      <h4>Expertise</h4>
+      <p style="line-height: 1.7em;">
+        {% for expertise in expertises %}
+           {{ expertise }}<br/>
+        {% endfor %}
+      </p>
+    {% endif %}
   </div>
   {# end right sidebar #}
   {# main column #}

@@ -601,13 +601,24 @@ class StaffPublicPage(PublicBasePage):
         s = StaffPage.objects.get(cnetid=self.cnetid)
         v = s.vcards.first()
 
+        expertises = []
+        for expertise in s.expertise_placements.all():
+            expertises.append(expertise.expertise.text)
+
+        subjects = []
+        for subject in s.staff_subject_placements.all():
+            subjects.append(subject.subject)
+
         context['bio'] = self.get_bio()
-        context['vcardtitle'] = v.title
-        context['email'] = v.email
-        context['phone_number'] = v.phone_number
-        context['library'] = v.unit.get_parent_library_name()
-        context['room_number'] = v.faculty_exchange.split(' ').pop()
         context['department_name'] = v.unit.name
+        context['email'] = v.email
+        context['expertises'] = expertises
+        context['libguide_url'] = s.libguide_url
+        context['library'] = v.unit.get_parent_library_name()
+        context['phone_number'] = v.phone_number
+        context['room_number'] = v.faculty_exchange.split(' ').pop()
+        context['subjects'] = subjects
+        context['vcardtitle'] = v.title
         return context
 
 

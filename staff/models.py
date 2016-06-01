@@ -11,6 +11,7 @@ from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
+from wagtail.wagtailsnippets.models import register_snippet
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
@@ -173,6 +174,7 @@ class StaffPage(BasePage):
         FieldPanel('libguide_url'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
+        InlinePanel('expertise_placements', label='Expertise'),
         FieldPanel('orcid')
     ] + BasePage.content_panels
 
@@ -279,3 +281,36 @@ class StaffIndexPage(BasePage):
         context = super(StaffIndexPage, self).get_context(request)
         context['staff_pages'] = staff_pages
         return context
+
+
+@register_snippet
+class Expertise(models.Model, index.Indexed):
+    text = models.CharField(max_length=255, blank=False)
+    
+    panels = [
+        FieldPanel('text'),
+    ]
+    
+    def __str__(self):
+        return self.text
+    
+    search_fields = [
+        index.SearchField('text', partial_match=True),
+    ]
+
+# Interstitial model for linking the Expertise model to the StaffPage
+class StaffPageExpertisePlacement(Orderable, models.Model):
+    page = ParentalKey('staff.StaffPage', related_name='expertise_placements')
+    expertise = models.ForeignKey('staff.Expertise', related_name='+')
+
+    class Meta:
+        verbose_name = "Expertise Placement"
+        verbose_name_plural = "Expertise Placements"
+
+    panels = [ 
+        SnippetChooserPanel('expertise'),
+    ]   
+
+    def __str__(self):
+        return self.page.title + " -> " + self.expertise.text
+
