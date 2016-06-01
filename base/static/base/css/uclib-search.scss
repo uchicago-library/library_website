@@ -1,0 +1,194 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Search Type Tabs
+Search Field Row
+Other Search Row
+
+-------------------------------------------------------------------*/
+
+@import "variables";
+@import "base";
+
+/*
+ * Search Type Tabs
+ * --------------------------------------------------
+ */
+
+h1.searchbox-header {
+  font-size: 1.1em;
+  color: #5e5e5e;
+  margin: 10px 0 10px 5px;
+  font-weight: 600;
+}
+
+.transformer-tabs {
+  .main-search & {
+    background-color: #fff;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 3px solid #D6D6CE;
+    @include respond-to(smallonly) {
+      color: #fff;
+      display: flex;
+    }
+  }
+  li {
+    display: inline-block;
+    padding: 0;
+    vertical-align: bottom;
+    a.active {
+      color: lighten(#642822, 20%);
+      border-bottom-color: #642822;
+      @include respond-to(smallonly) {
+        color: #642822;
+        display: flex;
+        padding-top: 0;
+      }
+    }
+  }
+  a {
+    display: inline-block;
+    color: #525252;
+    text-decoration: none;
+    padding: 0.3em 1.5em;
+    &.active {
+      border-bottom: 3px solid transparent;
+      position: relative;
+      bottom: -3px;
+    }
+    &:hover {
+      color: #C16622;
+      border-bottom: 3px solid #C16622;
+      position: relative;
+      bottom: -3px;
+    }
+  }
+}
+
+.tabs {
+  > div {
+    display: none;
+    padding: 1em;
+  }
+  &.main-search {
+    background-color: rgba(210,205,204, 0.5);
+    margin-bottom: 20px;
+
+  }
+  > .active {
+    display: block;
+  }
+}
+
+.searchbody {
+  background-color: transparent;
+  padding: 15px 40px 20px 30px;
+  border-top: 4px solid $darkred;
+  @include respond-to(small) {
+    border-top: none;
+  }
+}
+
+/*
+ * Search Field Row
+ * --------------------------------------------------
+ */
+
+.form-control {
+    padding: 18px 12px;
+}
+
+#search-drop {
+  &.open>.dropdown-toggle.btn-default {
+  background-color: #B1746F;
+}
+  & > ul {
+    background-color: rgba(210, 205, 204, 0.95);
+    & > li > a {
+    color: #000;
+    &:hover {
+      color: #800000;
+      background-color: #f7f1f0;
+      text-decoration: none;
+    }
+  }
+  }
+}
+
+.search-btn-wrapper {
+  @include respond-to(medium) {
+    padding-right: 0;
+  }
+}
+
+.btn-searchtype {
+  color: #fff;
+  padding: 15px;
+  line-height: 0.45em;
+}
+
+.btn-search {
+  background-color: #642822;
+  color: #fff;
+  width: 100%;
+  font-size: 1.1em;
+  padding: 10px;
+  line-height: 0.45em;
+  margin-top: 0;
+  @include respond-to(medium) {
+    padding: 15px;
+  }
+}
+
+.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype:hover, .btn-searchtype:focus, .btn-searchtype:active {
+    color: #000;
+    background-color: #B1746F;
+  }
+
+.dropdown-menu-right {
+  margin: 0px;
+  border: 0px;
+  background-color: #F2F2F2;
+}
+
+/*
+ * Other Search Row
+ * --------------------------------------------------
+ */
+
+ .eoptions {
+  padding: 10px 0 0 5px;
+  font-size: 14px;
+  margin-bottom: 0;
+  p {
+    margin-bottom: 0;
+  }
+  @include respond-to(smallonly) {
+    padding: 10px 0 0 15px;
+  }
+}
+
+.advanced {
+  @extend .eoptions;
+  text-decoration: underline;
+  @include respond-to(small) {
+    text-align: right;
+  }
+}
+
+ .searchoptions {
+  color: #525252;
+  padding: 10px 0 0 5px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-size: 0.9em;
+  font-style: italic;
+  p {
+    margin-bottom: 0;
+  }
+}
+

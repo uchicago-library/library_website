@@ -1,0 +1,490 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Top Right Navbar (time/account/ask)
+Main Navbar
+Navigation Drop Downs
+Fancy Splash Image (Jumbotron)
+Off Canvas (Sidebar Mobile Toggle)
+Left Sidebar
+Footer
+-------------------------------------------------------------------*/
+
+// Right sidebar is in uclib.scss
+
+@import "variables.scss";
+@import "base.scss";
+
+
+/*
+ * Top Right Navbar (time/account/ask)
+ * --------------------------------------------------
+ */
+
+.mobile-topnav {
+  text-align: center;
+  border-bottom: 1px solid $darkgray;
+  background-color: rgba(67, 67, 67, 0.7);
+  padding: 5px 0;
+      a {
+      color: #fff;
+      padding: 0 1em;
+  }
+}
+
+#navbar-right {
+  font-size: 1em;
+  padding-right: 1.5em;
+  &>li>a {
+      color: #f9f9f9;
+      &:hover {
+      	color:#E4E4E4;
+        background-color: $transparent;
+      }
+      &:focus {
+        background-color: $transparent;
+      }
+    }
+  &>li>.dropdown-menu {
+      color: #fff;
+      text-align: right;
+      background-color: $transparent;
+  }
+  @include respond-to(xlarge) {
+      padding-right: 15em;
+      margin-right: 30px;
+  }
+}
+
+ul#navbar-right li:hover > ul.dropdown-menu.menuhover {
+    display: block;
+}
+
+i.ask-online {
+  color: #eee;
+}
+
+i.ask-offline {
+  color:transparent;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #fff;
+}
+
+
+/*
+ * Main Navbar
+ * --------------------------------------------------
+ */
+
+.fluid-top {
+  @include respond-to(small) {
+    padding: 0px;
+  }
+}
+
+.navbar-brand {
+  max-width: 125px;
+  padding: 5px 15px 15px 15px;
+  @include respond-to(small) {
+    max-width: 175px;
+    padding-left: 20px;
+    padding-top: 5px;
+  }
+  @include respond-to(medium) {
+    padding-left: 35px;
+    padding-top: 10px;
+  }
+}
+
+.navbar-default {
+  border: 0px;
+  margin-bottom:0px;
+  background-image: url("../images/warm_grey_reddish.jpg");
+  background-repeat: repeat;
+  z-index: 10;
+  .navbar-nav {
+    &>li>a {
+      color: #eee;
+      &:hover {
+        color: #fff;
+        background-color: $transparent;
+      }
+      &:focus {
+        color: #fff;
+      }
+    }
+    & .open .dropdown-menu {
+      background-color: $transparent;
+    }
+    &>.open>a:focus {
+      background-color: $maroon;
+      color: #fff;
+    }
+    &>.open>a, &>.open>a:hover {
+      color: #E4E4E4;
+      background-color: $transparent;
+    }
+  }
+}
+
+#global-navbar {
+  background-color: rgba(67, 67, 67, 0.4);
+  font-size: 1.1em;
+  padding-left:0.5em;
+  &.navbar-nav>li>a:focus {
+    color: #fff;
+  }
+  &.navbar-nav>.open>a:focus {
+    background-color: $maroon;
+  }
+  @include respond-to(small)  {
+    box-shadow: 0 1px 7px #462b28;
+    margin-top: 70px;
+    .navbar-nav>li>a {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+  }
+}
+
+/*
+ * Navigation Drop Downs
+ * --------------------------------------------------
+ */
+
+.dropdown-menu { // For both top right and global nav
+  border: none;
+  &>li>a {
+      color: #fff;
+      font-size: 1.1em;
+      margin-bottom: 5px;
+    &:hover { //For top right nav
+        color: #262626;
+        text-decoration: none;
+        background-color: #f5f5f5;
+    }
+  }
+  .divider {
+      background-color: $darkgray;
+  }
+}
+
+.dropdown-menu-right {
+  @include respond-to(large) {
+    right: auto;
+    left: 0;
+  }
+}
+
+.twocol-head { // Headers for mega drop downs
+  color: #e7d5d3;
+  font-size: .8em;
+  line-height: 2.4em;
+  text-transform: uppercase;
+}
+
+.twocol-drop {
+  background-color: $transparent;
+  @include respond-to(small) {
+      min-width: 500px;
+      padding: 10px 0 10px 0;
+  }
+  >li>ul>li {
+    margin-bottom: 10px;
+    a {
+      color: #fff;
+      font-size: 1.1em;
+      text-decoration: none;
+      &:hover {
+        color: $hoveraccent;
+      }
+    }
+  }
+}
+
+.ul-left {
+  padding-bottom: 1.5em;
+  @include respond-to(medium) {
+    padding-bottom: 0px;
+    border-right: 1px solid $darkgray;
+  }
+}
+
+/*
+ * Fancy Splash Image (Jumbotron)
+ * --------------------------------------------------
+ */
+
+.jumbotron {
+  max-height: 50px;
+  padding-top: 0px;
+  margin-bottom: 0;
+  background-color: $darkred; //fallback if all else fails
+  background-image: url("../images/banner.gif"); //fallback if no image uploaded
+  background-size: cover;
+  h2 {
+    color: #fff;
+  }
+  .container {
+    padding: 0px;
+  }
+  @include respond-to(small) { 
+    min-height: 75px;
+    .container {
+      position: relative;
+      margin: 0px;
+    }
+  }
+}
+
+.overlaywrap {
+  background-color: $trans-red; // Also applies to Law. Default if location is not specified
+  color: #E7E5E2;
+  left: 0;
+  top: 0;
+  h2 {
+    font-weight: 400;
+    font-size: 1.2em;
+    margin-top: 0;
+    padding: 10px 15px;
+  }
+  &.crerar {
+    background-color: $trans-blue;
+  }
+  &.eckhart {
+    background-color: $trans-purple;
+  }
+  &.mansueto {
+    background-color: $trans-darkgreen;
+  }
+  &.reg {
+    background-color: $trans-lightgreen;
+  }
+  &.ssa {
+    background-color: $trans-orange;
+  }
+  @include respond-to(small) {
+    position: absolute;
+    padding-right: 3em;
+    padding-left: 1.7em;
+    h2 {
+      font-size: 1.6em;
+      margin-top: 10px;
+      padding: 0;
+    }
+  }
+}
+
+
+/*
+ * Off Canvas (Sidebar Mobile Toggle)
+ * --------------------------------------------------
+ */
+
+@media screen and (max-width: 986px) { // Keep as @media (instead of @include) for stability
+ .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+      .sidebar-offcanvas {
+        right: -50%; /* 6 columns */
+    }
+    &.active {
+        right: 50%; /* 6 columns */
+    }
+  }
+
+  .row-offcanvas-left {
+    left: 0;
+      .sidebar-offcanvas {
+        left: -50%; /* 6 columns */
+    }
+    &.active {
+        left: 50%; /* 6 columns */
+    }
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+  }
+
+  .toggle-side {
+      padding-bottom: 5px;
+  }
+}
+
+/*
+ * Left Sidebar
+ * --------------------------------------------------
+ */
+
+.sidebar {
+  background-color: $midneutral;
+  padding: 5px 15px 40px 40px;
+  @include respond-to(medium) {
+    padding-left: 2em;
+    padding-top: 35px;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 2em;
+    text-indent: -2em;
+    li {
+      margin-bottom: 3px;
+    }
+  }
+  h3, h3 a {
+    margin-bottom: 3px;
+    font-size: 1em;
+    color: $darkred;
+  }
+  h4, h4 a {
+    font-size: 1em;
+    font-weight: 600;
+    color: $maroon;
+  }
+  a {
+    font-size: 1em;
+    color: $mid-dark;
+  }
+  &.crerar {
+    h4, h4 a {
+      color: $crerarblue;
+    }
+  }
+  &.eckhart {
+    h4, h4 a {
+      color: $eckhartpurple;
+    }
+  }
+  &.mansueto {
+    h4, h4 a {
+      color: $mansuetogreen;
+    }
+  }
+  &.reg {
+    h4, h4 a {
+      color: $reggreen;
+    }
+  }
+  &.ssa {
+    h4, h4 a {
+      color: $ssaorange;
+    }
+  } 
+}
+
+.btn-sidebar {  // Toggle button for mobile view
+  background: #ddd;
+  color: $darkgray;
+  position: absolute;
+  padding: 10px;
+  left: 0;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  margin-left: 0;
+  margin-top: -25px;
+  z-index: 1000;
+  background-color: rgba(210,205,204, 0.9);
+  box-shadow: 0px 2px 7px $darkgray;
+  & a {
+    color: $darkgray;
+  }
+}
+
+
+/*
+ * Footer
+ * --------------------------------------------------
+ */
+
+.footer {
+  bottom: 0;
+  position: sticky;
+  width: 100%;
+  background: $darkgray; // fallback
+  background-image: url("../images/warm_grey_reddish.jpg");
+  background-repeat: repeat;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  &>hr {
+    border-top: 1px solid $darkgray;
+  }
+  p, small {
+    color: $neutral;
+  }
+  & a {
+  color: #eee;
+  line-height: 1.7em;
+  text-decoration: none;
+    &:hover {
+    	color: $hoveraccent;
+    }
+	}
+  h5 {
+    margin-bottom: 0px;
+  }
+  .col-footer {
+      border-top: 1px solid #5e5e5e;
+      padding-top: 15px;
+    @include respond-to(small) {
+      @include flex;
+      border-top: none;
+      padding-top: 0;
+    }
+  }
+  @include respond-to(small) { // Full width footer div
+  margin: 0;
+  display: table;
+  width: 100%;
+    li {
+      display: table-cell;
+      width: 1%;
+      float: none;
+    }
+    li a {
+      font-weight: bold;
+      text-align: center;
+      border-left: 1px solid rgba(255, 255, 255, .75);
+      border-right: 1px solid rgba(0, 0, 0, .1);
+    }
+    li:first-child a {
+      border-left: 0;
+      border-radius: 3px 0 0 3px;
+    }
+    li:last-child a {
+      border-right: 0;
+      border-radius: 0 3px 3px 0;
+    }
+    .divider-vertical { // Lines between link blocks
+      height: 100%;
+      border-right: 1px solid #5e5e5e;
+      border-left: 1px solid #5e5e5e;
+    }
+  }
+}
+
+.centerdiv {
+  img {
+    padding-bottom:20px;
+    width: 150px;
+    height: auto;
+  }
+  @include respond-to(small) {
+    @include center;
+    text-align: center;
+    img {
+        @include center;
+    }
+  }
+}
+
+
+      

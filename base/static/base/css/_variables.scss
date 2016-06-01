@@ -1,24 +1,73 @@
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+
+// Unv Color Palette
+
 $darkgray: #767676;
 $lightgray: #D6D6CE;
 $darkred: #642822;
+$maroon: #800000;
+$crerarblue: #0F425C;
+$eckhartpurple: #350E20;
+$mansuetogreen: #3E3E23;
+$reggreen:  #616530;
+$ssaorange: #9A5324;
+
+
+// Palette Variations
+
+$mid-dark: #525252;
 $darkneutral: #7B4943;
+$midneutral: #D2CDCC;
 $neutral: #e2ddd7;
+$lightneutral: #f0eeef;
+$brightpurple: #6d2f6a;
+$hoveraccent: #D49464;
+$hovercalm: #eeefe5; //#e0e5e2
+$hovercalmlight: #f6f7f2;
+$active: #8A9045;
+$active-hover: #725663;
+
+
+// Opacity Fun Times
+
 $transparent: rgba(67, 67, 67, 0.95);
+$trans-red: rgba(109, 50, 39,0.8);
+$trans-blue: rgba(21, 95, 131, 0.8);
+$trans-purple: rgba(53, 14, 32, 0.8);
+$trans-darkgreen: rgba(70, 71, 51, 0.8);
+$trans-lightgreen: rgba(101, 105, 51, 0.8);
+$trans-orange: rgba(154, 83, 46, 0.8);
+
+
+/*
+ * Elements
+ * --------------------------------------------------
+ */
+
 $divider: 1px solid $darkgray;
 
+
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+
+@mixin desaturate { // for images
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%);
+}
+
 @mixin center {
-            display:block;
-          margin-left: auto;
-          margin-right: auto;
-        }
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 @mixin flex {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-img.desaturate { 
--webkit-filter: grayscale(100%);
-filter: grayscale(100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

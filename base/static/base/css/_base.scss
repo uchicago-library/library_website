@@ -1,10 +1,44 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Accessibility
+Fonts and Headers
+Media Queries
+Global Elements
+Alerts
+
+-------------------------------------------------------------------*/
+
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+
+#skip  {
+  background-color: #47B5FF;
+  color: #fff;
+  a { 
+    position:absolute;
+    padding: 5px 0 5px 10px;
+    left:-10000px; 
+    top:auto; 
+    width:1px; 
+    height:1px; 
+    overflow:hidden;
+  color: #fff;
+    &:focus { 
+      position:static; 
+      width:auto; 
+      height:auto; 
+    } 
+  }
+}
+
 /*
  * Fonts and Headers
  * --------------------------------------------------
  */
 
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
 @import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
 @font-face {
   font-family: 'Glyphicons Halflings';
@@ -19,7 +53,8 @@ h1 {
 }
 
 h2{
-  font-size: 1.3em;
+  font-size: 1.2em;
+  color: #C16622;
   font-weight: 600;
     .contentalert {
       line-height: 1.3em;
@@ -28,16 +63,16 @@ h2{
 }
 
 h3 {
-  font-size: 1.2em;
-  color: #767676;
+  font-size: 1.1em;
+  color: #616530;
   font-weight: 600;
+  font-style: italic;
 }
 
 h4 {
-  font-size: 1.2em;
-  //line-height: 0.8em;
-  color:#725663;
-  font-weight: 600;
+  font-weight: 400;
+  font-size:1.1em;
+  color: #6d2f6a;
   .newsblock & {
     margin-bottom: 3px;
     line-height: 1.4em;
@@ -45,9 +80,9 @@ h4 {
 }
 
 h5 {
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: 600;
-  color: #616530;
+  color: #800000;
 }
 
 h6 {
@@ -72,8 +107,8 @@ p {
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *      @include respond-to(medium) { ... }
- *      @include respond-to(large) { ... }
+ *		@include respond-to(medium) { ... }
+ *		@include respond-to(large) { ... }
  */
 
 @mixin respond-to($breakpoint) {
@@ -136,36 +171,6 @@ html, body {
   overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
 }
 
-.alert-high {
-    text-align: center;
-    font-size: 1.1em;
-    padding: 1em;
-    margin-bottom: 0em;
-    border: 0;
-    color: #a94442;
-    background-color: #f2dede;
-    border-bottom: 2px solid #a94442;
-    a {
-      color: #a94442;
-      text-decoration: underline;
-    }
-}
-
-.alert-low {
-    text-align: center;
-    font-size: 1.1em;
-    padding: 1em;
-    margin-bottom: 0em;
-    border: 0;
-    color: #31708f;
-    background-color: #d9edf7;
-    border-bottom: 2px solid #31708f;
-    a {
-      color: #31708f;
-      text-decoration: underline;
-    }
-}
-
 .valid {
   color: #089e00; }
 
@@ -217,5 +222,35 @@ a {
   color: red;
   border-color: red;
   background: #ffbebe;
+}
+
+.alert-high {
+    text-align: center;
+    font-size: 1.1em;
+    padding: 1em;
+    margin-bottom: 0em;
+    border: 0;
+    color: #a94442;
+    background-color: #f2dede;
+    border-bottom: 2px solid #a94442;
+    a {
+      color: #a94442;
+      text-decoration: underline;
+    }
+}
+
+.alert-low {
+    text-align: center;
+    font-size: 1.1em;
+    padding: 1em;
+    margin-bottom: 0em;
+    border: 0;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-bottom: 2px solid #31708f;
+    a {
+      color: #31708f;
+      text-decoration: underline;
+    }
 }
 
