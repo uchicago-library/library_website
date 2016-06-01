@@ -15,7 +15,7 @@ class AskPage(PublicBasePage, ContactFields):
     reference_resources = RichTextField(blank=True)
     body = StreamField(DefaultBodyFields())
 
-    subpage_types = ['public.StandardPage']
+    subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
 
     content_panels = Page.content_panels + [
         FieldPanel('ask_widget_name'),
