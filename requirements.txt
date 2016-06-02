@@ -9,7 +9,7 @@ django-debug-toolbar==1.4
 django-libsass==0.6
 django-localflavor==1.2
 django-macros==0.4.0
-django-modelcluster==1.1
+django-modelcluster==2.0
 -e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@7111b478183af6ceb61d6d633ae346d5b6429962#egg=django_shibboleth_remoteuser-origin_uchicago
 django-taggit==0.18.3
 django-treebeard==4.0.1
@@ -29,7 +29,7 @@ six==1.10.0
 sqlparse==0.1.18
 Unidecode==0.4.19
 urllib3==1.12
-wagtail==1.4.5
+wagtail==1.5
 wheel==0.24.0
 Willow==0.3.1
 zope.interface==4.1.2
