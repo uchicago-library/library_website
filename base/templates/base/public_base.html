@@ -328,83 +328,93 @@
                         {{ block }}
                     {% endfor %}
                 {% endblock %}
+
+                    <p>this is just a sad test</p>
             </div> <!-- // Center Content -->
 
             <div class="col-xs-12 col-md-3 rightside"> <!-- Right Sidebar Content -->
                 {% block right_sidebar %}{% endblock %}
     
                 {% if self.quicklinks %}
-                    {% if self.quicklinks_title %}
-                        <h4>{{self.quicklinks_title}}</h4>
-                    {% endif %}
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        {% if self.quicklinks_title %}
+                            <h4>{{self.quicklinks_title}}</h4>
+                        {% endif %}
 
-                    {% autoescape off %}
-                        {{self.quicklinks}}
-                    {% endautoescape %}
+                        {% autoescape off %}
+                            {{self.quicklinks}}
+                        {% endautoescape %}
 
-                    {% if self.view_more_link and self.view_more_link_label %}
-                        <a href="{{self.view_more_link}}" style="color: #337ab7;" href="#">{{self.view_more_link_label}} 
-                            <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a>
-                    {% endif %}
+                        {% if self.view_more_link and self.view_more_link_label %}
+                            <a href="{{self.view_more_link}}" class="btn btn-morelink" role="button">{{self.view_more_link_label}} 
+                                <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                        {% endif %}
+                    </div>
                 {% endif %} 
 
                 {% if self.has_find_spaces %}
-                    <h4>Find Spaces</h4>
-                    <div class="studymod row">
-                        <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
-                            <p style="text-align: center;"><a href="{{quiet_spaces_link}}"><i class="material-icons" style="color:#767676;">local_library</i></a>
-                            <br/><span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
-                        </div>
-                        <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
-                            <p style="text-align: center;"><a href="{{collaborative_spaces_link}}"><i class="material-icons" style="color:#767676;">people</i></a><br/>Collaboration</p>
-                        </div>
-                        {% if self.book_a_room_link %}
-                            <div class="col-xs-4 col-sm-4 col-md-4 nopadding">
-                                <p style="text-align: center;"><a href="{{self.book_a_room_link}}">
-                                <i class="fa fa-calendar-plus-o fa-lg" style="color:#767676; font-size:1.5em; padding-top: 10px; padding-bottom:10px;"></i></a>
-                                <br/><span class="hidden-xs hidden-sm hidden-md">Book a Room</span><span class="hidden-lg">Reserve</span></p>
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        <h4>Find Spaces</h4>
+                        <div class="studymod row">
+                            <div class="col-xs-4 nopadding">
+                                <p><a href="{{quiet_spaces_link}}"><i class="material-icons">local_library</i></a><br/>
+                                <span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
                             </div>
-                        {% endif %}
+                            <div class="col-xs-4 nopadding">
+                                <p><a href="{{collaborative_spaces_link}}"><i class="material-icons">people</i></a><br/>Collaboration</p>
+                            </div>
+                            {% if self.book_a_room_link %}
+                                <div class="col-xs-4 nopadding">
+                                    <p><a href="{{self.book_a_room_link}}">
+                                    <i class="fa fa-calendar-plus-o fa-lg"></i></a>
+                                    <br/><span class="hidden-xs hidden-sm hidden-md">Book a Room</span><span class="hidden-lg">Reserve</span></p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p><a href="{{all_spaces_link}}" class="btn btn-morelink" role="button">View all {{self.friendly_name}} study spaces <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></p>
                     </div>
-                    <p><a href="{{all_spaces_link}}">View all {{self.friendly_name}} study spaces <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></p>
                 {% endif %}
                 
                 {% if self.collection_page %}
                     {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
-                    <h4>Featured Collection</h4>
-                    <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}">
-                    <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
-                    <a href="/collections/" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        <h4>Featured Collection</h4>
+                        <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}">
+                        <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
+                        <a href="/collections/" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                    </div>
                 {% endif %}  
 
                 {% if self.has_social_media %}
-                    <h4 class="rightside">{{self.friendly_name}}Social Media</h4>
-                    <ul>
-                        {% if self.twitter_page %}
-                        <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter"></i> Twitter</a></li>
-                        {% endif %}
-                        {% if self.facebook_page %}
-                        <li><a href="{{self.facebook_page}}"><i class="fa fa-facebook-official"></i> Facebook</a></li>
-                        {% endif %}
-                        {% if self.hashtag_page and self.hashtag %}
-                        <li><a href="{{self.hashtag_page}}"><strong>{{self.hashtag}}</strong></a></li>
-                        {% endif %}
-                        {% if self.instagram_page %}
-                        <li><a href="{{self.instagram_page}}"><i class="fa fa-instagram"></i> Instagram</a></li>
-                        {% endif %}
-                        {% if self.youtube_page %}
-                        <li><a href="{{self.youtube_page}}"><i class="fa fa-youtube-square"></i> YouTube</a></li>
-                        {% endif %}
-                        {% if self.blog_page %}
-                        <li><a href="{{self.blog_page}}"><i class="fa fa-rss"></i> Blog</a></li>
-                        {% endif %}
-                        {% if self.tumblr_page %}
-                        <li><a href="{{self.tumblr_page}}"><i class="fa fa-tumblr-square"></i> Tumblr</a></li>
-                        {% endif %}
-                        {% if self.snapchat_page %}
-                        <li><a href="{{self.snapchat_page}}"><i class="fa fa-fa-weixin"></i> Snapchat</a></li>
-                        {% endif %}
-                    </ul>
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        <h4>{{self.friendly_name}}Social Media</h4>
+                        <ul>
+                            {% if self.twitter_page %}
+                            <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a></li>
+                            {% endif %}
+                            {% if self.facebook_page %}
+                            <li><a href="{{self.facebook_page}}"><i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a></li>
+                            {% endif %}
+                            {% if self.hashtag_page and self.hashtag %}
+                            <li><a href="{{self.hashtag_page}}"><strong>{{self.hashtag}}</strong></a></li>
+                            {% endif %}
+                            {% if self.instagram_page %}
+                            <li><a href="{{self.instagram_page}}"><i class="fa fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+                            {% endif %}
+                            {% if self.youtube_page %}
+                            <li><a href="{{self.youtube_page}}"><i class="fa fa-youtube-square" aria-hidden="true"></i> YouTube</a></li>
+                            {% endif %}
+                            {% if self.blog_page %}
+                            <li><a href="{{self.blog_page}}"><i class="fa fa-rss" aria-hidden="true"></i> Blog</a></li>
+                            {% endif %}
+                            {% if self.tumblr_page %}
+                            <li><a href="{{self.tumblr_page}}"><i class="fa fa-tumblr-square" aria-hidden="true"></i> Tumblr</a></li>
+                            {% endif %}
+                            {% if self.snapchat_page %}
+                            <li><a href="{{self.snapchat_page}}"><i class="fa fa-snapchat" aria-hidden="true"></i> Snapchat</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
             <!-- // Right Sidebar Content -->
@@ -413,6 +423,7 @@
             <h1>{{self.title}}</h1>
             {% repeat content %}
 
+                    <p>this is just a sad test</p>
             <div class="row">
                 {% if has_featured_lib_expert %}
                     {% image featured_lib_expert_image fill-200x200 as profile_pic %}

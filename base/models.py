@@ -763,11 +763,23 @@ class PublicBasePage(BasePage):
     class Meta:
         abstract = True
 
+    def has_left_sidebar(self, context):
+        """
+        TODO:
+ 
+        Args:
+            context, django context dictionary
+        """
+        return bool(self.show_sidebar and context['sidebar'])
+
+
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']
 
+        has_left_sidebar(context)
+  
         try: 
             location = str(location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
