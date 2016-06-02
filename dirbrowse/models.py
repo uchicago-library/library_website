@@ -12,9 +12,9 @@ class DirBrowsePage(PublicBasePage):
         max_length=255,
         blank=False)
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('body'),
-    )
+    ]
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),

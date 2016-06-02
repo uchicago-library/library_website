@@ -131,9 +131,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         StreamFieldPanel('featured_library_experts'),
     ] + SocialMediaFields.panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
-    )
+    ]
 
     edit_handler = TabbedInterface([
         ObjectList(content_panels, heading='Content'),
@@ -507,14 +507,14 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('short_description', partial_match=True),
         index.SearchField('long_description', partial_match=True),
         index.SearchField('parent_building'),
         index.SearchField('location_photo'),
         index.SearchField('reservation_display_url'),
         index.SearchField('reservation_display_text'),
-    )
+    ]
 
 
 class DonorPage(PublicBasePage):
@@ -537,10 +537,10 @@ class DonorPage(PublicBasePage):
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('description'),
         index.SearchField('image'),
-    )
+    ]
 
 
 class FloorPlanPage(PublicBasePage):
@@ -561,9 +561,9 @@ class FloorPlanPage(PublicBasePage):
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('image'),
-    )
+    ]
 
 
 class StaffPublicPage(PublicBasePage):

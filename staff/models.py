@@ -178,13 +178,13 @@ class StaffPage(BasePage):
         FieldPanel('orcid')
     ] + BasePage.content_panels
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('profile_picture'),
         index.SearchField('bio'),
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
         index.SearchField('orcid')
-    )
+    ]
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
 
@@ -260,15 +260,15 @@ class StaffIndexPage(BasePage):
         FieldPanel('intro')
     ] + BasePage.content_panels
 
-    search_fields = Page.search_fields + ( # Inherit search_fields from Page
+    search_fields = Page.search_fields + [ # Inherit search_fields from Page
         index.SearchField('intro'),
-    )
+    ]
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'staff.StaffPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
-    )
+    ]
 
     def get_context(self, request):
         staff_pages = []

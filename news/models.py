@@ -55,12 +55,12 @@ class NewsPage(BasePage):
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('excerpt'),
         index.SearchField('author'),
         index.SearchField('thumbnail'),
         index.SearchField('body'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(NewsPage, self).get_context(request)
@@ -85,9 +85,9 @@ class NewsIndexPage(BasePage):
 
     subpage_types = ['news.NewsPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(NewsIndexPage, self).get_context(request)

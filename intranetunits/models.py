@@ -123,14 +123,14 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', \
     'intranettocs.TOCPage', 'intranetunits.IntranetUnitsPage', 'intranetunits.IntranetUnitsReportsIndexPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
         index.SearchField('internal_location'),
         index.SearchField('internal_phone_number'),
         index.SearchField('internal_email'),
         index.SearchField('staff_only_email'),
         index.SearchField('body'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
@@ -276,9 +276,9 @@ class IntranetUnitsIndexPage(BasePage):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetunits.IntranetUnitsPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(IntranetUnitsIndexPage, self).get_context(request)

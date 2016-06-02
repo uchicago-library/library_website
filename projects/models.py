@@ -62,14 +62,14 @@ class ProjectPage(BasePage):
         FieldPanel('notes'),
     ] + BasePage.content_panels
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('description'),
         index.SearchField('requestor'),
         index.SearchField('status'),
         index.SearchField('size'),
         index.SearchField('staff'),
         index.SearchField('notes'),
-    )
+    ]
 
 
 class ProjectIndexPage(BasePage):

@@ -200,7 +200,7 @@ class CollectionPage(PublicBasePage):
         FieldPanel('staff_contact'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.FilterField('text'),
         index.FilterField('title'),
         index.SearchField('short_abstract'),
@@ -210,7 +210,7 @@ class CollectionPage(PublicBasePage):
         index.SearchField('access_instructions'),
         index.SearchField('collection_location'),
         index.SearchField('staff_contact'),
-    )
+    ]
 
 
 class SubjectSpecialistPlacement(Orderable, models.Model):
@@ -383,12 +383,12 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         InlinePanel('lib_guides', label='Other Guides'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('subject'),
         index.SearchField('collecting_statement'),
         index.SearchField('guide_link_text'),
         index.SearchField('guide_link_url'),
-    )
+    ]
 
 
 class ExhibitPageSubjectPlacement(Orderable, models.Model):
@@ -563,7 +563,7 @@ class ExhibitPage(PublicBasePage):
         FieldPanel('staff_contact'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.FilterField('exhibit_open_date'),
         index.FilterField('exhibit_close_date'),
         index.FilterField('subject_id'),
@@ -582,6 +582,6 @@ class ExhibitPage(PublicBasePage):
         index.SearchField('publication_price'),
         index.SearchField('publication_url'),
         index.SearchField('staff_contact'),
-    )
+    ]
 
 

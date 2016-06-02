@@ -148,7 +148,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
 
     subpage_types = ['conferences.ConferenceSubPage']
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('subtitle'),
         index.SearchField('tagline'),
         index.SearchField('banner_image'),
@@ -157,7 +157,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         index.SearchField('current'),
         index.SearchField('conference_logo'),
         index.SearchField('body'),
-    )
+    ]
     api_fields = ('body',)
 
     # Context
@@ -203,9 +203,9 @@ class ConferenceSubPage(PublicBasePage):
 
     subpage_types = ['conferences.ConferenceSubPage']
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('body'),
-    )
+    ]
 
     api_fields = ('body',)
 

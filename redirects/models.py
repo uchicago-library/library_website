@@ -24,10 +24,10 @@ class RedirectPage(PublicBasePage, LinkFields):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('link_page', partial_match=True),
         index.SearchField('link_external', partial_match=True),
-    )
+    ]
 
     def serve(self, request):
         """

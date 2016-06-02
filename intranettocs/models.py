@@ -19,6 +19,6 @@ class TOCPage(BasePage):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
     
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('body'),
-    )
+    ]

@@ -32,7 +32,7 @@ class AskPage(PublicBasePage, ContactFields):
         StreamFieldPanel('body'),
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('ask_widget_name'),
         index.SearchField('reference_resources'),
         index.SearchField('body'),
@@ -40,7 +40,7 @@ class AskPage(PublicBasePage, ContactFields):
         index.SearchField('email_label'),
         index.SearchField('phone_number'),
         index.SearchField('body'),
-    )
+    ]
 
     @property
     def chat_status(self):

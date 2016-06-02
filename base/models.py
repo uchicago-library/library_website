@@ -421,9 +421,9 @@ class AbstractBase(models.Model):
     sort_order = IntegerField(blank=True, default=0)
 
     # Searchable fields
-    search_fields = (
+    search_fields = [
         index.SearchField('description'),
-    )
+    ]
 
     content_panels = [
         MultiFieldPanel(
@@ -826,9 +826,9 @@ class IntranetPlainPage(BasePage):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('body'),
-    )
+    ]
 
 IntranetPlainPage.content_panels = Page.content_panels + [
     StreamFieldPanel('body')
@@ -848,10 +848,10 @@ class IntranetIndexPage(BasePage):
         StreamFieldPanel('body')
     ] + BasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + (
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('intro'),
         index.SearchField('body'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(IntranetIndexPage, self).get_context(request)

@@ -237,12 +237,12 @@ class GroupPage(BasePage, Email):
                      'group.GroupReportsPage', 'intranetforms.IntranetFormPage', \
                      'intranettocs.TOCPage', 'projects.ProjectPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('meeting_location'),
         index.SearchField('meeting_frequency'),
         index.SearchField('intro'),
         index.SearchField('body'),
-    )
+    ]
 
     def get_context(self, request):
 
@@ -484,9 +484,9 @@ class GroupIndexPage(BasePage):
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage']
 
-    search_fields = BasePage.search_fields + (
+    search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
-    )
+    ]
 
     def get_context(self, request):
         context = super(GroupIndexPage, self).get_context(request)
