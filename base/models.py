@@ -22,6 +22,8 @@ from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
 from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
+from wagtail.contrib.table_block.blocks import TableBlock
+from django.utils import translation
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -615,8 +617,27 @@ class DefaultBodyFields(StreamBlock):
     video = EmbedBlock(icon='media')
     code = CodeBlock()
     agenda_item = AgendaItemFields(icon='date', template='base/blocks/agenda.html')
-    #ordered_list = ListBlock(RichTextBlock(), icon="list-ol")
-    #unordered_list = ListBlock(RichTextBlock(), icon="list-ul")
+
+    # Begin TableBlock Setup
+    language = translation.get_language()
+    if language is not None and len(language) > 2:
+        language = language[:2]
+
+    options = {
+        'minSpareRows': 0,
+        'startRows': 3,
+        'startCols': 3,
+        'colHeaders': False,
+        'rowHeaders': False,
+        'contextMenu': True,
+        'editor': 'text',
+        'stretchH': 'all',
+        'height': 108,
+        'language': language,
+        'renderer': 'html',
+        'autoColumnSize': False,
+    }
+    table = TableBlock(table_options=options, template='base/blocks/table.html') 
 
 
 class RawHTMLBodyField(StreamBlock):
