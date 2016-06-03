@@ -32,6 +32,7 @@ from pygments.lexers import get_lexer_by_name
 import json
 import logging
 import sys
+import urllib
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -895,19 +896,16 @@ class PublicBasePage(BasePage):
             2. Quiet spaces link 
             3. Collaborative spaces link
         """
-        zone = {1: 'feature=is_quiet_zone',
-                2: 'feature=is_collaboration_zone'}
- 
         base_url = '/spaces/'
 
         if self.unit.id == ROOT_UNIT:
             all_spaces = base_url 
-            quiet_spaces = '%s?%s' % (base_url, zone[1])
-            collaborative_spaces = '%s?%s' % (base_url, zone[2])
+            quiet_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'feature': 'is_quiet_zone'}))
+            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'feature': 'is_collaborative_zone'}))
         else:
-            all_spaces = '%s?building=%s' % (base_url, str(data['page_location']))
-            quiet_spaces = '%s?building=%s&feature=is_quiet_zone' % (base_url, str(data['page_location']))
-            collaborative_spaces = '%s?building=%s&feature=is_collaboration_zone' % (base_url, str(data['page_location']))
+            all_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location'])}))
+            quiet_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_quiet_zone'}))
+            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_collaborative_zone'}))
         return [all_spaces, quiet_spaces, collaborative_spaces]
 
     @property
