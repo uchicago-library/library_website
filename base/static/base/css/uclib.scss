@@ -30,14 +30,21 @@ Staff Profile Page
  * --------------------------------------------------
  */
 
- .breadcrumbs {
+.main-container {
+  @include respond-to(large) {
+    padding-right: 3em;
+  }
+}
+
+.breadcrumbs {
   padding-top: 5px;
   padding-left: 20px;
   font-size: 85%;
  }
 
- .body-container {
-    padding: 30px 10px;
+.body-container {
+  padding: 30px 10px;
+  max-width: 2000px;
 }
 
 .nopadding {  // For use when do not want to wrap in row 
@@ -61,7 +68,7 @@ Staff Profile Page
   display: inline;
   margin-bottom: 1.2em;
   padding-left: 15px;
-  border-bottom: 1px solid $darkgray;
+  border-bottom: 1px solid $lightgray;
   h1 {
     margin: 0 0 0.2em 0;
   }
@@ -558,7 +565,7 @@ input[type="search"]::-webkit-search-decoration {
 .inline-form input[type=submit], .inline-form button, .inline-form .btn {
   font-size: 0.875em;
   padding: 0.65rem 1.3rem;
-  background: #333333;
+  background: $darkgray;
   position: absolute;
   top: 0;
   right: 0;
@@ -659,11 +666,10 @@ input[type="search"]::-webkit-search-decoration {
  * --------------------------------------------------
  */
 
-table, tbody {
+table:not(.s-lc-whw), tbody:not(.s-lc-whw tbody) {
   @include respond-to(smallonly) { //mobile friendly magic
     display: block;
     width: 100%;
-    margin: 20px 5px;
     & tr, & th, & td {
       display: block;
       padding: 0;
@@ -682,7 +688,6 @@ table, tbody {
 }
 
 .distinct-list { //table base
-  width: 95%;
   a {
     color: #8a4a20;
   }
@@ -697,9 +702,6 @@ table, tbody {
     &:last-child {
       border-bottom: 2px solid #ADB17D;
     }
-  }
-  @include respond-to(small) {
-    width: 100%;
   }
   @include respond-to(medium) {
     margin-top: 0;
@@ -761,6 +763,19 @@ table.etable>tbody>tr {
 .headline { // Headers for "Browse" and "Limit" dropdowns and toggles
   color:$maroon;
   font-weight:600;
+}
+
+.scrc-list {
+  @extend .distinct-list;
+  @include respond-to(small) {
+    &>tbody>tr>td:first-child {
+        width: 30%;
+        padding: 15px 30px;
+    }
+    &>tbody>tr>td:nth-child(2) {
+        padding-left: 15px;
+    }
+  }
 }
 
 /*
@@ -863,27 +878,38 @@ a.btn-ask {
   }
 }
 
- .s-lc-whw-cont .table-responsive {
-    @include respond-to(medium) {
-      border: 0;
+.s-lc-whw-cont>.table-responsive {
+  &>table>tbody>tr>td {
+    white-space: normal;
+    @include respond-to(smallonly) {
+      white-space: normal;
+      width: 10%;
+      max-width: 100px;
     }
+  }
+  @include respond-to(medium) {
+    border: 0;
+  }
  }
 
-.s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today) {
+ .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
   @include respond-to(smallonly) {
     display: none;
   }
 }
 
 .s-lc-whw>thead>tr>th, .s-lc-whw>tbody>tr>th {
-   @include respond-to(small){
     display: table-cell;
+}
+
+th.s-lc-whw-bh {
+  @include respond-to(smallonly) {
+    background-color: #ADB17D;
   }
-   @include respond-to(medium){
-    display: table-cell;
-  }
-   @include respond-to(large) {
-    display: table-cell;
+  & button {
+    @include respond-to(smallonly) {
+      display: none;
+    }
   }
 }
 
@@ -966,10 +992,7 @@ td.time, td.event-nav {
 
 .event-nav {
   padding-bottom: 15px;
-  @include respond-to(medium) {
-    text-align: right;
-  }
-  @include respond-to(large) {
+  @include respond-to(small) {
     text-align: right;
   }
   & a {
@@ -1014,7 +1037,21 @@ td.time, td.event-nav {
   @extend .distinct-list;
   @include respond-to(small) {
     &>tbody>tr>td {
-      width: 25%;
+      &:nth-child(2), &:nth-child(3) {
+        width: 25%;
+      }
+      &:last-child {
+        padding-right: 15px;
+      }
+    }
+  }
+  img {
+    max-width: 150px;
+    @include respond-to(small) {
+      max-width: 100px;
+    }
+    @include respond-to(medium) {
+      max-width: 150px;
     }
   }
 }
@@ -1030,8 +1067,13 @@ td.time, td.event-nav {
 }
 
 .locations-list {
-  margin: 020px;
   border-bottom: 1px solid #b8aab1;
+  &>div {
+    padding: 0 1em 0 0;
+  }
+  img {
+    margin-bottom: 1em;
+  }
 }
 
 .btn-reserve {  //Reserve a room link

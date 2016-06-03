@@ -87,11 +87,10 @@ i.ask-offline {
   padding: 5px 15px 15px 15px;
   @include respond-to(small) {
     max-width: 175px;
-    padding-left: 20px;
+    padding-left: 35px;
     padding-top: 5px;
   }
   @include respond-to(medium) {
-    padding-left: 35px;
     padding-top: 10px;
   }
 }

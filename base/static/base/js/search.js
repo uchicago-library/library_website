@@ -31,7 +31,7 @@
                 var inputVal = $('.searchbox-input').val();
                 inputVal = $.trim(inputVal).length;
                 if( inputVal !== 0){
-                    $('.searchbox-icon').css('display','none');
+                    $('.searchbox-icon').css('display','block');
                 } else {
                     $('.searchbox-input').val('');
                     $('.searchbox-icon').css('display','block');
