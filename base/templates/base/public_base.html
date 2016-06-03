@@ -1,6 +1,5 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
-{% load repeatedblocks %}
 {% load wagtailimages_tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -284,7 +283,7 @@
            // Fancy Splash Image 
            End If Has Banner / Fancy Page **** -->
 
-    {% if self.show_sidebar and sidebar %}
+    {% if has_left_sidebar %}
         <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar" id="sidebar">
             <ul>
                 {% for child in sidebar %}
@@ -302,36 +301,62 @@
         </div>
     {% endif %}
     <!-- // Left Sidebar -->
-    {% if self.show_sidebar and sidebar %}
-        <div class="col-md-10 breadcrumbs hidden-xs hidden-sm">
-            {% include "base/includes/public_site_breadcrumbs.html" %}
+
+    <div class="{{breadcrumb_div_css}}">
+        {% include "base/includes/public_site_breadcrumbs.html" %}
+    </div>
+    <div class="{{content_div_css}}" id="content"> 
+        <!-- Off-Canvas Toggle Button -->
+        <div class="row visible-xs visible-sm toggle-side">
+            <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
         </div>
-        <div class="container body-container col-xs-12 col-md-10" id="content"> 
-            <!-- Off-Canvas Toggle Button -->
-            <div class="row visible-xs visible-sm toggle-side">
-                <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
-            </div>
-            <!-- // End Off-Canvas Toggle Button -->
-    {% else %}
-        <div class="col-md-12 breadcrumbs hidden-xs hidden-sm">
-            {% include "base/includes/public_site_breadcrumbs.html" %}
-        </div>
-        <div class="container body-container col-xs-12 col-lg-11 col-lg-offset-1" id="content"> <!-- Content Container -->
-    {% endif %}
+        <!-- // End Off-Canvas Toggle Button -->
+
+        <!-- Main Content -->
+        <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
+            <h1>{{self.title}}</h1>
+            {% block content %}
+                {% for block in self.body %}
+                    {{ block }}
+                {% endfor %}
+            {% endblock %}
+
+           {% if has_featured_lib_expert %}
+               <div class="row">
+                    {% if has_featured_lib_expert %}
+                        {% image featured_lib_expert_image fill-200x200 as profile_pic %}
+                        {#featured_lib_expert.block.library_expert #}
+                        <div class="col-xs-12 col-sm-6 home-modwrapper">
+                            <div class="home-module">
+                                <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}">View all {{self.friendly_name}} experts</a>
+                            </div>
+                            <div class="col-xs-8">
+                                {% if featured_lib_expert_profile %}
+                                    <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
+                                {% else %}
+                                    <h3>Consult {{featured_lib_expert_name}} on:</h3>
+                                {% endif %} 
+                                <ul>
+                                    {% for link in featured_lib_expert_links %}
+                                        <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
+                                    {% endfor %}
+                                </ul>
+                                <h3>Not sure where to start?</h3>
+                                <ul>
+                                    <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-4 home-profile">
+                                <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+                            </div>
+                        </div>
+                    {% endif %}
+                </div> <!-- // row -->
+           {% endif %}
+        </div> <!-- // Center Content -->
+
 
         {% if self.has_right_sidebar %}
-            <!-- Main Content -->
-            <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-                <h1>{{self.title}}</h1>
-                {% repeated_block content %}
-                    {% for block in self.body %}
-                        {{ block }}
-                    {% endfor %}
-                {% endblock %}
-
-                    <p>this is just a sad test</p>
-            </div> <!-- // Center Content -->
-
             <div class="col-xs-12 col-md-3 rightside"> <!-- Right Sidebar Content -->
                 {% block right_sidebar %}{% endblock %}
     
@@ -418,42 +443,6 @@
                 {% endif %}
             </div>
             <!-- // Right Sidebar Content -->
-        {% else %}
-            <!-- Main Content -->
-            <h1>{{self.title}}</h1>
-            {% repeat content %}
-
-                    <p>this is just a sad test</p>
-            <div class="row">
-                {% if has_featured_lib_expert %}
-                    {% image featured_lib_expert_image fill-200x200 as profile_pic %}
-                    {#featured_lib_expert.block.library_expert #}
-                    <div class="col-xs-12 col-sm-6 home-modwrapper">
-                        <div class="home-module">
-                            <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}">View all {{self.friendly_name}} experts</a>
-                        </div>
-                        <div class="col-xs-8">
-                            {% if featured_lib_expert_profile %}
-                                <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
-                            {% else %}
-                                <h3>Consult {{featured_lib_expert_name}} on:</h3>
-                            {% endif %} 
-                            <ul>
-                                {% for link in featured_lib_expert_links %}
-                                    <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
-                                {% endfor %}
-                            </ul>
-                            <h3>Not sure where to start?</h3>
-                            <ul>
-                                <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-xs-4 home-profile">
-                            <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
         {% endif %}
 
         {# This is needed for Ask a Librarian pages#}

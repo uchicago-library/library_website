@@ -763,14 +763,39 @@ class PublicBasePage(BasePage):
     class Meta:
         abstract = True
 
+
     def has_left_sidebar(self, context):
         """
-        TODO:
+        Logic for determining is a left sidebar should
+        be shown.
  
         Args:
-            context, django context dictionary
+            context: django context dictionary
+
+        Returns:
+            Boolean
         """
         return bool(self.show_sidebar and context['sidebar'])
+
+
+    def get_conditional_css_classes(self, divname, sidebar):
+        """
+        Get css classes for the main content div and    
+        breadcrumbs depending on whether or not a 
+        left sidebar is needed.
+
+        Args:
+            divname: string, the arbitrary name of a div
+
+            sidebar: boolean
+
+        Returns:
+            String, list of css classes to be applied
+            to a div.
+        """
+        css = {'breadcrumbs': {True: 'col-md-10 breadcrumbs hidden-xs hidden-sm', False: 'col-md-12 breadcrumbs hidden-xs hidden-sm'},
+               'content': {True: 'container body-container col-xs-12 col-md-10', False: 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'}}
+        return css[divname][sidebar]
 
 
     def get_context(self, request):
@@ -778,8 +803,6 @@ class PublicBasePage(BasePage):
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']
 
-        has_left_sidebar(context)
-  
         try: 
             location = str(location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
@@ -797,7 +820,12 @@ class PublicBasePage(BasePage):
         context['quiet_spaces_link'], \
         context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)
         context['chat_status'] = get_chat_status('uofc-ask')
-        context['chat_status_css'] = get_chat_status_css('uofc-ask') 
+        context['chat_status_css'] = get_chat_status_css('uofc-ask')
+
+        sidebar = self.has_left_sidebar(context)
+        context['has_left_sidebar'] = sidebar
+        context['content_div_css'] = self.get_conditional_css_classes('content', sidebar)
+        context['breadcrumb_div_css'] = self.get_conditional_css_classes('breadcrumbs', sidebar)
 
         return context
 
