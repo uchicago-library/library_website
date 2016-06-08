@@ -20,15 +20,9 @@
         <link href="{% static "base/css/uclib-search.scss" %}" rel="stylesheet" type="text/x-scss"/>
         <!-- * END Only needed when Main Search Box is used * -->
         <link href="{% static "base/css/navigation.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <!-- * Only needed when calendar module is used * -->
-        <link href="{% static "base/css/calendar/font-awesome.min.css" %}" rel="stylesheet" type="text/x-scss"/>
-        <!-- * END Only needed when calendar is used * -->
         <!-- Boostrap-select -->
         <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
     {% endcompress %}
-    <!-- * Only needed when calendar module is used * -->
-    <script type="text/javascript" src="css/calendar/res-timeline.js"></script>
-    <!-- * END Only needed when calendar is used * -->
 </head>
 
 <body>
@@ -524,6 +518,10 @@
     <script src="{% static "public/js/bootstrap-select.js" %}"></script>
     <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
     <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
+
+    <!-- * Only needed when calendar module is used * -->
+    <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
+    <!-- * END Only needed when calendar is used * -->
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
