@@ -71,6 +71,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     # Page content
     body = StreamField(DefaultBodyFields())
 
+    # Search widget
+    enable_search_widget = models.BooleanField(default=False)
+
     # Quicklinks fields
     quicklinks = RichTextField(blank=True) 
     quicklinks_title = models.CharField(max_length=100, blank=True)
@@ -105,6 +108,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('enable_search_widget')
+            ],
+            heading='Search Widget'
+        ),
         MultiFieldPanel(
             [
                 FieldPanel('quicklinks_title'),
@@ -358,6 +367,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             context['featured_lib_expert_image'] = lib_expert_block['image']
             context['featured_lib_expert_profile'] = lib_expert_block['profile'] 
             context['featured_lib_expert_links'] = lib_expert_block['links']
+
+        context['has_search_widget'] = self.enable_search_widget
 
         return context
 

@@ -3,5 +3,8 @@
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block content %}
-    {{ self.body }}
+  {% if has_search_widget %}
+    {% include "public/blocks/search_widget.html" %}
+  {% endif %}
+  {{ self.body }}
 {% endblock %}
