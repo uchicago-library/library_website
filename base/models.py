@@ -764,6 +764,27 @@ class PublicBasePage(BasePage):
         abstract = True
 
 
+    def get_sidebar_title(self):
+        """
+        Recursively search up the tree to get the title and 
+        url for a sidebar. The title and url returned will
+        be the first ancestor with the start_sidebar_from_here
+        parameter set. If nothing is found a tuple of empty
+        strings is returned.
+
+        Returns:
+            Tuple where the first item is a page title and
+            the second item is a page url. 
+        """
+        try:
+            if self.start_sidebar_from_here:
+                return (self.title, self.url)
+            else:
+                return self.get_parent().specific.get_sidebar_title()
+        except:
+            return ('', '')
+
+
     def has_left_sidebar(self, context):
         """
         Logic for determining is a left sidebar should
@@ -798,6 +819,27 @@ class PublicBasePage(BasePage):
         return css[divname][sidebar]
 
 
+    def get_branch_lib_css_class(self):
+        """
+        Get the css classes for fancy pages and 
+        subsections of the site based on location.
+
+        Returns:
+            String, css classname.
+        """
+        css = { 'The John Crerar Library' : 'crerar',
+                'The D\'Angelo Law Library': 'law',
+                'Eckhart Library': 'eckhart',
+                'The Joe and Rika Mansueto Library': 'mansueto',
+                'The Joseph Regenstein Library': 'reg',
+                'Social Service Administration Library': 'ssa'}
+        try:
+            key = str(get_hours_and_location(self)['page_location'])
+            return css[key]
+        except(KeyError):
+            return ''
+
+
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         location_and_hours = get_hours_and_location(self)
@@ -826,6 +868,9 @@ class PublicBasePage(BasePage):
         context['has_left_sidebar'] = sidebar
         context['content_div_css'] = self.get_conditional_css_classes('content', sidebar)
         context['breadcrumb_div_css'] = self.get_conditional_css_classes('breadcrumbs', sidebar)
+        context['sidebartitle'] = self.get_sidebar_title()[0]
+        context['sidebartitleurl'] = self.get_sidebar_title()[1]
+        context['branch_lib_css'] = self.get_branch_lib_css_class()
 
         return context
 

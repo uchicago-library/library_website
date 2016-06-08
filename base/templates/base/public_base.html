@@ -212,8 +212,7 @@
                                 <ul class="list-unstyled col-sm-6">
                                     <li class="twocol-head">Using Spaces &amp; Services</li>
                                     <li role="separator" class="divider visible-xs"></li>
-                                    <li><a href="">Visiting the Library</a></li>
-                                    <li><a href="#">Call Number Guides</a></li>
+                                    <li><a href="#">Visiting the Library</a></li>
                                     <li><a href="http://rooms.lib.uchicago.edu/">Book a Room</a></li>
                                     <li><a href="/spaces/">Places to Study</a></li>
                                     <li><a href="/using/access-privileges/">Access &amp; Privileges</a></li>
@@ -282,20 +281,18 @@
            End If Has Banner / Fancy Page **** -->
 
     {% if has_left_sidebar %}
-        <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar" id="sidebar">
-            <ul>
-                {% for child in sidebar %}
-                    <li><a href="{{ child.url }}">{{ child.title }}</a>
-                    {% if child.children %}
-                    <ul>
-                        {% for grandchild in child.children %}
-                            <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+        <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
+            <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
+            {% for child in sidebar %}
+                <h4><a href="{{ child.url }}">{{ child.title }}</a></h4>
+                {% if child.children %}
+                <ul>
+                    {% for grandchild in child.children %}
+                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endfor %}
         </div>
     {% endif %}
     <!-- // Left Sidebar -->
