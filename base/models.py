@@ -482,7 +482,7 @@ class ImageBlock(StructBlock):
         help_text='Invisible text for screen readers',
     ) #Img title in the system is a fallback. 
     alignment = ImageFormatChoiceBlock()
-    source = CharBlock(
+    source = URLBlock(
         required=False,
         help_text='Link to image source (needed for Creative Commons)',
     )
