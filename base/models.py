@@ -523,6 +523,15 @@ class ButtonBlock(StructBlock):
         template = 'base/blocks/button.html'
 
 
+class ClearBlock(StructBlock):
+    """
+    Allows authors to add a clear between floated elements.
+    """
+    class Meta:
+        icon = 'horizontalrule'
+        template = 'base/blocks/clear.html'
+
+
 class ParagraphBlock(StructBlock):
     """
     Paragraph streamfield block.
@@ -634,6 +643,7 @@ class DefaultBodyFields(StreamBlock):
     video = EmbedBlock(icon='media')
     code = CodeBlock()
     agenda_item = AgendaItemFields(icon='date', template='base/blocks/agenda.html')
+    clear = ClearBlock()
 
     # Begin TableBlock Setup
     language = translation.get_language()
