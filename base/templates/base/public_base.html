@@ -1,6 +1,7 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% image self.banner_image original as banner %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -263,19 +264,17 @@
     <!-- Awesome Page Content -->
     <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
         <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-
-            <!-- Fancy Splash Image -
-            <div class="jumbotron" style="background-image: url(...);">
-              <div class="container">
-                <div class="overlaywrap" itemscope itemtype="http://schema.org/Library">
-                    <a href="#">
-                  <h2 itemprop="name"></h2>
-                    </a>
-                </div>  
-              </div> 
-            </div> 
-           // Fancy Splash Image 
-           End If Has Banner / Fancy Page **** -->
+            {% if self.banner_image and self.banner_title %}
+                <div class="jumbotron" style="background-image: url({{banner.url}});">
+                  <div class="container">
+                    <div class="overlaywrap" itemscope itemtype="http://schema.org/Library">
+                        <a href="#">
+                        <h2 itemprop="name">{{self.banner_title}}</h2>
+                        </a>
+                    </div>  
+                  </div> 
+                </div> 
+            {% endif %}
 
     {% if has_left_sidebar %}
         <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">

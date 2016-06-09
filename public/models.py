@@ -98,6 +98,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(), default=[]) 
     featured_library_experts = StreamField(FeaturedLibraryExpertFields(), default=[])
 
+    # Banner
+    banner_title = models.CharField(max_length=100, blank=True)
+    banner_image =  models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Banners should be approximately 1200 × 200 pixels"
+    )
+
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
@@ -123,6 +134,13 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 FieldPanel('view_more_link'),
             ], 
             heading='Quicklinks'
+        ),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_title'),
+            ],
+            heading='Banner'
         ),
         MultiFieldPanel(
             [
