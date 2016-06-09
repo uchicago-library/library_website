@@ -125,7 +125,7 @@ h1.searchbox-header {
   }
 }
 
-.btn-searchtype {
+.btn-searchtype>button {
   color: #fff;
   padding: 15px;
   line-height: 0.45em;
@@ -144,7 +144,7 @@ h1.searchbox-header {
   }
 }
 
-.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype:hover, .btn-searchtype:focus, .btn-searchtype:active {
+.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype>button:hover, .btn-searchtype>button:focus, .btn-searchtype>button:active {
     color: #000;
     background-color: #B1746F;
   }
@@ -191,4 +191,3 @@ h1.searchbox-header {
     margin-bottom: 0;
   }
 }
-

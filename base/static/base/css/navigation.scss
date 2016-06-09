@@ -38,7 +38,7 @@ Footer
   &>li>a {
       color: #f9f9f9;
       &:hover {
-      	color:#E4E4E4;
+        color:#E4E4E4;
         background-color: $transparent;
       }
       &:focus {
@@ -101,6 +101,7 @@ i.ask-offline {
   background-image: url("../images/warm_grey_reddish.jpg");
   background-repeat: repeat;
   z-index: 10;
+  border-radius: 0;
   .navbar-nav {
     &>li>a {
       color: #eee;
@@ -424,9 +425,9 @@ i.ask-offline {
   line-height: 1.7em;
   text-decoration: none;
     &:hover {
-    	color: $hoveraccent;
+        color: $hoveraccent;
     }
-	}
+    }
   h5 {
     margin-bottom: 0px;
   }
@@ -484,6 +485,3 @@ i.ask-offline {
     }
   }
 }
-
-
-      

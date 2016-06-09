@@ -12,6 +12,7 @@ Ask A Librarian
 Forms
 Buttons
 Tables
+Toggle Search (For Lists / Tables)
 Hours (Mods to LibCal Feed)
 Agenda (Conferences)
 Event Calendar List
@@ -43,7 +44,7 @@ Staff Profile Page
  }
 
 .body-container {
-  padding: 30px 10px;
+  padding: 30px;
   max-width: 2000px;
 }
 
@@ -55,6 +56,9 @@ Staff Profile Page
 }
 
 .centermain {
+  h2:first-child:not(.home-module h2) {
+    margin-top: 5px;
+  }
   @include respond-to(small) {
     padding: 0 30px;
   }
@@ -240,9 +244,11 @@ figure.imgcaption { //image in streamfield
   a {
     color:  $active-hover;
   }
-  h4 {
+  h3, h4 {
     margin: 5px 0 10px 0;
     padding-bottom: 5px;
+    color: $brightpurple;
+    font-style: normal;
     border-bottom: 2px solid $brightpurple;
     &:first-child {
       margin-top: 5px;
@@ -540,8 +546,9 @@ input[type=text], input[type=search], input[type=url], input[type=number], texta
 
 button, input[type="submit"] {
   padding: 0.5em;
-  background: #333333;
-  border: 1px solid gray;
+  color: #fff;
+  background: #800000;
+  border: none;
   cursor: pointer; }
 
 input[type="checkbox"],
@@ -779,6 +786,88 @@ table.etable>tbody>tr {
 }
 
 /*
+ * Toggle Search (For Lists / Tables)
+ * --------------------------------------------------
+ */
+
+ .searchbox{
+    position:relative;
+    min-width:30px;
+    margin-top:10px;
+    width:0%;
+    height:30px;
+    float:right;
+    overflow:hidden;
+    -webkit-transition: width 0.3s;
+    -moz-transition: width 0.3s;
+    -ms-transition: width 0.3s;
+    -o-transition: width 0.3s;
+    transition: width 0.3s;
+    @include respond-to(small) {
+        overflow: none;
+        width: 70%;
+        float: right;
+    }
+}
+
+.searchbox-input{
+    top:0;
+    right:0;
+    border:0;
+    outline:0;
+    background:#dcddd8;
+    width:100%;
+    height:30px;
+    margin:0;
+    padding:0px 55px 0px 20px;
+    font-size:1em;
+    color:$maroon;
+}
+
+.searchbox-icon,
+.searchbox-submit,
+.searchbox > input[type="submit"] {
+    content: "\f002";
+    width:30px;
+    height:30px;
+    display:block;
+    position:absolute;
+    top:0;
+    font-family:verdana;
+    font-size:1em;
+    right:0;
+    padding:0;
+    margin:0;
+    border:0;
+    outline:0;
+    line-height:30px;
+    text-align:center;
+    cursor:pointer;
+    color:#ddd;
+    background:$maroon;
+    @include respond-to(small) {
+        color: #fff;
+        background: $darkgray;
+    }
+}
+
+.searchbox-open{
+    width:100%;
+}
+
+.byline{
+  position:absolute;
+  top:150px;
+  left:30%;
+  text-align:center;
+  font-size:18px;
+}
+.byline a{
+  text-decoration:none;
+  color: $maroon;
+}
+
+/*
  * Ask A Librarian Pages
  * --------------------------------------------------
  */
@@ -862,6 +951,119 @@ a.btn-ask {
  * --------------------------------------------------
  */
 
+.s-lc-whw {
+  width: 100%;
+  margin-bottom: 20px;
+  max-width: 100%;
+  background-color: transparent;
+  border-bottom: none;
+  border-left: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  & thead {
+    background-color: #c5c8a4;
+    color: #000;
+    &>tr>th {
+      vertical-align: bottom;
+      border-bottom: 2px solid #ADB17D;
+      padding: 5px;
+    }
+  }
+  & th {
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+  }
+  & td {
+    @include respond-to(smllonly) {
+      white-space: nowrap;
+    }
+  }
+  &>tbody>tr {
+    &>td {
+      padding: 5px;
+      &:first-child {
+        @include respond-to(small) {
+          border-right: 1px solid #c5c8a4;
+        }
+        @include respond-to(medium) {
+          min-width: 150px;
+        }
+      }
+    }
+    &:nth-of-type(even) {
+      background-color: #f9f9f9;
+    }
+    &:last-child {
+      border-bottom:2px solid #ADB17D;
+    }
+  }
+}
+
+.s-lc-whw-head-date {
+  color: $darkgray;
+  font-style: italic;
+}
+
+.s-lc-whw-today-h {
+  background-color: #ADB17D;
+}
+
+.s-lc-whw-today {
+  background-color: #edeee3;
+}
+
+.s-lc-whw-locname {
+  font-weight: bold;
+}
+
+.s-lc-whw-sublocname {
+  padding-left: 10px!important;
+}
+
+.s-lc-whw-footnote {
+  color: #555;
+  font-size: 80%;
+  & td:hover {
+    background-color:#fff!important;
+  }
+}
+
+.s-lc-whw-pr, .s-lc-whw-ne{
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.s-lc-whw-pr:disabled, .s-lc-whw-ne:disabled {
+  background-color: #efefef;
+}
+
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
 .hours-today tr {
   border-bottom: 1px solid #b8aab1;
   & td {
@@ -885,6 +1087,13 @@ a.btn-ask {
       white-space: normal;
       width: 10%;
       max-width: 100px;
+      margin-bottom: 15px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      -ms-overflow-style:
+      -ms-autohiding-scrollbar;
+      border: 1px solid #ddd;
+      -webkit-overflow-scrolling: touch;
     }
   }
   @include respond-to(medium) {
@@ -903,6 +1112,8 @@ a.btn-ask {
 }
 
 th.s-lc-whw-bh {
+  text-align: left;
+  white-space: nowrap;
   @include respond-to(smallonly) {
     background-color: #ADB17D;
   }
@@ -1026,11 +1237,11 @@ td.time, td.event-nav {
     padding: 0 0 15px 0;
 }
 
-.img-space {
-  max-width: 150px;
-    @include respond-to(small) {
-      max-width: 200px;
-    }
+.img-spaces { // Div holding photos in individual space pages
+  padding: 0 10px 0 0;
+  img {
+    margin-bottom: 15px;
+  }
 }
 
 .spacelist {
@@ -1261,5 +1472,3 @@ tr.seealso {
     padding-right: 0;
   }
 }
-
-
