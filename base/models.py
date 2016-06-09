@@ -469,12 +469,28 @@ class ImageBlock(StructBlock):
     """
     image = ImageChooserBlock()
     title = CharBlock(required=False)
-    citation = CharBlock(required=False)
-    caption = TextBlock(required=False)
-    alt_text = CharBlock(required=False) #Img title in the system is a fallback. 
+    citation = CharBlock(
+        required=False,
+        help_text='Photographer, artist, or creator of image',
+    )
+    caption = TextBlock(
+        required=False,
+        help_text='Details about or description of image',
+    )
+    alt_text = CharBlock(
+        required=False,
+        help_text='Invisible text for screen readers',
+    ) #Img title in the system is a fallback. 
     alignment = ImageFormatChoiceBlock()
-    source = CharBlock(required=False)
-    lightbox = BooleanBlock(default=False, required=False)
+    source = CharBlock(
+        required=False,
+        help_text='Link to image source (needed for Creative Commons)',
+    )
+    lightbox = BooleanBlock(
+        default=False, 
+        required=False,
+        help_text='Link to a larger version of the image',
+    )
 
     class Meta:
         icon = 'image'
@@ -638,7 +654,12 @@ class DefaultBodyFields(StreamBlock):
         'renderer': 'html',
         'autoColumnSize': False,
     }
-    table = TableBlock(table_options=options, template='base/blocks/table.html') 
+    table = TableBlock(
+        table_options=options, 
+        template='base/blocks/table.html', 
+        help_text='Right + click in a table cell for more options. Use <em>text</em> for italics, \
+<strong>text</strong> for bold, and <a href="https://duckduckgo.com">text</a> for links.',
+    ) 
 
 
 class RawHTMLBodyField(StreamBlock):
