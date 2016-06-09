@@ -362,7 +362,7 @@
                         {% endif %}
 
                         {% autoescape off %}
-                            {{self.quicklinks}}
+                            {{self.quicklinks|richtext}}
                         {% endautoescape %}
 
                         {% if self.view_more_link and self.view_more_link_label %}
