@@ -5,7 +5,6 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
     <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_suffix %}{% endblock %}</title>
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -48,7 +47,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
-                  <a class="navbar-brand" href="/"><img itemprop="logo" src="{% static "base/images/color-logo.png" %}" class="img-responsive" alt="library logo"></a>
+                  <a class="navbar-brand" href="/" itemscope itemtype="http://schema.org/Organization">
+                    <img itemprop="logo" src="{% static "base/images/color-logo.png" %}" class="img-responsive" alt="library logo"/></a>
             </div> <!-- // end navbar-header -->
             <!-- // Mobile + Menu Toggle  -->
 
@@ -152,7 +152,7 @@
                                     <li role="separator" class="divider visible-xs"></li>
                                     <li><a href="http://guides.lib.uchicago.edu/coursereserves">Course Reserves</a></li>
                                     <li><a href="#">Research Instruction for Courses</a></li>
-                                    <hr style="border:0; border-top: 1px solid #767676;">
+                                    <li><hr style="border:0; border-top: 1px solid #767676;"></li>
                                     <li class="twocol-head">Scholarly Communication &amp; Publishing</li>
                                     <li role="separator" class="divider visible-xs"></li>
                                     <li><a href="/research/scholar/phd">Dissertation Office</a></li>
@@ -166,7 +166,7 @@
 
                     <!-- Collection/Exhibits Dropdown -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu twocol-drop">
                             <li>
                                 <ul class="list-unstyled col-sm-6 ul-left">
@@ -399,7 +399,7 @@
                     {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                         <h4>Featured Collection</h4>
-                        <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}">
+                        <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
                         <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
                         <a href="/collections/" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
                     </div>
@@ -458,7 +458,7 @@
             <p>Contact<br/>
             <a href="#">Contact Form</a><br/>
             <a href="#">Library Departments</a><br/>
-            <a href="#"><a href="#">Staff Directory</a><br/></p>
+            <a href="#">Staff Directory</a><br/></p>
         </div>
         <!-- // Contact -->
 

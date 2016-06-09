@@ -13,6 +13,7 @@ from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField
 from datetime import date
 from staff.models import StaffPage
+import urllib
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
@@ -311,14 +312,14 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             filtered by library.
         """
         base = '/units/?view=staff&library='
-        links = {'The John Crerar Library': base + 'Crerar Library',
-                 'The D\'Angelo Law Library': base + 'D\'Angelo Law Library',
-                 'Eckhart Library': base + 'Eckhart Library',
-                 'The Joe and Rika Mansueto Library': base + 'Mansueto',
-                 'The Joseph Regenstein Library': base + 'Regenstein Library',
-                 'Special Collections Research Center': base + 'Special Collections Research Center',
-                 'Social Service Administration Library': base + 'SSA Library'} 
-        return links[location]     
+        links = {'The John Crerar Library': base + urllib.parse.quote_plus('Crerar Library'),
+                 'The D\'Angelo Law Library': base + urllib.parse.quote_plus('D\'Angelo Law Library'),
+                 'Eckhart Library': base + urllib.parse.quote_plus('Eckhart Library'),
+                 'The Joe and Rika Mansueto Library': base + urllib.parse.quote_plus('Mansueto'),
+                 'The Joseph Regenstein Library': base + urllib.parse.quote_plus('Regenstein Library'),
+                 'Special Collections Research Center': base + urllib.parse.quote_plus('Special Collections Research Center'),
+                 'Social Service Administration Library': base + urllib.parse.quote_plus('SSA Library')} 
+        return links[location]
 
 
     @property 
