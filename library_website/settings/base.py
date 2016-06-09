@@ -221,3 +221,6 @@ ROOT_UNIT = 3378
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s: %s'
 ADDRESS_TEMPLATE = '%s, %s, %s %s'
+
+# Location and hours page
+HOURS_PAGE = 4084

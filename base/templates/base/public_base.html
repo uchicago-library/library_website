@@ -60,9 +60,10 @@
             <ul class="dropdown-menu">
                 {% for hours in all_building_hours %}
                     {% if hours != current_building_hours %}
-                    <li style="margin-bottom: 5px;"><a href="#" data-ga-category="hours" data-ga-action="click" data-ga-label="{{hours}}">{{hours}}</a></li>
+                    <li><a href="#">{{hours}}</a></li>
                     {% endif %}
                 {% endfor %}
+                <li><a href="{{hours_page_url}}">View all Locations <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a></li>
             </ul>
           </li>
           <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
@@ -203,7 +204,7 @@
                                     <li><a href="/reg/">Regenstein</a></li>
                                     <li><a href="/scrc/">Special Collections</a></li>
                                     <li><a href="/ssa/">SSA</a></li>
-                                    <li><a href="">View all hours</a></li>
+                                    <li><a href="{{hours_page_url}}">View all hours</a></li>
                                 </ul>
                                 <ul class="list-unstyled col-sm-6">
                                     <li class="twocol-head">Using Spaces &amp; Services</li>
@@ -531,6 +532,45 @@
     <script src='/static/base/js/jquery.track-everything.js'></script>
     <script src='/static/base/js/ga.public.js'></script>
     {% block extra_scripts %}{% endblock %}
+    {% if is_hours_page %}
+        <script src="https://api3.libcal.com/js/hours_grid.js?002"></script> 
+        <script>
+            //Regenstein
+            $(function(){ 
+                var week1357 = new $.LibCalWeeklyGrid( $("#s-lc-whw1357"), { iid: 482, lid: 1357,  weeks: 4 }); 
+            });
+
+            //Crerar
+            $(function(){ 
+                var week1373 = new $.LibCalWeeklyGrid( $("#s-lc-whw1373"), { iid: 482, lid: 1373,  weeks: 4 }); 
+            });
+
+            //Law
+            $(function(){ 
+                var week1378 = new $.LibCalWeeklyGrid( $("#s-lc-whw1378"), { iid: 482, lid: 1378,  weeks: 4 }); 
+            });
+
+            //Eckhart
+            $(function(){ 
+                var week1377 = new $.LibCalWeeklyGrid( $("#s-lc-whw1377"), { iid: 482, lid: 1377,  weeks: 4 }); 
+            });
+
+            //Mansueto
+            $(function(){ 
+                var week1379 = new $.LibCalWeeklyGrid( $("#s-lc-whw1379"), { iid: 482, lid: 1379,  weeks: 4 }); 
+            });
+
+            //SCRC
+            $(function(){ 
+                var week2449 = new $.LibCalWeeklyGrid( $("#s-lc-whw2449"), { iid: 482, lid: 2449,  weeks: 4 }); 
+            });
+
+            //SSA
+            $(function(){ 
+                var week1380 = new $.LibCalWeeklyGrid( $("#s-lc-whw1380"), { iid: 482, lid: 1380,  weeks: 4 }); 
+            });
+    </script>
+    {% endif %}
 <!-- // Scripts -->
 </body>
 </html>

@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
-from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, ROOT_UNIT
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -765,6 +765,26 @@ class PublicBasePage(BasePage):
         abstract = True
 
 
+    def get_hours_page(self, request):
+        """
+        Get a link to the hours page from the ID set
+        in the base config file.
+
+        Args:
+            request, object
+
+        Return:
+            String, url. 
+        """
+        try:
+            current_site = Site.find_for_request(request)
+            return Page.objects.all().filter(id=HOURS_PAGE)[0].relative_url(current_site)
+        except(IndexError) as e:
+            msg = 'HOURS_PAGE in settings.base is configured incorrectly. \
+Either it is set to the ID of a non-existing page or it has an incorrect value.'
+            raise IndexError(msg)
+
+
     def get_sidebar_title(self):
         """
         Recursively search up the tree to get the title and 
@@ -872,6 +892,8 @@ class PublicBasePage(BasePage):
         context['sidebartitle'] = self.get_sidebar_title()[0]
         context['sidebartitleurl'] = self.get_sidebar_title()[1]
         context['branch_lib_css'] = self.get_branch_lib_css_class()
+        context['hours_page_url'] = self.get_hours_page(request)
+        context['is_hours_page'] = self.id == HOURS_PAGE
 
         return context
 
