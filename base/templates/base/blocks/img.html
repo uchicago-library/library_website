@@ -19,13 +19,16 @@
     {% if value.title or value.citation or value.caption %}
         <figcaption>
             {% if value.title %}
-                <em>{{value.title}}</em><br/>
+                <span class="img-title">{{value.title}}</span><br/>
             {% endif %}
             {% if value.citation %}
-                <strong>{{value.citation}}</strong><br/>
+                <span class="img-citation">{{value.citation}}</span><br/>
             {% endif %}
             {% if value.caption %}
-                {{value.caption}}
+                <span class="img-caption">{{value.caption}}<span></br/>
+            {% endif %}
+            {% if value.source %}
+                <a class="img-src" href="{{value.source}}">{{value.source}}</a>
             {% endif %}
         </figcaption>
     {% endif %}
