@@ -7,6 +7,7 @@
 
 {% block content %}
   <article>
+  <div class="row">
   {% if view == 'collections' %}
     {% include 'lib_collections/header_collections.html' %}
     <div class="col-xs-12">
@@ -77,7 +78,7 @@
                   <strong>Subjects</strong>
                   <br/>
                   {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a><br/>
                   {% endfor %}
                 {% endif %}
               </td>
@@ -114,7 +115,7 @@
                   <strong>Subjects</strong>
                   <br/>
                   {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a>
+                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a></br/>
                   {% endfor %}
                 {% endif %}
               </td>
@@ -177,6 +178,7 @@
         </table>
       </div>
     {% endif %}
+  </div>
   </article>
 {% endblock %}
 
