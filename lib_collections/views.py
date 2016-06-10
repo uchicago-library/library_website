@@ -32,9 +32,7 @@ def collections(request):
         collections = CollectionPage.objects.all()
 	
         if digital:
-            #collections = collections.filter(collection_placements__format__text='Digital')
-            collections = collections.filter(title="A Century of Progress International Exposition Publications")
-
+            collections = collections.filter(collection_placements__format__text='Digital')
 
         if format:
             collections = collections.filter(collection_placements__format__text=format)
