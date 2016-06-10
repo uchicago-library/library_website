@@ -421,8 +421,6 @@ class AbstractBase(models.Model):
         related_name='%(app_label)s_%(class)s_editor'
     )
 
-    sort_order = IntegerField(blank=True, default=0)
-
     # Searchable fields
     search_fields = [
         index.SearchField('description'),
@@ -434,7 +432,6 @@ class AbstractBase(models.Model):
                 FieldPanel('page_maintainer'),
                 FieldPanel('editor'),
                 FieldPanel('last_reviewed', None),
-                FieldPanel('sort_order')
             ],
             heading='Page Management'
         ),
@@ -724,14 +721,14 @@ class BasePage(Page, AbstractBase):
                     break
                 a = a - 1
 
-            children = sorted(sidebar_parent.get_children().in_menu().live().specific(), key=lambda c: (c.sort_order, c.title))
+            children = sidebar_parent.get_children().in_menu().live().specific()
             for child in children:
                 new_child = {
                     'title': child.title,
                     'url': child.relative_url(current_site),
                     'children': []
                 }
-                grandchildren = sorted(child.get_children().in_menu().live().specific(), key=lambda c: (c.sort_order, c.title))
+                grandchildren = child.get_children().in_menu().live().specific()
                 for grandchild in grandchildren:
                     new_child['children'].append({
                         'title': grandchild.title,

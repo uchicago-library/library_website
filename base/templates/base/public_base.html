@@ -281,11 +281,11 @@
         <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
             <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
             {% for child in sidebar %}
-                <h4><a href="{{ child.url }}">{{ child.title }}</a></h4>
+                <h4><a href="{{child.url}}">{{child.title}}</a></h4>
                 {% if child.children %}
                 <ul>
                     {% for grandchild in child.children %}
-                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                        <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
                     {% endfor %}
                 </ul>
                 {% endif %}
