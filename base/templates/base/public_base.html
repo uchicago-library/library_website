@@ -297,12 +297,14 @@
     <div class="{{breadcrumb_div_css}}">
         {% include "base/includes/public_site_breadcrumbs.html" %}
     </div>
-    <div class="{{content_div_css}}" id="content"> 
-        <!-- Off-Canvas Toggle Button -->
-        <div class="row visible-xs visible-sm toggle-side">
-            <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
-        </div>
-        <!-- // End Off-Canvas Toggle Button -->
+    <div class="{{content_div_css}}" id="content">
+        {% if has_left_sidebar %}
+            <!-- Off-Canvas Toggle Button -->
+            <div class="row visible-xs visible-sm toggle-side">
+                <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
+            </div>
+            <!-- // End Off-Canvas Toggle Button -->
+        {% endif %}
 
         <!-- Main Content -->
         {% if self.has_right_sidebar %}
