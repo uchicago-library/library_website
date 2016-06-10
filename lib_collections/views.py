@@ -100,6 +100,10 @@ def collections(request):
         s = get_search_backend()
         subjects_queryset = s.search(search, Subject)
 
+    if subject:
+        subject_ids = Subject.objects.get(name=subject).get_descendants()
+        subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
+
     for s in subjects_queryset:
         parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
         subjects.append({
