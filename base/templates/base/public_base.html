@@ -261,20 +261,21 @@
         </div> <!-- // Nav Wrapper / Fluid Top  -->
     </nav><!-- // Top Navigation -->
 
+     {% if has_banner %}
+        <div class="jumbotron" style="background-image: url({{banner.url}});">
+          <div class="container">
+            <div class="overlaywrap" itemscope itemtype="http://schema.org/Library">
+                <a href="#">
+                <h2 itemprop="name">{{banner_title}}</h2>
+                </a>
+            </div>  
+          </div> 
+        </div> 
+    {% endif %}
+
     <!-- Awesome Page Content -->
     <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
-        <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-            {% if has_banner %}
-                <div class="jumbotron" style="background-image: url({{banner.url}});">
-                  <div class="container">
-                    <div class="overlaywrap" itemscope itemtype="http://schema.org/Library">
-                        <a href="#">
-                        <h2 itemprop="name">{{banner_title}}</h2>
-                        </a>
-                    </div>  
-                  </div> 
-                </div> 
-            {% endif %}
+        <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row --> 
 
     {% if has_left_sidebar %}
         <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
