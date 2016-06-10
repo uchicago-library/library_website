@@ -879,6 +879,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             String, css classname.
         """
+        # TODO: move this to base.settings and use page ID instead of page title
         css = { 'The John Crerar Library' : 'crerar',
                 'The D\'Angelo Law Library': 'law',
                 'Eckhart Library': 'eckhart',
@@ -890,6 +891,28 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return css[key]
         except(KeyError):
             return ''
+
+
+    def get_banner(self):
+        """
+        Test to see if a page should have a banner image. 
+        Get the image url for display if the anser is yes.
+
+        Returns:
+            A tuple where the first value is a boolean and 
+            the second value is an image object or None 
+            and the third value is a string (banner title).
+        """
+        try:
+            # Base case
+            if self.banner_title and self.banner_image:
+                return (True, self.banner_image, self.banner_title)
+            # Recursive case
+            else:
+                return self.get_parent().specific.get_banner()
+        # Reached the top of the tree (could factor this into an if)
+        except(AttributeError):
+            return (False, None, '')
 
 
     def get_context(self, request):
@@ -925,6 +948,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['branch_lib_css'] = self.get_branch_lib_css_class()
         context['hours_page_url'] = self.get_hours_page(request)
         context['is_hours_page'] = self.id == HOURS_PAGE
+        context['has_banner'] = self.get_banner()[0]
+        context['banner'] = self.get_banner()[1]
+        context['banner_title'] = self.get_banner()[2]
 
         return context
 

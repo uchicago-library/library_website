@@ -1,7 +1,7 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% image self.banner_image original as banner %}
+{% image banner original as banner %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -264,12 +264,12 @@
     <!-- Awesome Page Content -->
     <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
         <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-            {% if self.banner_image and self.banner_title %}
+            {% if has_banner %}
                 <div class="jumbotron" style="background-image: url({{banner.url}});">
                   <div class="container">
                     <div class="overlaywrap" itemscope itemtype="http://schema.org/Library">
                         <a href="#">
-                        <h2 itemprop="name">{{self.banner_title}}</h2>
+                        <h2 itemprop="name">{{banner_title}}</h2>
                         </a>
                     </div>  
                   </div> 
