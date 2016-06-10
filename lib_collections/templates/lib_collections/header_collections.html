@@ -1,62 +1,56 @@
-<div class="row">
-  <div class="col-xs-6">
-    <h1><span class="hidden-xs">Our </span>Collections &amp; Exhibits</h1>
+<div class="col-sm-6">
+  <div class="btn-group spaces-toggle">
+    <a class="btn btn-list-toggle active" href="?view=collections">Collections</a>
+    <a class="btn btn-list-toggle" href="?view=exhibits">Exhibits</a>
+    <a class="btn btn-list-toggle" href="?view=subjects">Subjects</a>
+  </div>
+</div>
+
+<div class="col-sm-6">
+  <form class="searchbox">
+    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
+    <input name="view" type="hidden" value="collections"/>
+    <input type="submit" class="searchbox-submit"/>
+    <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
+  </form>
+</div>
+
+<div class="col-xs-12 col-sm-7 coll-dropdown">
+  <span class="headline">Browse by</span>
+
+  <div class="btn-group">
+    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+      {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" id="listings-dropdown">
+      {% if subject %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a></li>{% endif %}
+      {% for subject in subjects_pulldown %}
+        <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a></li>
+      {% endfor %}
+    </ul>
   </div>
 
-  <div class="col-xs-6">
-    <form class="searchbox">
-      <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
-      <input name="view" type="hidden" value="collections"/>
-      <input type="submit" class="searchbox-submit"/>
-      <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
-    </form>
+  <div class="btn-group">
+    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+      {% if format %}{{ format }}{% else %}Format{% endif %} <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" id="listings-dropdown">
+      {% if format %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a></li>{% endif %}
+      {% for format in formats_pulldown %}
+        <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}&amp;format={{ format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ format }}</a></li>
+      {% endfor %}
+    </ul>
   </div>
+</div>
 
-  <div class="col-xs-12">
-    <div class="btn-group spaces-toggle">
-      <a class="btn btn-directory active" href="?view=collections">Collections</a>
-      <a class="btn btn-directory" href="?view=exhibits">Exhibits</a>
-      <a class="btn btn-directory" href="?view=subjects">Subjects</a>
-    </div>
-  </div>
-
-  <div class="col-xs-12 col-sm-7 coll-dropdown">
-    <span class="headline">Browse by</span>
-
-    <div class="btn-group">
-      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-        {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
-      </button>
-      <div class="dropdown-menu listings-dropdown">
-        {% if subject %}<a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a><br/>{% endif %}
-        {% for subject in subjects_pulldown %}
-          <a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a><br/>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-primary btn-textonly dropdown-toggle" type="button">
-        {% if format %}{{ format }}{% else %}Format{% endif %} <span class="caret"></span>
-      </button>
-      <div class="dropdown-menu listings-dropdown">
-        {% if format %}<a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a><br/>{% endif %}
-        {% for format in formats_pulldown %}
-          <a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}&amp;format={{ format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ format }}</a><br/>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <div class="col-xs-12 col-sm-5">
-    <form action="." method="get">
-      <span class="headline">Limit to</span> &nbsp;
-      <input name="digital" type="checkbox" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
-      <input name="view" type="hidden" value="collections"/>
-      {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
-      {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
-      {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
-      <input type="submit"/>
-    </form>
-  </div>
+<div class="col-xs-12 col-sm-5">
+  <form action="." method="get">
+    <span class="headline">Limit to</span> &nbsp;
+    <input name="digital" type="checkbox" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+    <input name="view" type="hidden" value="collections"/>
+    {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
+    {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
+    {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
+    <input type="submit"/>
+  </form>
 </div>

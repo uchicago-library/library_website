@@ -136,6 +136,7 @@ def collections(request):
 
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
+        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'digital': digital,
         'exhibits': exhibits,
         'exhibits_current': exhibits_current,
@@ -145,6 +146,9 @@ def collections(request):
         'location': location,
         'locations': locations,
         'search': search,
+        'self': {
+            'title': 'Our Collections & Exhibits'
+        },
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,

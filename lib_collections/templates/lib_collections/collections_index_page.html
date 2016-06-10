@@ -9,11 +9,15 @@
   <article>
   {% if view == 'collections' %}
     {% include 'lib_collections/header_collections.html' %}
-    <div class="row">
+    <div class="col-xs-12">
       <table class="table table-striped coll-list">
         <tbody>
-          <tr class="table-header">
-            <th colspan="4">All Collections</th>
+          <tr class="etable-header">
+            {% if search %}
+              <th colspan="4">Search Results for "{{ search }}"</th>
+            {% else %}
+              <th colspan="4">All Collections</th>
+            {% endif %}
           </tr>
           {% for collection_page in collections %}
             <tr>
@@ -28,17 +32,22 @@
               </td>
             </tr>
           {% endfor %}
+          {% if search and not collections %}
+            <tr>
+              <td colspan="4">There were no results for your search.</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
   {% endif %}
   {% if view == 'exhibits' %}
     {% include 'lib_collections/header_exhibits.html' %}
-    <div class="row">
+    <div class="col-xs-12">
       <table class="table table-striped coll-list">
         <tbody>
           {% if exhibits_current %}
-            <tr class="table-header">
+            <tr class="etable-header">
               <th colspan="4">Current Exhibits</th>
             </tr>
           {% endif %}
@@ -75,7 +84,7 @@
             </tr>
           {% endfor %}
           {% if exhibits %}
-            <tr class="table-header">
+            <tr class="etable-header">
               <th colspan="4">All Exhibits</th>
             </tr>
           {% endif %}
@@ -118,10 +127,10 @@
   {% endif %}
   {% if view == 'subjects' %}
     {% include 'lib_collections/header_subject.html' %}
-      <div class="row">
+      <div class="col-xs-12">
         <table class="table table-striped coll-list">
           <tbody>
-            <tr class="table-header">
+            <tr class="etable-header">
               <th colspan="4">All Subjects</th>
             </tr>
             {% for s in subjects %}
