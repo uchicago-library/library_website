@@ -21,7 +21,7 @@
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
       {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
     </button>
-    <ul id="listings-dropdown" class="dropdown-menu">
+    <ul class="dropdown-menu listings-dropdown">
       {% if subject %}
         <li>
           <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">All subjects</a>
@@ -38,7 +38,7 @@
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
       {% if location %}{{ location }}{% else %}Location{% endif %} <span class="caret"></span>
     </button>
-    <ul id="listings-dropdown" class="dropdown-menu">
+    <ul class="dropdown-menu listings-dropdown">
       {% if location %}
         <li>
           <a href=".?view=exhibits" class="dropdown-item">All locations</a>

@@ -1,4 +1,4 @@
-<div class="col-sm-6">
+<div class="col-xs-12 col-sm-6">
   <div class="btn-group spaces-toggle">
     <a class="btn btn-list-toggle active" href="?view=collections">Collections</a>
     <a class="btn btn-list-toggle" href="?view=exhibits">Exhibits</a>
@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<div class="col-sm-6">
+<div class="col-xs-12 col-sm-6">
   <form class="searchbox">
     <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
     <input name="view" type="hidden" value="collections"/>
@@ -22,7 +22,7 @@
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
       {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu" id="listings-dropdown">
+    <ul class="dropdown-menu listings-dropdown">
       {% if subject %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a></li>{% endif %}
       {% for subject in subjects_pulldown %}
         <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a></li>
@@ -34,7 +34,7 @@
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
       {% if format %}{{ format }}{% else %}Format{% endif %} <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu" id="listings-dropdown">
+    <ul class="dropdown-menu listings-dropdown">
       {% if format %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a></li>{% endif %}
       {% for format in formats_pulldown %}
         <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}&amp;format={{ format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ format }}</a></li>
