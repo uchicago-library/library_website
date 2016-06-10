@@ -24,7 +24,7 @@
     <ul id="listings-dropdown" class="dropdown-menu">
       {% for subject in subjects_pulldown %}
         <li>
-          <a href=".?view=subject&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a>
+          <a href=".?view=subjects&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a>
         </li>
       {% endfor %}
     </ul>
