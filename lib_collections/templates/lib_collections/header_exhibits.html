@@ -7,7 +7,7 @@
 </div>
       
 <div class="col-sm-6">
-  <form class="searchbox">
+  <form>
     <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search exhibits"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
     <input type="submit" style="background-color: transparent;" class="searchbox-submit">
     <input name="view" type="hidden" value="exhibits"/>
