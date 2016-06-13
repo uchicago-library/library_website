@@ -5,18 +5,17 @@
 
 {% block content %}
     <article>
-        <h1>Our Spaces</h1>
           <div class="row">
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 nopadding">
-                <div class="btn-group spaces-toggle col-xs-9 col-sm-9">
-                  <a class="btn btn-directory{% if space_type == 'is_study_space' %} active{% endif %}" href="?space_type=is_study_space"><!-- <span class="hidden-xs">Places to </span> -->To Study</a>
-                  <a class="btn btn-directory{% if space_type == 'is_teaching_space' %} active {% endif %}" href="?space_type=is_teaching_space"><!-- <span class="hidden-xs">Places to </span> -->To Teach</a>
-                  <a class="btn btn-directory{% if space_type == 'is_event_space' %} active {% endif %}" href="?space_type=is_event_space"><!-- <span class="hidden-xs">Places for </span> -->For Events</a>
+            <div class="col-xs-12 col-sm-6">
+                <div class="btn-group spaces-toggle">
+                  <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" href="?space_type=is_study_space">To Study</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" href="?space_type=is_teaching_space">To Teach</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" href="?space_type=is_event_space">For Events</a>
                 </div>
             </div>
         
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 nopadding">
-                <span style="color:#800000;font-weight:600;">Filter by</span>
+            <div class="col-xs-12 col-sm-6 coll-dropdown">
+                <span class="headline">Filter by</span>
                 <div class="btn-group">
                   <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button">
                     {% if building %}
@@ -26,23 +25,29 @@
                     {% endif %}
                     <span class="caret"></span>
                   </button>
-                  <div class="dropdown-menu">
+                  <ul class="listings-dropdown dropdown-menu">
                     {% if building %}
-                       <a href=".">All Buildings</a><br/>
+                       <li>
+                          <a href=".">All Buildings</a><br/>
+                       </li>
                     {% endif %}
                     {% for b in buildings %}
-                       <a href="?building={{ b|urlencode }}" class="dropdown-item">{{ b }}</a><br/>
+                       <li>
+                          <a href="?building={{ b|urlencode }}" class="dropdown-item">{{ b }}</a>
+                       </li>
                     {% endfor %}
-                  </div>
+                  </ul>
                 </div>
 
                 <div class="btn-group">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not library %} disabled="true"{% endif %}>
+                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not library %} disabled="disabled"{% endif %}>
                     Floor <span class="caret"></span>
                   </button>
-                  <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item">Choose a Library First</a>
-                  </div>
+                  <ul class="listings-dropdown dropdown-menu">
+                    <li>
+                      <a href="#" class="dropdown-item">Choose a Library First</a>
+                    </li>
+                  </ul>
                 </div>
 
                 <div class="btn-group">
@@ -54,64 +59,70 @@
                     {% endif %}
                     <span class="caret"></span>
                   </button>
-                  <div class="dropdown-menu">
+                  <ul class="listings-dropdown dropdown-menu">
                     {% if feature %}
-                      <a href=".">All Features</a><br/>
+                      <li>
+                        <a href=".">All Features</a>
+                      </li>
                     {% endif %}
                     {% for f in features %}
-                      <a href="?space_type={{ space_type|urlencode }}&feature={{ f.field|urlencode }}" class="dropdown-item">{{ f.label }}</a><br/>
+                      <li>
+                        <a href="?space_type={{ space_type|urlencode }}&feature={{ f.field|urlencode }}" class="dropdown-item">{{ f.label }}</a>
+                      </li>
                     {% endfor %}
-                  </div>
+                  </ul>
                 </div>          
             </div>
         </div>
         <div class="row">
-            <table class="table table-striped spacelist">
-                <tbody>
-                <tr class="etable-header">
-                    <th colspan="4">
-                        {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
-                        {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
-                        {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
-                    </th>
-                </tr>
-                {% for space in spaces %}
-                  <tr>
-                    <td><!-- photos coming soon --></td>
-                    <td>
-                        {{ space.title }}<br/>
-                        {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
-                        <!-- floor coming soon -->
-                        {% if space.reservation_url %}<button class="btn btn-reserve" type="button">Reserve</button>{% endif %}
-                    </td>
-                    <td>
-                      <p class="features-list">
-                        {% if space.is_quiet_zone %}<i class="fa fa-bell-slash-o"> </i>Quiet Zone<br/>{% endif %}
-                        {% if space.is_collaboration_zone %}<i class="material-icons">people</i>Collaboration Zone<br/>{% endif %}
-                        {% if space.is_phone_zone %}<i class="material-icons">phone_android</i>Cell Phone Zone<br/>{% endif %}
-                        {% if space.is_meal_zone %}<i class="material-icons">local_dining</i>Meal Zone<br/>{% endif %}
-                        {% if space.is_open_space %}<i class="material-icons">all_inclusive</i>Open Space<br/>{% endif %}
-                        {% if space.is_snacks_allowed %}<i class="material-icons">local_cafe</i>Snacks Allowed<br/>{% endif %}
-                        {% if space.is_24_hours %}<i class="material-icons">access_alarm</i>All Night Study<br/>{% endif %}
-                        {% if space.has_printing %}<i class="fa fa-print"> </i>Copy / Print / Scan<br/>{% endif %}
-                        {% if space.has_public_computer %}<i class="fa fa-desktop"> </i>Public Computer(s)<br/>{% endif %}
-                        {% if space.has_dual_monitors %}<i class="material-icons">add_to_queue</i>Dual Monitor stations<br/>{% endif %}
-                        {% if space.has_book_scanner %}<i class="material-icons">import_contacts</i>Overhead Book Scanner<br/>{% endif %}
-                        {% if space.has_single_tables %}<i class="material-icons">widgets</i>Individual Tables<br/>{% endif %}
-                        {% if space.has_large_tables %}<i class="material-icons">wb_iridescent</i>Large Tables<br/>{% endif %}
-                        {% if space.has_carrels %}<i class="material-icons">border_inner</i>Carrels<br/>{% endif %}
-                        {% if space.has_standing_desk %}Standing Desks<br/>{% endif %}
-                        {% if space.has_soft_seating %}<i class="material-icons">weekend</i>Comfy Seating<br/>{% endif %}
-                        {% if space.is_reservable %}<i class="fa fa-calendar-plus-o"> </i>Reservable<br/>{% endif %}
-                        {% if space.has_board %}<i class="material-icons">gesture</i>White Board<br/>{% endif %}
-                    </td>
-                    <td>
-                        {{ space.short_description|safe }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+            <div class="col-xs-12">
+                <table class="table table-striped spacelist">
+                    <tbody>
+                    <tr class="etable-header">
+                        <th colspan="4">
+                            {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
+                            {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
+                            {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
+                        </th>
+                    </tr>
+                    {% for space in spaces %}
+                      <tr>
+                        <td><!-- photos coming soon --></td>
+                        <td>
+                            {{ space.title }}<br/>
+                            {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
+                            <!-- floor coming soon -->
+                            {% if space.reservation_url %}<button class="btn btn-reserve" type="button">Reserve</button>{% endif %}
+                        </td>
+                        <td>
+                          <p class="features-list">
+                            {% if space.is_quiet_zone %}<i class="fa fa-bell-slash-o"> </i>Quiet Zone<br/>{% endif %}
+                            {% if space.is_collaboration_zone %}<i class="material-icons">people</i>Collaboration Zone<br/>{% endif %}
+                            {% if space.is_phone_zone %}<i class="material-icons">phone_android</i>Cell Phone Zone<br/>{% endif %}
+                            {% if space.is_meal_zone %}<i class="material-icons">local_dining</i>Meal Zone<br/>{% endif %}
+                            {% if space.is_open_space %}<i class="material-icons">all_inclusive</i>Open Space<br/>{% endif %}
+                            {% if space.is_snacks_allowed %}<i class="material-icons">local_cafe</i>Snacks Allowed<br/>{% endif %}
+                            {% if space.is_24_hours %}<i class="material-icons">access_alarm</i>All Night Study<br/>{% endif %}
+                            {% if space.has_printing %}<i class="fa fa-print"> </i>Copy / Print / Scan<br/>{% endif %}
+                            {% if space.has_public_computer %}<i class="fa fa-desktop"> </i>Public Computer(s)<br/>{% endif %}
+                            {% if space.has_dual_monitors %}<i class="material-icons">add_to_queue</i>Dual Monitor stations<br/>{% endif %}
+                            {% if space.has_book_scanner %}<i class="material-icons">import_contacts</i>Overhead Book Scanner<br/>{% endif %}
+                            {% if space.has_single_tables %}<i class="material-icons">widgets</i>Individual Tables<br/>{% endif %}
+                            {% if space.has_large_tables %}<i class="material-icons">wb_iridescent</i>Large Tables<br/>{% endif %}
+                            {% if space.has_carrels %}<i class="material-icons">border_inner</i>Carrels<br/>{% endif %}
+                            {% if space.has_standing_desk %}Standing Desks<br/>{% endif %}
+                            {% if space.has_soft_seating %}<i class="material-icons">weekend</i>Comfy Seating<br/>{% endif %}
+                            {% if space.is_reservable %}<i class="fa fa-calendar-plus-o"> </i>Reservable<br/>{% endif %}
+                            {% if space.has_board %}<i class="material-icons">gesture</i>White Board<br/>{% endif %}
+                        </td>
+                        <td>
+                            {{ space.short_description|safe }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
         </div>
     </article>
 {% endblock %}

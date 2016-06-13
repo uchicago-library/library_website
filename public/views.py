@@ -63,9 +63,13 @@ def spaces(request):
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
         'buildings': buildings,
+        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'feature': feature,
         'feature_label': feature_label,
         'features': features,
+        'self': {
+            'title': 'Our Spaces'
+        },
         'spaces': spaces,
         'space_type': space_type
     })
