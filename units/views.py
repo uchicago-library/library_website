@@ -157,7 +157,7 @@ def units(request):
         if unit_page.phone_number:
             if unit_page.phone_label:
                 h = h + '<em>' + unit_page.phone_label + ':' + '</em> '
-            h = h + "<a href='tel:'" + unit_page.phone_number + ">" + unit_page.phone_number + "</a>"
+            h = h + "<a href='tel:" + unit_page.phone_number.replace('-', '') + "'>" + unit_page.phone_number + "</a>"
             h = h + '<br/>'
 
         # fax_number  
@@ -288,7 +288,7 @@ def units(request):
             hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
     
         # alphabetical units. 
-        alphabetical_html = "<table class='table table-striped'>"
+        alphabetical_html = ""
 
         units = UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc')
         if query:
@@ -313,10 +313,10 @@ def units(request):
             alphabetical_html = alphabetical_html + unit_page.directory_unit.get_parent_library_name()
             alphabetical_html = alphabetical_html + '</td>'
             alphabetical_html = alphabetical_html + '</tr>'
-        alphabetical_html = alphabetical_html + '</table>'
 
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
+        'content_div_css': 'container body-container col-xs-12',
         'department': department,
         'department_label': department_label,
         'departments': get_departments(library),
@@ -330,6 +330,6 @@ def units(request):
         'subject': subject,
         'view': view,
         'self': {
-            'has_right_sidebar': True
+            'title': 'Library Directory'
         }
     })

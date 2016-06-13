@@ -7,54 +7,52 @@
 
 {% block content %}
 	<article>
-		<h1 style="padding: 15px 0 0 0; margin-bottom: 0;">Library Directory</h1>
-        <div class="col-sm-12 col-md-12">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="btn-group bg-directory">
-                        <a class="btn btn-directory{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href="?view=department">Department View</a>
-                        <a class="btn btn-directory{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href="?view=staff">Staff View</a>
-                    </div><!-- /btn-group-->
-                </div><!-- / col-md-6-->
-                <div class="col-md-6">
-                    <div class="col-xs-12 col-sm-12 col-md-5 bg-directory dir-header">
-                    </div><!-- /.col-lg-3 -->
-                    <div style="padding: 15px 0 7px 0;" class="col-xs-12 col-sm-12 col-md-7">
-                        <form action="." method="GET">
-                            <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
-                            <div class="input-group">
-                                <input type="text" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" name="query" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
-                                <div class="input-group-btn">
-                                    <button style="padding: 7px 14px;" class="btn btn-searchtype btn-default">Find </button>
-                                </div><!-- /btn-group -->
-                            </div><!-- /input-group -->
-                        </form>
-                    </div><!-- /.col-xs-12 -->
-                </div><!-- /.col-md-6 -->
-            </div><!-- /.row -->
-            <hr/>
+        <div class="row">
+	        <div class="col-xs-12 col-sm-6">
+	            <div class="btn-group spaces-toggle">
+	                <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href="?view=department">Department View</a>
+	                <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href="?view=staff">Staff View</a>
+	            </div><!-- /btn-group-->
+	        </div><!-- / col-xs-12 col-sm-6 -->
+	        <div class="col-xs-12 col-sm-6">
+	            <form action="." method="GET">
+	                <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
+	                <input name="query" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
+	                <input type="submit" class="searchbox-submit">
+	                <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
+	           </form>
+	        </div><!-- /.col-xs-12 col-sm-6-->
             {% if view == 'department' %}
-                <h3 style="margin:10px 20px 20px 0; display: inline;">Departments, Divisions, & Units</h3>
                 {% if sort == 'alphabetical' %}
                     {% if query == None or query == '' %}
-                        <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
+                        <div class="col-xs-12 list-view">
+                            <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
+                        </div>
                     {% endif %}
-                    {{ alphabetical_units|safe }}
                 {% else %}
-                    <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
-                    {{ hierarchical_units|safe }}
+                    <div class="col-xs-12 list-view">
+                        <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
+                    </div>
                 {% endif %}
-            {% elif view == 'staff' %} 
-                <div class="col-md-3 col-xs-12 col-sm-12">
-                    <h3 style="margin:10px 20px 20px 0;">All Library Staff</h3>
                 </div>
-                <div class="col-md-2 dir-header">
-                    <h4>Browse by</h4>
-                </div>
-                {% include "units/browse_by_pulldowns.html" %}
+            {% endif %}
+            {% if view == 'staff' %} 
                 {% if staff_pages %}
+                    <table class="table table-striped quicktable">
+                        <tbody>
+                            <tr>
+                                <td>Quick Numbers</td>
+                                <td><strong>Main Telephone</strong> 773-702-8740</td>
+                                <td><strong>Privileges </strong> 773-702-8782</td>
+                                <td><strong>General Reference</strong>  773-702-4685</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <table class="table table-striped">
                         <tbody>
+                            <tr class="etable-header">
+                                <td colspan="4">All Staff</td>
+                            </tr>
                             {% for staff_page in staff_pages %}
                                 <tr>
                                     <td>
@@ -80,7 +78,7 @@
                                             {% staff_subjects staff_page %}
                                         {% endif %}
                                         {% if staff_page.libguide_url %}
-                                            <a href="{{ staff_page.libguide_url }}" class="guide-link"><i class="fa fa-file-text-o"></i> Subject Guides</a>
+                                            <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -92,7 +90,7 @@
                         <p>There are no results for your search.</p>
                     {% endif %}
                 {% endif %}
-
+    
                 {% if staff_pages.has_previous %}
                     <a href=".?view=staff&amp;page={{ staff_pages.previous_page_number }}">Previous</a>
                 {% endif %}
@@ -102,23 +100,32 @@
                 {% if staff_pages.has_next %}
                     <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
                 {% endif %}
+            {% else %}
+                {% if sort == 'alphabetical' %}
+                    <table class="table table-striped coll-list">
+                        <tbody>
+                            <tr class="etable-header">
+                                <th colspan="3">All Departments, Divisions, &amp; Units</th>
+                            </tr>
+                        </tbody>
+                        {{ alphabetical_units|safe }}
+                    </table>
+                {% else %}
+                    <table class="table table-striped coll-list">
+                        <tbody>
+                            <tr class="etable-header">
+                                <th>All Departments, Divisions, &amp; Units</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ hierarchical_units|safe }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                {% endif %}
             {% endif %}
-            </a>
-        </div><!-- /.col-sm-12 -->
+        </div><!-- /.row -->
 	</article>
 {% endblock %}
 
-{% block right_sidebar %}
-    <h3>Quick Reference</h3>
-    <p><strong>Main Telephone</strong> <br>773-702-8740</p>
-    <p><strong>Privileges (all libraries)</strong> <br>773-702-8782<br><a href="#">example@lib.uchicago.edu</a></p>
-    <p><strong>General Reference</strong>  <br>773-702-4685</p>
-    <p><strong>Circulation Desk</strong>  <br>773-702-8701</p>
-            
-    <h3 style="padding-top:25px;">Today's Hours</h3>
-    <p><strong>Regenstein Library</strong><br><a href="#">8:00am-2:00am</a></p>
-    <strong>Crerar Library</strong><br><a href="#">8:00am-2:00am</a><p></p>
-    <strong>Eckhart Library</strong><br><a href="#">8:00am-2:00am</a><p></p>
-    <strong>SSA Library</strong><br><a href="#">8:00am-2:00am</a><p></p>
-    <strong>D'Angelo Law Library</strong><br><a href="#">8:00am-2:00am</a><p></p>
-{% endblock %}
