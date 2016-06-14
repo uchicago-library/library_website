@@ -917,6 +917,17 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']
 
+        def get_children_recursive(page):
+            """
+
+            """
+            if page.get_children() == []:
+                return []
+            else:
+                children = page.get_children
+                for child in children:
+                    pass
+
         try: 
             location = str(location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
