@@ -948,6 +948,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['has_banner'] = self.get_banner()[0]
         context['banner'] = self.get_banner()[1]
         context['banner_title'] = self.get_banner()[2]
+        context['page_type'] = str(self.specific)
 
         return context
 

@@ -25,7 +25,7 @@
     {% endcompress %}
 </head>
 
-<body>
+<body id="{{page_type|slugify}}">
 {% wagtailuserbar %}
     <div id="skip">
         <a href="#content">Skip to Main Content</a>
@@ -58,7 +58,7 @@
 
         <!-- Top right nav --> <!-- Hidden XS + SM -->
         <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-          <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg {{chat_status_css}}"></i> Ask a Librarian</a></li>
+          <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}"></i> Ask a Librarian</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-ga-category="hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> <span>{{current_building_hours}}</span> <span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -313,6 +313,7 @@
         {% if self.has_right_sidebar %}
         <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
         {% endif %}
+
             <h1>{{self.title}}</h1>
             {% block content %}
                 {% for block in self.body %}
@@ -357,7 +358,7 @@
         {% endif %}
 
         {% if self.has_right_sidebar %}
-            <div class="col-xs-12 col-md-3 rightside"> <!-- Right Sidebar Content -->
+            <div class="col-xs-12 col-md-3 rightside {% block right_sidebar_classes %}{% endblock %}"> <!-- Right Sidebar Content -->
                 {% block right_sidebar %}{% endblock %}
     
                 {% if self.quicklinks %}
@@ -461,7 +462,7 @@
         <!-- Contact -->
         <div class="col-xs-12 col-sm-2 col-footer">
             <p>Contact<br/>
-            <a href="#">Contact Form</a><br/>
+            <a href="/about/thelibrary/contact/">Contact Form</a><br/>
             <a href="/units/?view=department">Library Departments</a><br/>
             <a href="/units/?view=staff">Staff Directory</a><br/></p>
         </div>
@@ -497,7 +498,7 @@
             <p>Library Social Media<br/>
             <a href="http://www.facebook.com/uchicagolibrary"><i class="fa fa-facebook-official"></i> &nbsp; Facebook</a><br/>
             <a href="http://news.lib.uchicago.edu/"><i class="fa fa-rss-square"></i> &nbsp; Library News</a><br/>
-            <a href="#"><i class="fa fa-clone"></i> &nbsp; More Library Accounts...</a></p>
+            <a href="/about/thelibrary/social-media/"><i class="fa fa-clone"></i> &nbsp; More Library Accounts...</a></p>
         </div>
         <!-- // Social -->
 

@@ -34,7 +34,7 @@ def get_chat_status_css(name):
     Returns:
         string, css class. 
     """
-    status = {True: 'online', False: 'off'}
+    status = {True: 'active', False: 'off'}
     return status[get_chat_status(name)]
 
 
