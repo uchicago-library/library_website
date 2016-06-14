@@ -89,7 +89,7 @@
                       <tr>
                         <td><!-- photos coming soon --></td>
                         <td>
-                            {{ space.title }}<br/>
+                            <a href="{{ space.url }}">{{ space.title }}</a><br/>
                             {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
                             <!-- floor coming soon -->
                             {% if space.reservation_url %}<button class="btn btn-reserve" type="button">Reserve</button>{% endif %}
