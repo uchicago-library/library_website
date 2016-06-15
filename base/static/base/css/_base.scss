@@ -50,16 +50,25 @@ h1 {
   font-size: 1.4em;
   color: #800000;
   font-weight: 300;
+  padding-bottom: 5px;
+  border-bottom: 1px solid $lightgray;
+  margin: 0 0 0.2em 0;
 }
 
 h2{
   font-size: 1.2em;
   color: #C16622;
   font-weight: 600;
-    .contentalert {
-      line-height: 1.3em;
-      color: #FF3399;
+  line-height: 1.4em;
+  .contentalert {
+    line-height: 1.3em;
+    color: #FF3399;
+  }
+  &:first-child {
+     @media (min-width: 48em) {
+      margin-top: 5px;
     }
+  }
 }
 
 h3 {
@@ -67,15 +76,16 @@ h3 {
   color: #616530;
   font-weight: 600;
   font-style: italic;
+  line-height: 1.4em;
 }
 
 h4 {
   font-weight: 400;
   font-size:1.1em;
   color: #6d2f6a;
+  line-height: 1.4em;
   .newsblock & {
     margin-bottom: 3px;
-    line-height: 1.4em;
   }
 }
 
@@ -83,6 +93,7 @@ h5 {
   font-size: 1em;
   font-weight: 600;
   color: #800000;
+  line-height: 1.4em;
 }
 
 h6 {
@@ -107,8 +118,8 @@ p {
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *		@include respond-to(medium) { ... }
- *		@include respond-to(large) { ... }
+ *      @include respond-to(medium) { ... }
+ *      @include respond-to(large) { ... }
  */
 
 @mixin respond-to($breakpoint) {

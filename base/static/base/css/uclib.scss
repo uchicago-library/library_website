@@ -56,29 +56,12 @@ Staff Profile Page
 }
 
 .centermain {
-  h2:first-child:not(.home-module h2) {
-    margin-top: 5px;
-  }
   @include respond-to(small) {
-    padding: 0 30px;
+    padding: 0 30px 0 10px;
   }
   @include respond-to(large) {
-    padding: 0 45px;
+    padding: 0 45px 0 0;
     max-width: 1400px;
-  }
-}
-
-.page-head {
-  display: inline;
-  margin-bottom: 1.2em;
-  padding-left: 15px;
-  border-bottom: 1px solid $lightgray;
-  h1 {
-    margin: 0 0 0.2em 0;
-  }
-  h2 {
-    margin-top:10px;
-    font-size:1.1em;
   }
 }
 
@@ -131,10 +114,10 @@ Staff Profile Page
 
 blockquote {
   margin: 0 50px;
-  padding: 0.5em 5px;
+  padding: 0;
+  text-indent: -2em;
   quotes: "\201C""\201D""\2018""\2019";
-  line-height: 1.7em;
-  padding-right: 4em;
+  line-height: 2.2em;
   border-left: 0px;
   &:before {
     color: $darkgray;
@@ -158,9 +141,9 @@ blockquote {
 }
 
 .citation {
-  text-align: center;
   color: $darkgray;
   font-size: .9em;
+  margin: 0 0 2em 4em;
 }
 
 .intro {
@@ -194,6 +177,10 @@ img, video, object {
   height: auto;
 }
 
+.block-video > div { //override Wagtail's weird padding
+    padding-bottom: 20px!important;
+}
+
 img.richtext-image {  //images placed in richtext streamfield
   &.left {
     float: left;
@@ -220,12 +207,32 @@ figure.imgcaption { //image in streamfield
   max-width: 100%;
   background: $midneutral;
   padding: 0;
-  margin: 10px 20px 10px 0 ;
+  &.pull-left {
+    margin: 10px 20px 10px 0;
+  }
+  &.pull-right {
+    margin: 10px 0 10px 20px;
+  }
   figcaption {
-    padding: 0.7em;
+    padding: 0.7em 1em;
     font-size: 0.8em;
     color: $mid-dark;
   }
+}
+
+span.img-title {
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+span.img-caption {
+  font-size: 1.1em;
+  padding-top: 10px;
+  display: block;
+}
+
+a.img-src {
+  font-size: 0.8em;
 }
 
 /*
@@ -338,11 +345,20 @@ a.viewall {
 
 .btn-morelink {  // "View more ..." link for sidebar
   font-size: 0.9em;
+  color: $crerarblue;
   background: $lightneutral;
   border: 1px solid $lightgray;
   border-radius: 0;
   padding: 6px 12px;
   margin-bottom: 10px;
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
+  &:hover {
+    background: #d8b9b7;
+    color: $maroon; 
+  }
 }
 
 .studymod { //Study Spaces
@@ -429,7 +445,7 @@ a#event-header {
 .newsblock {
   padding: 0 0 0 5px;
   h3 {
-    color: $maroon;
+    color: $darkneutral;
     font-style: normal;
   }
   p {
@@ -602,6 +618,16 @@ input[type="search"]::-webkit-search-decoration {
 .btn-default {
   color: #fff;
   background-color: $darkgray;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  &:hover {
+    background: $lightgray;
+    color: $maroon; 
+  }
+}
+
+.btn-primary {
+  @extend .btn-morelink;
 }
 
 .btn-list-toggle {  //Behavior togglers with maroon lines
@@ -673,7 +699,13 @@ input[type="search"]::-webkit-search-decoration {
  * --------------------------------------------------
  */
 
-table:not(.s-lc-whw), tbody:not(.s-lc-whw tbody) {
+table {
+  @include respond-to(smallonly) {
+    margin-top: 15px;
+  }
+}
+
+table.table-striped, .table-striped>tbody {
   @include respond-to(smallonly) { //mobile friendly magic
     display: block;
     width: 100%;
@@ -757,7 +789,7 @@ table.etable>tbody>tr {
 }
 
 .quicktable { // "Quick reference" on top of direcotry table/list
-  margin: 0px;
+  margin: 10px 0 0;
   &>tbody>tr {
     @extend .currentlist;
     &>td:first-child {
@@ -886,7 +918,12 @@ table.etable>tbody>tr {
 
 .ask-rightside {
   @extend .distinct-rightside;
-  background-color: #e7eef2;
+  background-color: #fff;
+  @include respond-to(medium) {
+    background-color: #e7eef2;
+    border: none;
+    margin-top: 10px;
+  }
   ul {
     text-indent: 0;
     margin-left: 0;
@@ -1322,7 +1359,7 @@ td.time, td.event-nav {
   }
 }
 
-#listings-dropdown {
+.listings-dropdown {
   margin-top: 0;
   background-color: $hovercalm;
   min-width: 200px;
@@ -1344,6 +1381,10 @@ td.time, td.event-nav {
   @include respond-to(medium) {
     padding: 0px 14px 10px 14px;
   }
+}
+
+.coll-limit {
+  text-align: right;
 }
 
 .coll-checkbox {
@@ -1426,9 +1467,6 @@ tr.seealso {
     font-size: 1em;
     margin-right: 0.5em;
   }
-  &:after {
-    content: "Subject Guides";
-  }
 }
 
 .list-view { // "Switch to [...] view"
@@ -1454,21 +1492,8 @@ tr.seealso {
   }
 }
 
-.profile-bio { //Staff Page, Text
-  @include respond-to(large) {
-    padding: 0 35px 0 25px;
-  }
-}
-
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {
     padding: 0 3em 1.2em 3em;
-  }
-  @include respond-to(small) {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-  @include respond-to(medium) {
-    padding-right: 0;
   }
 }

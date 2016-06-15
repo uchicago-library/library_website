@@ -9,7 +9,7 @@
 
 <figure class="imgcaption {{ value.alignment }}">
     {% if value.lightbox %}
-        <a href="{{ original.url }}">
+        <a href="{{ original.url }}" data-toggle="lightbox">
             <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
         </a>
     {% else %}

@@ -2,11 +2,7 @@
 {% load wagtailcore_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
-{% block page_head %}
-    <div class="col-xs-12 col-lg-11 col-lg-offset-1 page-head">
-        <h1>{{self.title}}</h1>
-    </div>
-{% endblock %}
+
 {% block content %}
     {{ self.body }}
     <div class="libraryh3lp" data-lh3-jid="{{self.ask_widget_name}}@chat.libraryh3lp.com">
@@ -34,31 +30,37 @@
 {% endblock %}
 
 {% block btm_content %}
-    <h2>Consult a Specific Library</h2>
-    <table class="table table-striped ask">
-        <tbody>
-        {% for p in ask_pages %}
-            {{p.href}}
-            <tr>
-              <td>
-                {{p.unit.location}}<br/>
-                {{p.unit.location.address_1}}, {% if p.unit.location.address_2 %}{{p.unit.location.address_2}}, {% endif %}
-                {{p.unit.location.city}},
-                {{p.unit.location.state}}
-                {{p.unit.location.postal_code}}
-              </td>
-              <td>
-                {% autoescape off %}
-                {{p.reference_resources}}
-                {% endautoescape %}
-              </td>
-              <td style="text-align:center;">
-                <strong>Ask a {% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</strong><br/>
-                <a class="btn btn-ask {{p.chat_status_css}}" href="{{p.url}}"></a><br/>
-                <a href="{{p.url}}">Other Ways to Ask a{% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</a>
-              </td> 
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="row">
+        <table class="table table-striped ask">
+            <thead>
+                <tr class="etable-header">
+                    <th colspan="3">Consult a Specific Library</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in ask_pages %}
+                {{p.href}}
+                <tr>
+                  <td>
+                    {{p.unit.location}}<br/>
+                    {{p.unit.location.address_1}}, {% if p.unit.location.address_2 %}{{p.unit.location.address_2}}, {% endif %}
+                    {{p.unit.location.city}},
+                    {{p.unit.location.state}}
+                    {{p.unit.location.postal_code}}
+                  </td>
+                  <td>
+                    {% autoescape off %}
+                    {{p.reference_resources}}
+                    {% endautoescape %}
+                  </td>
+                  <td style="text-align:center;">
+                    <strong>Ask a {% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</strong><br/>
+                    <a class="btn btn-ask {{p.chat_status_css}}" href="{{p.url}}"></a><br/>
+                    <a href="{{p.url}}">Other Ways to Ask a{% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</a>
+                  </td> 
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

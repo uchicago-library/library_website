@@ -56,8 +56,8 @@ $divider: 1px solid $darkgray;
  */
 
 @mixin desaturate { // for images
-	-webkit-filter: grayscale(100%);
-	filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
 }
 
 @mixin center {
@@ -67,7 +67,7 @@ $divider: 1px solid $darkgray;
 }
 
 @mixin flex {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

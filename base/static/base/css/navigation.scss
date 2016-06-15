@@ -15,6 +15,24 @@ Footer
 @import "variables.scss";
 @import "base.scss";
 
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Sticky Footer, a part 1: Wrapper for page content to push down footer */
+#body-wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -10px;
+  @include respond-to(medium) {
+    /* Negative indent footer by it's height */
+    margin: 0 auto -200px;
+  }
+}
+
 
 /*
  * Top Right Navbar (time/account/ask)
@@ -60,14 +78,13 @@ ul#navbar-right li:hover > ul.dropdown-menu.menuhover {
     display: block;
 }
 
-i.ask-online {
-  color: #eee;
-}
-
-i.ask-offline {
+i.ask-icon {
   color:transparent;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #fff;
+  &.active {
+    color: #eee;
+  }
 }
 
 
@@ -337,7 +354,7 @@ i.ask-offline {
     padding-left: 2em;
     text-indent: -2em;
     li {
-      margin-bottom: 3px;
+      margin-bottom: 5px;
     }
   }
   h3, h3 a {
@@ -349,6 +366,8 @@ i.ask-offline {
     font-size: 1em;
     font-weight: 600;
     color: $maroon;
+    line-height: 1.4em;
+    margin: 18px 0 5px;
   }
   a {
     font-size: 1em;
@@ -405,9 +424,15 @@ i.ask-offline {
  * --------------------------------------------------
  */
 
+/* Sticky Footer, a part 2 */
+#footer {
+  @include respond-to(small-only) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 .footer {
-  bottom: 0;
-  position: sticky;
   width: 100%;
   background: $darkgray; // fallback
   background-image: url("../images/warm_grey_reddish.jpg");
@@ -434,6 +459,9 @@ i.ask-offline {
   .col-footer {
       border-top: 1px solid #5e5e5e;
       padding-top: 15px;
+      &:first-child {
+        border-top: none;
+      }
     @include respond-to(small) {
       @include flex;
       border-top: none;
@@ -441,28 +469,9 @@ i.ask-offline {
     }
   }
   @include respond-to(small) { // Full width footer div
-  margin: 0;
-  display: table;
-  width: 100%;
-    li {
-      display: table-cell;
-      width: 1%;
-      float: none;
-    }
-    li a {
-      font-weight: bold;
-      text-align: center;
-      border-left: 1px solid rgba(255, 255, 255, .75);
-      border-right: 1px solid rgba(0, 0, 0, .1);
-    }
-    li:first-child a {
-      border-left: 0;
-      border-radius: 3px 0 0 3px;
-    }
-    li:last-child a {
-      border-right: 0;
-      border-radius: 0 3px 3px 0;
-    }
+    margin: 0;
+    display: table;
+    width: 100%;
     .divider-vertical { // Lines between link blocks
       height: 100%;
       border-right: 1px solid #5e5e5e;
@@ -485,3 +494,7 @@ i.ask-offline {
     }
   }
 }
+
+
+      
+

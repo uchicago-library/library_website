@@ -102,23 +102,6 @@ h1.searchbox-header {
     padding: 18px 12px;
 }
 
-#search-drop {
-  &.open>.dropdown-toggle.btn-default {
-  background-color: #B1746F;
-}
-  & > ul {
-    background-color: rgba(210, 205, 204, 0.95);
-    & > li > a {
-    color: #000;
-    &:hover {
-      color: #800000;
-      background-color: #f7f1f0;
-      text-decoration: none;
-    }
-  }
-  }
-}
-
 .search-btn-wrapper {
   @include respond-to(medium) {
     padding-right: 0;
@@ -127,8 +110,21 @@ h1.searchbox-header {
 
 .btn-searchtype>button {
   color: #fff;
-  padding: 15px;
-  line-height: 0.45em;
+  line-height: 1.2em;
+  &.dropdown-menu open {
+    background-color: #B1746F;
+    & > ul {
+      background-color: rgba(210, 205, 204, 0.95);
+      & > li > a {
+      color: #000;
+        &:hover {
+          color: #800000;
+          background-color: #f7f1f0;
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }
 
 .btn-search {
@@ -191,3 +187,5 @@ h1.searchbox-header {
     margin-bottom: 0;
   }
 }
+
+
