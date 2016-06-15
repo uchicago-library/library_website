@@ -23,25 +23,46 @@
                     <h3>Features</h3>
                     <ul class="features-list">
                         {% if self.is_quiet_zone %}
-                            <li><a href="#"><i class="fa fa-bell-slash-o"></i> Quiet Zone</a></li>
+                            <li><a href="/spaces/?feature=is_quiet_zone"><i class="fa fa-bell-slash-o"></i> Quiet Zone</a></li>
                         {% endif %}
-                        {% if self.has_public_computer %}
-                            <li><a href="#"><i class="fa fa-desktop"></i> Public Computer(s)</a></li>
+                        {% if self.is_collaboration_zone %}
+                            <li><a href="/spaces/?feature=is_collaboration_zone"><i class="material-icons">people</i> Collaboration Zone / Group Study</a></li>
                         {% endif %}
-                        {% if self.has_printing %}
-                            <li><a href="#"><i class="fa fa-print"></i> Copy / Print / Scan</a></li>
+                        {% if self.is_phone_zone %}
+                            <li><a href="/spaces/?feature=is_phone_zone"><i class="material-icons">phone_android</i> Cell Phone Zone</a></li>
+                        {% endif %}
+                        {% if self.is_meal_zone %}
+                            <li><a href="/spaces/?feature=is_meal_zone"><i class="material-icons">local_dining</i> Meal Zone</a></li>
                         {% endif %}
                         {% if self.is_open_space %}
-                            <li><a href="#"><i class="material-icons">all_inclusive</i> Open Space</a></li>
+                            <li><a href="/spaces/?feature=is_open_space"><i class="material-icons">all_inclusive</i> Open Space</a></li>
                         {% endif %}
-                        {% if self.has_soft_seating %}
-                            <li><a href="#"><i class="material-icons">weekend</i> Comfy Seating</a></li>
+                        {% if self.is_snacks_allowed %}
+                            <li><a href="/spaces/?feature=is_snacks_allowed"><i class="material-icons">local_cafe</i> Snacks Allowed</a></li>
                         {% endif %}
-                        {% if self.has_large_tables %}
-                            <li><a href="#"><i class="material-icons">wb_iridescent</i> Large Tables</a></li>
+                        {% if self.is_24_hours %}
+                            <li><a href="/spaces/?feature=is_24_hours"><i class="material-icons">access_alarm</i> All Night Study</a></li>
+                        {% endif %}
+                        {% if self.has_printing %}
+                            <li><a href="/spaces/?feature=has_printing"><i class="fa fa-print"></i> Copy / Print / Scan</a></li>
+                        {% endif %}
+                        {% if self.has_public_computer %}
+                            <li><a href="/spaces/?feature=has_public_computer"><i class="fa fa-desktop"></i> Public Computer(s)</a></li>
+                        {% endif %}
+                        {% if self.has_dual_monitors %}
+                            <li><a href="/spaces/?feature=has_dual_monitors"><i class="material-icons">add_to_queue</i> Dual Monitor Stations</a></li>
+                        {% endif %}
+                        {% if self.has_book_scanner %}
+                            <li><a href="/spaces/?feature=has_book_scanner"><i class="material-icons">import_contacts</i> Overhead Book Scanner</a></li>
+                        {% endif %}
+                        {% if self.has_screen %}
+                            <li><a href="/spaces/?feature=has_screen"><i class="material-icons">cast</i> Monitor / Projector</a></li>
                         {% endif %}
                         {% if self.has_single_tables %}
-                            <li><a href="#"><i class="material-icons">widgets</i> Individual Tables</a></li>
+                            <li><a href="/spaces/?feature=has_single_tables"><i class="material-icons">widgets</i> Individual Tables</a></li>
+                        {% endif %}
+                        {% if self.has_large_tables %}
+                            <li><a href="/spaces/?feature=has_large_tables"><i class="material-icons">wb_iridescent</i> Large Tables</a></li>
                         {% endif %}
                     <ul>
                 </div><!--/.rightside-mod-->
