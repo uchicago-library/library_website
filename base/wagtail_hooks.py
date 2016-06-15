@@ -51,7 +51,7 @@ def editor_css():
     """
     return format_html('<link rel="stylesheet" href="' \
     + settings.STATIC_URL \
-    + 'css/editor.scss">')
+    + 'css/editor.css">')
 
 
 @hooks.register('before_serve_page')
