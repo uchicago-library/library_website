@@ -4,6 +4,7 @@ from public.models import LocationPage
 def spaces(request):
     building = request.GET.get('building', None)
     feature = request.GET.get('feature', None)
+    floor = request.GET.get('floor', None)
     space_type = request.GET.get('space_type', 'is_study_space')
 
     possible_features = [
@@ -67,6 +68,8 @@ def spaces(request):
         'feature': feature,
         'feature_label': feature_label,
         'features': features,
+        'floor': floor,
+        'floors': [],
         'self': {
             'title': 'Our Spaces'
         },
