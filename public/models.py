@@ -75,12 +75,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     # Search widget
     enable_search_widget = models.BooleanField(default=False)
 
-    # Quicklinks fields
-    quicklinks = RichTextField(blank=True) 
-    quicklinks_title = models.CharField(max_length=100, blank=True)
-    view_more_link = models.URLField(max_length=255, blank=True, default='')
-    view_more_link_label = models.CharField(max_length=100, blank=True)
-
     # Find spaces fields
     enable_find_spaces = models.BooleanField(default=False)
     book_a_room_link = models.URLField(max_length=255, blank=True, default='')
@@ -180,25 +174,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
         ObjectList(widget_content_panels, heading='Widgets'),
     ])
-
-    def has_field(self, field_list):
-        """
-        Helper method for checking the page object 
-        to see if specific fields are filled out.
-        Returns True if any one field is present
-        in the list. Note: actually checks
-        values in practice.
-
-        Args:
-            field_list: list of page field objects. 
-
-        Returns:
-            Boolean
-        """
-        for field in field_list:
-            if field:
-                return True
-        return False
 
 
     def streamblock_has_link(self, streamblock, field):
@@ -372,8 +347,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Returns:
             boolean
         """
-        fields = [self.quicklinks, self.collection_page]
-        if self.has_social_media:
+        fields = [self.collection_page]
+        if self.base_has_right_sidebar():
+            return True
+        elif self.has_social_media:
             return True
         elif self.has_find_spaces:
             return True
@@ -546,6 +523,26 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
+
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('quicklinks_title'),
+                FieldPanel('quicklinks'),
+                FieldPanel('view_more_link_label'),
+                FieldPanel('view_more_link'),
+            ],
+            heading='Quicklinks'
+        ),
+    ] 
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+        ObjectList(widget_content_panels, heading='Widgets'),
+    ])
+
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
     search_fields = PublicBasePage.search_fields + [
@@ -556,6 +553,111 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         index.SearchField('reservation_display_url'),
         index.SearchField('reservation_display_text'),
     ]
+
+
+    def features(self):
+        """
+        Boolean fields we use as "features" in the
+        spaces browse and page display.
+
+        Returns:
+            List of tuples containing three strings where 
+            the first item is a field name, the second item 
+            is a display label and the third item is an 
+            html icon for display. 
+        """
+        return [
+                    ('is_quiet_zone', 'Quiet Zone', '<i class="fa fa-bell-slash-o"></i>'),
+                    ('is_collaboration_zone', 'Collaboration Zone / Group study', '<i class="material-icons">people</i>'),
+                    ('is_phone_zone', 'Cell Phone Zone', '<i class="material-icons">phone_android</i>'),
+                    ('is_meal_zone', 'Meal Zone', '<i class="material-icons">local_dining</i>'),
+                    ('is_open_space', 'Open Space', '<i class="material-icons">all_inclusive</i>'),
+                    ('is_snacks_allowed', 'Snacks allowed', '<i class="material-icons">local_cafe</i>'),
+                    ('is_24_hours', 'All Night Study', '<i class="material-icons">access_alarm</i>'),
+                    ('has_printing', 'Copy / Print / Scan', '<i class="fa-print"></i>'),
+                    ('has_public_computer', 'Public Computer(s)', '<i class="fa fa-desktop"></i>'),
+                    ('has_dual_monitors', 'Dual Monitor stations', '<i class="material-icons">add_to_queue</i>'),
+                    ('has_book_scanner', 'Overhead Book Scanner', '<i class="material-icons">import_contacts</i>'),
+                    ('has_screen', 'Monitor/Projector', '<i class="material-icons">cast</i>'),
+                    ('has_single_tables', 'Individual Tables', '<i class="material-icons">widgets</i>'),
+                    ('has_large_tables', 'Large Tables', '<i class="material-icons">wb_iridescent</i>'),
+                    ('has_carrels', 'Carrels', '<i class="material-icons">border_inner</i>'),
+                    ('has_standing_desk', 'Standing Desks', '<i class="material-icons">accessibility</i>'),
+                    ('has_soft_seating', 'Comfy Seating', '<i class="material-icons">weekend</i>'),
+                    ('has_board', 'White Board', '<i class="material-icons">gesture</i>'),
+                    ('is_reservable', 'Reservable', '<i class="fa fa-calendar-plus-o"></i>'),
+                    ('is_no_food_allowed', 'No Food', ''),
+                    ('has_lockers', 'Has Lockers', ''),
+                    ('has_day_lockers', 'Has Day Lockers', ''),
+                ]
+
+
+    def has_any_features(self):
+        """
+        See if a location has fields, we've dubbed "features".
+
+        Returns:
+            Boolean
+        """
+        for item in self.features():
+            field = 'self.' + item[0]
+            if eval(field):
+                return True
+        return False
+
+
+    @property
+    def has_features(self):
+        """
+        Convenience wrapper for has_any_features.
+        This is to be used in the templates.
+
+        Returns:
+            Boolean
+        """ 
+        return self.has_any_features()
+
+
+    def get_features_html(self):
+        """
+        Generate html for the display of "features"
+        on location pages.
+
+        Returns:
+            Html or an empty string
+        """
+        html = '<ul class="features-list">'
+        if self.has_any_features():
+            for item in self.features():
+                field = 'self.' + item[0]
+                if eval(field):
+                    html += '<li><a href="/spaces/?space_type=None&feature=%s">%s %s</a></li>' % (item[0], item[2], item[1])
+            html += '</ul>'
+            return html
+        else:
+            return ''
+
+
+    @property
+    def has_right_sidebar(self):
+        """
+        Test to see if a right sidebar should be 
+        displayed.
+
+        Returns:
+            Boolean
+        """
+        return self.base_has_right_sidebar() or self.has_any_features()
+
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(LocationPage, self).get_context(request)
+        context['features_html'] = self.get_features_html()
+
+        return context
 
 
 class DonorPage(PublicBasePage):

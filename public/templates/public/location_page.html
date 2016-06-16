@@ -18,35 +18,18 @@
                 </div><!--/.col-->
             </div> <!--/.centermain-->
 
-            <div class="col-xs-12 col-md-3 rightside"> <!-- Right Sidebar Content -->
-                <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                    <h3>Features</h3>
-                    <ul class="features-list">
-                        {% if self.is_quiet_zone %}
-                            <li><a href="#"><i class="fa fa-bell-slash-o"></i> Quiet Zone</a></li>
+            {% if has_right_sidebar %}
+                {% block right_sidebar %}
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        {% if self.has_features %}
+                            <h3>Features</h3>
+                            {% autoescape off %}
+                                {{features_html}}
+                            {% endautoescape %}
                         {% endif %}
-                        {% if self.has_public_computer %}
-                            <li><a href="#"><i class="fa fa-desktop"></i> Public Computer(s)</a></li>
-                        {% endif %}
-                        {% if self.has_printing %}
-                            <li><a href="#"><i class="fa fa-print"></i> Copy / Print / Scan</a></li>
-                        {% endif %}
-                        {% if self.is_open_space %}
-                            <li><a href="#"><i class="material-icons">all_inclusive</i> Open Space</a></li>
-                        {% endif %}
-                        {% if self.has_soft_seating %}
-                            <li><a href="#"><i class="material-icons">weekend</i> Comfy Seating</a></li>
-                        {% endif %}
-                        {% if self.has_large_tables %}
-                            <li><a href="#"><i class="material-icons">wb_iridescent</i> Large Tables</a></li>
-                        {% endif %}
-                        {% if self.has_single_tables %}
-                            <li><a href="#"><i class="material-icons">widgets</i> Individual Tables</a></li>
-                        {% endif %}
-                    <ul>
-                </div><!--/.rightside-mod-->
-                <!-- Floorplans link -->
-            </div><!-- // Right Sidebar Content -->
+                    </div><!--/.rightside-mod-->
+                {% endblock %}
+            {% endif %}
         </div><!--/.row-->
     </article>
 {% endblock %}

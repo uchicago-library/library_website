@@ -753,6 +753,12 @@ class PublicBasePage(BasePage):
     #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True},
     #    related_name='%(app_label)s_%(class)s_related')
 
+    # Quicklinks fields
+    quicklinks = RichTextField(blank=True)
+    quicklinks_title = models.CharField(max_length=100, blank=True)
+    view_more_link = models.URLField(max_length=255, blank=True, default='')
+    view_more_link_label = models.CharField(max_length=100, blank=True)
+
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
@@ -890,6 +896,38 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return ''
 
 
+    def has_field(self, field_list):
+        """
+        Helper method for checking the page object
+        to see if specific fields are filled out.
+        Returns True if any one field is present
+        in the list. Note: actually checks
+        values in practice.
+
+        Args:
+            field_list: list of page field objects.
+
+        Returns:
+            Boolean
+        """
+        for field in field_list:
+            if field:
+                return True
+        return False
+
+
+    def base_has_right_sidebar(self):
+        """
+        Determine if a right sidebar should
+        be displayed in the template.
+
+        Returns:
+            boolean
+        """
+        fields = [self.quicklinks]
+        return self.has_field(fields)
+
+
     def get_banner(self):
         """
         Test to see if a page should have a banner image. 
@@ -959,7 +997,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['has_banner'] = self.get_banner()[0]
         context['banner'] = self.get_banner()[1]
         context['banner_title'] = self.get_banner()[2]
-        context['page_type'] = str(self.specific)
+        context['page_type'] = str(self.specific.__class__.__name__)
 
         return context
 
