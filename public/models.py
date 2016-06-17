@@ -690,6 +690,9 @@ class FloorPlanPage(PublicBasePage):
     """
     Floor plan page model.
     """ 
+    def __str__(self):
+        return '%s, %s' % (self.title, self.unit.location.parent_building)
+
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
