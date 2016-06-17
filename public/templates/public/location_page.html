@@ -10,6 +10,20 @@
             <div class="col-xs-12 col-md-9 centermain">
                 <div class="col-xs-12 col-sm-4">
                     {% image self.location_photo width-200 class="img-responsive" %}
+                    {% if self.address_1 %}
+                        <p>
+                            <strong>{{ self.address_1 }}</strong><br/>
+                            {% if self.address_2 %}
+                                {{ self.address_2 }}<br/>
+                            {% endif %}
+                            {% if self.city and self.state and self.postal_code %}
+                                {{ self.city }}, {{ self.state }} {{ self.postal_code }}<br/>
+                            {% endif %}
+                            {% if self.google_map_link %}
+                                <a href="{{ self.google_map_link }}">Google Map</a>
+                            {% endif %}
+                        </p>
+                    {% endif %}
                 </div><!--/.col-->
 
                 <div class="col-xs-12 col-sm-8">
