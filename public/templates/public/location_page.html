@@ -41,6 +41,7 @@
                                 {{features_html}}
                             {% endautoescape %}
                         {% endif %}
+                        {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
                     </div><!--/.rightside-mod-->
                 {% endblock %}
             {% endif %}
