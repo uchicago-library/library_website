@@ -28,25 +28,36 @@
                   <ul class="listings-dropdown dropdown-menu">
                     {% if building %}
                        <li>
-                          <a href=".">All Buildings</a><br/>
+                          <a href="?{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Buildings</a><br/>
                        </li>
                     {% endif %}
                     {% for b in buildings %}
                        <li>
-                          <a href="?building={{ b|urlencode }}" class="dropdown-item">{{ b }}</a>
+                          <a href="?building={{ b|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}" class="dropdown-item">{{ b }}</a>
                        </li>
                     {% endfor %}
                   </ul>
                 </div>
-
                 <div class="btn-group">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not library %} disabled="disabled"{% endif %}>
-                    Floor <span class="caret"></span>
+                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not floors %} disabled="disabled"{% endif %}>
+                    {% if floor %}
+                        {{ floor }}
+                    {% else %}
+                        Floor 
+                    {% endif %}
+                    <span class="caret"></span>
                   </button>
                   <ul class="listings-dropdown dropdown-menu">
-                    <li>
-                      <a href="#" class="dropdown-item">Choose a Library First</a>
-                    </li>
+                    {% if floor %}
+                       <li>
+                          <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Floors</a><br/>
+                       </li>
+                    {% endif %}
+                    {% for f in floors %}
+                      <li>
+                        <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}floor={{ f|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f }}</a>
+                      </li>
+                    {% endfor %}
                   </ul>
                 </div>
 
@@ -62,12 +73,12 @@
                   <ul class="listings-dropdown dropdown-menu">
                     {% if feature %}
                       <li>
-                        <a href=".">All Features</a>
+                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Features</a>
                       </li>
                     {% endif %}
                     {% for f in features %}
                       <li>
-                        <a href="?space_type={{ space_type|urlencode }}&feature={{ f.field|urlencode }}" class="dropdown-item">{{ f.label }}</a>
+                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}feature={{ f.field|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f.label }}</a>
                       </li>
                     {% endfor %}
                   </ul>
