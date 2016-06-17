@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from public.models import LocationPage
+from public.models import LocationPage, LocationPageFloorPlacement
 
 def spaces(request):
     building = request.GET.get('building', None)
@@ -36,10 +36,6 @@ def spaces(request):
     if not space_type in ['is_study_space', 'is_teaching_space', 'is_event_space']:
         space_type = None
 
-    # make sure some other 
-    buildings = LocationPage.objects.filter(is_building = True)
-
-
     # get the feature label. 
     feature_label = ''
     if feature:
@@ -53,13 +49,29 @@ def spaces(request):
         spaces = spaces.filter(parent_building = LocationPage.objects.get(title=building))
     if feature:
         spaces = spaces.filter(**{feature: True})
+    if floor:
+        location_ids = LocationPageFloorPlacement.objects.filter(floor__title=floor).values_list('parent', flat=True)
+        spaces = spaces.filter(id__in=location_ids)
     if space_type:
         spaces = spaces.filter(**{space_type: True})
+
+    # the spaces have been filtered down by building, feature, floor and space type. 
+    # get possible buildings from that filtered list. 
+    buildings = []
+    parent_building_ids = list(map(lambda s: s.parent_building.id, list(filter(lambda s: s.parent_building, spaces))))
+    buildings = LocationPage.objects.filter(id__in = parent_building_ids)
 
     # make sure all features have at least one LocationPage for the current space_type. 
     features = list(filter(lambda f: spaces.filter(**{f['field']: True}), possible_features))
 
-    # need a pager. 
+    # if a library building has been set, get floors that are appropriate for
+    # the parameters that have been set. 
+    floors = []
+    if building:
+        # get all locations that are descendants of this building. 
+        id_list = spaces.filter(parent_building__title=building).values_list('pk', flat=True)
+        # get a unique, sorted list of the available floors here. 
+        floors = sorted(list(set(LocationPageFloorPlacement.objects.filter(parent__in=id_list).exclude(floor=None).values_list('floor__title', flat=True))))
 
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
@@ -69,7 +81,7 @@ def spaces(request):
         'feature_label': feature_label,
         'features': features,
         'floor': floor,
-        'floors': [],
+        'floors': floors,
         'self': {
             'title': 'Our Spaces'
         },
