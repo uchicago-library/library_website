@@ -303,7 +303,9 @@
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
         <div class="{{content_div_css}}" id="content">
-            <h1>{{self.title}}</h1>
+            <div class="col-xs-12 page-head">
+                <h1>{{self.title}}</h1>
+            </div>
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
