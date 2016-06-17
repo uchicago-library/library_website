@@ -22,7 +22,7 @@
           </tr>
           {% for collection_page in collections %}
             <tr>
-              <td>{% if collection_page.thumbnail %}<img class="img-responsive" src=""/>{% endif %}</td>
+              <td>{% image collection_page.thumbnail fill-100x100 %}</td>
               <td><strong><a href="{{ collection_page.url_path }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
               <td><strong>Formats</strong><br/>{% collections_formats collection_page %}</td>
               <td>
