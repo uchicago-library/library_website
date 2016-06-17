@@ -112,7 +112,7 @@ def get_departments(library = None):
 def get_vcards_for_department(department):
     depts = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
     vcards = VCard.objects.filter(unit__in=depts)
-    return vcards
+    return set(vcards)
 
 def get_staff_pages_for_library(library = None):
     staff_pks = []
@@ -253,7 +253,7 @@ def units(request):
 
         # departments.
         if department:
-            staff_pages_all = staff_pages_all.filter(vcards__in=get_vcards_for_department(department))
+            staff_pages_all = sorted(list(set(staff_pages_all.filter(vcards__in=get_vcards_for_department(department)))), key=lambda s: s.last_name)
 
         # search staff pages.
         if query:
