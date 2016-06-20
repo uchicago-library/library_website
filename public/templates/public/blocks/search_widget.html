@@ -10,7 +10,7 @@
   <!-- TAB 1 - Catalog Search -->
   <div class="col-xs-12 active" id="tab-1">
     <h1 class="searchbox-header">Library Catalog</h1>
-    <form action="https://catalog.lib.uchicago.edu/vufind/Search/Results" method="get">
+    <form action="https://catalog.lib.uchicago.edu/vufind/Search/Results" id="search_widget_catalog_search" method="get">
       <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field --> 
         <div class="input-group"> <!-- Input Group -->
           <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="..." class="form-control"/>
@@ -18,6 +18,8 @@
             <option value="">All Fields</option>
             <option value="Title">Title</option>
             <option value="Author">Author</option>
+            <option value="Subject">Subject</option>
+            <option value="JournalTitle">Journal Title</option>
             <option value="StandardNumbers">ISBN, ISSN, etc.</option>
           </select>
         </div> <!-- // Input Group -->
