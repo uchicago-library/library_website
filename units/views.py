@@ -193,7 +193,12 @@ def units(request):
             room_number = " (" + t.unit_page.room_number + ") "
 
         if t.name:
-            h = h + "<strong>" + t.name + room_number + staff_link + "</strong><br/>"
+            directory_name = t.name
+            if t.unit_page.public_web_page:
+                directory_name = '<a href="' + t.unit_page.public_web_page.url + '">' + directory_name + '</a>'
+            
+            h = h + "<strong>" + directory_name + room_number + staff_link + "</strong><br/>"
+
         if t.unit_page:
             h = h + get_unit_info_from_unit_page(t.unit_page)
 
@@ -297,6 +302,10 @@ def units(request):
         for unit_page in units:
             alphabetical_html = alphabetical_html + '<tr>'
 
+            directory_name = unit_page.alphabetical_directory_name
+            if unit_page.public_web_page:
+                directory_name = '<a href="' + unit_page.public_web_page.url + '">' + directory_name + '</a>'
+
             staff_link = ''
             if unit_page.directory_unit:
                 staff_link = " <a href='/units/?" + urllib.parse.urlencode({'view': 'staff', 'department': unit_page.directory_unit.fullName}) + "'>staff</a>"
@@ -305,7 +314,7 @@ def units(request):
             if unit_page.room_number:
                 room_number = " (" + unit_page.room_number + ") "
 
-            alphabetical_html = alphabetical_html + '<td><strong>' + unit_page.alphabetical_directory_name + room_number + staff_link + '</strong></td>'
+            alphabetical_html = alphabetical_html + '<td><strong>' + directory_name + room_number + staff_link + '</strong></td>'
             alphabetical_html = alphabetical_html + '<td>'
             alphabetical_html = alphabetical_html + get_unit_info_from_unit_page(unit_page)
             alphabetical_html = alphabetical_html + '</td>'
