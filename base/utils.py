@@ -44,12 +44,12 @@ def get_hours_by_id(lid):
     Get today's hours for a specific library.
 
     Args:
-        lid: integer, library ID in libcal.
+        lid: integer or string, library ID in libcal.
 
     Returns:
         string, today's hours for location.
     """
-    data = get_json_for_library(lid)
+    data = get_json_for_library(int(lid))
     msg = 'Hours Unavailable'
     try:
         hours = data['rendered']
@@ -72,6 +72,26 @@ def get_all_building_hours():
     from public.models import LocationPage
     buildings = list((str(p), p.libcal_library_id) for p in LocationPage.objects.live().filter(is_building=True) if p.libcal_library_id != None)
     return list(HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings)
+
+
+def get_building_hours_and_lid():
+    """
+    Get all libcal houurs for buildings along 
+    with the corresponding libcal library ID.
+
+    Returns:
+        A list of tuples where the first item
+        is a libcal library ID and the second
+        item is the hours presented as a string.
+    """
+    from public.models import LocationPage
+    buildings = []
+    for page in LocationPage.objects.live().filter(is_building=True):
+        if page.libcal_library_id:
+            llid = page.libcal_library_id
+            hours = HOURS_TEMPLATE % (str(page), get_hours_by_id(llid))
+            buildings.append((str(llid), str(hours)))
+    return buildings
 
 
 def recursive_get_parent_building(location):
@@ -138,12 +158,14 @@ def get_hours_and_location(obj):
     try:
         unit = obj.unit
         location = recursive_get_parent_building(unit.location)
-        hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
+        libcalid = location.libcal_library_id
+        #hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
     except(AttributeError):
         from units.utils import get_default_unit
         unit = get_default_unit()
         location = fallback = unit.location
-        hours =  HOURS_TEMPLATE % (str(fallback), get_hours_by_id(fallback.libcal_library_id))
+        libcalid = fallback.libcal_library_id
+        #hours =  HOURS_TEMPLATE % (str(fallback), get_hours_by_id(fallback.libcal_library_id))
 
     # Set address
     if location.address_2:
@@ -154,7 +176,8 @@ def get_hours_and_location(obj):
     # Return everything at once
     return {'page_location': location,
             'page_unit' : unit, 
-            'hours': hours, 
+            #'hours': hours, 
+            'libcalid': libcalid,
             'address': ADDRESS_TEMPLATE % (address, location.city, location.state, str(location.postal_code)) }
 
 

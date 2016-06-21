@@ -9,10 +9,10 @@
     <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_suffix %}{% endblock %}</title>
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />
+    <link href="{% static "base/css/iconfont/material-icons.css" %}"/>
     <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.min.css">
+    <link rel="stylesheet" href="{% static "base/css/ekko-lightbox.min.css" %}"/>
 
     {% compress css %}
     {# SCSS compilation relies on django compressor #}
@@ -62,8 +62,15 @@
             <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
               <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}"></i> Ask a Librarian</a></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-ga-category="hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-clock-o"></i> <span>{{current_building_hours}}</span> <span class="caret"></span></a>
-                <ul class="dropdown-menu">
+                <a href="#" class="dropdown-toggle" data-ga-category="hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-clock-o"></i> 
+                    <span id="current-hours" data-libcalid="{{libcalid}}">
+                        <span id="current-hours-target"><i class="fa fa-refresh fa-spin fa-fw"></i> 
+                            <span>Loading...</span>
+                        </span>
+                    </span> <span class="caret"></span>
+                </a>
+                <ul id="hours-dropdown" class="dropdown-menu">
                     {% for hours in all_building_hours %}
                         {% if hours != current_building_hours %}
                         <li><a href="#">{{hours}}</a></li>
@@ -146,7 +153,6 @@
                                         <li role="separator" class="divider visible-xs"></li>
                                         <li><a href="/research/help/ask-librarian/">Ask a Librarian</a></li>
                                         <li><a href="/units/?view=staff&subject=All+Subject+Specialists">Subject Specialists</a></li>
-                                        <li><a href="/research/teaching/">Library Instruction</a></li>
                                         <li><a href="http://guides.lib.uchicago.edu/citation_management">Citation Management</a></li>
                                         <li><a href="/research/help/offcampus">Off-Campus Access</a></li>
                                         <li><a href="http://guides.lib.uchicago.edu/subjectguides/helpguides">Help Guides</a></li>
@@ -535,7 +541,7 @@
     <script src="{% static "public/js/bootstrap-select.js" %}"></script>
     <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
     <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/4.0.1/ekko-lightbox.min.js"></script>
+    <script type="text/javascript" src="{% static "base/js/ekko-lightbox.min.js" %}"></script>
 
     <!-- * Only needed when calendar module is used * -->
     <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>

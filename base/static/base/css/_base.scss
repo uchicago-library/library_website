@@ -33,18 +33,11 @@ Alerts
     } 
   }
 }
-
+ 
 /*
  * Fonts and Headers
  * --------------------------------------------------
  */
-
-@import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
-@font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url('fonts/glyphicons-halflings-regular.eot');
-  src: url('fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded- opentype'), url('Content/fonts/glyphicons-halflings-regular.woff') format('woff'), url('Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
-}
 
 h1 {
   font-size: 1.4em;

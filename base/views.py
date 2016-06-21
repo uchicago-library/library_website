@@ -1,4 +1,8 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+import json
+from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid
+from units.utils import get_default_unit
 
 def breadcrumbs(request):
     breadcrumbs = [{
@@ -19,3 +23,27 @@ def breadcrumbs(request):
             break
 
     return breadcrumbs
+
+
+def json_hours(request):
+    """
+    View for rendering hours as json. 
+    """
+    if request.method == 'GET':
+        if request.GET.get('fallback'):
+            fallback = request.GET['fallback']
+            return JsonResponse(
+                {
+                    'llid': get_default_unit().location.libcal_library_id,
+                }
+            )
+        else:
+            libcalid = request.GET['libcalid']
+            return JsonResponse(
+                {
+                    'all_building_hours': json.dumps(get_building_hours_and_lid()),
+                    'current_hours': get_hours_by_id(libcalid),
+                    'llid': libcalid,
+                    'llid_fallback': get_default_unit().location.libcal_library_id,
+                }
+            )

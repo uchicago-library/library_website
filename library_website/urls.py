@@ -12,6 +12,7 @@ from units.views import units as unit_view
 from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
 from staff.views import staff
+from base.views import json_hours
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -20,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
+    url(r'^json-hours/', json_hours, name='json-hours'),
     url(r'^search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),
     url(r'^spaces/$', spaces_view, name='spaces'),

@@ -970,15 +970,16 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             location = str(location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
             context['page_location'] = location
-            context['current_building_hours'] = location_and_hours['hours']
+            #context['current_building_hours'] = location_and_hours['hours']
             context['address'] = location_and_hours['address']
-            context['all_building_hours'] = get_all_building_hours()
+            #context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
             context['directory_link'] = self.get_directory_link_by_location(location)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
 
+        context['libcalid'] = location_and_hours['libcalid']
         context['all_spaces_link'], \
         context['quiet_spaces_link'], \
         context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)
