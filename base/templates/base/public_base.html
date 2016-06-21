@@ -26,7 +26,7 @@
     {% endcompress %}
 </head>
 
-<body id="{{page_type|slugify}}">
+<body id="p-{{self.id}}" class="{{page_type|slugify}}">
 {% wagtailuserbar %}
     <div id="skip">
         <a href="#content">Skip to Main Content</a>
@@ -309,9 +309,10 @@
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
         <div class="{{content_div_css}}" id="content">
-            <div class="col-xs-12 page-head">
+            {# Only display <h1>s if it's not a fancy page #}
+            {% if not self.banner_image and not self.banner_title %}
                 <h1>{{self.title}}</h1>
-            </div>
+            {% endif %}
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
