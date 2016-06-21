@@ -54,13 +54,13 @@
   {# main column #}
   <div class="col-xs-12 col-md-6 col-lg-7 col-md-pull-3 col-xlg-6 col-xlg-pull-2 profile-bio">
     {{bio}}
-    <h3>Publications</h3>
-    <p><a href="">View Works List On ORCID</a></p>
-    <h3>Education</h3>
-    <p>
-      PhD Classical Magic, University of Chicago<br>
-      B.A. Practical Magic, Hogwarts Academy</p>
-      <a role="button" class="btn btn-morelink" href="#">View CV <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
-    </p>
+    {% if orcid %}
+        <h3>Publications</h3>
+        <p><a href="http://orcid.org/{{ orcid }}">View Works List On ORCID</a></p>
+    {% endif %}
+
+    {% if cv %}
+        <p><a role="button" class="btn btn-primary" href="{{ cv }}">View CV</a></p>
+    {% endif %}
   </div>
 {% endblock %}

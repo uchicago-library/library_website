@@ -762,11 +762,13 @@ class StaffPublicPage(PublicBasePage):
             subjects.append(subject.subject)
 
         context['bio'] = self.get_bio()
+        context['cv'] = s.cv
         context['department_name'] = v.unit.name
         context['email'] = v.email
         context['expertises'] = expertises
         context['libguide_url'] = s.libguide_url
         context['library'] = v.unit.get_parent_library_name()
+        context['orcid'] = s.orcid
         context['phone_number'] = v.phone_number
         context['room_number'] = v.faculty_exchange.split(' ').pop()
         context['subjects'] = subjects
