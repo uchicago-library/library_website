@@ -142,6 +142,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ),
         MultiFieldPanel(
             [
+                FieldPanel('display_hours_in_right_sidebar'),
+            ], 
+            heading='Granular hours'
+        ),
+        MultiFieldPanel(
+            [
                 ImageChooserPanel('banner_image'),
                 FieldPanel('banner_title'),
             ],

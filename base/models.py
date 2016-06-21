@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
-from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT
+from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT, LIBCAL_IID
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -24,6 +24,7 @@ from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from wagtail.contrib.table_block.blocks import TableBlock
 from django.utils import translation
+from units.utils import get_default_unit
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -759,6 +760,9 @@ class PublicBasePage(BasePage):
     view_more_link = models.URLField(max_length=255, blank=True, default='')
     view_more_link_label = models.CharField(max_length=100, blank=True)
 
+    # Sidebar hours
+    display_hours_in_right_sidebar = models.BooleanField(default=False)
+
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
@@ -895,6 +899,47 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         except(KeyError):
             return ''
 
+    def get_granular_libcal_lid(self, unit):
+        """
+        Get the most specific libcal library ID
+        for the display of the most granular hours. 
+        Recurrs up the tree visiting all parent pages
+        and looks at unit -> location -> libcal_library_id
+        assignments and returnts the first one found.
+        If a granular libcal ID isn't found, display
+        the default (Regenstein).
+        
+        Args:
+            unit, page object.
+
+        Returns:
+            Integer 
+        """
+        try:
+            current_page_id = unit.location.libcal_library_id
+            if current_page_id:
+                print(current_page_id)
+                return current_page_id
+            else: 
+                return self.get_granular_libcal_lid(self.get_parent().unit.location)
+        except(AttributeError):
+            return get_default_unit().location.libcal_library_id 
+      
+
+    def has_granular_hours(self):
+        """
+        Check to see if granular hours should be 
+        displayed in the right sidebar.
+
+        Returns:
+            Boolean
+        """
+        try:
+            is_building = self.is_building
+        except(AttributeError):
+            is_building = False
+        return True if is_building or self.has_field([self.display_hours_in_right_sidebar]) else False
+
 
     def has_field(self, field_list):
         """
@@ -925,7 +970,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             boolean
         """
         fields = [self.quicklinks]
-        return self.has_field(fields)
+        return self.has_field(fields) or self.has_granular_hours()
 
 
     def get_banner(self):
@@ -980,6 +1025,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             logger.error('Context variables not set in PublicBasePage.')
 
         context['libcalid'] = location_and_hours['libcalid']
+        context['granular_libcalid'] = self.get_granular_libcal_lid(self.unit)
+        context['libcaliid'] = LIBCAL_IID
+        context['has_granular_hours'] = self.has_granular_hours()
         context['all_spaces_link'], \
         context['quiet_spaces_link'], \
         context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)

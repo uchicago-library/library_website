@@ -387,7 +387,15 @@
                                     <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
                             {% endif %}
                         </div>
-                    {% endif %} 
+                    {% endif %}
+
+                    {% if self.has_granular_hours %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                            <h3>Hours Today</h3>
+                            <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required <script> moved to footer #}
+                            <a href="/using/libraries-hours/" class="viewall">View all library hours</a>
+                        </div> 
+                    {% endif %}
 
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
@@ -546,6 +554,10 @@
     <!-- * Only needed when calendar module is used * -->
     <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
     <!-- * END Only needed when calendar is used * -->
+
+    {% if self.has_granular_hours %}
+        <script src="https://api3.libcal.com/api_hours_today.php?iid={{libcaliid}}&lid={{granular_libcalid}}&format=js&context=object"> </script>
+    {% endif %}
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
