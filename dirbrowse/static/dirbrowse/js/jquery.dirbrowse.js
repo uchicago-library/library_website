@@ -46,7 +46,7 @@
 		else
 			path = options['initialpath'];
 
-		var q = 'http://www.lib.uchicago.edu/cgi-bin/dirbrowse';
+		var q = 'https://www.lib.uchicago.edu/cgi-bin/dirbrowse';
 		q += '?project=' + options['project'];
 		q += '&path=' + path;
 		q += '&jsoncallback=?';
