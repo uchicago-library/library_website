@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^api/', include(wagtailapi_urls)),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
-    url(r'^units/$', unit_view, name='unit'),
+    url(r'^about/directory/$', unit_view, name='unit'),
     url(r'^collections/$', collection_view, name='collection'),
 
     url(r'', include(wagtail_urls)),
