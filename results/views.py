@@ -33,6 +33,7 @@ def results(request):
         search_results = paginator.page(paginator.num_pages)
 
     return render(request, 'results/results.html', {
+        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'search_query': search_query,
         'search_results': search_results,
         'search_picks': search_picks,
