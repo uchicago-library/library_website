@@ -24,17 +24,98 @@ function ebscoHostSearchParse(ebscohostsearchtext,ebscohostsearchmode) {
 }
 
 /* Grabbing info from the search box form and saving it into variables */
-function ebscoHostSearchGo(form) {	
-	 var ebscohostsearchtext=chkObject(form.ebscohostsearchtext,'');
-	 var ebscohostkeywords=chkObject(form.ebscohostkeywords,'');
-	 var ebscohostsearchsrc=chkObject(form.ebscohostsearchsrc,'');
-	 var ebscohostsearchmode=chkObject(form.ebscohostsearchmode,'\+AND\+');
-	 var ebscohostwindow=chkObject(form.ebscohostwindow,0);
-	 var ebscohosturl=chkObject(form.ebscohosturl,'http://pproxy.uchicago.edu/login?url=http://search.ebscohost.com/login.aspx?');
+/* Line 38 added June 6th 2011 to address Alert: Ehost App Eng - SI Email Alert (Record Modified) ID: 44186 - GAspen */
+function ebscoHostSearchGo(form) {
+	function ebscoAddDisciplines() {
+		function addScrollBoxLimiters(disciplinesDiv) {
+			var visibleDisciplines = document.getElementById('ehostVisibleDisciplines'),
+				options = visibleDisciplines ? visibleDisciplines.getElementsByTagName('option') : [],
+				selectedOptionValues = [];
+			
+			if (options.length) {
+				for (var i = 0; i < options.length; i++) {
+					var theOption = options[i],
+					code = theOption.value;
+					if ((theOption.selected || (theOption.getAttribute('selected') === 'selected' && theOption.style.display === 'none') ) && code !== '') { // Do not include default option
+						selectedOptionValues.push(code);
+					}
+				}
+				
+				if (selectedOptionValues.length) {
+					// Do not add disciplines limiter if only default option is selected
+					if (selectedOptionValues.length === 1 && selectedOptionValues[0].value === '') {
+						return;
+					}
+					
+					ebscohosturl += '&cli' + index + '=DISCIPLINE' + '&clv' + index + '=';
+					for (var i = 0; i< selectedOptionValues.length; i++) {
+						ebscohosturl += 'LO+system.dis-' + selectedOptionValues[i].toLowerCase() + '%7e';
+					}
+				}
+
+				index++;
+			}
+			
+			function addDisciplinesToUrl () {
+				for (var i = 0; i < selectedOptionValues.length; i++) {
+					addToUrl(selectedOptionValues[i]);
+				}
+				
+				// Add selected hidden disciplines to url
+				var hiddenDisciplines = disciplinesDiv.getElementById('ehostHiddenDisciplines').getElementsByTagName('option');
+				for (var i = 0; i < hiddenDisciplines.length; i++ ) {
+					addToUrl(hiddenDisciplines[i].value);
+				}
+				
+				function addToUrl (value) {
+					ebscohosturl += 'LO+system.dis-' + value.toLowerCase() + '%7e';
+				}
+			}
+
+		}
+
+		var disciplinesDiv = document.getElementById('disciplineBlock');
+		if (disciplinesDiv) {
+			var checkboxes = disciplinesDiv.getElementsByTagName('input');
+
+			if (checkboxes.length) {
+				ebscohosturl += '&cli' + index + '=DISCIPLINE' + '&clv' + index + '=';
+
+				for (var i = 0; i < checkboxes.length; i++) {
+					var checkbox = checkboxes[i],
+					code = checkbox.value;
+					if (checkbox.checked) {
+						ebscohosturl += 'LO+system.dis-' + code.toLowerCase() + '%7e';
+					}
+				}
+
+				index++;
+			}
+		}
+
+		if (disciplinesDiv) {
+			addScrollBoxLimiters(disciplinesDiv);
+		}
+
+		
+
+		ebscohosturl = ebscohosturl.replace(/%7e$/, '');
+
+	}
+
+
+	 var ebscohostsearchtext = chkObject(form.ebscohostsearchtext,'');
+	 var ebscohostkeywords = chkObject(form.ebscohostkeywords,'');
+	 var ebscohostsearchsrc = chkObject(form.ebscohostsearchsrc,'');
+	 var ebscohostsearchmode = chkObject(form.ebscohostsearchmode,'\+AND\+');
+	 var ebscohostwindow = parseInt(chkObject(form.ebscohostwindow,0));
+	 var ebscohosturl = chkObject(form.ebscohosturl,'http://search.ebscohost.com/login.aspx?');
 	
 	 var strAlert="";
 	
-	 if (ebscohosturl.indexOf('eds-live') == -1) {
+	 ebscohostsearchtext = encodeURI(ebscohostsearchtext);
+	
+	 if (ebscohosturl.indexOf('eds-live') == -1 && ebscohosturl.indexOf('edspub-live') === -1) {
 	 		if (ebscohostsearchsrc == "db" || ebscohostsearchsrc == "dbgroup") {
 	 	 		var ebscohostdatabases = getSelectedDatabases(form.cbs,ebscohostsearchsrc);
 	 	 	if (ebscohostdatabases==-1) 
@@ -53,17 +134,58 @@ function ebscoHostSearchGo(form) {
 	 }	 
 	 
 	 var cbFT = document.getElementById("chkFullText");
-	 	 
+	 var matches=ebscohosturl.match(/cli[0-9]/g);
+	 var index = (matches===null)?0:matches.length; 
+	 
 	 if (!_isEmpty(cbFT) && cbFT.checked) {	 	 
-		 var matches=ebscohosturl.match(/cli[0-9]/g);
-		 var index = (matches===null)?0:matches.length;
-		 ebscohosturl+= "&cli"+index+"=FT&clv"+index+"=Y";
+		ebscohosturl	+= "&cli"+index+"=FT&clv"+index+"=Y";
+		index++;
 	 }	 
+	 
+	 var cbPR = document.getElementById("chkPeerReviewed");
+	 	 
+	 if (!_isEmpty(cbPR) && cbPR.checked) {	 	 
+	 	var rv = document.getElementById("ebscoIsPubFinder") ? "RV3" : "RV";
+	 	ebscohosturl += "&cli" + index + "=" + rv + "&clv" + index + "=Y";
+		 index++;
+	 }	 
+	 
+	 var cbCO = document.getElementById("chkCatalogOnly");
+	 	 
+	 if (!_isEmpty(cbCO) && cbCO.checked) {	 	 
+		 ebscohosturl+= "&cli"+index+"=FC&clv"+index+"=Y";
+		 index++;
+	 }
+	 
+	 var cbLC = document.getElementById("chkLibraryCollection");
+	 	 
+	 if (!_isEmpty(cbLC) && cbLC.checked) {	 	 
+		 ebscohosturl+= "&cli"+index+"=FT1&clv"+index+"=Y";
+		 index++;
+		}
+
+		try {
+			ebscoAddDisciplines();	
+		}
+	catch (e) {
+		debugger;
+		}
+		
+
 	
 	if (ebscohostkeywords!="") 
 		ebscohostkeywords=ebscoHostSearchParse(ebscohostkeywords,ebscohostsearchmode)+'\+AND\+';
-	  	
-	ebscohosturl+='&bquery=('+ebscohostkeywords+ebscoHostSearchParse(ebscohostsearchtext,ebscohostsearchmode)+')';  	
+	
+	var keywordSelector = document.getElementById("guidedField_0"), 
+		titleSelector = document.getElementById("guidedField_1"),
+		authorSelector = document.getElementById("guidedField_2");	
+	if(!_isEmpty(authorSelector) && authorSelector.checked) {
+		ebscohosturl+='&bquery=AU+('+ebscohostkeywords+ebscoHostSearchParse(ebscohostsearchtext,ebscohostsearchmode)+')'; 
+	} else if(!_isEmpty(titleSelector) && titleSelector.checked) {
+		ebscohosturl+='&bquery=TI+('+ebscohostkeywords+ebscoHostSearchParse(ebscohostsearchtext,ebscohostsearchmode)+')'; 
+	} else {
+		ebscohosturl+='&bquery='+ebscohostkeywords+ebscoHostSearchParse(ebscohostsearchtext,ebscohostsearchmode);  	
+	} 
 	
 	if (ebscohostwindow)
 		window.open(ebscohosturl, 'EBSCOhost');
@@ -72,6 +194,8 @@ function ebscoHostSearchGo(form) {
 		
 	return false;
 }
+
+
 
 function getSelectedDatabases(ob,src) {
  var databases = getMultiple(ob);
@@ -105,10 +229,15 @@ function highlight(id, currentClass, checkboxId) {
 }
 
 function SelectAllCheckBoxes(e) {
-	var cbs = document.getElementsByName("cbs");
- 	for(i=0;i<cbs.length;i++){
-  		cbs[i].checked = e.checked;
-  		highlight('tr'+[i+1], (i % 2) ? 'two' : 'one', 'cb'+[i+1])
+	var cbs = document.getElementsByName("cbs"),
+		rows = document.getElementsByClassName('choose-db-list')[0].children;
+ 	for(var i=0;i<cbs.length;i++){
+ 		var row = rows[i],
+ 			checkbox = row.getElementsByTagName('input')[0];
+		cbs[i].checked = e.checked;
+  		if (row.id) {
+  			highlight(row.id, (i % 2) ? 'two' : 'one', checkbox.id);
+  		}
  	}
 }
 
