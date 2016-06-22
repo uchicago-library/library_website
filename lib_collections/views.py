@@ -3,6 +3,7 @@ from lib_collections.models import CollectionPage, CollectionPageFormatPlacement
 from public.models import LocationPage
 from staff.models import StaffPage
 from subjects.models import Subject, SubjectParentRelations
+from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.backends import get_search_backend
 
 import datetime
@@ -136,9 +137,16 @@ def collections(request):
 'Humanities', 'Law', 'Literature', 'Medicine', 'Sciences, Biological', \
 'Sciences, Physical', 'Social Sciences', 'Social Services', 'Special Collections']
 
+    default_image = None
+    try:
+        default_image = Image.objects.get(title="Default Placeholder Photo")
+    except:
+        pass
+
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+        'default_image': default_image,
         'digital': digital,
         'exhibits': exhibits,
         'exhibits_current': exhibits_current,

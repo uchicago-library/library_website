@@ -22,7 +22,15 @@
           </tr>
           {% for collection_page in collections %}
             <tr>
-              <td>{% image collection_page.thumbnail fill-100x100 %}</td>
+              <td>
+                {% if collection_page.thumbnail %}
+                  {% image collection_page.thumbnail fill-100x100 %}
+                {% else %}
+                  {% if default_image %}
+                    {% image default_image fill-100x100 %}
+                  {% endif %}
+                {% endif %}
+              </td>
               <td><strong><a href="{{ collection_page.url_path }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
               <td><strong>Formats</strong><br/>{% collections_formats collection_page %}</td>
               <td>
@@ -55,7 +63,13 @@
           {% for exhibit in exhibits_current %}
             <tr>
               <td>
-                {% image exhibit.thumbnail fill-100x100 %}
+                {% if exhibit.thumbnail %}
+                  {% image exhibit.thumbnail fill-100x100 %}
+                {% else %}
+                  {% if default_image %}
+                    {% image default_image fill-100x100 %}
+                  {% endif %}
+                {% endif %}
               </td>
               <td>
                 <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
@@ -92,7 +106,13 @@
           {% for exhibit in exhibits %}
             <tr>
               <td>
-                {% image exhibit.thumbnail fill-100x100 %}
+                {% if exhibit.thumbnail %}
+                  {% image exhibit.thumbnail fill-100x100 %}
+                {% else %}
+                  {% if default_image %}
+                    {% image default_image fill-100x100 %}
+                  {% endif %}
+                {% endif %}
               </td>
               <td>
                 <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
