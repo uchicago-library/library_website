@@ -186,7 +186,7 @@ def units(request):
         # intercept this in the future to link to unit pages. 
         staff_link = ''
         if t.unit_page.directory_unit:
-            staff_link = " <a href='/units/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.directory_unit.fullName}) + "'>staff</a>"
+            staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.directory_unit.fullName}) + "'>staff</a>"
 
         room_number = ''
         if t.unit_page.room_number:
@@ -308,7 +308,7 @@ def units(request):
 
             staff_link = ''
             if unit_page.directory_unit:
-                staff_link = " <a href='/units/?" + urllib.parse.urlencode({'view': 'staff', 'department': unit_page.directory_unit.fullName}) + "'>staff</a>"
+                staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': unit_page.directory_unit.fullName}) + "'>staff</a>"
 
             room_number = ''
             if unit_page.room_number:
