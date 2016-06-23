@@ -102,6 +102,41 @@ def get_breadcrumbs(page):
     breadcrumbs.pop(0)
     return breadcrumbs
 
+def recursively_add_children(page, current_site):
+    """
+    Recursively add child pages to a data structure
+    that is a list of dictionaries. Used to create 
+    a sitemap like index on pages.
+
+    Args:
+        page: object.
+
+        current_site: site object
+    """
+    return {
+        'title': page.title,
+        'url': page.relative_url(current_site),
+        'children': list(map(lambda p: recursively_add_children(p, current_site), page.get_children().live()))
+    }
+
+
+def get_index_html(currentlevel):
+    """
+    Generate html for a sitemap like index listing
+    of child pages.  
+
+    Args:
+        currentlevel: list of dictionaries containing
+        page information. 
+
+    Returns:
+        html, string
+    """
+    if not currentlevel:
+        return ''
+    else:
+        return "<ul class='index-list'>" + "".join(list(map(lambda n: "<li><a href='" + n['url'] + "'>" + n['title'] + "</a>" + get_index_html(n['children']) + "</li>", currentlevel))) + "</ul>"
+
 
 # Abstract classes
 class Address(models.Model):
@@ -763,6 +798,10 @@ class PublicBasePage(BasePage):
     # Sidebar hours
     display_hours_in_right_sidebar = models.BooleanField(default=False)
 
+    # Index fields 
+    enable_index = models.BooleanField(default=False)
+    display_hierarchical_listing = models.BooleanField(default=False)
+
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
@@ -918,7 +957,6 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         try:
             current_page_id = unit.location.libcal_library_id
             if current_page_id:
-                print(current_page_id)
                 return current_page_id
             else: 
                 return self.get_granular_libcal_lid(self.get_parent().unit.location)
@@ -998,18 +1036,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         location_and_hours = get_hours_and_location(self)
-        unit = location_and_hours['page_unit']
-
-        def get_children_recursive(page):
-            """
-
-            """
-            if page.get_children() == []:
-                return []
-            else:
-                children = page.get_children
-                for child in children:
-                    pass
+        unit = location_and_hours['page_unit']     
 
         try: 
             location = str(location_and_hours['page_location'])
@@ -1047,6 +1074,25 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['banner'] = self.get_banner()[1]
         context['banner_title'] = self.get_banner()[2]
         context['page_type'] = str(self.specific.__class__.__name__)
+
+
+        # Data structure for generating a 
+        # sitemap display of child pages
+        current_site = Site.find_for_request(request)
+        index_pages = [{
+            'title': self.title,
+            'url': self.relative_url(current_site),
+            'children': [],
+        }]
+
+        # Build sitemap listing of child pages 
+        # in html format.
+        if self.enable_index and self.display_hierarchical_listing:
+            index_pages[0]['children'] = list(map(lambda p: recursively_add_children(p, current_site), self.get_children().live()))
+        elif self.enable_index:
+            index_pages[0]['children'] = list(map(lambda p: {'title': p.title, 'url': p.relative_url(current_site), 'children': []}, self.get_children().live()))
+        index_pages_html = get_index_html(index_pages[0]['children'])
+        context['index_pages_html'] = index_pages_html
 
         return context
 

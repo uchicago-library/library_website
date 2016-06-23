@@ -103,10 +103,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         help_text="Banners should be approximately 1200 × 200 pixels"
     )
 
-    # Index fields
-    enable_index = models.BooleanField(default=False)
-    display_hierarchical_listing = models.BooleanField(default=False)  
-
     subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
