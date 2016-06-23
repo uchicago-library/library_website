@@ -421,6 +421,21 @@
                             <p><a href="{{all_spaces_link}}" class="btn btn-morelink" role="button">View all {{self.friendly_name}} study spaces <i class="fa fa-angle-double-right" aria-hidden="true"></i></a></p>
                         </div>
                     {% endif %}
+
+                    {% if self.events_feed_url %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                            <h4>Workshops &amp; Events</h4>
+                            <div class="calledOnce">
+                            <!--<div class="jflatTimeline calledOnce">-->
+                                <div class="dates-bar">
+                                    
+                                </div>
+                                <div class="event-wrap">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                     
                     {% if self.collection_page %}
                         {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}

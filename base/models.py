@@ -802,6 +802,9 @@ class PublicBasePage(BasePage):
     enable_index = models.BooleanField(default=False)
     display_hierarchical_listing = models.BooleanField(default=False)
 
+    # Workshops and Events
+    events_feed_url = models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed') 
+
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
@@ -1007,7 +1010,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             boolean
         """
-        fields = [self.quicklinks]
+        fields = [self.quicklinks, self.events_feed_url]
         return self.has_field(fields) or self.has_granular_hours()
 
 

@@ -151,6 +151,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ),
         MultiFieldPanel(
             [
+                FieldPanel('events_feed_url'),
+            ],
+            heading='Workshops and Events'
+        ),
+        MultiFieldPanel(
+            [
                 FieldPanel('enable_find_spaces'),
                 FieldPanel('book_a_room_link'),
             ], 
