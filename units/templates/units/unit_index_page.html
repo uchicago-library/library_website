@@ -37,6 +37,7 @@
                 </div>
             {% endif %}
             {% if view == 'staff' %} 
+                {% include "units/browse_by_pulldowns.html" %}
                 {% if staff_pages %}
                     <table class="table table-striped quicktable">
                         <tbody>

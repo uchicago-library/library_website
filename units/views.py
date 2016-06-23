@@ -329,7 +329,7 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
-        'subjects': get_subjects(department),
+        'subjects': get_subjects(None),
         'subject': subject,
         'view': view,
         'self': {
