@@ -20,6 +20,7 @@ h1.searchbox-header {
   color: #5e5e5e;
   margin: 10px 0 10px 5px;
   font-weight: 600;
+  border: none;
 }
 
 .transformer-tabs {
@@ -98,10 +99,6 @@ h1.searchbox-header {
  * --------------------------------------------------
  */
 
-.form-control {
-    padding: 18px 12px;
-}
-
 .search-btn-wrapper {
   @include respond-to(medium) {
     padding-right: 0;
@@ -111,18 +108,17 @@ h1.searchbox-header {
 .btn-searchtype>button {
   color: #fff;
   line-height: 1.2em;
-  &.dropdown-menu open {
-    background-color: #B1746F;
-    & > ul {
-      background-color: rgba(210, 205, 204, 0.95);
-      & > li > a {
-      color: #000;
-        &:hover {
-          color: #800000;
-          background-color: #f7f1f0;
-          text-decoration: none;
-        }
-      }
+}
+
+.btn-searchtype>.dropdown-menu { //ALTS to work with javascript translation
+  background-color: #B1746F;
+  color: #000;
+  & > ul {
+    background-color: transparent;
+    & > li > a:hover, & > li > a:focus {
+        color: #800000;
+        background-color: rgba(210, 205, 204, 0.95); //#f7f1f0
+        text-decoration: none;
     }
   }
 }
@@ -140,7 +136,7 @@ h1.searchbox-header {
   }
 }
 
-.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype>button:hover, .btn-searchtype>button:focus, .btn-searchtype>button:active {
+.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype>button:hover, .btn-searchtype>button:focus, .btn-searchtype>button:active, .btn-searchtype>button.btn.dropdown-toggle.btn-default {
     color: #000;
     background-color: #B1746F;
   }
@@ -149,6 +145,10 @@ h1.searchbox-header {
   margin: 0px;
   border: 0px;
   background-color: #F2F2F2;
+}
+
+.bootstrap-select.btn-group .dropdown-toggle .filter-option { // Makes select text readable
+  overflow: initial;
 }
 
 /*

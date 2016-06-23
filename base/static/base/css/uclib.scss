@@ -20,6 +20,7 @@ Spaces
 Collections & Exhibits
 Directory
 Staff Profile Page
+Page Specific Alterations
 -------------------------------------------------------------------*/
 
 @import "variables.scss";
@@ -31,12 +32,6 @@ Staff Profile Page
  * --------------------------------------------------
  */
 
-.main-container {
-  @include respond-to(large) {
-    padding-right: 3em;
-  }
-}
-
 .breadcrumbs {
   padding-top: 5px;
   padding-left: 20px;
@@ -46,6 +41,11 @@ Staff Profile Page
 .body-container {
   padding: 30px;
   max-width: 2000px;
+  .sidebar ~ & {
+    @include respond-to(medium) {
+      padding-left: 45px;
+    }
+  }
 }
 
 .nopadding {  // For use when do not want to wrap in row 
@@ -56,18 +56,28 @@ Staff Profile Page
 }
 
 .centermain {
-  @include respond-to(small) {
-    padding: 0 30px 0 10px;
-  }
+  padding: 0 30px 0 0;
   @include respond-to(large) {
-    padding: 0 45px 0 0;
-    max-width: 1400px;
+    max-width: 1200px;
   }
 }
 
 .material-icons {
   font-size: 1.2em;
   line-height: 1.2em;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.
+  text-rendering: optimizeLegibility; // Support for Safari and Chrome.
+  -moz-osx-font-smoothing: grayscale; // Support for Firefox.
+  font-feature-settings: 'liga'; // Support for IE.
 }
 
 .distinct-rightside {
@@ -98,6 +108,15 @@ Staff Profile Page
   @include respond-to(large) {
     max-width: 30em;
   }
+}
+
+.h1-banner, #p-3378 h1 {  // Hide h1 on homepages with banners
+  position:absolute;
+  right:-10000px; 
+  top:auto; 
+  width:1px; 
+  height:1px; 
+  overflow:hidden;
 }
 
 
@@ -172,10 +191,10 @@ p q { //Inline Quote
  * --------------------------------------------------
  */
 
-img, video, object {
-  max-width: 100%;
-  height: auto;
-}
+// img, video, object {
+//   max-width: 100%;
+//   height: auto;
+// }
 
 .block-video > div { //override Wagtail's weird padding
     padding-bottom: 20px!important;
@@ -235,6 +254,11 @@ a.img-src {
   font-size: 0.8em;
 }
 
+.imgcaption .fullwidth {
+  display: inline-block;
+  margin: 15px 0;
+}
+
 /*
  * Right Sidebar
  * --------------------------------------------------
@@ -276,6 +300,20 @@ a.img-src {
   }
   .btn-morelink {
     margin-bottom: 10px;
+  }
+}
+
+.call-out {
+  color: #fff;
+  padding: 15px!important;
+  margin-bottom: 15px;
+  background-color: $maroon;
+  & h3, & h4 {
+    color: #fff;
+    border: none;
+  }
+  & > ul > li > a {
+    color: white;
   }
 }
 
@@ -438,12 +476,25 @@ a#event-header {
 }
 
 /*
+ * Carousel
+ * --------------------------------------------------
+ */
+
+.carousel {
+  margin-bottom: 20px;
+}
+
+.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
+  width: 100%
+}
+
+/*
  * News Homepage Module
  * --------------------------------------------------
  */
 
 .newsblock {
-  padding: 0 0 0 5px;
+  padding: 0 5px;
   h3 {
     color: $darkneutral;
     font-style: normal;
@@ -455,10 +506,10 @@ a#event-header {
 }
 
 figure.embed {
+  width: 98%;
   display: inline-block;
   vertical-align: top;
   position: relative;
-  margin-bottom: 15px;
   font-size: 0.9em;
   background: transparent;
   overflow: hidden;
@@ -469,14 +520,13 @@ figure.embed {
     clear:both;
   }
   img {
-    width: 100%;
-    display: block;
-    @include respond-to(small) {
-        max-width: 250px;
-        .newsblock & {
-          max-width: 300px;
-        }
-    }
+    object-fit: cover;
+    min-width: 100%;
+    height: 125px; // for centering the image
+    width: 200px; // for centering the image
+    display: block; // corrects inline gap in enclosing div
+    width: auto\9; // ie8+9
+    -ms-interpolation-mode: bicubic; // lt ie8
   }
   figcaption {  //category tags on news images
     width: 100%;
@@ -525,10 +575,11 @@ figure.embed {
       font-weight: 600;
     }
   }
-  @include respond-to(small) {
-    margin-right: 15px;
-    margin-left: 0px;
-  } 
+}
+
+.figure-wrap {
+  height: 125px;
+  overflow: hidden;
 }
 
 /*
@@ -605,6 +656,15 @@ input[type="search"]::-webkit-search-decoration {
 .is-valid {
   border-color: #089e00; }
 
+form#knowledgetracker { // Desk Tracker
+  & input#submit {
+    padding: 0.5em 1.5em;
+  }
+  & input[type="reset"] { // Hide "clear form" button
+    display: none;
+  }
+}
+
 
 /*
  * Buttons
@@ -668,7 +728,8 @@ input[type="search"]::-webkit-search-decoration {
 }
 
 .btn-alpha {  //Finding Aids Search Page
-  padding: 0;
+  padding: 20px 0 0 0;
+  text-align: center;
   @include respond-to(smallonly) {
     display: flex;
     flex-wrap: wrap;
@@ -677,7 +738,7 @@ input[type="search"]::-webkit-search-decoration {
   .btn {
     color: #333;
     background-color: #fff;
-    margin-bottom: 10px;
+    padding: 0.5em 1em;
     // Border color specific to Bootstrap style in order to overide
     border-top-color: transparent;
     border-right-color: $maroon;
@@ -689,6 +750,9 @@ input[type="search"]::-webkit-search-decoration {
     @include respond-to(smallonly) {
       flex: 1;
       width: 10%;
+    }
+    @include respond-to(medium) {
+      padding: 0.5em 0.75em;
     }
   }
 }
@@ -709,7 +773,7 @@ table.table-striped, .table-striped>tbody {
   @include respond-to(smallonly) { //mobile friendly magic
     display: block;
     width: 100%;
-    & tr, & th, & td {
+    & thead, & tr, & th, & td {
       display: block;
       padding: 0;
       text-align: left;
@@ -806,6 +870,7 @@ table.etable>tbody>tr {
 
 .scrc-list {
   @extend .distinct-list;
+  margin-top: 1em;
   @include respond-to(small) {
     &>tbody>tr>td:first-child {
         width: 30%;
@@ -818,28 +883,20 @@ table.etable>tbody>tr {
 }
 
 /*
- * Toggle Search (For Lists / Tables)
+ * Mini Search (For Browse / Lists / Tables)
  * --------------------------------------------------
  */
 
- .searchbox{
-    position:relative;
-    min-width:30px;
-    margin-top:10px;
-    width:0%;
-    height:30px;
-    float:right;
-    overflow:hidden;
-    -webkit-transition: width 0.3s;
-    -moz-transition: width 0.3s;
-    -ms-transition: width 0.3s;
-    -o-transition: width 0.3s;
-    transition: width 0.3s;
-    @include respond-to(small) {
-        overflow: none;
-        width: 70%;
-        float: right;
-    }
+.searchbox{
+  position:relative;
+  min-width:30px;
+  margin:5px 0 10px 0;
+  width: 100%;
+  height:30px;
+  float:right;
+  @include respond-to(small) {
+    margin:15px 0 10px 0;
+  }
 }
 
 .searchbox-input{
@@ -877,14 +934,6 @@ table.etable>tbody>tr {
     cursor:pointer;
     color:#ddd;
     background:$maroon;
-    @include respond-to(small) {
-        color: #fff;
-        background: $darkgray;
-    }
-}
-
-.searchbox-open{
-    width:100%;
 }
 
 .byline{
@@ -898,6 +947,45 @@ table.etable>tbody>tr {
   text-decoration:none;
   color: $maroon;
 }
+
+.distinct-search {
+  padding: 15px 30px;
+  background-color: rgba(210, 205, 204, 0.5);
+  border-top: 3px solid #D6D6CE;
+  & input.searchbox-input {
+    background-color: #fff;
+    border: 1px solid #ccc;
+  }
+  @include respond-to(smallonly) {
+    max-width: 90%;
+    margin: 0 15px;
+  }
+}
+
+
+/*
+ * Lightbox Styling
+ * --------------------------------------------------
+ */
+
+.modal-content {
+  -webkit-box-shadow: 0 5px 35px rgba(0,0,0,.8);
+  box-shadow: 0 5px 35px rgba(0,0,0,.8);
+}
+
+.modal-header {
+    padding: 15px 20px 0px 15px;
+    border-bottom: none;
+    &> .close {
+      font-size: 2em;
+      opacity: .6;
+      &:hover {
+        opacity: .5;
+      }
+    }
+}
+
+
 
 /*
  * Ask A Librarian Pages
@@ -1270,8 +1358,12 @@ td.time, td.event-nav {
   }
 }
 
+.spaces-dropdown {
+  padding-top: 15px;
+}
+
 .spaces-toggle {
-    padding: 0 0 15px 0;
+    padding: 15px 0;
 }
 
 .img-spaces { // Div holding photos in individual space pages
@@ -1299,7 +1391,7 @@ td.time, td.event-nav {
       max-width: 100px;
     }
     @include respond-to(medium) {
-      max-width: 150px;
+      max-width: 200px;
     }
   }
 }
@@ -1365,7 +1457,7 @@ td.time, td.event-nav {
   min-width: 200px;
   color: #000;
   border-radius: 0;
-  &>li>a {
+  &>ul>li>a {
     color: #262626;
     font-size: 1em;
     &:hover {
@@ -1381,10 +1473,6 @@ td.time, td.event-nav {
   @include respond-to(medium) {
     padding: 0px 14px 10px 14px;
   }
-}
-
-.coll-limit {
-  text-align: right;
 }
 
 .coll-checkbox {
@@ -1469,8 +1557,12 @@ tr.seealso {
   }
 }
 
-.list-view { // "Switch to [...] view"
-  padding-bottom: 10px;
+.list-view, .coll-limit { // "Switch to [...] view"
+  padding: 5px 15px;
+  @include respond-to(small) {
+    text-align: right;
+    padding: 5px 15px 10px 0;
+  }
   a {
     color: $darkgray;
   }
@@ -1497,3 +1589,20 @@ tr.seealso {
     padding: 0 3em 1.2em 3em;
   }
 }
+
+
+/*
+ * Page Specific Alterations
+ * --------------------------------------------------
+ */
+
+.block-paragraph > .rich-text { // Giving Pages
+  #p-3413 &, #p-3415 &, #p-3417 &, #p-3418 &, #p-3419 & {
+    @include respond-to(small) {
+      overflow: hidden;
+    }
+  }
+}
+
+
+

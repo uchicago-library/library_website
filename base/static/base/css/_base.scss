@@ -33,11 +33,45 @@ Alerts
     } 
   }
 }
- 
+
 /*
  * Fonts and Headers
  * --------------------------------------------------
  */
+
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('fonts/glyphicons-halflings-regular.eot');
+  src: url('fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded- opentype'), url('Content/fonts/glyphicons-halflings-regular.woff') format('woff'), url('Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(https://motacilla.lib.uchicago.edu/static/base/css/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+  font-size: 1.2em;
+  line-height: 1.2em;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.
+  text-rendering: optimizeLegibility; // Support for Safari and Chrome.
+  -moz-osx-font-smoothing: grayscale; // Support for Firefox.
+  font-feature-settings: 'liga'; // Support for IE.
+}
 
 h1 {
   font-size: 1.4em;
@@ -111,8 +145,8 @@ p {
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *      @include respond-to(medium) { ... }
- *      @include respond-to(large) { ... }
+ *        @include respond-to(medium) { ... }
+ *        @include respond-to(large) { ... }
  */
 
 @mixin respond-to($breakpoint) {
@@ -257,4 +291,5 @@ a {
       text-decoration: underline;
     }
 }
+
 
