@@ -317,7 +317,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             string, link into the public directory
             filtered by library.
         """
-        base = '/units/?view=staff&library='
+        base = '/about/directory/?view=staff&library='
         links = {'The John Crerar Library': base + urllib.parse.quote_plus('Crerar Library'),
                  'The D\'Angelo Law Library': base + urllib.parse.quote_plus('D\'Angelo Law Library'),
                  'Eckhart Library': base + urllib.parse.quote_plus('Eckhart Library'),
