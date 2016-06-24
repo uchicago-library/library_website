@@ -1014,32 +1014,37 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         return self.has_field(fields) or self.has_granular_hours()
 
 
-    def get_banner(self):
+    def get_banner(self, current_site):
         """
         Test to see if a page should have a banner image. 
         Get the image url for display if the anser is yes.
 
+        Args:
+            current_site: site object.
+
         Returns:
-            A tuple where the first value is a boolean and 
-            the second value is an image object or None 
-            and the third value is a string (banner title).
+            A tuple where the first value is a boolean, 
+            the second value is an image object or None, 
+            the third value is a string (banner title),
+            and the fourth value is a link.
         """
         try:
             # Base case
             if self.banner_title and self.banner_image:
-                return (True, self.banner_image, self.banner_title)
+                return (True, self.banner_image, self.banner_title, self.relative_url(current_site))
             # Recursive case
             else:
-                return self.get_parent().specific.get_banner()
+                return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
         except(AttributeError):
-            return (False, None, '')
+            return (False, None, '', '')
 
 
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']     
+        current_site = Site.find_for_request(request)
 
         try: 
             location = str(location_and_hours['page_location'])
@@ -1073,15 +1078,15 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['branch_lib_css'] = self.get_branch_lib_css_class()
         context['hours_page_url'] = self.get_hours_page(request)
         context['is_hours_page'] = self.id == HOURS_PAGE
-        context['has_banner'] = self.get_banner()[0]
-        context['banner'] = self.get_banner()[1]
-        context['banner_title'] = self.get_banner()[2]
+        context['has_banner'] = self.get_banner(current_site)[0]
+        context['banner'] = self.get_banner(current_site)[1]
+        context['banner_title'] = self.get_banner(current_site)[2]
+        context['banner_url'] = self.get_banner(current_site)[3]
         context['page_type'] = str(self.specific.__class__.__name__)
 
 
         # Data structure for generating a 
         # sitemap display of child pages
-        current_site = Site.find_for_request(request)
         index_pages = [{
             'title': self.title,
             'url': self.relative_url(current_site),
