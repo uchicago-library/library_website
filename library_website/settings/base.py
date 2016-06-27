@@ -61,6 +61,7 @@ INSTALLED_APPS = (
     'conferences',
     'dirbrowse',
     'directory_unit',
+    'events',
     'findingaids',
     'group',
     'home',

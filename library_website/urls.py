@@ -6,6 +6,7 @@ from django.views.generic.base import RedirectView
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
+from events.views import events as events_view
 from public.views import spaces as spaces_view
 from results.views import results as results_view
 from search.views import search as search_view 
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^about/directory/$', unit_view, name='unit'),
+    url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collections/$', collection_view, name='collection'),
 
     url(r'', include(wagtail_urls)),
