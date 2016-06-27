@@ -1,0 +1,75 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+  <article>
+
+    <div class="col-xs-12 page-head">
+      <h1>Library Events</h1> 
+    </div>
+
+    <div class="col-xs-12 col-sm-6">
+      <div class="btn-group spaces-toggle col-xs-9 col-sm-9">
+        <a class="btn btn-list-toggle{% if view == 'day' %} active{% endif %}" href=".?view=day{% if start %}&amp;start={{ start|urlencode }}{% endif %}">Day</a>
+        <a class="btn btn-list-toggle{% if view == 'week' %} active{% endif %}" href=".?view=week{% if start %}&amp;start={{ start|urlencode }}{% endif %}">Week</a>
+        <a class="btn btn-list-toggle{% if view == 'month' %} active{% endif %}" href=".?view=month{% if start %}&amp;start={{ start|urlencode }}{% endif %}">Month</a>
+      </div>
+    </div>
+            
+    <div class="col-xs-12 col-sm-6 event-nav">
+      <a href=".?view={{ view|urlencode }}&amp;start={{ previous_link|urlencode }}"><span style="font-size:0.8em;" class="glyphicon glyphicon-chevron-left"></span> Previous</a>&nbsp; &nbsp; &nbsp; &nbsp; 
+      <a href=".?view={{ view|urlencode }}&amp;start={{ next_link|urlencode }}">Next <span style="font-size:0.8em;" class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+
+    <!--EVENTLIST-->
+    <div class="col-xs-12">
+      <table class="table table-striped etable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if entries %}
+            {% for d, list in entries %}
+              <tr class="etable-header">
+                <th colspan="3">
+                  {{ list.0.date_label }}
+                </th>
+              </tr>
+              {% for e in list %}
+                <tr>
+                  <td class="time">{{ e.time_label }}<br/>{{ e.sortable_date_string }}</td>
+                  <td>
+                    <a href="{{ e.link }}">{{ e.title|safe }}</a><br>
+                    {{ e.content|safe }}
+                  </td>
+                  <td></td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <tr class="etable-header">
+              <th colspan="3">{{ start_label }}</th>
+            </tr>
+            <tr>
+              <td class="time"></td>
+              <td>There are no events scheduled for this
+                {% if view == 'day' %}
+                  day.
+                {% elif view == 'week' %}
+                  week.
+                {% else %}
+                  month.
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+{% endblock %}
