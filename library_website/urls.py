@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^staff/$', staff, name='staff'),
     url(r'^about/directory/$', unit_view, name='unit'),
     url(r'^about/news-events/events/$', events_view, name='events'),
-    url(r'^collex/collections/$', collection_view, name='collection'),
+    url(r'^collex/$', collection_view, name='collection'),
 
     url(r'', include(wagtail_urls)),
 ]
