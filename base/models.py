@@ -1083,7 +1083,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['banner_title'] = self.get_banner(current_site)[2]
         context['banner_url'] = self.get_banner(current_site)[3]
         context['page_type'] = str(self.specific.__class__.__name__)
-
+        context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe='~()*!.\'')
 
         # Data structure for generating a 
         # sitemap display of child pages

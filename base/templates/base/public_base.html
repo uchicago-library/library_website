@@ -429,11 +429,12 @@
                             <h4>Workshops &amp; Events</h4>
                             <div class="calledOnce">
                             <!--<div class="jflatTimeline calledOnce">-->
-                                <div class="dates-bar">
-                                    
-                                </div>
-                                <div class="event-wrap">
-                                    
+                                <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
+                                    <span id="events-target">
+                                        <i class="fa fa-refresh fa-spin fa-fw"></i>
+                                        <span>Loading...</span>
+                                    </span>
+                                    <a class="btn btn-morelink" role="button" href="/about/news-events/events/">View full calendar</a>
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid
+from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid, get_events
 from units.utils import get_default_unit
+
 
 def breadcrumbs(request):
     breadcrumbs = [{
@@ -47,3 +48,16 @@ def json_hours(request):
                     'llid_fallback': get_default_unit().location.libcal_library_id,
                 }
             )
+
+
+def json_events(request):
+    """
+    View for rendering events feed data as json.
+    """
+    if request.method == 'GET':
+        feed = request.GET['feed']
+        return JsonResponse(
+            {
+                'events': get_events(feed),
+            }
+        )

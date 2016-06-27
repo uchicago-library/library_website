@@ -1,15 +1,5 @@
 /*
  * Get libal id for the page.
- DEPRECATED: 
-    function getLibCalId() {
-        var fallback = '1357';
-        var libcalid = $('#current-hours').data('libcalid');
-        if (libcalid == '') {
-            return fallback;
-        } else {
-            return libcalid;
-        }
-    }
 */
 function getLibCalId() {
     var libcalid = $('#current-hours').data('libcalid');
@@ -54,6 +44,25 @@ function renderHours(libcalid){
 
         // Render the hours dropdown
         $('#hours-dropdown').prepend(html); 
+    });
+}
+
+/*
+ * Ajax call to workshops and events feed.
+ */
+function renderEvents() {
+    var feed = $('#events').data('events'); // Already encoded
+    var eventsHtml = '';
+    json = $.getJSON('/json-events/?feed='.concat(feed), function(data) {
+        var innerJson = data['events'];
+        $.each(innerJson, function(key, val){
+            var title = innerJson[key][0];
+            var url = innerJson[key][1];
+            var date = innerJson[key][2];
+            var time = innerJson[key][3];
+            eventsHtml += '<p><a id="event-header" href="' + url + '">' + title + '</a><br/><span class="event-date">' + date + '</span> | ' + time; 
+        });
+        $('#events-target').replaceWith(eventsHtml);
     });
 }
 
@@ -104,6 +113,9 @@ $(document).ready(function(){
         $(this).ekkoLightbox();
     });
 
+    // Render hours html in the header
     renderHours(getLibCalId());
 
+    // Render events widget html in the right sidebar
+    renderEvents();
 });
