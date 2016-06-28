@@ -27,7 +27,8 @@
           {% endif %}
 
           {% if self.collection_location %}
-            <p><strong><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a>
+            <p>
+              <strong><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></strong>
               {% if self.access_instructions %}
                 <br/>{{ self.access_instructions }}
               {% endif %}
@@ -35,9 +36,9 @@
           {% endif %}
 
         {% if self.supplementary_access_links %}
-          <p>
+          <p style="font-size: 1.1em;">
             {% for l in self.supplementary_access_links.all %}
-              <br/><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a>
+              <strong><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a></strong><br/>
             {% endfor %}
           </p>
         {% endif %}
@@ -45,20 +46,6 @@
         </div>
       </div>
     </div><!--/.row-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   </article>
 {% endblock %}
 
@@ -105,7 +92,7 @@
       <strong>Related Exhibits</strong>
       <ul>
       {% for e in self.exhibit_page_related_collection.all %}
-        <li><a href="{{ e.parent.url }}">{{ e.parent.title }}<a></li>
+        <li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
       {% endfor %}
       </ul>
     {% endif %}
