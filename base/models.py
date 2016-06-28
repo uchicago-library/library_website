@@ -807,6 +807,7 @@ class PublicBasePage(BasePage):
 
     # News
     news_feed_url = models.URLField(blank=True, help_text='Link to a WordPress Feed from the Library News Site') 
+    active_tag =  models.CharField(max_length=30, blank=True, help_text='A WordPress tag name used for display purposes, e.g. "Library Kiosk"')
 
     unit = models.ForeignKey(
         'units.UnitPage', 
@@ -1089,7 +1090,6 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
-        context['is_home'] = bool(self.sites_rooted_here.all())
 
         # Data structure for generating a 
         # sitemap display of child pages

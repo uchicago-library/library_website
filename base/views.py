@@ -69,9 +69,8 @@ def json_news(request):
     """
     if request.method == 'GET':
         feed = request.GET['feed']
-        is_home = False if request.GET['home'] == 'False' else True
         return JsonResponse(
             {
-                'news': get_news(feed, is_home),
+                'news': get_news(feed),
             }
         )

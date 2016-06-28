@@ -54,7 +54,7 @@ def get_events(url):
     return entries
 
 
-def display_news(tags, is_home):
+def display_news(tags):
     """
     Helper method for determining if a news story
     should be displayed.
@@ -66,25 +66,21 @@ def display_news(tags, is_home):
     Returns:
         Boolean
     """
-    kiosk = 'library kiosk' if is_home else 'kiosk'
     flag = False
     for tag in tags:
-        if tag['term'].lower() == kiosk:
+        if tag['term'].lower() == 'kiosk':
             flag = True
             break
     return flag
 
 
-def get_news(url, is_home):
+def get_news(url):
     """
     Get news stories from a Wordpress feed and create
     a datastructure to hand off to a restful sevice.
 
     Args:
         url: string, link to a wordpress feed.
-
-        is_home: boolean, is the page the Library home 
-        page.
 
     Returns:
         A list of tuples representing a news story.
@@ -96,7 +92,7 @@ def get_news(url, is_home):
     for e in d.entries:
         if i < 1:
             break
-        display = display_news(e.tags, is_home)
+        display = display_news(e.tags)
         for tag in e.tags:
             # Categories and tags
             cat = tag['term']

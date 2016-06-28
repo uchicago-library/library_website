@@ -158,6 +158,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
        MultiFieldPanel(
             [
                 FieldPanel('news_feed_url'),
+                FieldPanel('active_tag'),
             ],
             heading='News'
         ),
