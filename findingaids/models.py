@@ -3,9 +3,9 @@ from django.db import models
 from wagtail.wagtailcore.models import Page
 from xml.etree import ElementTree
 
+import re
 import urllib
 
-# Create your models here.
 class FindingAidsPage(PublicBasePage):
     content_panels = Page.content_panels + PublicBasePage.content_panels
 
@@ -44,8 +44,16 @@ class FindingAidsPage(PublicBasePage):
 
             return digitized
 
-        def get_search_results(searchq, exactphrase):
+        def get_search_results(searchq):
             searchresults = []
+
+            # If the search query came in starting and ending with double quotes, remove them
+            # and process the search as an exact phrase query.
+            exactphrase = False
+            r = re.match(r'/^"(.*)"$/', searchq)
+            if r:
+                searchq = r.group(1)
+                exactphrase = True
 
             if exactphrase:
                 u = "http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
@@ -80,9 +88,26 @@ class FindingAidsPage(PublicBasePage):
             e = ElementTree.fromstring(xml_string)
             for div in e.findall('div'):
                 subject = div.find('subject').text
+
+                if not subject:
+                    continue
+
                 if not subject in topics:
                     topics[subject] = []
-                topics[subject].append([div.find('eadid').text, div.find('title').text, div.find('abstract').find('abstract').text])
+
+                topic_data = {}
+                for f in ['eadid', 'title']:
+                    try:
+                        topic_data[f] = div.find(f).text
+                    except:
+                        topic_data[f] = ''
+
+                try:
+                    topic_data['abstract'] = div.find('abstract').find('abstract').text
+                except:
+                    topic_data['abstract'] = ''
+                    
+                topics[subject].append([topic_data['eadid'], topic_data['title'], topic_data['abstract']])
 
             return topics
 
@@ -96,12 +121,14 @@ class FindingAidsPage(PublicBasePage):
 
         browse = request.GET.get('browse', None)
         digitized = request.GET.get('digitized', None)
-        exactphrase = request.GET.get('exactphrase', None)
         searchq = request.GET.get('searchq', None)
         topic = request.GET.get('topic', None)
         topics = request.GET.get('topics', None)
         if topics and not topics == 'all':
             topics = None
+        view = request.GET.get('view', None)
+        if not view:
+            view = 'title'
 
         # browse
         browses = get_browses()
@@ -113,19 +140,19 @@ class FindingAidsPage(PublicBasePage):
 
         # digitized
         digitizedlist = []
-        if digitized:
+        if view == 'digitized':
             digitizedlist = get_digitized_content()
 
         # search
         searchresults = []
         searchresultcount = 0
         if searchq:
-            searchresults = get_search_results(searchq, exactphrase)
+            searchresults = get_search_results(searchq)
             searchresultcount = len(searchresults)
 
         # topics
         topiclist = []
-        if topics:
+        if view == 'topics':
             topiclist = get_topic_list(all_topics)
 
         # topic
@@ -133,16 +160,11 @@ class FindingAidsPage(PublicBasePage):
         if topic:
             thistopiclist = list(sorted(all_topics[topic], key=lambda t: t[1]))
 
-        # foreach /html/body/div
-        # for d in e.findall('div'):
-        # get the first span and second span- that's the EADID and title. 
-            
         context['browse'] = browse
         context['browselinks'] = browselinks
         context['browses'] = browses
         context['digitized'] = digitized
         context['digitizedlist'] = digitizedlist
-        context['exactphrase'] = exactphrase
         context['searchq'] = searchq
         context['searchresultcount'] = searchresultcount
         context['searchresults'] = searchresults
@@ -150,5 +172,6 @@ class FindingAidsPage(PublicBasePage):
         context['thistopiclist'] = thistopiclist
         context['topics'] = topics
         context['topic'] = topic
+        context['view'] = view
 
         return context
