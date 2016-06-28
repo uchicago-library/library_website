@@ -118,6 +118,30 @@ def get_news(url, active_tag):
     return stories
 
 
+def has_news_stories(url, active_tag):
+    """
+    Test to see if a page has news stories.
+
+    Args:
+        url: string, link to a wordpress feed.
+
+    Returns:
+        Boolean.
+    """
+    d = feedparser.parse(url)
+    for e in d.entries:
+        for tag in e.tags:
+            soup = BeautifulSoup(e.description, 'html.parser')
+            img = soup.findAll('img')
+            try:
+                img_src = img[0]['src']
+            except:
+                img_src = ''
+            if tag['term'] in NEWS_CATEGORIES and display_news(e.tags, active_tag) and img_src:
+                return True
+    return False
+
+
 def get_json_for_library(lid):
     """
     Get json data for a specific library from
