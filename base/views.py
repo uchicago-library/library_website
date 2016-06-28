@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid, get_events, get_news
 from units.utils import get_default_unit
-
+import urllib
 
 def breadcrumbs(request):
     breadcrumbs = [{
@@ -69,8 +69,9 @@ def json_news(request):
     """
     if request.method == 'GET':
         feed = request.GET['feed']
+        active_tag = urllib.parse.unquote(request.GET['tag'])
         return JsonResponse(
             {
-                'news': get_news(feed),
+                'news': get_news(feed, active_tag),
             }
         )

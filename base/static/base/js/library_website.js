@@ -71,9 +71,9 @@ function renderEvents() {
  */
 function renderNews() {
     var feed = $('#news-target').data('news-feed'); // Already encoded
-    var isHome = $('#news-target').data('home');
+    var activeTag = $('#news-target').data('news-tag');
     var newsHtml = '';
-    json = $.getJSON('/json-news/?feed='.concat(feed), function(data) {
+    json = $.getJSON('/json-news/?feed='.concat(feed).concat('&tag=' + activeTag), function(data) {
         var innerJson = data['news'];
         $.each(innerJson, function(key, val){
             var title = innerJson[key][0];

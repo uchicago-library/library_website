@@ -1090,6 +1090,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
+        context['active_tag'] = urllib.parse.quote(self.active_tag)
 
         # Data structure for generating a 
         # sitemap display of child pages
