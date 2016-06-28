@@ -770,6 +770,7 @@ class StaffPublicPage(PublicBasePage):
             subjects.append(subject.subject)
 
         context['bio'] = self.get_bio()
+        context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
         context['cv'] = s.cv
         context['department_name'] = v.unit.name
         context['email'] = v.email
