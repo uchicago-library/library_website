@@ -212,6 +212,40 @@ class CollectionPage(PublicBasePage):
         index.SearchField('staff_contact'),
     ]
 
+    def get_context(self, request):
+        # staff_contact. get cnetid. Get StaffPublicPage with that cnetid. 
+
+        staff_title = '' 
+        staff_vcard_title = ''
+        staff_vcard_email = ''
+        staff_vcard_phone_number = ''
+        staff_vcard_faculty_exchange = ''
+        try:
+            staff_title = self.staff_contact.title
+            staff_vcard_title = self.staff_contact.vcards.first().title
+            staff_vcard_email = self.staff_contact.vcards.first().email
+            staff_vcard_phone_number = self.staff_contact.vcards.first().phone_number
+            staff_vcard_faculty_exchange = self.staff_contact.vcards.first().faculty_exchange
+        except:
+            pass
+
+        staff_url = ''
+        try:
+            staff_url = StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url
+        except:
+            pass
+
+        context = super(CollectionPage, self).get_context(request)
+        context['staff_title'] = staff_title
+        context['staff_url'] = staff_url
+        context['staff_vcard_title'] = staff_vcard_title
+        context['staff_vcard_email'] = staff_vcard_email
+        context['staff_vcard_phone_number'] = staff_vcard_phone_number
+        context['staff_vcard_faculty_exchange'] = staff_vcard_faculty_exchange
+        return context
+
+    def has_right_sidebar(self):
+        return True
 
 class SubjectSpecialistPlacement(Orderable, models.Model):
     """
