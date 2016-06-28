@@ -75,6 +75,10 @@ function renderNews() {
     var newsHtml = '';
     json = $.getJSON('/json-news/?feed='.concat(feed).concat('&tag=' + activeTag), function(data) {
         var innerJson = data['news'];
+        var has_stories = innerJson.length > 0;
+        if (has_stories) {
+            $('#news-header').removeClass('hidden');
+        }
         $.each(innerJson, function(key, val){
             var title = innerJson[key][0];
             var tag = innerJson[key][2];
