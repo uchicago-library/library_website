@@ -367,7 +367,19 @@
                             </div>
                         {% endif %}
                     </div> <!-- // row -->
-               {% endif %}
+                {% endif %}
+                {% if self.news_feed_url %}
+                    <div class="home-modwrapper">
+                        <div class="home-module">
+                            <h2>News</h2>
+                            <a class="viewall" href="http://news.lib.uchicago.edu/">View all</a>
+                        </div>
+                        <span id="news-target" data-news-feed="{{news_feed}}" data-home="{{is_home}}">
+                            <i class="fa fa-refresh fa-spin fa-fw"></i>
+                            <span>Loading...</span>
+                        </span> 
+                    </div>
+                {% endif %}
             {% if self.has_right_sidebar %}
             </div> <!-- // Center Content -->
             {% endif %}

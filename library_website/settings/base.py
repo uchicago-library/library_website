@@ -226,3 +226,6 @@ ADDRESS_TEMPLATE = '%s, %s, %s %s'
 
 # Location and hours page
 HOURS_PAGE = 4084
+
+# Library news categories
+NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People', 'Hours & Access', 'Spotlight', 'From the Director'])

@@ -2,9 +2,11 @@ import base64
 from http.client import HTTPSConnection
 from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 import requests
-from library_website.settings.base import LIBCAL_IID, HOURS_TEMPLATE, ADDRESS_TEMPLATE
+from library_website.settings.base import LIBCAL_IID, HOURS_TEMPLATE, ADDRESS_TEMPLATE, NEWS_CATEGORIES
 import feedparser
 from django.utils.html import strip_tags
+from django.utils.text import slugify
+from bs4 import BeautifulSoup
 
 def get_xml_from_directory_api(url):
     assert url.startswith('https://')
@@ -23,7 +25,8 @@ def get_xml_from_directory_api(url):
 def get_events(url):
     """
     Get the workshops and events feed from Tiny Tiny RSS
-    reorder the events by date and return html for display.
+    reorder the events by date and retun data formatted 
+    for a restful service.
 
     Args:
         url: string, feed url.
@@ -49,6 +52,68 @@ def get_events(url):
         title = e.title.split(': ')[1]
         entries.append((title, e.link, ds, ts))
     return entries
+
+
+def display_news(tags, is_home):
+    """
+    Helper method for determining if a news story
+    should be displayed.
+
+    Args:
+        tags: list of dictionaries, "tags: from a 
+        feedparser object.
+
+    Returns:
+        Boolean
+    """
+    kiosk = 'library kiosk' if is_home else 'kiosk'
+    flag = False
+    for tag in tags:
+        if tag['term'].lower() == kiosk:
+            flag = True
+            break
+    return flag
+
+
+def get_news(url, is_home):
+    """
+    Get news stories from a Wordpress feed and create
+    a datastructure to hand off to a restful sevice.
+
+    Args:
+        url: string, link to a wordpress feed.
+
+        is_home: boolean, is the page the Library home 
+        page.
+
+    Returns:
+        A list of tuples representing a news story.
+    """
+    d = feedparser.parse(url)
+    stories = []
+    i = 4
+    garbage = ['Continue&#160;reading&#160;&#187;', 'Continue&nbsp;reading&nbsp;&raquo;']
+    for e in d.entries:
+        if i < 1:
+            break
+        display = display_news(e.tags, is_home)
+        for tag in e.tags:
+            # Categories and tags
+            cat = tag['term']
+            
+            # Images
+            soup = BeautifulSoup(e.description, 'html.parser')
+            img = soup.findAll('img')
+            try:
+                img_src = img[0]['src']
+            except:
+                img_src = ''
+            if cat in NEWS_CATEGORIES and display and img_src:
+                description = strip_tags(e.description).strip(garbage[0]).strip(garbage[1]) 
+                stories.append((e.title, e.link, cat, description, slugify(cat), img_src))
+                i -= 1
+                break
+    return stories
 
 
 def get_json_for_library(lid):

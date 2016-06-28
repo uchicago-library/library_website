@@ -803,7 +803,10 @@ class PublicBasePage(BasePage):
     display_hierarchical_listing = models.BooleanField(default=False)
 
     # Workshops and Events
-    events_feed_url = models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed') 
+    events_feed_url = models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed')
+
+    # News
+    news_feed_url = models.URLField(blank=True, help_text='Link to a WordPress Feed from the Library News Site') 
 
     unit = models.ForeignKey(
         'units.UnitPage', 
@@ -1045,6 +1048,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         location_and_hours = get_hours_and_location(self)
         unit = location_and_hours['page_unit']     
         current_site = Site.find_for_request(request)
+        url_filter = '~()*!.\''
 
         try: 
             location = str(location_and_hours['page_location'])
@@ -1083,7 +1087,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['banner_title'] = self.get_banner(current_site)[2]
         context['banner_url'] = self.get_banner(current_site)[3]
         context['page_type'] = str(self.specific.__class__.__name__)
-        context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe='~()*!.\'')
+        context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
+        context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
+        context['is_home'] = bool(self.sites_rooted_here.all())
 
         # Data structure for generating a 
         # sitemap display of child pages

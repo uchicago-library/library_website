@@ -155,6 +155,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ],
             heading='Workshops and Events'
         ),
+       MultiFieldPanel(
+            [
+                FieldPanel('news_feed_url'),
+            ],
+            heading='News'
+        ),
         MultiFieldPanel(
             [
                 FieldPanel('enable_find_spaces'),

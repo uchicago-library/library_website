@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid, get_events
+from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid, get_events, get_news
 from units.utils import get_default_unit
 
 
@@ -59,5 +59,19 @@ def json_events(request):
         return JsonResponse(
             {
                 'events': get_events(feed),
+            }
+        )
+
+
+def json_news(request):
+    """
+    View for rendering news feed data as json.
+    """
+    if request.method == 'GET':
+        feed = request.GET['feed']
+        is_home = False if request.GET['home'] == 'False' else True
+        return JsonResponse(
+            {
+                'news': get_news(feed, is_home),
             }
         )
