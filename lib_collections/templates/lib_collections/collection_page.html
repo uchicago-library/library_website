@@ -7,47 +7,45 @@
 {% block content %}
   <article>
     <div class="row">
-      <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-        <div class="col-xs-12 col-sm-3">
-          {% if self.thumbnail %}
-            {% image self.thumbnail width-200 class="img-responsive" %}
-            {% if self.thumbnail_caption %}
-              {{ self.thumbnail_caption }}
+      <div class="col-xs-12 col-sm-3">
+        {% if self.thumbnail %}
+          {% image self.thumbnail width-200 class="img-responsive" %}
+          {% if self.thumbnail_caption %}
+            {{ self.thumbnail_caption }}
+          {% endif %}
+        {% else %}
+          {% if default_image %}
+            {% image default_image width-200 %}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="col-xs-12 col-sm-9">
+        {% for block in self.full_description %}
+          {{ block }}
+        {% endfor %}
+
+        {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
+          <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }} <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
+        {% endif %}
+
+        {% if self.collection_location %}
+          <p>
+            <strong><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></strong>
+            {% if self.access_instructions %}
+              <br/>{{ self.access_instructions }}
             {% endif %}
-          {% else %}
-            {% if default_image %}
-              {% image default_image width-200 %}
-            {% endif %}
-          {% endif %}
-        </div>
-
-        <div class="col-xs-12 col-sm-9">
-          {% for block in self.full_description %}
-            {{ block }}
-          {% endfor %}
-
-          {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
-            <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }} <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
-          {% endif %}
-
-          {% if self.collection_location %}
-            <p>
-              <strong><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></strong>
-              {% if self.access_instructions %}
-                <br/>{{ self.access_instructions }}
-              {% endif %}
-            </p>
-          {% endif %}
-
-        {% if self.supplementary_access_links %}
-          <p style="font-size: 1.1em;">
-            {% for l in self.supplementary_access_links.all %}
-              <strong><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a></strong><br/>
-            {% endfor %}
           </p>
         {% endif %}
 
-        </div>
+      {% if self.supplementary_access_links %}
+        <p style="font-size: 1.1em;">
+          {% for l in self.supplementary_access_links.all %}
+            <strong><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a></strong><br/>
+          {% endfor %}
+        </p>
+      {% endif %}
+
       </div>
     </div><!--/.row-->
   </article>
