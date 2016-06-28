@@ -20,7 +20,7 @@ from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
-from base.utils import get_all_building_hours, get_hours_and_location, has_news_stories
+from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from wagtail.contrib.table_block.blocks import TableBlock
 from django.utils import translation
@@ -1091,7 +1091,6 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
         context['active_tag'] = urllib.parse.quote(self.active_tag)
-        context['has_news_stories'] = has_news_stories(self.news_feed_url, self.active_tag)
 
         # Data structure for generating a 
         # sitemap display of child pages
