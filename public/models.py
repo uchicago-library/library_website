@@ -332,6 +332,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         base = '/about/directory/?view=staff&library='
         links = {'The John Crerar Library': base + urllib.parse.quote_plus('Crerar Library'),
                  'The D\'Angelo Law Library': base + urllib.parse.quote_plus('D\'Angelo Law Library'),
+                 'The University of Chicago Library': '/about/directory/?view=staff',
                  'Eckhart Library': base + urllib.parse.quote_plus('Eckhart Library'),
                  'The Joe and Rika Mansueto Library': base + urllib.parse.quote_plus('Mansueto'),
                  'The Joseph Regenstein Library': base + urllib.parse.quote_plus('Regenstein Library'),
@@ -751,6 +752,9 @@ class StaffPublicPage(PublicBasePage):
             return StaffPage.objects.live().filter(cnetid=self.cnetid)[0].bio
         except(IndexError):
             return ''
+
+    def has_right_sidebar(self):
+        return True
 
     def get_context(self, request):
         """
