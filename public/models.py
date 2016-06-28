@@ -775,6 +775,7 @@ class StaffPublicPage(PublicBasePage):
 
         context['bio'] = self.get_bio()
         context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
+        context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
         context['cv'] = s.cv
         context['department_name'] = v.unit.name
         context['email'] = v.email
@@ -783,6 +784,7 @@ class StaffPublicPage(PublicBasePage):
         context['library'] = v.unit.get_parent_library_name()
         context['orcid'] = s.orcid
         context['phone_number'] = v.phone_number
+        context['profile_picture'] = s.profile_picture
         context['room_number'] = v.faculty_exchange.split(' ').pop()
         context['subjects'] = subjects
         context['vcardtitle'] = v.title
