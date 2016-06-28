@@ -333,6 +333,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         base = '/about/directory/?view=staff&library='
         links = {'The John Crerar Library': base + urllib.parse.quote_plus('Crerar Library'),
                  'The D\'Angelo Law Library': base + urllib.parse.quote_plus('D\'Angelo Law Library'),
+                 'The University of Chicago Library': '/about/directory/?view=staff',
                  'Eckhart Library': base + urllib.parse.quote_plus('Eckhart Library'),
                  'The Joe and Rika Mansueto Library': base + urllib.parse.quote_plus('Mansueto'),
                  'The Joseph Regenstein Library': base + urllib.parse.quote_plus('Regenstein Library'),
@@ -753,6 +754,9 @@ class StaffPublicPage(PublicBasePage):
         except(IndexError):
             return ''
 
+    def has_right_sidebar(self):
+        return True
+
     def get_context(self, request):
         """
         Override the page object's get context method.
@@ -771,6 +775,8 @@ class StaffPublicPage(PublicBasePage):
             subjects.append(subject.subject)
 
         context['bio'] = self.get_bio()
+        context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
+        context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
         context['cv'] = s.cv
         context['department_name'] = v.unit.name
         context['email'] = v.email
@@ -779,6 +785,7 @@ class StaffPublicPage(PublicBasePage):
         context['library'] = v.unit.get_parent_library_name()
         context['orcid'] = s.orcid
         context['phone_number'] = v.phone_number
+        context['profile_picture'] = s.profile_picture
         context['room_number'] = v.faculty_exchange.split(' ').pop()
         context['subjects'] = subjects
         context['vcardtitle'] = v.title

@@ -4,6 +4,7 @@ from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
@@ -213,8 +214,6 @@ class CollectionPage(PublicBasePage):
     ]
 
     def get_context(self, request):
-        # staff_contact. get cnetid. Get StaffPublicPage with that cnetid. 
-
         staff_title = '' 
         staff_vcard_title = ''
         staff_vcard_email = ''
@@ -235,7 +234,11 @@ class CollectionPage(PublicBasePage):
         except:
             pass
 
+        default_image = None
+        default_image = Image.objects.get(title="Default Placeholder Photo")
+
         context = super(CollectionPage, self).get_context(request)
+        context['default_image'] = default_image
         context['staff_title'] = staff_title
         context['staff_url'] = staff_url
         context['staff_vcard_title'] = staff_vcard_title

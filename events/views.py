@@ -57,6 +57,7 @@ def events(request):
     previous_link = '#'
     
     return render(request, 'events/events_index_page.html', {
+        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'entries': entries_out,
         'next_link': next_start.strftime('%Y-%m-%d'),
         'previous_link': previous_start.strftime('%Y-%m-%d'),

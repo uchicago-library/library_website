@@ -1,33 +1,49 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <div class="page-head">
-    <h2>{{ vcardtitle }}</h2>
+  <p><strong>{{ vcardtitle }}</strong></p>
+    
+  <div class="col-xs-12 col-sm-3">
+    {% image profile_picture width-200 class="img-responsive" %}
   </div>
-  {# staff portrait #}
-  <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
-    <img class="staff-profile img-responsive" src=""/>
+
+  <div class="col-xs-12 col-sm-9">
+    {{bio}}
+    {% if orcid %}
+        <h3>Publications</h3>
+        <p><a href="http://orcid.org/{{ orcid }}">View Works List On ORCID</a></p>
+    {% endif %}
+
+    {% if cv %}
+        <p><a role="button" class="btn btn-primary" href="{{ cv }}">View CV</a></p>
+    {% endif %}
   </div>
-  {# end staff portrait #}
-  {# right sidebar #}
-  <div class="col-xs-12 col-sm-7 col-md-3 col-md-push-6 col-lg-push-7 flex-sidebar"> 
+{% endblock %}
+
+{% block right_sidebar %}
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Contact</h4>
     <p>
       <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
       {{ phone_number }}<br/>
       {{ library }}, Rm {{ room_number }}
     </p>
+  </div>
 
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Library &amp; Department</h4>
     <p>
       <strong><a href="#">{{ library }}</a></strong><br>
       {{ department_name }}
     </p>
+  </div>
 
-    {% if subjects or libguide_url %}
+  {% if subjects or libguide_url %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h4>Subject Specialties</h4>
       <p style="line-height: 1.7em;">
         {% for s in subjects %}
@@ -39,28 +55,17 @@
           <a role="button" class="btn btn-morelink" href="{{ libguide_url|urlencode }}">View Research Guides <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
         </p>
       {% endif %}
-    {% endif %}
+    </div>
+  {% endif %}
 
-    {% if expertises %}
+  {% if expertises %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h4>Expertise</h4>
       <p style="line-height: 1.7em;">
         {% for expertise in expertises %}
-           {{ expertise }}<br/>
+          {{ expertise }}<br/>
         {% endfor %}
       </p>
-    {% endif %}
-  </div>
-  {# end right sidebar #}
-  {# main column #}
-  <div class="col-xs-12 col-md-6 col-lg-7 col-md-pull-3 col-xlg-6 col-xlg-pull-2 profile-bio">
-    {{bio}}
-    {% if orcid %}
-        <h3>Publications</h3>
-        <p><a href="http://orcid.org/{{ orcid }}">View Works List On ORCID</a></p>
-    {% endif %}
-
-    {% if cv %}
-        <p><a role="button" class="btn btn-primary" href="{{ cv }}">View CV</a></p>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 {% endblock %}
