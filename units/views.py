@@ -319,7 +319,7 @@ def units(request):
 
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
-        'content_div_css': 'container body-container col-xs-12',
+        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
         'department_label': department_label,
         'departments': get_departments(library),
