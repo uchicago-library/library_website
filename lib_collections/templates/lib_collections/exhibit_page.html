@@ -78,59 +78,68 @@
 {% endblock %}
 
 {% block right_sidebar %}
-  <h3>Exhibit Details</h3>
-  <p>
-    {% if self.exhibit_open_date or self.exhibit_close_date %}
-      <strong>
-        {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
-        {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
-        {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
-      </strong><br>
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h3>Exhibit Details</h3>
+    <p>
+      {% if self.exhibit_open_date or self.exhibit_close_date %}
+        <strong>
+          {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+          {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
+          {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
+        </strong><br>
+      {% endif %}
+  
+      {% if self.exhibit_daily_hours %}
+        {{ self.exhibit_daily_hours }}<br/>
+      {% endif %}
+  
+      {% if self.exhibit_location %}
+        <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
+      {% endif %}
+  
+      {% if self.exhibit_cost %}
+        {{ self.exhibit_cost }}<br/>
+      {% endif %}
+  
+      {% if self.space_type %}
+        Space Type: {{ self.space_type }}<br/>
+      {% endif %}
+  
+      {% if self.web_exhibit_url %} 
+        <a href="{{ self.web_exhibit_url }}">View Web Exhibit</a><br/>
     {% endif %}
+    </p>
+  </div>
 
-    {% if self.exhibit_daily_hours %}
-      {{ self.exhibit_daily_hours }}<br/>
-    {% endif %}
-
-    {% if self.exhibit_location %}
-      <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
-    {% endif %}
-
-    {% if self.exhibit_cost %}
-      {{ self.exhibit_cost }}<br/>
-    {% endif %}
-
-    {% if self.space_type %}
-      Space Type: {{ self.space_type }}<br/>
-    {% endif %}
-
-    {% if self.web_exhibit_url %} 
-      <a href="{{ self.web_exhibit_url }}">View Web Exhibit</a><br/>
+  {% if self.staff_contact %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h3>Contact</h3>
+      <p>
+        <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
+        <em>{{ self.staff_contact.vcards.first.title }}</em><br>
+        <a href="mailto:{{ self.staff_contact.vcards.first.email|urlencode }}">{{ self.staff_contact.vcards.first.email }}</a><br>
+        {{ self.staff_contact.vcards.first.phone_number }}<br>
+        {{ self.staff_contact.vcards.first.faculty_exchange }}
+      </p>
+    </div>
   {% endif %}
-      
-  </p>
 
-  <h3>Contact</h3>
-  <p>
-    <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
-    <em>{{ self.staff_contact.vcards.first.title }}</em><br>
-    <a href="mailto:{{ self.staff_contact.vcards.first.email|urlencode }}">{{ self.staff_contact.vcards.first.email }}</a><br>
-    {{ self.staff_contact.vcards.first.phone_number }}<br>
-    {{ self.staff_contact.vcards.first.faculty_exchange }}
-  </p>
-
-  <h3>Explore Related Content</h3>
-  <strong>Related Collections</strong>
-  <ul>
-    <li><a href="#">Wells, Ida B. Papers</a></li>
-  </ul>
-
-  {% if self.collection_subject_placements.all %}
-    <strong>Exhibits by Subject</strong>
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h3>Explore Related Content</h3>
+    <strong>Related Collections</strong>
     <ul>
-      {% for s in self.collection_subject_placements.all %}
-        <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+      {% for c in self.exhibit_page_related_collection_placement.all %}
+        <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
       {% endfor %}
     </ul>
-  {% endif %}
+  
+    {% if self.collection_subject_placements.all %}
+      <strong>Exhibits by Subject</strong>
+      <ul>
+        {% for s in self.collection_subject_placements.all %}
+          <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
 {% endblock %}
