@@ -7,6 +7,7 @@ from django.utils.html import escape
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
 from subjects.models import Subject
 from units.models import UnitPage
+from wagtail.wagtailimages.models import Image
 
 import urllib.parse
 
@@ -317,12 +318,15 @@ def units(request):
             alphabetical_html = alphabetical_html + '</td>'
             alphabetical_html = alphabetical_html + '</tr>'
 
+    default_image = Image.objects.get(title="Default Placeholder Photo")
+
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
         'department_label': department_label,
         'departments': get_departments(library),
+        'default_image': default_image,
         'hierarchical_units': hierarchical_html,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Law Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
         'library': library,
