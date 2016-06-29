@@ -13,6 +13,8 @@ from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField
 from datetime import date
 from staff.models import StaffPage
+from wagtail.wagtailimages.models import Image
+
 import urllib
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
@@ -778,10 +780,13 @@ class StaffPublicPage(PublicBasePage):
         for subject in s.staff_subject_placements.all():
             subjects.append(subject.subject)
 
+        default_image = Image.objects.get(title="Default Placeholder Photo")
+
         context['bio'] = self.get_bio()
         context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
         context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
         context['cv'] = cv
+        context['default_image'] = default_image
         context['department_name'] = v.unit.name
         context['email'] = v.email
         context['expertises'] = expertises
