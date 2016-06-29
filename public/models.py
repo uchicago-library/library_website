@@ -772,6 +772,10 @@ class StaffPublicPage(PublicBasePage):
         if s.cv:
             cv = s.cv.file.url
 
+        libguide_url = None
+        if s.libguide_url:
+            libguide_url = s.libguide_url
+
         expertises = []
         for expertise in s.expertise_placements.all():
             expertises.append(expertise.expertise.text)
@@ -790,7 +794,7 @@ class StaffPublicPage(PublicBasePage):
         context['department_name'] = v.unit.name
         context['email'] = v.email
         context['expertises'] = expertises
-        context['libguide_url'] = s.libguide_url
+        context['libguide_url'] = libguide_url
         context['library'] = v.unit.get_parent_library_name()
         context['orcid'] = s.orcid
         context['phone_number'] = v.phone_number
