@@ -15,7 +15,7 @@
 	            </div><!-- /btn-group-->
 	        </div><!-- / col-xs-12 col-sm-6 -->
 	        <div class="col-xs-12 col-sm-6">
-	            <form action="." method="GET">
+	            <form action="." class="searchbox" method="GET">
 	                <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
 	                <input name="query" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
 	                <input type="submit" class="searchbox-submit">
