@@ -60,7 +60,7 @@
 
             <!-- Top right nav --> <!-- Hidden XS + SM -->
             <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-              <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}"></i> Ask a Librarian</a></li>
+              <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}"></i> Ask a {{self.friendly_name}} Librarian</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-ga-category="hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-clock-o"></i> 
@@ -336,7 +336,21 @@
                     {{index_pages_html}}
                 {% endautoescape %}
 
-               {% if has_featured_lib_expert %}
+                {% if self.has_richtext_widget %}
+                    <div class="col-xs-12 col-sm-6 home-modwrapper">
+                        <div class="home-module">
+                            <h2>{{self.rich_text_heading}}</h2>
+                            {% if self.rt_link and self.rich_text_link_text %}
+                                <a class="viewall" href="{{self.rt_link}}">{{self.rich_text_link_text}}</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12">
+                            {{self.rich_text|richtext}}
+                        </div>
+                    </div> 
+                {% endif %}
+
+                {% if has_featured_lib_expert %}
                    <div class="row">
                         {% if has_featured_lib_expert %}
                             {% image featured_lib_expert_image fill-200x200 as profile_pic %}

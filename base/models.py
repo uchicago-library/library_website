@@ -809,6 +809,20 @@ class PublicBasePage(BasePage):
     news_feed_url = models.URLField(blank=True, help_text='Link to a WordPress Feed from the Library News Site') 
     active_tag =  models.CharField(max_length=30, blank=True, help_text='A WordPress tag name used for display purposes, e.g. "Library Kiosk"')
 
+    # Rich text 
+    rich_text_heading =  models.CharField(max_length=25, blank=True)
+    rich_text = RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')
+    rich_text_link = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        help_text='Optional link that displays next to the heading'
+    )
+    rich_text_external_link = models.URLField(blank=True, help_text='Optional external link that displays next to the heading')
+    rich_text_link_text =  models.CharField(max_length=25, blank=True, help_text='Display text for the rich text link')
+
     unit = models.ForeignKey(
         'units.UnitPage', 
         null=True, 
@@ -1004,6 +1018,25 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             if field:
                 return True
         return False
+
+    
+    @property
+    def has_richtext_widget(self):
+        """
+        Detect if a rich text widget should display.
+
+        Returns:
+            Boolean.
+        """
+        return self.has_field([self.rich_text_heading, self.rich_text])
+
+
+    @property
+    def rt_link(self):
+        if self.rich_text_external_link:
+            return self.rich_text_external_link
+        elif self.rich_text_link:
+            return self.rich_text_link.url
 
 
     def base_has_right_sidebar(self):

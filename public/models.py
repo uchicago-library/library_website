@@ -177,6 +177,16 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ], 
             heading='Featured Collection'
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel('rich_text_heading'),
+                FieldPanel('rich_text'),
+                PageChooserPanel('rich_text_link'),
+                FieldPanel('rich_text_external_link'),
+                FieldPanel('rich_text_link_text'),
+            ], 
+            heading='Rich Text'
+        ),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
     ] + SocialMediaFields.panels
