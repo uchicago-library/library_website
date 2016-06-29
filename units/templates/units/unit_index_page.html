@@ -34,99 +34,100 @@
                         <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
                     </div>
                 {% endif %}
-                </div>
             {% endif %}
-            {% if view == 'staff' %} 
+            {% if view == 'staff' %}
                 {% include "units/browse_by_pulldowns.html" %}
-                {% if staff_pages %}
-                    <table class="table table-striped quicktable">
-                        <tbody>
-                            <tr>
-                                <td>Quick Numbers</td>
-                                <td><strong>Main Telephone</strong> 773-702-8740</td>
-                                <td><strong>Privileges </strong> 773-702-8782</td>
-                                <td><strong>General Reference</strong>  773-702-4685</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped">
-                        <tbody>
-                            <tr class="etable-header">
-                                <td colspan="4">All Staff</td>
-                            </tr>
-                            {% for staff_page in staff_pages %}
-                                <tr>
-                                    <td>
-                                        {% image staff_page.profile_picture fill-100x100 %}
-                                    </td>
-                                    <td>
-                                        <strong>{{ staff_page.title }}</strong>
-                                        <br/>
-                                        <p>
-                                          {{ staff_page.vcards.first.title }}<br/>
-                                          {{ staff_page.vcards.first.unit.fullName }}
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <strong>Contact</strong>
-                                        <br/>
-                                        {% staff_email_addresses staff_page %}
-                                        {% staff_faculty_exchanges_phone_numbers staff_page %}
-                                    </td>
-                                    <td>
-                                        {% if staff_page.staff_subject_placements.all %}
-                                            <strong>Subject Specialties</strong><br/>
-                                            {% staff_subjects staff_page %}
-                                        {% endif %}
-                                        {% if staff_page.libguide_url %}
-                                            <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    {% if query %}
-                        <p>There are no results for your search.</p>
-                    {% endif %}
-                {% endif %}
-    
-                {% if staff_pages.has_previous %}
-                    <a href=".?view=staff&amp;page={{ staff_pages.previous_page_number }}">Previous</a>
-                {% endif %}
-                {% if staff_pages.has_previous and staff_pages.has_next %} 
-                    | 
-                {% endif %}
-                {% if staff_pages.has_next %}
-                    <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
-                {% endif %}
-            {% else %}
-                {% if sort == 'alphabetical' %}
-                    <table class="table table-striped coll-list">
-                        <tbody>
-                            <tr class="etable-header">
-                                <th colspan="3">All Departments, Divisions, &amp; Units</th>
-                            </tr>
-                        </tbody>
-                        {{ alphabetical_units|safe }}
-                    </table>
-                {% else %}
-                    <table class="table table-striped coll-list">
-                        <tbody>
-                            <tr class="etable-header">
-                                <th>All Departments, Divisions, &amp; Units</th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {{ hierarchical_units|safe }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                {% endif %}
             {% endif %}
         </div><!-- /.row -->
+        {% if view == 'staff' %} 
+            {% if staff_pages %}
+                <table class="table table-striped quicktable">
+                    <tbody>
+                        <tr>
+                            <td>Quick Numbers</td>
+                            <td><strong>Main Telephone</strong> 773-702-8740</td>
+                            <td><strong>Privileges </strong> 773-702-8782</td>
+                            <td><strong>General Reference</strong>  773-702-4685</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr class="etable-header">
+                            <td colspan="4">All Staff</td>
+                        </tr>
+                        {% for staff_page in staff_pages %}
+                            <tr>
+                                <td>
+                                    {% image staff_page.profile_picture fill-100x100 %}
+                                </td>
+                                <td>
+                                    <strong>{{ staff_page.title }}</strong>
+                                    <br/>
+                                    <p>
+                                      {{ staff_page.vcards.first.title }}<br/>
+                                      {{ staff_page.vcards.first.unit.fullName }}
+                                    </p>
+                                </td>
+                                <td>
+                                    <strong>Contact</strong>
+                                    <br/>
+                                    {% staff_email_addresses staff_page %}
+                                    {% staff_faculty_exchanges_phone_numbers staff_page %}
+                                </td>
+                                <td>
+                                    {% if staff_page.staff_subject_placements.all %}
+                                        <strong>Subject Specialties</strong><br/>
+                                        {% staff_subjects staff_page %}
+                                    {% endif %}
+                                    {% if staff_page.libguide_url %}
+                                        <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                {% if query %}
+                    <p>There are no results for your search.</p>
+                {% endif %}
+            {% endif %}
+
+            {% if staff_pages.has_previous %}
+                <a href=".?view=staff&amp;page={{ staff_pages.previous_page_number }}">Previous</a>
+            {% endif %}
+            {% if staff_pages.has_previous and staff_pages.has_next %} 
+                | 
+            {% endif %}
+            {% if staff_pages.has_next %}
+                <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
+            {% endif %}
+        {% else %}
+            {% if sort == 'alphabetical' %}
+                <table class="table table-striped coll-list">
+                    <tbody>
+                        <tr class="etable-header">
+                            <th colspan="3">All Departments, Divisions, &amp; Units</th>
+                        </tr>
+                    </tbody>
+                    {{ alphabetical_units|safe }}
+                </table>
+            {% else %}
+                <table class="table table-striped coll-list">
+                    <tbody>
+                        <tr class="etable-header">
+                            <th>All Departments, Divisions, &amp; Units</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ hierarchical_units|safe }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endif %}
 	</article>
 {% endblock %}
 
