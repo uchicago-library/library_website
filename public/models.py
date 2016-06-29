@@ -766,6 +766,10 @@ class StaffPublicPage(PublicBasePage):
         s = StaffPage.objects.get(cnetid=self.cnetid)
         v = s.vcards.first()
 
+        cv = None
+        if s.cv:
+            cv = s.cv.file.url
+
         expertises = []
         for expertise in s.expertise_placements.all():
             expertises.append(expertise.expertise.text)
@@ -777,7 +781,7 @@ class StaffPublicPage(PublicBasePage):
         context['bio'] = self.get_bio()
         context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
         context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
-        context['cv'] = s.cv
+        context['cv'] = cv
         context['department_name'] = v.unit.name
         context['email'] = v.email
         context['expertises'] = expertises
