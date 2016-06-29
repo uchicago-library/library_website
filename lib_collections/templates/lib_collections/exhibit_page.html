@@ -6,85 +6,131 @@
 
 {% block content %}
   <article>
-    {% if self.thumbnail %}
-      {% image self.thumbnail width-200 %}
-      {% if self.thumbnail_caption %}
-        <p>{{ self.thumbnail_caption }}</p>
-      {% endif %}
-    {% endif %}
+    <div class="row">
+      <div class="col-xs-12">
+        <p>{{ self.acknowledgements }}</p>
+      </div>
+    </div>
 
-    {% for block in self.full_description %}
-      {{ block }}
-    {% endfor %}
+    <div class="row">
+      <div class="col-xs-12 col-sm-3">
+        {% if self.thumbnail %}
+          <figure class="imgcaption">
+            {% image self.thumbnail width-200 class="img-responsive" %}
+            {% if self.thumbnail_caption %}
+              <figcaption>
+                <p>{{ self.thumbnail_caption }}</p>
+              </figcaption>
+            {% endif %}
+          </figure>
+        {% else %}
+          <figure>
+            {% image default_image width-200 class="img-responsive" %}
+          </figure>
+        {% endif %}
+      </div>
 
-    {% if self.exhibit_open_date %}
-      <h2>Opening Date</h2>
-      {{ self.exhibit_open_date }}
-    {% endif %}
+      <div class="col-xs-12 col-sm-9">
+        {% if self.acknowledgments %}
+          <p>{{ self.acknowledgments }}</p>
+        {% endif %}
 
-    {% if self.exhibit_close_date %}
-      <h2>Closing Date</h2>
-      {{ self.exhibit_close_date }}
-    {% endif %}
+        {% for block in self.full_description %}
+          {{ block }}
+        {% endfor %}
+       
+        <h2>Exhibit Publications &amp; Documents</h2>
 
-    {% if self.exhibit_location %}
-      <h2>Location</h2>
-      <p>{{ self.exhibit_location.title}}</p>
+        {% if self.publication_description %}
+          <p>
+            {% if self.publication_url %}
+              <a href="{{ self.publication_url }}">Publication</a><br>
+            {% endif %}
+            <em>{{ self.publication_description }}</em>{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
+            {% if self.ordering_information %}
+              <a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a><br/>
+            {% endif %}
+          </p>
+        {% endif %}
+
+        {% if self.exhibit_text_document %}
+          <p><a href="{{ self.exhibit_text_document }}">Exhibit Text</a></p>
+        {% endif %}
+        {% if self.exhibit_text_link_external %}
+          <p><a href="{{ self.exhibit_text_link_external }}">Exhibit Text</a></p>
+        {% endif %}
+        {% if self.exhibit_text_link_page %}
+          <p><a href="{{ self.exhibit_text_link_page }}">Exhibit Text</a></p>
+        {% endif %}
+
+        {% if self.exhibit_checklist_document %}
+          <p><a href="{{ self.exhibit_checklist_document }}">Exhibit Checklist</a></p>
+        {% endif %}
+        {% if self.exhibit_checklist_link_external %}
+          <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
+        {% endif %}
+        {% if self.exhibit_checklist_link_page %}
+          <p><a href="{{ self.exhibit_checklist_link_page }}">Exhibit Checklist</a></p>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+{% endblock %}
+
+{% block right_sidebar %}
+  <h3>Exhibit Details</h3>
+  <p>
+    {% if self.exhibit_open_date or self.exhibit_close_date %}
+      <strong>
+        {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+        {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
+        {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
+      </strong><br>
     {% endif %}
 
     {% if self.exhibit_daily_hours %}
-      <h2>Daily Hours</h2>
-      <p>{{ self.exhibit_daily_hours }}</p>
+      {{ self.exhibit_daily_hours }}<br/>
+    {% endif %}
+
+    {% if self.exhibit_location %}
+      <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
     {% endif %}
 
     {% if self.exhibit_cost %}
-      <h2>Exhibit Cost</h2>
-      <p>{{ self.exhibit_cost }}</p>
+      {{ self.exhibit_cost }}<br/>
     {% endif %}
 
     {% if self.space_type %}
-      <h2>Space Type</h2>
-      <p>{{ self.space_type }}</p>
+      Space Type: {{ self.space_type }}<br/>
     {% endif %}
 
-    {% if self.web_exhibit_url %}
-      <h2>Web Exhibit</h2>
-      <p><a href="{{ self.web_exhibit_url }}">Web Exhibit</a></p>
-    {% endif %}
+    {% if self.web_exhibit_url %} 
+      <a href="{{ self.web_exhibit_url }}">View Web Exhibit</a><br/>
+  {% endif %}
+      
+  </p>
 
-    {% if self.publication_description %}
-      <h2>Publication Description</h2>
-      <p>{{ self.publication_description }}</p>
-    {% endif %}
+  <h3>Contact</h3>
+  <p>
+    <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
+    <em>{{ self.staff_contact.vcards.first.title }}</em><br>
+    <a href="mailto:{{ self.staff_contact.vcards.first.email|urlencode }}">{{ self.staff_contact.vcards.first.email }}</a><br>
+    {{ self.staff_contact.vcards.first.phone_number }}<br>
+    {{ self.staff_contact.vcards.first.faculty_exchange }}
+  </p>
 
-    {% if self.publication_price %}
-      <h2>Publication Price</h2>
-      <p>{{ self.publication_price }}</p>
-    {% endif %}
+  <h3>Explore Related Content</h3>
+  <strong>Related Collections</strong>
+  <ul>
+    <li><a href="#">Wells, Ida B. Papers</a></li>
+  </ul>
 
-    {% if self.publication_url %}
-      <h2>Publication URL</h2>
-      <p><a href="{{ self.publication_url }}">Link to Publication</a></p>
-    {% endif %}
-
-    {% if self.ordering_information %}
-      <h2>Ordering Information</h2>
-      <p><a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a></p>
-    {% endif %}
-
-    {% if self.exhibit_text %}
-      <h2>Exhibit Text</h2>
-      <p><a href="{{ self.exhibit_text }}">Exhibit Text</a></p>
-    {% endif %}
-
-    {% if self.exhibit_checklist %}
-      <h2>Exhibit Checklist</h2>
-      <p><a href="{{ self.exhibit_checklist }}">Exhibit Checklist</a></p>
-    {% endif %}
-
-    {% if self.staff_contact %}
-      <h2>More Information</h2>
-      <p>For more information, contact <a href="mailto:{{ self.staff_contact.vcards.first.email }}">{{ self.staff_contact.title }}</a>.</p>
-    {% endif %}
-  </article>
+  {% if self.collection_subject_placements.all %}
+    <strong>Exhibits by Subject</strong>
+    <ul>
+      {% for s in self.collection_subject_placements.all %}
+        <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endblock %}

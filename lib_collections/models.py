@@ -11,7 +11,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage
-from public.models import DonorPage, LocationPage
+from public.models import DonorPage, LocationPage, StaffPublicPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 
@@ -621,4 +621,20 @@ class ExhibitPage(PublicBasePage):
         index.SearchField('staff_contact'),
     ]
 
+    def has_right_sidebar(self):
+        return True
 
+    def get_context(self, request):
+        staff_url = 'hhh'
+        try:
+            staff_url = StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url
+        except:
+            pass
+
+        default_image = None
+        default_image = Image.objects.get(title="Default Placeholder Photo")
+
+        context = super(ExhibitPage, self).get_context(request)
+        context['default_image'] = default_image
+        context['staff_url'] = staff_url
+        return context
