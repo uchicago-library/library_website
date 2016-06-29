@@ -1,5 +1,5 @@
 from django import template
-from public.models import LocationPage
+from public.models import LocationPage, StaffPublicPage
 from staff.models import StaffPage
 
 register = template.Library()
@@ -60,5 +60,18 @@ def staff_subjects(staff_page):
     
     return {
         'subjects': sorted(subjects)
+    }
+
+@register.inclusion_tag('units/staff_public_page_link.html')
+def staff_public_page_link(staff_page):
+    
+    try:
+        href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
+    except:
+        href = ''
+       
+    return {
+        'href': href,
+        'title': staff_page.title
     }
     
