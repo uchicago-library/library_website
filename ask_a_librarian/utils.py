@@ -1,7 +1,7 @@
 import requests
 from defusedxml.ElementTree import fromstring
 from wagtail.wagtailcore.models import Site
-from library_website.settings.base import DEFAULT_UNIT
+from library_website.settings import DEFAULT_UNIT
 
 def get_chat_status(name):
     """
@@ -73,5 +73,5 @@ def get_unit_chat_link(unit, request):
 
     try:
         return AskPage.objects.live().get(unit=unit).url
-    except(IndexError):
+    except:
         return AskPage.objects.live().get(unit=DEFAULT_UNIT).url
