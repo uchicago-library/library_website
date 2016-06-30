@@ -42,38 +42,40 @@
           <a role="button" class="btn btn-morecoll" href="{{ self.web_exhibit_url }}">View Web Exhibit <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
         {% endif %}
        
-        <h2>Exhibit Publications &amp; Documents</h2>
-
-        {% if self.publication_description %}
-          <p>
-            {% if self.publication_url %}
-              <a href="{{ self.publication_url }}">Publication</a><br>
-            {% endif %}
-            <em>{{ self.publication_description }}</em>{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
-            {% if self.ordering_information %}
-              <a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a><br/>
-            {% endif %}
-          </p>
-        {% endif %}
-
-        {% if self.exhibit_text_document %}
-          <p><a href="{{ self.exhibit_text_document }}">Exhibit Text</a></p>
-        {% endif %}
-        {% if self.exhibit_text_link_external %}
-          <p><a href="{{ self.exhibit_text_link_external }}">Exhibit Text</a></p>
-        {% endif %}
-        {% if self.exhibit_text_link_page %}
-          <p><a href="{{ self.exhibit_text_link_page }}">Exhibit Text</a></p>
-        {% endif %}
-
-        {% if self.exhibit_checklist_document %}
-          <p><a href="{{ self.exhibit_checklist_document }}">Exhibit Checklist</a></p>
-        {% endif %}
-        {% if self.exhibit_checklist_link_external %}
-          <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
-        {% endif %}
-        {% if self.exhibit_checklist_link_page %}
-          <p><a href="{{ self.exhibit_checklist_link_page }}">Exhibit Checklist</a></p>
+        {% if self.publication_description or self.exhibit_text_document or self.exhibit_text_link_external or self.exhibit_text_link_page or self.exhibit_checklist_document or self.exhibit_checklist_link_external or self.exhibit_checklist_link_page %}
+          <h2>Exhibit Publications &amp; Documents</h2>
+  
+          {% if self.publication_description %}
+            <p>
+              {% if self.publication_url %}
+                <a href="{{ self.publication_url }}">Publication</a><br>
+              {% endif %}
+              <em>{{ self.publication_description }}</em>{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
+              {% if self.ordering_information %}
+                <a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a><br/>
+              {% endif %}
+            </p>
+          {% endif %}
+  
+          {% if self.exhibit_text_document %}
+            <p><a href="{{ self.exhibit_text_document.file.url }}">Exhibit Text</a></p>
+          {% endif %}
+          {% if self.exhibit_text_link_external %}
+            <p><a href="{{ self.exhibit_text_link_external }}">Exhibit Text</a></p>
+          {% endif %}
+          {% if self.exhibit_text_link_page %}
+            <p><a href="{{ self.exhibit_text_link_page.url }}">Exhibit Text</a></p>
+          {% endif %}
+  
+          {% if self.exhibit_checklist_document %}
+            <p><a href="{{ self.exhibit_checklist_document.file.url }}">Exhibit Checklist</a></p>
+          {% endif %}
+          {% if self.exhibit_checklist_link_external %}
+            <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
+          {% endif %}
+          {% if self.exhibit_checklist_link_page %}
+            <p><a href="{{ self.exhibit_checklist_link_page.url }}">Exhibit Checklist</a></p>
+          {% endif %}
         {% endif %}
       </div>
     </div>
