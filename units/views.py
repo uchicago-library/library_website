@@ -322,6 +322,7 @@ def units(request):
 
     return render(request, 'units/unit_index_page.html', {
         'alphabetical_units': alphabetical_html,
+        'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
         'department_label': department_label,
