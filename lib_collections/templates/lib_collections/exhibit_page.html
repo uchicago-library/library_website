@@ -125,24 +125,28 @@
     </div>
   {% endif %}
 
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h3>Explore Related Content</h3>
-    <strong>Related Collections</strong>
-    <ul>
-      {% for c in self.exhibit_page_related_collection_placement.all %}
-        <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
-      {% endfor %}
-    </ul>
-  
-    {% if self.exhibit_subject_placements.all %}
-      <strong>Exhibits by Subject</strong>
-      <ul>
-        {% for s in self.exhibit_subject_placements.all %}
-          <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  </div>
+  {% if self.exhibit_page_related_collection_placement.all or self.exhibit_subject_placements.all %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h3>Explore Related Content</h3>
+      {% if self.exhibit_page_related_collection_placement.all %}
+        <strong>Related Collections</strong>
+        <ul>
+          {% for c in self.exhibit_page_related_collection_placement.all %}
+            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    
+      {% if self.exhibit_subject_placements.all %}
+        <strong>Exhibits by Subject</strong>
+        <ul>
+          {% for s in self.exhibit_subject_placements.all %}
+            <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
