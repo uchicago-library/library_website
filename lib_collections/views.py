@@ -42,6 +42,9 @@ def collections(request):
             subject_ids = Subject.objects.get(name=subject).get_descendants()
             collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
 
+        # sorting
+        collections = collections.order_by('title')
+
         if search:
             collections = collections.search(search)
 
@@ -79,7 +82,7 @@ def collections(request):
 'Statistics & Datasets', 'Video']
 
     # locations
-    locations = sorted(LocationPage.objects.live().values_list('title', flat=True))
+    locations = sorted(list(set(ExhibitPage.objects.exclude(exhibit_location=None).values_list('exhibit_location__title', flat=True))))
 
     subjects = []
     # this needs to fold the see alsos in. 
