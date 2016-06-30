@@ -2,7 +2,7 @@
   <span class="headline">Browse by</span>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if library %}{{ library }}{% else %}Library{% endif %} <span class="caret"></span>
+      Library{% if library %}: {{ library }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       {% if library %}
@@ -16,7 +16,7 @@
 
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if subject %}{{ subject }}{% else %}Subject Specialty{% endif %} <span class="caret"></span>
+      Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       <li><a href=".?view=staff{% if library %}&library={{ library|urlencode }}{% endif %}{% if query %}&query={{ query|urlencode }}{% endif %}&subject=All+Subject+Specialists">View All Subject Specialists</a></li>
