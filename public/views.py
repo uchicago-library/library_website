@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from public.models import LocationPage, LocationPageFloorPlacement
+from wagtail.wagtailimages.models import Image
 
 def spaces(request):
     building = request.GET.get('building', None)
@@ -73,10 +74,13 @@ def spaces(request):
         # get a unique, sorted list of the available floors here. 
         floors = sorted(list(set(LocationPageFloorPlacement.objects.filter(parent__in=id_list).exclude(floor=None).values_list('floor__title', flat=True))))
 
+    default_image = Image.objects.get(title="Default Placeholder Photo")
+
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
         'buildings': buildings,
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+        'default_image': default_image,
         'feature': feature,
         'feature_label': feature_label,
         'features': features,

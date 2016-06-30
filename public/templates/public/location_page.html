@@ -9,7 +9,11 @@
         <div class="row">
             <div class="col-xs-12 col-md-9 centermain">
                 <div class="col-xs-12 col-sm-4">
-                    {% image self.location_photo width-200 class="img-responsive" %}
+                    {% if self.location_photo %}
+                        {% image self.location_photo width-200 class="img-responsive" %}
+                    {% else %}
+                        {% image default_image width-200 class="img-responsive" %}
+                    {% endif %}
                     {% if self.address_1 %}
                         <p>
                             <strong>{{ self.address_1 }}</strong><br/>
