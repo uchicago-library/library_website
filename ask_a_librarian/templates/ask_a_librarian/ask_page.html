@@ -16,10 +16,19 @@
         <h4>Other Ways to Ask</h4>
         <ul>
           {% if self.contact_link %}
-          <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
+            <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
           {% endif %}
           {% if self.phone_number %}
-          <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
+            <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
+          {% endif %}
+          {% if self.secondary_phone_number %}
+            <li><i class="fa fa-phone-square fa-2x"></i> {{self.secondary_phone_number}}</li>
+          {% endif %}
+          {% if self.secondary_phone_number %}
+            <li><a href="{{self.schedule_appointment_page.url}}"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
+          {% endif %}
+          {% if self.visit_page %}
+            <li><a href="{{self.visit_page.url}}"><i class="fa fa-comments-o fa-2x"></i> Visit</a></li>
           {% endif %}
         </ul>
         {% if self.reference_resources %}

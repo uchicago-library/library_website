@@ -5,6 +5,8 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 from .utils import get_chat_status, get_chat_status_css
+from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
+from django.core.validators import RegexValidator
 
 class AskPage(PublicBasePage, ContactFields):
     """
@@ -14,6 +16,25 @@ class AskPage(PublicBasePage, ContactFields):
     ask_widget_name = models.CharField(max_length=100, blank=True)
     reference_resources = RichTextField(blank=True)
     body = StreamField(DefaultBodyFields())
+    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
+    secondary_phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
+    schedule_appointment_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        help_text='Link to a contact form'
+    )
+    visit_page = models.ForeignKey(
+            'wagtailcore.Page',
+            null=True,
+            blank=True,
+            related_name='+',
+            on_delete=models.SET_NULL,
+            help_text='Link to a location or hours page'
+        )
+
 
     subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
 
@@ -27,8 +48,16 @@ class AskPage(PublicBasePage, ContactFields):
             ],
             heading='Contact Form'
         ),
-        FieldPanel('email'),
-        FieldPanel('phone_number'), 
+        MultiFieldPanel(
+            [
+                FieldPanel('email'),
+                FieldPanel('phone_number'),
+                FieldPanel('secondary_phone_number'),
+                PageChooserPanel('visit_page'),
+                PageChooserPanel('schedule_appointment_page'), 
+            ],
+            heading='General Contact'
+        ),
         StreamFieldPanel('body'),
     ] + PublicBasePage.content_panels
 
@@ -83,10 +112,13 @@ class AskPage(PublicBasePage, ContactFields):
         Returns:
             boolean
         """
-        fields = [self.contact_link, self.phone_number]
-        for field in fields:
-            if field:
-                return True
+        fields = [self.contact_link, self.phone_number, self.secondary_phone_number, self.schedule_appointment_page, self.visit_page]
+        if self.base_has_right_sidebar():
+            return True
+        else:
+            for field in fields:
+                if field:
+                    return True
         return False
 
     def get_context(self, request):
