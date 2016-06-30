@@ -8,7 +8,7 @@
 
 <div class="col-xs-12 col-sm-6">
   <form class="searchbox">
-    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search|urlencode }}"{% endif %}/>
+    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search collections"{% if search %} value="{{ search }}"{% endif %}/>
     <input name="view" type="hidden" value="collections"/>
     <input type="submit" class="searchbox-submit"/>
     <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
