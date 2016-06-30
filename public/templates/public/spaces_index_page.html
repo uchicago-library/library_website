@@ -85,55 +85,51 @@
                 </div>          
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <table class="table table-striped spacelist">
-                    <tbody>
-                    <tr class="etable-header">
-                        <th colspan="4">
-                            {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
-                            {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
-                            {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
-                        </th>
-                    </tr>
-                    {% for space in spaces %}
-                      <tr>
-                        <td><!-- photos coming soon --></td>
-                        <td>
-                            <a href="{{ space.url }}">{{ space.title }}</a><br/>
-                            {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
-                            <!-- floor coming soon -->
-                            {% if space.reservation_url %}<form action="{{ space.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
-                        </td>
-                        <td>
-                          <p class="features-list">
-                            {% if space.is_quiet_zone %}<i class="fa fa-bell-slash-o"> </i>Quiet Zone<br/>{% endif %}
-                            {% if space.is_collaboration_zone %}<i class="material-icons">people</i>Collaboration Zone<br/>{% endif %}
-                            {% if space.is_phone_zone %}<i class="material-icons">phone_android</i>Cell Phone Zone<br/>{% endif %}
-                            {% if space.is_meal_zone %}<i class="material-icons">local_dining</i>Meal Zone<br/>{% endif %}
-                            {% if space.is_open_space %}<i class="material-icons">all_inclusive</i>Open Space<br/>{% endif %}
-                            {% if space.is_snacks_allowed %}<i class="material-icons">local_cafe</i>Snacks Allowed<br/>{% endif %}
-                            {% if space.is_24_hours %}<i class="material-icons">access_alarm</i>All Night Study<br/>{% endif %}
-                            {% if space.has_printing %}<i class="fa fa-print"> </i>Copy / Print / Scan<br/>{% endif %}
-                            {% if space.has_public_computer %}<i class="fa fa-desktop"> </i>Public Computer(s)<br/>{% endif %}
-                            {% if space.has_dual_monitors %}<i class="material-icons">add_to_queue</i>Dual Monitor stations<br/>{% endif %}
-                            {% if space.has_book_scanner %}<i class="material-icons">import_contacts</i>Overhead Book Scanner<br/>{% endif %}
-                            {% if space.has_single_tables %}<i class="material-icons">widgets</i>Individual Tables<br/>{% endif %}
-                            {% if space.has_large_tables %}<i class="material-icons">wb_iridescent</i>Large Tables<br/>{% endif %}
-                            {% if space.has_carrels %}<i class="material-icons">border_inner</i>Carrels<br/>{% endif %}
-                            {% if space.has_standing_desk %}Standing Desks<br/>{% endif %}
-                            {% if space.has_soft_seating %}<i class="material-icons">weekend</i>Comfy Seating<br/>{% endif %}
-                            {% if space.is_reservable %}<i class="fa fa-calendar-plus-o"> </i>Reservable<br/>{% endif %}
-                            {% if space.has_board %}<i class="material-icons">gesture</i>White Board<br/>{% endif %}
-                        </td>
-                        <td>
-                            {{ space.short_description|safe }}
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-        </div>
+        <table class="table table-striped spacelist">
+            <tbody>
+            <tr class="etable-header">
+                <th colspan="4">
+                    {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
+                    {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
+                    {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
+                </th>
+            </tr>
+            {% for space in spaces %}
+              <tr>
+                <td><!-- photos coming soon --></td>
+                <td>
+                    <a href="{{ space.url }}">{{ space.title }}</a><br/>
+                    {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
+                    <!-- floor coming soon -->
+                    {% if space.reservation_url %}<form action="{{ space.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
+                </td>
+                <td>
+                  <p class="features-list">
+                    {% if space.is_quiet_zone %}<i class="fa fa-bell-slash-o"> </i>Quiet Zone<br/>{% endif %}
+                    {% if space.is_collaboration_zone %}<i class="material-icons">people</i>Collaboration Zone<br/>{% endif %}
+                    {% if space.is_phone_zone %}<i class="material-icons">phone_android</i>Cell Phone Zone<br/>{% endif %}
+                    {% if space.is_meal_zone %}<i class="material-icons">local_dining</i>Meal Zone<br/>{% endif %}
+                    {% if space.is_open_space %}<i class="material-icons">all_inclusive</i>Open Space<br/>{% endif %}
+                    {% if space.is_snacks_allowed %}<i class="material-icons">local_cafe</i>Snacks Allowed<br/>{% endif %}
+                    {% if space.is_24_hours %}<i class="material-icons">access_alarm</i>All Night Study<br/>{% endif %}
+                    {% if space.has_printing %}<i class="fa fa-print"> </i>Copy / Print / Scan<br/>{% endif %}
+                    {% if space.has_public_computer %}<i class="fa fa-desktop"> </i>Public Computer(s)<br/>{% endif %}
+                    {% if space.has_dual_monitors %}<i class="material-icons">add_to_queue</i>Dual Monitor stations<br/>{% endif %}
+                    {% if space.has_book_scanner %}<i class="material-icons">import_contacts</i>Overhead Book Scanner<br/>{% endif %}
+                    {% if space.has_single_tables %}<i class="material-icons">widgets</i>Individual Tables<br/>{% endif %}
+                    {% if space.has_large_tables %}<i class="material-icons">wb_iridescent</i>Large Tables<br/>{% endif %}
+                    {% if space.has_carrels %}<i class="material-icons">border_inner</i>Carrels<br/>{% endif %}
+                    {% if space.has_standing_desk %}Standing Desks<br/>{% endif %}
+                    {% if space.has_soft_seating %}<i class="material-icons">weekend</i>Comfy Seating<br/>{% endif %}
+                    {% if space.is_reservable %}<i class="fa fa-calendar-plus-o"> </i>Reservable<br/>{% endif %}
+                    {% if space.has_board %}<i class="material-icons">gesture</i>White Board<br/>{% endif %}
+                </td>
+                <td>
+                    {{ space.short_description|safe }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
     </article>
 {% endblock %}
