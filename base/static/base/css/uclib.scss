@@ -12,7 +12,9 @@ Ask A Librarian
 Forms
 Buttons
 Tables
-Toggle Search (For Lists / Tables)
+Mini Search (For Lists / Tables)
+Light Box Styling
+Index List Page
 Hours (Mods to LibCal Feed)
 Agenda (Conferences)
 Event Calendar List
@@ -56,28 +58,13 @@ Page Specific Alterations
 }
 
 .centermain {
-  padding: 0 30px 0 0;
+  padding: 0;
+  @include respond-to(small) {
+    padding: 0 30px 0 0;
+  }
   @include respond-to(large) {
     max-width: 1200px;
   }
-}
-
-.material-icons {
-  font-size: 1.2em;
-  line-height: 1.2em;
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.
-  text-rendering: optimizeLegibility; // Support for Safari and Chrome.
-  -moz-osx-font-smoothing: grayscale; // Support for Firefox.
-  font-feature-settings: 'liga'; // Support for IE.
 }
 
 .distinct-rightside {
@@ -117,6 +104,10 @@ Page Specific Alterations
   width:1px; 
   height:1px; 
   overflow:hidden;
+}
+
+.h1-banner .breadcrumbs, #p-3378 .breadcrumbs { // Hide breadcrumbs on homepages with banners
+   visibility: hidden;
 }
 
 
@@ -325,6 +316,7 @@ a.img-src {
 
 .home-modwrapper {
   padding-top: 20px;
+  margin: 10px 0;
   & h2 {
     display: inline;
     font-size: 1.2em;
@@ -354,6 +346,9 @@ a.img-src {
     &.viewall:before {
       content: "\0020|\0020";
       margin: 0 0.5em;
+    }
+    &:hover {
+      text-decoration: none;
     }
   }
 }
@@ -539,7 +534,7 @@ figure.embed {
       position: absolute !important;
       bottom: 30px;
     }
-    &.exhibit {
+    &.exhibits {
       background: rgb(37,25,15);
     }
     &.spaces {
@@ -560,13 +555,13 @@ figure.embed {
     &.events {
       background: rgb(114,86,99);
     }
-    &.hours {
+    &.hours-access {
       background: rgb(128,0,0);
     }
     &.spotlight {
       background: rgb(198,130,32);
     }
-    &.director {
+    &.from-the-director {
       background: rgb(143,57,49);
     }
     .newsblock & {
@@ -665,6 +660,15 @@ form#knowledgetracker { // Desk Tracker
   }
 }
 
+.extract { // copyright info box
+  background-color: #eeefe5;
+  margin: 20px 50px;
+  padding: 5px 30px;
+  border-left: 3px solid #ccc;
+  border-right: 3px solid #ccc;
+  box-shadow: 5px 5px 5px #888888;
+}
+
 
 /*
  * Buttons
@@ -735,15 +739,12 @@ form#knowledgetracker { // Desk Tracker
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .btn {
+  a {
     color: #333;
-    background-color: #fff;
+    font-size: 0.8em;
     padding: 0.5em 1em;
-    // Border color specific to Bootstrap style in order to overide
-    border-top-color: transparent;
-    border-right-color: $maroon;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
+    line-height: 3em;
+    border-right: 1px solid #800000;
     &:last-child {
       border-right: none;
     }
@@ -882,6 +883,26 @@ table.etable>tbody>tr {
   }
 }
 
+//East Asia table
+
+#p-3765 .table { 
+  @include respond-to(small) {
+     width: 25em;
+  }
+  &>tbody>tr>td {
+    @include respond-to(small) {
+      width: 50%;
+    }
+  }
+}
+
+#p-3765 .table>tbody>tr>td:first-child, #p-3765 .table>thead>tr>th:first-child {
+  @include respond-to(small) {
+    padding-right: 3em;
+    text-align: right;
+  }
+}
+
 /*
  * Mini Search (For Browse / Lists / Tables)
  * --------------------------------------------------
@@ -985,7 +1006,43 @@ table.etable>tbody>tr {
     }
 }
 
+/*
+ *  Index List Page
+ * --------------------------------------------------
+ */
 
+ul.index-list {
+  list-style: none;
+  &>li {
+    margin: 1em 0;
+    padding-left: 0;
+    a {
+      font-weight: 600;
+      color:#C16622;
+    }
+    &>ul.index-list>li { // 2nd Level
+      margin: 5px 0;
+      padding-left: 2em;
+      a {
+        font-weight: 400;
+        color:$darkgray;
+      }
+      &>ul.index-list>li { // 3rd Level
+        a {
+          font-weight: 300;
+          color: #616530;
+        }
+        &>ul.index-list>li { // 4th Level
+          a {
+            font-weight: 300;
+            color:$darkgray;
+            font-style: italic;
+          }
+        }
+      }
+    }
+  }
+}
 
 /*
  * Ask A Librarian Pages

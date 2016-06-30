@@ -77,7 +77,7 @@ h1.searchbox-header {
   }
   &.main-search {
     background-color: rgba(210,205,204, 0.5);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
   }
   > .active {
@@ -108,11 +108,15 @@ h1.searchbox-header {
 .btn-searchtype>button {
   color: #fff;
   line-height: 1.2em;
+  padding: 8px 25px 8px 10px;
 }
 
 .btn-searchtype>.dropdown-menu { //ALTS to work with javascript translation
   background-color: #B1746F;
   color: #000;
+  margin-top: -1px;
+  border: none;
+  border-top-left-radius: 0;
   & > ul {
     background-color: transparent;
     & > li > a:hover, & > li > a:focus {
@@ -157,14 +161,14 @@ h1.searchbox-header {
  */
 
  .eoptions {
-  padding: 10px 0 0 5px;
-  font-size: 14px;
+  padding: 0 0 0 5px;
+  font-size: 0.9em;
   margin-bottom: 0;
   p {
     margin-bottom: 0;
   }
   @include respond-to(smallonly) {
-    padding: 10px 0 0 15px;
+    padding: 5px 0 0 5px;
   }
 }
 
