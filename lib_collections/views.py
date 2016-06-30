@@ -30,7 +30,7 @@ def collections(request):
     # filter collections.
     collections = []
     if view == 'collections':
-        collections = CollectionPage.objects.all()
+        collections = CollectionPage.objects.live()
 	
         if digital:
             collections = collections.filter(collection_placements__format__text='Digital')
