@@ -11,7 +11,6 @@
         <p>{{ self.acknowledgements }}</p>
       </div>
     </div>
-
     <div class="row">
       <div class="col-xs-12 col-sm-3">
         {% if self.thumbnail %}
@@ -38,6 +37,10 @@
         {% for block in self.full_description %}
           {{ block }}
         {% endfor %}
+  
+        {% if self.web_exhibit_url %} 
+          <a role="button" class="btn btn-morecoll" href="{{ self.web_exhibit_url }}">View Web Exhibit <i aria-hidden="true" class="fa fa-angle-double-right"></i></a>
+        {% endif %}
        
         <h2>Exhibit Publications &amp; Documents</h2>
 
@@ -104,10 +107,6 @@
       {% if self.space_type %}
         Space Type: {{ self.space_type }}<br/>
       {% endif %}
-  
-      {% if self.web_exhibit_url %} 
-        <a href="{{ self.web_exhibit_url }}">View Web Exhibit</a><br/>
-    {% endif %}
     </p>
   </div>
 
@@ -133,10 +132,10 @@
       {% endfor %}
     </ul>
   
-    {% if self.collection_subject_placements.all %}
+    {% if self.exhibit_subject_placements.all %}
       <strong>Exhibits by Subject</strong>
       <ul>
-        {% for s in self.collection_subject_placements.all %}
+        {% for s in self.exhibit_subject_placements.all %}
           <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
         {% endfor %}
       </ul>
