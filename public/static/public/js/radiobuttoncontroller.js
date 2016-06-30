@@ -1,7 +1,7 @@
 $(document).ready(function() {
   // a function to show the checked panels, hide all others. 
   function toggle() {
-    $("[data-radio-button-controller").each(function() {
+    $("[data-radio-button-controller]").each(function() {
       var panel = $(this).attr('data-radio-button-controller');
       // if the one we're looking at was just checked, show its associated panel. 
       if ($(this).is(':checked')) {
