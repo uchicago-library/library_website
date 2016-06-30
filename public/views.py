@@ -79,6 +79,7 @@ def spaces(request):
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
         'buildings': buildings,
+        'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'default_image': default_image,
         'feature': feature,
