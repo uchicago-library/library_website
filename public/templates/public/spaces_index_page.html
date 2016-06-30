@@ -1,5 +1,6 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -96,7 +97,13 @@
             </tr>
             {% for space in spaces %}
               <tr>
-                <td><!-- photos coming soon --></td>
+                <td>
+                  {% if self.location_photo %}
+                    {% image self.location_photo width-200 class="img-responsive" %}
+                  {% else %}
+                    {% image default_image width-200 class="img-responsive" %}
+                  {% endif %}
+                </td>
                 <td>
                     <a href="{{ space.url }}">{{ space.title }}</a><br/>
                     {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}

@@ -683,6 +683,10 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         Override the page object's get context method.
         """
         context = super(LocationPage, self).get_context(request)
+
+        default_image = Image.objects.get(title="Default Placeholder Photo")
+
+        context['default_image'] = default_image
         context['features_html'] = self.get_features_html()
 
         return context
