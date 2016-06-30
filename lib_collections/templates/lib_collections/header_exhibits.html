@@ -19,7 +19,7 @@
   <span class="headline">Browse by</span>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
+      Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       {% if subject %}
@@ -36,7 +36,7 @@
   </div>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if location %}{{ location }}{% else %}Location{% endif %} <span class="caret"></span>
+      Location{% if location %}: {{ location }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       {% if location %}

@@ -38,12 +38,12 @@ def collections(request):
         if format:
             collections = collections.filter(collection_placements__format__text=format)
 
-        if search:
-            collections = collections.search(search)
-
         if subject:
             subject_ids = Subject.objects.get(name=subject).get_descendants()
             collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
+
+        if search:
+            collections = collections.search(search)
 
     # fiter exhibits.
     exhibits = []
@@ -145,6 +145,7 @@ def collections(request):
 
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
+        'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'default_image': default_image,
         'digital': digital,

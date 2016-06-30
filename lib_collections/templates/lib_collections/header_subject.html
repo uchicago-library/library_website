@@ -19,7 +19,7 @@
   <span class="headline">Browse by</span>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if subject %}{{ subject }}{% else %}Subject Area{% endif %} <span class="caret"></span>
+      Subject Area{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul id="listings-dropdown" class="dropdown-menu">
       {% for subject in subjects_pulldown %}

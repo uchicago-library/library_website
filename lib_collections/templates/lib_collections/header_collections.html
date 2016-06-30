@@ -20,7 +20,7 @@
 
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if subject %}{{ subject }}{% else %}Subject{% endif %} <span class="caret"></span>
+      Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       {% if subject %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a></li>{% endif %}
@@ -32,7 +32,7 @@
 
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      {% if format %}{{ format }}{% else %}Format{% endif %} <span class="caret"></span>
+      Format{% if format %}: {{ format }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
       {% if format %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a></li>{% endif %}
