@@ -136,9 +136,10 @@ def collections(request):
     # Biological Sciences
     # Physical Sciences
 
-    subjects_pulldown = ['Area & Cultural Studies', 'Arts', 'Business', \
-'Humanities', 'Law', 'Literature', 'Medicine', 'Sciences, Biological', \
-'Sciences, Physical', 'Social Sciences', 'Social Services', 'Special Collections']
+    subjects_pulldown = ['Area & Cultural Studies', 'Arts', \
+'Biological Sciences', 'Business', 'Humanities', 'Law', 'Literature', \
+'Medicine', 'Physical Sciences', 'Social Sciences', 'Social Services', \
+'Special Collections']
 
     default_image = None
     try:
