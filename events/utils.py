@@ -5,8 +5,8 @@ from xml.etree import ElementTree
 import re
 
 def get_xml_from_university_event_calendar():
-    c = HTTPConnection('moss.lib.uchicago.edu', 8888)
-    c.request('GET', '/tt-rss/public.php?op=rss&id=-4&key=4w4en5576c2601893f9')
+    c = HTTPConnection('www3.lib.uchicago.edu', 80)
+    c.request('GET', '/tt-rss/public.php?op=rss&id=-4&key=cmxewn57755bc8bdf3b')
     result = c.getresponse()
     xml_string = result.read()
     return ElementTree.fromstring(xml_string)
