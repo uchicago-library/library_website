@@ -10,7 +10,7 @@ from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
-from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField
+from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField, CarouselItem
 from datetime import date
 from staff.models import StaffPage
 from wagtail.wagtailimages.models import Image
@@ -65,6 +65,13 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
         required=False, 
         template='public/blocks/featured_library_expert.html'
     )
+
+
+class StandardPageCarouselItem(Orderable, CarouselItem):
+    """
+    Carousel widgets for standard pages
+    """
+    page = ParentalKey('public.StandardPage', related_name='carousel_items')
 
 
 class StandardPage(PublicBasePage, SocialMediaFields):
@@ -188,6 +195,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ], 
             heading='Rich Text'
         ),
+        InlinePanel('carousel_items', label="Carousel items"),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
     ] + SocialMediaFields.panels

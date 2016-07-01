@@ -265,6 +265,37 @@ class LinkFields(models.Model):
         abstract = True
 
 
+class CarouselItem(LinkFields):
+    """
+    Reusable abstract model for a carousel item.
+    """
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    image_title = models.CharField(max_length=55, blank=True)
+    image_subtitle = models.CharField(max_length=55, blank=True)
+
+    panels = [ # WARNIG: do not rename content_panels! Won't work with InlinePanel
+        ImageChooserPanel('image'),
+        FieldPanel('image_title'),
+        FieldPanel('image_subtitle'),
+        MultiFieldPanel(
+            [
+                FieldPanel('link_external'),
+                PageChooserPanel('link_page'),
+            ],
+            heading = 'Link'
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
 class LinkedText(LinkFields):
     """
     Generic link with text.
@@ -1125,6 +1156,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
         context['active_tag'] = urllib.parse.quote(self.active_tag)
+        carousel = self.carousel_items.all()
+        context['carousel_items'] = carousel
+        context['carousel_multi'] = len(carousel) > 1
 
         # Data structure for generating a 
         # sitemap display of child pages
