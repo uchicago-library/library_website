@@ -62,7 +62,7 @@ def events(request):
         'next_link': next_start.strftime('%Y-%m-%d'),
         'previous_link': previous_start.strftime('%Y-%m-%d'),
         'start': start.strftime('%Y-%m-%d'),
-        'start_label': start.strftime('%B %d, %Y'),
+        'start_label': start.strftime('%B %d, %Y').replace(' 0', ' '),
         'stop': stop.strftime('%Y-%m-%d'),
         'view': view
     })
