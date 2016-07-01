@@ -34,6 +34,8 @@ urlpatterns = [
     url(r'^about/directory/$', unit_view, name='unit'),
     url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collex/$', collection_view, name='collection'),
+    url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    url(r'^collex/exhibits/$', RedirectView.as_view(url='/collex/?view=exhibits')),
 
     url(r'', include(wagtail_urls)),
 ]
