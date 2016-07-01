@@ -1156,7 +1156,10 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
         context['active_tag'] = urllib.parse.quote(self.active_tag)
-        carousel = self.carousel_items.all()
+        try:
+            carousel = self.carousel_items.all()
+        except(AttributeError):
+            carousel = []
         context['carousel_items'] = carousel
         context['carousel_multi'] = len(carousel) > 1
 

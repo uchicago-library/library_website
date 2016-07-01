@@ -408,12 +408,17 @@
                                         <img src="{{nifty.url}}"/>
                                         <div class="carousel-caption">
                                             {% if item.image_title or item.image_subtitle %}
-                                                <p>
+                                                <p> {% if item.link %}
+                                                        <a href="{{item.link}}">
+                                                    {% endif %}
                                                     {% if item.image_title %}
                                                         <span style="font-size: 2em;">{{item.image_title}}</span><br/>
                                                     {% endif %}
                                                     {% if item.image_subtitle %}
                                                         {{item.image_subtitle}}
+                                                    {% endif %}
+                                                    {% if item.link %}
+                                                        </a>
                                                     {% endif %}
                                                 </p>
                                             {% endif %}
