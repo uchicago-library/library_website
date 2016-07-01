@@ -40,7 +40,7 @@ def collections(request):
 
         if subject:
             subject_ids = Subject.objects.get(name=subject).get_descendants()
-            collections = collections.filter(collection_subject_placements__subject__in=subject_ids)
+            collections = collections.filter(collection_subject_placements__subject__in=subject_ids).distinct()
 
         # sorting
         collections = collections.order_by('title')
@@ -62,7 +62,7 @@ def collections(request):
 
         if subject:
             subject_ids = Subject.objects.get(name=subject).get_descendants()
-            exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids)
+            exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids).distinct()
 
         exhibits_current = exhibits.filter(exhibit_open_date__lt = datetime.datetime.now().date()).filter(exhibit_close_date__gt = datetime.datetime.now().date())
 
