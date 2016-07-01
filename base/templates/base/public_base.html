@@ -17,9 +17,7 @@
     {% compress css %}
     {# SCSS compilation relies on django compressor #}
         <link href="{% static "base/css/uclib.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <!-- * Only needed when Main Search Box is used * -->
         <link href="{% static "base/css/uclib-search.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <!-- * END Only needed when Main Search Box is used * -->
         <link href="{% static "base/css/navigation.scss" %}" rel="stylesheet" type="text/x-scss"/>
         <!-- Boostrap-select -->
         <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
@@ -32,6 +30,11 @@
         <a href="#content">Skip to Main Content</a>
     </div>
     <div id="body-wrap">
+        <div class="alert alert-info" role="alert">
+            <strong>Welcome to the new Library website!</strong>
+            <span class="visible-xs"></span>
+            Leave <a href="//www.lib.uchicago.edu/about/feedback/">feedback or report a problem</a>.
+        </div>
         <!-- Top Navigation -->
         <nav class="navbar navbar-default"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->
@@ -405,7 +408,7 @@
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        <div class="{% if self.change_to_callout %} call-out {%endif%} rightside-mod col-xs-12 col-sm-6 col-md-12">
                             {% if self.quicklinks_title %}
                                 <h4>{{self.quicklinks_title}}</h4>
                             {% endif %}
@@ -597,13 +600,15 @@
     <script src="{% static "base/js/bootstrap.min.js" %}"></script>
     <script src="{% static "base/js/transformer-tabs.js" %}"></script>
     <script src="{% static "public/js/bootstrap-select.js" %}"></script>
-    <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
-    <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
+    {% if has_search_widget %}
+        <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
+        <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
+    {% endif %}
     <script type="text/javascript" src="{% static "base/js/ekko-lightbox.min.js" %}"></script>
 
-    <!-- * Only needed when calendar module is used * -->
-    <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
-    <!-- * END Only needed when calendar is used * -->
+    {% if self.events_feed_url %}
+        <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
+    {% endif %}
 
     {% if self.has_granular_hours %}
         <script src="https://api3.libcal.com/api_hours_today.php?iid={{libcaliid}}&lid={{granular_libcalid}}&format=js&context=object"> </script>

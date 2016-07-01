@@ -214,7 +214,7 @@ WAGTAILAPI_MAX_RESULTS = 60
 LIBCAL_IID = 482
 
 # Fallback unit for pages that don't have one (Library - Regenstein Library)
-DEFAULT_UNIT = 2235
+DEFAULT_UNIT = 2455
 
 # The unit for pages that are assigned to The University of Chicago Libraries.
 # In other words generic pages that are not branch library specific use this number.

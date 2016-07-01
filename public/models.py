@@ -128,6 +128,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 FieldPanel('quicklinks'),
                 FieldPanel('view_more_link_label'),
                 FieldPanel('view_more_link'),
+                FieldPanel('change_to_callout'),
             ], 
             heading='Quicklinks'
         ),

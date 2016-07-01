@@ -794,6 +794,7 @@ class PublicBasePage(BasePage):
     quicklinks_title = models.CharField(max_length=100, blank=True)
     view_more_link = models.URLField(max_length=255, blank=True, default='')
     view_more_link_label = models.CharField(max_length=100, blank=True)
+    change_to_callout = models.BooleanField(default=False)
 
     # Sidebar hours
     display_hours_in_right_sidebar = models.BooleanField(default=False)

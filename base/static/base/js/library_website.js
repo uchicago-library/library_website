@@ -53,17 +53,19 @@ function renderHours(libcalid){
 function renderEvents() {
     var feed = $('#events').data('events'); // Already encoded
     var eventsHtml = '';
-    json = $.getJSON('/json-events/?feed='.concat(feed), function(data) {
-        var innerJson = data['events'];
-        $.each(innerJson, function(key, val){
-            var title = innerJson[key][0];
-            var url = innerJson[key][1];
-            var date = innerJson[key][2];
-            var time = innerJson[key][3];
-            eventsHtml += '<p><a id="event-header" href="' + url + '">' + title + '</a><br/><span class="event-date">' + date + '</span> | ' + time; 
+    if (feed) {
+        json = $.getJSON('/json-events/?feed='.concat(feed), function(data) {
+            var innerJson = data['events'];
+            $.each(innerJson, function(key, val){
+                var title = innerJson[key][0];
+                var url = innerJson[key][1];
+                var date = innerJson[key][2];
+                var time = innerJson[key][3];
+                eventsHtml += '<p><a id="event-header" href="' + url + '">' + title + '</a><br/><span class="event-date">' + date + '</span> | ' + time; 
+            });
+            $('#events-target').replaceWith(eventsHtml);
         });
-        $('#events-target').replaceWith(eventsHtml);
-    });
+    }
 }
 
 /*
@@ -73,28 +75,30 @@ function renderNews() {
     var feed = $('#news-target').data('news-feed'); // Already encoded
     var activeTag = $('#news-target').data('news-tag');
     var newsHtml = '';
-    json = $.getJSON('/json-news/?feed='.concat(feed).concat('&tag=' + activeTag), function(data) {
-        var innerJson = data['news'];
-        var has_stories = innerJson.length > 0;
-        if (has_stories) {
-            $('#news-header').removeClass('hidden');
-        }
-        $.each(innerJson, function(key, val){
-            var title = innerJson[key][0];
-            var tag = innerJson[key][2];
-            var desc = innerJson[key][3];
-            var link = innerJson[key][1];
-            var css = innerJson[key][4];
-            var img = innerJson[key][5];
-            newsHtml += '<div class="newsblock col-xs-12 col-sm-6 col-md-3">'
-            newsHtml += '<figure class="embed"><div class="figure-wrap"><img class="img-responsive" src="' + img + '"></div>'
-            newsHtml += '<figcaption class="' + css + '">' + tag + '</figcaption></figure>'
-            newsHtml += '<h5>' + title + '</h5>'
-            newsHtml += '<p>' + desc + '<br><a href="' + link + '">Read more...</a></p>'
-            newsHtml += '</div>'
+    if (feed) {
+        json = $.getJSON('/json-news/?feed='.concat(feed).concat('&tag=' + activeTag), function(data) {
+            var innerJson = data['news'];
+            var has_stories = innerJson.length > 0;
+            if (has_stories) {
+                $('#news-header').removeClass('hidden');
+            }
+            $.each(innerJson, function(key, val){
+                var title = innerJson[key][0];
+                var tag = innerJson[key][2];
+                var desc = innerJson[key][3];
+                var link = innerJson[key][1];
+                var css = innerJson[key][4];
+                var img = innerJson[key][5];
+                newsHtml += '<div class="newsblock col-xs-12 col-sm-6 col-md-3">'
+                newsHtml += '<figure class="embed"><div class="figure-wrap"><img class="img-responsive" src="' + img + '"></div>'
+                newsHtml += '<figcaption class="' + css + '">' + tag + '</figcaption></figure>'
+                newsHtml += '<h5>' + title + '</h5>'
+                newsHtml += '<p>' + desc + '<br><a href="' + link + '">Read more...</a></p>'
+                newsHtml += '</div>'
+            });
+            $('#news-target').replaceWith(newsHtml);
         });
-        $('#news-target').replaceWith(newsHtml);
-    });
+    }
 }
     
 
@@ -137,6 +141,15 @@ $(document).ready(function(){
         }
     });
 
+    // Render news html
+    renderNews()
+
+    // Render hours html in the header
+    renderHours(getLibCalId());
+
+    // Render events widget html in the right sidebar
+    renderEvents();
+
     /*
      * Lightbox
      */
@@ -145,12 +158,4 @@ $(document).ready(function(){
         $(this).ekkoLightbox();
     });
 
-    // Render hours html in the header
-    renderHours(getLibCalId());
-
-    // Render events widget html in the right sidebar
-    renderEvents();
-
-    // Render news html
-    renderNews()
 });
