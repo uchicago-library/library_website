@@ -43,11 +43,11 @@
             </ul>
     
             {% if search_results.has_previous %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
+                <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
             {% endif %}
     
             {% if search_results.has_next %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+                <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
             {% endif %}
         {% elif search_query %}
             No results found
