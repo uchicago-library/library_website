@@ -139,9 +139,9 @@ WSGI_APPLICATION = 'library_website.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Chicago'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_L10N = True
 
@@ -218,7 +218,7 @@ DEFAULT_UNIT = 2455
 
 # The unit for pages that are assigned to The University of Chicago Libraries.
 # In other words generic pages that are not branch library specific use this number.
-ROOT_UNIT = 3378
+ROOT_UNIT = 2455
 
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s: %s'
