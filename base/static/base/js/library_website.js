@@ -73,10 +73,9 @@ function renderEvents() {
  */
 function renderNews() {
     var feed = $('#news-target').data('news-feed'); // Already encoded
-    var activeTag = $('#news-target').data('news-tag');
     var newsHtml = '';
     if (feed) {
-        json = $.getJSON('/json-news/?feed='.concat(feed).concat('&tag=' + activeTag), function(data) {
+        json = $.getJSON('/json-news/?feed='.concat(feed), function(data) {
             var innerJson = data['news'];
             var has_stories = innerJson.length > 0;
             if (has_stories) {

@@ -444,13 +444,15 @@
                     </div>
                 {% endif %}
 
-                {% if self.news_feed_url and self.active_tag %}
+                {% if self.news_feed_url %}
                     <div class="home-modwrapper">
                         <div id="news-header" class="home-module hidden">
                             <h2>News</h2>
-                            <a class="viewall" href="http://news.lib.uchicago.edu/">View all</a>
+                            {% if news_page %}
+                                <a class="viewall" href="{{news_page}}">View all</a>
+                            {% endif %}
                         </div>
-                        <span id="news-target" data-news-feed="{{news_feed}}" data-news-tag="{{active_tag}}">
+                        <span id="news-target" data-news-feed="{{news_feed}}">
                             <i class="fa fa-refresh fa-spin fa-fw"></i>
                             <span>Loading...</span>
                         </span> 

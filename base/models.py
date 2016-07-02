@@ -838,8 +838,16 @@ class PublicBasePage(BasePage):
     events_feed_url = models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed')
 
     # News
-    news_feed_url = models.URLField(blank=True, help_text='Link to a WordPress Feed from the Library News Site') 
-    active_tag =  models.CharField(max_length=30, blank=True, help_text='A WordPress tag name used for display purposes, e.g. "Library Kiosk"')
+    news_feed_url = models.URLField(blank=True, help_text='Link to a wordpress feed from the Library News Site') 
+    external_news_page = models.URLField(blank=True, help_text='Link to an external news page, e.g. wordpress')
+    internal_news_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL,
+        help_text='Link to an internal news page'
+    )
 
     # Rich text 
     rich_text_heading =  models.CharField(max_length=25, blank=True)
@@ -1155,7 +1163,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
-        context['active_tag'] = urllib.parse.quote(self.active_tag)
+        try:
+            context['news_page'] = self.external_news_page if self.external_news_page else self.internal_news_page.relative_url(current_site)
+        except(AttributeError):
+            context['news_page'] = ''
+             
         try:
             carousel = self.carousel_items.all()
         except(AttributeError):

@@ -70,9 +70,8 @@ def json_news(request):
     """
     if request.method == 'GET':
         feed = request.GET['feed']
-        active_tag = urllib.parse.unquote(request.GET['tag'])
         return JsonResponse(
             {
-                'news': get_news(feed, active_tag),
+                'news': get_news(feed),
             }
         )

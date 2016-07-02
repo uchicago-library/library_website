@@ -57,39 +57,13 @@ def get_events(url):
     return entries
 
 
-def display_news(tags, active_tag):
-    """
-    Helper method for determining if a news story
-    should be displayed.
-
-    Args:
-        tags: list of dictionaries, "tags: from a 
-        feedparser object.
-    
-        active_tag: string, wordpress tag to be used
-        for making a story appear on the kiosk.
-
-    Returns:
-        Boolean
-    """
-    flag = False
-    for tag in tags:
-        if tag['term'].lower() == active_tag.lower():
-            flag = True
-            break
-    return flag
-
-
-def get_news(url, active_tag):
+def get_news(url):
     """
     Get news stories from a Wordpress feed and create
     a datastructure to hand off to a restful sevice.
 
     Args:
         url: string, link to a wordpress feed.
-
-        active_tag: string, wordpress tag to be used
-        for making a story appear on the kiosk.
 
     Returns:
         A list of tuples representing a news story.
@@ -101,7 +75,6 @@ def get_news(url, active_tag):
     for e in d.entries:
         if i < 1:
             break
-        display = display_news(e.tags, active_tag)
         for tag in e.tags:
             # Categories and tags
             cat = tag['term']
@@ -113,7 +86,7 @@ def get_news(url, active_tag):
                 img_src = img[0]['src']
             except:
                 img_src = ''
-            if cat in NEWS_CATEGORIES and display and img_src:
+            if cat in NEWS_CATEGORIES and img_src:
                 description = strip_tags(e.description).strip(garbage[0]).strip(garbage[1]) 
                 stories.append((e.title, e.link, cat, description, slugify(cat), img_src))
                 i -= 1
