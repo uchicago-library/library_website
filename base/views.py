@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from base.utils import get_all_building_hours, get_hours_and_location, get_hours_by_id, get_building_hours_and_lid, get_events, get_news
+from base.utils import get_all_building_hours, get_hours_and_location, get_json_hours_by_id, get_building_hours_and_lid, get_events, get_news
 from units.utils import get_default_unit
 import urllib
 
@@ -40,10 +40,11 @@ def json_hours(request):
             )
         else:
             libcalid = request.GET['libcalid']
+            all_building_hours = json.dumps(get_building_hours_and_lid())
             return JsonResponse(
                 {
-                    'all_building_hours': json.dumps(get_building_hours_and_lid()),
-                    'current_hours': get_hours_by_id(libcalid),
+                    'all_building_hours': all_building_hours,
+                    'current_hours': get_json_hours_by_id(int(libcalid), all_building_hours),
                     'llid': libcalid,
                     'llid_fallback': get_default_unit().location.libcal_library_id,
                 }

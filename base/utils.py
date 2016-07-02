@@ -7,6 +7,9 @@ import feedparser
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from bs4 import BeautifulSoup
+import json
+
+HOURS_UNAVIALABLE = 'Hours Unavailable'
 
 def get_xml_from_directory_api(url):
     assert url.startswith('https://')
@@ -154,10 +157,9 @@ def get_json_for_libraries(lids):
     """
     lids = ','.join([str(i) for i in lids])
     url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
-        str(LIBCAL_IID) + '&lid=' + str(lids) + '&format=json'
+        str(LIBCAL_IID) + '&lids=' + str(lids) + '&format=json'
 
     json = requests.get(url).json()
-
     return json
 
 
@@ -172,7 +174,7 @@ def get_hours_by_id(lid):
         string, today's hours for location.
     """
     data = get_json_for_library(int(lid))
-    msg = 'Hours Unavailable'
+    msg = HOURS_UNAVIALABLE
     try:
         hours = data['rendered']
         if hours != '': 
@@ -184,7 +186,13 @@ def get_hours_by_id(lid):
 
 
 def process_hours(hours):
-    msg = 'Hours Unavailable' 
+    """
+    Process the hours string for display.
+
+    Args:
+        hours: string, json array
+    """
+    msg = HOURS_UNAVIALABLE 
     if hours != '': 
         return hours
     else:
@@ -204,6 +212,46 @@ def get_all_building_hours():
     return list(HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings)
 
 
+#def get_building_hours_and_lid_DEPRECATED():
+#    """
+#    Get all libcal houurs for buildings along 
+#    with the corresponding libcal library ID.
+#
+#    Returns:
+#        A list of tuples where the first item
+#        is a libcal library ID and the second
+#        item is the hours presented as a string.
+#    """
+#    from public.models import LocationPage
+#    buildings = []
+#    for page in LocationPage.objects.live().filter(is_building=True):
+#        if page.libcal_library_id:
+#            llid = page.libcal_library_id
+#            hours = HOURS_TEMPLATE % (str(page), get_hours_by_id(llid))
+#            buildings.append((str(llid), str(hours)))
+#    return buildings
+
+
+def get_json_hours_by_id(llid, hours):
+    """
+    Pull the hours for a specific id out 
+    of a json string with many hours.
+
+    Args:
+        llid: integer, libcal library id
+
+        hours: string, json
+
+    Returns:
+        string, hours
+    """
+    for item in json.loads(hours):
+        if item[0] == llid:
+            return item[1]
+    return HOURS_UNAVIALABLE 
+    
+
+
 def get_building_hours_and_lid():
     """
     Get all libcal houurs for buildings along 
@@ -216,33 +264,21 @@ def get_building_hours_and_lid():
     """
     from public.models import LocationPage
     buildings = []
-    for page in LocationPage.objects.live().filter(is_building=True):
-        if page.libcal_library_id:
-            llid = page.libcal_library_id
-            hours = HOURS_TEMPLATE % (str(page), get_hours_by_id(llid))
+    llids = []
+    library_names = {}
+    for library in LocationPage.objects.live().filter(is_building=True):
+        library_id = library.libcal_library_id
+        if library.libcal_library_id:
+            llids.append(library_id)
+            library_names[library_id] = str(library)
+
+    library_hours = get_json_for_libraries(llids)
+    for page in library_hours['locations']:
+        llid = int(page['lid'])
+        if llid in llids:
+            hours = HOURS_TEMPLATE % (library_names[llid], process_hours(page['rendered']))
             buildings.append((str(llid), str(hours)))
     return buildings
-
-
-#def get_building_hours_and_lid():
-#    """
-#    Get all libcal houurs for buildings along 
-#    with the corresponding libcal library ID.
-#
-#    Returns:
-#        A list of tuples where the first item
-#        is a libcal library ID and the second
-#        item is the hours presented as a string.
-#    """
-#    from public.models import LocationPage
-#    buildings = []
-#    llids = [p.libcal_library_id for p in LocationPage.objects.live().filter(is_building=True) if p.libcal_library_id]
-#    library_hours = get_json_for_libraries(llids)
-#    for page in library_hours['locations']:
-#        llid = int(page['lid'])
-#        hours = HOURS_TEMPLATE % (str(page['name']), process_hours(page['rendered']))
-#        buildings.append((str(llid), str(hours)))
-#    return buildings
 
 
 def recursive_get_parent_building(location):
