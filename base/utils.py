@@ -140,6 +140,27 @@ def get_json_for_library(lid):
             return item
 
 
+def get_json_for_libraries(lids):
+    """
+    Get json data for a list of libraries from
+    the libcal api.
+
+    Args:
+        lids: list of integers, library IDs in
+        libcal.
+
+    Returns:
+        string, json
+    """
+    lids = ','.join([str(i) for i in lids])
+    url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
+        str(LIBCAL_IID) + '&lid=' + str(lids) + '&format=json'
+
+    json = requests.get(url).json()
+
+    return json
+
+
 def get_hours_by_id(lid):
     """
     Get today's hours for a specific library.
@@ -159,6 +180,14 @@ def get_hours_by_id(lid):
         else:
             return msg
     except:
+        return msg
+
+
+def process_hours(hours):
+    msg = 'Hours Unavailable' 
+    if hours != '': 
+        return hours
+    else:
         return msg
 
 
@@ -193,6 +222,27 @@ def get_building_hours_and_lid():
             hours = HOURS_TEMPLATE % (str(page), get_hours_by_id(llid))
             buildings.append((str(llid), str(hours)))
     return buildings
+
+
+#def get_building_hours_and_lid():
+#    """
+#    Get all libcal houurs for buildings along 
+#    with the corresponding libcal library ID.
+#
+#    Returns:
+#        A list of tuples where the first item
+#        is a libcal library ID and the second
+#        item is the hours presented as a string.
+#    """
+#    from public.models import LocationPage
+#    buildings = []
+#    llids = [p.libcal_library_id for p in LocationPage.objects.live().filter(is_building=True) if p.libcal_library_id]
+#    library_hours = get_json_for_libraries(llids)
+#    for page in library_hours['locations']:
+#        llid = int(page['lid'])
+#        hours = HOURS_TEMPLATE % (str(page['name']), process_hours(page['rendered']))
+#        buildings.append((str(llid), str(hours)))
+#    return buildings
 
 
 def recursive_get_parent_building(location):
