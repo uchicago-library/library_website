@@ -16,6 +16,10 @@ var Tabs = {
       .on("click", ".transformer-tabs a.active", function(event) {
         Tabs.toggleMobileMenu(event, this);
         event.preventDefault();
+      })
+      .on("click", "#web-search a", function(event) {
+        Tabs.changeTab(this.hash);
+        event.preventDefault();
       });
 
   },
