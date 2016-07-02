@@ -9,7 +9,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 from events.views import events as events_view
 from public.views import spaces as spaces_view
 from results.views import results as results_view
-from search.views import search as search_view 
+from search.views import loop_search as search_view 
 from units.views import units as unit_view
 from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^json-events/', json_events, name='json-events'),
     url(r'^json-news/', json_news, name='json-news'),
     url(r'^results/$', results_view, name='results'),
-    url(r'^search/$', search_view, name='search'),
+    url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),

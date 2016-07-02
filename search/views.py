@@ -5,7 +5,7 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
-def search(request):
+def loop_search(request):
     search_query = request.GET.get('query', None)
     page = request.GET.get('page', 1)
 
@@ -33,7 +33,7 @@ def search(request):
     except EmptyPage:
         search_results = paginator.page(paginator.num_pages)
 
-    return render(request, 'search/search.html', {
+    return render(request, 'search/loop_search.html', {
         'search_query': search_query,
         'search_results': search_results,
         'search_picks': search_picks,
