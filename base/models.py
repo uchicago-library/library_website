@@ -42,6 +42,9 @@ BUTTON_CHOICES = (
     ('btn-reserve', 'Reservation'),
 )
 
+# Friendly names that need "an" instead of "a" 
+UNFRIENDLY_ARTICLES = set(['SSA'])
+
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""
     if not isinstance(number, int):
@@ -1167,6 +1170,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
+        context['unfriendly_a'] = True if self.friendly_name.strip() in UNFRIENDLY_ARTICLES else False
+
         try:
             context['news_page'] = self.external_news_page if self.external_news_page else self.internal_news_page.relative_url(current_site)
         except(AttributeError):
@@ -1231,8 +1236,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_collaborative_zone'}))
         return [all_spaces, quiet_spaces, collaborative_spaces]
 
-    @property
-    def friendly_name(self):
+
+    def get_friendly_name(self):
         """
         Get the friendly name of the unit associated 
         with any given page. If the unit doesn't have 
@@ -1247,6 +1252,16 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return self.unit.friendly_name + ' '
         except(AttributeError):
             return ''
+
+
+    @property
+    def friendly_name(self):
+        """
+        Convenience method for handing the
+        friendly name to the templates.
+        """
+        return self.get_friendly_name()
+
 
 class IntranetPlainPage(BasePage):
     body = StreamField(DefaultBodyFields())
