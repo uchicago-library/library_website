@@ -1,6 +1,6 @@
 /*
  * Get libal id for the page.
-*/
+ */
 function getLibCalId() {
     var libcalid = $('#current-hours').data('libcalid');
     $.ajax({
@@ -156,6 +156,12 @@ $(document).ready(function(){
     $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
         event.preventDefault();
         $(this).ekkoLightbox();
+    });
+
+    // Fix # link to website search in searchbox on non-searchbox pages
+    $("#web-search").click(function() {
+        var wslink = $(this).find('a').attr('href');
+        $(location).attr('href', wslink)
     });
 
 });
