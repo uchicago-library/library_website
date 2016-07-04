@@ -89,9 +89,10 @@ function renderNews() {
                 var css = innerJson[key][4];
                 var img = innerJson[key][5];
                 newsHtml += '<div class="newsblock col-xs-12 col-sm-6 col-md-3">'
-                newsHtml += '<figure class="embed"><div class="figure-wrap"><img class="img-responsive" src="' + img + '"></div>'
+                newsHtml += '<figure class="embed"><div class="figure-wrap">'
+                newsHtml += '<a href="' + link + '"><img class="img-responsive" src="' + img + '"></a></div>'
                 newsHtml += '<figcaption class="' + css + '">' + tag + '</figcaption></figure>'
-                newsHtml += '<h5>' + title + '</h5>'
+                newsHtml += '<a href="' + link + '"><h5>' + title + '</h5></a>'
                 newsHtml += '<p>' + desc + '<br><a href="' + link + '">Read more...</a></p>'
                 newsHtml += '</div>'
             });
