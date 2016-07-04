@@ -6,7 +6,23 @@
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_suffix %}{% endblock %}</title>
+    <title>
+        {% block title %}
+            {% if self.seo_title %}
+                {{self.seo_title}}
+            {% else %} 
+                {{ self.title }}
+            {% endif %}
+        {% endblock %} 
+        {% block title_suffix %} 
+            {% if has_banner %} 
+                {% if branch_title %}
+                    - {{branch_title}} 
+                {% endif %}
+            {% endif %}
+        {% endblock %} 
+        - The University of Chicago Library
+    </title>
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />

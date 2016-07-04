@@ -1103,18 +1103,19 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             A tuple where the first value is a boolean, 
             the second value is an image object or None, 
             the third value is a string (banner title),
-            and the fourth value is a link.
+            the fourth value is a link, and the fifth
+            value is a page title.
         """
         try:
             # Base case
             if self.banner_title and self.banner_image:
-                return (True, self.banner_image, self.banner_title, self.relative_url(current_site))
+                return (True, self.banner_image, self.banner_title, self.relative_url(current_site), self.title)
             # Recursive case
             else:
                 return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
         except(AttributeError):
-            return (False, None, '', '')
+            return (False, None, '', '', '')
 
 
     def get_context(self, request):
@@ -1148,6 +1149,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['chat_status_css'] = get_chat_status_css('uofc-ask')
 
         sidebar = self.has_left_sidebar(context)
+        section_info = self.get_banner(current_site)
+        branch_name = section_info[4] 
         context['has_left_sidebar'] = sidebar
         context['content_div_css'] = self.get_conditional_css_classes('content', sidebar)
         context['breadcrumb_div_css'] = self.get_conditional_css_classes('breadcrumbs', sidebar)
@@ -1156,10 +1159,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['branch_lib_css'] = self.get_branch_lib_css_class()
         context['hours_page_url'] = self.get_hours_page(request)
         context['is_hours_page'] = self.id == HOURS_PAGE
-        context['has_banner'] = self.get_banner(current_site)[0]
-        context['banner'] = self.get_banner(current_site)[1]
-        context['banner_title'] = self.get_banner(current_site)[2]
-        context['banner_url'] = self.get_banner(current_site)[3]
+        context['has_banner'] = section_info[0]
+        context['banner'] = section_info[1]
+        context['banner_title'] = section_info[2]
+        context['banner_url'] = section_info[3]
+        context['branch_title'] = branch_name if branch_name is not self.title else ''
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
