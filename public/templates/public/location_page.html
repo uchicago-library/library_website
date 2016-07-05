@@ -46,6 +46,14 @@
                             {% endautoescape %}
                         {% endif %}
                         {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
+                        {% if self.location_floor_placements.all %}
+                            <h3>Floorplans</h3>
+                            <p>
+                                {% for p in self.location_floor_placements.all %}
+                                    <a href="{{ p.floor.url }}">{{ p.floor.title }}</a><br/>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
                     </div><!--/.rightside-mod-->
                 {% endblock %}
             {% endif %}
