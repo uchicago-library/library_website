@@ -220,6 +220,8 @@ DEFAULT_UNIT = 2455
 # In other words generic pages that are not branch library specific use this number.
 ROOT_UNIT = 2455
 
+PUBLIC_HOMEPAGE = 3378
+
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s: %s'
 ADDRESS_TEMPLATE = '%s, %s, %s %s'

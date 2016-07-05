@@ -5,6 +5,10 @@ from staff.models import StaffPage
 from subjects.models import Subject, SubjectParentRelations
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.backends import get_search_backend
+from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
+from public.models import StandardPage
+from library_website.settings import PUBLIC_HOMEPAGE
+from base.utils import get_hours_and_location
 
 import datetime
 import re
@@ -150,6 +154,12 @@ def collections(request):
     except:
         pass
 
+    # Set context variables for templates
+    home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
+    location_and_hours = get_hours_and_location(home_page)
+    location = str(location_and_hours['page_location'])
+    unit = location_and_hours['page_unit']
+
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
         'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
@@ -170,5 +180,11 @@ def collections(request):
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,
-        'view': view
+        'view': view,
+        'page_unit': str(unit),
+        'page_location': location,
+        'address': location_and_hours['address'],
+        'chat_url': get_unit_chat_link(unit, request),
+        'chat_status': get_chat_status('uofc-ask'),
+        'chat_status_css': get_chat_status_css('uofc-ask'),
     })
