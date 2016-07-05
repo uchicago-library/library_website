@@ -7,6 +7,7 @@ from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.backends import get_search_backend
 
 import datetime
+import re
 
 def collections(request):
     # PARAMETERS
@@ -48,9 +49,11 @@ def collections(request):
         if search:
             filter_arguments['id__in'] = list(map(lambda s: s.id, CollectionPage.objects.live().search(search)))
 
-        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct().order_by('title')
+        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
 
-        # StaffPage.search_fields[0].field_name
+        # sort browses by title, omitting leading articles. 
+        if not search:
+            collections = sorted(collections, key=lambda c: re.sub(r'^(A|An|The) ', '', c.title))
 
     # fiter exhibits.
     exhibits = []
