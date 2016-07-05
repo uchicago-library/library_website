@@ -163,7 +163,7 @@ def collections(request):
         'locations': locations,
         'search': search,
         'self': {
-            'title': 'Our Collections & Exhibits'
+            'title': 'Collections & Exhibits'
         },
         'subject': subject,
         'subjects': subjects,
