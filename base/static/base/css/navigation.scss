@@ -505,9 +505,6 @@ i.ask-icon {
   @include respond-to(small) {
     @include center;
     text-align: center;
-    img {
-        @include center;
-    }
   }
 }
 
