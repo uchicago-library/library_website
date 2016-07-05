@@ -501,8 +501,13 @@ a#event-header {
 }
 
 .carousel-caption {
-  @include respond-to(smallonly) {
-    font-size: 0.7em;
+  //font-family: Garamond, serif;
+  padding-bottom: 0;
+  padding-top: 0;
+  text-shadow: 1px -1px 3px rgba(0,0,0,.95);
+  font-size: 0.7em;
+  @include respond-to(small) {
+    font-size: 1em;
   }
   & a {
     color: #fff;
@@ -757,9 +762,10 @@ form#knowledgetracker { // Desk Tracker
   @include respond-to(small) {
     padding: 5px 10px 5px 10px;
   }
-  .btn-group.open & {
-    background-color: $hovercalm;
-  }
+}
+
+.open>.dropdown-toggle.btn-textonly:focus, .open>.dropdown-toggle.btn-textonly:hover {
+  background-color: $hovercalm;
 }
 
 .btn-alpha {  //Finding Aids Search Page
