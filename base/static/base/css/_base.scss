@@ -45,7 +45,7 @@ Alerts
   font-weight: 400;
   src: local('Material Icons'),
        local('MaterialIcons-Regular'),
-       url(/static/base/css/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+       url(https://motacilla.lib.uchicago.edu/static/base/css/iconfont/MaterialIcons-Regular.ttf) format('truetype');
 }
 
 .material-icons {
@@ -284,5 +284,21 @@ a {
       text-decoration: underline;
     }
 }
+
+.alert-info {
+  @extend .alert-low;
+  font-size: 0.9em;
+  padding: 0.5em;
+  border-bottom: none;
+  border-radius: 0;
+  & .close {
+    opacity: .4;
+  }
+  @include respond-to(small) {
+    padding: 0.5em 3em;
+  }
+}
+
+
 
 

@@ -60,7 +60,7 @@ Page Specific Alterations
 .centermain {
   padding: 0;
   @include respond-to(small) {
-    padding: 0 30px 0 0;
+    padding: 0 30px 0 15px;
   }
   @include respond-to(large) {
     max-width: 1200px;
@@ -110,7 +110,24 @@ Page Specific Alterations
    visibility: hidden;
 }
 
-
+.search-results {
+  & ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  & h4 {
+      margin: 20px 0 0 0;
+      a {
+        @extend h4;
+        text-decoration: underline;
+      }
+  }
+  & p {
+    color: $darkgray;
+    margin-bottom: 2px;
+    font-style: italic;
+  }
+}
 
 /*
  * Text
@@ -303,8 +320,8 @@ a.img-src {
     color: #fff;
     border: none;
   }
-  & > ul > li > a {
-    color: white;
+  & a {
+    color: #fff;
   }
 }
 
@@ -481,6 +498,20 @@ a#event-header {
 
 .carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
   width: 100%
+}
+
+.carousel-caption {
+  @include respond-to(smallonly) {
+    font-size: 0.7em;
+  }
+  & a {
+    color: #fff;
+    line-height: 2.3em;
+    &:hover {
+      color: $darkgray;
+      text-decoration: none;
+    }
+  }
 }
 
 /*
@@ -1499,8 +1530,9 @@ td.time, td.event-nav {
  * --------------------------------------------------
  */
 
-.coll-rightside {
+.rightside.coll-rightside {
   @extend .distinct-rightside;
+  border: none;
   ul {
     padding-left: 2em;
     text-indent: -2em;
