@@ -25,7 +25,7 @@
     <ul class="dropdown-menu listings-dropdown">
       {% if subject %}
         <li>
-          <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">All subjects</a>
+          <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">All Subjects</a>
         </li>
       {% endif %}
       {% for subject in subjects_pulldown %}
@@ -42,7 +42,7 @@
     <ul class="dropdown-menu listings-dropdown">
       {% if location %}
         <li>
-          <a href=".?view=exhibits" class="dropdown-item">All locations</a>
+          <a href=".?view=exhibits" class="dropdown-item">All Locations</a>
         </li>
       {% endif %}
       {% for l in locations %}

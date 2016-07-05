@@ -24,7 +24,7 @@
       Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
-      {% if subject %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All subjects</a></li>{% endif %}
+      {% if subject %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}" class="dropdown-item">All Subjects</a></li>{% endif %}
       {% for subject in subjects_pulldown %}
         <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if format %}&amp;format={{ format|urlencode }}{% endif %}&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a></li>
       {% endfor %}
@@ -36,7 +36,7 @@
       Format{% if format %}: {{ format }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
-      {% if format %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All formats</a></li>{% endif %}
+      {% if format %}<li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">All Formats</a></li>{% endif %}
       {% for format in formats_pulldown %}
         <li><a href=".?view=collections{% if digital %}&amp;digital=on{% endif %}&amp;format={{ format|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ format }}</a></li>
       {% endfor %}

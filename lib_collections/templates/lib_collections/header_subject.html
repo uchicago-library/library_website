@@ -23,6 +23,7 @@
       Subject Area{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul id="listings-dropdown" class="dropdown-menu">
+      {% if subject %}<li><a href=".?view=subjects" class="dropdown-item">All Subject Areas</a></li>{% endif %}
       {% for subject in subjects_pulldown %}
         <li>
           <a href=".?view=subjects&amp;subject={{ subject|urlencode }}" class="dropdown-item">{{ subject }}</a>
