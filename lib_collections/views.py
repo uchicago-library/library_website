@@ -59,28 +59,30 @@ def collections(request):
     exhibits = []
     exhibits_current = []
     if view == 'exhibits':
-        exhibits = ExhibitPage.objects.live().order_by('title')
+        filter_arguments = {}
+
+        if location:
+            filter_arguments['exhibit_location__title'] = location
+
+        if subject:
+            filter_arguments['exhibit_subject_placements__subject__in'] = Subject.objects.get(name=subject).get_descendants()
+
+        exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct()
+        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
 
         if digital:
             exhibits = exhibits.exclude(web_exhibit_url = '')
-
-        if location:
-            exhibits = exhibits.filter(exhibit_location__title=location)
-
-        if subject:
-            subject_ids = Subject.objects.get(name=subject).get_descendants()
-            exhibits = exhibits.filter(exhibit_subject_placements__subject__in=subject_ids).distinct()
-
-        exhibits_current = exhibits.filter(exhibit_open_date__lt = datetime.datetime.now().date()).filter(exhibit_close_date__gt = datetime.datetime.now().date())
+            exhibits_current = exhibits_current.exclude(web_exhibit_url = '')
 
         if search:
             exhibits = exhibits.search(search).results()
             exhibits_current = exhibits_current.search(search).results()
 
-    # FORMATS AND SUBJECTS THAT MAKE SENSE FOR THE QUERIES THAT HAVE HAPPENED SO FAR.
+        if not search:
+            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
+            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
 
-    # we'll need some kind of way to only get formats and subjects for things where it's possible here.  
-    # sorted(CollectionPageFormatPlacement.objects.all().values_list('format__text', flat=True).distinct())
+    # formats.
     formats = Format.objects.all().values_list('text', flat=True)
 
     # the formats pulldown should skip 'Digital'. That shows up as a checkbox. 
