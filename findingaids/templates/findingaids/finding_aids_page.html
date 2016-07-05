@@ -17,8 +17,9 @@
       <div class="col-xs-12 col-sm-6 col-sm-offset-3 distinct-search">
         <form action="." class="searchbox" method="get">
           <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="searchq" placeholder="Search finding aids"{% if searchq %} value="{{ searchq }}"{% endif %}/>
-          <input type="submit" class="searchbox-submit"/>
-          <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
+          <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i>
+            <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;"/>
+          </span>
         </form>
      
         <!-- 

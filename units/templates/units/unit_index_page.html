@@ -18,8 +18,9 @@
 	            <form action="." class="searchbox" method="GET">
 	                <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
 	                <input name="query" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
-	                <input type="submit" class="searchbox-submit">
-	                <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i></span>
+	                <span class="searchbox-icon"><i aria-hidden="true" class="fa fa-search"></i>
+	                    <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
+                    </span>
 	           </form>
 	        </div><!-- /.col-xs-12 col-sm-6-->
             {% if view == 'department' %}
