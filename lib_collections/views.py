@@ -30,23 +30,27 @@ def collections(request):
     # filter collections.
     collections = []
     if view == 'collections':
-        collections = CollectionPage.objects.live()
-	
+        filter_arguments = {}
+
+        # format
+        if digital or format:
+            filter_arguments['collection_placements__format__text__in'] = []
         if digital:
-            collections = collections.filter(collection_placements__format__text='Digital')
-
+            filter_arguments['collection_placements__format__text__in'].append('Digital')
         if format:
-            collections = collections.filter(collection_placements__format__text=format)
+            filter_arguments['collection_placements__format__text__in'].append(format)
 
+        # subject 
         if subject:
-            subject_ids = Subject.objects.get(name=subject).get_descendants()
-            collections = collections.filter(collection_subject_placements__subject__in=subject_ids).distinct()
+            filter_arguments['collection_subject_placements__subject__in'] = Subject.objects.get(name=subject).get_descendants()
 
-        # sorting
-        collections = collections.order_by('title')
-
+        # search
         if search:
-            collections = collections.search(search)
+            filter_arguments['id__in'] = list(map(lambda s: s.id, CollectionPage.objects.live().search(search)))
+
+        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct().order_by('title')
+
+        # StaffPage.search_fields[0].field_name
 
     # fiter exhibits.
     exhibits = []
@@ -85,12 +89,6 @@ def collections(request):
     locations = sorted(list(set(ExhibitPage.objects.exclude(exhibit_location=None).values_list('exhibit_location__title', flat=True))))
 
     subjects = []
-    # this needs to fold the see alsos in. 
-
-    # JEJ TODO:
-    # make a new subjects list to populate the subject pulldown.
-    # list subjects whose parent has no parent, plus law. So grandchild subjects online.
-
     # for the code below, list all subjects that are children of the subjects in the list
     # above, plus anything with a libguide id. right now that is equal to
     # business, medicine and law. See DB's "collections subjects" lucid chart for more 
