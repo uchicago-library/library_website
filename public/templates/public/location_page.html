@@ -6,57 +6,53 @@
 
 {% block content %}
     <article>
-        <div class="row">
-            <div class="col-xs-12 col-md-9 centermain">
-                <div class="col-xs-12 col-sm-4">
-                    {% if self.location_photo %}
-                        {% image self.location_photo width-200 class="img-responsive" %}
-                    {% else %}
-                        {% image default_image width-200 class="img-responsive" %}
+            <div class="col-xs-12 col-sm-4">
+                {% if self.location_photo %}
+                    {% image self.location_photo width-200 class="img-responsive" %}
+                {% else %}
+                    {% image default_image width-200 class="img-responsive" %}
+                {% endif %}
+                {% if self.address_1 %}
+                    <p>
+                        <strong>{{ self.address_1 }}</strong><br/>
+                        {% if self.address_2 %}
+                            {{ self.address_2 }}<br/>
+                        {% endif %}
+                        {% if self.city and self.state and self.postal_code %}
+                            {{ self.city }}, {{ self.state }} {{ self.postal_code }}<br/>
+                        {% endif %}
+                        {% if self.google_map_link %}
+                            <a href="{{ self.google_map_link }}">Google Map</a>
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div><!--/.col-->
+
+            <div class="col-xs-12 col-sm-8">
+                <h2>About</h2>
+                {{ self.long_description|richtext }}
+            </div><!--/.col-->
+
+        {% if has_right_sidebar %}
+            {% block right_sidebar %}
+                <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                    {% if self.has_features %}
+                        <h3>Features</h3>
+                        {% autoescape off %}
+                            {{features_html}}
+                        {% endautoescape %}
                     {% endif %}
-                    {% if self.address_1 %}
+                    {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
+                    {% if self.location_floor_placements.all %}
+                        <h3>Floorplans</h3>
                         <p>
-                            <strong>{{ self.address_1 }}</strong><br/>
-                            {% if self.address_2 %}
-                                {{ self.address_2 }}<br/>
-                            {% endif %}
-                            {% if self.city and self.state and self.postal_code %}
-                                {{ self.city }}, {{ self.state }} {{ self.postal_code }}<br/>
-                            {% endif %}
-                            {% if self.google_map_link %}
-                                <a href="{{ self.google_map_link }}">Google Map</a>
-                            {% endif %}
+                            {% for p in self.location_floor_placements.all %}
+                                <a href="{{ p.floor.url }}">{{ p.floor.title }}</a><br/>
+                            {% endfor %}
                         </p>
                     {% endif %}
-                </div><!--/.col-->
-
-                <div class="col-xs-12 col-sm-8">
-                    <h2>About</h2>
-                    {{ self.long_description|richtext }}
-                </div><!--/.col-->
-            </div> <!--/.centermain-->
-
-            {% if has_right_sidebar %}
-                {% block right_sidebar %}
-                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                        {% if self.has_features %}
-                            <h3>Features</h3>
-                            {% autoescape off %}
-                                {{features_html}}
-                            {% endautoescape %}
-                        {% endif %}
-                        {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
-                        {% if self.location_floor_placements.all %}
-                            <h3>Floorplans</h3>
-                            <p>
-                                {% for p in self.location_floor_placements.all %}
-                                    <a href="{{ p.floor.url }}">{{ p.floor.title }}</a><br/>
-                                {% endfor %}
-                            </p>
-                        {% endif %}
-                    </div><!--/.rightside-mod-->
-                {% endblock %}
-            {% endif %}
-        </div><!--/.row-->
+                </div><!--/.rightside-mod-->
+            {% endblock %}
+        {% endif %}
     </article>
 {% endblock %}
