@@ -32,6 +32,12 @@ body {
   }
 }
 
+#push {
+  @include respond-to(small) {
+    height: 250px;
+  }
+}
+
 
 /*
  * Top Right Navbar (time/account/ask)
