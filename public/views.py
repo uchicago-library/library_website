@@ -88,7 +88,7 @@ def spaces(request):
         'floor': floor,
         'floors': floors,
         'self': {
-            'title': 'Our Spaces'
+            'title': 'Library Spaces'
         },
         'spaces': spaces,
         'space_type': space_type
