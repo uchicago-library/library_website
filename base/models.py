@@ -1136,7 +1136,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             context['address'] = location_and_hours['address']
             #context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
-            context['directory_link'] = self.get_directory_link_by_location(location)
+            context['directory_link'] = self.get_directory_link_by_location(location, True)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')

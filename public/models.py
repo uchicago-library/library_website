@@ -338,7 +338,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         return {'person': person, 'image': image, 'profile': profile, 'links': links}
 
 
-    def get_directory_link_by_location(self, location):
+    def get_directory_link_by_location(self, location, specialists=False):
         """
         Return a link into the directory limited for a 
         given Library.
@@ -347,6 +347,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             location: string, the building level locations 
             for which to retrieve a link into the public 
             directory.
+
+            specialists: boolean, if set to True, only show
+            subject specialists for the given location.
 
         Returns:
             string, link into the public directory
@@ -360,8 +363,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                  'The Joe and Rika Mansueto Library': base + urllib.parse.quote_plus('Mansueto'),
                  'The Joseph Regenstein Library': base + urllib.parse.quote_plus('Regenstein Library'),
                  'Special Collections Research Center': base + urllib.parse.quote_plus('Special Collections Research Center'),
-                 'Social Service Administration Library': base + urllib.parse.quote_plus('SSA Library')} 
-        return links[location]
+                 'Social Service Administration Library': base + urllib.parse.quote_plus('SSA Library')}
+
+        if specialists:
+             return links[location] + '&subject=All+Subject+Specialists'       
+        else: 
+            return links[location]
 
 
     @property 
