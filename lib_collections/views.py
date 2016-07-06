@@ -187,4 +187,5 @@ def collections(request):
         'chat_url': get_unit_chat_link(unit, request),
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
+        'hours_page_url': home_page.get_hours_page(request),
     })

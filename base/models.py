@@ -919,7 +919,7 @@ class PublicBasePage(BasePage):
         """
         try:
             current_site = Site.find_for_request(request)
-            return Page.objects.all().filter(id=HOURS_PAGE)[0].relative_url(current_site)
+            return Page.objects.get(id=HOURS_PAGE).relative_url(current_site)
         except(IndexError) as e:
             msg = 'HOURS_PAGE in settings.base is configured incorrectly. \
 Either it is set to the ID of a non-existing page or it has an incorrect value.'
