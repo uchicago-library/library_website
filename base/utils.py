@@ -2,12 +2,13 @@ import base64
 from http.client import HTTPSConnection
 from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 import requests
-from library_website.settings.base import LIBCAL_IID, HOURS_TEMPLATE, ADDRESS_TEMPLATE, NEWS_CATEGORIES
+from library_website.settings import LIBCAL_IID, HOURS_TEMPLATE, ADDRESS_TEMPLATE, NEWS_CATEGORIES, HOURS_PAGE
 import feedparser
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from bs4 import BeautifulSoup
 import json
+from wagtail.wagtailcore.models import Page
 
 HOURS_UNAVIALABLE = 'Hours Unavailable'
 
@@ -225,32 +226,44 @@ def get_json_hours_by_id(llid, hours):
     
 
 
-def get_building_hours_and_lid():
+def get_building_hours_and_lid(current_site):
     """
     Get all libcal houurs for buildings along 
     with the corresponding libcal library ID.
 
+    Args:
+        current_site: wagtail site object from 
+        request.
+
     Returns:
         A list of tuples where the first item
-        is a libcal library ID and the second
-        item is the hours presented as a string.
+        is a libcal library ID the second item
+        is the hours presented as a string and
+        the third item is an anchor link to the
+        hours and locations page.
     """
     from public.models import LocationPage
     buildings = []
     llids = []
-    library_names = {}
+    library_data = {}
+    hours_page = Page.objects.get(id=HOURS_PAGE)
+    base_url = hours_page.relative_url(current_site)
     for library in LocationPage.objects.live().filter(is_building=True):
         library_id = library.libcal_library_id
         if library.libcal_library_id:
             llids.append(library_id)
-            library_names[library_id] = str(library)
+            data = {}
+            libname = str(library)
+            data['name'] = libname
+            data['url'] = base_url + '#' + slugify(libname)
+            library_data[library_id] = data
 
     library_hours = get_json_for_libraries(llids)
     for page in library_hours['locations']:
         llid = int(page['lid'])
         if llid in llids:
-            hours = HOURS_TEMPLATE % (library_names[llid], process_hours(page['rendered']))
-            buildings.append((str(llid), str(hours)))
+            hours = HOURS_TEMPLATE % (library_data[llid]['name'], process_hours(page['rendered']))
+            buildings.append((str(llid), str(hours), library_data[llid]['url']))
     return buildings
 
 

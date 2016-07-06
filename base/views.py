@@ -4,6 +4,7 @@ import json
 from base.utils import get_all_building_hours, get_hours_and_location, get_json_hours_by_id, get_building_hours_and_lid, get_events, get_news
 from units.utils import get_default_unit
 import urllib
+from wagtail.wagtailcore.models import Site
 
 def breadcrumbs(request):
     breadcrumbs = [{
@@ -30,6 +31,7 @@ def json_hours(request):
     """
     View for rendering hours as json. 
     """
+    current_site = Site.find_for_request(request)
     if request.method == 'GET':
         if request.GET.get('fallback'):
             fallback = request.GET['fallback']
@@ -40,7 +42,7 @@ def json_hours(request):
             )
         else:
             libcalid = request.GET['libcalid']
-            all_building_hours = json.dumps(get_building_hours_and_lid())
+            all_building_hours = json.dumps(get_building_hours_and_lid(current_site))
             return JsonResponse(
                 {
                     'all_building_hours': all_building_hours,

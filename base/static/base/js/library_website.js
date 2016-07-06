@@ -32,9 +32,10 @@ function renderHours(libcalid){
             var key = JSON.parse(keystr);
             var llid = innerJson[key][0];
             var hours = innerJson[key][1];
+            var hlink = innerJson[key][2];
 
             if (llid != currentLlid) {
-                html += '<li><a href="#">' + hours + '</a></li>';
+                html += '<li><a href="' + hlink + '">' + hours + '</a></li>';
             } else {
                 // Render the current building hours as selected
                 var currentHoursHtml = '<span>' + hours  + '</span>';
