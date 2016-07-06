@@ -97,7 +97,7 @@ Page Specific Alterations
   }
 }
 
-.h1-banner, #p-3378 h1 {  // Hide h1 on homepages with banners
+.h1-banner, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
   position:absolute;
   right:-10000px; 
   top:auto; 
@@ -524,6 +524,11 @@ a#event-header {
  * --------------------------------------------------
  */
 
+ .news-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .newsblock {
   padding: 0 5px;
   h3 {
@@ -759,6 +764,7 @@ form#knowledgetracker { // Desk Tracker
   border:0;
   padding: 5px 10px 5px 5px;
   border-radius: 0;
+  margin-bottom: 0px;
   @include respond-to(small) {
     padding: 5px 10px 5px 10px;
   }
