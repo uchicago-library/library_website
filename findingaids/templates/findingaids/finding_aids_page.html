@@ -59,7 +59,7 @@
               {% for r in searchresults %}
                 <tr>
                   <td colspan="1">
-                    <h3><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
+                    <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
                     <p>{{ r.abstract }}</p>
                   </td>
                 </tr>
@@ -98,7 +98,7 @@
           <tbody>
             {% for b in browses %}
               <tr>
-                <td><strong><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a></strong></td>
+                <td><strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a></strong></td>
               </tr>
             {% endfor %}
           </tbody>
@@ -122,7 +122,7 @@
             {% for t in thistopiclist %}
               <tr>
                 <td>
-                  <h3><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
+                  <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
                   <p>{{ t.2 }}</p>
                 </td>
               </tr>
@@ -165,7 +165,7 @@
           {% for d in digitizedlist %}
             <tr>
               <td>
-                <strong><a href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></strong><br/>
+                <strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></strong><br/>
                 {{ d.2 }}
               </td>
             </tr>
