@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.fields import CharField
 from django import forms
 from django.utils import timezone
-from wagtail.wagtailcore.models import Page, Orderable
+from wagtail.wagtailcore.models import Page, Orderable, Site
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore import blocks
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel, PageChooserPanel
@@ -303,7 +303,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         return (False, None)
 
 
-    def unpack_lib_expert_block(self, block):
+    def unpack_lib_expert_block(self, block, current_site):
         """
         Unpack the values from a "Featured Library Expert" 
         streamfield block and return a data structure for 
@@ -318,16 +318,23 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             block: Featured Library Expert or fallback 
             streamfield block.
 
+            current_site: Wagtail site object for the 
+            request.
+
         Returns:
             Mixed dictionary with the following values: 
             person (StaffPage object), image (object), 
             profile (string url), links (list of html strings).
         """
-        person = block.value.get('library_expert')
+        person = block.value.get('library_expert') 
         libguides = block.value.get('libguides')
         image = person.specific.profile_picture
-        profile = person.specific.public_page.url if person.specific.public_page else None
-   
+        try:
+            public_person = StaffPublicPage.objects.get(title=str(person))
+        except:
+            public_person = None
+        profile = public_person.relative_url(current_site) if public_person else None
+        
         links = [] 
         for guide in libguides:
             link_text = guide['link_text']
@@ -408,11 +415,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Override the page object's get context method.
         """
         context = super(StandardPage, self).get_context(request)
-        
+        current_site = Site.find_for_request(request) 
         has_featured_lib_expert = self.get_featured_lib_expert()[0]
 
         if has_featured_lib_expert:
-            lib_expert_block = self.unpack_lib_expert_block(self.get_featured_lib_expert()[1])
+            lib_expert_block = self.unpack_lib_expert_block(self.get_featured_lib_expert()[1], current_site)
             context['has_featured_lib_expert'] = has_featured_lib_expert
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
             context['featured_lib_expert_name'] = lib_expert_block['person'] 
