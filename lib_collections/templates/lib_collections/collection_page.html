@@ -29,7 +29,7 @@
           <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
         {% endif %}
 
-        {% if self.collection_location or self.supplementary_access_links %}
+        {% if self.collection_location or supplementary_access_links %}
           <h3>Location &amp; Access</h3>
           {% if self.collection_location %}
             <p>
@@ -40,9 +40,9 @@
             </p>
           {% endif %}
   
-          {% if self.supplementary_access_links %}
+          {% if supplementary_access_links %}
             <p style="font-size: 1.1em;">
-              {% for l in self.supplementary_access_links.all %}
+              {% for l in supplementary_access_links %}
                 <strong><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a></strong><br/>
               {% endfor %}
             </p>

@@ -245,6 +245,7 @@ class CollectionPage(PublicBasePage):
         context['staff_vcard_email'] = staff_vcard_email
         context['staff_vcard_phone_number'] = staff_vcard_phone_number
         context['staff_vcard_faculty_exchange'] = staff_vcard_faculty_exchange
+        context['supplementary_access_links'] = self.supplementary_access_links.get_object_list()
         return context
 
     def has_right_sidebar(self):
