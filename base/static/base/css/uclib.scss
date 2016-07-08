@@ -284,6 +284,7 @@ a.img-src {
     color:  $active-hover;
   }
   h3, h4 {
+    font-weight: 400;
     margin: 5px 0 10px 0;
     padding-bottom: 5px;
     color: $brightpurple;
@@ -502,9 +503,8 @@ a#event-header {
 
 .carousel-caption {
   //font-family: Garamond, serif;
-  padding-bottom: 0;
   padding-top: 0;
-  text-shadow: 1px -1px 3px rgba(0,0,0,.95);
+  text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
   font-size: 0.7em;
   @include respond-to(small) {
     font-size: 1em;
@@ -1521,7 +1521,7 @@ td.time, td.event-nav {
   letter-spacing: 0.1em;
   background-color: #58593F;
   border-right: 0px;
-  margin-top: 15px;
+  margin: 5px 0 15px;
   padding: 5px 20px;
   &:before {
       color: #fff;
@@ -1625,6 +1625,12 @@ tr.seealso {
   td {
     font-style: italic;
   }
+}
+
+p.acknowledgments {
+  font-style: italic;
+  color: #6d2f6a;
+  font-size: 1.2em;
 }
 
 /*

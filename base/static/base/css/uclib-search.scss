@@ -105,10 +105,18 @@ h1.searchbox-header {
   }
 }
 
-.btn-searchtype>button {
-  color: #fff;
-  line-height: 1.2em;
-  padding: 8px 25px 8px 10px;
+.btn-searchtype {
+  @include respond-to(small) {
+    min-width: 100px;
+  }
+  &>button {
+    color: #fff;
+    line-height: 1.2em;
+    padding: 8px 25px 8px 10px;
+  }
+  &>.btn-default {
+    margin-bottom: 0;
+  }
 }
 
 .btn-searchtype>.dropdown-menu { //ALTS to work with javascript translation
