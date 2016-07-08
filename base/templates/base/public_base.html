@@ -365,54 +365,6 @@
                     {{index_pages_html}}
                 {% endautoescape %}
 
-                {% if self.has_richtext_widget %}
-                    <div class="col-xs-12 col-sm-6 home-modwrapper">
-                        <div class="home-module">
-                            <h2>{{self.rich_text_heading}}</h2>
-                            {% if self.rt_link and self.rich_text_link_text %}
-                                <a class="viewall" href="{{self.rt_link}}">{{self.rich_text_link_text}}</a>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-12">
-                            {{self.rich_text|richtext}}
-                        </div>
-                    </div> 
-                {% endif %}
-
-                {% if has_featured_lib_expert %}
-                   <div class="row">
-                        {% if has_featured_lib_expert %}
-                            {% image featured_lib_expert_image fill-200x200 as profile_pic %}
-                            {#featured_lib_expert.block.library_expert #}
-                            <div class="col-xs-12 col-sm-6 home-modwrapper">
-                                <div class="home-module">
-                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}">View all {{self.friendly_name}} experts</a>
-                                </div>
-                                <div class="col-xs-8">
-                                    {% if featured_lib_expert_profile %}
-                                        <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
-                                    {% else %}
-                                        <h3>Consult {{featured_lib_expert_name}} on:</h3>
-                                    {% endif %} 
-                                    <ul>
-                                        {% for link in featured_lib_expert_links %}
-                                            <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    <h3>Not sure where to start?</h3>
-                                    <ul>
-                                        <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-xs-4 home-profile">
-                                    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div> <!-- // row -->
-                {% endif %}
-
-
                 {% if carousel_items %}
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
 
@@ -463,6 +415,53 @@
                             </a>
                         {% endif %}
                     </div>
+                {% endif %}
+
+                {% if self.has_richtext_widget %}
+                    <div class="col-xs-12 col-sm-6 home-modwrapper">
+                        <div class="home-module">
+                            <h2>{{self.rich_text_heading}}</h2>
+                            {% if self.rt_link and self.rich_text_link_text %}
+                                <a class="viewall" href="{{self.rt_link}}">{{self.rich_text_link_text}}</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12">
+                            {{self.rich_text|richtext}}
+                        </div>
+                    </div> 
+                {% endif %}
+
+                {% if has_featured_lib_expert %}
+                   <div class="row">
+                        {% if has_featured_lib_expert %}
+                            {% image featured_lib_expert_image fill-200x200 as profile_pic %}
+                            {#featured_lib_expert.block.library_expert #}
+                            <div class="col-xs-12 col-sm-6 home-modwrapper">
+                                <div class="home-module">
+                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}">View all {{self.friendly_name}} experts</a>
+                                </div>
+                                <div class="col-xs-8">
+                                    {% if featured_lib_expert_profile %}
+                                        <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
+                                    {% else %}
+                                        <h3>Consult {{featured_lib_expert_name}} on:</h3>
+                                    {% endif %} 
+                                    <ul>
+                                        {% for link in featured_lib_expert_links %}
+                                            <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <h3>Not sure where to start?</h3>
+                                    <ul>
+                                        <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-4 home-profile">
+                                    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div> <!-- // row -->
                 {% endif %}
 
                 {% if self.news_feed_url %}
