@@ -75,14 +75,6 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     # Field definitions
     subtitle = models.CharField(max_length=100, blank=True) 
     tagline = models.CharField(max_length=150, blank=True)
-    banner_image = models.ForeignKey(
-        'wagtailimages.Image',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        help_text="Banners should be 1200xB pixels"
-    )
     branding_color= models.CharField(validators=[hex_regex], \
         max_length=7, blank=True)
     location = models.ForeignKey('public.LocationPage',

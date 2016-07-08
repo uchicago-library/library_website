@@ -840,6 +840,17 @@ class PublicBasePage(BasePage):
     # Workshops and Events
     events_feed_url = models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed')
 
+    # Banner
+    banner_title = models.CharField(max_length=100, blank=True)
+    banner_image =  models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Banners should be approximately 1200 × 200 pixels"
+    )
+
     # News
     news_feed_url = models.URLField(blank=True, help_text='Link to a wordpress feed from the Library News Site') 
     external_news_page = models.URLField(blank=True, help_text='Link to an external news page, e.g. wordpress')
