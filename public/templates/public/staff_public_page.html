@@ -50,9 +50,11 @@
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h4>Subject Specialties</h4>
       <p style="line-height: 1.7em;">
-        {% for s in subjects %}
-          <a href="#">{{ s }}</a><br/>
-        {% endfor %}
+        {% if subjects %}
+            {% autoescape off %}
+                {{subjects}}
+            {% endautoescape %}
+        {% endif %}
       </p>
       {% if libguide_url %}
         <p>

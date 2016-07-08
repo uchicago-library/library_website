@@ -14,6 +14,7 @@ from base.models import PublicBasePage, DefaultBodyFields, Address, Email, Phone
 from datetime import date
 from staff.models import StaffPage
 from wagtail.wagtailimages.models import Image
+from subjects.utils import get_subjects_html
 
 import urllib
 
@@ -807,10 +808,6 @@ class StaffPublicPage(PublicBasePage):
         for expertise in s.expertise_placements.all():
             expertises.append(expertise.expertise.text)
 
-        subjects = []
-        for subject in s.staff_subject_placements.all():
-            subjects.append(subject.subject)
-
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
         context['bio'] = self.get_bio()
@@ -827,7 +824,7 @@ class StaffPublicPage(PublicBasePage):
         context['phone_number'] = v.phone_number
         context['profile_picture'] = s.profile_picture
         context['room_number'] = v.faculty_exchange.split(' ').pop()
-        context['subjects'] = subjects
+        context['subjects'] = get_subjects_html(s.staff_subject_placements.all())
         context['vcardtitle'] = v.title
         return context
 
