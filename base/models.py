@@ -277,6 +277,7 @@ class CarouselItem(LinkFields):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        help_text='Suggested proportions: 1200px wide by 400px high ',
         related_name='+'
     )
     image_title = models.CharField(max_length=55, blank=True)
