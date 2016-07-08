@@ -356,16 +356,6 @@
             <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
             {% endif %}
 
-                {% block content %}
-                    {% for block in self.body %}
-                        {{ block }}
-                    {% endfor %}
-                {% endblock %}
-
-                {% autoescape off %}
-                    {{index_pages_html}}
-                {% endautoescape %}
-
                 {% if carousel_items %}
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
 
@@ -417,6 +407,16 @@
                         {% endif %}
                     </div>
                 {% endif %}
+
+                {% block content %}
+                    {% for block in self.body %}
+                        {{ block }}
+                    {% endfor %}
+                {% endblock %}
+
+                {% autoescape off %}
+                    {{index_pages_html}}
+                {% endautoescape %}
 
                 {% if self.has_richtext_widget %}
                     <div class="col-xs-12 col-sm-6 home-modwrapper">
