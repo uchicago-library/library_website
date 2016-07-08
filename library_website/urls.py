@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^about/directory/$', unit_view, name='unit'),
+    url(r'^about/directory/staff/$', RedirectView.as_view(url='/about/directory/?view=staff')),
     url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collex/$', collection_view, name='collection'),
     url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
