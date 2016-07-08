@@ -473,10 +473,12 @@
                                 <a class="viewall" href="{{news_page}}">View all</a>
                             {% endif %}
                         </div>
-                        <span id="news-target" data-news-feed="{{news_feed}}">
-                            <i class="fa fa-refresh fa-spin fa-fw"></i>
-                            <span>Loading...</span>
-                        </span> 
+                        <div class="news-wrap">
+                            <span id="news-target" data-news-feed="{{news_feed}}">
+                                <i class="fa fa-refresh fa-spin fa-fw"></i>
+                                <span>Loading...</span>
+                            </span>
+                        </div>
                     </div>
                 {% endif %}
             {% if self.has_right_sidebar %}
@@ -642,6 +644,7 @@
             <a href="/eck/">Eckhart</a><br/>
             <a href="/mansueto/">Mansueto</a><br/>
             <a href="/spaces/joseph-regenstein-library/">Regenstein</a><br/>
+            <a href="/scrc/">Special Collections</a><br/>
             <a href="/ssa/">SSA</a></p>
         </div>
         <!-- // Libraries -->
