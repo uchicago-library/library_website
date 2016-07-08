@@ -48,7 +48,7 @@
           {% if self.publication_description %}
             <p>
               {% if self.publication_url %}
-                <a href="{{ self.publication_url }}">Publication</a><br>
+                <a href="{{ self.publication_url }}" class="btn btn-morecoll">Online Exhibit Catalog</a><br>
               {% endif %}
               <em>{{ self.publication_description }}</em>{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
               {% if self.ordering_information %}
