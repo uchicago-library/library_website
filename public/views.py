@@ -5,6 +5,8 @@ from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
+from public.utils import get_features, has_feature
+
 
 def spaces(request):
     building = request.GET.get('building', None)
@@ -12,31 +14,12 @@ def spaces(request):
     floor = request.GET.get('floor', None)
     space_type = request.GET.get('space_type', 'is_study_space')
 
-    possible_features = [
-        {'field': 'is_quiet_zone',         'label': 'Quiet Zone'},
-        {'field': 'is_collaboration_zone', 'label': 'Collaboration Zone'},
-        {'field': 'is_phone_zone',         'label': 'Cell Phone Zone'},
-        {'field': 'is_meal_zone',          'label': 'Meal Zone'},
-        {'field': 'is_open_space',         'label': 'Open Space'},
-        {'field': 'is_snacks_allowed',     'label': 'Snacks Allowed'},
-        {'field': 'is_24_hours',           'label': 'All Night Study'},
-        {'field': 'has_printing',          'label': 'Copy / Print / Scan'},
-        {'field': 'has_public_computer',   'label': 'Public Computer(s)'},
-        {'field': 'has_dual_monitors',     'label': 'Dual Monitor stations'},
-        {'field': 'has_book_scanner',      'label': 'Overhead Book Scanner'},
-        {'field': 'has_single_tables',     'label': 'Individual Tables'},
-        {'field': 'has_large_tables',      'label': 'Large Tables'},
-        {'field': 'has_carrels',           'label': 'Carrels'},
-        {'field': 'has_standing_desk',     'label': 'Standing Desks'},
-        {'field': 'has_soft_seating',      'label': 'Comfy Seating'},
-        {'field': 'is_reservable',         'label': 'Reservable'},
-        {'field': 'has_board',             'label': 'Whiteboard'}
-    ]
+    possible_features = get_features() 
 
     # validate form input.
     if not building in LocationPage.objects.filter(is_building=True).values_list('title', flat=True):
         building = None
-    if not feature in list(map(lambda f: f['field'], possible_features)):
+    if not has_feature(feature):
         feature = None
     if not space_type in ['is_study_space', 'is_teaching_space', 'is_event_space']:
         space_type = None
@@ -45,8 +28,8 @@ def spaces(request):
     feature_label = ''
     if feature:
         for f in possible_features:
-            if f['field'] == feature:
-                feature_label = f['label']
+            if f[0] == feature:
+                feature_label = f[1]
 
     # get spaces.
     spaces = LocationPage.objects.live()
@@ -67,7 +50,7 @@ def spaces(request):
     buildings = LocationPage.objects.filter(id__in = parent_building_ids)
 
     # make sure all features have at least one LocationPage for the current space_type. 
-    features = list(filter(lambda f: spaces.filter(**{f['field']: True}), possible_features))
+    features = list(filter(lambda f: spaces.filter(**{f[0]: True}), possible_features))
 
     # if a library building has been set, get floors that are appropriate for
     # the parameters that have been set. 

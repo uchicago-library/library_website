@@ -38,6 +38,9 @@
         <!-- Boostrap-select -->
         <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
     {% endcompress %}
+    {% if is_hours_page %}
+        <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
+    {% endif %}
 </head>
 
 <body id="p-{{self.id}}" class="{{page_type|slugify}}">
@@ -706,7 +709,6 @@
  
     {% block extra_scripts %}{% endblock %}
     {% if is_hours_page %}
-        <script src="https://api3.libcal.com/js/hours_grid.js?002"></script> 
         <script>
             //Regenstein
             $(function(){ 
@@ -742,7 +744,7 @@
             $(function(){ 
                 var week1380 = new $.LibCalWeeklyGrid( $("#s-lc-whw1380"), { iid: 482, lid: 1380,  weeks: 4 }); 
             });
-    </script>
+        </script>
     {% endif %}
 <!-- // Scripts -->
 </body>
