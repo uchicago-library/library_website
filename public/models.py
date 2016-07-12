@@ -634,9 +634,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             Html or an empty string
         """
         html = '<ul class="features-list">'
-        print('foo')
         if self.has_any_features():
-            print('bar')
             for item in get_features():
                 field = 'self.' + item[0]
                 if eval(field):
