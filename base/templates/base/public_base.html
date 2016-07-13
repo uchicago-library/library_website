@@ -38,7 +38,9 @@
         <!-- Boostrap-select -->
         <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
     {% endcompress %}
+    {# Jquery must be loaded in the header on the hours page #}
     {% if is_hours_page %}
+        <script src="{% static "base/js/jquery.min.js" %}"></script>
         <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
     {% endif %}
 </head>
@@ -681,7 +683,10 @@
 <!-- Scripts -->
 
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "base/js/jquery.min.js" %}"></script>
+    {# Unfortunately we have to load jquery in the header on the hours page#}
+    {% if not is_hours_page %}
+        <script src="{% static "base/js/jquery.min.js" %}"></script>
+    {% endif %}
     <script src="{% static "base/js/bootstrap.min.js" %}"></script>
     <script src="{% static "base/js/transformer-tabs.js" %}"></script>
     <script src="{% static "public/js/bootstrap-select.js" %}"></script>
