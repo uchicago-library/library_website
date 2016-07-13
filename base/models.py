@@ -1241,11 +1241,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         if self.unit.id == ROOT_UNIT:
             all_spaces = base_url 
             quiet_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'feature': 'is_quiet_zone'}))
-            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'feature': 'is_collaborative_zone'}))
+            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'feature': 'is_collaboration_zone'}))
         else:
             all_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location'])}))
             quiet_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_quiet_zone'}))
-            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_collaborative_zone'}))
+            collaborative_spaces = '%s?%s' % (base_url, urllib.parse.urlencode({'building': str(data['page_location']), 'feature': 'is_collaboration_zone'}))
         return [all_spaces, quiet_spaces, collaborative_spaces]
 
 
