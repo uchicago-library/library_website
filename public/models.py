@@ -597,6 +597,12 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         index.SearchField('reservation_display_text'),
     ]
 
+    api_fields = [
+        'libcal_library_id',
+        'google_map_link',
+        'reservation_url',
+    ]
+
 
 
     def has_any_features(self):
