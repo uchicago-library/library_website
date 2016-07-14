@@ -93,7 +93,7 @@
                   <strong>Subjects</strong>
                   <br/>
                   {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a><br/>
+                    <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a><br/>
                   {% endfor %}
                 {% endif %}
               </td>
@@ -136,7 +136,7 @@
                   <strong>Subjects</strong>
                   <br/>
                   {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href="{{ subject_placement.subject.url }}">{{ subject_placement.subject.name }}</a></br/>
+                    <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a></br/>
                   {% endfor %}
                 {% endif %}
               </td>

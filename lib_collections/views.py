@@ -157,7 +157,7 @@ def collections(request):
     # Set context variables for templates
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
     location_and_hours = get_hours_and_location(home_page)
-    location = str(location_and_hours['page_location'])
+    page_location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
 
     return render(request, 'lib_collections/collections_index_page.html', {
@@ -182,7 +182,7 @@ def collections(request):
         'subjects_pulldown': subjects_pulldown,
         'view': view,
         'page_unit': str(unit),
-        'page_location': location,
+        'page_location': page_location,
         'address': location_and_hours['address'],
         'chat_url': get_unit_chat_link(unit, request),
         'chat_status': get_chat_status('uofc-ask'),
