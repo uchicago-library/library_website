@@ -577,6 +577,12 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             ],
             heading='Quicklinks'
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel('display_hours_in_right_sidebar'),
+            ],
+            heading='Granular hours'
+        ),
     ] 
 
     edit_handler = TabbedInterface([
@@ -672,7 +678,22 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         Returns:
             Boolean
         """
-        return self.base_has_right_sidebar() or self.has_any_features()
+        self.has_floorplans()
+        return self.base_has_right_sidebar() or self.has_any_features() or self.has_floorplans
+
+
+    def has_floorplans(self):
+        """
+        Detect if a location page has floorplans.
+
+        Returns:
+            boolean
+        """
+        objects = self.location_floor_placements.get_live_query_set().filter(parent_id=self.id)
+        for obj in objects:
+            if obj.floor_id:
+                return True
+        return False
 
 
     def get_context(self, request):
@@ -685,6 +706,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
         context['default_image'] = default_image
         context['features_html'] = self.get_features_html()
+        context['has_floorplans'] = self.has_floorplans()
 
         return context
 

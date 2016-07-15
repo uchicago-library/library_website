@@ -43,7 +43,7 @@
                         {% endautoescape %}
                     {% endif %}
                     {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
-                    {% if self.location_floor_placements.all %}
+                    {% if has_floorplans %}
                         <h3>Floorplans</h3>
                         <p>
                             {% for p in self.location_floor_placements.all %}
