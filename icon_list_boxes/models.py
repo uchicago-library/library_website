@@ -37,13 +37,13 @@ class IconAutoListBlock(StructBlock):
         if value['starting_page']:
             url_path = value['starting_page'].url_path
 
-            for child in sorted(list(Page.objects.get(url_path=url_path).get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
+            for child in Page.objects.get(url_path=url_path).get_children().in_menu().live().specific():
                 c = {
                     'title': child.title,
                     'url': child.url,
                     'children': []
                 }
-                for grandchild in sorted(list(child.get_children().in_menu().live().specific()), key=lambda p: (p.sort_order, p.title)):
+                for grandchild in child.get_children().in_menu().live().specific():
                     c['children'].append({
                         'title': grandchild.title,
                         'url': grandchild.url
