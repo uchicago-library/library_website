@@ -130,6 +130,7 @@ i.ask-icon {
   margin-bottom:0px;
   background-image: url("../images/warm_grey_reddish.jpg");
   background-repeat: repeat;
+  background-color: $darkgray; //back-up
   z-index: 10;
   border-radius: 0;
   .navbar-nav {
@@ -359,7 +360,7 @@ i.ask-icon {
  */
 
 .sidebar {
-  background-color: $midneutral;
+  background-color: rgba(210,205,204,0.6);
   padding: 5px 15px 40px 40px;
   @include respond-to(medium) {
     padding-left: 2em;
@@ -367,8 +368,8 @@ i.ask-icon {
   }
   ul {
     list-style-type: none;
-    padding-left: 2em;
-    text-indent: -2em;
+    padding-left: 1em;
+    text-indent: -1em;
     li {
       margin-bottom: 5px;
     }

@@ -1061,11 +1061,11 @@ ul.index-list {
     padding-left: 0;
     a {
       font-weight: 600;
-      color:#C16622;
+      color: $ssaorange;
     }
     &>ul.index-list>li { // 2nd Level
       margin: 5px 0;
-      padding-left: 2em;
+      padding-left: 0;
       a {
         font-weight: 400;
         color:$darkgray;
@@ -1641,17 +1641,22 @@ p.acknowledgments {
  .directory-list {
   @extend .distinct-list;
   & img {
-      @include desaturate;
-      max-width: 7em;
+    @include desaturate;
+    max-width: 7em;
+  }
+  &>tbody>tr>td {
+    &:nth-child(2) {
+      padding-left: 15px;
     }
-    &>tbody>tr>td {
-      &:nth-child(2) {
-        padding-left: 15px;
-      }
-      @include respond-to(smallonly) {
-        padding-left: 15px;
+    @include respond-to(small) {
+      &:nth-child(3), &:nth-child(4) {
+        width: 25%;
       }
     }
+    @include respond-to(smallonly) {
+      padding-left: 15px;
+    }
+  }
  }
 
 .guide-link {
