@@ -156,7 +156,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
             units = self.specific.unit.get_descendants(True)
     
             staff_pages = []
-            for v in StaffPagePageVCards.objects.filter(unit__in=units):
+            for v in StaffPagePageVCards.objects.filter(page__live=True, unit__in=units):
                 staff_page = v.staffpagepagevcards.page
                 if staff_page not in staff_pages:
                     staff_pages.append(staff_page)
