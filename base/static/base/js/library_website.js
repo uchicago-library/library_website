@@ -101,7 +101,86 @@ function renderNews() {
         });
     }
 }
+
+/* 
+ * validateFormBeforeSubmit
+ */
+
+(function($) {
+    $.fn.extend({
+        validateConfirmField: function() {
+            var form = this.parents('form').eq(0);
+            var elementName = this.attr('name');
+            var elementData = form.serializeArray();
+            var e = 0;
+            while (e < elementData.length) {
+                if (elementData[e].name == elementName)
+                    break;
+                e++;
+            }
+            var previousElementName = elementData[e-1].name;
+            var previousElement = form.find('*[name=' + previousElementName + ']');
+            if (previousElement.val() == this.val())
+                return true;
+            else
+                return false;
+        }
+    });
+    $.fn.extend({
+        validateEmailField: function() {
+            var re = /^.+@.+\..+$/;
+            return re.test(this.val());
+        }
+    });
+    $.fn.extend({
+        validateRequiredField: function() {
+            if (this.attr('type') == 'radio') {
+                var name = this.attr('name');
+                if ($('input:radio[name=' + name + ']:checked').size() > 0) 
+                    return true;
+                else
+                    return false;
+            } else {
+                if (this.val() != '')
+                    return true;
+                else
+                    return false;
+            }
+        }
+    });
+    $.fn.extend({
+        validateFormBeforeSubmit: function() {
+            this.submit(function(e) {
+                var errors = new Array();
     
+                $(this).find('.validateemail').each(function() {
+                    if (!$(this).validateEmailField())
+                        errors.push($(this).attr('name') + ' is an invalid email address.');
+                });
+
+                $(this).find('.validaterequired, select[name="affiliation"], select[name="proxy_length"], select[name="heard_about"], select[name="researcher_type"], select[name="category"]').each(function(element) {
+                    if (!$(this).validateRequiredField())
+                        errors.push($(this).attr('name') + ' is required.');
+                });
+
+                $(this).find('.validateconfirm').each(function() {
+                    if (!$(this).validateConfirmField())
+                        errors.push($(this).attr('name') + ' doesn\'t match.');
+                });
+
+                if (!$(this).find('.validateatleastone').first().validateRequiredField()) {
+                    errors.push($(this).find('.validateatleastone').first().attr('name') + ' is required.');
+                }
+        
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join('\n'));
+                    return false;
+                }
+            });
+        }
+    });
+})(jQuery);    
 
 $(document).ready(function(){
 
@@ -165,4 +244,21 @@ $(document).ready(function(){
         $(location).attr('href', wslink)
     });
 
+    /*
+     * Appeal a Fine or Claim a Return Form
+     * /borrow/borrowing/appeal.html
+     */
+
+    $('#appeal_a_fine_or_claim_a_return_form').validateFormBeforeSubmit();
+
+    /* Before submitting the form, concatenate call no, copy no, and title and place that
+       string in the question field. */
+    $('#appeal_a_fine_or_claim_a_return_form').submit(function(e) {
+        var q = 'FINE APPEAL/CLAIM: ';
+        q += $("input[name='04_title']").val() + ', ';
+        q += $("input[name='02_call_no']").val() + ', ';
+        q += $("input[name='03_copy_no']").val();
+
+        $("input[name='question']").val(q);
+    });
 });
