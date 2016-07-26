@@ -81,6 +81,34 @@
           {{ staff_vcard_faculty_exchange }}
         {% endif %}
       </p>
+
+      {% if unit_title %}
+        <p>
+          {% if unit_url %}
+            <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
+          {% else %}
+            {{ unit_title }}<br/>
+          {% endif %}
+          {% if unit_email %}
+            <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_phone_number %}
+            {% if unit_phone_label %}{{ unit_phone_label }}{% endif %}: {{ unit_phone_number }}<br/>
+          {% endif %}
+          {% if unit_fax_number %}
+            Fax: {{ unit_fax_number }}<br/>
+          {% endif %}
+          {% if unit_link_external %}
+            <a href="{{ unit_link_external }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_external }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_link_page %}
+            <a href="{{ unit_link_page }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_link_document %}
+            <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
+          {% endif %}
+        </p>
+      {% endif %}
     </div>
   {% endif %}
 

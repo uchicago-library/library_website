@@ -169,6 +169,7 @@ class CollectionPage(PublicBasePage):
         null=True, blank=True, on_delete=models.SET_NULL)
     staff_contact = models.ForeignKey('staff.StaffPage',
         null=True, blank=True, on_delete=models.SET_NULL)
+    unit_contact = models.BooleanField(default=False)
 
     subpage_types = []
 
@@ -198,8 +199,14 @@ class CollectionPage(PublicBasePage):
         InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
-        FieldPanel('staff_contact'),
-    ] + PublicBasePage.content_panels
+        MultiFieldPanel(
+            [
+                FieldPanel('staff_contact'),
+                FieldPanel('unit_contact')
+            ],
+            heading='Staff or Unit Contact'
+        )
+    ]
 
     search_fields = PublicBasePage.search_fields + [
         index.FilterField('text'),
@@ -234,6 +241,71 @@ class CollectionPage(PublicBasePage):
         except:
             pass
 
+        unit_title = ''
+        unit_url = ''
+        unit_email_label = ''
+        unit_email = ''
+        unit_phone_label = ''
+        unit_phone_number = ''
+        unit_fax_number = ''
+        unit_link_text = ''
+        unit_link_external = ''
+        unit_link_page = ''
+        unit_link_document = ''
+        if self.unit_contact:
+            try:
+                unit_title = self.unit.title
+            except:
+                pass
+
+            try:
+                unit_url = self.unit.public_web_page.url
+            except:
+                pass
+
+            try:
+                unit_email_label = self.unit.email_label
+            except:
+                pass
+            try:
+                unit_email = self.unit.email
+            except:
+                pass
+
+            try:
+                unit_phone_label = self.unit.phone_label
+            except:
+                pass
+            try:
+                unit_phone_number = self.unit.phone_number
+            except:
+                pass
+
+            try:
+                unit_fax_number = self.unit.fax_number
+            except:
+                pass
+
+            try:
+                unit_link_text = self.unit.link_text
+            except:
+                pass
+
+            try:
+                unit_link_external = self.unit.link_external
+            except:
+                pass
+
+            try:
+                unit_link_page = self.unit.link_page.url
+            except:
+                pass
+
+            try:
+                unit_link_document = self.unit.link_document.url
+            except:
+                pass
+
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
@@ -245,6 +317,17 @@ class CollectionPage(PublicBasePage):
         context['staff_vcard_email'] = staff_vcard_email
         context['staff_vcard_phone_number'] = staff_vcard_phone_number
         context['staff_vcard_faculty_exchange'] = staff_vcard_faculty_exchange
+        context['unit_title'] = unit_title
+        context['unit_url'] = unit_url
+        context['unit_email_label'] = unit_email_label
+        context['unit_email'] = unit_email
+        context['unit_phone_label'] = unit_phone_label
+        context['unit_phone_number'] = unit_phone_number
+        context['unit_fax_number'] = unit_fax_number
+        context['unit_link_text'] = unit_link_text
+        context['unit_link_external'] = unit_link_external
+        context['unit_link_page'] = unit_link_page
+        context['unit_link_document'] = unit_link_document
         context['supplementary_access_links'] = self.supplementary_access_links.get_object_list()
         return context
 
@@ -507,6 +590,7 @@ class ExhibitPage(PublicBasePage):
     thumbnail_caption = models.TextField(null=False, blank=True, default='')
     staff_contact = models.ForeignKey('staff.StaffPage',
         null=True, blank=True, on_delete=models.SET_NULL)
+    unit_contact = models.BooleanField(default=False)
     student_exhibit = models.BooleanField(default=False)
 
     exhibit_open_date = models.DateField(blank=True, null=True)
@@ -598,7 +682,13 @@ class ExhibitPage(PublicBasePage):
             ],
             heading='Exhibit Checklist (Choose One or None)'
         ),
-        FieldPanel('staff_contact'),
+        MultiFieldPanel(
+            [
+                FieldPanel('staff_contact'),
+                FieldPanel('unit_contact')
+            ],
+            heading='Staff or Unit Contact'
+        )
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -626,7 +716,7 @@ class ExhibitPage(PublicBasePage):
         return True
 
     def get_context(self, request):
-        staff_url = 'hhh'
+        staff_url = ''
         try:
             staff_url = StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url
         except:
