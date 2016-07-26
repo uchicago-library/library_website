@@ -558,6 +558,7 @@ figure.embed {
   img {
     object-fit: cover;
     min-width: 100%;
+    min-height: auto;
     height: 125px; // for centering the image
     width: 200px; // for centering the image
     display: block; // corrects inline gap in enclosing div
@@ -1716,6 +1717,5 @@ p.acknowledgments {
     }
   }
 }
-
 
 

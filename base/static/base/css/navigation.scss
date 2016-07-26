@@ -17,6 +17,8 @@ Footer
 
 html,
 body {
+  overflow-y: scroll; /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
   height: 100%;
   /* The html and body elements cannot have any padding or margin. */
 }
@@ -61,7 +63,7 @@ body {
   &>li>a {
       color: #f9f9f9;
       &:hover {
-          color:#E4E4E4;
+        color:#E4E4E4;
         background-color: $transparent;
       }
       &:focus {
@@ -511,4 +513,3 @@ i.ask-icon {
 
 
       
-
