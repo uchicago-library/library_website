@@ -9,6 +9,7 @@ from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
 from base.utils import get_hours_and_location
+from units.models import UnitPage
 
 import datetime
 import re
@@ -28,6 +29,7 @@ def collections(request):
     subject = request.GET.get('subject', None)
     if not subject in Subject.objects.all().values_list('name', flat=True):
         subject = None
+    unit = request.GET.get('unit', None)
     view = request.GET.get('view', 'collections')
     if not view in ['collections', 'exhibits', 'subjects']:
         view = 'collections'
@@ -53,6 +55,10 @@ def collections(request):
         if search:
             filter_arguments['id__in'] = list(map(lambda s: s.id, CollectionPage.objects.live().search(search)))
 
+        # unit
+        if unit:
+            filter_arguments['unit'] = UnitPage.objects.get(title=unit)
+
         collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
 
         # sort browses by title, omitting leading articles. 
@@ -70,6 +76,9 @@ def collections(request):
 
         if subject:
             filter_arguments['exhibit_subject_placements__subject__in'] = Subject.objects.get(name=subject).get_descendants()
+
+        if unit:
+            filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
         exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct()
         exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
@@ -158,7 +167,7 @@ def collections(request):
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
     location_and_hours = get_hours_and_location(home_page)
     page_location = str(location_and_hours['page_location'])
-    unit = location_and_hours['page_unit']
+    page_unit = location_and_hours['page_unit']
 
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,
@@ -181,10 +190,10 @@ def collections(request):
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,
         'view': view,
-        'page_unit': str(unit),
+        'page_unit': str(page_unit),
         'page_location': page_location,
         'address': location_and_hours['address'],
-        'chat_url': get_unit_chat_link(unit, request),
+        'chat_url': get_unit_chat_link(page_unit, request),
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
