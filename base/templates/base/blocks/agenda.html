@@ -2,10 +2,10 @@
     <div class="row agenda-header">
         <div class="col-xs-12 col-sm-12 col-md-3">
             {% if value.start_time %}
-                <span class="start-time">{{value.start_time|time:"g:i"}}</span>
+                <span class="start-time">{{value.start_time|time:"G:i"}}</span>
             {% endif %}
             {% if value.end_time %}
-                <span class="end-time">{{value.end_time|time:"g:i"}}</span>
+                <span class="end-time">{{value.end_time|time:"G:i"}}</span>
             {% endif %}
         </div>
 
