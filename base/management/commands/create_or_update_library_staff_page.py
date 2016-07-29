@@ -54,6 +54,7 @@ class Command (BaseCommand):
         # works with just 'title' set as a default. 
         # setting path destroyed the staff index!!!
         # 'path': next_available_path
+
         if StaffPage.objects.filter(cnetid=info['cnetid']):
             sp, created = StaffPage.objects.update_or_create(
                 cnetid=info['cnetid'],
@@ -63,6 +64,8 @@ class Command (BaseCommand):
                     'official_name': info['officialName'],
                     'slug': make_slug(info['displayName']),
                     'url_path': '/loop/staff/' + make_slug(info['displayName']) + '/',
+                    'editor': StaffPage.objects.get(cnetid='dbietila'),
+                    'page_maintainer': StaffPage.objects.get(cnetid='dbietila'),
                     'depth': staff_index_depth + 1,
                 })
             StaffIndexPage.objects.first().fix_tree(destructive=False)
@@ -74,6 +77,8 @@ class Command (BaseCommand):
             depth=len(next_available_path) // 4,
             numchild=0,
             url_path='/staff/' + make_slug(info['displayName']) + '/',
+            editor=StaffPage.objects.get(cnetid='dbietila'),
+            page_maintainer=StaffPage.objects.get(cnetid='dbietila'),
             cnetid=info['cnetid'],
             display_name=info['displayName'],
             official_name=info['officialName'],
@@ -115,4 +120,7 @@ class Command (BaseCommand):
             }
             if not d in info['title_department_subdepartments_dicts']:
                 vcard.delete()
-            
+        
+        staff_page = StaffPage.objects.get(cnetid=info['cnetid'])
+        staff_page.page_maintainer = staff_page
+        staff_page.save()
