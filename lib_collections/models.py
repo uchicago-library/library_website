@@ -206,7 +206,7 @@ class CollectionPage(PublicBasePage):
             ],
             heading='Staff or Unit Contact'
         )
-    ]
+    ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
         index.FilterField('text'),
