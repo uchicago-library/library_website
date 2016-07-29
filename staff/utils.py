@@ -148,6 +148,12 @@ def get_all_library_cnetids_from_wagtail():
 
 def get_individual_info_from_wagtail(cnetid):
     staff_page = StaffPage.objects.get(cnetid=cnetid)
+
+    if staff_page.display_name == None:
+        raise ValueError(cnetid + ' has a display_name of None.')
+
+    if staff_page.official_name == None:
+        raise ValueError(cnetid + ' has an official_name of None.')
        
     # officialName is slightly more formal- e.g. "John E. Jung"
     # displayName is a bit more casual- e.g. "John Jung"
