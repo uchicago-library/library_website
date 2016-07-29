@@ -64,7 +64,7 @@ def get_departments(library = None):
         departments = [
             'D\'Angelo Law Library',
             'D\'Angelo Law Library - Administration',
-            'D\'Angelo Law Library - Law Technical Services',
+            'D\'Angelo Law Library - Law Collection Services',
             'D\'Angelo Law Library - Law User Services',
             'D\'Angelo Law Library - Law User Services - Access Services',
             'D\'Angelo Law Library - Law User Services - Reference'
