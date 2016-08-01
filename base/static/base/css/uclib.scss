@@ -506,6 +506,7 @@ a#event-header {
   padding-top: 0;
   text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
   font-size: 0.7em;
+  z-index: 5;
   @include respond-to(small) {
     font-size: 1em;
   }
@@ -1327,11 +1328,12 @@ a.btn-ask {
   }
  }
 
- .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
-  @include respond-to(smallonly) {
-    display: none;
-  }
-}
+//Quick Fix for showing all days
+//  .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
+//   @include respond-to(smallonly) {
+//     display: none;
+//   }
+// }
 
 .s-lc-whw>thead>tr>th, .s-lc-whw>tbody>tr>th {
     display: table-cell;
@@ -1343,11 +1345,11 @@ th.s-lc-whw-bh {
   @include respond-to(smallonly) {
     background-color: #ADB17D;
   }
-  & button {
-    @include respond-to(smallonly) {
-      display: none;
-    }
-  }
+  // & button {  ////// Quick Fix to show all days
+  //   @include respond-to(smallonly) {
+  //     display: none;
+  //   }
+  // }
 }
 
 /*
