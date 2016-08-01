@@ -40,12 +40,8 @@ def collections(request):
         filter_arguments = {}
 
         # format
-        if digital or format:
-            filter_arguments['collection_placements__format__text__in'] = []
-        if digital:
-            filter_arguments['collection_placements__format__text__in'].append('Digital')
         if format:
-            filter_arguments['collection_placements__format__text__in'].append(format)
+            filter_arguments['collection_placements__format__text'] = format
 
         # subject 
         if subject:
@@ -60,6 +56,10 @@ def collections(request):
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
         collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
+
+        # digital
+        if digital:
+            collections = collections.filter(collection_placements__format__text='Digital')
 
         # sort browses by title, omitting leading articles. 
         if not search:
