@@ -60,10 +60,10 @@
         <nav class="navbar navbar-default"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->
                 <div class="mobile-topnav visible-xs visible-sm">
-                    <a href="{{hours_page_url}}"><i class="fa fa-clock-o fa-lg"></i></a> | 
-                    <a href="{{chat_url}}"><i class="fa fa-comment fa-lg"></i></a> | 
-                    <a href="/about/thelibrary/supportus/"><i class="fa fa-gift fa-lg"></i></a> | 
-                    <a href="/borrow/borrowing/my-accounts/"><i class="fa fa-user fa-lg"></i></a>
+                    <a href="{{hours_page_url}}"><i class="fa fa-clock-o fa-lg" aria-hidden="true"></i></a> | 
+                    <a href="{{chat_url}}"><i class="fa fa-comment fa-lg" aria-hidden="true"></i></a> | 
+                    <a href="/about/thelibrary/supportus/"><i class="fa fa-gift fa-lg" aria-hidden="true"></i></a> | 
+                    <a href="/borrow/borrowing/my-accounts/"><i class="fa fa-user fa-lg" aria-hidden="true"></i></a>
                 </div>
                 <!-- // Mobile top right nav -->
 
@@ -87,7 +87,7 @@
 
             <!-- Top right nav --> <!-- Hidden XS + SM -->
             <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-              <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}"></i> Ask 
+              <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}" aria-hidden="true"></i> Ask 
                 {% if unfriendly_a %} 
                     an 
                 {% else %} 
@@ -95,9 +95,9 @@
                 {% endif %} {{self.friendly_name}} Librarian</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-ga-category="hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-clock-o"></i> 
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> 
                     <span id="current-hours" data-libcalid="{{libcalid}}">
-                        <span id="current-hours-target"><i class="fa fa-refresh fa-spin fa-fw"></i> 
+                        <span id="current-hours-target"><i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i> 
                             <span>Loading...</span>
                         </span>
                     </span> <span class="caret"></span>
@@ -112,8 +112,8 @@
                     <li><a href="{{hours_page_url}}">View all hours <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a></li>
                 </ul>
               </li>
-              <li><a href="/about/thelibrary/supportus/"><i class="fa fa-gift"></i> Support the Library</a></li>
-              <li><a href="/borrow/borrowing/my-accounts/"><i class="fa fa-user"></i> My Accounts</a></li>
+              <li><a href="/about/thelibrary/supportus/"><i class="fa fa-gift" aria-hidden="true"></i> Support the Library</a></li>
+              <li><a href="/borrow/borrowing/my-accounts/"><i class="fa fa-user" aria-hidden="true"></i> My Accounts</a></li>
             </ul> 
             <!-- // Top right nav -->
 
@@ -355,7 +355,7 @@
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
-                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
+                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true"></i></button></p>
                 </div>
                 <!-- // End Off-Canvas Toggle Button -->
             {% endif %}
@@ -485,7 +485,7 @@
                         </div>
                         <div class="news-wrap">
                             <span id="news-target" data-news-feed="{{news_feed}}">
-                                <i class="fa fa-refresh fa-spin fa-fw"></i>
+                                <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
                                 <span>Loading...</span>
                             </span>
                         </div>
@@ -528,16 +528,16 @@
                             <h4>Find Spaces</h4>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons">local_library</i></a><br/>
+                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
                                     <span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
                                 </div>
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons">people</i></a><br/>Collaboration</p>
+                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true">people</i></a><br/>Collaboration</p>
                                 </div>
                                 {% if self.book_a_room_link %}
                                     <div class="col-xs-4 nopadding">
                                         <p><a href="{{self.book_a_room_link}}">
-                                        <i class="fa fa-calendar-plus-o fa-lg"></i></a>
+                                        <i class="fa fa-calendar-plus-o fa-lg" aria-hidden="true"></i></a>
                                         <br/><span class="hidden-xs hidden-sm hidden-md">Book a Room</span><span class="hidden-lg">Reserve</span></p>
                                     </div>
                                 {% endif %}
@@ -553,7 +553,7 @@
                             <!--<div class="jflatTimeline calledOnce">-->
                                 <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
                                     <span id="events-target">
-                                        <i class="fa fa-refresh fa-spin fa-fw"></i>
+                                        <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
                                         <span>Loading...</span>
                                     </span>
                                     <a class="btn btn-morelink" role="button" href="/about/news-events/events/">View full calendar</a>
@@ -661,11 +661,11 @@
         <!-- Social -->
         <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4">
             <p>Library Social Media<br/>
-            <a href="http://www.facebook.com/uchicagolibrary"><i class="fa fa-facebook-official"></i> &nbsp; Facebook</a><br/>
-            <a href="https://www.instagram.com/uchicagolibrary/"><i class="fa fa-instagram"></i> &nbsp; Instagram</a><br/>
-            <a href="http://news.lib.uchicago.edu/"><i class="fa fa-rss-square"></i> &nbsp; Library News</a><br/>
-            <a href="https://www.youtube.com/user/uchicagolibrary"><i class="fa fa-youtube-square"></i> &nbsp; YouTube</a><br/>
-            <a href="/about/news-events/social-media/"><i class="fa fa-clone"></i> &nbsp; More Library Accounts...</a></p>
+            <a href="http://www.facebook.com/uchicagolibrary"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Facebook</a><br/>
+            <a href="https://www.instagram.com/uchicagolibrary/"><i class="fa fa-instagram" aria-hidden="true"></i> &nbsp; Instagram</a><br/>
+            <a href="http://news.lib.uchicago.edu/"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Library News</a><br/>
+            <a href="https://www.youtube.com/user/uchicagolibrary"><i class="fa fa-youtube-square" aria-hidden="true"></i> &nbsp; YouTube</a><br/>
+            <a href="/about/news-events/social-media/"><i class="fa fa-clone" aria-hidden="true"></i> &nbsp; More Library Accounts...</a></p>
         </div>
         <!-- // Social -->
 
