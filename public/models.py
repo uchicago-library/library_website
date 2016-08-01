@@ -33,7 +33,7 @@ class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
     Base treamfield block for "Featured Library Experts".
     """
     library_expert = blocks.PageChooserBlock( # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
-        required=False, help_text='Select a staff page from Loop/Staff', 
+        required=False, help_text='Be sure to select a StaffPage (not a StaffPublicPage)', 
     ) 
     libguides = blocks.ListBlock(LinkBlock(),
         icon='link')
