@@ -38,6 +38,31 @@ def get_chat_status_css(name):
     return status[get_chat_status(name)]
 
 
+def get_chat_status_and_css(name):
+    """
+    Get the chat status and css for Ask a 
+    Librarian pages.
+
+    Args:
+        name: string, the name of the chat 
+        widget you wish to retrieve. Possible 
+        values include: uofc-ask, law, crerar, 
+        and ssa.
+
+    Returns:
+        Tuple representing the chat status for 
+        Ask a Librarian pages where the first 
+        item is a boolean and the second item 
+        is a string (css class).
+    """
+    xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
+    + name + '/chat.libraryh3lp.com/xml')
+    tree = fromstring(xml.content)
+    status_lookup = {True: 'active', False: 'off'}
+    status_bool = tree.find('resource').attrib['show'] == 'available'
+    return (status_bool, status_lookup[status_bool])
+
+
 def get_chat_statuses():
     """
     Get a dictionary of chat statuses for all

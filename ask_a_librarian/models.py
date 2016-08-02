@@ -71,23 +71,15 @@ class AskPage(PublicBasePage, ContactFields):
         index.SearchField('body'),
     ]
 
-    @property
-    def chat_status(self):
-        """
-        Wrapper method for getting the 
-        chat status of a library chat 
-        widget.
-        """
-        return get_chat_status(self.ask_widget_name)
-
     @property 
-    def chat_status_css(self):
+    def ask_form_name(self):
         """
-        Wrapper method for getting the 
-        css class for the chat status of
-        a library chat widget.
+        Get the name of the chat widget.
+
+        Returns:
+            String, name of the ask widget.
         """
-        return get_chat_status_css(self.ask_widget_name)
+        return self.ask_widget_name
 
     @property
     def contact_link(self):

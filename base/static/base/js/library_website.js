@@ -102,6 +102,37 @@ function renderNews() {
     }
 }
 
+/*
+ * Ajax call for the Ask a Librarian status icon in the banner.
+ */
+function renderBannerChatStatus(){
+    var askpage = $('#chat-status').data('default-ask-name');
+    if (askpage) {
+        json = $.getJSON('/chat-status/?name='.concat(askpage), function(data) {
+            $('#chat-status').addClass(data.chat_css);
+        });
+    }
+}
+
+/*
+ * Ajax calls for the chat statuses listed in the table on Ask
+ * a Librarian pages.
+ */
+function renderAskPageChatStatuses(){
+    $('.ask .btn-ask').each(function() {
+        var askpage = $(this).data('btn-chat-status');
+        var master = $(this);
+        if (askpage) {  
+            json = $.getJSON('/chat-status/?name='.concat(askpage), function(data) {
+                console.log(data.chat_css);
+                master.addClass(data.chat_css);
+            });
+        }
+    });
+}
+
+
+
 /* 
  * validateFormBeforeSubmit
  */
@@ -222,13 +253,19 @@ $(document).ready(function(){
     });
 
     // Render news html
-    renderNews()
+    renderNews();
 
     // Render hours html in the header
     renderHours(getLibCalId());
 
     // Render events widget html in the right sidebar
     renderEvents();
+
+    // Apply chat status
+    renderBannerChatStatus();
+
+    // Apply chat statuses to table on Ask pages
+    renderAskPageChatStatuses();
 
     /*
      * Lightbox

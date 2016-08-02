@@ -14,7 +14,7 @@ from units.views import units as unit_view
 from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
 from staff.views import staff
-from base.views import json_hours, json_events, json_news
+from base.views import json_hours, json_events, json_news, chat_status
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^json-hours/', json_hours, name='json-hours'),
     url(r'^json-events/', json_events, name='json-events'),
     url(r'^json-news/', json_news, name='json-news'),
+    url(r'^chat-status/', chat_status, name='chat-status'),
     url(r'^results/$', results_view, name='results'),
     url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),

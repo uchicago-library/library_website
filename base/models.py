@@ -1160,8 +1160,6 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['all_spaces_link'], \
         context['quiet_spaces_link'], \
         context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)
-        context['chat_status'] = get_chat_status('uofc-ask')
-        context['chat_status_css'] = get_chat_status_css('uofc-ask')
 
         sidebar = self.has_left_sidebar(context)
         section_info = self.get_banner(current_site)

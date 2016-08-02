@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import json
 from base.utils import get_all_building_hours, get_hours_and_location, get_json_hours_by_id, get_building_hours_and_lid, get_events, get_news
 from units.utils import get_default_unit
+from ask_a_librarian.utils import get_chat_status_and_css
 import urllib
 from wagtail.wagtailcore.models import Site
 
@@ -77,3 +78,21 @@ def json_news(request):
                 'news': get_news(feed),
             }
         )
+
+
+def chat_status(request):
+    """
+    View for retreiving the chat status for 
+    Ask a Librarian pages. Returns json.
+    """
+    if request.method == 'GET':
+        ask_name = request.GET['name']
+        status = get_chat_status_and_css(ask_name)
+        return JsonResponse(
+            {
+                'chat_status': status[0],
+                'chat_css': status[1],
+            }
+        )
+
+

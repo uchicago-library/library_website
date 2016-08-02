@@ -87,7 +87,7 @@
 
             <!-- Top right nav --> <!-- Hidden XS + SM -->
             <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-              <li><a href="{{chat_url}}"><i class="fa fa-comment fa-lg ask-icon {{chat_status_css}}" aria-hidden="true"></i> Ask 
+              <li><a href="{{chat_url}}"><i id="chat-status" class="fa fa-comment fa-lg ask-icon" data-default-ask-name="uofc-ask" aria-hidden="true"></i> Ask 
                 {% if unfriendly_a %} 
                     an 
                 {% else %} 
