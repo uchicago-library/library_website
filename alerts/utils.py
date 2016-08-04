@@ -1,3 +1,4 @@
+from django.utils.html import remove_tags
 
 def get_alert(current_site):
     """
@@ -21,4 +22,4 @@ def get_alert(current_site):
         return None
     else:
         alert = high_alert[0] if high_alert else info_alert[0]
-        return (alert.banner_message, alert.alert_level, alert.more_info, alert.relative_url(current_site)) 
+        return (remove_tags(alert.banner_message, 'br'), alert.alert_level, alert.more_info, alert.relative_url(current_site)) 

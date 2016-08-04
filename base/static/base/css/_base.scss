@@ -138,8 +138,8 @@ p {
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *      @include respond-to(medium) { ... }
- *      @include respond-to(large) { ... }
+ *        @include respond-to(medium) { ... }
+ *        @include respond-to(large) { ... }
  */
 
 @mixin respond-to($breakpoint) {
@@ -247,6 +247,13 @@ a {
   margin-bottom: 0.5em;
   border: 1px solid gray;
   background: #f9f9f9;
+  & p {
+    margin-bottom: 0;
+    display: inline;
+  }
+  & .rich-text {
+    display: inline;
+  }
 }
 
 .alert-error {

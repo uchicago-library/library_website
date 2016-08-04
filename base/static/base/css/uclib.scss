@@ -50,6 +50,18 @@ Page Specific Alterations
   }
 }
 
+body.staffpublicpage {
+  h1 {
+    border-bottom: none;
+    &~h2 {
+      border-bottom: 1px solid #D6D6CE;
+      margin-top: 0px;
+      padding-bottom: 5px;
+      font-weight: 400;
+    }
+  }
+}
+
 .nopadding {  // For use when do not want to wrap in row 
    padding-right: 0;
    padding-left: 0;
@@ -1719,5 +1731,6 @@ p.acknowledgments {
     }
   }
 }
+
 
 

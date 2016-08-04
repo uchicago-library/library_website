@@ -35,6 +35,7 @@ class AlertPage(PublicBasePage):
         'banner_message',
         'more_info',
         'alert_level',
+        'url',
     ]
 
 
