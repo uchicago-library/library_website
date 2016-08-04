@@ -103,7 +103,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(), default=[]) 
     featured_library_experts = StreamField(FeaturedLibraryExpertFields(), default=[])
 
-    subpage_types = ['public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
+    subpage_types = ['alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
         'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
         'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
@@ -796,7 +796,7 @@ class StaffPublicPage(PublicBasePage):
         """
         Override the page object's get context method.
         """
-        context = super(PublicBasePage, self).get_context(request)
+        context = super(StaffPublicPage, self).get_context(request)
 
         s = StaffPage.objects.get(cnetid=self.cnetid)
         v = s.vcards.first()

@@ -51,11 +51,14 @@
         <a href="#content">Skip to Main Content</a>
     </div>
     <div id="body-wrap">
-        <div class="alert alert-info" role="alert">
-            <strong>Welcome to the new Library website.</strong>
-            <span class="visible-xs"></span>
-            Leave <a href="//www.lib.uchicago.edu/about/feedback/">feedback or report a problem</a>.
-        </div>
+        {% if has_alert %}
+            <div class="alert {{alert_level}}" role="alert">
+                {{alert_message|richtext}}
+                {% if alert_more_info|striptags %}
+                    <a id="alert-more" href="{{alert_link}}">More info...</a>
+                {% endif %}
+            </div>
+        {% endif %}
         <!-- Top Navigation -->
         <nav class="navbar navbar-default"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->

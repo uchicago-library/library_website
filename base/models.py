@@ -25,6 +25,7 @@ from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit
 from wagtail.contrib.table_block.blocks import TableBlock
 from django.utils import translation
 from units.utils import get_default_unit
+from alerts.utils import get_alert
 
 from django.utils.safestring import mark_safe
 from pygments import highlight
@@ -1164,6 +1165,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         sidebar = self.has_left_sidebar(context)
         section_info = self.get_banner(current_site)
         branch_name = section_info[4] 
+        has_alert = False if not get_alert(current_site) else True
         context['has_left_sidebar'] = sidebar
         context['content_div_css'] = self.get_conditional_css_classes('content', sidebar)
         context['breadcrumb_div_css'] = self.get_conditional_css_classes('breadcrumbs', sidebar)
@@ -1181,6 +1183,12 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
         context['unfriendly_a'] = True if self.friendly_name.strip() in UNFRIENDLY_ARTICLES else False
+        context['has_alert'] = has_alert
+        if has_alert:
+            context['alert_message'], \
+            context['alert_level'], \
+            context['alert_more_info'], \
+            context['alert_link'] = get_alert(current_site)
 
         try:
             context['news_page'] = self.external_news_page if self.external_news_page else self.internal_news_page.relative_url(current_site)
