@@ -54,7 +54,8 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailsitemaps',
     'wagtail.contrib.wagtailstyleguide',
     'wagtail.contrib.wagtailapi',
-
+    
+    'corsheaders',
     'rest_framework',
     'alerts',
     'ask_a_librarian',
@@ -88,6 +89,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 
@@ -196,6 +198,27 @@ WAGTAILSEARCH_BACKENDS = {
         'TIMEOUT': 5,
     }
 }
+
+# Settings for cross origin requests
+# Documentation and settings:
+# https://github.com/OttoYiu/django-cors-headers
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'catalog.lib.uchicago.edu',
+    'catalogtest.lib.uchicago.edu',
+    'dldc1.lib.uchicago.edu',
+    'dldc2.lib.uchicago.edu',
+    'dldc3.lib.uchicago.edu',
+    'vufindtest.lib.uchicago.edu'
+)
+CORS_ALLOW_METHODS = (
+    'GET',
+    #'POST',
+    #'PUT',
+    #'PATCH',
+    #'DELETE',
+    #'OPTIONS'
+)
 
 # Lock down specific nodes to wagtail groups. Sections are locked down
 # by page ID. In order to see any page, a user must belong to all groups
