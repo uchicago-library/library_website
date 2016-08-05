@@ -354,7 +354,8 @@
             </div>
         {% endif %}
         <div class="{{content_div_css}}" id="content">
-            <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1> 
+            <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+            {% block under_h1 %}{% endblock %}
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
