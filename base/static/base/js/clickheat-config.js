@@ -3,7 +3,7 @@ String.prototype.endsWith = function(suffix) {
 };
 
 clickHeatSite = 'www.lib';
-clickHeatServer = 'http://www1.lib.uchicago.edu/clickheat/click.php';
+clickHeatServer = 'https://www.lib.uchicago.edu/clickheat/click.php';
         
 var paths = {}
 paths['/']                                  = 'kiosk';
