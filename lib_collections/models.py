@@ -302,7 +302,7 @@ class CollectionPage(PublicBasePage):
                 pass
 
             try:
-                unit_link_document = self.unit.link_document.url
+                unit_link_document = self.unit.link_document.file.url
             except:
                 pass
 
