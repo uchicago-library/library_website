@@ -61,7 +61,7 @@ class TestUsersAndServingLivePages(TestCase):
     2. Setup your dev sites in the wagtail admin.
     3. Use the following command to get json from the live
        database and move it into the /base/fixters directory:
-       python manage.py dumpdata --natural-foreign --natural-primary  > test.json
+       python manage.py dumpdata --natural-foreign --natural-primary --exclude wagtailcore.GroupCollectionPermission > test.json
     4. Run the tests.
     """
    
