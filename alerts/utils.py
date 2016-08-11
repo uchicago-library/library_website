@@ -1,4 +1,4 @@
-from django.utils.html import remove_tags
+import bleach 
 
 def get_alert(current_site):
     """
@@ -22,4 +22,5 @@ def get_alert(current_site):
         return None
     else:
         alert = high_alert[0] if high_alert else info_alert[0]
-        return (remove_tags(alert.banner_message, 'br'), alert.alert_level, alert.more_info, alert.relative_url(current_site)) 
+        msg = bleach.clean(alert.banner_message, tags=['p', 'b', 'a', 'strong'], strip=True)
+        return (msg, alert.alert_level, alert.more_info, alert.relative_url(current_site)) 
