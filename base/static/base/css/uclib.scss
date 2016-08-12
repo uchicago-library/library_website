@@ -109,7 +109,7 @@ body.staffpublicpage {
   }
 }
 
-.h1-banner, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
+.h1-banner, #p-4898 h1, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
   position:absolute;
   right:-10000px; 
   top:auto; 
@@ -1561,6 +1561,10 @@ td.time, td.event-nav {
 .rightside.coll-rightside {
   @extend .distinct-rightside;
   border: none;
+  h3 {
+    color: #616530;
+    font-weight: 600;
+  }
   ul {
     padding-left: 2em;
     text-indent: -2em;
