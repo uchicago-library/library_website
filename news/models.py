@@ -19,7 +19,7 @@ class NewsPage(BasePage):
     """
     News story content type used on intranet pages.
     """
-    excerpt = RichTextField(blank=True, null=True)
+    excerpt = RichTextField(blank=True, null=True, help_text='Shown on the News feed. Populated automatically from “Body” if left empty.')
     author = models.ForeignKey(
         'staff.StaffPage',
         null=True,
@@ -27,8 +27,8 @@ class NewsPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='news_stories'
     )
-    story_date = models.DateField(default=timezone.now)
-    sticky_until = models.DateField(blank=True, null=True, help_text='While a story is "sticky" it will appear at the top of the news feed with a special background color.')
+    story_date = models.DateField(default=timezone.now, help_text='If you use Settings to publish a future post, put the publish date here. Otherwise, leave today as the story date.')
+    sticky_until = models.DateField(blank=True, null=True, help_text='To be used by Admin and HR only.')
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -41,7 +41,7 @@ class NewsPage(BasePage):
     subpage_types = []
 
     content_panels = Page.content_panels + [ 
-        FieldPanel('excerpt'),
+        StreamFieldPanel('body'),
         FieldPanel('author'),
         FieldPanel('story_date'),
         FieldPanel('sticky_until'),
@@ -52,7 +52,7 @@ class NewsPage(BasePage):
             ],
             heading='Thumbnail',
         ),
-        StreamFieldPanel('body'),
+        FieldPanel('excerpt'),
     ] + BasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
