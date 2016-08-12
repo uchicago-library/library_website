@@ -38,6 +38,7 @@ class AlertPage(PublicBasePage):
         'url',
     ]
 
+    search_fields = PublicBasePage.search_fields
 
 class AlertIndexPage(PublicBasePage):
     """
@@ -45,3 +46,4 @@ class AlertIndexPage(PublicBasePage):
     """
     content_panels = Page.content_panels + PublicBasePage.content_panels
     subpage_types = ['alerts.AlertPage']
+    search_fields = PublicBasePage.search_fields

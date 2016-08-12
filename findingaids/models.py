@@ -9,6 +9,8 @@ import urllib
 class FindingAidsPage(PublicBasePage):
     content_panels = Page.content_panels + PublicBasePage.content_panels
 
+    subpage_types = []
+
     def get_context(self, request):
         def get_browses():
             browses = []

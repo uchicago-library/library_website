@@ -6,6 +6,7 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
     MultiFieldPanel)
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormField
+from wagtail.wagtailsearch import index
 
 class IntranetFormField(AbstractFormField):
     page = ParentalKey('IntranetFormPage', related_name='form_fields')
@@ -26,6 +27,16 @@ class IntranetFormPage(AbstractEmailForm, AbstractBase):
     ] + AbstractBase.content_panels
 
     promote_panels = AbstractEmailForm.promote_panels + AbstractBase.left_sidebar_panels
+
+    search_fields = AbstractBase.search_fields + [
+        index.SearchField('intro'),
+        index.SearchField('thank_you_text'),
+        index.SearchField('to_address'),
+        index.SearchField('from_address'),
+        index.SearchField('subject'),
+    ]
+
+    subpage_types = []
 
     def get_context(self, request):
         context = super(IntranetFormPage, self).get_context(request)

@@ -16,6 +16,8 @@ class DirBrowsePage(PublicBasePage):
         index.SearchField('body'),
     ]
 
+    subpage_types = []
+
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
         FieldPanel('dir_browse_script_url')

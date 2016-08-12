@@ -26,9 +26,13 @@ def create_user_with_privileges():
     from base.management.commands.create_library_user import Command
 
     # Create a user 
-    user = User.objects.create(username='geordilaforge', first_name='Geordi', \
-        last_name='La Forge', email='glaforge@starfleet.com')
-    user.set_password('broken_visor!')
+    user = User.objects.create(
+        username='geordilaforge',
+        password='broken_visor!', 
+        first_name='Geordi',
+        last_name='La Forge', 
+        email='glaforge@starfleet.com'
+    )
     user.save()
     
     # Add user to groups
@@ -104,9 +108,10 @@ class TestUsersAndServingLivePages(TestCase):
         user that belongs to the necessary groups.
         """
         hostname = Site.objects.filter(site_name='Loop')[0].hostname
-        user = loggin_user_with_privileges(create_user_with_privileges()) 
+        user = loggin_user_with_privileges(create_user_with_privileges())
         response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
         self.assertEqual(response.status_code, 200)
+
 
     def test_all_live_intranet_pages_for_200(self):
         """
@@ -123,19 +128,27 @@ class TestUsersAndServingLivePages(TestCase):
             response = user.client.get(page.url, HTTP_HOST=site.hostname)
             self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
 
-    def test_all_live_public_pages_for_200_with_anonymous_user(self):
+    def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(self):
         """
-        Test all live public pages with an anonymous user.
+        Test all live public pages with an anonymous user. 
+        Most pages should return a 200, however, the redirect 
+        page will return a 301 and some custom views return
+        a 302. Nothing should return a 404.
         """
         site = Site.objects.filter(site_name='Public')[0]
         user = AnonymousUser()
         user.client = Client()
         pages = site.root_page.get_descendants().live()
+        possible = set([200, 301, 302])
 
         for page in pages:
-            url = page.relative_url(site)
-            response = user.client.get(page.url, HTTP_HOST=site.hostname)
-            self.assertEqual(response.status_code, 200)
+            try:
+                url = page.relative_url(site)
+                response = user.client.get(page.url, HTTP_HOST=site.hostname)
+                self.assertEqual(response.status_code in possible, True, msg=page.url + ' returned a ' + str(response.status_code))
+            except:
+                msg = page.relative_url(site) + ' has a problem'
+                raise RuntimeError(msg)
 
     def test_loop_page_with_anonymous_user(self):
         """
@@ -186,15 +199,15 @@ class TestPageModels(TestCase):
         page_search_fields = Page.search_fields
         base_page_search_fields = BasePage.search_fields
         default_search_fields = set(page_search_fields + base_page_search_fields)
-        ignore = set(['ConferenceIndexPage', 'GroupMeetingMinutesIndexPage', 'GroupReportsIndexPage', \
-                      'HomePage', 'IntranetHomePage', 'IntranetUnitsReportsIndexPage', 'ProjectIndexPage', \
-                      'GroupMeetingMinutesPage', 'GroupReportsPage', 'IntranetUnitsReportsPage'])
+        ignore = set(['AlertPage', 'AlertIndexPage', 'ConferenceIndexPage', 'FindingAidsPage', 'GroupMeetingMinutesIndexPage', \
+                      'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage', 'IntranetHomePage', 'IntranetUnitsReportsIndexPage', \
+                      'ProjectIndexPage', 'GroupMeetingMinutesPage', 'GroupReportsPage', 'IntranetUnitsReportsPage'])
         no_search_fields = set([])
         for page_type in content_types:
             if not len(set(page_type.search_fields)) > len(default_search_fields) and not page_type.__name__ in ignore:
                 no_search_fields.add(page_type.__name__)
 
-        self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration: ' + str(no_search_fields))
+        self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: ' + str(no_search_fields))
 
 
 class TestUtilityFunctions(TestCase):
@@ -218,4 +231,4 @@ class TestUtilityFunctions(TestCase):
         """
         crerar = 1373
         assert(len(get_hours_by_id(crerar)) > 1)
-        self.assertEqual(get_hours_by_id(999), '')
+        self.assertEqual(get_hours_by_id(999), 'Hours Unavailable')

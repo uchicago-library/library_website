@@ -833,6 +833,10 @@ class StaffPublicPage(PublicBasePage):
         context['vcardtitle'] = v.title
         return context
 
+    search_fields = PublicBasePage.search_fields + [
+        index.SearchField('cnetid'),
+    ] 
+
 
 class PublicRawHTMLPage(PublicBasePage):
     """
@@ -844,3 +848,8 @@ class PublicRawHTMLPage(PublicBasePage):
         StreamFieldPanel('html')
     ] + PublicBasePage.content_panels
 
+    search_fields = PublicBasePage.search_fields + [
+        index.SearchField('html', partial_match=True),
+    ]
+
+    subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage'] 
