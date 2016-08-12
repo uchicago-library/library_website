@@ -2,7 +2,7 @@
   <nav class="transformer-tabs">
     <ul>
       <li><a class="active" href="#tab-1">Catalogs</a></li>
-      <li><a href="#tab-2"><span class="hidden-xs">Databases, Journals &amp; </span>Articles</a></li>
+      <li><a href="#tab-2"><span class="hidden-xs">Articles, Journals &amp; </span>Databases</a></li>
       <li><a href="#tab-3">Library Website</a></li>
     </ul>
   </nav>
@@ -17,8 +17,8 @@
           <select class="selectpicker btn-searchtype" name="type">
             <option value="">All Fields</option>
             <option value="Title">Title</option>
-            <option value="Author">Author</option>
             <option value="Subject">Subject</option>
+            <option value="Author">Author</option>
             <option value="JournalTitle">Journal Title</option>
             <option value="StandardNumbers">ISBN, ISSN, etc.</option>
           </select>
@@ -31,7 +31,7 @@
 
       <!-- Filter Search -->
       <div class="col-xs-12 col-sm-9 eoptions">
-        <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks"/> 
+        <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks"/ aria-label="Limit to Ebooks"> 
         Limit to Ebooks &amp; Ejournals<p></p>
       </div> <!-- // eoptions -->
     </form>
@@ -109,9 +109,9 @@
     <!-- Filter Search -->
     <div class="col-xs-12 col-sm-9 eoptions">
       <p><strong class="hidden-xs">Searching for &nbsp;</strong>
-        <input checked="checked" name="searching_for" type="radio" value="articles" data-radio-button-controller="articles-plus">Articles &nbsp;
-        <input name="searching_for" type="radio" value="journals" data-radio-button-controller="ejournals">Journals &nbsp;
-        <input name="searching_for" type="radio" value="databases" data-radio-button-controller="database-finder">Databases
+        <input checked="checked" name="searching_for" type="radio" value="articles" data-radio-button-controller="articles-plus" aria-label="Articles">Articles &nbsp;
+        <input name="searching_for" type="radio" value="journals" data-radio-button-controller="ejournals" aria-label="Journals">Journals &nbsp;
+        <input name="searching_for" type="radio" value="databases" data-radio-button-controller="database-finder" aria-label="Databases">Databases
       </p>
     </div>
 

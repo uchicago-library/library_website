@@ -79,7 +79,7 @@
                     {% endif %}
                     {% for f in features %}
                       <li>
-                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}feature={{ f.field|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f.label }}</a>
+                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}feature={{ f.0|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f.1 }}</a>
                       </li>
                     {% endfor %}
                   </ul>

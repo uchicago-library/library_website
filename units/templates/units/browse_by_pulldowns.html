@@ -20,9 +20,7 @@
     </button>
     <ul class="dropdown-menu listings-dropdown">
       <li><a href=".?view=staff{% if library %}&library={{ library|urlencode }}{% endif %}{% if query %}&query={{ query|urlencode }}{% endif %}&subject=All+Subject+Specialists">View All Subject Specialists</a></li>
-      {% if subject %}
-        <li><a href=".?view=staff{% if library %}&library={{ library|urlencode }}{% endif %}{% if query %}&query={{ query|urlencode }}{% endif %}">Browse All Subjects</a></li>
-      {% endif %}
+      <li><a href="/collex/?view=subjects">Browse All Subjects</a></li>
       <li class="divider" role="separator"></li>
       {% for s in subjects %}
         <li><a href=".?view=staff{% if library %}&library={{ library|urlencode }}{% endif %}{% if query %}&query={{ query|urlencode }}{% endif %}&subject={{ s|urlencode }}">{{ s }}</a></li>
