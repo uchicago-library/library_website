@@ -108,7 +108,17 @@
                     <a href="{{ space.url }}">{{ space.title }}</a><br/>
                     {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
                     <!-- floor coming soon -->
-                    {% if space.reservation_url %}<form action="{{ space.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
+                    {% if space.reservation_url %}
+                        <form action="{{ space.reservation_url }}" method="get">
+                            <button class="btn btn-reserve" type="submit">
+                                {% if space.reservation_display_text %}
+                                    {{space.reservation_display_text}}
+                                {% else %}
+                                    Reserve
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
                 </td>
                 <td>
                     {% autoescape off %}

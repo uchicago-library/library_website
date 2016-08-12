@@ -42,7 +42,17 @@
                             {{features_html}}
                         {% endautoescape %}
                     {% endif %}
-                    {% if self.reservation_url %}<form action="{{ self.reservation_url }}" method="get"><button class="btn btn-reserve" type="submit">Reserve</button></form>{% endif %}
+                    {% if self.reservation_url %}
+                        <form action="{{ self.reservation_url }}" method="get">
+                            <button class="btn btn-reserve" type="submit">
+                                {% if self.reservation_display_text %}
+                                    {{self.reservation_display_text}}
+                                {% else %}
+                                    Reserve
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
                     {% if has_floorplans %}
                         <h3>Floorplans</h3>
                         <p>
