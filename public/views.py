@@ -34,7 +34,7 @@ def spaces(request):
     # get spaces.
     spaces = LocationPage.objects.live()
     if building:
-	    spaces = spaces.filter(parent_building = LocationPage.objects.get(title=building))
+        spaces = spaces.filter(parent_building = LocationPage.objects.get(title=building))
     if feature:
         spaces = spaces.filter(**{feature: True})
     if floor:
