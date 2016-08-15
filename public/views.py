@@ -44,10 +44,16 @@ def spaces(request):
         spaces = spaces.filter(**{space_type: True})
 
     # the spaces have been filtered down by building, feature, floor and space type. 
-    # get possible buildings from that filtered list. 
+    # get possible buildings from that filtered list if feature is selected.
+    # else show all libraries as options
     buildings = []
-    parent_building_ids = list(map(lambda s: s.parent_building.id, list(filter(lambda s: s.parent_building, spaces))))
-    buildings = LocationPage.objects.filter(id__in = parent_building_ids)
+
+	# 3393 = D'Angelo Law Library, 1797 = Regenstein Library, 1816 = Mansueto
+	# 2713 = Crerar, 2714 = Eckart, 1798 = Social Service Administration
+    buildings = LocationPage.objects.filter(id__in = [3393, 1797, 1816, 2713, 2714])
+    if feature:
+        parent_building_ids = list(map(lambda s: s.parent_building.id, list(filter(lambda s: s.parent_building, spaces))))
+        buildings = LocationPage.objects.filter(id__in = parent_building_ids)
 
     # make sure all features have at least one LocationPage for the current space_type. 
     features = list(filter(lambda f: spaces.filter(**{f[0]: True}), possible_features))
