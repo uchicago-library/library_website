@@ -3,7 +3,7 @@ from public.models import LocationPage, LocationPageFloorPlacement
 from wagtail.wagtailimages.models import Image
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
-from base.utils import get_hours_and_location
+from base.utils import get_hours_and_location, sort_buildings
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.utils import get_features, has_feature
 
@@ -50,7 +50,16 @@ def spaces(request):
 	# 3393 = D'Angelo Law Library, 1797 = Regenstein Library, 1816 = Mansueto
 	# 2713 = Crerar, 2714 = Eckart, 1798 = Social Service Administration
     buildings = LocationPage.objects.filter(id__in = [3393, 1797, 1816, 2713, 2714, 1798])
-
+    if feature:
+	    # Sort by feature, obtain all buildings, filter by featurem then obtain
+		# parent buildings and use set() to eliminate doubles now have to organize
+        all_buildings = LocationPage.objects.all()
+        all_buildings = all_buildings.filter(**{feature: True})
+        buildings = []
+        for b in all_buildings:
+            buildings.append(b.parent_building)
+        buildings = list(set(buildings))
+        #buildings = sort_buildings(buildings)			
     # make sure all features have at least one LocationPage for the current space_type. 
     features = list(filter(lambda f: spaces.filter(**{f[0]: True}), possible_features))
 

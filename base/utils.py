@@ -353,4 +353,47 @@ def get_hours_and_location(obj):
             'libcalid': libcalid,
             'address': ADDRESS_TEMPLATE % (address, location.city, location.state, str(location.postal_code)) }
 
-
+def sort_buildings(buildings):
+    """ 
+    Sort the given list of buildings so that buildings
+    always appear in standard order in dropdown select 
+    in spaces page.
+    """
+    new_list = []
+    reg, law, ssa, mansueto, crerar, eckhart = False, False, False, False, False, False
+    temp1, temp2, temp3, temp4, temp5, temp6 = 0, 0, 0, 0, 0, 0
+    for b in buildings:
+        if b.libcal_library_id == 1797:
+            reg = True
+            temp1 = b
+        elif b.libcal_library_id == 1798:
+            ssa = True
+            temp2 = b
+        elif b.libcal_library_id == 1816:
+            mansueto = True
+            temp3 = b
+        elif b.libcal_library_id == 2713:
+            crerar = True
+            temp4 = b
+        elif b.libcal_library_id == 2714:
+            eckhart = True
+            temp5 = b
+        elif b.libcal_library_id == 3393:
+            law = True
+            temp6 = b
+    
+    #Now constructing new sorted list
+    if reg:
+        new_list.append(temp1)
+    if ssa:
+        new_list.append(temp2)
+    if mansueto:
+        new_list.append(temp3)
+    if crerar:
+        new_list.append(temp4)
+    if eckhart:
+        new_list.append(temp5)
+    if law:
+        new_list.append(temp6)
+        
+    return new_list
