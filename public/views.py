@@ -43,9 +43,10 @@ def spaces(request):
     if space_type:
         spaces = spaces.filter(**{space_type: True})
 
-    # the spaces have been filtered down by building, feature, floor and space type. 
-    # get possible buildings from that filtered list if feature is selected.
-    # else show all libraries as options
+    # Narrow down list of buildings from all buildings by using feature
+    # and space_type, create list of libraries for display in dropdown
+    # from parent_building of filtered all_buildings. Use set to remove
+    # duplicates and sort_buildings to organize resulting list of libraries
     all_buildings = LocationPage.objects.all()
     if feature:
         all_buildings = all_buildings.filter(**{feature: True})
@@ -63,8 +64,9 @@ def spaces(request):
     # the parameters that have been set. 
     floors = []
     if building:
+        # Changed spaces to all_buildings in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building. 
-        id_list = spaces.filter(parent_building__title=building).values_list('pk', flat=True)
+        id_list = all_buildings.filter(parent_building__title=building).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here. 
         floors = sorted(list(set(LocationPageFloorPlacement.objects.filter(parent__in=id_list).exclude(floor=None).values_list('floor__title', flat=True))))
 

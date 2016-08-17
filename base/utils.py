@@ -357,7 +357,9 @@ def sort_buildings(buildings):
     """ 
     Sort the given list of buildings so that buildings
     always appear in standard order in dropdown select 
-    in spaces page.
+    in spaces page. Uses libcal_library_id of main library buildings.
+
+	If not used, buildings list will be randomly organized.
     """
     new_list = []
     reg, law, ssa, mansueto, crerar, eckhart, scrc = False, False, False, False, False, False, False
