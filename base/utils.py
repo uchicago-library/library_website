@@ -360,27 +360,30 @@ def sort_buildings(buildings):
     in spaces page.
     """
     new_list = []
-    reg, law, ssa, mansueto, crerar, eckhart = False, False, False, False, False, False
-    temp1, temp2, temp3, temp4, temp5, temp6 = 0, 0, 0, 0, 0, 0
+    reg, law, ssa, mansueto, crerar, eckhart, scrc = False, False, False, False, False, False, False
+    temp1, temp2, temp3, temp4, temp5, temp6, temp7 = 0, 0, 0, 0, 0, 0, 0
     for b in buildings:
-        if b.libcal_library_id == 1797:
+        if (b.libcal_library_id) == 1357:
             reg = True
             temp1 = b
-        elif b.libcal_library_id == 1798:
+        elif b.libcal_library_id == 1380:
             ssa = True
             temp2 = b
-        elif b.libcal_library_id == 1816:
+        elif b.libcal_library_id == 1379:
             mansueto = True
             temp3 = b
-        elif b.libcal_library_id == 2713:
+        elif b.libcal_library_id == 1373:
             crerar = True
             temp4 = b
-        elif b.libcal_library_id == 2714:
+        elif b.libcal_library_id == 1377:
             eckhart = True
             temp5 = b
-        elif b.libcal_library_id == 3393:
+        elif b.libcal_library_id == 1378:
             law = True
             temp6 = b
+        else:
+            scrc = True
+            temp7 = b
     
     #Now constructing new sorted list
     if reg:
@@ -395,5 +398,7 @@ def sort_buildings(buildings):
         new_list.append(temp5)
     if law:
         new_list.append(temp6)
+    if scrc:
+        new_list.append(temp7)
         
     return new_list
