@@ -1,0 +1,35 @@
+@media print {
+    @page {
+        size: 330mm 427mm;
+        margin: 0.5cm;
+    }
+    .container {
+        width: 1170px;
+    }
+    .navbar, #footer {
+        display: none;
+    }
+    div.breadcrumbs, div#sidebar, div.jumbotron {
+        display: none;
+    }
+    body {
+        overflow: visible !important; 
+    }
+    div.container, div.container-fluid {
+        margin: none;
+        padding: none;
+    }
+    div.row, div.row-fluid {
+        margin: none;
+        padding: none;
+    }
+    h2, h3, h4, h5, h6 {
+       page-break-after: avoid;
+    }
+    img {
+       max-width: 100% !important;
+    }
+    ul, img {
+       page-break-inside: avoid;
+    }
+}
