@@ -52,9 +52,6 @@ def spaces(request):
         all_spaces = all_spaces.filter(**{feature: True})
     if space_type:
         all_spaces = all_spaces.filter(**{space_type: True})
-    #buildings = []
-    #for s in all_spaces:
-    #    buildings.append(s.parent_building)
     buildings = sort_buildings(all_spaces)
 
     # make sure all features have at least one LocationPage for the current space_type. 

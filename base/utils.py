@@ -362,23 +362,23 @@ def sort_buildings(spaces):
 
 	If not used, buildings list will be randomly organized.
     """
-    from public.models import LocationPage
-    from base.models import PublicBasePage
+    from public.models import LocationPage, StandardPage
+    REG, SSA, MANSUETO, CRERAR, ECKHART, DANGELO, SCRC = 1797, 1798, 1816, 2713, 2714, 3393, 2971
     new_list = []
-    pages = PublicBasePage.objects
+    pages = StandardPage.objects
     id_list = spaces.values_list('parent_building',flat=True)
-    if 1797 in id_list:
+    if REG in id_list:
         new_list.append(pages.get(id=REGENSTEIN_HOMEPAGE))
-    if 1798 in id_list:
-        new_list.append(pages.get(id=1798))
-    if 1816 in id_list:
+    if SSA in id_list:
+        new_list.append(LocationPage.objects.get(id=SSA))
+    if MANSUETO in id_list:
         new_list.append(pages.get(id=MANSUETO_HOMEPAGE))
-    if 2713 in id_list:
+    if CRERAR in id_list:
         new_list.append(pages.get(id=CRERAR_HOMEPAGE))
-    if 2714 in id_list:
+    if ECKHART in id_list:
         new_list.append(pages.get(id=ECKHART_HOMEPAGE))
-    if 3393 in id_list:
+    if DANGELO in id_list:
         new_list.append(pages.get(id=DANGELO_HOMEPAGE))
-    if 2971 in id_list:
+    if SCRC in id_list:
         new_list.append(pages.get(id=SCRC_HOMEPAGE))
     return new_list
