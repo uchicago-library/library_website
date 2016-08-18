@@ -45,17 +45,17 @@ def spaces(request):
 
     # Narrow down list of buildings from all buildings by using feature
     # and space_type, create list of libraries for display in dropdown
-    # from parent_building of filtered all_buildings. Use set to remove
+    # from parent_building of filtered all_spaces. Use set to remove
     # duplicates and sort_buildings to organize resulting list of libraries
-    all_buildings = LocationPage.objects.all()
+    all_spaces = LocationPage.objects.live()
     if feature:
-        all_buildings = all_buildings.filter(**{feature: True})
+        all_spaces = all_spaces.filter(**{feature: True})
     if space_type:
-        all_buildings = all_buildings.filter(**{space_type: True})
-    buildings = []
-    for b in all_buildings:
-        buildings.append(b.parent_building)
-    buildings = sort_buildings(list(set(buildings)))
+        all_spaces = all_spaces.filter(**{space_type: True})
+    #buildings = []
+    #for s in all_spaces:
+    #    buildings.append(s.parent_building)
+    buildings = sort_buildings(all_spaces)
 
     # make sure all features have at least one LocationPage for the current space_type. 
     features = list(filter(lambda f: spaces.filter(**{f[0]: True}), possible_features))
@@ -64,9 +64,9 @@ def spaces(request):
     # the parameters that have been set. 
     floors = []
     if building:
-        # Changed spaces to all_buildings in id_list to bypass filtering in spaces.
+        # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building. 
-        id_list = all_buildings.filter(parent_building__title=building).values_list('pk', flat=True)
+        id_list = all_spaces.filter(parent_building__title=building).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here. 
         floors = sorted(list(set(LocationPageFloorPlacement.objects.filter(parent__in=id_list).exclude(floor=None).values_list('floor__title', flat=True))))
 
