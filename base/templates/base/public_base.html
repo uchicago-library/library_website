@@ -44,6 +44,7 @@
         <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
     {% endif %}
     <link rel="stylesheet" href="{% static "base/css/uclib-print.css" %}"/>
+    {% block styles %}{% endblock %}
 </head>
 
 <body id="p-{{self.id}}" class="{{page_type|slugify}}">
@@ -317,7 +318,7 @@
         </nav><!-- // Top Navigation -->
 
          {% if has_banner %}
-            <div class="jumbotron" style="background-image: url({{banner.url}});">
+            <div class="jumbotron {% block banner_classes %}{% endblock %}" style="background-image: url({{banner.url}});">
               <div class="container">
                 <div class="overlaywrap {{branch_lib_css}}" itemscope itemtype="http://schema.org/Library">
                     <a href="{{banner_url}}">
