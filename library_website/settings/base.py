@@ -257,3 +257,12 @@ HOURS_PAGE = 4084
 
 # Library news categories
 NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People', 'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'])
+
+# UChicago Library Pages
+REGENSTEIN_HOMEPAGE = 1757
+SSA_HOMEPAGE = 1758
+MANSUETO_HOMEPAGE = 1753 
+CRERAR_HOMEPAGE = 1752
+ECKHART_HOMEPAGE = 1755
+DANGELO_HOMEPAGE = 1754
+SCRC_HOMEPAGE = 1756

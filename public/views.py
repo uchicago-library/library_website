@@ -3,7 +3,7 @@ from public.models import LocationPage, LocationPageFloorPlacement
 from wagtail.wagtailimages.models import Image
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
-from base.utils import get_hours_and_location
+from base.utils import get_hours_and_location, sort_buildings
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.utils import get_features, has_feature
 
@@ -43,11 +43,16 @@ def spaces(request):
     if space_type:
         spaces = spaces.filter(**{space_type: True})
 
-    # the spaces have been filtered down by building, feature, floor and space type. 
-    # get possible buildings from that filtered list. 
-    buildings = []
-    parent_building_ids = list(map(lambda s: s.parent_building.id, list(filter(lambda s: s.parent_building, spaces))))
-    buildings = LocationPage.objects.filter(id__in = parent_building_ids)
+    # Narrow down list of buildings from all buildings by using feature
+    # and space_type, create list of libraries for display in dropdown
+    # from parent_building of filtered all_spaces. Use set to remove
+    # duplicates and sort_buildings to organize resulting list of libraries
+    all_spaces = LocationPage.objects.live()
+    if feature:
+        all_spaces = all_spaces.filter(**{feature: True})
+    if space_type:
+        all_spaces = all_spaces.filter(**{space_type: True})
+    buildings = sort_buildings(all_spaces)
 
     # make sure all features have at least one LocationPage for the current space_type. 
     features = list(filter(lambda f: spaces.filter(**{f[0]: True}), possible_features))
@@ -56,8 +61,9 @@ def spaces(request):
     # the parameters that have been set. 
     floors = []
     if building:
+        # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building. 
-        id_list = spaces.filter(parent_building__title=building).values_list('pk', flat=True)
+        id_list = all_spaces.filter(parent_building__title=building).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here. 
         floors = sorted(list(set(LocationPageFloorPlacement.objects.filter(parent__in=id_list).exclude(floor=None).values_list('floor__title', flat=True))))
 

@@ -9,6 +9,7 @@ from django.utils.text import slugify
 from bs4 import BeautifulSoup
 import json
 from wagtail.wagtailcore.models import Page
+from library_website.settings import REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 
 HOURS_UNAVIALABLE = 'Hours Unavailable'
 
@@ -353,4 +354,33 @@ def get_hours_and_location(obj):
             'libcalid': libcalid,
             'address': ADDRESS_TEMPLATE % (address, location.city, location.state, str(location.postal_code)) }
 
+def sort_buildings(spaces):
+    """ 
+    Sort the given list of buildings so that buildings
+    always appear in standard order in dropdown select 
+    in spaces page. Uses libcal_library_id of main library buildings.
 
+	If not used, buildings list will be randomly organized.
+    """
+    from public.models import LocationPage, StandardPage
+	# LocationPage Object ids
+    REG, SSA, MANSUETO, CRERAR, ECKHART, DANGELO, SCRC = 1797, 1798, 1816, 2713, 2714, 3393, 2971
+    new_list = []
+    pages = StandardPage.objects
+    id_list = spaces.values_list('parent_building',flat=True)
+	#If locationpage id in list of ids of parent buildings, grab StandardPage object
+    if REG in id_list:
+        new_list.append(pages.get(id=REGENSTEIN_HOMEPAGE).unit.location)
+    if SSA in id_list:
+        new_list.append(pages.get(id=SSA_HOMEPAGE).unit.location)
+    if MANSUETO in id_list:
+        new_list.append(pages.get(id=MANSUETO_HOMEPAGE).unit.location)
+    if CRERAR in id_list:
+        new_list.append(pages.get(id=CRERAR_HOMEPAGE).unit.location)
+    if ECKHART in id_list:
+        new_list.append(pages.get(id=ECKHART_HOMEPAGE).unit.location)
+    if DANGELO in id_list:
+        new_list.append(pages.get(id=DANGELO_HOMEPAGE).unit.location)
+    if SCRC in id_list:
+        new_list.append(pages.get(id=SCRC_HOMEPAGE).unit.location)
+    return new_list
