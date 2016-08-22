@@ -370,7 +370,7 @@ def sort_buildings(spaces):
     id_list = spaces.values_list('parent_building',flat=True)
 	#If locationpage id in list of ids of parent buildings, grab StandardPage object
     if REG in id_list:
-        new_list.append(pages.get(id=REGENSTEIN_HOMEPAGE).unit.location)
+        new_list.append(LocationPage.objects.get(id=REG))#pages.get(id=REGENSTEIN_HOMEPAGE).unit.location)
     if SSA in id_list:
         new_list.append(pages.get(id=SSA_HOMEPAGE).unit.location)
     if MANSUETO in id_list:
