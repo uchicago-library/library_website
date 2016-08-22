@@ -1,83 +1,90 @@
 {% extends "base/public_base.html" %}
 {% load compress static %}
+{% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block styles %}
     {% compress css %}
-        <link rel="stylesheet" href="{% static "lib_collections/css/collex.scss" %}">
+        <link rel="stylesheet" type="text/x-scss" href="{% static "lib_collections/css/collex.scss" %}">
     {% endcompress %}
-        <script type="text/x-sass">
-            $base-color: {{self.branding_color}};
-            h1, h2 {
-                color: $base-color;
-            }
-            h3 {
-                color: lighten($base-color, 10%);
-            }
-            h4 {
-                color: $base-color;
-            }
-            .collex-banner .overlaywrap {
-                background-color: rgba( $base-color, .9 );
-            }
-            .collex-banner .overlaywrap {
-                background-color: rgba( $base-color, .9 );
-                h2.banner-title {
-                    color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
-                }
-            }
-            .btn.webex-next {
-                border-color: $base-color;
-                a & {
+
+    {% if branding_color %}
+        <style>
+            {% inlinecompile "scss" %}
+                $base-color: {{branding_color}};
+                h1, h2 {
                     color: $base-color;
                 }
-            }
-            .sidebar.collex {
                 h3 {
-                    a {
-                        color: lighten($base-color, 20%);
-                    }
-                }
-                a {
-                    color: $base-color;
-                    &:hover {
-                    color: lighten($base-color, 60%);
-                    }
-                }
-                & li {
-                    &.active {
-                        background-color: lighten($base-color, 75%);
-                    }
-                }
-            }
-            .coll-rightside.webex {
-                background-color: lighten($base-color, 75%);
-                h3, h3 a {
                     color: lighten($base-color, 10%);
-                    border-bottom-color: lighten($base-color, 10%);
                 }
-            }
-            .collex-loc {
-                .loc-title {
+                h4 {
                     color: $base-color;
-                    a {
-                        color: lighten($base-color, 15%);
+                }
+                .exhibitpage .overlaywrap {
+                    background-color: rgba( $base-color, .9 );
+                }
+                .exhibitpage .overlaywrap {
+                    background-color: rgba( $base-color, .9 );
+                    h2.banner-title {
+                        color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
                     }
                 }
-            }
-            .collex-solo, .collex-duo, .collex-trio, .collex-verso {
-                .img-title {
-                     color: $base-color;
+                .btn.webex-next {
+                    border-color: $base-color;
+                    a & {
+                        color: $base-color;
+                    }
                 }
-                .img-citation {
-                    color: lighten($base-color, 25%);
+                .sidebar.collex {
+                    h3 {
+                        a {
+                            color: lighten($base-color, 20%);
+                        }
+                    }
+                    a {
+                        color: $base-color;
+                        &:hover {
+                        color: lighten($base-color, 60%);
+                        }
+                    }
+                    & li {
+                        &.active {
+                            background-color: lighten($base-color, 75%);
+                        }
+                    }
                 }
-            }
-        </script>
+                .exhibitpage {
+                    .coll-rightside {
+                        background-color: lighten($base-color, 75%);
+                        h3, h3 a {
+                            color: lighten($base-color, 10%);
+                            border-bottom-color: lighten($base-color, 10%);
+                        }
+                    }
+                }
+                .collex-loc {
+                    .loc-title {
+                        color: $base-color;
+                        a {
+                            color: lighten($base-color, 15%);
+                        }
+                    }
+                }
+                .collex-solo, .collex-duo, .collex-trio, .collex-verso {
+                    .img-title {
+                         color: $base-color;
+                    }
+                    .img-citation {
+                        color: lighten($base-color, 25%);
+                    }
+                }
+            {% endinlinecompile %}
+        </style>
+    {% endif %}
 {% endblock %}
-{% block banner_classes %}collex-banner{% endblock %}
 
 {% block content %}
   <article>

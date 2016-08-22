@@ -642,8 +642,6 @@ class ExhibitPage(PublicBasePage):
     # Web exhibit fields
     hex_regex = RegexValidator(regex='^#[a-zA-Z0-9]{6}$', \
         message='Please enter a hex color, e.g. #012043')
-    banner_subtitle = models.CharField(max_length=100, blank=True)
-    banner_tagline = models.CharField(max_length=100, blank=True)
     branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
 
     subpage_types = []
@@ -655,7 +653,6 @@ class ExhibitPage(PublicBasePage):
                 ImageChooserPanel('banner_image'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
-                FieldPanel('banner_tagline'),
                 FieldPanel('branding_color'),
             ],
             heading='Banner and branding'
@@ -773,4 +770,5 @@ class ExhibitPage(PublicBasePage):
         context = super(ExhibitPage, self).get_context(request)
         context['default_image'] = default_image
         context['staff_url'] = staff_url
+        context['branding_color'] = self.branding_color
         return context

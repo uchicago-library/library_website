@@ -1,8 +1,7 @@
-@import "variables.scss";
-@import "base.scss";
-@import "compass/utilities/color/contrast";
+@import "base/css/variables.scss";
+@import "base/css/base.scss";
+//@import "compass/utilities/color/contrast";
 
-$base-color: #271847;
 $base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
 $font-large: 2.5em;
 $font-medium: 1.5em;
@@ -18,21 +17,18 @@ body {
 }
 
 h1, h2 {
-    color: $base-color;
     font-style: normal;
     font-size: $font-medium;
     font-weight: 400;
 }
 
 h3 {
-    color: lighten($base-color, 10%);
     font-style: normal;
     font-size: $font-small;
     font-weight: 600;
 }
 
 h4 {
-    color: $base-color;
     font-style: italic;
     font-size: $font-small;
     font-weight: 600;
@@ -53,7 +49,7 @@ h4 {
     }
 }
 
-.jumbotron.collex-banner {
+.exhibitpage .jumbotron {
   min-height: 250px;
   padding-top: 0px;
   margin-bottom: 0;
@@ -75,8 +71,7 @@ h4 {
   }
 }
 
-.collex-banner .overlaywrap {
-    background-color: rgba( $base-color, .9 );
+.exhibitpage .overlaywrap {
     left: 0;
     top: 0;
     font-family: $base-font;
@@ -97,13 +92,11 @@ h4 {
         margin: 0;
         padding: 0px;
         letter-spacing: 0.03em;
-        color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
         @include respond-to(small) {
             font-size: $font-large;
         }
     }
     .banner-subtitle {
-        color: lighten($base-color, 60%);
         font-size: $font-medium*0.8;
         padding-bottom:5px;
         @include respond-to(small) {
@@ -120,11 +113,7 @@ h4 {
 .btn.webex-next {
     margin-top: 2em;
     background: transparent;
-    border-color: $base-color;
     float: right;
-    a & {
-          color: $base-color;
-    }
 }
 
 .sidebar.collex {
@@ -140,14 +129,9 @@ h4 {
         @include respond-to(small) {
             padding-left: 1em;
         }
-        a {
-            color: lighten($base-color, 20%);
-        }
     }
     a {
-        color: $base-color;
         &:hover {
-            color: lighten($base-color, 60%);
             text-decoration: none;
         }
     }
@@ -159,17 +143,8 @@ h4 {
         padding: 0.6em 1em 0.6em 2em;
         //margin: 2em 0;
         &.active {
-            background-color: lighten($base-color, 75%);
             font-weight: 600;
         }
-    }
-}
-
-.coll-rightside.webex {
-    background-color: lighten($base-color, 75%);
-    h3, h3 a {
-        color: lighten($base-color, 10%);
-        border-bottom-color: lighten($base-color, 10%);
     }
 }
 
@@ -191,12 +166,10 @@ h4 {
     //}
     .loc-title {
         margin-bottom: 0.5em;
-        color: $base-color;
         font-weight: 600;
         font-size: 1em;
         a {
             font-weight: 400;    
-            color: lighten($base-color, 15%);
         }
     }
     p, ul {
@@ -258,12 +231,10 @@ h4 {
 
 .collex-solo, .collex-duo, .collex-trio, .collex-verso {
     .img-title {
-        color: $base-color;
         font-size: $font-small;
         font-weight: 600;
     }
     .img-citation {
-        color: lighten($base-color, 25%);
         font-size: 0.95em;
     }
     .img-caption {
