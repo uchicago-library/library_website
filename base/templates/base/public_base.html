@@ -43,6 +43,8 @@
         <script src="{% static "base/js/jquery.min.js" %}"></script>
         <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
     {% endif %}
+    <link rel="stylesheet" href="{% static "base/css/uclib-print.css" %}"/>
+    {% block styles %}{% endblock %}
 </head>
 
 <body id="p-{{self.id}}" class="{{page_type|slugify}}">
@@ -132,19 +134,19 @@
                                     <ul class="list-unstyled col-sm-6 ul-left">
                                         <li class="twocol-head">Catalogs</li>
                                         <li role="separator" class="divider visible-xs"></li>
-                                        <li><a href="http://lib.uchicago.edu/h/3">Library Catalog</a></li>
-                                        <li><a href="http://lib.uchicago.edu/h/ub">UBorrow</a></li>
-                                        <li><a href="http://lib.uchicago.edu/h/borrowdirect">BorrowDirect</a></li>
-                                        <li><a href="http://lib.uchicago.edu/h/worldcat">WorldCat</a></li>
+                                        <li><a href="/h/3">Library Catalog</a></li>
+                                        <li><a href="/h/ub">UBorrow</a></li>
+                                        <li><a href="/h/borrowdirect">BorrowDirect</a></li>
+                                        <li><a href="/h/worldcat">WorldCat</a></li>
                                         <li><a href="/search/catalogs/other">Other Catalogs</a></li>
                                     </ul>
 
                                     <ul class="list-unstyled col-sm-6">
                                         <li class="twocol-head">Other Search Tools</li>
                                         <li role="separator" class="divider visible-xs"></li>
-                                        <li><a href="http://lib.uchicago.edu/h/articlesplus">Articles Plus</a></li>
-                                        <li><a href="http://lib.uchicago.edu/h/atoz">Database Finder</a></li>
-                                        <li><a href="http://lib.uchicago.edu/ejournals">Ejournals</a></li>
+                                        <li><a href="/h/articlesplus">Articles Plus</a></li>
+                                        <li><a href="/h/atoz">Database Finder</a></li>
+                                        <li><a href="/ejournals">Ejournals</a></li>
                                         <li id="web-search"><a href="/#tab-3">Website Search</a></li>
                                         <li><a href="/search/tools/database-trials/">Database Trials</a></li>
                                     </ul>
@@ -321,6 +323,9 @@
                 <div class="overlaywrap {{branch_lib_css}}" itemscope itemtype="http://schema.org/Library">
                     <a href="{{banner_url}}">
                     <h2 itemprop="name">{{banner_title}}</h2>
+                    {% if banner_subtitle %}
+                        <p class="banner-subtitle">{{banner_subtitle}}</p>
+                    {% endif %}
                     </a>
                 </div>  
               </div> 

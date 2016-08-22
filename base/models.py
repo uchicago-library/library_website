@@ -844,6 +844,7 @@ class PublicBasePage(BasePage):
 
     # Banner
     banner_title = models.CharField(max_length=100, blank=True)
+    banner_subtitle = models.CharField(max_length=100, blank=True)
     banner_image =  models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -1097,8 +1098,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
     def base_has_right_sidebar(self):
         """
-        Determine if a right sidebar should
-        be displayed in the template.
+        Determine if a right sidebar should be displayed in 
+        the template.
 
         Returns:
             boolean
@@ -1119,19 +1120,20 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             A tuple where the first value is a boolean, 
             the second value is an image object or None, 
             the third value is a string (banner title),
-            the fourth value is a link, and the fifth
-            value is a page title.
+            the fourth value is a string (banner subtitle),
+            the fifth value is a link, and the sixth value
+            is a page title.
         """
         try:
             # Base case
             if self.banner_title and self.banner_image:
-                return (True, self.banner_image, self.banner_title, self.relative_url(current_site), self.title)
+                return (True, self.banner_image, self.banner_title, self.banner_subtitle, self.relative_url(current_site), self.title)
             # Recursive case
             else:
                 return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
         except(AttributeError):
-            return (False, None, '', '', '')
+            return (False, None, '', '', '', '')
 
 
     def get_context(self, request):
@@ -1177,7 +1179,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['has_banner'] = section_info[0]
         context['banner'] = section_info[1]
         context['banner_title'] = section_info[2]
-        context['banner_url'] = section_info[3]
+        context['banner_subtitle'] = section_info[3]
+        context['banner_url'] = section_info[4]
         context['branch_title'] = branch_name if branch_name is not self.title else ''
         context['page_type'] = str(self.specific.__class__.__name__)
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)

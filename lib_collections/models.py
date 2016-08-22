@@ -1,8 +1,9 @@
 from base.models import DefaultBodyFields, LinkFields
 from django.db import models
+from django.core.validators import RegexValidator
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -638,7 +639,26 @@ class ExhibitPage(PublicBasePage):
         on_delete=models.SET_NULL
     )
 
+    # Web exhibit fields
+    hex_regex = RegexValidator(regex='^#[a-zA-Z0-9]{6}$', \
+        message='Please enter a hex color, e.g. #012043')
+    branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
+
     subpage_types = []
+
+
+    web_exhibit_panels = [
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_title'),
+                FieldPanel('banner_subtitle'),
+                FieldPanel('branding_color'),
+            ],
+            heading='Banner and branding'
+        ),
+    ]
+
 
     content_panels = Page.content_panels + [
         FieldPanel('acknowledgments'),
@@ -655,17 +675,32 @@ class ExhibitPage(PublicBasePage):
         InlinePanel('exhibit_page_related_collection_placement', label='Related Collection'),
         InlinePanel('exhibit_page_donor_page_list_placement', label='Donor'),
         FieldPanel('student_exhibit'),
-        FieldPanel('exhibit_open_date'),
-        FieldPanel('exhibit_close_date'),
-        FieldPanel('exhibit_location'),
-        FieldPanel('exhibit_daily_hours'),
-        FieldPanel('exhibit_cost'),
-        FieldPanel('space_type'),
-        FieldPanel('web_exhibit_url'),
-        FieldPanel('publication_description'),
-        FieldPanel('publication_price'),
-        FieldPanel('publication_url'),
-        FieldPanel('ordering_information'),
+        MultiFieldPanel(
+            [
+                FieldPanel('exhibit_open_date'),
+                FieldPanel('exhibit_close_date'),
+            ],
+            heading='Dates'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('exhibit_location'),
+                FieldPanel('exhibit_daily_hours'),
+                FieldPanel('exhibit_cost'),
+                FieldPanel('space_type'),
+            ],
+            heading='Visiting information'
+        ),
+       MultiFieldPanel(
+            [
+                FieldPanel('web_exhibit_url'),
+                FieldPanel('publication_description'),
+                FieldPanel('publication_price'),
+                FieldPanel('publication_url'),
+                FieldPanel('ordering_information'),
+            ],
+            heading='Publication information'
+        ),
         MultiFieldPanel(
             [
                 FieldPanel('exhibit_text_link_external'),
@@ -712,6 +747,13 @@ class ExhibitPage(PublicBasePage):
         index.SearchField('staff_contact'),
     ]
 
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+        ObjectList(web_exhibit_panels, heading='Web Exhibit'),
+    ])
+
     def has_right_sidebar(self):
         return True
 
@@ -728,4 +770,5 @@ class ExhibitPage(PublicBasePage):
         context = super(ExhibitPage, self).get_context(request)
         context['default_image'] = default_image
         context['staff_url'] = staff_url
+        context['branding_color'] = self.branding_color
         return context

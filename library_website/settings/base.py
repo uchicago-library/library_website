@@ -86,6 +86,7 @@ INSTALLED_APPS = (
     'staff',
     'subjects',
     'units',
+    'static_precompiler',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -159,6 +160,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
+    'static_precompiler.finders.StaticPrecompilerFinder',
 )
 
 STATICFILES_DIRS = (
@@ -186,6 +188,11 @@ ORCID_ERROR_MSG = 'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1
 # django-compressor settings
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+# django-static-precompilers 
+STATIC_PRECOMPILER_COMPILERS = (
+    'static_precompiler.compilers.libsass.SCSS',
 )
 
 # Wagtail settings
