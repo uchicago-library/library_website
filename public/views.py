@@ -6,6 +6,7 @@ from library_website.settings import PUBLIC_HOMEPAGE, REGENSTEIN_HOMEPAGE, SSA_H
 from base.utils import get_hours_and_location, sort_buildings
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.utils import get_features, has_feature
+from wagtail.wagtailcore.models import Site
 
 
 def spaces(request):
@@ -101,6 +102,9 @@ def spaces(request):
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
 
+    # Find banner for given home_page and add to context
+    current_site = Site.find_for_request(request)
+    section_info = home_page.get_banner(current_site)
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
         'buildings': buildings,
@@ -127,4 +131,8 @@ def spaces(request):
         'hours_page_url': home_page.get_hours_page(request),
         'unfriendly_a': unfriendly_a,
         'libcalid': llid,
+        'has_banner': section_info[0],
+        'banner': section_info[1],
+        'banner_title': section_info[2],
+        'banner_url': section_info[3],
     })
