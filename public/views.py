@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from public.models import LocationPage, LocationPageFloorPlacement
+from public.models import LocationPage, LocationPageFloorPlacement, StandardPage
 from wagtail.wagtailimages.models import Image
-from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE, REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 from base.utils import get_hours_and_location, sort_buildings
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.utils import get_features, has_feature
 from wagtail.wagtailcore.models import Site
+from base.models import UNFRIENDLY_ARTICLES
 
 
 def spaces(request):
@@ -71,33 +71,26 @@ def spaces(request):
     default_image = Image.objects.get(title="Default Placeholder Photo")
     #If building is selected pass respective page id to page context variables,
     #else pass PUBLIC_HOMEPAGE, llid passed to render correct hours in js script,
-    friendly_name, unfriendly_a = '', False
-    PAGE_ID, llid = PUBLIC_HOMEPAGE, 1357
+    unfriendly_a = False
+    PAGE_ID = PUBLIC_HOMEPAGE
     if building:
         if building == 'Social Service Administration Library':
             PAGE_ID = SSA_HOMEPAGE
-            friendly_name = ' SSA '
-            unfriendly_a = True
-            llid = 1380
         elif building == 'The Joe and Rika Mansueto Library':
             PAGE_ID = MANSUETO_HOMEPAGE
-            llid = 1379
         elif building == 'The John Crerar Library':
             PAGE_ID = CRERAR_HOMEPAGE
-            friendly_name = ' Science '
-            llid = 1373
         elif building == 'Eckhart Library':
             PAGE_ID = ECKHART_HOMEPAGE
-            llid = 1377
         elif building == 'The D\'Angelo Law Library':
             PAGE_ID = DANGELO_HOMEPAGE
-            friendly_name = ' Law '
-            llid = 1378
         elif building == 'Special Collections Research Center':
             PAGE_ID = SCRC_HOMEPAGE
-            llid = 2449
+            
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PAGE_ID)
+    friendly_name = home_page.friendly_name
+    llid = home_page.get_granular_libcal_lid(home_page.unit)
     location_and_hours = get_hours_and_location(home_page)
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
@@ -130,7 +123,7 @@ def spaces(request):
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
-        'unfriendly_a': unfriendly_a,
+        'unfriendly_a': True if friendly_name.strip() in UNFRIENDLY_ARTICLES else False,
         'libcalid': llid,
         'has_banner': section_info[0],
         'banner': section_info[1],
