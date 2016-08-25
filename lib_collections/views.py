@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, ExhibitPage, ExhibitPageSubjectPlacement, Format
 from public.models import LocationPage
-from staff.models import StaffPage
+from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject, SubjectParentRelations
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.backends import get_search_backend
@@ -122,12 +122,20 @@ def collections(request):
         subject_ids = Subject.objects.get(name=subject).get_descendants()
         subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
+    subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
+    subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
+    subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
+
     for s in subjects_queryset:
-        parents = sorted(SubjectParentRelations.objects.filter(child=s).values_list('parent__name', flat=True))
+        subject_descendants = set(s.get_descendants().values_list('id', flat=True))
+        parents = SubjectParentRelations.objects.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
+        has_collections = bool(subjects_with_collections.intersection(subject_descendants))
+        has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
+        has_subject_specialists = s.id in subjects_with_specialists
         subjects.append({
-            'has_collections': CollectionPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
-            'has_exhibits': ExhibitPageSubjectPlacement.objects.filter(subject__in = s.get_descendants()).exists(),
-            'has_subject_specialists': StaffPage.objects.filter(staff_subject_placements__subject = s).exists(),
+            'has_collections': has_collections,
+            'has_exhibits': has_exhibits,
+            'has_subject_specialists': has_subject_specialists,
             'libguide_url': s.libguide_url,
             'name': s.name,
             'parents': parents,

@@ -39,7 +39,6 @@
 			}
 		}
 
-
         // $('body').track() means that this loop will be executed once. 
 		return this.each(function() {
             $('*[data-ga-category][data-ga-action][data-ga-label]').each(function() {
@@ -75,6 +74,16 @@
                         console.log('Added tracking for:');
                         console.log($(this));
                     }
+                }
+                // <input type="checkbox">, <input type="radio"> elements.
+                if ($(this).is("input[type='checkbox'], input[type='radio']")) {
+                    $(this).on("change.track-everything", function (e) {
+                        pushEvent({
+                            'category': $(this).attr('data-ga-category'),
+                            'action'  : $(this).attr('data-ga-action'),
+                            'label'   : $(this).attr('data-ga-label')
+                        });
+                    });
                 }
             });
 
@@ -119,14 +128,133 @@
             }
 		});
 	};
-}( jQuery ));
 
-    /* Track outbound links. 
-    $('a[href^="http"]').click(function(e) {
-        var link = $(this).attr('href');
-        ga('send', 'event', 'outbound', 'click', link, {
-            'transport': 'beacon',
-            'hitCallback': function() { document.location = url; }
+    $(document).ready(function () {
+        // Explore Research Guides
+        // View all link. 
+        $('#widget-explore-research-guides-view-all').on('click.track-everything keypress.track-everything', function (e) {
+	        pushEvent({
+                'category': 'Guides and Course Support',
+                'action'  : 'click',
+                'label'   : 'View all'
+            });
+        });
+        $('#widget-explore-research-guides-view-all').attr("data-ga-tracked", "on");
+
+        // All other links .
+        $('#widget-explore-research-guides a').not('#widget-explore-research-guides-view-all').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+	            pushEvent({
+                    'category': 'Guides and Course Support',
+                    'action'  : 'click',
+                    'label'   : $(this).text()
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
+        });
+
+        // Featured Library Expert
+        // View all link. 
+        $('#widget-featured-library-expert-view-all').on('click.track-everything keypress.track-everything', function (e) {
+	        pushEvent({
+                'category': 'Featured Library Expert',
+                'action'  : 'click',
+                'label'   : 'View all'
+            });
+        });
+        $('#widget-featured-library-expert-view-all').attr("data-ga-tracked", "on");
+
+        // All other links .
+        $('#widget-featured-library-expert a').not('#widget-featured-library-expert-view-all').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+	            pushEvent({
+                    'category': 'Featured Library Expert',
+                    'action'  : 'click',
+                    'label'   : $(this).text()
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
+        });
+
+        // Quick Links
+        $('#widget-quicklinks a').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+		        pushEvent({
+                    'category': 'Quicklinks',
+                    'action'  : 'click',
+                    'label'   : $(this).text()
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
+        });
+
+        // Spaces
+        $('#widget-spaces a').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+                var title = $(this).parents('p').text().split('    ').pop();
+		        pushEvent({
+                    'category': 'Spaces',
+                    'action'  : 'click',
+                    'label'   : title
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
+        });
+
+        // Workshops and Events
+        $('#widget-workshops-and-events a').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+	            pushEvent({
+                    'category': 'Workshops and Events',
+                    'action'  : 'click',
+                    'label'   : $(this).text()
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
+        });
+
+        // Social Media
+        $('#widget-social-media a').each(function() {
+            $(this).on('click.track-everything keypress.track-everything', function (e) {
+	            pushEvent({
+                    'category': 'Social Media',
+                    'action'  : 'click',
+                    'label'   : $(this).text()
+                });
+            });
+            $(this).attr("data-ga-tracked", "on");
         });
     });
-    */
+
+    // News
+    var interval = setInterval(function() {
+        if ($('.newsblock').length == 0) {
+            return;
+        } else {
+            clearInterval(interval);
+            // View all link. 
+            $('#widget-news-view-all').on('click.track-everything keypress.track-everything', function (e) {
+	            pushEvent({
+                    'category': 'News',
+                    'action'  : 'click',
+                    'label'   : 'View all'
+                });
+            });
+            $('#widget-news-view-all').attr("data-ga-tracked", "on");
+
+            // All other links .
+            $('#widget-news a').not('#widget-news-view-all').each(function() {
+                $(this).on('click.track-everything keypress.track-everything', function (e) {
+                    var title = $(this).parents('.newsblock').find('a').eq(1).text();
+	                pushEvent({
+                        'category': 'News',
+                        'action'  : 'click',
+                        'label'   : title
+                    });
+                });
+                $(this).attr("data-ga-tracked", "on");
+            });
+        }
+    }, 100);
+}( jQuery ));
+
