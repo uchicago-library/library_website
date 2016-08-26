@@ -265,6 +265,10 @@ HOURS_PAGE = 4084
 # Library news categories
 NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People', 'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'])
 
+# SCRC special situations
+SCRC_MAIN_UNIT = 2456
+SCRC_ASK_PAGE = 4127
+
 # UChicago Library Pages
 REGENSTEIN_HOMEPAGE = 1757
 SSA_HOMEPAGE = 1758
