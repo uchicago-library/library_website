@@ -281,6 +281,8 @@ $(document).ready(function(){
         $(location).attr('href', wslink)
     });
 
+    $('form#knowledgetracker').validateFormBeforeSubmit();
+
     /*
      * Appeal a Fine or Claim a Return Form
      * /borrow/borrowing/appeal.html
