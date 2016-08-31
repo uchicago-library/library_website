@@ -78,8 +78,13 @@
                                 {% for staff_page in staff_pages %}
                                     <tr>
                                         <td>
-                                            {# image staff_page.profile_picture #}
+                                            {% if staff_page.profile_picture %}
+                                                {% image staff_page.profile_picture fill-100x100 %}
+                                            {% else %}
+                                                {% image default_image fill-100x100 %}
+                                            {% endif %}
                                         </td>
+
                                         <td>
                                             <a href="{{ staff_page.url }}">
                                                 <strong>{{ staff_page.title }}</strong>

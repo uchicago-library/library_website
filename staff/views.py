@@ -7,6 +7,7 @@ from subjects.models import Subject
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement
 
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
@@ -108,7 +109,10 @@ def staff(request):
     subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
 
+    default_image = Image.objects.get(title="Default Placeholder Photo")
+
     return render(request, 'staff/staff_index_page.html', {
+        'default_image': default_image,
         'flat_intranet_units': flat_units,
         'libraries': ["Regenstein Library", "Crerar Library", "D'Angelo Law Library", "Eckhart Library", "Mansueto", "Special Collections Research Center", "SSA Library"],
         'library': library,
