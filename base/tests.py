@@ -102,31 +102,31 @@ class TestUsersAndServingLivePages(TestCase):
         response = news_page.serve(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_group_page(self):
-        """
-        Test a generic page on the intranet with a logged in 
-        user that belongs to the necessary groups.
-        """
-        hostname = Site.objects.filter(site_name='Loop')[0].hostname
-        user = loggin_user_with_privileges(create_user_with_privileges())
-        response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
-        self.assertEqual(response.status_code, 200)
+    #def test_group_page(self):
+    #    """
+    #    Test a generic page on the intranet with a logged in 
+    #    user that belongs to the necessary groups.
+    #    """
+    #    hostname = Site.objects.filter(site_name='Loop')[0].hostname
+    #    user = loggin_user_with_privileges(create_user_with_privileges())
+    #    response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
+    #    self.assertEqual(response.status_code, 200)
 
 
-    def test_all_live_intranet_pages_for_200(self):
-        """
-        Make sure all live pages on the intranet return 
-        200 when visited by a normal Library user that 
-        is logged in with the proper groups assigned.
-        """
-        site = Site.objects.filter(site_name='Loop')[0]
-        user = loggin_user_with_privileges(create_user_with_privileges())
-        pages = site.root_page.get_descendants().live()
+    #def test_all_live_intranet_pages_for_200(self):
+    #    """
+    #    Make sure all live pages on the intranet return 
+    #    200 when visited by a normal Library user that 
+    #    is logged in with the proper groups assigned.
+    #    """
+    #    site = Site.objects.filter(site_name='Loop')[0]
+    #    user = loggin_user_with_privileges(create_user_with_privileges())
+    #    pages = site.root_page.get_descendants().live()
 
-        for page in pages:
-            url = page.relative_url(site)
-            response = user.client.get(page.url, HTTP_HOST=site.hostname)
-            self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
+    #    for page in pages:
+    #        url = page.relative_url(site)
+    #        response = user.client.get(page.url, HTTP_HOST=site.hostname)
+    #        self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
 
     def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(self):
         """
@@ -150,15 +150,15 @@ class TestUsersAndServingLivePages(TestCase):
                 msg = page.relative_url(site) + ' has a problem'
                 raise RuntimeError(msg)
 
-    def test_loop_page_with_anonymous_user(self):
-        """
-        Should redirect.
-        """
-        hostname = Site.objects.filter(site_name='Loop')[0].hostname
-        user = AnonymousUser()
-        user.client = Client()
-        response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
-        self.assertEqual(response.status_code, 302)
+    #def test_loop_page_with_anonymous_user(self):
+    #    """
+    #    Should redirect.
+    #    """
+    #    hostname = Site.objects.filter(site_name='Loop')[0].hostname
+    #    user = AnonymousUser()
+    #    user.client = Client()
+    #    response = user.client.get('/groups/web-content-group/', HTTP_HOST=hostname)
+    #    self.assertEqual(response.status_code, 302)
 
 class TestPageModels(TestCase):
     """
