@@ -6,8 +6,11 @@ from email.mime.text import MIMEText
 from news.models import get_story_summary, NewsPage
 
 import datetime
+import urllib.parse
 import re
+import smtplib
 import sys
+import textwrap
 
 # followed first example here:
 # https://docs.python.org/3/library/email-examples.html
@@ -44,7 +47,6 @@ class Command (BaseCommand):
             start_day = int(options['start_date'][6:])
             start_date = datetime.date(start_year, start_month, start_day)
             num_days = options['num_days']
-            print(num_days)
 
         except:
             sys.exit(1)
@@ -52,23 +54,25 @@ class Command (BaseCommand):
         output = []
 
         # campaign is always the current day: e.g. 20160901
-        utm_campaign = datetime.datetime.now().strftime('%Y%m%d')
-        utm_medium = 'email'
-        utm_source = 'loop_email_digest'
+        link_params = {
+            'utm_campaign': datetime.datetime.now().strftime('%Y%m%d'),
+            'utm_medium': 'email',
+            'utm_source': 'loop_email_digest'
+        }
 
         msg = MIMEMultipart('alternative')
         msg['Subject'] = 'Loop digest for Monday, August 29'
-        msg['From'] = 'eee@uchicago.edu'
+        msg['From'] = 'jej@uchicago.edu'
         msg['To'] = 'jej@uchicago.edu'
    
         text = "Here is a round-up of some interesting Loop news stories that "
         text = text + "you may have missed.\n"
         for d in [start_date + datetime.timedelta(days=x) for x in range(num_days, -1, -1)]:
-            for news_page in NewsPage.objects.filter(story_date = d):
+            for news_page in NewsPage.objects.live().filter(story_date = d):
                 text = text + "  *   "
                 text = text + news_page.title
                 text = text + "<"
-                text = text + "https://loop.lib.uchicago.edu" + news_page.url_path.replace('/loop', '', 1)
+                text = text + "https://loop.lib.uchicago.edu" + news_page.url_path.replace('/loop', '', 1) + '?' + urllib.parse.urlencode(link_params)
                 text = text + ">\n"
 
         text = text + "\n"
@@ -88,29 +92,31 @@ class Command (BaseCommand):
         part1 = MIMEText(text, 'plain')
         msg.attach(part1)
 
-        html = "<html><head></head><body>Here is a round-up of some"
-        html = html + "interesting Loop news stories that you may have"
-        html = html + " missed<br><ul>"
+        html = "<html><head></head><body>Here is a round-up of some interesting Loop news stories that you may have missed<br><ul>"
         for d in [start_date + datetime.timedelta(days=x) for x in range(num_days, -1, -1)]:
-            for news_page in NewsPage.objects.filter(story_date = d):
-                html = html + "<li><a href='" + news_page.url_path.replace('/loop', '', 1) + "'>"
-                html = html + news_page.title + "</a></li>"
-        html = html + "</ul>"
+            for news_page in NewsPage.objects.live().filter(story_date = d):
+                html = html + "<li><a href='https://loop.lib.uchicago.edu" + news_page.url_path.replace('/loop', '', 1) + '?' + urllib.parse.urlencode(link_params) + "'>"
+                html = html + news_page.title + "</a></li>\n"
+        html = html + "</ul>\n"
         html = html + "<p>As always, contact <a "
         html = html + "href='mailto:intranet@lib.uchicago.edu'>"
         html = html + "intranet@lib.uchicago.edu</a> with any "
         html = html + "questions or feedback regarding "
-        html = html + "Loop.<br>Thanks,<br>Elizabeth<br>On behalf of "
-        html = html + "the Intranet Advisory Group</p>"
+        html = html + "Loop.<br>\nThanks,<br>\nElizabeth<br>\nOn behalf of "
+        html = html + "the Intranet Advisory Group</p>\n"
         html = html + "<p>Elizabeth Edwards<br>Assessment "
         html = html + "Librarian<br>University of Chicago "
-        html = html + "Library<br>773-834-8972<br><a href='mailto:"
-        html = html + "eee@uchicago.edu'>eee@uchicago.edu</a></p>"
+        html = html + "Library<br>\n773-834-8972<br>\n<a href='mailto:"
+        html = html + "eee@uchicago.edu'>eee@uchicago.edu</a></p>\n"
 
-        part2 = MIMEText(html, 'html')
+        part2 = MIMEText("\n".join(textwrap.wrap(html, break_long_words=False, width=70)), 'html')
         msg.attach(part2)
 
-        return msg.as_string()
+        s = smtplib.SMTP('localhost')
+        s.send_message(msg)
+        s.quit()
+
+        return 'Message sent.'
     
 
 
