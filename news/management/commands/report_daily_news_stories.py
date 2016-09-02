@@ -16,6 +16,8 @@ import textwrap
 # https://docs.python.org/3/library/email-examples.html
 # tried to send email from and to jej at 4:55pm. 
 
+# if there were no new Loop news stories, do nothing.
+
 class Command (BaseCommand):
     """
     Produce a summary of news stories for a given day.
@@ -63,7 +65,7 @@ class Command (BaseCommand):
         msg = MIMEMultipart('alternative')
         msg['Subject'] = 'Loop digest for Monday, August 29'
         msg['From'] = 'jej@uchicago.edu'
-        msg['To'] = 'jej@uchicago.edu'
+        msg['To'] = 'eee@uchicago.edu'
    
         text = "Here is a round-up of some interesting Loop news stories that "
         text = text + "you may have missed.\n"
