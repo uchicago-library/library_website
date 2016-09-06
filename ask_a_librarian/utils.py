@@ -76,8 +76,10 @@ def get_chat_statuses():
     """
     return {'uofc-ask': get_chat_status_css('uofc-ask'), 
             'crerar': get_chat_status_css('crerar'),
+            'eckhart': get_chat_status_css('crerar'),
             'law': get_chat_status_css('law'),
-            'ssa': get_chat_status_css('ssa')}
+            'ssa': get_chat_status_css('ssa'),
+            'dissertation-office': get_chat_status_css('dissertation-office')}
 
 
 def get_unit_chat_link(unit, request):
