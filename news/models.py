@@ -13,6 +13,7 @@ from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
+from wagtail.wagtailsnippets.models import register_snippet
 import re
 
 class NewsPage(BasePage):
@@ -200,3 +201,22 @@ def get_story_summary(news_page):
         'thumbnail': news_page.thumbnail,
         'page_alt' : news_page.alt_text
     }
+
+@register_snippet
+class NewsEmailAddition(models.Model, index.Indexed):
+    name = models.CharField(max_length=255, blank=False, help_text='Give this snippet a name to help stay organized. This name will appear in the list of snippets, but not in emails.')
+    text = RichTextField(help_text='Text to include in emails. This can include internal or external links.')
+    is_header = models.BooleanField(default=False, help_text='Text to include in the top of every email.')
+    is_footer = models.BooleanField(default=False, help_text='Text to include in the bottom of every email.')
+    include_in_email_dated = models.DateField(null=True, blank=True, help_text='Emails are send automatically via cron. Only email additions with the appropriate date will be attached to messages.')
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('text'),
+        FieldPanel('include_in_email_dated'),
+        FieldPanel('is_header'),
+        FieldPanel('is_footer')
+    ]
+
+    def __str__(self):
+        return self.name
