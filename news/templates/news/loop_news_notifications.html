@@ -1,0 +1,40 @@
+{% extends "wagtailadmin/base.html" %}
+{% load wagtailadmin_tags i18n staticfiles gravatar %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'wagtailstyleguide/css/styleguide.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block titletag %}Loop News Notifications{% endblock %}
+{% block bodyclass %}loopnewsnotifications{% endblock %}
+
+{% block content %}
+    {% trans "Loop News Notifications" as title_trans %}
+    {% include "wagtailadmin/shared/header.html" with title=title_trans %}
+
+    <div class="nice-padding">
+        <h2>Test Your Loop News Notification Email</h2>
+        <p>Make sure your Loop News notification message looks the way it's supposed to.</p>
+    
+        <form action="{% url 'loopnotifications' %}" method="POST">
+            {% csrf_token %}
+    
+            <section id="account" class="active nice-padding">
+                <ul class="fields">
+                    {% block fields %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.email_from %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.email_to %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.num_days %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.email_as_if_date %}
+                    {% endblock fields %}
+                    <li><input type="submit" value="{% trans 'Send Test Email' %}" class="button" /></li>
+                </ul>
+            </section>
+        </form>
+    </div>
+{% endblock %}
+

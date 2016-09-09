@@ -278,3 +278,8 @@ ECKHART_HOMEPAGE = 1755
 DANGELO_HOMEPAGE = 1754
 SCRC_HOMEPAGE = 1756
 DISSERTATION_HOMEPAGE = 1672
+
+# Loop Email Notification header and footer
+LOOP_EMAIL_NOTIFICATION_HEADER = "Here is a round-up of some interesting Loop news stories that you may have missed."
+LOOP_EMAIL_NOTIFICATION_FOOTER = "As always, contact <a href='mailto:intranet@lib.uchicago.edu'>intranet@lib.uchicago.edu</a> with any questions or feedback regarding Loop."
+

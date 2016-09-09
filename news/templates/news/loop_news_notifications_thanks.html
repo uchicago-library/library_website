@@ -1,0 +1,22 @@
+{% extends "wagtailadmin/base.html" %}
+{% load wagtailadmin_tags i18n staticfiles gravatar %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'wagtailstyleguide/css/styleguide.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block titletag %}Loop News Notifications{% endblock %}
+{% block bodyclass %}loopnewsnotifications{% endblock %}
+
+{% block content %}
+    {% trans "Loop News Notifications" as title_trans %}
+    {% include "wagtailadmin/shared/header.html" with title=title_trans %}
+
+    <div class="nice-padding">
+        <h2>Your test message has been submitted.</h2>
+    </div>
+{% endblock %}
