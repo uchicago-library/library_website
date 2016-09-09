@@ -15,7 +15,6 @@ from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 
-import datetime
 import re
 
 class NewsPage(BasePage):
@@ -206,7 +205,7 @@ def get_story_summary(news_page):
 
 @register_snippet
 class NewsEmailAddition(models.Model, index.Indexed):
-    include_in_email_dated = models.DateField(null=False, blank=False, default=datetime.datetime.now, help_text='Emails are send automatically via cron. Only email additions with the appropriate date will be attached to messages.')
+    include_in_email_dated = models.DateField(null=False, blank=False, default=datetime.now, help_text='Emails are send automatically via cron. Only email additions with the appropriate date will be attached to messages.')
     text = RichTextField(help_text='Text to include in emails. This can include internal or external links.')
 
     panels = [
