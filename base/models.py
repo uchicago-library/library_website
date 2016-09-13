@@ -1,5 +1,6 @@
 from django import forms
 from django.apps import apps
+from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Q
@@ -8,7 +9,7 @@ from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT, LIBCAL_IID
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.wagtailcore.blocks import ChoiceBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
+from wagtail.wagtailcore.blocks import ChoiceBlock, ChooserBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
 from wagtail.wagtaildocs.blocks import DocumentChooserBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Page, Site
@@ -695,6 +696,33 @@ class LinkBlock(StructBlock):
     link_page = PageChooserBlock(required=False)
 
 
+class StaffPageChooserBlock(ChooserBlock):
+    target_model = 'staff.StaffPage'
+    widget = forms.Select
+
+    class Meta:
+        icon = "icon"
+
+    # Return the key value for the select field
+    def value_for_form(self, value):
+        if isinstance(value, self.target_model):
+            return value.pk
+        else:
+            return value
+
+
+class StaffListingFields(StructBlock):
+    staff_listing = ListBlock(PageChooserBlock(), icon="edit", help_text='Be sure to select staff pages from Loop.', label='Staff listing')
+    show_photos = BooleanBlock(default=False, required=False, help_text="Show staff photographs.")
+    show_contact_info = BooleanBlock(default=False, required=False, help_text="Show contact information.")
+    show_subject_specialties = BooleanBlock(default=False, required=False, help_text="Show subject specialties.")
+
+    class Meta:
+        template = 'blocks/staff_listing_block.html'
+        icon = 'form'
+        label = 'Staff Listing'
+
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared 
@@ -739,6 +767,7 @@ class DefaultBodyFields(StreamBlock):
         help_text='Right + click in a table cell for more options. Use <em>text</em> for italics, \
 <strong>text</strong> for bold, and <a href="https://duckduckgo.com">text</a> for links.',
     ) 
+    staff_listing = StaffListingFields(icon='group', template='base/blocks/staff_listing.html')
 
 
 class RawHTMLBodyField(StreamBlock):

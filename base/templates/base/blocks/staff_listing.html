@@ -1,0 +1,60 @@
+{% load wagtailimages_tags %}
+{% load units_tags %}
+{% if value.show_photos or value.show_subject_specialties or value.show_contact_info %}
+  <table class="table table-striped directory-list">
+    <tbody>
+      <tr class="etable-header">
+        <td colspan="4">
+          Staff Listing
+        </td>
+      </tr>
+      {% for staff in value.staff_listing %}
+        </tr>
+          {% if value.show_photos %}
+            <td>
+              {% if staff.specific.profile_picture %}
+                {% image staff_page.profile_picture fill-100x100 %}
+              {% else %}
+                <img width="100" height="100" src="/media/images/default-photo.2e16d0ba.fill-100x100.jpg" alt="Default Placeholder Photo">
+              {% endif %}
+            </td>
+          {% endif %}
+          <td>
+            <strong>{{ staff.title }}</strong>
+            <br/>
+            <p>
+              {{ staff.specific.vcards.first.title }}<br/>
+              {{ staff.specific.vcards.first.unit.fullName }}
+            </p>
+          </td>
+          {% if value.show_contact_info %}
+            <td>
+              <strong>Contact</strong>
+              <br/>
+              {% staff_email_addresses staff.specific %}
+              {% staff_faculty_exchanges_phone_numbers staff.specific %}
+            </td>
+          {% endif %}
+          {% if value.show_subject_specialties %}
+            <td>
+              {% if staff.specific.staff_subject_placements.all %}
+                <strong>Subject Specialties</strong><br/>
+                {% staff_subjects staff.specific %}
+                {% if staff.specific.libguide_url %}
+                  <a href="{{ staff.specific.libguide_url }}" class="guide-link"> Subject Guides</a>
+                {% endif %}
+              {% endif %}
+            </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  <table>
+{% else %}
+  <ul>
+    {% for staff in value.staff_listing %}
+      <li>{{ staff.title }} &#8212; <em>{{ staff.specific.vcards.first.title }}</em></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
