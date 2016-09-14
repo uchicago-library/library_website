@@ -23,19 +23,6 @@
                     </span>
 	           </form>
 	        </div><!-- /.col-xs-12 col-sm-6-->
-            {% if view == 'department' %}
-                {% if sort == 'alphabetical' %}
-                    {% if query == None or query == '' %}
-                        <div class="col-xs-12 list-view">
-                            <a href="?sort=hierarchical"><i class="fa fa-arrows-v"></i> Re-sort by Department Hierarchy</a>
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <div class="col-xs-12 list-view">
-                        <a href="?sort=alphabetical"><i class="fa fa-arrows-v"></i> Re-sort Alphabetically</a>
-                    </div>
-                {% endif %}
-            {% endif %}
             {% if view == 'staff' %}
                 {% include "units/browse_by_pulldowns.html" %}
             {% endif %}
@@ -109,29 +96,18 @@
                 <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
             {% endif %}
         {% else %}
-            {% if sort == 'alphabetical' %}
-                <table class="table table-striped coll-list">
-                    <tbody>
-                        <tr class="etable-header">
-                            <th colspan="3">All Departments, Divisions, &amp; Units</th>
-                        </tr>
-                    </tbody>
-                    {{ alphabetical_units|safe }}
-                </table>
-            {% else %}
-                <table class="table table-striped coll-list">
-                    <tbody>
-                        <tr class="etable-header">
-                            <th>All Departments, Divisions, &amp; Units</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                {{ hierarchical_units|safe }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            {% endif %}
+            <table class="table table-striped coll-list">
+                <tbody>
+                    <tr class="etable-header">
+                        <th>All Departments, Divisions, &amp; Units</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ hierarchical_units|safe }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         {% endif %}
 	</article>
 {% endblock %}

@@ -229,14 +229,13 @@ def units(request):
     # MAIN
     #
 
-    alphabetical_html = ''
     hierarchical_html = ''
     
     department = request.GET.get('department', None)
     library = request.GET.get('library', None)
     page = request.GET.get('page', 1)
     query = request.GET.get('query', None)
-    sort = request.GET.get('sort', 'alphabetical')
+    sort = request.GET.get('sort', 'hierarchical')
     subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'department')
 
@@ -258,7 +257,7 @@ def units(request):
 
         # departments.
         if department:
-            staff_pages_all = sorted(list(set(staff_pages_all.filter(vcards__in=get_vcards_for_department(department)))), key=lambda s: s.last_name)
+            staff_pages_all = sorted(list(set(staff_pages_all.filter(vcards__in=get_vcards_for_department(department)))), key=lambda s: s.last_name if s.last_name else '')
 
         # search staff pages.
         if query:
@@ -292,37 +291,6 @@ def units(request):
         if len(hierarchical_html) > 4:
             hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
     
-        # alphabetical units. 
-        alphabetical_html = ""
-
-        units = UnitPage.objects.filter(display_in_directory=True).extra(select={'lc': 'lower(alphabetical_directory_name)'}).order_by('lc')
-        if query:
-            units = units.search(query)
-
-        for unit_page in units:
-            alphabetical_html = alphabetical_html + '<tr>'
-
-            directory_name = unit_page.alphabetical_directory_name
-            if unit_page.public_web_page:
-                directory_name = '<a href="' + unit_page.public_web_page.url + '">' + directory_name + '</a>'
-
-            staff_link = ''
-            if unit_page.directory_unit:
-                staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': unit_page.directory_unit.fullName}) + "'>staff</a>"
-
-            room_number = ''
-            if unit_page.room_number:
-                room_number = " (" + unit_page.room_number + ") "
-
-            alphabetical_html = alphabetical_html + '<td><strong>' + directory_name + room_number + staff_link + '</strong></td>'
-            alphabetical_html = alphabetical_html + '<td>'
-            alphabetical_html = alphabetical_html + get_unit_info_from_unit_page(unit_page)
-            alphabetical_html = alphabetical_html + '</td>'
-            alphabetical_html = alphabetical_html + '<td>'
-            alphabetical_html = alphabetical_html + unit_page.directory_unit.get_parent_library_name()
-            alphabetical_html = alphabetical_html + '</td>'
-            alphabetical_html = alphabetical_html + '</tr>'
-
     default_image = Image.objects.get(title="Default Placeholder Photo")
 
     # Page context variables for templates
@@ -332,7 +300,6 @@ def units(request):
     unit = location_and_hours['page_unit']
 
     return render(request, 'units/unit_index_page.html', {
-        'alphabetical_units': alphabetical_html,
         'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
