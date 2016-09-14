@@ -283,3 +283,36 @@ DISSERTATION_HOMEPAGE = 1672
 LOOP_EMAIL_NOTIFICATION_HEADER = "Here is a round-up of some interesting Loop news stories that you may have missed."
 LOOP_EMAIL_NOTIFICATION_FOOTER = "As always, contact <a href='mailto:intranet@lib.uchicago.edu'>intranet@lib.uchicago.edu</a> with any questions or feedback regarding Loop."
 
+# Site IDs
+PUBLIC_SITE = 3
+
+# Quick numbers for directory
+# Links should be integers (page ID)
+# If a link is present, the phone number
+# will not be used
+QUICK_NUMS = {
+    'library':
+        [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
+         {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
+         {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
+    'regenstein-library':
+        [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
+         {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
+         {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
+    'crerar-library':
+        [{'label': 'Crerar Circulation',        'number': '773-702-7409', 'link': None},
+         {'label': 'Crerar Reference',          'number': '773-702-7715', 'link': None}],
+    'dangelo-law-library':
+        [{'label': 'Law Main Telephone',        'number': '773-702-9615', 'link': None},
+         {'label': 'Law Circulation',           'number': '773-702-0213', 'link': None},
+         {'label': 'Law Reference',             'number': '773-702-9631', 'link': None}],
+    'eckhart-library':
+        [{'label': 'Eckhart Library',           'number': '773-702-8778', 'link': None}],
+    'mansueto':
+        [{'label': 'Mansueto Circulation Desk', 'number': '773-702-0901', 'link': None}],
+    'special-collections-research-center':
+        [{'label': 'SCRC Front Desk',           'number': '773-702-8705', 'link': None},
+         {'label': 'SCRC Contact Form',         'number': '', 'link': SCRC_ASK_PAGE}],
+    'ssa-library':
+        [{'label': 'SSA Library',               'number': '773-702-1199', 'link': None}],
+}

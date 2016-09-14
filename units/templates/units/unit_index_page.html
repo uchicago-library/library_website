@@ -46,9 +46,9 @@
                     <tbody>
                         <tr>
                             <td>Quick Numbers</td>
-                            <td><strong>Main Telephone</strong> 773-702-8740</td>
-                            <td><strong>Privileges </strong> 773-702-8782</td>
-                            <td><strong>General Reference</strong>  773-702-4685</td>
+                            {% autoescape off %}
+                                {{quick_nums}}
+                            {% endautoescape %}
                         </tr>
                     </tbody>
                 </table>

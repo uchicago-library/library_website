@@ -7,12 +7,13 @@ from django.utils.html import escape
 from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
 from subjects.models import Subject
 from units.models import UnitPage
+from units.utils import get_quick_nums
 from wagtail.wagtailimages.models import Image
 from public.models import StandardPage
-from library_website.settings import PUBLIC_HOMEPAGE
+from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
-
+from django.utils.text import slugify
 import urllib.parse
 
 '''
@@ -357,4 +358,5 @@ def units(request):
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
+        'quick_nums': get_quick_nums(QUICK_NUMS[slugify(library)]) if library else get_quick_nums(QUICK_NUMS['library']),
     })
