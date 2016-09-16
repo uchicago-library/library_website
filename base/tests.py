@@ -1,18 +1,22 @@
 from base.utils import get_xml_from_directory_api
 from django.test import TestCase, Client
 from wagtail.wagtailcore.models import Page, Site
-from base.models import BasePage, PublicBasePage
+from base.models import BasePage, get_available_path_under, PublicBasePage
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from news.models import NewsPage
+from staff.models import StaffIndexPage, StaffPage
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import AnonymousUser
+from django.db import models
 from io import StringIO
 from lxml import etree
 from base.utils import get_json_for_library, get_hours_by_id
 from tempfile import NamedTemporaryFile
 from library_website.settings.base import LIBCAL_IID
 from file_parsing import is_json
+from public.models import StandardPage
+from units.models import UnitPage
 import subprocess
 import sys
 import json
@@ -208,6 +212,86 @@ class TestPageModels(TestCase):
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(len(no_search_fields), 0, 'The following content types don\'t have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: ' + str(no_search_fields))
+
+
+class TestStreamFields(TestCase):
+
+    # Load a copy of the production database  
+    fixtures = ['test.json']
+
+    def test_staff_listing_stream_fields(self):
+        # get a few pages for the test. 
+        home_page = Site.objects.first().root_page
+        staff_index_page = StaffIndexPage.objects.first()
+        dbietila = StaffPage.objects.get(cnetid='dbietila')
+    
+        try:
+            StaffPage.objects.get(cnetid='ignatius').delete()
+        except StaffPage.DoesNotExist:
+            pass
+    
+        # create a fictional StaffPage object for testing. 
+        staff_page = StaffPage.objects.create(
+            cnetid='ignatius',
+            depth=staff_index_page.depth+1,
+            editor=dbietila,
+            page_maintainer=dbietila,
+            path=get_available_path_under(staff_index_page.path),
+            slug='ignatius-reilly',
+            title='Ignatius Reilly'
+        )
+    
+        # build a streamfield by hand for testing. 
+        body = json.dumps([
+            {
+                "type": "staff_listing",
+                "value": {
+                    "staff_listing": [staff_page.id],
+                    "show_photos": False,
+                    "show_contact_info": False,
+                    "show_subject_specialties": False
+                }
+            }
+        ])
+
+        try:
+            StandardPage.objects.get(slug='a-standard-page').delete()
+        except StandardPage.DoesNotExist:
+            pass
+    
+        # create a StandardPage under the homepage for testing. 
+        standard_page = StandardPage.objects.create(
+            body=body,
+            content_specialist=staff_page,
+            depth=home_page.depth+1,
+            editor=dbietila,
+            page_maintainer=staff_page,
+            path=get_available_path_under(home_page.path),
+            slug="a-standard-page",
+            title="A Standard Page",
+            unit=UnitPage.objects.get(title="Library")
+        )
+    
+        # retrieve the StandardPage and make sure the status code is 200. 
+        request = HttpRequest()
+        response = standard_page.serve(request)
+        self.assertEqual(response.status_code, 200)
+    
+        # delete the StaffPage object. Test again, the status code should still be
+        # 200.
+        try:
+            staff_page.delete()
+        except StaffPage.DoesNotExist:
+            pass
+
+        response = standard_page.serve(request)
+        self.assertEqual(response.status_code, 200)
+    
+        # delete the StandardPage. 
+        try:
+            standard_page.delete()
+        except StandardPage.DoesNotExist:
+            pass
 
 
 class TestUtilityFunctions(TestCase):
