@@ -354,6 +354,41 @@ def get_hours_and_location(obj):
             'libcalid': libcalid,
             'address': ADDRESS_TEMPLATE % (address, location.city, location.state, str(location.postal_code)) }
 
+
+def get_specific_page_data(idnum, key):
+    """
+    Helper function for getting specific data for a page
+    by ID. The data returned is that from the 
+    get_hours_an_location data structure.
+
+    Args:
+        idnum: integer, id of the page for which to retrieve data.
+
+        key: sring, dictionary key from get_hours_an_location. 
+        Acceptable values are, "page_location", "page_unit",
+        "libcalid", and "address".
+
+    Returns:
+        Mixed output, objects and strings returned from the
+        get_hours_and_location data structure.
+    """
+    return get_hours_and_location(Page.objects.live().get(id=idnum).specific)[key]
+
+
+def get_page_loc_name(idnum):
+    """
+    Get the name of a page_location for a specific library page.
+
+    Args:
+        idnum: integer, id of the page for which to retrieve data.
+
+    Returns:
+        string, the name of the parent location under which 
+        a page resides.
+    """
+    return str(get_specific_page_data(idnum, 'page_location'))
+
+
 def sort_buildings(spaces):
     """ 
     Sort the given list of buildings so that buildings

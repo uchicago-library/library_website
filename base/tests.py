@@ -14,6 +14,9 @@ from lxml import etree
 from base.utils import get_json_for_library, get_hours_by_id
 from tempfile import NamedTemporaryFile
 from library_website.settings.base import LIBCAL_IID
+from django.core import management
+from django.utils.six import StringIO
+from django.db.models.base import ObjectDoesNotExist
 from file_parsing import is_json
 from public.models import StandardPage
 from units.models import UnitPage
@@ -316,3 +319,22 @@ class TestUtilityFunctions(TestCase):
         crerar = 1373
         assert(len(get_hours_by_id(crerar)) > 1)
         self.assertEqual(get_hours_by_id(999), 'Hours Unavailable')
+
+
+
+class TestAssignUnitLocationCommand(TestCase):
+    """
+    Test cases for the assign_unit_location manage command.
+    """
+    fixtures = ['test.json']
+
+
+    def test_assign_unit_location(self):
+        """
+        Should exit with a code of 1 if a location or 
+        unit doesn't exist. 
+        """
+        with self.assertRaises(SystemExit) as cm:
+            management.call_command('assign_unit_location', str(1), str(2))
+
+        self.assertEqual(cm.exception.code, 1)

@@ -1,11 +1,11 @@
-from django.test import TestCase
-from units.utils import get_quick_num_or_link, get_quick_num_html
+from django.test import TestCase, Client
+from units.utils import get_quick_num_or_link, get_quick_num_html, get_quick_nums_for_library_or_dept
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
 from wagtail.wagtailcore.models import Site
 from diablo_tests import assert_assertion_error
 
 
-class TestQuickNumbers(TestCase):
+class TestQuickNumberUtils(TestCase):
     """
     Tests for utilities used for adding quick numbers
     to the public staff directory.
@@ -80,3 +80,14 @@ class TestQuickNumbers(TestCase):
         for library in QUICK_NUMS:
             for number in QUICK_NUMS[library]:
                 get_quick_num_or_link(number)
+
+
+    def test_get_quick_nums_for_library_or_dept(self):
+        """
+        TODO:
+        """
+        client = Client()
+        site = Site.objects.filter(is_default_site=True)[0]
+        response = client.get('/about/directory/?view=staff&department=D\'Angelo+Law+Library', HTTP_HOST=site.hostname)
+        request = response.wsgi_request
+        get_quick_nums_for_library_or_dept(request)

@@ -270,7 +270,7 @@ SCRC_MAIN_UNIT = 2456
 SCRC_ASK_PAGE = 4127
 
 # UChicago Library Pages
-REGENSTEIN_HOMEPAGE = 1757
+REGENSTEIN_HOMEPAGE = 1797
 SSA_HOMEPAGE = 1758
 MANSUETO_HOMEPAGE = 1753 
 CRERAR_HOMEPAGE = 1752
@@ -295,24 +295,24 @@ QUICK_NUMS = {
         [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
          {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
          {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
-    'regenstein-library':
+    'the-joseph-regenstein-library':
         [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
          {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
          {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
-    'crerar-library':
+    'the-john-crerar-library':
         [{'label': 'Crerar Circulation',        'number': '773-702-7409', 'link': None},
          {'label': 'Crerar Reference',          'number': '773-702-7715', 'link': None}],
-    'dangelo-law-library':
+    'the-dangelo-law-library':
         [{'label': 'Law Main Telephone',        'number': '773-702-9615', 'link': None},
          {'label': 'Law Circulation',           'number': '773-702-0213', 'link': None},
          {'label': 'Law Reference',             'number': '773-702-9631', 'link': None}],
     'eckhart-library':
         [{'label': 'Eckhart Library',           'number': '773-702-8778', 'link': None}],
-    'mansueto':
+    'the-joe-and-rika-mansueto-library':
         [{'label': 'Mansueto Circulation Desk', 'number': '773-702-0901', 'link': None}],
     'special-collections-research-center':
         [{'label': 'SCRC Front Desk',           'number': '773-702-8705', 'link': None},
          {'label': 'SCRC Contact Form',         'number': '', 'link': SCRC_ASK_PAGE}],
-    'ssa-library':
+    'social-service-administration-library':
         [{'label': 'SSA Library',               'number': '773-702-1199', 'link': None}],
 }
