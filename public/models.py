@@ -354,19 +354,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             filtered by library.
         """
         base = '/about/directory/?view=staff&library='
-        links = {'The John Crerar Library': base + urllib.parse.quote_plus('Crerar Library'),
-                 'The D\'Angelo Law Library': base + urllib.parse.quote_plus('D\'Angelo Law Library'),
-                 'The University of Chicago Library': '/about/directory/?view=staff',
-                 'Eckhart Library': base + urllib.parse.quote_plus('Eckhart Library'),
-                 'The Joe and Rika Mansueto Library': base + urllib.parse.quote_plus('Mansueto'),
-                 'The Joseph Regenstein Library': base + urllib.parse.quote_plus('Regenstein Library'),
-                 'Special Collections Research Center': base + urllib.parse.quote_plus('Special Collections Research Center'),
-                 'Social Service Administration Library': base + urllib.parse.quote_plus('SSA Library')}
+        url = base + urllib.parse.quote_plus(location)
 
         if specialists:
-             return links[location] + '&subject=All+Subject+Specialists'       
+             return url + '&subject=All+Subject+Specialists'       
         else: 
-            return links[location]
+            return url
 
 
     @property 

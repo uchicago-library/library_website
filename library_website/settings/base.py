@@ -291,7 +291,7 @@ PUBLIC_SITE = 3
 # If a link is present, the phone number
 # will not be used
 QUICK_NUMS = {
-    'library':
+    'the-university-of-chicago-library':
         [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
          {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
          {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],

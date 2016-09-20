@@ -125,11 +125,11 @@ def get_quick_nums_for_library_or_dept(request):
         String, the full html to be displayed at the top of
         the department directory chosen by the available data.
     """
-    library = request.GET.get('library', None)
+    library = request.GET.get('the-university-of-chicago-library', None)
     department = request.GET.get('department', None)
-    fallback = slugify('library')
+    fallback = slugify('the-university-of-chicago-library')
 
-    assert fallback in settings.QUICK_NUMS, '"library" is a required key in the "QUICK_NUMS" dictionary'
+    assert fallback in settings.QUICK_NUMS, '"the-university-of-chicago-library" is a required key in the "QUICK_NUMS" dictionary'
     html = get_all_quick_nums_html(settings.QUICK_NUMS[fallback])
     if library:
         html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(library)])

@@ -105,7 +105,7 @@ class TestQuickNumberUtils(TestCase):
                 'defiant':
                     [{'label': 'Benjamin Sisko',    'number': '101001', 'link': None},
                      {'label': 'Quark',             'number': '',       'link': site.root_page.id}],
-                'library':
+                'the-university-of-chicago-library':
                     [{'label': 'Captain Long',   'number': '00100', 'link': None},
                      {'label': 'Lieutenant Commander Blair',  'number': '11000', 'link': None}],
             }):
