@@ -1,3 +1,4 @@
+from .models import Tree
 from directory_unit.models import DirectoryUnit
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -288,11 +289,19 @@ def units(request):
             staff_pages = paginator.page(paginator.num_pages)
 
     elif view == 'department':
-        hierarchical_units = UnitPage.hierarchical_units()
-        hierarchical_html = get_html(hierarchical_units)
-        # replace first ul. 
-        if len(hierarchical_html) > 4:
-            hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
+        hierarchical_html = ''
+
+        if query:
+            units = UnitPage.objects.filter(display_in_directory=True).search(query)
+            h = []
+            for u in units:
+                h.append(get_unit_info(Tree(u.title, u)))
+            hierarchical_html = ''.join(h)
+        else:
+            hierarchical_html = get_html(UnitPage.hierarchical_units())
+            # replace first ul. 
+            if len(hierarchical_html) > 4:
+                hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
     
     default_image = Image.objects.get(title="Default Placeholder Photo")
 

@@ -10,6 +10,30 @@ from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
 from base.models import BasePage, ContactFields, DefaultBodyFields
 
+class Tree(object):
+    def __init__(self, name='root', unit_page=None, children=None):
+        self.name = name
+        self.unit_page = unit_page
+        self.children = []
+        if children is not None:
+            for child in children:
+                self.add_child(child)
+    def __repr__(self):
+        return self.name
+    def add_child(self, node):
+        assert isinstance(node, Tree)
+        if self.get_child(node.name) == None:
+            self.children.append(node)
+            self.children.sort(key=lambda t: t.name)
+    def get_child(self, name):
+        c = 0
+        while c < len(self.children):
+            if self.children[c].name == name:
+                return self.children[c]
+            c = c + 1
+        return None
+
+
 @register_snippet
 class Role(models.Model, index.Indexed):
     """
@@ -106,29 +130,6 @@ class UnitPage(BasePage, ContactFields):
 
     @staticmethod
     def hierarchical_units():
-        class Tree(object):
-            def __init__(self, name='root', unit_page=None, children=None):
-                self.name = name
-                self.unit_page = unit_page
-                self.children = []
-                if children is not None:
-                    for child in children:
-                        self.add_child(child)
-            def __repr__(self):
-                return self.name
-            def add_child(self, node):
-                assert isinstance(node, Tree)
-                if self.get_child(node.name) == None:
-                    self.children.append(node)
-                    self.children.sort(key=lambda t: t.name)
-            def get_child(self, name):
-                c = 0
-                while c < len(self.children):
-                    if self.children[c].name == name:
-                        return self.children[c]
-                    c = c + 1
-                return None
-
         records = []
         for u in UnitPage.objects.filter(display_in_directory=True):
             records.append([u.get_full_name().split(' - '), u])
