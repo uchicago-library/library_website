@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, TextField
-from base.models import BasePage, DefaultBodyFields
+from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
 from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
@@ -79,7 +79,7 @@ class StaffPageManager(models.Manager):
         )
 
 
-class StaffPage(BasePage):
+class StaffPage(BasePageWithoutStaffPageForeignKeys):
     """
     Staff profile content type.
     """
@@ -176,9 +176,9 @@ class StaffPage(BasePage):
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
         InlinePanel('expertise_placements', label='Expertise'),
         FieldPanel('orcid')
-    ] + BasePage.content_panels
+    ] + BasePageWithoutStaffPageForeignKeys.content_panels
 
-    search_fields = BasePage.search_fields + [
+    search_fields = BasePageWithoutStaffPageForeignKeys.search_fields + [
         index.SearchField('profile_picture'),
         index.SearchField('bio'),
         index.SearchField('cv'),

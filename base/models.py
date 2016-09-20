@@ -464,20 +464,10 @@ class Report(AbstractReport):
     class Meta:
         abstract = True
 
-class AbstractBase(models.Model):
+class StaffPageForeignKeys(models.Model):
     """
-    General fields to add to all page types.
+    Separate StaffPage Foreign Keys out.
     """ 
-    start_sidebar_from_here = models.BooleanField(default=False)
-
-    show_sidebar = models.BooleanField(default=False)
-
-    last_reviewed = models.DateField(
-        'Last Reviewed', 
-        null=True, 
-        blank=True
-    )
-
     page_maintainer = models.ForeignKey(
         'staff.StaffPage',
         null=True, 
@@ -494,20 +484,40 @@ class AbstractBase(models.Model):
         related_name='%(app_label)s_%(class)s_editor'
     )
 
+    content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('page_maintainer'),
+                FieldPanel('editor'),
+            ],
+            heading='Page Management'
+        )
+    ]
+
+    class Meta:
+        abstract = True
+
+class AbstractBaseWithoutStaffPageForeignKeys(models.Model):
+    """
+    Separate StaffPage Foreign Keys out. 
+    """ 
+    start_sidebar_from_here = models.BooleanField(default=False)
+
+    show_sidebar = models.BooleanField(default=False)
+
+    last_reviewed = models.DateField(
+        'Last Reviewed', 
+        null=True, 
+        blank=True
+    )
+
     # Searchable fields
     search_fields = [
         index.SearchField('description'),
     ]
 
     content_panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel('page_maintainer'),
-                FieldPanel('editor'),
-                FieldPanel('last_reviewed', None),
-            ],
-            heading='Page Management'
-        ),
+        FieldPanel('last_reviewed', None),
     ]
 
     left_sidebar_panels = [
@@ -519,6 +529,16 @@ class AbstractBase(models.Model):
             heading='Left Sidebar Menus'
         ),
     ]
+
+    class Meta:
+        abstract = True
+
+class AbstractBase(StaffPageForeignKeys, AbstractBaseWithoutStaffPageForeignKeys):
+    """
+    General fields to add to all page types.
+    """ 
+    content_panels = (StaffPageForeignKeys.content_panels +
+        AbstractBaseWithoutStaffPageForeignKeys.content_panels)
 
     class Meta:
         abstract = True
@@ -778,7 +798,7 @@ class RawHTMLBodyField(StreamBlock):
 
 
 # Page definitions
-class BasePage(Page, AbstractBase):
+class BasePageWithoutStaffPageForeignKeys(Page, AbstractBaseWithoutStaffPageForeignKeys):
     """
     Adds additional fields to the wagtail Page model.
     Most other content types should extend this model
@@ -786,9 +806,9 @@ class BasePage(Page, AbstractBase):
     """
 
     # Searchable fields
-    search_fields = Page.search_fields + AbstractBase.search_fields
+    search_fields = Page.search_fields + AbstractBaseWithoutStaffPageForeignKeys.search_fields
 
-    content_panels = AbstractBase.content_panels
+    content_panels = AbstractBaseWithoutStaffPageForeignKeys.content_panels
     left_sidebar_panels = AbstractBase.left_sidebar_panels
     promote_panels = Page.promote_panels + left_sidebar_panels
 
@@ -796,7 +816,7 @@ class BasePage(Page, AbstractBase):
         abstract = True
 
     def get_context(self, request):
-        context = super(BasePage, self).get_context(request)
+        context = super(BasePageWithoutStaffPageForeignKeys, self).get_context(request)
 
         context['breadcrumbs'] = get_breadcrumbs(self)
 
@@ -842,6 +862,12 @@ class BasePage(Page, AbstractBase):
         
         return context
 
+class BasePage(BasePageWithoutStaffPageForeignKeys, StaffPageForeignKeys):
+    content_panels = (BasePageWithoutStaffPageForeignKeys.content_panels +
+        StaffPageForeignKeys.content_panels)
+
+    class Meta:
+        abstract = True
 
 class PublicBasePage(BasePage):
     """
