@@ -651,6 +651,7 @@ class ExhibitPage(PublicBasePage):
         MultiFieldPanel(
             [
                 ImageChooserPanel('banner_image'),
+                ImageChooserPanel('banner_feature'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
                 FieldPanel('branding_color'),

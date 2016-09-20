@@ -2,6 +2,7 @@
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 {% image banner original as banner %}
+{% image banner_feature original as banner_feature %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -320,6 +321,11 @@
          {% if has_banner %}
             <div class="jumbotron" style="background-image: url({{banner.url}});">
               <div class="container">
+                {% if banner_feature %}
+                    <div class="img-wrapper">
+                        <img src="{{banner_feature.url}}" alt="{{self.banner_feature.title}}"/>
+                    </div>
+                {% endif %}
                 <div class="overlaywrap {{branch_lib_css}}" itemscope itemtype="http://schema.org/Library">
                     <a href="{{banner_url}}">
                     <h2 itemprop="name">{{banner_title}}</h2>

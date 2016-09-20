@@ -127,7 +127,9 @@ def spaces(request):
         'libcalid': llid,
         'has_banner': section_info[0],
         'banner': section_info[1],
-        'banner_title': section_info[2],
-        'banner_url': section_info[3],
+        'banner_feature': section_info[2],
+        'banner_title': section_info[3],
+        'banner_subtitle': section_info[4],
+        'banner_url': section_info[5],
         'branch_lib_css': home_page.get_branch_lib_css_class(),
     })
