@@ -1,9 +1,9 @@
-from django.test import TestCase, Client
-from units.utils import get_quick_num_or_link, get_quick_num_html, get_quick_nums_for_library_or_dept
+from django.test import TestCase, Client, override_settings
+from units.utils import get_quick_num_or_link, get_quick_num_html, get_all_quick_nums_html, get_quick_nums_for_library_or_dept
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
 from wagtail.wagtailcore.models import Site
 from diablo_tests import assert_assertion_error
-
+from django.conf import settings
 
 class TestQuickNumberUtils(TestCase):
     """
@@ -19,6 +19,10 @@ class TestQuickNumberUtils(TestCase):
         """
         self.quick_num = {'label': 'Foobar', 'number': '773-702-8740', 'link': None}
         self.quick_link = {'label': 'Foobar', 'number': '', 'link': PUBLIC_HOMEPAGE}
+        self.dlist = [{'label': 'Captain Janeway',   'number': '00100', 'link': None},
+                     {'label': 'B\'Elanna Torres',  'number': '11000', 'link': None},
+                     {'label': 'Seven of Nine',     'number': '01001', 'link': None}]
+        self.dlist_expected = '<td><strong>Captain Janeway</strong> 00100</td><td><strong>B\'Elanna Torres</strong> 11000</td><td><strong>Seven of Nine</strong> 01001</td>'
 
 
     def test_get_quick_num_or_link(self):
@@ -82,12 +86,84 @@ class TestQuickNumberUtils(TestCase):
                 get_quick_num_or_link(number)
 
 
-    def test_get_quick_nums_for_library_or_dept(self):
+    
+    def test_get_quick_nums_for_library_or_dept_output(self):
         """
-        TODO:
+        Test the output of get_quick_nums_for_library_or_dept.
         """
         client = Client()
         site = Site.objects.filter(is_default_site=True)[0]
-        response = client.get('/about/directory/?view=staff&department=D\'Angelo+Law+Library', HTTP_HOST=site.hostname)
-        request = response.wsgi_request
-        get_quick_nums_for_library_or_dept(request)
+
+        # Override for the QUICK_NUMS constant to use in testing
+        with self.settings(QUICK_NUMS = {
+                'voyager':
+                    self.dlist,
+                'enterprise':
+                    [{'label': 'Captain Picard',    'number': '11100', 'link': None},
+                     {'label': 'Worf Rozhenko',     'number': '00001', 'link': None},
+                     {'label': 'Data',              'number': '10111', 'link': None}],
+                'defiant':
+                    [{'label': 'Benjamin Sisko',    'number': '101001', 'link': None},
+                     {'label': 'Quark',             'number': '',       'link': site.root_page.id}],
+                'library':
+                    [{'label': 'Captain Long',   'number': '00100', 'link': None},
+                     {'label': 'Lieutenant Commander Blair',  'number': '11000', 'link': None}],
+            }):
+
+            # Normal quick numbers
+            expected = '<td><strong>Captain Picard</strong> 11100</td><td><strong>Worf Rozhenko</strong> 00001</td><td><strong>Data</strong> 10111</td>'
+            response = client.get('/about/directory/?view=staff&department=Enterprise', HTTP_HOST=site.hostname)
+            request = response.wsgi_request
+            html = get_quick_nums_for_library_or_dept(request)
+            self.assertHTMLEqual(html, expected)
+
+            # Link instead of number
+            expected = '<td><strong>Benjamin Sisko</strong> 101001</td><td><strong><a href="/">Quark</a></strong></td>'
+            response = client.get('/about/directory/?view=staff&department=Defiant', HTTP_HOST=site.hostname)
+            request = response.wsgi_request
+            html = get_quick_nums_for_library_or_dept(request)
+            self.assertHTMLEqual(html, expected)
+
+            # Test library parameter
+            expected = self.dlist_expected
+            response = client.get('/about/directory/?view=staff&library=Voyager', HTTP_HOST=site.hostname)
+            request = response.wsgi_request
+            html = get_quick_nums_for_library_or_dept(request)
+            self.assertHTMLEqual(html, expected)
+
+            # Bad parameter not in dictionary should return the default values for library
+            expected = '<td><strong>Captain Long</strong> 00100</td><td><strong>Lieutenant Commander Blair</strong> 11000</td>'
+            response = client.get('/about/directory/?view=staff&department=Borg Cube', HTTP_HOST=site.hostname)
+            request = response.wsgi_request
+            html = get_quick_nums_for_library_or_dept(request)
+            self.assertHTMLEqual(html, expected)
+
+
+
+    def test_get_quick_nums_for_library_or_dept_with_bad_config(self):
+        """
+        Bad dictionary missing a required key, should throw an assertion error.
+        """
+        client = Client()
+        site = Site.objects.filter(is_default_site=True)[0]
+        response = client.get('/about/directory/?view=staff&department=Voyager', HTTP_HOST=site.hostname) # Must stay outside of the context manager
+
+        with self.settings(QUICK_NUMS = {
+                'voyager':
+                    self.dlist,
+                'enterprise':
+                    [{'label': 'Captain Picard',    'number': '11100', 'link': None},
+                     {'label': 'Worf Rozhenko',     'number': '00001', 'link': None},
+                     {'label': 'Data',              'number': '10111', 'link': None}],
+            }):
+
+            request = response.wsgi_request
+            self.assertTrue(assert_assertion_error(get_quick_nums_for_library_or_dept, request))
+
+
+    def test_get_all_quick_nums_html_output(self):
+        """
+        Test for expected html.
+        """
+        self.assertHTMLEqual(get_all_quick_nums_html(self.dlist), self.dlist_expected)
+

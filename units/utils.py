@@ -1,4 +1,5 @@
-from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE, QUICK_NUMS
+from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
+from django.conf import settings
 from wagtail.wagtailcore.models import Page, Site
 from file_parsing import is_int
 from django.utils.text import slugify
@@ -126,18 +127,20 @@ def get_quick_nums_for_library_or_dept(request):
     """
     library = request.GET.get('library', None)
     department = request.GET.get('department', None)
+    fallback = slugify('library')
 
-    html = get_all_quick_nums_html(QUICK_NUMS[slugify('library')])
+    assert fallback in settings.QUICK_NUMS, '"library" is a required key in the "QUICK_NUMS" dictionary'
+    html = get_all_quick_nums_html(settings.QUICK_NUMS[fallback])
     if library:
-        html = get_all_quick_nums_html(QUICK_NUMS[slugify(library)])
+        html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(library)])
     elif department:
         try:
-            html = get_all_quick_nums_html(QUICK_NUMS[slugify(department)])
+            html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(department)])
         except(KeyError):
             from units.models import UnitPage
             try:
                 unitpage = UnitPage.objects.live().get(title=department)
-                html = get_all_quick_nums_html(QUICK_NUMS[slugify(unitpage.location)])
+                html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(unitpage.location)])
             except(UnitPage.DoesNotExist, AssertionError, KeyError):
                 pass
     return html
