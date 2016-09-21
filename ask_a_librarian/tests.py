@@ -45,7 +45,7 @@ class TestAskUtils(TestCase):
             'law': (get_hours_and_location(StandardPage.objects.get(id=DANGELO_HOMEPAGE)), '/law/services/carrelslockers/'),
             'crerar': (get_hours_and_location(StandardPage.objects.get(id=CRERAR_HOMEPAGE)), '/crerar/science-research-services/data-support-services/'),
             'ssa': (get_hours_and_location(StandardPage.objects.get(id=SSA_HOMEPAGE)), '/ssa/about/'),
-            'uofc-ask': (get_hours_and_location(StandardPage.objects.get(id=REGENSTEIN_HOMEPAGE)), '/research/help/offcampus/'),
+            'uofc-ask': (get_hours_and_location(StandardPage.objects.get(id=PUBLIC_HOMEPAGE)), '/research/help/offcampus/'),
             'dissertation-office': (get_hours_and_location(StandardPage.objects.get(id=DISSERTATION_HOMEPAGE)), '/research/scholar/phd/students/'),
             'eck': (get_hours_and_location(StandardPage.objects.get(id=ECKHART_HOMEPAGE)), '/eck/mathematics-research-services/'),
             'scrc': (get_hours_and_location(StandardPage.objects.get(id=SCRC_HOMEPAGE)), '/scrc/visiting/'),
