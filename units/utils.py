@@ -125,7 +125,7 @@ def get_quick_nums_for_library_or_dept(request):
         String, the full html to be displayed at the top of
         the department directory chosen by the available data.
     """
-    library = request.GET.get('the-university-of-chicago-library', None)
+    library = request.GET.get('library', None)
     department = request.GET.get('department', None)
     fallback = slugify('the-university-of-chicago-library')
 
