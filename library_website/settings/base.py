@@ -304,8 +304,8 @@ QUICK_NUMS = {
          {'label': 'Crerar Reference',             'number': '773-702-7715', 'link': None}],
     'the-dangelo-law-library':
         [{'label': 'D\'Angelo Law Main Telephone', 'number': '773-702-9615', 'link': None},
-         {'label': 'Law Circulation',              'number': '773-702-0213', 'link': None},
-         {'label': 'Law Reference',                'number': '773-702-9631', 'link': None}],
+         {'label': 'D\'Angelo Law Circulation',    'number': '773-702-0213', 'link': None},
+         {'label': 'D\'Angelo Law Reference',      'number': '773-702-9631', 'link': None}],
     'eckhart-library':
         [{'label': 'Eckhart Library',              'number': '773-702-8778', 'link': None}],
     'the-joe-and-rika-mansueto-library':
