@@ -292,27 +292,27 @@ PUBLIC_SITE = 3
 # will not be used
 QUICK_NUMS = {
     'the-university-of-chicago-library':
-        [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
-         {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
+        [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
+         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
+         {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
     'the-joseph-regenstein-library':
-        [{'label': 'Main Telephone',            'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                'number': '773-702-8782', 'link': None},
-         {'label': 'General Reference',         'number': '773-702-4685', 'link': None}],
+        [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
+         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
+         {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
     'the-john-crerar-library':
-        [{'label': 'Crerar Circulation',        'number': '773-702-7409', 'link': None},
-         {'label': 'Crerar Reference',          'number': '773-702-7715', 'link': None}],
+        [{'label': 'Crerar Circulation',           'number': '773-702-7409', 'link': None},
+         {'label': 'Crerar Reference',             'number': '773-702-7715', 'link': None}],
     'the-dangelo-law-library':
-        [{'label': 'Law Main Telephone',        'number': '773-702-9615', 'link': None},
-         {'label': 'Law Circulation',           'number': '773-702-0213', 'link': None},
-         {'label': 'Law Reference',             'number': '773-702-9631', 'link': None}],
+        [{'label': 'D\'Angelo Law Main Telephone', 'number': '773-702-9615', 'link': None},
+         {'label': 'Law Circulation',              'number': '773-702-0213', 'link': None},
+         {'label': 'Law Reference',                'number': '773-702-9631', 'link': None}],
     'eckhart-library':
-        [{'label': 'Eckhart Library',           'number': '773-702-8778', 'link': None}],
+        [{'label': 'Eckhart Library',              'number': '773-702-8778', 'link': None}],
     'the-joe-and-rika-mansueto-library':
-        [{'label': 'Mansueto Circulation Desk', 'number': '773-702-0901', 'link': None}],
+        [{'label': 'Mansueto Circulation Desk',    'number': '773-702-0901', 'link': None}],
     'special-collections-research-center':
-        [{'label': 'SCRC Front Desk',           'number': '773-702-8705', 'link': None},
-         {'label': 'SCRC Contact Form',         'number': '', 'link': SCRC_ASK_PAGE}],
+        [{'label': 'SCRC Front Desk',              'number': '773-702-8705', 'link': None},
+         {'label': 'SCRC Contact Form',            'number': '', 'link': SCRC_ASK_PAGE}],
     'social-service-administration-library':
-        [{'label': 'SSA Library',               'number': '773-702-1199', 'link': None}],
+        [{'label': 'SSA Library',                  'number': '773-702-1199', 'link': None}],
 }
