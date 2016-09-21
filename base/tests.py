@@ -74,6 +74,25 @@ class TestUsersAndServingLivePages(TestCase):
        database and move it into the /base/fixters directory:
        python manage.py dumpdata --natural-foreign --natural-primary --exclude wagtailcore.GroupCollectionPermission > test.json
     4. Run the tests.
+
+    Note:
+    If you'd like to import the complete database and prune it down to a minimal set of pages for testing,
+    you can do something like this: 
+
+pages = Page.objects.exclude(id__in=[1, 6, 7, 9, 12, 23, 33, 38, 82, 272, 278,
+279, 280, 282, 407, 451, 452, 521, 587, 665, 754, 755, 822, 1207, 1208, 1260,
+1448, 1632, 1669, 1670, 1671, 1672, 1674, 1675, 1677, 1678, 1679, 1707, 1752,
+1753, 1754, 1755, 1756, 1757, 1758, 1779, 1797, 1798, 1816, 1831, 1862, 1871,
+1893, 2165, 2166, 2198, 2226, 2230, 2261, 2281, 2283, 2452, 2455, 2456, 2458,
+2685, 2713, 2714, 2923, 2927, 2970, 2971, 2980, 2981, 3000, 3184, 3185, 3213,
+3314, 3378, 3380, 3392, 3393, 3640, 3643, 3692, 3699, 3961, 4084, 4127, 4186,
+4273, 4317, 4499, 4637, 4646, 4717, 4872, 4873])
+
+from wagtail.wagtaildocs.models import Document
+Document.objects.all().delete()
+
+from wagtail.wagtailimages.models import Image
+Image.objects.exclude(title="Default Placeholder Photo").delete()
     """
    
     # Load a copy of the production database  
@@ -237,8 +256,6 @@ class TestStreamFields(TestCase):
         staff_page = StaffPage.objects.create(
             cnetid='ignatius',
             depth=staff_index_page.depth+1,
-            editor=dbietila,
-            page_maintainer=dbietila,
             path=get_available_path_under(staff_index_page.path),
             slug='ignatius-reilly',
             title='Ignatius Reilly'
