@@ -43,6 +43,7 @@ def results(request):
     unit = location_and_hours['page_unit']
 
     return render(request, 'results/results.html', {
+        'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'search_query': search_query,
         'search_results': search_results,
@@ -54,4 +55,7 @@ def results(request):
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
+        'self': {
+            'title': 'Search Results'
+        }
     })
