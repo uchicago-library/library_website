@@ -9,13 +9,9 @@ import calendar
 import datetime
 
 def events(request):
-    view = request.GET.get('view', None)
-    if not view:
-        view = 'day'
-
-    start = request.GET.get('start', None)
-    if start:
-        start = datetime.datetime.strptime(start, '%Y-%m-%d')
+    start_str = request.GET.get('start', None)
+    if start_str:
+        start = datetime.datetime.strptime(start_str, '%Y-%m-%d')
     else:
         start = datetime.date.today()
 
@@ -23,31 +19,16 @@ def events(request):
     x = get_xml_from_university_event_calendar()
     entries = group_entries(get_flat_entries(x))
 
-    # adjust start and stop dates, depending on whether the view is for a single day,
-    # a week or a month. 
+    # get start and stop dates, along with previous start and next start dates. 
+    number_of_days_this_month = calendar.monthrange(start.year, start.month)[1]
+    stop = start + datetime.timedelta(days=number_of_days_this_month - 1)
 
-    # get the date as a date object for week and month calculations.
-    d = start
-    if view == 'day':
-        stop = start
-        previous_start = start - datetime.timedelta(days=1)
-        next_start = start + datetime.timedelta(days=1)
-    elif view == 'week':
-        start = d - datetime.timedelta(days=d.weekday())
-        stop = start + datetime.timedelta(days=6)
-        previous_start = start - datetime.timedelta(days=7)
-        next_start = start + datetime.timedelta(days=7)
-    elif view == 'month':
-        start = d - datetime.timedelta(days=d.day - 1)
-        number_of_days_in_month = calendar.monthrange(d.year, d.month)[1]
-        stop = start + datetime.timedelta(days=number_of_days_in_month - 1)
-
-        if d.month == 1:
-            number_of_days_last_month = calendar.monthrange(d.year - 1, 12)[1]
-        else:
-            number_of_days_last_month = calendar.monthrange(d.year, d.month - 1)[1]
-        previous_start = start - datetime.timedelta(days=number_of_days_last_month)
-        next_start = stop + datetime.timedelta(days=1)
+    if start.month == 1:
+        number_of_days_last_month = calendar.monthrange(start.year - 1, 12)[1]
+    else:
+        number_of_days_last_month = calendar.monthrange(start.year, start.month - 1)[1]
+    previous_start = start - datetime.timedelta(days=number_of_days_last_month)
+    next_start = stop + datetime.timedelta(days=1)
 
     # only pass along the entries that make sense for this date range. 
     entries_out = []
@@ -57,9 +38,6 @@ def events(request):
             entries_out.append(entries[i])
         i = i + 1
 
-    next_link = '#'
-    previous_link = '#'
-
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
     location_and_hours = get_hours_and_location(home_page)
@@ -67,6 +45,7 @@ def events(request):
     unit = location_and_hours['page_unit']
     
     return render(request, 'events/events_index_page.html', {
+        'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'entries': entries_out,
         'next_link': next_start.strftime('%Y-%m-%d'),
@@ -74,7 +53,7 @@ def events(request):
         'start': start.strftime('%Y-%m-%d'),
         'start_label': start.strftime('%B %d, %Y').replace(' 0', ' '),
         'stop': stop.strftime('%Y-%m-%d'),
-        'view': view,
+        'stop_label': stop.strftime('%B %d, %Y').replace(' 0', ' '),
         'page_unit': str(unit),
         'page_location': location,
         'address': location_and_hours['address'],
@@ -82,4 +61,7 @@ def events(request):
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
+        'self': {
+            'title': 'Library Events'
+        },
     })
