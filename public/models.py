@@ -329,7 +329,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         links = [] 
         for guide in libguides:
             link_text = guide['link_text']
-            url = guide['link_external'] if guide['link_external'] else guide['link_page']
+            url = guide['link_external'] if guide['link_external'] else guide['link_page'].relative_url(current_site)
             html = '<a href="%s">%s</a>' % (url, link_text)
             links.append(html)
 
