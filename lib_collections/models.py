@@ -644,7 +644,7 @@ class ExhibitPage(PublicBasePage):
         message='Please enter a hex color, e.g. #012043')
     branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
 
-    subpage_types = []
+    subpage_types = ['public.StandardPage']
 
 
     web_exhibit_panels = [

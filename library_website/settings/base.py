@@ -192,7 +192,10 @@ COMPRESS_PRECOMPILERS = (
 
 # django-static-precompilers 
 STATIC_PRECOMPILER_COMPILERS = (
-    'static_precompiler.compilers.libsass.SCSS',
+    ('static_precompiler.compilers.libsass.SCSS', {
+        'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
+        'output_style': 'compressed'
+    }),
 )
 
 # Wagtail settings
