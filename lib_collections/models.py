@@ -755,6 +755,18 @@ class ExhibitPage(PublicBasePage):
         ObjectList(web_exhibit_panels, heading='Web Exhibit'),
     ])
 
+
+    @property
+    def is_web_exhibit(self):
+        """
+        Determine if an ExhibitPage is a 
+        web exhibit.
+        """
+        if self.has_all_fields([self.banner_image, self.banner_title, self.branding_color]) \
+            and not self.web_exhibit_url:
+            return True
+        return False
+
     def has_right_sidebar(self):
         return True
 

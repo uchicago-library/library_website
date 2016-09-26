@@ -1139,6 +1139,23 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return True
         return False
 
+
+    def has_all_fields(self, field_list):
+        """
+        Determine if all a page object has all of the
+        given fields.
+
+        Args:
+            field_list: list of page field objects.
+
+        Returns:
+            Boolean
+        """
+        for field in field_list:
+            if not field:
+                return False
+        return True
+
     
     @property
     def has_richtext_widget(self):

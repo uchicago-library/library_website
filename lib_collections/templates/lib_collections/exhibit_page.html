@@ -389,22 +389,24 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-12 col-sm-3">
-        {% if self.thumbnail %}
-          <figure class="imgcaption">
-            {% image self.thumbnail width-200 class="img-responsive" %}
-            {% if self.thumbnail_caption %}
-              <figcaption>
-                <p>{{ self.thumbnail_caption }}</p>
-              </figcaption>
+        {% if not self.is_web_exhibit %} 
+          <div class="col-xs-12 col-sm-3">
+            {% if self.thumbnail %}
+              <figure class="imgcaption">
+                {% image self.thumbnail width-200 class="img-responsive" %}
+                {% if self.thumbnail_caption %}
+                  <figcaption>
+                    <p>{{ self.thumbnail_caption }}</p>
+                  </figcaption>
+                {% endif %}
+              </figure>
+            {% else %}
+              <figure>
+                {% image default_image width-200 class="img-responsive" %}
+              </figure>
             {% endif %}
-          </figure>
-        {% else %}
-          <figure>
-            {% image default_image width-200 class="img-responsive" %}
-          </figure>
+          </div>
         {% endif %}
-      </div>
 
       <div class="col-xs-12 col-sm-9">
         {% if self.acknowledgments %}
