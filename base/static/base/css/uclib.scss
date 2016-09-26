@@ -540,6 +540,8 @@ a#event-header {
  .news-wrap {
   display: flex;
   flex-wrap: wrap;
+  display: -webkit-flex;  // Safari fix
+  -webkit-flex-wrap: wrap;  // Safari fix
 }
 
 .newsblock {
@@ -869,6 +871,13 @@ table.table-striped, .table-striped>tbody {
   }
 }
 
+.etable {
+  a[href*="events.uchicago"] {
+    font-size: 1.05em;
+    font-weight: 600;
+  }
+}
+
 tr.etable-header {
   border-bottom: 2px solid #ADB17D;
   background-color: #c5c8a4 !important;
@@ -937,6 +946,16 @@ table.etable>tbody>tr {
     &>tbody>tr>td:nth-child(2) {
         padding-left: 15px;
     }
+  }
+}
+
+.block-staff_listing {
+  ul {
+    padding-left: 0;
+  }
+  li {
+    line-height: 2em;
+    list-style: none;
   }
 }
 
