@@ -6,6 +6,9 @@
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block styles %}
+    {% if self.google_font_link %}
+        <link href="{{self.google_font_link}}" rel="stylesheet"> 
+    {% endif %}
     {% if branding_color %}
         <style>
             {% inlinecompile "scss" %}
@@ -13,7 +16,7 @@
                 @import "base/static/base/css/base.scss";
 
                 $base-color: {{branding_color}};
-                $base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+                $base-font: {% autoescape off %}{{font_family}}{% endautoescape %};
                 $font-large: 2.5em;
                 $font-medium: 1.5em;
                 $font-small: 1.1em;

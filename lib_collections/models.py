@@ -606,6 +606,10 @@ class ExhibitPage(PublicBasePage):
     publication_price = models.CharField(null=False, blank=True, default='', max_length=255)
     publication_url = models.URLField("Publication URL", blank=True)
     ordering_information = models.BooleanField(default=False)
+    google_font_link = models.URLField(blank=True, 
+        help_text='Google fonts link to embedd in the header')
+    font_family = models.CharField(max_length=100, blank=True, 
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif')
 
     exhibit_text_link_external = models.URLField("Exhibit text external link", blank=True)
     exhibit_text_link_page = models.ForeignKey(
@@ -654,9 +658,16 @@ class ExhibitPage(PublicBasePage):
                 ImageChooserPanel('banner_feature'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
-                FieldPanel('branding_color'),
             ],
-            heading='Banner and branding'
+            heading='Banner'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('branding_color'),
+                FieldPanel('google_font_link'),
+                FieldPanel('font_family'),
+            ],
+            heading='Branding'
         ),
     ]
 
@@ -784,4 +795,5 @@ class ExhibitPage(PublicBasePage):
         context['default_image'] = default_image
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
+        context['font_family'] = self.font_family if self.font_family else '"Helvetica Neue", Helvetica, Arial, sans-serif'
         return context
