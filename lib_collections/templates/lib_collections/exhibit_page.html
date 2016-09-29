@@ -6,8 +6,8 @@
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block styles %}
-    {% if self.google_font_link %}
-        <link href="{{self.google_font_link}}" rel="stylesheet"> 
+    {% if google_font_link %}
+        <link href="{{google_font_link}}" rel="stylesheet"> 
     {% endif %}
     {% if branding_color %}
         <style>
@@ -66,7 +66,8 @@
                     }
                 }
 
-                .exhibitpage .jumbotron {
+                .exhibitpage .jumbotron,
+                .exhibitchildpage .jumbotron {
                   min-height: 250px;
                   overflow: hidden;
                   padding-top: 0px;
@@ -110,7 +111,8 @@
                   }
                 }
 
-                .exhibitpage .jumbotron .overlaywrap {
+                .exhibitpage .jumbotron .overlaywrap,
+                .exhibitchildpage .jumbotron .overlaywrap {
                     background-color: rgba( $base-color, .9 );
                     left: 0;
                     top: 0;
@@ -162,7 +164,8 @@
                     }
                 }
 
-                .exhibitpage .sidebar {
+                .exhibitpage .sidebar,
+                .exhibitchildpage .sidebar {
                     background-color: #eee;
                     padding: 1em 0 0 0;
                     @include respond-to(small) {
@@ -200,7 +203,8 @@
                     }
                 }
 
-                .exhibitpage .coll-rightside {
+                .exhibitpage .coll-rightside,
+                .exhibitchildpage .coll-rightside {
                     background-color: lighten($base-color, 75%);
                     h3, h3 a {
                         color: lighten($base-color, 10%);

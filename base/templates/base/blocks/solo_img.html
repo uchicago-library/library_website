@@ -1,0 +1,25 @@
+{% load wagtailimages_tags %}
+{% image value.image original as original %}
+
+<div class="col-xs-12 collex-solo">
+    <div class="row">
+        <div class="col-sm-12 col-md-7">
+            <a href="{{original.url}}" data-toggle="lightbox">
+                <img class="img-responsive" src="{{original.url}}" alt="{% firstof value.alt_text value.image %}"/>
+            </a>
+        </div>
+        <div class="col-sm-12 col-md-5">
+            {% if value.image %}
+                <span class="img-title">{{value.image}}</span><br>
+            {% endif %}
+            {% if value.citation %} 
+                <span class="img-citation">{{value.citation}}</span>
+            {% endif %}
+            {% if value.caption %} 
+                <span class="img-caption">
+                    {{value.caption}}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</div>

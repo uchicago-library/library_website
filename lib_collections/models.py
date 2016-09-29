@@ -606,10 +606,6 @@ class ExhibitPage(PublicBasePage):
     publication_price = models.CharField(null=False, blank=True, default='', max_length=255)
     publication_url = models.URLField("Publication URL", blank=True)
     ordering_information = models.BooleanField(default=False)
-    google_font_link = models.URLField(blank=True, 
-        help_text='Google fonts link to embedd in the header')
-    font_family = models.CharField(max_length=100, blank=True, 
-        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif')
 
     exhibit_text_link_external = models.URLField("Exhibit text external link", blank=True)
     exhibit_text_link_page = models.ForeignKey(
@@ -647,8 +643,12 @@ class ExhibitPage(PublicBasePage):
     hex_regex = RegexValidator(regex='^#[a-zA-Z0-9]{6}$', \
         message='Please enter a hex color, e.g. #012043')
     branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
+    google_font_link = models.URLField(blank=True, 
+        help_text='Google fonts link to embedd in the header')
+    font_family = models.CharField(max_length=100, blank=True, 
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif')
 
-    subpage_types = ['public.StandardPage']
+    subpage_types = ['lib_collections.ExhibitChildPage']
 
 
     web_exhibit_panels = [
@@ -796,4 +796,31 @@ class ExhibitPage(PublicBasePage):
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
         context['font_family'] = self.font_family if self.font_family else '"Helvetica Neue", Helvetica, Arial, sans-serif'
+        context['google_font_link'] = self.google_font_link
         return context
+
+
+class ExhibitChildPage(PublicBasePage):
+    """
+    Pages for web exhibit child pages.
+    """
+
+    body = StreamField(DefaultBodyFields(), blank=True)
+
+    subpage_types = ['lib_collections.ExhibitChildPage']
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('body'),
+    ] + PublicBasePage.content_panels
+
+    search_fields = PublicBasePage.search_fields + [
+        index.SearchField('bdoy'),
+    ]
+
+    def get_context(self, request):
+        context = super(ExhibitChildPage, self).get_context(request)
+        exhibit = self.get_parent_of_type('exhibit page')
+        context['branding_color'] = exhibit.branding_color
+        context['font_family'] = exhibit.font_family
+        context['google_font_link'] = exhibit.google_font_link
+        return context 

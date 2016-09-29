@@ -553,6 +553,7 @@ class ImageFormatChoiceBlock(FieldBlock):
         ('pull-left', 'Wrap left'), ('pull-right', 'Wrap right'), ('fullwidth', 'Full width'),
     ))
 
+
 class ImageBlock(StructBlock):
     """
     Image streamfield block.
@@ -585,6 +586,24 @@ class ImageBlock(StructBlock):
     class Meta:
         icon = 'image'
         template ='base/blocks/img.html'
+
+
+class SoloImage(StructBlock):
+    """
+    Normal image for web exhibits.
+    """
+    image = ImageChooserBlock()
+    citation = RichTextBlock(blank=True)
+    caption = RichTextBlock(blank=True)
+    alt_text = CharBlock(
+        required=False,
+        help_text='Invisible text for screen readers',
+    )
+ 
+    class Meta:
+        icon = 'image'
+        template ='base/blocks/solo_img.html'
+
 
 class BlockQuoteBlock(StructBlock):
     """
@@ -788,6 +807,7 @@ class DefaultBodyFields(StreamBlock):
 <strong>text</strong> for bold, and <a href="https://duckduckgo.com">text</a> for links.',
     ) 
     staff_listing = StaffListingFields(icon='group', template='base/blocks/staff_listing.html')
+    solo_image = SoloImage(help_text='Single image with caption on the right')
 
 
 class RawHTMLBodyField(StreamBlock):
@@ -1215,6 +1235,26 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         # Reached the top of the tree (could factor this into an if)
         except(AttributeError):
             return (False, None, None, '', '', '', '')
+
+
+    def get_parent_of_type(self, t):
+        """
+        Get the the first parent page of a specific
+        page type.
+
+        Args:
+            t: string, name of a page type.
+
+        Returns:
+            Page object if found, otherwise None.
+        """
+        try:
+            if self.content_type.name == t:
+                return self
+            else:
+                return self.get_parent().specific.get_parent_of_type(t)
+        except(AttributeError):
+            return None
 
 
     def get_context(self, request):
