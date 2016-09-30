@@ -593,8 +593,8 @@ class SoloImage(StructBlock):
     Normal image for web exhibits.
     """
     image = ImageChooserBlock()
-    citation = RichTextBlock(blank=True)
-    caption = RichTextBlock(blank=True)
+    citation = RichTextBlock(blank=True, null=True)
+    caption = RichTextBlock(blank=True, null=True)
     alt_text = CharBlock(
         required=False,
         help_text='Invisible text for screen readers',
@@ -603,6 +603,25 @@ class SoloImage(StructBlock):
     class Meta:
         icon = 'image'
         template ='base/blocks/solo_img.html'
+
+
+class DuoImage(StructBlock):
+    """
+    Panel of two images stacked side
+    by side. Used in web exhibits.
+    """
+    image_one = SoloImage(
+        help_text='First of two images displayed \
+            side by side'
+        )
+    image_two = SoloImage(
+        help_text='Second of two images displayed \
+            side by side'
+        )
+
+    class Meta:
+        icon = 'image'
+        template ='base/blocks/duo_img.html'
 
 
 class BlockQuoteBlock(StructBlock):
@@ -808,6 +827,7 @@ class DefaultBodyFields(StreamBlock):
     ) 
     staff_listing = StaffListingFields(icon='group', template='base/blocks/staff_listing.html')
     solo_image = SoloImage(help_text='Single image with caption on the right')
+    duo_image = DuoImage(help_text='Two images stacked side by side')
 
 
 class RawHTMLBodyField(StreamBlock):

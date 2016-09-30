@@ -1,0 +1,25 @@
+{% load wagtailimages_tags %}
+{% image value.image_one.image original as original_one %}
+{% image value.image_two.image original as original_two %}
+<div class="col-xs-12 duo-wrapper">
+    <div class="col-xs-12 col-sm-6 collex-duo">
+        <figure>
+            <a href="{{original_one.url}}" data-toggle="lightbox"><img class="img-responsive" src="{{original_one.url}}"></a>
+            <figcaption>
+                <span class="img-title">{{value.image_one.image}}</span><br>
+                <span class="img-citation">{{value.image_one.citation}}</span>
+                <span class="img-caption">{{value.image_one.caption}}</span>
+            </figcaption>
+        </figure>
+    </div>
+    <div class="col-xs-12 col-sm-6 collex-duo">
+        <figure>
+            <a href="{{original_two.url}}" data-toggle="lightbox"><img class="img-responsive" src="{{original_two.url}}"></a>
+            <figcaption>
+                <span class="img-title">{{value.image_two.image}}</span><br>
+                <span class="img-citation">{{value.image_two.citation}}</span>
+                <span class="img-caption">{{value.image_two.caption}}</span>
+            </figcaption>
+        </figure>
+    </div>
+</div>
