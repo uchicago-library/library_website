@@ -15,10 +15,8 @@
   <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  <link href="{% static 'base/css/libglobal.css' %}" rel="stylesheet">
   <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
   <link href="{% static 'base/css/sw.css' %}" rel="stylesheet">
-  <link href="{% static 'base/css/print.css' %}" media="print" rel="stylesheet">
   {% block extra_css %}
     {# Override this in templates to add extra stylesheets #}
   {% endblock %}
@@ -123,9 +121,10 @@
   <!-- Footer Section -->
   <footer class="container-fluid footer"> 
     <div class="col-sm-12"><!-- Footer -->
+    <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="/static/base/images/color-logo.png"></a></span>
       <ul>
-        <li class="divider-vertical"><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
-        <li class="divider-vertical"><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>
+        <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
+        <li><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>
         <!--<li class="divider-vertical"><a href="#"><span class="hidden-xs">Library Building </span>Addresses</a></li>-->
         <li><a href="mailto:intranet@lib.uchicago.edu">Contact <span class="hidden-xs">Site Maintainer</span></a></li>
       </ul>
