@@ -1279,17 +1279,18 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
-        location_and_hours = get_hours_and_location(self)
-        unit = location_and_hours['page_unit']     
+        self.location_and_hours = get_hours_and_location(self)
+        unit = self.location_and_hours['page_unit']     
         current_site = Site.find_for_request(request)
         url_filter = '~()*!.\''
 
         try: 
-            location = str(location_and_hours['page_location'])
+            location = str(self.location_and_hours['page_location'])
             context['page_unit'] = str(unit) 
             context['page_location'] = location
-            #context['current_building_hours'] = location_and_hours['hours']
-            context['address'] = location_and_hours['address']
+            context['page_location_id'] = self.location_and_hours['page_location'].id
+            #context['current_building_hours'] = self.location_and_hours['hours']
+            context['address'] = self.location_and_hours['address']
             #context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
             context['directory_link'] = self.get_directory_link_by_location(location, True)
@@ -1297,13 +1298,13 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
 
-        context['libcalid'] = location_and_hours['libcalid']
+        context['libcalid'] = self.location_and_hours['libcalid']
         context['granular_libcalid'] = self.get_granular_libcal_lid(self.unit)
         context['libcaliid'] = LIBCAL_IID
         context['has_granular_hours'] = self.has_granular_hours()
         context['all_spaces_link'], \
         context['quiet_spaces_link'], \
-        context['collaborative_spaces_link'] = self.get_spaces_links(location_and_hours)
+        context['collaborative_spaces_link'] = self.get_spaces_links(self.location_and_hours)
 
         sidebar = self.has_left_sidebar(context)
         section_info = self.get_banner(current_site)

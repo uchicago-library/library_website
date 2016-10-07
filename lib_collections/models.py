@@ -15,6 +15,7 @@ from base.models import PublicBasePage
 from public.models import DonorPage, LocationPage, StaffPublicPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
+from library_website.settings import SCRC_BUILDING_ID, CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_EXHIBIT_FOOTER_IMG
 
 # The abstract model for related links, complete with panels
 class SupplementaryAccessLink(models.Model):
@@ -779,7 +780,25 @@ class ExhibitPage(PublicBasePage):
         return False
 
     def has_right_sidebar(self):
+        """
+        Always has a right sidebar?
+        """
         return True
+
+    def get_web_exhibit_footer_img(self):
+        """
+        Get the web exhibit footer image
+        for a specific building.
+
+        Returns:
+            Image object or None
+        """
+        building = self.location_and_hours['page_location'].id
+        img = {SCRC_BUILDING_ID: SCRC_EXHIBIT_FOOTER_IMG,
+               CRERAR_BUILDING_ID: CRERAR_EXHIBIT_FOOTER_IMG}
+        if building in img:
+            return Image.objects.get(id=img[building])
+        return None
 
     def get_context(self, request):
         staff_url = ''
@@ -787,16 +806,19 @@ class ExhibitPage(PublicBasePage):
             staff_url = StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url
         except:
             pass
-
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
-
+ 
         context = super(ExhibitPage, self).get_context(request)
+        footer_img = self.get_web_exhibit_footer_img() # must be set after context
         context['default_image'] = default_image
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
         context['font_family'] = self.font_family if self.font_family else '"Helvetica Neue", Helvetica, Arial, sans-serif'
         context['google_font_link'] = self.google_font_link
+        context['footer_img'] = footer_img
+        context['has_exhibit_footer'] = not (not footer_img)
+
         return context
 
 

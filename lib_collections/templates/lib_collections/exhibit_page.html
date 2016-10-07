@@ -508,3 +508,12 @@
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
+
+{% block optional_footer %}
+    {% if self.is_web_exhibit %}
+        {% if has_exhibit_footer %}
+            <div class="col-xs-12 collex-loc">
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

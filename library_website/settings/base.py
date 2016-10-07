@@ -319,3 +319,11 @@ QUICK_NUMS = {
     'social-service-administration-library':
         [{'label': 'SSA Library',                  'number': '773-702-1199', 'link': None}],
 }
+
+# Location pages
+SCRC_BUILDING_ID = 2971
+CRERAR_BUILDING_ID = 2713
+
+# Web Exhibit footers
+CRERAR_EXHIBIT_FOOTER_IMG = 1068 
+SCRC_EXHIBIT_FOOTER_IMG = 1067
