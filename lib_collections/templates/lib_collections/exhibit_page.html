@@ -16,7 +16,7 @@
                 @import "base/static/base/css/base.scss";
 
                 $base-color: {{branding_color}};
-                $base-font: {% autoescape off %}{{font_family}}{% endautoescape %};
+                $display-font: {% autoescape off %}{{font_family}}{% endautoescape %};
                 $font-large: 2.5em;
                 $font-medium: 1.5em;
                 $font-small: 1.1em;
@@ -25,192 +25,173 @@
                     border-bottom: 1px dotted $darkgray;
                 }
 
-
-                body {
-                    font-family: $base-font;
-                }
-
-                h1, h2 {
-                    color: $base-color;
-                    font-style: normal;
-                    font-size: $font-medium;
-                    font-weight: 400;
-                }
-
-                h3 {
-                    color: lighten($base-color, 10%);
-                    font-style: normal;
-                    font-size: $font-small;
-                    font-weight: 600;
-                }
-
-                h4 {
-                    color: $base-color;
-                    font-style: italic;
-                    font-size: $font-small;
-                    font-weight: 600;
-                }
-
-                //remove?
-                .subnav {
-                    position: absolute;
-                    right: 0;
-                    bottom: 0;
-                    padding: 5px 0;
-                    font-size: 0.9em;
-                    text-align: right;
-                    a {
-                        color: #eee;
-                        text-decoration: none;
-                        padding: 0 20px;
+                .exhibitpage, .exhibitchildpage {
+                    h1, h2 {
+                        color: $base-color;
+                        font-family: $display-font;
+                        font-style: normal;
+                        font-size: $font-medium;
+                        font-weight: 400;
                     }
-                }
 
-                .exhibitpage .jumbotron,
-                .exhibitchildpage .jumbotron {
-                  min-height: 250px;
-                  overflow: hidden;
-                  padding-top: 0px;
-                  margin-bottom: 0;
-                  background-color: $darkred; //fallback if all else fails
-                  background-image: url("../images/banner.gif"); //fallback if no image uploaded
-                  background-size: cover;
-                  h2 {
-                    color: #fff;
-                  }
-                  .container {
-                    padding: 0px;
-                    margin: 0px;
-                    position: relative;
-                    width: 100%;
-                  }
-                  .img-wrapper {
-                      width: 200px;
+                    h3 {
+                        color: lighten($base-color, 10%);
+                        font-style: normal;
+                        font-size: $font-small;
+                        font-weight: 600;
+                    }
+
+                    h4 {
+                        color: $base-color;
+                        font-style: italic;
+                        font-size: $font-small;
+                        font-weight: 600;
+                    }
+
+                    .jumbotron {
+                      min-height: 250px;
                       overflow: hidden;
-                      @include respond-to(medium) {
-                          width: 250px;
+                      padding-top: 0px;
+                      margin-bottom: 0;
+                      background-color: $darkred; //fallback if all else fails
+                      background-image: url("../images/banner.gif"); //fallback if no image uploaded
+                      background-size: cover;
+                      h2 {
+                        color: #fff;
                       }
-                      @include respond-to(smallonly) {
-                          display: none;
+                      .container {
+                        padding: 0px;
+                        margin: 0px;
+                        position: relative;
+                        width: 100%;
                       }
-                      img {
+                      .img-wrapper {
                           width: 200px;
-                          height: auto;
+                          overflow: hidden;
                           @include respond-to(medium) {
                               width: 250px;
                           }
-                      }
-                      &+.overlaywrap {
-                          @include respond-to(small) {
-                              left: 200px;
+                        @include respond-to(smallonly) {
+                            display: none;
+                        }
+                          img {
+                              width: 200px;
+                              height: auto;
+                              @include respond-to(medium) {
+                                  width: 250px;
+                              }
                           }
-                          @include respond-to(medium) {
-                              left: 250px;
+                          &+.overlaywrap {
+                              @include respond-to(small) {
+                                  left: 200px;
+                              }
+                              @include respond-to(medium) {
+                                  left: 250px;
+                              }
                           }
                       }
-                  }
-                }
+                    }
 
-                .exhibitpage .jumbotron .overlaywrap,
-                .exhibitchildpage .jumbotron .overlaywrap {
-                    background-color: rgba( $base-color, .9 );
-                    left: 0;
-                    top: 0;
-                    font-family: $base-font;
-                    padding: 0.5em 2em;
-                    @include respond-to(small) {
-                            padding-right: 6em;
-                        }
-                    p {
-                        padding: 0;
-                        margin: 0;
-                        &:last-child {
-                            padding-bottom: 15px;
-                        }
-                    }
-                    h2 {
-                        font-weight: 100;
-                        font-size: $font-large*0.7;
-                        margin: 0;
-                        padding: 0px;
-                        letter-spacing: 0.03em;
-                        color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
+                    .jumbotron .overlaywrap {
+                        background-color: rgba( $base-color, .9 );
+                        left: 0;
+                        top: 0;
+                        font-family: $display-font;
+                        padding: 0.5em 2em;
                         @include respond-to(small) {
-                            font-size: $font-large;
+                                padding-right: 6em;
+                            }
+                        p {
+                            padding: 0;
+                            margin: 0;
+                            &:last-child {
+                                padding-bottom: 15px;
+                            }
+                        }
+                        h2 {
+                            font-weight: 100;
+                            font-size: $font-large*0.7;
+                            margin: 0;
+                            padding: 0px;
+                            letter-spacing: 0.03em;
+                            color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
+                            @include respond-to(small) {
+                                font-size: $font-large;
+                            }
+                        }
+                        .banner-subtitle {
+                            font-family: $display-font;
+                            color: lighten($base-color, 60%);
+                            font-size: $font-medium*0.8;
+                            padding-bottom:5px;
+                            @include respond-to(small) {
+                                font-size: $font-medium;
+                            }
+                        }
+                        .banner-loc, .banner-date {
+                            font-family: $display-font;
+                            color: #e0dddb;
+                            font-style: italic;
+                            font-size: $font-small*0.8;
                         }
                     }
-                    .banner-subtitle {
-                        color: lighten($base-color, 60%);
-                        font-size: $font-medium*0.8;
-                        padding-bottom:5px;
-                        @include respond-to(small) {
-                            font-size: $font-medium;
-                        }
-                    }
-                    .banner-loc, .banner-date {
-                        color: #e0dddb;
-                        font-style: italic;
-                        font-size: $font-small*0.8;
-                    }
-                }
 
-                .btn.webex-next {
-                    margin-top: 2em;
-                    background: transparent;
-                    border-color: $base-color;
-                    float: right;
-                    a & {
-                          color: $base-color;
+                    .btn.webex-next {
+                        margin-top: 2em;
+                        background: transparent;
+                        border-color: $base-color;
+                        float: right;
+                        a & {
+                              color: $base-color;
+                        }
                     }
-                }
 
-                .exhibitpage .sidebar,
-                .exhibitchildpage .sidebar {
-                    background-color: #eee;
-                    padding: 1em 0 0 0;
-                    @include respond-to(small) {
-                        background-color: #fff;
-                        border-right: 1px dotted #767676;
-                    }
-                    h3 {
-                        padding-left: 2em;
-                        font-weight: 600;
+                    .sidebar {
+                        background-color: #eee;
+                        padding: 1em 0 0 0;
                         @include respond-to(small) {
-                            padding-left: 1em;
+                            background-color: #fff;
+                            border-right: 1px dotted #767676;
+                        }
+                        h3 {
+                            padding-left: 2em;
+                            font-weight: 600;
+                            @include respond-to(small) {
+                                padding-left: 1em;
+                            }
+                            a {
+                                color: lighten($base-color, 20%);
+                            }
                         }
                         a {
-                            color: lighten($base-color, 20%);
+                            color: $base-color;
+                            &:hover {
+                                color: lighten($base-color, 60%);
+                                text-decoration: none;
+                            }
+                        }
+                        & ul {    
+                            padding-left: 0;
+                            text-indent: 0;
+                        }
+                        & li {
+                            padding: 0.6em 1em 0.6em 2em;
+                            //margin: 2em 0;
+                            &.active {
+                                background-color: lighten($base-color, 75%);
+                                font-weight: 600;
+                            }
                         }
                     }
-                    a {
-                        color: $base-color;
-                        &:hover {
-                            color: lighten($base-color, 60%);
-                            text-decoration: none;
-                        }
-                    }
-                    & ul {    
-                        padding-left: 0;
-                        text-indent: 0;
-                    }
-                    & li {
-                        padding: 0.6em 1em 0.6em 2em;
-                        //margin: 2em 0;
-                        &.active {
-                            background-color: lighten($base-color, 75%);
-                            font-weight: 600;
-                        }
-                    }
-                }
 
-                .exhibitpage .coll-rightside,
-                .exhibitchildpage .coll-rightside {
-                    background-color: lighten($base-color, 75%);
-                    h3, h3 a {
-                        color: lighten($base-color, 10%);
-                        border-bottom-color: lighten($base-color, 10%);
+                    .coll-rightside {
+                        background-color: lighten($base-color, 75%);
+                        h3, h3 a {
+                            color: lighten($base-color, 10%);
+                            border-bottom-color: lighten($base-color, 10%);
+                        }
                     }
-                }
+                } // End body.exhibitpage customizations
 
                 .collex-loc {
                     background-color: #eee;
@@ -220,14 +201,6 @@
                     & ~ #push {
                         background-color: #eee;
                     }
-                    // img {
-                    //     float: left;
-                    //     padding-right: 1.5em;
-                    //     max-width: 30%;
-                        // &~.loc-title {
-                        //     clear: both;
-                        // }
-                    //}
                     .loc-title {
                         margin-bottom: 0.5em;
                         color: $base-color;
@@ -382,7 +355,6 @@
                     border-left: 30px solid #c0c0c0;
                 }
 
- 
             {% endinlinecompile %}
         </style>
     {% endif %}
