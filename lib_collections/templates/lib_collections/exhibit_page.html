@@ -12,8 +12,59 @@
     {% if branding_color %}
         <style>
             {% inlinecompile "scss" %}
-                @import "base/static/base/css/_variables.scss";
-                @import "base/static/base/css/base.scss";
+                /*
+                 * Media Queries
+                 * --------------------------------------------------
+                 *
+                 * Use as: @include respond-to(small) { ... }
+                 *        @include respond-to(medium) { ... }
+                 *        @include respond-to(large) { ... }
+                 */
+
+                @mixin respond-to($breakpoint) {
+                  // Extra small devices (phones, 544px and up)
+                  @if $breakpoint == "xsmall" {
+                    @media (min-width: 34em) {
+                      @content;
+                    }
+                  }
+
+                  // Small devices (landscape phones, 768px and up)
+                  @else if $breakpoint == "small" {
+                    @media (min-width: 48em) {
+                      @content;
+                    }
+                  }
+                  // Medium devices (crappy laptops, tablets, 992px and up)
+                  @else if $breakpoint == "medium" {
+                    @media (min-width: 62em) {
+                      @content;
+                    }
+                  }
+                  // Large devices (desktops, 1200px and up)
+                  @else if $breakpoint == "large" {
+                    @media (min-width: 75em) {
+                      @content;
+                    }
+                  }
+
+                  //Extra large devices (large desktops, 1900px and up)
+                  @else if $breakpoint == "xlarge" {
+                    @media (min-width: 118em) {
+                      @content;
+                    }
+                  }
+                  
+                  // Short-cut to target extra small devices *only* (phones, 544px and up)
+                  @else if $breakpoint == "smallonly" {
+                    @media (max-width: 34em) {
+                      @content;
+                    }
+                  }
+                }
+
+                $darkgray: #767676;
+                $darkred: #642822;
 
                 $base-color: {{branding_color}};
                 $display-font: {% autoescape off %}{{font_family}}{% endautoescape %};
