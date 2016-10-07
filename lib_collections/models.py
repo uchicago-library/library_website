@@ -2,7 +2,7 @@ from base.models import DefaultBodyFields, LinkFields
 from django.db import models
 from django.core.validators import RegexValidator
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailcore.models import Orderable, Page, Site
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.models import Image
@@ -768,7 +768,6 @@ class ExhibitPage(PublicBasePage):
     ])
 
 
-    @property
     def is_web_exhibit(self):
         """
         Determine if an ExhibitPage is a 
@@ -785,7 +784,7 @@ class ExhibitPage(PublicBasePage):
         """
         return True
 
-    def get_web_exhibit_footer_img(self):
+    def get_web_exhibit_footer_img(self, building):
         """
         Get the web exhibit footer image
         for a specific building.
@@ -793,11 +792,33 @@ class ExhibitPage(PublicBasePage):
         Returns:
             Image object or None
         """
-        building = self.location_and_hours['page_location'].id
+        #building = self.location_and_hours['page_location'].id
         img = {SCRC_BUILDING_ID: SCRC_EXHIBIT_FOOTER_IMG,
                CRERAR_BUILDING_ID: CRERAR_EXHIBIT_FOOTER_IMG}
         if building in img:
             return Image.objects.get(id=img[building])
+        return None
+
+    def get_related_collections(self, request):
+        """
+        Get the related collections for a web exhibit.
+    
+        Args:
+            request: object
+
+        Returns:
+            A list of tuples where the first item in 
+            the tuple is a collection title and the
+            second item is a url. If no related 
+            collections are found, returns None.
+        """
+        current_site = Site.find_for_request(request)
+        collections = self.exhibit_page_related_collection_placement.all() 
+        related_collections = '<ul>'
+        if collections:
+            for collection in collections:
+                related_collections += '<li><a href="' + collection.related_collection.relative_url(current_site) + '">' + collection.related_collection.title + '</a></li>'
+            return related_collections + '</ul>'
         return None
 
     def get_context(self, request):
@@ -810,7 +831,7 @@ class ExhibitPage(PublicBasePage):
         default_image = Image.objects.get(title="Default Placeholder Photo")
  
         context = super(ExhibitPage, self).get_context(request)
-        footer_img = self.get_web_exhibit_footer_img() # must be set after context
+        footer_img = self.get_web_exhibit_footer_img(self.location_and_hours['page_location'].id) # must be set after context
         context['default_image'] = default_image
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
@@ -818,6 +839,8 @@ class ExhibitPage(PublicBasePage):
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
+        context['is_web_exhibit'] = self.is_web_exhibit()
+        context['related_collections'] = self.get_related_collections(request)
 
         return context
 
@@ -842,7 +865,12 @@ class ExhibitChildPage(PublicBasePage):
     def get_context(self, request):
         context = super(ExhibitChildPage, self).get_context(request)
         exhibit = self.get_parent_of_type('exhibit page')
+        footer_img = exhibit.get_web_exhibit_footer_img(self.location_and_hours['page_location'].id)
         context['branding_color'] = exhibit.branding_color
         context['font_family'] = exhibit.font_family
         context['google_font_link'] = exhibit.google_font_link
+        context['footer_img'] = footer_img
+        context['has_exhibit_footer'] = not (not footer_img)
+        context['is_web_exhibit'] = True
+        context['related_collections'] = exhibit.get_related_collections(request)
         return context 

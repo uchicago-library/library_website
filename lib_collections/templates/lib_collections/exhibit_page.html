@@ -561,9 +561,39 @@
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
 
 {% block optional_footer %}
-    {% if self.is_web_exhibit %}
+    {% if is_web_exhibit %}
         {% if has_exhibit_footer %}
             <div class="col-xs-12 collex-loc">
+                <div class="col-xs-12 col-md-7 loc-child">
+                    <div class="row">
+                        <div class="hidden-xs nopadding col-xs-12 col-sm-4 col-md-3">
+                            {% if footer_img %}
+                                {% image footer_img max-760x465 as gallery %}
+                                <img class="img-responsive" src="{{gallery.url}}">
+                            {% endif %}
+                        </div>
+                        <div class="col-xs-12 col-sm-8 col-md-9">
+                            <!--
+                            TODO: Set up gallery hours to use libcal api
+                            <span class="loc-title">{{page_location}} Gallery Hours</span>
+                            <p><strong>Monday – Friday</strong><br>9a.m.–4:45 p.m.</p>
+                            <p><strong>Saturday</strong><br>9a.m.–12:30 p.m.</p>
+                            <p>When classes are in session.<br>
+                            For holiday hours, please consult our <a href="{{hours_page_url}}">hours page</a>.</p>
+                            -->
+            
+                            <span class="loc-title">{{page_location}}</span>
+                            <p>Please consult our <a href="{{hours_page_url}}">hours page</a>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-md-5 loc-child">
+                    {% if related_collections %}
+                        <p class="loc-title">Related Collections</p>
+                        {% autoescape off%} {{related_collections}} {% endautoescape %}
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
     {% endif %}
