@@ -424,7 +424,7 @@
           </div>
         {% endif %}
 
-      <div class="col-xs-12{% if self.is_web_exhibit %} col-sm-9{% endif %}">
+      <div class="col-xs-12{% if not self.is_web_exhibit %} col-sm-9{% endif %}">
         {% if self.acknowledgments %}
           <p class="acknowledgments">{{ self.acknowledgments }}</p>
         {% endif %}
