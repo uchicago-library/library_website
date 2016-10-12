@@ -72,339 +72,326 @@
                 $font-medium: 1.5em;
                 $font-small: 1.1em;
 
-                @mixin borders {
-                    border-bottom: 1px dotted $darkgray;
-                }
-
-                .exhibitpage, .exhibitchildpage {
-                    h1, h2 {
-                        color: $base-color;
-                        font-family: $display-font;
-                        font-style: normal;
-                        font-size: $font-medium;
-                        font-weight: 400;
-                    }
-
-                    h3 {
-                        color: lighten($base-color, 10%);
-                        font-style: normal;
-                        font-size: $font-small;
-                        font-weight: 600;
-                    }
-
-                    h4 {
-                        color: $base-color;
-                        font-style: italic;
-                        font-size: $font-small;
-                        font-weight: 600;
-                    }
-
-                    .jumbotron {
-                      min-height: 250px;
-                      overflow: hidden;
-                      padding-top: 0px;
-                      margin-bottom: 0;
-                      background-color: $darkred; //fallback if all else fails
-                      background-image: url("../images/banner.gif"); //fallback if no image uploaded
-                      background-size: cover;
-                      h2 {
-                        color: #fff;
-                      }
-                      .container {
-                        padding: 0px;
-                        margin: 0px;
-                        position: relative;
-                        width: 100%;
-                      }
-                      .img-wrapper {
-                          width: 200px;
-                          overflow: hidden;
-                          @include respond-to(medium) {
-                              width: 250px;
-                          }
-                        @include respond-to(smallonly) {
-                            display: none;
-                        }
-                          img {
-                              width: 200px;
-                              height: auto;
-                              @include respond-to(medium) {
-                                  width: 250px;
-                              }
-                          }
-                          &+.overlaywrap {
-                              @include respond-to(small) {
-                                  left: 200px;
-                              }
-                              @include respond-to(medium) {
-                                  left: 250px;
-                              }
-                          }
-                      }
-                    }
-
-                    .jumbotron .overlaywrap {
-                        background-color: rgba( $base-color, .9 );
-                        left: 0;
-                        top: 0;
-                        font-family: $display-font;
-                        padding: 0.5em 2em;
-                        @include respond-to(small) {
-                                padding-right: 6em;
-                            }
-                        p {
-                            padding: 0;
-                            margin: 0;
-                            &:last-child {
-                                padding-bottom: 15px;
-                            }
-                        }
-                        h2 {
-                            font-weight: 100;
-                            font-size: $font-large*0.7;
-                            margin: 0;
-                            padding: 0px;
-                            letter-spacing: 0.03em;
-                            color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
-                            @include respond-to(small) {
-                                font-size: $font-large;
-                            }
-                        }
-                        .banner-subtitle {
-                            font-family: $display-font;
-                            color: lighten($base-color, 60%);
-                            font-size: $font-medium*0.8;
-                            padding-bottom:5px;
-                            @include respond-to(small) {
-                                font-size: $font-medium;
-                            }
-                        }
-                        .banner-loc, .banner-date {
-                            font-family: $display-font;
-                            color: #e0dddb;
-                            font-style: italic;
-                            font-size: $font-small*0.8;
-                        }
-                    }
-
-                    .btn.webex-next {
-                        margin-top: 2em;
-                        background: transparent;
-                        border-color: $base-color;
-                        float: right;
-                        a & {
-                              color: $base-color;
-                        }
-                    }
-
-                    .sidebar {
-                        background-color: #eee;
-                        padding: 1em 0 0 0;
-                        @include respond-to(small) {
-                            background-color: #fff;
-                            border-right: 1px dotted #767676;
-                        }
-                        h3 {
-                            padding-left: 2em;
-                            font-weight: 600;
-                            @include respond-to(small) {
-                                padding-left: 1em;
-                            }
-                            a {
-                                color: lighten($base-color, 20%);
-                            }
-                        }
-                        a {
-                            color: $base-color;
-                            &:hover {
-                                color: lighten($base-color, 60%);
-                                text-decoration: none;
-                            }
-                        }
-                        & ul {    
-                            padding-left: 0;
-                            text-indent: 0;
-                        }
-                        & li {
-                            padding: 0.6em 1em 0.6em 2em;
-                            //margin: 2em 0;
-                            &.active {
-                                background-color: lighten($base-color, 75%);
-                                font-weight: 600;
-                            }
-                        }
-                    }
-
-                    .coll-rightside {
-                        background-color: lighten($base-color, 75%);
-                        h3, h3 a {
-                            color: lighten($base-color, 10%);
-                            border-bottom-color: lighten($base-color, 10%);
-                        }
-                    }
-                } // End body.exhibitpage customizations
-
-                .collex-loc {
-                    background-color: #eee;
-                    padding: 1.5em;
-                    display: flex;
-                    flex-wrap: wrap;
-                    & ~ #push {
-                        background-color: #eee;
-                    }
-                    .loc-title {
-                        margin-bottom: 0.5em;
-                        color: $base-color;
-                        font-weight: 600;
-                        font-size: 1em;
-                        a {
-                            font-weight: 400;    
-                            color: lighten($base-color, 15%);
-                        }
-                    }
-                    p, ul {
-                        font-size: 0.95em;
-                    }
-                    ul {
-                        list-style: none;
-                        padding-left: 0;
-                        & li {
-                            margin-bottom: 10px;
-                            .viewall {
-                                margin-top: 15px;
-                            }
-                        }
-                    }
-                }
-
-                .loc-child {
-                    &+& {
-                        padding-top: 10px;
-                        border-top: 1px dotted #767676;
-                        @include respond-to(medium) {
-                            padding-top: initial;
-                            border-top: none;
-                        }
-                    }
-                    .loc-title~.loc-title {
-                        margin-top: 1.2em;
-                    }
-                }
-
-                .collex-gallery {
-                    border-top: 1px dotted #767676;
-                }
-
-                .collex {
-                    padding: 2em 1em;
-                    & figure {
-                       @include respond-to(medium) {
-                           display: flex;
-                       }
-                    }
-                }
-
-                .collex-solo {
-                    @extend .collex;
-                    @include borders;
-                    img {
-                        padding-bottom: 1em    ;
-                        max-height: 40em;
-                        width: auto;
-                        @include respond-to(medium) {
-                        float: right;
-                            padding-bottom: 0;
-                        }
-
-                    }
-                }
-
-                .collex-solo, .collex-duo, .collex-trio, .collex-verso {
-                    .img-title {
-                        color: $base-color;
-                        font-size: $font-small;
-                        font-weight: 600;
-                    }
-                    .img-citation {
-                        color: lighten($base-color, 25%);
-                        font-size: 0.95em;
-                    }
-                    .img-caption {
-                        color: #000;
-                        font-size: 1em;
-                    }
-                }
-
-                .collex-verso {
-                    @extend .collex-solo;
-                    .modal.and.carousel {
-                      position: absolute; // Needed because the carousel overrides the position property
-                    }
-                }
-
-                .duo-wrapper {
-                    //display:flex;
-                    //flex-wrap: wrap;
-                    padding: 2em 1em;
-                    @include respond-to(small) {
-                        @include borders;
-                    }
-                }
-
-                .collex-duo {
-                    padding: 0;
-                    //@extend .collex;
-                    @include respond-to(medium) {
-                        &:not(.collex-solo):nth-of-type(odd) {
-                            border-right: 1px dotted $darkgray;
-                        }
-                   }
-                   &+& img {
-                       padding-left: 1em;
-                   }
-                    img {
-                        padding: 0 1em 1em 0;
-                        @include respond-to(medium) {
-                            max-height: 30em;
-                            width: auto;
-                            margin-left: auto;
-                            margin-right: auto;
-                            padding: 1em;
-                        }
-                    }
-                    figcaption {
-                        text-align: center;
-                        @include respond-to(medium) {
-                            &:nth-of-type(odd) {
-                                padding-right: 0.5em;
-                            }
-                        }
-                    }
-                }
-
-                .collex-trio {
-                    padding: 1em 0 2em 0;
-                    @include borders;
-                    img {
-                        float: left;
-                        max-width: 33%;
-                        height: auto;
-                        padding: 1em;
-                    }
-                    figcaption {
-                        clear: both;
-                        text-align: center;
-                    }
-                }
-
-                #page-turn {
-                    position: absolute;
-                    width: 0;
-                    height: 0;
-                    right: 15px;
-                    border-top: 30px solid #fff;
-                    border-left: 30px solid #c0c0c0;
-                }
+				.exhibitpage, .exhibitchildpage {
+				    h1, h2 {
+				        color: $base-color;
+				        font-family: $display-font;
+				        font-style: normal;
+				        font-size: $font-medium;
+				        font-weight: 400;
+				    }
+				
+				    h3 {
+				        color: lighten($base-color, 10%);
+				        font-style: normal;
+				        font-size: $font-small;
+				        font-weight: 600;
+				    }
+				
+				    h4 {
+				        color: $base-color;
+				        font-style: italic;
+				        font-size: $font-small;
+				        font-weight: 600;
+				    }
+				
+				    .jumbotron {
+				      min-height: 250px;
+				      overflow: hidden;
+				      padding-top: 0px;
+				      margin-bottom: 0;
+				      background-color: $darkred; //fallback if all else fails
+				      background-image: url("../images/banner.gif"); //fallback if no image uploaded
+				      background-size: cover;
+				      h2 {
+				        color: #fff;
+				      }
+				      .container {
+				        padding: 0px;
+				        margin: 0px;
+				        position: relative;
+				        width: 100%;
+				      }
+				      .img-wrapper {
+				        width: 200px;
+				        overflow: hidden;
+				        @include respond-to(medium) {
+				            width: 250px;
+				        }
+				        @include respond-to(smallonly) {
+				            display: none;
+				        }
+				        img {
+				            width: 200px;
+				            height: auto;
+				            @include respond-to(medium) {
+				                width: 250px;
+				            }
+				        }
+				        &+.overlaywrap {
+				            @include respond-to(small) {
+				                left: 200px;
+				            }
+				            @include respond-to(medium) {
+				                left: 250px;
+				            }
+				        }
+				      }
+				    }
+				
+				    .jumbotron .overlaywrap {
+				        background-color: rgba( $base-color, .9 );
+				        left: 0;
+				        top: 0;
+				        font-family: $display-font;
+				        padding: 0.5em 2em;
+				        @include respond-to(small) {
+				                padding-right: 6em;
+				            }
+				        p {
+				            padding: 0;
+				            margin: 0;
+				            &:last-child {
+				                padding-bottom: 15px;
+				            }
+				        }
+				        h2 {
+				            font-weight: 100;
+				            font-size: $font-large*0.7;
+				            margin: 0;
+				            padding: 0px;
+				            letter-spacing: 0.03em;
+				            color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
+				            @include respond-to(small) {
+				                font-size: $font-large;
+				            }
+				        }
+				        .banner-subtitle {
+				            font-family: $display-font;
+				            color: lighten($base-color, 60%);
+				            font-size: $font-medium*0.8;
+				            padding-bottom:5px;
+				            @include respond-to(small) {
+				                font-size: $font-medium;
+				            }
+				        }
+				        .banner-loc, .banner-date {
+				            font-family: $display-font;
+				            color: #e0dddb;
+				            font-style: italic;
+				            font-size: $font-small*0.8;
+				        }
+				    }
+				
+				    .btn.webex-next {
+				        margin-top: 2em;
+				        background: transparent;
+				        border-color: $base-color;
+				        float: right;
+				        a & {
+				            color: $base-color;
+				        }
+				    }
+				
+				    .sidebar {
+				        background-color: #fff;
+				        border-right: 1px solid #ddd;
+				        @include respond-to(small) {    
+				            background-color: #fff;
+				            border-right: 1px dotted #767676;
+				        }
+				        h3 a {
+				            color: lighten($base-color, 20%);
+				        }
+				        > ul {
+				            > li { // Direct child page
+				                a {
+				                    font-weight: 200;
+				                    color: $base-color;
+				                    &:hover {
+				                        color: lighten($base-color, 60%);
+				                        text-decoration: none;
+				                    }
+				                }
+				                &.active { // Active direct child page
+				                    background-color: lighten($base-color, 75%);
+				                    margin-left: -2em; // Bleed background color past div
+				                    margin-right: -1em; // Bleed background color past div
+				                    padding: 0.5em 0.5em 0.5em 2em; // Fix text padding from bleeding background color past div
+				                    >a {
+				                        font-weight: 600;
+				                    }
+				                }
+				                > ul { // Grandchild page
+				                    li a {
+				                        font-style: italic;
+				                        color: lighten($base-color, 10%);
+				                    }
+				                }
+				            }
+				        }
+				    }
+				
+				    .coll-rightside {
+				        background-color: lighten($base-color, 75%);
+				        h3, h3 a {
+				            color: lighten($base-color, 10%);
+				            border-bottom-color: lighten($base-color, 10%);
+				        }
+				    }
+				} // End body.exhibitpage customizations
+				
+				.collex-loc {
+				    background-color: #eee;
+				    padding: 1.5em;
+				    display: flex;
+				    flex-wrap: wrap;
+				    & ~ #push {
+				        background-color: #eee;
+				    }
+				    .loc-title {
+				        margin-bottom: 0.5em;
+				        color: $base-color;
+				        font-weight: 600;
+				        font-size: 1em;
+				        a {
+				            font-weight: 400;   
+				            color: lighten($base-color, 15%);
+				        }
+				    }
+				    p, ul {
+				        font-size: 0.95em;
+				    }
+				    ul {
+				        list-style: none;
+				        padding-left: 0;
+				        & li {
+				            margin-bottom: 10px;
+				            .viewall {
+				                margin-top: 15px;
+				            }
+				        }
+				    }
+				}
+				
+				.loc-child {
+				    &+& {
+				        padding-top: 10px;
+				        border-top: 1px dotted #767676;
+				        @include respond-to(medium) {
+				            padding-top: initial;
+				            border-top: none;
+				        }
+				    }
+				    .loc-title~.loc-title {
+				        margin-top: 1.2em;
+				    }
+				}
+				
+				.collex-gallery {
+				    border-top: 1px dotted #767676;
+				}
+				
+				.collexbase {
+				    padding: 2em 1em;
+				    & figure {
+				       @include respond-to(medium) {
+				           display: flex;
+				       }
+				    }
+				}
+				
+				.collex-solo {
+				    @extend .collexbase;
+				    border-bottom: 1px dotted $darkgray;
+				    img {
+				        padding-bottom: 1em ;
+				        max-height: 40em;
+				        width: auto;
+				        @include respond-to(medium) {
+				        float: right;
+				            padding-bottom: 0;
+				        }
+				
+				    }
+				}
+				
+				.collex-solo, .collex-duo, .collex-trio, .collex-verso {
+				    .img-title {
+				        color: $base-color;
+				        font-size: $font-small;
+				        font-weight: 600;
+				    }
+				    .img-citation {
+				        color: lighten($base-color, 25%);
+				        font-size: 0.95em;
+				    }
+				    .img-caption {
+				        color: #000;
+				        font-size: 1em;
+				    }
+				}
+				
+				.collex-verso {
+				    @extend .collex-solo;
+				    .modal.and.carousel {
+				      position: absolute; // Needed because the carousel overrides the position property
+				    }
+				}
+				
+				.duo-wrapper {
+				    display:flex;
+				    flex-wrap: wrap;
+				    padding: 1em;
+				    border-bottom: 1px dotted $darkgray;
+				}
+				
+				.collex-duo {
+				    padding: 0;
+				    text-align: center;
+				    & + & {
+				        border-top: 1px dotted $darkgray;
+				        @include respond-to(small) {
+				            border-top: none;
+				            border-left: 1px dotted $darkgray;
+				            padding-left: 1em;
+				        }
+				    }
+				    figure {
+				        display: inline-block;
+				        text-align: left;
+				    }
+				    img {
+				        padding: 1.5em 1em 1em 0;
+				        @include respond-to(medium) {
+				            max-height: 30em;
+				            width: auto;
+				        }
+				    }
+				}
+				
+				.collex-trio {
+				    padding: 1em 0 2em 0;
+				    border-bottom: 1px dotted $darkgray;
+				    img {
+				        float: left;
+				        max-width: 33%;
+				        height: auto;
+				        padding: 1em;
+				    }
+				    figcaption {
+				        clear: both;
+				    }
+				}
+				
+				#page-turn {
+				    position: absolute;
+				    width: 0;
+				    height: 0;
+				    right: 15px;
+				    border-top: 30px solid #fff;
+				    border-left: 30px solid #c0c0c0;
+				}
             {% endinlinecompile %}
         </style>
     {% endif %}
@@ -437,7 +424,7 @@
           </div>
         {% endif %}
 
-      <div class="col-xs-12 col-sm-9">
+      <div class="col-xs-12{% if self.is_web_exhibit %} col-sm-9{% endif %}">
         {% if self.acknowledgments %}
           <p class="acknowledgments">{{ self.acknowledgments }}</p>
         {% endif %}
