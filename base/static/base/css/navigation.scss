@@ -17,7 +17,7 @@ Footer
 
 html,
 body {
-  /*overflow-y: scroll;*/ /* has to be scroll, not auto */
+  //overflow-y: scroll; /* has to be scroll, not auto */
   -webkit-overflow-scrolling: touch;
   height: 100%;
   /* The html and body elements cannot have any padding or margin. */
@@ -63,7 +63,7 @@ body {
   &>li>a {
       color: #f9f9f9;
       &:hover {
-        color:#E4E4E4;
+      	color:#E4E4E4;
         background-color: $transparent;
       }
       &:focus {
@@ -363,61 +363,63 @@ i.ask-icon {
 
 .sidebar {
   background-color: rgba(210,205,204,0.6);
-  padding: 5px 15px 40px 40px;
+  padding: 1em 1em 1em 2em;
   @include respond-to(medium) {
-    padding-left: 2em;
+    padding-left: 1em;
     padding-top: 35px;
   }
-  ul {
+
+  // Library specific colors
+  &.crerar>ul>li>a {
+    color: $crerarblue;
+  }
+  &.eckhart>ul>li>a {
+    color: $eckhartpurple;
+  }
+  &.mansueto>ul>li>a {
+    color: $mansuetogreen;
+  }
+  &.reg>ul>li>a {
+    color: $reggreen;
+  }
+  &.ssa>ul>li>a {
+    color: $ssaorange;
+  }
+  // END Library specific colors
+
+  >ul {
     list-style-type: none;
     padding-left: 1em;
     text-indent: -1em;
-    li {
-      margin-bottom: 5px;
+    >li { // Direct child page
+      margin: 1em 0;
+      font-weight: 600;
+      a {
+        color: $maroon;
+      }
+      & ul { // Grandchild page
+        list-style-type: none;
+        padding-left: 1em;
+        text-indent: -1em;
+        li {
+          font-weight: 200;
+          margin-top: 0.5em;
+          &:first-child {
+            margin-top: 0.2em;
+          }
+          a {
+            color: $mid-dark;
+          }
+        }
+      }
     }
   }
   h3, h3 a {
     margin-bottom: 3px;
     font-size: 1em;
     color: $darkred;
-  }
-  h4, h4 a {
-    font-size: 1em;
-    font-weight: 600;
-    color: $maroon;
-    line-height: 1.4em;
-    margin: 18px 0 5px;
-  }
-  a {
-    font-size: 1em;
-    color: $mid-dark;
-  }
-  &.crerar {
-    h4, h4 a {
-      color: $crerarblue;
-    }
-  }
-  &.eckhart {
-    h4, h4 a {
-      color: $eckhartpurple;
-    }
-  }
-  &.mansueto {
-    h4, h4 a {
-      color: $mansuetogreen;
-    }
-  }
-  &.reg {
-    h4, h4 a {
-      color: $reggreen;
-    }
-  }
-  &.ssa {
-    h4, h4 a {
-      color: $ssaorange;
-    }
   } 
-}
+} // END Sidebar nesting
 
 .btn-sidebar {  // Toggle button for mobile view
   background: #ddd;
@@ -436,6 +438,7 @@ i.ask-icon {
     color: $darkgray;
   }
 }
+
 
 
 /*
@@ -469,9 +472,9 @@ i.ask-icon {
   line-height: 1.7em;
   text-decoration: none;
     &:hover {
-        color: $hoveraccent;
+    	color: $hoveraccent;
     }
-    }
+	}
   h5 {
     margin-bottom: 0px;
   }

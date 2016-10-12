@@ -15,17 +15,18 @@ Alerts
  */
 
 #skip  {
-  background-color: #47B5FF;
-  color: #fff;
+  background: #f5f5f5;
+  color: #222;
   a { 
     position:absolute;
-    padding: 5px 0 5px 10px;
+    padding: 1em 0 1em 3em;
+    line-height: 2em;
     left:-10000px; 
     top:auto; 
     width:1px; 
     height:1px; 
     overflow:hidden;
-  color: #fff;
+    color: #222;
     &:focus { 
       position:static; 
       width:auto; 
@@ -138,8 +139,8 @@ p {
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *        @include respond-to(medium) { ... }
- *        @include respond-to(large) { ... }
+ *		@include respond-to(medium) { ... }
+ *		@include respond-to(large) { ... }
  */
 
 @mixin respond-to($breakpoint) {
@@ -182,6 +183,46 @@ p {
       @content;
     }
   }
+}
+
+
+@media print {
+    @page {
+        size: 330mm 427mm;
+        margin: 1cm;
+    }
+    a[href]:after {
+        content: none !important;
+    }
+    .container {
+        width: 1170px;
+    }
+    .navbar, #footer {
+        display: none;
+    }
+    div.breadcrumbs, div#sidebar, div.jumbotron {
+        display: none;
+    }
+    body {
+        overflow: visible !important; 
+    }
+    div.container, div.container-fluid {
+        margin: none;
+        padding: none;
+    }
+    div.row, div.row-fluid {
+        margin: none;
+        padding: none;
+    }
+    h2, h3, h4, h5, h6 {
+       page-break-after: avoid;
+    }
+    /*img {
+       max-width: 100% !important;
+    }*/
+    ul, img {
+       page-break-inside: avoid;
+    }
 }
 
 
@@ -251,7 +292,7 @@ a {
     margin-bottom: 0;
     display: inline;
   }
-  & .rich-text {
+  &.rich-text {
     display: inline;
   }
 }
@@ -304,7 +345,6 @@ a {
     padding: 0.5em 3em;
   }
 }
-
 
 
 

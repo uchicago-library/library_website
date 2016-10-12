@@ -52,6 +52,11 @@
 {% wagtailuserbar %}
     <div id="skip">
         <a href="#content">Skip to Main Content</a>
+        <a href="#global-navbar">Skip to Main Navigation</a>
+        {% if has_left_sidebar %}
+            <a href="#sidebar">Skip to Side Bar</a>
+        {% endif %}
+        <a href="#footer">Skip to Footer</a>
     </div>
     <div id="body-wrap">
         {% if has_alert %}
@@ -63,7 +68,7 @@
             </div>
         {% endif %}
         <!-- Top Navigation -->
-        <nav class="navbar navbar-default"> <!-- Navwrapper -->
+        <nav class="navbar navbar-default" role="navigation"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->
                 <div class="mobile-topnav visible-xs visible-sm">
                     <a href="{{hours_page_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Library Hours"><i title="Library Hours" class="fa fa-clock-o fa-lg"><span class="sr-only">Library Hours</span></i></a> | 
@@ -345,19 +350,24 @@
             <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row --> 
 
         {% if has_left_sidebar %}
-            <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
-                <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
-                {% for child in sidebar %}
-                    <h4><a href="{{child.url}}">{{child.title}}</a></h4>
-                    {% if child.children %}
+            <nav role="navigation">
+                <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
+                    <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
                     <ul>
-                        {% for grandchild in child.children %}
-                            <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
+                        {% for child in sidebar %}
+                            <li><a href="{{child.url}}">{{child.title}}</a>
+                            {% if child.children %}
+                                <ul>
+                                    {% for grandchild in child.children %}
+                                        <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
-                    {% endif %}
-                {% endfor %}
-            </div>
+                </div>
+            </nav>
         {% endif %}
         <!-- // Left Sidebar -->
 
