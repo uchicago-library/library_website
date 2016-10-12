@@ -64,8 +64,6 @@ class Command (BaseCommand):
                     'official_name': info['officialName'],
                     'slug': make_slug(info['displayName']),
                     'url_path': '/loop/staff/' + make_slug(info['displayName']) + '/',
-                    'editor': StaffPage.objects.get(cnetid='dbietila'),
-                    'page_maintainer': StaffPage.objects.get(cnetid='dbietila'),
                     'depth': staff_index_depth + 1,
                 })
             StaffIndexPage.objects.first().fix_tree(destructive=False)
@@ -77,8 +75,6 @@ class Command (BaseCommand):
             depth=len(next_available_path) // 4,
             numchild=0,
             url_path='/staff/' + make_slug(info['displayName']) + '/',
-            editor=StaffPage.objects.get(cnetid='dbietila'),
-            page_maintainer=StaffPage.objects.get(cnetid='dbietila'),
             cnetid=info['cnetid'],
             display_name=info['displayName'],
             official_name=info['officialName'],
