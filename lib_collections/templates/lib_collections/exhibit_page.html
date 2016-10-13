@@ -71,7 +71,7 @@
                 $font-large: 2.5em;
                 $font-medium: 1.5em;
                 $font-small: 1.1em;
-
+                
 				.exhibitpage, .exhibitchildpage {
 				    h1, h2 {
 				        color: $base-color;
@@ -209,7 +209,7 @@
 				                    font-weight: 200;
 				                    color: $base-color;
 				                    &:hover {
-				                        color: lighten($base-color, 60%);
+				                        color: lighten($base-color, 25%);
 				                        text-decoration: none;
 				                    }
 				                }
@@ -323,7 +323,7 @@
 				        font-weight: 600;
 				    }
 				    .img-citation {
-				        color: lighten($base-color, 25%);
+				        color: lighten($base-color, 10%);
 				        font-size: 0.95em;
 				    }
 				    .img-caption {
@@ -360,6 +360,12 @@
 				    figure {
 				        display: inline-block;
 				        text-align: left;
+				        @include respond-to(small) {
+				            max-width: 90%;
+				        }
+				        @include respond-to(medium) {
+				            max-width: 80%;
+				        }
 				    }
 				    img {
 				        padding: 1.5em 1em 1em 0;
