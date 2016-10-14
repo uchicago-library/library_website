@@ -594,7 +594,7 @@ class SoloImage(StructBlock):
     """
     image = ImageChooserBlock()
     citation = RichTextBlock(blank=True, null=True)
-    caption = RichTextBlock(blank=True, null=True)
+    caption = RichTextBlock(blank=True, null=True, required=False)
     alt_text = CharBlock(
         required=False,
         help_text='Invisible text for screen readers',
