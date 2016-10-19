@@ -641,7 +641,7 @@ class ExhibitPage(PublicBasePage):
     )
 
     # Web exhibit fields
-    web_exhibit = models.BooleanField(default=False)
+    web_exhibit = models.BooleanField(default=False, help_text='Display as web exhibit')
     hex_regex = RegexValidator(regex='^#[a-zA-Z0-9]{6}$', \
         message='Please enter a hex color, e.g. #012043')
     branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
