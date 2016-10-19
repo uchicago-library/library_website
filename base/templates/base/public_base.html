@@ -340,6 +340,18 @@
                         <p class="banner-subtitle">{{banner_subtitle}}</p>
                     {% endif %}
                     </a>
+                    {% if self.exhibit_open_date or self.exhibit_close_date %}
+                      <p class="banner-date">Exhibition on view from 
+                        {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+                        {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
+                        {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
+                      </p>
+                    {% endif %}
+                    {% if self.exhibit_location %}
+                      <p class="banner-loc">
+                        <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
+                      </p>
+                    {% endif %}
                 </div>  
               </div> 
             </div> 
