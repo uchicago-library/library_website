@@ -641,6 +641,7 @@ class ExhibitPage(PublicBasePage):
     )
 
     # Web exhibit fields
+    web_exhibit = models.BooleanField(default=False)
     hex_regex = RegexValidator(regex='^#[a-zA-Z0-9]{6}$', \
         message='Please enter a hex color, e.g. #012043')
     branding_color= models.CharField(validators=[hex_regex], max_length=7, blank=True)
@@ -653,6 +654,7 @@ class ExhibitPage(PublicBasePage):
 
 
     web_exhibit_panels = [
+        FieldPanel('web_exhibit'),
         MultiFieldPanel(
             [
                 ImageChooserPanel('banner_image'),
@@ -773,10 +775,7 @@ class ExhibitPage(PublicBasePage):
         Determine if an ExhibitPage is a 
         web exhibit.
         """
-        if self.has_all_fields([self.banner_image, self.banner_title, self.branding_color]) \
-            and not self.web_exhibit_url:
-            return True
-        return False
+        return self.web_exhibit
 
     def has_right_sidebar(self):
         """

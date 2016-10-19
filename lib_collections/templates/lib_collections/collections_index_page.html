@@ -84,8 +84,12 @@
                 {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
                   <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
                 {% endif %}
-                {% if exhibit.web_exhibit_url %}
-                  <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a><br/>
+                {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
+                  {% if exhibit.web_exhibit %}
+                    <a href="{{ exhibit.url }}">View web exhibit &gt;&gt;</a><br/>
+                  {% else %}
+                    <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a><br/>
+                  {% endif %}
                 {% endif %}
               </td>
               <td>
@@ -127,8 +131,12 @@
                 {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
                   <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
                 {% endif %}
-                {% if exhibit.web_exhibit_url %}
-                  <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
+                {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
+                  {% if exhibit.web_exhibit %}
+                    <a href="{{ exhibit.url }}">View web exhibit &gt;&gt;</a>
+                  {% else %}
+                    <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
+                  {% endif %}
                 {% endif %}
               </td>
               <td>

@@ -84,8 +84,8 @@ def collections(request):
         exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
 
         if digital:
-            exhibits = exhibits.exclude(web_exhibit_url = '')
-            exhibits_current = exhibits_current.exclude(web_exhibit_url = '')
+            exhibits = exhibits.filter(web_exhibit = True)
+            exhibits_current = exhibits_current.filter(web_exhibit = True)
 
         if search:
             exhibits = exhibits.search(search).results()
