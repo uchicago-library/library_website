@@ -113,13 +113,15 @@
 				        width: 100%;
 				      }
 				      .img-wrapper {
-				        width: 200px;
-				        overflow: hidden;
+				        display: none;
+				        @include respond-to(small) {
+				            display: block;
+				            width: 250px;
+				            overflow: hidden;
+				        }
 				        @include respond-to(medium) {
 				            width: 250px;
-				        }
-				        @include respond-to(smallonly) {
-				            display: none;
+				            overflow: hidden;
 				        }
 				        img {
 				            width: 200px;
@@ -175,7 +177,7 @@
 				                font-size: $font-medium;
 				            }
 				        }
-				        .banner-loc, .banner-date {
+				        .banner-loc, .banner-loc a, .banner-date {
 				            font-family: $display-font;
 				            color: #e0dddb;
 				            font-style: italic;
@@ -223,6 +225,8 @@
 				                    }
 				                }
 				                > ul { // Grandchild page
+				                    padding-left: 1.5em;
+				                    border-left: 3px solid lighten($base-color, 75%);
 				                    li a {
 				                        font-style: italic;
 				                        color: lighten($base-color, 10%);
@@ -317,6 +321,9 @@
 				}
 				
 				.collex-solo, .collex-duo, .collex-trio, .collex-verso {
+				    img {
+				        border: 3px solid #c8c8c8;
+				    }
 				    .img-title {
 				        color: $base-color;
 				        font-size: $font-small;
@@ -368,7 +375,7 @@
 				        }
 				    }
 				    img {
-				        padding: 1.5em 1em 1em 0;
+				        margin: 1.5em 1em 1.5em 0;
 				        @include respond-to(medium) {
 				            max-height: 30em;
 				            width: auto;
@@ -381,9 +388,12 @@
 				    border-bottom: 1px dotted $darkgray;
 				    img {
 				        float: left;
-				        max-width: 33%;
+				        max-width: 28%;
 				        height: auto;
-				        padding: 1em;
+				        margin: 1em;
+				        @include respond-to(large) {
+				            max-width: 25%;
+				        }
 				    }
 				    figcaption {
 				        clear: both;
