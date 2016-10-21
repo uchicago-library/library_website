@@ -816,7 +816,8 @@ class ExhibitPage(PublicBasePage):
         related_collections = '<ul>'
         if collections:
             for collection in collections:
-                related_collections += '<li><a href="' + collection.related_collection.relative_url(current_site) + '">' + collection.related_collection.title + '</a></li>'
+                if collection.related_collection:
+                    related_collections += '<li><a href="' + collection.related_collection.relative_url(current_site) + '">' + collection.related_collection.title + '</a></li>'
             return related_collections + '</ul>'
         return None
 
