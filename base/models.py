@@ -512,9 +512,7 @@ class AbstractBaseWithoutStaffPageForeignKeys(models.Model):
     )
 
     # Searchable fields
-    search_fields = [
-        index.SearchField('description'),
-    ]
+    search_fields = []
 
     content_panels = [
         FieldPanel('last_reviewed', None),
