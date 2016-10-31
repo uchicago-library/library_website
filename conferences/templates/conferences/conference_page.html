@@ -5,8 +5,12 @@
 {% load wagtailcore_tags %}
 
 {% block styles %}
+    {% compress css %}
+        <link href="{% static "conferences/css/conf.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
     <style type="text/css">
-        .jumbotron {
+        .conferencepage .jumbotron, 
+        .conferencesubpage .jumbotron {
             {% if banner_image %}
                 background: url("{{banner.url}}");
             {% elif primary_branding_color %}
@@ -18,7 +22,8 @@
             background-size: cover;
         }
         {% if secondary_branding_color %}
-            .overlaywrap { 
+            .conferencepage .jumbotron .overlaywrap,
+            .conferencesubpage .jumbotron .overlaywrap { 
                 background:{{secondary_branding_color}};
             }
         {% endif %}
@@ -76,7 +81,7 @@
             <p>{{secondary_registration_description}}</p>
     {% endif %}
     {% for btn in secondary_registration %}
-        <a href="{{btn.link}}" class="btn btn-subreserve">{{btn.button_text}}</a>
+        <a href="{{btn.link}}" class="btn btn-default">{{btn.button_text}}</a><br/>
     {% endfor %}
     {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
         </div>
