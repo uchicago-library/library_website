@@ -592,7 +592,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         index.SearchField('long_description', partial_match=True),
         index.SearchField('parent_building'),
         index.SearchField('location_photo'),
-        index.SearchField('reservation_display_url'),
+        index.SearchField('reservation_url'),
         index.SearchField('reservation_display_text'),
     ]
 

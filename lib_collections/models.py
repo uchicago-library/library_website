@@ -211,7 +211,6 @@ class CollectionPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
-        index.FilterField('text'),
         index.FilterField('title'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
@@ -744,7 +743,6 @@ class ExhibitPage(PublicBasePage):
     search_fields = PublicBasePage.search_fields + [
         index.FilterField('exhibit_open_date'),
         index.FilterField('exhibit_close_date'),
-        index.FilterField('subject_id'),
         index.FilterField('title'),
         index.FilterField('web_exhibit_url'),
         index.SearchField('short_abstract'),
@@ -859,7 +857,7 @@ class ExhibitChildPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('bdoy'),
+        index.SearchField('body'),
     ]
 
     def get_context(self, request):

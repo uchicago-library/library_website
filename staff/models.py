@@ -70,15 +70,6 @@ class StaffPagePageVCards(Orderable, VCard):
     page = ParentalKey('staff.StaffPage', related_name='vcards')
 
 
-class StaffPageManager(models.Manager):
-    def get_query_set(self):
-        return (
-            super(StaffPageManager, self)
-            .get_query_set()
-            .order_by('title')
-        )
-
-
 class StaffPage(BasePageWithoutStaffPageForeignKeys):
     """
     Staff profile content type.
@@ -164,8 +155,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             return StaffPublicPage.objects.live().filter(title=self.cnetid)[0]
         except(IndexError):
             return None
-
-    objects = StaffPageManager
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),
