@@ -364,30 +364,33 @@
         {% if has_left_sidebar %}
             <nav role="navigation">
                 <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
-                    <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
-                    <ul>
-                        {% for child in sidebar %}
-                            <li><a href="{{child.url}}">{{child.title}}</a>
-                            {% if child.children %}
-                                <ul>
-                                    {% for grandchild in child.children %}
-                                        <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    {% if sidebartitle %}
+                        <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
+                    {% endif %}
+                    {% if sidebar %}
+                        <ul>
+                            {% for child in sidebar %}
+                                <li><a href="{{child.url}}">{{child.title}}</a>
+                                {% if child.children %}
+                                    <ul>
+                                        {% for grandchild in child.children %}
+                                            <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% block left_sidebar_extras %}{% endblock %}
                 </div>
             </nav>
         {% endif %}
         <!-- // Left Sidebar -->
 
-        {% if not self.banner_image and not self.banner_title %}
-            <div class="{{breadcrumb_div_css}}">
-                {% include "base/includes/public_site_breadcrumbs.html" %}
-            </div>
-        {% endif %}
+        <div class="{{breadcrumb_div_css}}">
+            {% include "base/includes/public_site_breadcrumbs.html" %}
+        </div>
         <div class="{{content_div_css}}" id="content">
             <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
             {% block under_h1 %}{% endblock %}

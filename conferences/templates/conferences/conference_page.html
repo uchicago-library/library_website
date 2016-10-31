@@ -1,463 +1,91 @@
+{% extends "base/public_base.html" %}
 {% load wagtailimages_tags %}
-{% image conference_logo width-400 as conference_logo %}
 {% image banner_image original as banner %}
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <title>University of Chicago Library</title>
-    <meta name="generator" content="Bootply" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet">
-    <!--[if lt IE 9]>
-        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link href="{% static "base/css/normalize.css" %}" rel="stylesheet">
 
-    {% compress css %}
-        {# Custom stylesheets #}
-        {# SCSS compilation relies on django compressor #}
-        <link rel="stylesheet" type="text/x-scss" href="{% static "base/css/uclib.scss" %}" />
-        <link rel="stylesheet" type="text/x-scss" href="{% static "conferences/css/conference-nav.scss" %}" />
-    {% endcompress %}
-    
-<!-- Banner Image -->
-<style type="text/css">
-    {% block css %}
+{% block styles %}
+    <style type="text/css">
         .jumbotron {
             {% if banner_image %}
                 background: url("{{banner.url}}");
-            {% elif branding_color %}
-                background:{{branding_color}};
+            {% elif primary_branding_color %}
+                background:{{primary_branding_color}};
             {% else %}
                 background: url("{% static "conferences/images/conference-page-banner.gif" %}");
             {% endif %}
 
             background-size: cover;
         }
-    {% endblock %}
-</style>
-<!-- // Banner Image -->
-
-</head>
-
-<body>
-{% wagtailuserbar %}
-<!-- Top Navigation -->
-<nav class="navbar navbar-default">
-    
-    <!--<div class="mob-fa visible-xs visible-sm"> 
-        <a href="#"><i class="fa fa-clock-o fa-lg"></i></a>&nbsp; &nbsp; |&nbsp; &nbsp; <a href="#"><i class="fa fa-comment fa-lg"></i></a>&nbsp; &nbsp; |&nbsp; &nbsp; <a href="#"><i class="fa fa-gift fa-lg"></i></a>&nbsp; &nbsp; |&nbsp; &nbsp; <a href="#"><i class="fa fa-user fa-lg"></i></a>
-    </div>-->
-
-    <div class="container-fluid fluid-top"> <!-- Nav Wrapper / Fluid Top -->
-
-        <!-- Mobile + Menu Toggle  -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#global-navbar" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="http://lib.uchicago.edu/"><img src="{% static "base/images/librarylogo.svg" %}" class="img-responsive" alt="library logo"></a>
-        </div>
-
-
-        <!-- // Mobile + Menu Toggle  -->
-
-        <!--<ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
-          <li><a href="#"><i class="fa fa-clock-o"></i> Regenstein Library: 8:00am-10:30pm</a></li>
-          <li><a href="#"><i class="fa fa-comment"></i> Ask a Librarian</a></li>
-          <li><a href="#"><i class="fa fa-gift"></i> Support the Library</a></li>
-          <li><a href="#"><i class="fa fa-user"></i> My Accounts</a></li>
-        </ul> --><!-- / top right nav -->
-
-        <!-- Main Navigation (In Toggle) -->
-        <div class="collapse navbar-collapse" id="global-navbar"> 
-            <!-- 
-            <ul class="nav navbar-nav"> 
-                <li class="dropdown col-drop">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></a>
-                    <ul class="dropdown-menu twocol-drop">
-                        <li>
-                            <ul class="list-unstyled col-sm-6 ul-left">
-                                <li class="twocol-head">Catalogs</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                  <li><a href="#">Library Catalog</a></li>
-                                  <li><a href="#">UBorrow</a></li>  
-                                  <li><a href="#">BorrowDirect</a></li> 
-                                  <li><a href="#">WorldCat</a></li>                           
-                                  <li><a href="#">Chicago Area Catalogs</a></li>
-                            </ul>
-
-                            <ul class="list-unstyled col-sm-6">
-                                <li class="twocol-head">Other Search Tools</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Articles Plus</a></li>
-                                <li><a href="#">Database Finder</a></li>
-                                <li><a href="#">EJournals</a></li>
-                                <li><a href="#">Website Search</a></li> 
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown col-drop">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Borrow &amp; Request <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Borrowing &amp; Renewing</a></li>
-                        <li><a href="#">UBorrow</a></li>
-                        <li><a href="#">BorrowDirect</a></li>
-                        <li><a href="#">Interlibrary Loan</a></li>
-                        <li><a href="#">Scan &amp; Deliver</a></li>
-                        <li><a href="#">Suggest a Purchase</a></li>
-                        <li><a href="#">My Account</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Research <span class="hidden-sm">Support </span><span class="caret"></span></a>
-                    <ul class="dropdown-menu twocol-drop">
-                        <li>
-                            <ul class="list-unstyled col-sm-5 ul-left">
-                                <li class="twocol-head">Research Help &amp; Tools</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Ask a Librarian</a></li>
-                                <li><a href="#">Subject Specialists</a></li>
-                                <li><a href="#">Library Instruction</a></li>
-                                <li><a href="#">Citation Management</a></li>
-                                <li><a href="#">Off-Campus Access</a></li>
-                                <li><a href="#">Help Guides</a></li>
-                                <li><a href="#">Subject Guides</a></li>
-                            </ul>
-
-                            <ul class="list-unstyled col-sm-7">
-                                <li class="twocol-head">Scholarly Communication &amp; Publishing</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Dissertation Office</a></li>
-                                <li><a href="#">Digital Scholarship</a></li>
-                                <li><a href="#">Copyright Info</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown col-drop">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits </span><span class="caret"></span></a>
-                    <ul class="dropdown-menu twocol-drop">
-                        <li>
-                            <ul class="list-unstyled col-sm-6 ul-left">
-                                <li class="twocol-head">Collections</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Collecting Areas by Subject</a></li>
-                                <li><a href="#">Unique Collections</a></li>
-                                <li><a href="#">Collections by Format</a></li>
-                             </ul>
-
-                            <ul class="list-unstyled col-sm-6">
-                                <li class="twocol-head">Exhibits</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">All Exhibits</a></li>
-                                <li><a href="#">Current Exhibits</a></li>
-                                <li><a href="#">Past Exhibits</a></li>
-                                <li><a href="#">Web Exhibits</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="hidden-sm">Locations &amp; </span>Hours <span class="caret"></span></a>
-                    <ul class="dropdown-menu twocol-drop">
-                        <li>
-                            <ul class="list-unstyled col-sm-6 ul-left">
-                                <li class="twocol-head">Using the Library</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Hours</a></li>
-                                <li><a href="#">Maps &amp; Floor Plans</a></li>
-                                <li><a href="#">Visiting the Library</a></li>
-                                <li><a href="#">Call Number Guides</a></li>
-                                <li><a href="#">Book a Room</a></li>
-                                <li><a href="#">Places to Study</a></li>
-                                <li><a href="#">Access &amp; Privileges</a></li>
-                                <li><a href="#">Off-Campus Access</a></li>
-                                <li><a href="#">Copy, Print, Scan</a></li>
-                                <li><a href="#">Techb@r</a></li>
-                            </ul>
-
-                            <ul class="list-unstyled col-sm-6">
-                                <li class="twocol-head">Libraries</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Regenstein</a></li>
-                                <li><a href="#">Crerar</a></li>
-                                <li><a href="#">D'Angelo Law</a></li>
-                                <li><a href="#">Mansueto</a></li>
-                                <li><a href="#">SSA</a></li>
-                                <li><a href="#">Eckhart</a></li>
-                                <li><a href="#">Special Collections</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="hidden-sm">the Library </span><span class="caret"></span></a>
-                    <ul class="dropdown-menu twocol-drop">
-                        <li>
-                            <ul class="list-unstyled col-sm-6 ul-left">
-                                <li class="twocol-head">About the Library</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">Mission &amp; Strategic Plan</a></li>
-                                <li><a href="#">Facts</a></li>
-                                <li><a href="#">Departments &amp; Staff</a></li>
-                                <li><a href="#">Employment</a></li>
-                                <li><a href="#">Visiting the Library</a></li>
-                                <li><a href="#">Support the Library</a></li>
-                                <li><a href="#">Library Surveys &amp; Reports</a></li>
-                                <li><a href="#">Library Policies</a></li>
-                                <li><a href="#">Confrences</a></li>
-                                <li><a href="#">External Boards &amp; Committees</a></li>
-                            </ul>
-
-                            <ul class="list-unstyled col-sm-6">
-                                <li class="twocol-head">News &amp; Events</li>
-                                <li role="separator" class="divider visible-xs"></li>
-                                <li><a href="#">News</a></li>
-                                <li><a href="#">Workshops &amp; Events</a></li>
-                                <li><a href="#">Social Media Directory</a></li>
-                                <li><a href="#">Libra</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>  -->
-        </div> <!-- // Global Navbar -->
-    </div> <!-- // Nav Wrapper / Fluid Top  -->
-</nav>
-<!-- // Top Navigation -->
-<!-- Fancy Splash Image -->
-<div class="jumbotron">
-  <div class="container">
-    <div class="overlaywrap">
-      <a href="{{home}}"><span class="banner-title">{{conference_title}}</span></a>
-      {% if conference_subtitle %}
-        <span class="banner-subtitle">{{conference_subtitle}}</span>
-      {% endif %}
-      {% if conference_tagline %}
-        <span class="banner-tagline">{{conference_tagline}}</span>
-      {% endif %}
-    </div>
-  </div>
-</div>
-<!-- // Fancy Splash Image -->
-
-<!-- Awesome Page Content -->
-<div class="container-fluid main-container"> <!-- Main Container Wrapper -->
-    <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-    <!-- Sidebar -->
-    <div class="col-xs-6 col-md-2 sidebar-offcanvas conference sidebar" id="sidebar">
-        {% if self.show_sidebar and sidebar %}
-        <ul>
-            {% for child in sidebar %}
-                <li><a href="{{ child.url }}">{{ child.title }}</a>
-                {% if child.children %}
-                <ul>
-                    {% for grandchild in child.children %}
-                        <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        {% if secondary_branding_color %}
+            .overlaywrap { 
+                background:{{secondary_branding_color}};
+            }
         {% endif %}
 
-        {% block register %}
-            {% for button in main_registration %}
-                <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
-            {% endfor %}
-        {% endblock %}
-    </div>
-    <!-- // Sidebar -->
+    </style>
+{% endblock %}
 
-    <div class="container body-container col-xs-12 col-md-10"> <!-- Content Container -->
-<div class="row visible-xs toggle-side">
-            <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
+{% block left_sidebar_extras %}
+    {% for button in main_registration %}
+        <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    {{self.body}}
+{% endblock %}
+
+{% block right_sidebar %}
+    {% if conference_logo %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            {% image conference_logo width-400 as logo %}
+            <img class="conf-logo img-responsive" src="{{logo.url}}" alt="{{logo.alt}}"/>
         </div>
-        <!-- Main Content -->
-        <div class="col-xs-12 xol-sm-12 col-md-9 centermain">
-        {% block content %}
-            <h1>{{self.title}}</h1> 
-            {% for block in self.body %}
-                {{ block }}
-            {% endfor %}
-        {% endblock %}
-        </div> <!-- // Main Content -->
+    {% endif %}
 
-    <div class="col-xs-12 xol-sm-12 col-md-3 home-rightside">
-        {% if conference_logo %}
-            <img class="conf-logo img-responsive" src="{{conference_logo.url}}" alt="{{conference_logo.alt}}"/>
-        {% endif %}
-
-        {% if sponsors %}
-            <h4 class="rightside">Sponsors</h4>
+    {% if sponsors %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h4>Sponsors</h4>
             <ul>
             {% for sponsor in sponsors%}
                 <li><a href="{{sponsor.link}}">{{sponsor.content}}</a></li>
             {% endfor %}
             </ul>
-        {% endif %}  
+        </div>
+    {% endif %}  
 
-        {% if organizers %}
-            <h4 class="rightside">Organizers</h4>
+    {% if organizers %}
+       <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h4>Organizers</h4>
             <ul>
             {% for organizer in organizers%}
                 <li><a href="{{organizer.link}}">{{organizer.content}}</a></li>
             {% endfor %}
             </ul>
-        {% endif %}        
+        </div>
+    {% endif %}        
 
-        {% if has_social_media %}
-            <h4 class="rightside">Social</h4>
-        {% endif %}
-        <ul>
-            {% if twitter_page %}
-            <li><a href="{{twitter_page}}"><i class="fa fa-twitter"></i> &nbsp; Twitter</a></li>
-            {% endif %}
-            {% if facebook_page %}
-            <li><a href="{{facebook_page}}"><i class="fa fa-facebook-official"></i> &nbsp; Facebook</a></li>
-            {% endif %}
-            {% if hashtag_page and hashtag %}
-            <li><a href="{{hashtag_page}}"><strong>{{hashtag}}</strong></a></li>
-            {% endif %}
-            {% if instagram_page %}
-            <li><a href="{{instagram_page}}"><i class="fa fa-instagram"></i> &nbsp; Instagram</a></li>
-            {% endif %}
-            {% if youtube_page %}
-            <li><a href="{{youtube_page}}"><i class="fa fa-youtube-square"></i> &nbsp; YouTube</a></li>
-            {% endif %}
-            {% if blog_page %}
-            <li><a href="{{blog_page}}"><i class="fa fa-rss"></i> &nbsp; Blog</a></li>
-            {% endif %}
-            {% if tumblr_page %}
-            <li><a href="{{tumblr_page}}"><i class="fa fa-tumblr-square"></i> &nbsp; Tumblr</a></li>
-            {% endif %}
-            {% if snapchat_page %}
-            <li><a href="{{snapchat_page}}"><i class="fa fa-fa-weixin"></i> &nbsp; Snapchat</a></li>
-            {% endif %}
-        </ul>
-
-        {% if secondary_registration_heading %}
-            <h4 class="rightside">{{secondary_registration_heading}}</h4>
-        {% endif %}
-        {% if secondary_registration_description %}
+    {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    {% endif %}
+    {% if secondary_registration_heading %}
+            <h4>{{secondary_registration_heading}}</h4>
+    {% endif %}
+    {% if secondary_registration_description %}
             <p>{{secondary_registration_description}}</p>
-        {% endif %}
-        {% for btn in secondary_registration %}
-            <a href="{{btn.link}}" class="btn btn-subreserve">{{btn.button_text}}</a>
-        {% endfor %}
-    </div>
+    {% endif %}
+    {% for btn in secondary_registration %}
+        <a href="{{btn.link}}" class="btn btn-subreserve">{{btn.button_text}}</a>
+    {% endfor %}
+    {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
+        </div>
+    {% endif %}
+
+{% endblock %}
 
         
-</div> <!-- // Content Container -->
 
 
-</div> <!-- // Main Container Wrapper -->
-</div> <!-- // Off Canvas Wrapper Row -->
-<!-- // Awesome Page Content -->
 
 
-<!-- Footer -->
-<footer class="container-fluid footer">
-
-    <!-- Contact -->
-    <div class="col-md-2">
-        <!--<p>Connect &amp; Share<br/>
-        <a href="#">Contact Us</a><br/>
-        <a href="#">Phone Numbers</a><br/>
-        <a href="#"><a href="#">Library Directory</a><br/></p>-->
-    </div>
-    <!-- // Contact -->
-
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
-
-    <!-- Information -->
-    <div class="col-md-2 divider-vertical">
-        <!--<p>Information for<br/>
-        <a href="#">Faculty</a><br/>
-        <a href="#">Students</a><br/>
-        <a href="#">University Staff</a><br/>
-        <a href="#"><a href="#">Alumni &amp; Library Friends</a><br/>
-        <a href="#">Patrons with Disabilities</a></p>-->
-    </div>
-    <!-- // Information -->
-
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
-
-    <!-- Address / Logo Text -->
-    <div class="col-md-4 hidden-xs hidden-sm">
-        <div class="centerdiv"><img src="{% static "base/images/univ-logo.gif" %}" width="150" alt="The University of Chicago" class="img-responsive" />
-            <p>University of Chicago Library<br/>
-             1100 East 57th Street, Chicago, IL 60637</p>
-            
-            <small><a href="https://www.lib.uchicago.edu/e/about/privacy.html">Privacy Policy</a><br/>
-            © The University of Chicago</small>
-        </div>
-    </div>
-    <!-- // Address / Logo Text -->
-
-    <!-- Libraries -->
-    <div class="col-md-2 divider-vertical">
-        <!--<p>Libraries<br/>
-        <a href="#">Crerar</a><br/>
-        <a href="#">D’Angelo Law</a><br/>
-        <a href="#">Eckhart</a><br/>
-        <a href="#">Mansueto</a><br/>
-        <a href="#">Regenstein</a><br/>
-        <a href="#">SSA</a></p>-->
-    </div>
-    <!-- // Libraries -->
-
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
-
-    <!-- Social -->
-    <div class="col-md-2">
-        <!--<p>Find Us On<br/>
-        <a href="#"><i class="fa fa-rss-square"></i> &nbsp; Library News</a><br/>
-        <a href="#"><i class="fa fa-facebook-official"></i> &nbsp; Facebook</a><br/>
-        <a href="#"><i class="fa fa-clone"></i> &nbsp; More...</a></p>-->
-    </div>
-    <!-- // Social -->
-
-    <hr class="visible-xs visible-sm"> <!-- Mobile Divider -->
-
-    <!-- Mobile - Address / Logo Text -->
-    <div class="col-md-4 visible-xs visible-sm">
-        <div class="centerdiv"><img src="{% static "base/images/univ-logo.gif" %}" width="150" alt="The University of Chicago" class="img-responsive"/>
-            <p>University of Chicago Library<br/>
-             1100 East 57th Street, Chicago, IL 60637</p>
-            
-            <small><a href="https://www.lib.uchicago.edu/e/about/privacy.html">Privacy Policy</a><br/>
-            © The University of Chicago</small>
-        </div>
-    </div>
-    <!-- // Mobile - Address / Logo Text -->
-
-</footer>
-<!-- // Footer -->
-
-
-<!-- Scripts -->
-
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "base/js/jquery.min.js" %}"></script>
-    <script src="{% static "base/js/bootstrap.min.js" %}"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
-
-    <script src="{% static "base/js/offcanvas.js" %}"></script>
-<!-- // Scripts -->
-
-</body>
-</html>

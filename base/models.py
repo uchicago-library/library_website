@@ -1223,7 +1223,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             boolean
         """
         fields = [self.quicklinks, self.events_feed_url]
-        return self.has_field(fields) or self.has_granular_hours()
+        return self.has_field(fields) or self.has_granular_hours() or self.has_social_media
 
 
     def get_banner(self, current_site):

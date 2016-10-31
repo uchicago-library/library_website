@@ -73,9 +73,9 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         message='Please enter a hex color, e.g. #012043')
 
     # Field definitions
-    subtitle = models.CharField(max_length=100, blank=True) 
-    tagline = models.CharField(max_length=150, blank=True)
-    branding_color= models.CharField(validators=[hex_regex], \
+    primary_branding_color= models.CharField(validators=[hex_regex], \
+        max_length=7, blank=True)
+    secondary_branding_color= models.CharField(validators=[hex_regex], \
         max_length=7, blank=True)
     location = models.ForeignKey('public.LocationPage',
         null=True, blank=True, on_delete=models.SET_NULL, 
@@ -99,19 +99,19 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
-                FieldPanel('subtitle'),
-                FieldPanel('tagline'),
+                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_title'),
+                FieldPanel('banner_subtitle'),
             ],
-            heading='Additional Title Info'
+            heading='Banner'
         ),
         MultiFieldPanel(
             [
-                ImageChooserPanel('banner_image'),
-                FieldPanel('branding_color'),
+                FieldPanel('primary_branding_color'),
+                FieldPanel('secondary_branding_color'),
                 ImageChooserPanel('conference_logo'),
             ],
             heading='Branding',
-            classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [
@@ -119,9 +119,8 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
                 FieldPanel('end_date'),
             ],
             heading='Dates and Times',
-            classname='collapsible collapsed'
         ),
-        FieldPanel('location', classname='collapsible collapsed multi-field'),
+        FieldPanel('location'),
         FieldPanel('current'),
         InlinePanel('main_registration', label='Main Registration Link'),
         MultiFieldPanel(
@@ -131,7 +130,6 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
                 InlinePanel('sub_registration', label='Secondary Registration Link'),
             ],
             heading='Secondary Registration Links',
-            classname='collapsible collapsed'
         ),
         InlinePanel('sponsors', label='Sponsors'),
         InlinePanel('organizers', label='Organizers'),
@@ -141,10 +139,9 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     subpage_types = ['conferences.ConferenceSubPage', 'redirects.RedirectPage']
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('subtitle'),
-        index.SearchField('tagline'),
         index.SearchField('banner_image'),
-        index.SearchField('branding_color'),
+        index.SearchField('primary_branding_color'),
+        index.SearchField('secondary_branding_color'),
         index.SearchField('location'),
         index.SearchField('current'),
         index.SearchField('conference_logo'),
@@ -152,29 +149,71 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     ]
     api_fields = ('body',)
 
+    @property
+    def has_right_sidebar(self):
+        """
+        Test to see if a right sidebar should be
+        displayed.
+
+        Returns:
+            Boolean
+        """
+        fields = [self.sponsors, self.organizers, self.sub_registration, \
+            self.secondary_registration_heading, self.secondary_registration_description]
+        return self.base_has_right_sidebar() or self.has_field(fields)
+
+    def has_conf_banner(self, current_site):
+        """
+        Used to override the boolean [0] value for PublicBasePage
+        get_banner. 
+
+        Args:
+            current_site: object
+        """
+        return self.get_banner(current_site)[0] or (self.primary_branding_color and self.banner_title)
+
+    def get_banner(self, current_site):
+        """
+        Override the default get_banner method so that
+        banners will always display as long as a title
+        is present.
+
+        Args:
+            current_site: site object.
+
+        Returns:
+            See get_banner in PublicBasePage. 
+        """
+        try:
+            # Base case
+            if self.banner_title:
+                return (True, self.banner_image, self.banner_feature, self.banner_title, self.banner_subtitle, self.relative_url(current_site), self.title)
+            # Recursive case
+            else:
+                return self.get_parent().specific.get_banner(current_site)
+        # Reached the top of the tree (could factor this into an if)
+        except(AttributeError):
+            return (False, None, None, '', '', '', '')
+
+
     # Context
     def get_context(self, request):
         context = super(ConferencePage, self).get_context(request)
         current_site = Site.find_for_request(request)
-        context['banner_image'] = self.banner_image
-        context['branding_color'] = self.branding_color
+        main_reg = self.main_registration.all()
+        has_sidebar = self.has_left_sidebar(context) or bool(main_reg)
+        context['has_left_sidebar'] = has_sidebar
+        context['content_div_css'] = self.get_conditional_css_classes('content', has_sidebar)
+        context['breadcrumb_div_css'] = self.get_conditional_css_classes('breadcrumbs', has_sidebar)
+        context['has_banner'] = self.has_conf_banner(current_site)
+        context['primary_branding_color'] = self.primary_branding_color
+        context['secondary_branding_color'] = self.secondary_branding_color
         context['conference_logo'] = self.conference_logo
         context['conference_title'] = self.title
-        context['conference_subtitle'] = self.subtitle
-        context['conference_tagline'] = self.tagline
         context['has_social_media'] = self.has_social_media
-        context['main_registration'] = self.main_registration.all()
+        context['main_registration'] = main_reg
         context['sponsors'] = self.sponsors.all()
         context['organizers'] = self.organizers.all()
-        context['twitter_page'] = self.twitter_page 
-        context['facebook_page'] = self.facebook_page
-        context['hashtag_page'] = self.hashtag_page
-        context['hashtag'] = self.hashtag
-        context['instagram_page'] = self.instagram_page
-        context['youtube_page'] = self.youtube_page
-        context['blog_page'] = self.blog_page
-        context['tumblr_page'] = self.tumblr_page
-        context['snapchat_page'] = self.snapchat_page
         context['secondary_registration'] = self.sub_registration.all()
         context['secondary_registration_heading'] = self.secondary_registration_heading
         context['secondary_registration_description'] = self.secondary_registration_description
@@ -201,32 +240,54 @@ class ConferenceSubPage(PublicBasePage):
 
     api_fields = ('body',)
 
+    @property
+    def has_right_sidebar(self):
+        """
+        Override default test to see if a right 
+        sidebar should be displayed.
+
+        Returns:
+            Boolean
+        """
+        parent = self.get_parent_of_type('conference page')
+        return parent.has_right_sidebar
+
+    @property
+    def has_social_media(self):
+        """
+        Override default test for social media.
+
+        Returns:
+            Boolean
+        """
+        parent = self.get_parent_of_type('conference page')
+        return parent.has_social_media
 
     # Context
     def get_context(self, request):
         context = super(ConferenceSubPage, self).get_context(request)
         current_site = Site.find_for_request(request)
-        context['banner_image'] = self.get_parent().conferencepage.banner_image
-        context['branding_color'] = self.get_parent().conferencepage.branding_color
-        context['conference_logo'] = self.get_parent().conferencepage.conference_logo 
-        context['conference_title'] = self.get_parent().title
-        context['conference_subtitle'] = self.get_parent().conferencepage.subtitle
-        context['conference_tagline'] = self.get_parent().conferencepage.tagline
-        context['has_social_media'] = self.get_parent().conferencepage.has_social_media
-        context['main_registration'] = self.get_parent().conferencepage.main_registration.all()
-        context['sponsors'] = self.get_parent().conferencepage.sponsors.all()
-        context['organizers'] = self.get_parent().conferencepage.organizers.all()
-        context['twitter_page'] = self.get_parent().conferencepage.twitter_page 
-        context['facebook_page'] = self.get_parent().conferencepage.facebook_page
-        context['hashtag_page'] = self.get_parent().conferencepage.hashtag_page
-        context['hashtag'] = self.get_parent().conferencepage.hashtag
-        context['instagram_page'] = self.get_parent().conferencepage.instagram_page
-        context['youtube_page'] = self.get_parent().conferencepage.youtube_page
-        context['blog_page'] = self.get_parent().conferencepage.blog_page
-        context['tumblr_page'] = self.get_parent().conferencepage.tumblr_page
-        context['snapchat_page'] = self.get_parent().conferencepage.snapchat_page
-        context['secondary_registration'] = self.get_parent().conferencepage.sub_registration.all()
-        context['secondary_registration_heading'] = self.get_parent().conferencepage.secondary_registration_heading
-        context['secondary_registration_description'] = self.get_parent().conferencepage.secondary_registration_description
-        context['home'] = self.get_parent().conferencepage.relative_url(current_site)
+        parent = self.get_parent_of_type('conference page')
+        has_sidebar = parent.has_left_sidebar(context) or bool(main_reg)
+
+        # Set social media fields dynamically and
+        # get all the values from the parent page.
+        # This doesn't seem like a good practice
+        # How else can this be done?
+        social_media_fields = [f.name for f in SocialMediaFields._meta.get_fields()]
+        for field in social_media_fields:
+            exec('self.' + field + ' = ' + 'parent.' + field)
+
+        context['primary_branding_color'] = parent.primary_branding_color
+        context['secondary_branding_color'] = parent.secondary_branding_color
+        context['conference_logo'] = parent.conference_logo 
+        context['conference_title'] = parent.title
+        context['has_social_media'] = parent.has_social_media
+        context['main_registration'] = parent.main_registration.all()
+        context['sponsors'] = parent.sponsors.all()
+        context['organizers'] = parent.organizers.all()
+        context['secondary_registration'] = parent.sub_registration.all()
+        context['secondary_registration_heading'] = parent.secondary_registration_heading
+        context['secondary_registration_description'] = parent.secondary_registration_description
+        context['home'] = parent.relative_url(current_site)
         return context
