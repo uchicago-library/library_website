@@ -177,7 +177,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
 
     class Meta:
-        ordering = ['title']
+        ordering = ['last_name', 'first_name']
 
     def get_context(self, request):
         vcard_titles = set()
