@@ -785,23 +785,24 @@ dd {
  * --------------------------------------------------
  */
 @media print {
-  @page {
-    size: 330mm 427mm;
-    margin: 1cm; }
-  a[href]:after {
-    content: none !important; }
-  background-color: #fff;
-  .navbar, .footer, .breadcrumbs, .sidebar, iframe {
+  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
     display: none; }
   img {
-    max-width: 100%; }
-  @page {
-    margin: 0.5cm; }
+    max-width: 100% !important; }
+  a[href]:after {
+    content: none !important; }
   .container-fluid:before {
     content: "University of Chicago Library";
     margin-bottom: 10px;
     border: 1px solid #bbb;
     padding: 3px 5px; }
+  h2, h3 {
+    page-break-after: avoid; }
+  ul, img {
+    page-break-inside: avoid; }
   .rich-text a {
     color: #000;
-    word-wrap: break-word; } }
+    word-wrap: break-word; }
+  @page {
+    margin: 2cm;
+    background-color: #fff; } }
