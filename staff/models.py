@@ -169,7 +169,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     search_fields = BasePageWithoutStaffPageForeignKeys.search_fields + [
         index.SearchField('profile_picture'),
-        index.SearchField('bio'),
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
         index.SearchField('orcid')
