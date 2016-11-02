@@ -171,7 +171,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         index.SearchField('profile_picture'),
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
-        index.SearchField('orcid')
+        index.SearchField('orcid'),
+        index.SearchField('staff_subject_placements')
     ]
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
