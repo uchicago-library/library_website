@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT, LIBCAL_IID
+from library_website.settings.local import DATABASES
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, ChooserBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -40,13 +41,22 @@ import urllib
 # Staff listing, for page_maintainer and editor fields. 
 # doing a raw SQL query here because the models haven't loaded yet. 
 cursor = connection.cursor()
-cursor.execute('''
-    SELECT staff_staffpage.page_ptr_id, wagtailcore_page.title 
-    FROM staff_staffpage 
-    INNER JOIN wagtailcore_page 
-    ON (staff_staffpage.page_ptr_id = wagtailcore_page.id) 
-    WHERE wagtailcore_page.live = true 
-    ORDER BY staff_staffpage.last_name''')
+if 'sqlite' in DATABASES['default']['ENGINE']:
+    cursor.execute('''
+        SELECT staff_staffpage.page_ptr_id, wagtailcore_page.title 
+        FROM staff_staffpage 
+        INNER JOIN wagtailcore_page 
+        ON (staff_staffpage.page_ptr_id = wagtailcore_page.id) 
+        WHERE wagtailcore_page.live = 1 
+        ORDER BY staff_staffpage.last_name''')
+else:
+    cursor.execute('''
+        SELECT staff_staffpage.page_ptr_id, wagtailcore_page.title 
+        FROM staff_staffpage 
+        INNER JOIN wagtailcore_page 
+        ON (staff_staffpage.page_ptr_id = wagtailcore_page.id) 
+        WHERE wagtailcore_page.live = true 
+        ORDER BY staff_staffpage.last_name''')
 staff_pages = cursor.fetchall()
 
 # Helper functions and constants
