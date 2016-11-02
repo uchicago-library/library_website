@@ -139,7 +139,7 @@ def get_stories(sticky=False):
                 continue
             pages.append(get_story_summary(page))
 
-    return sorted(pages, key=lambda p: p['story_date_sort'], reverse=True)
+    return sorted(pages, key=lambda p: (p['story_date_sort'], p['latest_revision_created_at']), reverse=True)
 
 def get_stories_by_page(page=1, sticky=False):
     get_stories_by_page.page_length = 10
@@ -192,6 +192,7 @@ def get_story_summary(news_page):
     return {
         'story_date_sort': news_page.story_date,
         'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
+        'latest_revision_created_at': news_page.latest_revision_created_at,
         'author_title': author_title,
         'author_url': author_url,
         'excerpt': excerpt,
