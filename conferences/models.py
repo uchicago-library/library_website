@@ -19,6 +19,7 @@ class ConferencePageMainRegistrationLinks(Orderable, AbstractButton):
     class Meta:
         verbose_name = 'Main Registration Link'
         verbose_name_plural = 'Main Registration Links'
+        ordering = ['sort_order']
 
 
 class ConferencePageSecondaryRegistrationLinks(Orderable, AbstractButton):
@@ -31,6 +32,7 @@ class ConferencePageSecondaryRegistrationLinks(Orderable, AbstractButton):
     class Meta:
         verbose_name = 'Additional Registration Link'
         verbose_name_plural = 'Additional Registration Links'
+        ordering = ['sort_order']
 
 
 class ConferencePageSponsors(Orderable, LinkedTextOrLogo):
@@ -42,6 +44,7 @@ class ConferencePageSponsors(Orderable, LinkedTextOrLogo):
     class Meta:
         verbose_name = 'Sponsor'
         verbose_name_plural = 'Sponsors'
+        ordering = ['sort_order']
 
 
 class ConferencePageOrganizers(Orderable, LinkedTextOrLogo):
@@ -51,8 +54,9 @@ class ConferencePageOrganizers(Orderable, LinkedTextOrLogo):
     page = ParentalKey('conferences.ConferencePage', related_name='organizers')
     
     class Meta:
-        verbose_name = 'Sponsor'
-        verbose_name_plural = 'Sponsors'
+        verbose_name = 'Organizer'
+        verbose_name_plural = 'Organizers'
+        ordering = ['sort_order']
 
 
 # Page definitions 
