@@ -5,7 +5,7 @@ from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBo
 from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Page, Orderable
+from wagtail.wagtailcore.models import Orderable, Page, PageManager
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -69,6 +69,13 @@ class StaffPagePageVCards(Orderable, VCard):
     """
     page = ParentalKey('staff.StaffPage', related_name='vcards')
 
+class StaffPageManager(PageManager):
+    def get_queryset(self):
+        return (
+            super(StaffPageManager, self)
+            .get_queryset()
+            .order_by('last_name', 'first_name')
+        )
 
 class StaffPage(BasePageWithoutStaffPageForeignKeys):
     """
@@ -126,6 +133,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         blank=True,
         validators=[orcid_regex]
     )
+
+    objects = StaffPageManager()
 
     @property
     def get_staff_subjects(self):

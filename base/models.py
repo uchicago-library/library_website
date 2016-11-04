@@ -2,12 +2,11 @@ from django import forms
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
-from django.db import models, connection
+from django.db import models
 from django.db.models import Q
 from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT, LIBCAL_IID
-from library_website.settings.local import DATABASES
 from unidecode import unidecode
 from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
 from wagtail.wagtailcore.blocks import ChoiceBlock, ChooserBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
@@ -37,27 +36,6 @@ import json
 import logging
 import sys
 import urllib
-
-# Staff listing, for page_maintainer and editor fields. 
-# doing a raw SQL query here because the models haven't loaded yet. 
-cursor = connection.cursor()
-if 'sqlite' in DATABASES['default']['ENGINE']:
-    cursor.execute('''
-        SELECT staff_staffpage.page_ptr_id, wagtailcore_page.title 
-        FROM staff_staffpage 
-        INNER JOIN wagtailcore_page 
-        ON (staff_staffpage.page_ptr_id = wagtailcore_page.id) 
-        WHERE wagtailcore_page.live = 1 
-        ORDER BY staff_staffpage.last_name''')
-else:
-    cursor.execute('''
-        SELECT staff_staffpage.page_ptr_id, wagtailcore_page.title 
-        FROM staff_staffpage 
-        INNER JOIN wagtailcore_page 
-        ON (staff_staffpage.page_ptr_id = wagtailcore_page.id) 
-        WHERE wagtailcore_page.live = true 
-        ORDER BY staff_staffpage.last_name''')
-staff_pages = cursor.fetchall()
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -496,7 +474,6 @@ class StaffPageForeignKeys(models.Model):
         blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_maintainer',
-        choices=staff_pages,
     )
 
     editor = models.ForeignKey(
@@ -505,7 +482,6 @@ class StaffPageForeignKeys(models.Model):
         blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_editor',
-        choices=staff_pages,
     )
 
     content_panels = [
@@ -1020,7 +996,6 @@ class PublicBasePage(BasePage):
         blank=False, 
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_content_specialist',
-        choices=staff_pages
     )
 
     # Searchable fields
