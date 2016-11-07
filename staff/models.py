@@ -165,6 +165,17 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         except(IndexError):
             return None
 
+    def get_subjects(self):
+        """
+        Get all the subjects for a staff member. 
+        Must return a string for elasticsearch.
+
+        Returns:
+            String, concatenated list of subjects.
+        """
+        subject_list = self.staff_subject_placements.values_list('subject', flat=True)
+        return '\n'.join(Subject.objects.get(id=subject).name for subject in subject_list)
+
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),
         StreamFieldPanel('bio'),
@@ -181,7 +192,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
         index.SearchField('orcid'),
-        index.SearchField('staff_subject_placements')
+        index.SearchField('get_subjects')
     ]
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
