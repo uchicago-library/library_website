@@ -80,6 +80,9 @@ class TestUsersAndServingLivePages(TestCase):
     you can do something like this: 
 
     from wagtail.wagtailcore.models import Page
+    from ask_a_librarian.models import AskPage
+    from staff.models import StaffPage
+    from units.models import UnitPage
     pages = Page.objects.exclude(id__in=[1, 6, 7, 9, 12, 23, 33, 38, 82, 272, 278,
     279, 280, 282, 407, 451, 452, 521, 587, 665, 754, 755, 822, 1207, 1208, 1260,
     1448, 1632, 1669, 1670, 1671, 1672, 1674, 1675, 1677, 1678, 1679, 1707, 1752,
@@ -87,7 +90,7 @@ class TestUsersAndServingLivePages(TestCase):
     1893, 2165, 2166, 2198, 2226, 2230, 2261, 2281, 2283, 2452, 2455, 2456, 2458,
     2685, 2713, 2714, 2923, 2927, 2970, 2971, 2980, 2981, 3000, 3184, 3185, 3213,
     3314, 3378, 3380, 3392, 3393, 3640, 3643, 3692, 3699, 3961, 4084, 4127, 4186,
-    4273, 4317, 4499, 4637, 4646, 4717, 4872, 4873]).delete()
+    4273, 4317, 4499, 4637, 4646, 4717, 4872, 4873]).not_type((AskPage, StaffPage, UnitPage)).delete()
 
     from wagtail.wagtaildocs.models import Document
     Document.objects.all().delete()
