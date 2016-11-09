@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
         ('wagtaildocs', '0007_merge'),
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
         ('wagtailcore', '0028_merge'),
+        ('lib_collections', '0000_manual_pre_initial'),
     ]
 
     operations = [

@@ -20,8 +20,6 @@ class Migration(migrations.Migration):
 
     replaces = [('lib_collections', '0001_initial'), ('lib_collections', '0002_auto_20151113_2245'), ('lib_collections', '0003_auto_20151113_2245'), ('lib_collections', '0004_auto_20151118_2143'), ('lib_collections', '0005_auto_20151201_2209'), ('lib_collections', '0006_auto_20151203_1806'), ('lib_collections', '0007_auto_20151209_2251'), ('lib_collections', '0008_auto_20160328_1905'), ('lib_collections', '0009_exhibitpage_exhibitpagedonorpageplacement_exhibitpagerelatedcollectionpageplacement_exhibitpagesubje'), ('lib_collections', '0010_auto_20160502_2055'), ('lib_collections', '0011_auto_20160502_2100'), ('lib_collections', '0012_auto_20160509_1715'), ('lib_collections', '0013_auto_20160509_1743'), ('lib_collections', '0014_auto_20160510_1815'), ('lib_collections', '0015_auto_20160510_1923'), ('lib_collections', '0016_collectionpage_thumbnail_caption'), ('lib_collections', '0017_auto_20160513_1529'), ('lib_collections', '0018_auto_20160602_1653'), ('lib_collections', '0019_auto_20160602_2028'), ('lib_collections', '0020_auto_20160609_2056'), ('lib_collections', '0021_auto_20160609_2105'), ('lib_collections', '0022_auto_20160609_2121'), ('lib_collections', '0023_auto_20160610_1600'), ('lib_collections', '0024_auto_20160616_1727'), ('lib_collections', '0025_auto_20160621_1858'), ('lib_collections', '0026_auto_20160623_1449'), ('lib_collections', '0027_auto_20160623_1934'), ('lib_collections', '0028_auto_20160624_1847'), ('lib_collections', '0029_auto_20160627_2019'), ('lib_collections', '0030_auto_20160628_2157'), ('lib_collections', '0031_auto_20160629_2118'), ('lib_collections', '0032_auto_20160629_2135'), ('lib_collections', '0033_auto_20160701_1505'), ('lib_collections', '0034_auto_20160702_1740'), ('lib_collections', '0035_auto_20160702_1751'), ('lib_collections', '0036_auto_20160702_1754'), ('lib_collections', '0037_auto_20160708_1033'), ('lib_collections', '0038_auto_20160726_1429'), ('lib_collections', '0039_auto_20160819_1235'), ('lib_collections', '0040_auto_20160819_1653'), ('lib_collections', '0041_auto_20160912_1227'), ('lib_collections', '0042_auto_20160912_1354'), ('lib_collections', '0043_auto_20160913_1024'), ('lib_collections', '0044_auto_20160920_1342'), ('lib_collections', '0045_auto_20160926_1455'), ('lib_collections', '0046_auto_20160929_1632'), ('lib_collections', '0047_auto_20160930_1137'), ('lib_collections', '0048_auto_20160930_1327'), ('lib_collections', '0049_auto_20161014_1113'), ('lib_collections', '0050_exhibitpage_web_exhibit'), ('lib_collections', '0051_auto_20161027_1008'), ('lib_collections', '0052_auto_20161103_1604'), ('lib_collections', '0053_auto_20161104_1314')]
 
-    initial = True
-
     dependencies = [
         ('public', '0001_squashed_0098_auto_20161104_1314'),
         ('staff', '0000_manual_pre_initial'),
@@ -34,6 +32,7 @@ class Migration(migrations.Migration):
         ('subjects', '0001_initial'),
         ('units', '0000_manual_pre_initial'),
         ('subjects', '0004_subjectseealsotable'),
+        ('lib_collections', '0000_manual_pre_initial'),
     ]
 
     operations = [
@@ -89,29 +88,75 @@ class Migration(migrations.Migration):
                 'ordering': ['sort_order'],
             },
         ),
-        migrations.CreateModel(
-            name='CollectionPage',
-            fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
-                ('sort_order', models.IntegerField(blank=True, default=0)),
-                ('short_abstract', models.TextField(default='')),
-                ('full_description', models.TextField(default='')),
-                ('access_instructions', models.TextField(blank=True, default='')),
-                ('collection_location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='public.LocationPage')),
-                ('content_specialist', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_content_specialist', to='staff.StaffPage')),
-                ('editor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_editor', to='staff.StaffPage')),
-                ('page_maintainer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_maintainer', to='staff.StaffPage')),
-                ('staff_contact', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage')),
-                ('thumbnail', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
-                ('unit', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_related', to='units.UnitPage')),
-                ('show_sidebar', models.BooleanField(default=False)),
-                ('start_sidebar_from_here', models.BooleanField(default=False)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('wagtailcore.page',),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='last_reviewed',
+            field=models.DateField(blank=True, null=True, verbose_name='Last Reviewed'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='sort_order',
+            field=models.IntegerField(blank=True, default=0),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='short_abstract',
+            field=models.TextField(default=''),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='full_description',
+            field=models.TextField(default=''),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='access_instructions',
+            field=models.TextField(blank=True, default=''),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='collection_location',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='public.LocationPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='content_specialist',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_content_specialist', to='staff.StaffPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='editor',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_editor', to='staff.StaffPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='page_maintainer',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_maintainer', to='staff.StaffPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='staff_contact',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='thumbnail',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='unit',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lib_collections_collectionpage_related', to='units.UnitPage'),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='show_sidebar',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='collectionpage',
+            name='start_sidebar_from_here',
+            field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
             name='CollectionPageAlternateNames',
