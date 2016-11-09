@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staff', '0007_auto_20151209_2251'),
+        ('staff', '0000_manual_pre_initial'),
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
     ]
 

@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
         ('directory_unit', '0002_auto_20151208_1739'),
+        ('staff', '0000_manual_pre_initial'),
     ]
 
     operations = [
@@ -25,24 +26,50 @@ class Migration(migrations.Migration):
             },
             bases=('wagtailcore.page',),
         ),
-        migrations.CreateModel(
-            name='StaffPage',
-            fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
-                ('cnetid', models.CharField(max_length=255)),
-                ('display_name', models.CharField(null=True, max_length=255, blank=True)),
-                ('official_name', models.CharField(null=True, max_length=255, blank=True)),
-                ('first_name', models.CharField(null=True, max_length=255, blank=True)),
-                ('middle_name', models.CharField(null=True, max_length=255, blank=True)),
-                ('last_name', models.CharField(null=True, max_length=255, blank=True)),
-                ('libguide_url', models.URLField(null=True, max_length=255, blank=True)),
-                ('bio', wagtail.wagtailcore.fields.RichTextField(blank=True, null=True)),
-                ('is_public_persona', models.BooleanField(default=False)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('wagtailcore.page',),
+        migrations.AddField(
+            model_name='staff',
+            name='cnetid',
+            field=models.CharField(blank=True, max_length=255),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='display_name',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='official_name',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='first_name',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='middle_name',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='last_name',
+            field=models.CharField(blank=True, max_length=255, null=True),
+        ),  
+        migrations.AddField(
+            model_name='staff',
+            name='libguide_url',
+            field=models.URLField(blank=True, max_length=255, null=True),
+        ), 
+        migrations.AddField(
+            model_name='staff',
+            name='bio',
+            field=wagtail.wagtailcore.fields.RichTextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='staff',
+            name='is_public_persona',
+            field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
             name='StaffPageSubjectPlacement',

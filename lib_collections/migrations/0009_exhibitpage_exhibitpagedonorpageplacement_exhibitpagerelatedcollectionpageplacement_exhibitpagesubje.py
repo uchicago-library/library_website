@@ -14,8 +14,8 @@ class Migration(migrations.Migration):
         ('public', '0052_auto_20160328_1905'),
         ('subjects', '0004_subjectseealsotable'),
         ('wagtailimages', '0012_copy_image_permissions_to_collections'),
-        ('units', '0050_auto_20160328_1905'),
-        ('staff', '0024_auto_20160328_1905'),
+        ('units', '0000_manual_pre_initial'),
+        ('staff', '0000_manual_pre_initial'),
         ('lib_collections', '0008_auto_20160328_1905'),
     ]
 

@@ -13,9 +13,10 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('units', '0000_manual_pre_initial'),
         ('public', '0002_auto_20151113_2245'),
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
-        ('staff', '0001_initial'),
+        ('staff', '0000_manual_pre_initial'),
     ]
 
     operations = [
@@ -27,28 +28,70 @@ class Migration(migrations.Migration):
             ],
             bases=(models.Model, wagtail.wagtailsearch.index.Indexed),
         ),
-        migrations.CreateModel(
-            name='UnitPage',
-            fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
-                ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
-                ('sort_order', models.IntegerField(blank=True, default=0)),
-                ('fax_number', models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message='Please enter the phone number using the format 773-123-4567')], max_length=12, blank=True)),
-                ('display_in_directory', models.BooleanField(default=False)),
-                ('email', models.EmailField(max_length=254, blank=True)),
-                ('contact_url', models.URLField(default='', blank=True)),
-                ('room_number', models.CharField(max_length=32, blank=True)),
-                ('is_hub_page', models.BooleanField(default=False)),
-                ('body', wagtail.wagtailcore.fields.StreamField((('h2', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon='pilcrow'))))),
-                ('editor', models.ForeignKey(to='staff.StaffPage', related_name='units_unitpage_editor', on_delete=django.db.models.deletion.SET_NULL, null=True)),
-                ('location', models.ForeignKey(to='public.LocationPage', on_delete=django.db.models.deletion.SET_NULL, related_name='units_unitpage_related', blank=True, null=True)),
-                ('page_maintainer', models.ForeignKey(to='staff.StaffPage', related_name='units_unitpage_maintainer', on_delete=django.db.models.deletion.SET_NULL, null=True)),
-                ('public_web_page', models.ForeignKey(to='wagtailcore.Page', on_delete=django.db.models.deletion.SET_NULL, related_name='+', blank=True, null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('wagtailcore.page', models.Model),
+        migrations.AddField(
+            model_name='unitpage',
+            name='last_reviewed',
+            field=models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='sort_order',
+            field=models.IntegerField(blank=True, default=0),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='fax_number',
+            field=models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message='Please enter the phone number using the format 773-123-4567')], max_length=12, blank=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='display_in_directory',
+            field=models.BooleanField(default=False)
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='email',
+            field=models.EmailField(max_length=254, blank=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='contact_url',
+            field=models.URLField(default='', blank=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='room_number',
+            field=models.CharField(max_length=32, blank=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='is_hub_page',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='body',
+            field=wagtail.wagtailcore.fields.StreamField((('h2', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon='pilcrow')))),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='editor',
+            field=models.ForeignKey(to='staff.StaffPage', related_name='units_unitpage_editor', on_delete=django.db.models.deletion.SET_NULL, null=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='location',
+            field=models.ForeignKey(to='public.LocationPage', on_delete=django.db.models.deletion.SET_NULL, related_name='units_unitpage_related', blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='page_maintainer',
+            field=models.ForeignKey(to='staff.StaffPage', related_name='units_unitpage_maintainer', on_delete=django.db.models.deletion.SET_NULL, null=True),
+        ),
+        migrations.AddField(
+            model_name='unitpage',
+            name='public_web_page',
+            field=models.ForeignKey(to='wagtailcore.Page', on_delete=django.db.models.deletion.SET_NULL, related_name='+', blank=True, null=True),
         ),
         migrations.CreateModel(
             name='UnitPagePhoneNumbers',

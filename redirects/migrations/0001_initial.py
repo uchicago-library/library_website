@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailcore', '0028_merge'),
-        ('staff', '0023_auto_20160301_1838'),
-        ('units', '0049_unitpage_alphabetical_directory_name'),
+        ('staff', '0000_manual_pre_initial'),
+        ('units', '0000_manual_pre_initial'),
         ('wagtaildocs', '0007_merge'),
     ]
 

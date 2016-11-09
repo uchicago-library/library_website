@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('staff', '0011_auto_20160119_1942'),
-        ('units', '0031_auto_20160119_1942'),
+        ('staff', '0000_manual_pre_initial'),
+        ('units', '0000_manual_pre_initial'),
         ('wagtailcore', '0023_alter_page_revision_on_delete_behaviour'),
         ('wagtailimages', '0010_change_on_delete_behaviour'),
         ('public', '0031_auto_20160119_1942'),

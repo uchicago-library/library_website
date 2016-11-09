@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('public', '0002_auto_20151113_2245'),
         ('subjects', '0001_initial'),
-        ('units', '0001_initial'),
-        ('staff', '0001_initial'),
+        ('units', '0000_manual_pre_initial'),
+        ('staff', '0000_manual_pre_initial'),
         ('lib_collections', '0002_auto_20151113_2245'),
     ]
 

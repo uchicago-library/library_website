@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staff', '0001_initial'),
+        ('staff', '0000_manual_pre_initial'),
         ('public', '0001_initial'),
     ]
 

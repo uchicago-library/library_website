@@ -11,9 +11,9 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('units', '0050_auto_20160328_1905'),
+        ('units', '0000_manual_pre_initial'),
         ('wagtailcore', '0028_merge'),
-        ('staff', '0026_auto_20160502_2055'),
+        ('staff', '0000_manual_pre_initial'),
         ('public', '0058_staffpublicpage'),
     ]
 

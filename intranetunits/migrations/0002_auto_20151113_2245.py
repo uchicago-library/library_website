@@ -9,7 +9,7 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staff', '0001_initial'),
+        ('staff', '0000_manual_pre_initial'),
         ('intranetunits', '0001_initial'),
     ]
 

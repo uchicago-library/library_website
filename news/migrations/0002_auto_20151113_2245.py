@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('news', '0001_initial'),
-        ('staff', '0001_initial'),
+        ('staff', '0000_manual_pre_initial'),
         ('wagtailimages', '0008_image_created_at_index'),
     ]
 
