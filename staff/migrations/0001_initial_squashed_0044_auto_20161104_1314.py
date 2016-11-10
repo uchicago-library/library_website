@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         ('wagtaildocs', '0003_add_verbose_names'),
         ('staff', '0000_manual_pre_initial'),
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
-        ('subjects', '0001_initial'),
+        ('subjects', '0001_squashed_0006_subject_display_in_dropdown'),
         ('wagtailimages', '0008_image_created_at_index'),
         ('directory_unit', '0002_auto_20151208_1739'),
     ]
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='staffpage',
             name='cnetid',
-            field=models.CharField(max_length=255),
+            field=models.CharField(blank=False, max_length=255),
         ),
         migrations.AddField(
             model_name='staffpage',
