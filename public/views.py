@@ -86,7 +86,7 @@ def spaces(request):
             PAGE_ID = DANGELO_HOMEPAGE
         elif building == 'Special Collections Research Center':
             PAGE_ID = SCRC_HOMEPAGE
-            
+
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PAGE_ID)
     friendly_name = home_page.friendly_name

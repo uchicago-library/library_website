@@ -27,38 +27,6 @@ def get_xml_from_directory_api(url):
     return result.read()
 
 
-def get_events(url):
-    """
-    Get the workshops and events feed from Tiny Tiny RSS
-    reorder the events by date and retun data formatted 
-    for a restful service.
-
-    Args:
-        url: string, feed url.
-
-    Returns:
-        A list of tuples where the first item in the tuple
-        is a title, the second item in the tuple is a url,
-        the third item in the tuple is a date string,
-        and the fourth item is a time string.
-    """
-    d = feedparser.parse(url)
-    entries = []
-    for e in d.entries:
-        content = e.content[0]['value']
-        # TODO: turn this into a regex
-        tmp_lst = content.split('<strong>Date:</strong>')
-        tmp_lst = tmp_lst[1].split('<strong>Time:</strong>')
-        tmp_lst = [tmp_lst[0]] + tmp_lst[1].split('<br>')
-        ds = strip_tags(tmp_lst[0]).strip()
-        ts = strip_tags(tmp_lst[1]).strip()
-        #dt_obj = parser.parse(ds)
-        #print(dt_obj)
-        title = e.title.split(': ')[1]
-        entries.append((title, e.link, ds, ts))
-    return entries
-
-
 def get_news(url):
     """
     Get news stories from a Wordpress feed and create

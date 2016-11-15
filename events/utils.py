@@ -1,75 +1,42 @@
 from datetime import datetime
 from http.client import HTTPConnection
+from urllib.parse import parse_qs, urlparse
 from xml.etree import ElementTree
 
 import re
 
-def get_xml_from_university_event_calendar():
-    c = HTTPConnection('www3.lib.uchicago.edu', 80)
-    c.request('GET', '/tt-rss/public.php?op=rss&id=-4&key=cmxewn57755bc8bdf3b')
+def get_xml_from_feed(feed):
+    p = urlparse(feed)
+
+    if p.scheme != 'http':
+        raise ValueError
+
+    # p.netloc is "www3.lib.uchicago.edu"
+    c = HTTPConnection(p.netloc, 80)
+
+    c.request('GET', p.path + "?" + p.query)
     result = c.getresponse()
     xml_string = result.read()
     return ElementTree.fromstring(xml_string)
 
-def get_flat_entries(x):
+def get_entries_from_events_uchicago(x):
+    entries = {}
+    for entry in x.find('channel').findall('item'):
+        entries[entry.find('guid').text] = {
+            'start_date': entry.find('startDate').text,
+            'start_time': entry.find('startTime').text,
+            'end_date': entry.find('endDate').text,
+            'end_time': entry.find('endTime').text
+        }
+    return entries
+
+# 
+# input: xml from university event feed.
+#
+def get_flat_entries_from_ttrss(x):
     entries = []
     for entry in x.findall('{http://www.w3.org/2005/Atom}entry'):
         content = entry.find('{http://www.w3.org/2005/Atom}content').text
-
-        # date
-        m = re.search('<strong>Date:</strong>([^<]*)<br>', content)
-        try:
-            date = m.group(1).strip()
-        except:
-            date = ''
-
-        # starts
-        m = re.search('<strong>Starts:</strong>([^<]*)<br>', content)
-        try:
-            starts = m.group(1).strip()
-        except:
-            starts = ''
-
-        # ends
-        m = re.search('<strong>Ends:</strong>([^<]*)<br>', content)
-        try:
-            ends = m.group(1).strip()
-        except:
-            ends = ''
-
-        # date fallback...
-        if date == '':
-            date = starts
-
-        # time
-        m = re.search('<strong>Time:</strong>([^<]*)<br>', content)
-        try:
-            time = m.group(1).strip()
-        except:
-            time = ''
-
-        # sortable date string: e.g. "2016-06-24 15:00"
-        sortable_datetime = ''
-        if date:
-            s = date
-        else:
-            s = start
-    
-        sortable_datetime = datetime.strptime(s, '%B %d, %Y').strftime("%Y-%m-%d")
-
-        date_label = datetime.strptime(s, '%B %d, %Y').strftime('%B %d, %Y').replace(' 0', ' ')
-
-        if time == 'All Day':
-            sortable_datetime = sortable_datetime + ' 00:00'
-        else:
-            sortable_datetime = sortable_datetime + datetime.strptime(time.split('-')[0].strip(), '%I:%M %p').strftime(" %H:%M")
-
-        sortable_date = sortable_datetime.split(' ')[0]
-
-        if date:
-            time_label = time
-        else:
-            time_label = starts + ' - ' + ends
 
         # the date and time appear in the title, like "Aug 18: ", or "Aug 18, 5:00PM: ".
         # strip that out.
@@ -80,16 +47,15 @@ def get_flat_entries(x):
         # relace <br><br> and everything after with whitespace.
         content = re.sub(r'<br><br>.*$', '', content)
 
+        link = entry.find('{http://www.w3.org/2005/Atom}link').get('href')
+        query = urlparse(link).query
+        guid = parse_qs(query)['guid'][0]
+
         entries.append({
             'content':           content,
-            'date':              date,
-            'date_label':        date_label,
-            'link':              entry.find('{http://www.w3.org/2005/Atom}link').get('href'),
-            'sortable_date':     sortable_date,
-            'sortable_datetime': sortable_datetime,
+            'guid':              guid,
+            'link':              link,
             'summary':           entry.find('{http://www.w3.org/2005/Atom}summary').text,
-            'time':              time,
-            'time_label':        time_label,
             'title':             title
         })
     return entries
@@ -99,7 +65,7 @@ def get_flat_entries(x):
 #   [ '20160623', [ list-of-entries ] ],
 #   ...
 # ]
-def group_entries(entries):
+def group_ttrss_entries(entries):
     entries_out = []
     for entry in entries:
         # find the entry index for this sortable_date.
@@ -123,5 +89,42 @@ def group_entries(entries):
 
     return entries_out
 
-        
+def add_university_fields_to_ttrss_entries(university_entries, ttrss_entries):
+    i = 0
+    while i < len(ttrss_entries):
+        guid = ttrss_entries[i]['guid']
+        date = university_entries[guid]['start_date']
+        time = university_entries[guid]['start_time']
+        sortable_date = datetime.strptime(date, '%B %d, %Y').strftime("%Y-%m-%d")
+        sortable_datetime = sortable_date + ' ' + datetime.strptime(time, '%I:%M %p').strftime('%H:%M')
+        ttrss_entries[i]['date'] = date
+        ttrss_entries[i]['date_label'] = date
+        ttrss_entries[i]['time'] = time
+        ttrss_entries[i]['time_label'] = time
+        ttrss_entries[i]['sortable_date'] = sortable_date
+        ttrss_entries[i]['sortable_datetime'] = sortable_datetime
+        i = i + 1
+    return ttrss_entries
 
+def get_events(university_xml, ttrss_xml, start, stop):
+    # get xml from the university event feed directly. 
+    university_entries = get_entries_from_events_uchicago(university_xml)
+
+    # get info from the event calendar as a list of lists.
+    ttrss_entries = get_flat_entries_from_ttrss(ttrss_xml)
+
+    # add fields. 
+    ttrss_entries = add_university_fields_to_ttrss_entries(university_entries, ttrss_entries)
+
+    # group entries. 
+    ttrss_entries = group_ttrss_entries(ttrss_entries)
+
+    # only pass along the entries that make sense for this date range. 
+    entries_out = []
+    i = 0
+    while i < len(ttrss_entries):
+        if ttrss_entries[i][0] >= start.strftime('%Y-%m-%d') and ttrss_entries[i][0] <= stop.strftime('%Y-%m-%d'):
+            entries_out.append(ttrss_entries[i])
+        i = i + 1
+
+    return entries_out
