@@ -20,14 +20,42 @@ def get_xml_from_feed(feed):
     return ElementTree.fromstring(xml_string)
 
 def get_entries_from_events_uchicago(x):
-    entries = {}
+    entries = []
     for entry in x.find('channel').findall('item'):
-        entries[entry.find('guid').text] = {
-            'start_date': entry.find('startDate').text,
-            'start_time': entry.find('startTime').text,
+        content = entry.find('description').text
+        # remove CDATA marker. 
+        content = content.replace('<![CDATA[', '')
+        # remove line breaks.
+        content = re.sub(r'<br><br>.*$', '', content)
+
+        guid = entry.find('guid').text
+
+        start_date = entry.find('startDate').text
+        start_time = entry.find('startTime').text
+    
+        sortable_date = datetime.strptime(start_date, '%B %d, %Y').strftime('%Y-%m-%d')
+        sortable_datetime = sortable_date + ' ' + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
+        
+        # the date and time appear in the title, like "Aug 18: ", or "Aug 18, 5:00PM: ".
+        # strip that out.
+        title = re.sub(r'^.*?: ', '', entry.find('title').text)
+
+        entries.append({
+            'content': content,
+            'date_label': start_date,
             'end_date': entry.find('endDate').text,
-            'end_time': entry.find('endTime').text
-        }
+            'end_time': entry.find('endTime').text,
+            'guid': guid,
+            'link': entry.find('link').text,
+            'sortable_date': sortable_date,
+            'sortable_datetime': sortable_datetime,
+            'start_date': start_date,
+            'start_time': start_time,
+            'summary': content,
+            'time': start_time,
+            'time_label': start_time,
+            'title': title
+        })
     return entries
 
 # 
@@ -36,28 +64,11 @@ def get_entries_from_events_uchicago(x):
 def get_flat_entries_from_ttrss(x):
     entries = []
     for entry in x.findall('{http://www.w3.org/2005/Atom}entry'):
-        content = entry.find('{http://www.w3.org/2005/Atom}content').text
-
-        # the date and time appear in the title, like "Aug 18: ", or "Aug 18, 5:00PM: ".
-        # strip that out.
-        title = re.sub(r'^.*?: ', '', entry.find('{http://www.w3.org/2005/Atom}title').text)
-
-        # process content some more. 
-        content = content.replace('<![CDATA[', '')
-        # relace <br><br> and everything after with whitespace.
-        content = re.sub(r'<br><br>.*$', '', content)
-
+        #category = entry.find('{http://www.w3.org/2005/Atom}category').get('term')
         link = entry.find('{http://www.w3.org/2005/Atom}link').get('href')
         query = urlparse(link).query
         guid = parse_qs(query)['guid'][0]
-
-        entries.append({
-            'content':           content,
-            'guid':              guid,
-            'link':              link,
-            'summary':           entry.find('{http://www.w3.org/2005/Atom}summary').text,
-            'title':             title
-        })
+        entries.append({'guid': guid})
     return entries
 
 # collect all entries into a list of lists. 
@@ -65,7 +76,7 @@ def get_flat_entries_from_ttrss(x):
 #   [ '20160623', [ list-of-entries ] ],
 #   ...
 # ]
-def group_ttrss_entries(entries):
+def group_entries(entries):
     entries_out = []
     for entry in entries:
         # find the entry index for this sortable_date.
@@ -89,7 +100,7 @@ def group_ttrss_entries(entries):
 
     return entries_out
 
-def add_university_fields_to_ttrss_entries(university_entries, ttrss_entries):
+def filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries):
     """
     Combine data from the University events calendar feed with the
     Library's Tiny Tiny RSS feed and return a new data structure
@@ -107,23 +118,17 @@ def add_university_fields_to_ttrss_entries(university_entries, ttrss_entries):
         The new datastructure combines fields from the University
         xml feed and the Tiny Tiny Rss feed.
     """
-    i = 0
-    while i < len(ttrss_entries):
-        guid = ttrss_entries[i]['guid']
-        date = university_entries[guid]['start_date']
-        time = university_entries[guid]['start_time']
-        sortable_date = datetime.strptime(date, '%B %d, %Y').strftime("%Y-%m-%d")
-        sortable_datetime = sortable_date + ' ' + datetime.strptime(time, '%I:%M %p').strftime('%H:%M')
-        ttrss_entries[i]['date'] = date
-        ttrss_entries[i]['date_label'] = date
-        ttrss_entries[i]['time'] = time
-        ttrss_entries[i]['time_label'] = time
-        ttrss_entries[i]['sortable_date'] = sortable_date
-        ttrss_entries[i]['sortable_datetime'] = sortable_datetime
-        i = i + 1
-    return ttrss_entries
+    ttrss_guids = []
+    for ttrss_entry in ttrss_entries:
+        ttrss_guids.append(ttrss_entry['guid'])
 
-def get_events(university_xml, ttrss_xml, start, stop):
+    entries_out = []
+    for entry in university_entries:
+        if entry['guid'] in ttrss_guids:
+            entries_out.append(entry)
+    return entries_out
+
+def get_events(university_url, ttrss_url, start, stop, full_view = True):
     """
     Return a datastructure containing events data parsed from
     the University events feed and Tiny Tiny Rss.
@@ -146,24 +151,31 @@ def get_events(university_xml, ttrss_xml, start, stop):
         time_label, guid, date_label, date, content, link,
         sortable_date, title, and time.
     """
+    ttrss_xml = get_xml_from_feed(ttrss_url)
+    university_xml = get_xml_from_feed(university_url)
+
+    query = urlparse(ttrss_url).query
+    category = parse_qs(query)['id'][0]
+
     # get xml from the university event feed directly. 
     university_entries = get_entries_from_events_uchicago(university_xml)
 
     # get info from the event calendar as a list of lists.
     ttrss_entries = get_flat_entries_from_ttrss(ttrss_xml)
 
-    # add fields. 
-    ttrss_entries = add_university_fields_to_ttrss_entries(university_entries, ttrss_entries)
+    # filter to TTRSS entries only.
+    if not full_view:
+        university_entries = filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries)
 
     # group entries. 
-    ttrss_entries = group_ttrss_entries(ttrss_entries)
+    grouped_entries = group_entries(university_entries)
 
     # only pass along the entries that make sense for this date range. 
     entries_out = []
     i = 0
-    while i < len(ttrss_entries):
-        if ttrss_entries[i][0] >= start.strftime('%Y-%m-%d') and ttrss_entries[i][0] <= stop.strftime('%Y-%m-%d'):
-            entries_out.append(ttrss_entries[i])
+    while i < len(grouped_entries):
+        if grouped_entries[i][0] >= start.strftime('%Y-%m-%d') and grouped_entries[i][0] <= stop.strftime('%Y-%m-%d'):
+            entries_out.append(grouped_entries[i])
         i = i + 1
 
     return entries_out

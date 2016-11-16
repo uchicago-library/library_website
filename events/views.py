@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .utils import get_events, get_xml_from_feed
+from .utils import get_events
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
 from base.utils import get_hours_and_location
@@ -26,11 +26,10 @@ def events(request):
     previous_start = start - datetime.timedelta(days=number_of_days_last_month)
     next_start = stop + datetime.timedelta(days=1)
 
-    feed = 'http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=library&key=oxj4em577573f09bc56'
-    university_xml = get_xml_from_feed('http://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48')
-    ttrss_xml = get_xml_from_feed('http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=library&key=oxj4em577573f09bc56')
+    university_url = 'http://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
+    ttrss_url = 'http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
 
-    entries = get_events(university_xml, ttrss_xml, start, stop)
+    entries = get_events(university_url, ttrss_url, start, stop)
 
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
