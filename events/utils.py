@@ -90,6 +90,23 @@ def group_ttrss_entries(entries):
     return entries_out
 
 def add_university_fields_to_ttrss_entries(university_entries, ttrss_entries):
+    """
+    Combine data from the University events calendar feed with the
+    Library's Tiny Tiny RSS feed and return a new data structure
+    with all the fields.
+
+    Args:
+        university_entries: dictionary of fields parsed from the
+        University events xml feed.
+
+        ttrss_entries: list of dictionaries of fields parsed from
+        the Tiny Tiny RSS feed.
+
+    Returns:
+        A list of dictionaries with combined data about events.
+        The new datastructure combines fields from the University
+        xml feed and the Tiny Tiny Rss feed.
+    """
     i = 0
     while i < len(ttrss_entries):
         guid = ttrss_entries[i]['guid']
@@ -107,6 +124,28 @@ def add_university_fields_to_ttrss_entries(university_entries, ttrss_entries):
     return ttrss_entries
 
 def get_events(university_xml, ttrss_xml, start, stop):
+    """
+    Return a datastructure containing events data parsed from
+    the University events feed and Tiny Tiny Rss.
+
+    Args:
+        university_xml: ElementTree xml object representing
+        xml from the university calendar feed.
+
+        ttrss_xml: ElementTree xml object representing xml
+        from the Tiny Tiny RSS feed.
+
+        start: datetime object.
+
+        stop: datetime object.
+
+    Returns:
+        A list of lists where the first item of each list
+        is a date string and the second item is a list
+        containing dictionaries. Dictionary keys include
+        time_label, guid, date_label, date, content, link,
+        sortable_date, title, and time.
+    """
     # get xml from the university event feed directly. 
     university_entries = get_entries_from_events_uchicago(university_xml)
 
