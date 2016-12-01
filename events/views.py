@@ -11,13 +11,13 @@ import datetime
 def events(request):
     start_str = request.GET.get('start', None)
     if start_str:
-        start = datetime.datetime.strptime(start_str, '%Y-%m-%d')
+        start = datetime.datetime.strptime(start_str, '%Y-%m-%d').date()
     else:
         start = datetime.date.today()
         start_str = start.strftime('%Y-%m-%d')
 
     # if the date was in the past, set it to today.
-    if start < datetime.datetime.now():
+    if start < datetime.datetime.now().date():
         start = datetime.datetime.now().date()
         start_str = start.strftime('%Y-%m-%d')
 
