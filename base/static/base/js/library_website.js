@@ -57,12 +57,14 @@ function renderEvents() {
     if (feed) {
         json = $.getJSON('/json-events/?feed='.concat(feed), function(data) {
             var innerJson = data['events'];
-            $.each(innerJson, function(key, val){
-                var title = innerJson[key][0];
-                var url = innerJson[key][1];
-                var date = innerJson[key][2];
-                var time = innerJson[key][3];
-                eventsHtml += '<p><a id="event-header" href="' + url + '">' + title + '</a><br/><span class="event-date">' + date + '</span> | ' + time; 
+            $.each(innerJson, function(i, v){
+                if (v['start_date'] == v['end_date']) {
+                    // single-day events.
+                    eventsHtml += '<p><a id="event-header" href="' + v['link'] + '">' + v['title'] + '</a><br/><span class="event-date">' + v['start_date'] + '</span> | ' + v['start_time'] + ' - ' + v['end_time'] + '</p>'
+                } else {
+                    // multi-day events. 
+                    eventsHtml += '<p><a id="event-header" href="' + v['link'] + '">' + v['title'] + '</a><br/><span class="event-date">' + v['start_date'] + '</span> | ' + v['start_time'] + ' -<br/>' + '<span class="event-date">' + v['end_date'] + '</span> | ' + v['end_time'] + '</p>'
+                }
             });
             $('#events-target').replaceWith(eventsHtml);
         });
