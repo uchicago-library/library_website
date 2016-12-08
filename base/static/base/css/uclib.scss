@@ -34,6 +34,14 @@ Page Specific Alterations
  * --------------------------------------------------
  */
 
+ .visually-hidden { // For ADA helper text
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
 .breadcrumbs {
   padding-top: 5px;
   padding-left: 20px;
@@ -854,6 +862,10 @@ table.table-striped, .table-striped>tbody {
   }
 }
 
+thead th {
+  white-space: nowrap;
+}
+
 .distinct-list { //table base
   a {
     color: #8a4a20;
@@ -875,14 +887,34 @@ table.table-striped, .table-striped>tbody {
   }
 }
 
+thead a {
+  color: #000036;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+tbody a {
+  color: #32327f;
+}
+
 .etable {
   a[href*="events.uchicago"] {
     font-size: 1.05em;
     font-weight: 600;
+    a[href*=register] {
+      color: red;
+    }
+    &:after {
+      content: "\0020\F08E";
+      font-family: FontAwesome;
+      font-size: 0.8em;
+      padding-left: 0.5em;
+      display: inline-block;
+    }
   }
 }
 
-tr.etable-header {
+tr.etable-header, th.etable-header, table.etable thead {
   border-bottom: 2px solid #ADB17D;
   background-color: #c5c8a4 !important;
   @include respond-to(smallonly) {
@@ -893,18 +925,6 @@ tr.etable-header {
 
 table.etable>thead>tr>th {
   border-bottom: 0;
-}
-
-table.etable thead {
-  text-indent: -999em;
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  width: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
 }
 
 table.etable>tbody>tr {
@@ -1472,6 +1492,12 @@ td.time, td.event-nav {
   & a {
     color: $darkgray;
   }
+}
+
+.event-time {
+  font-weight: 400;
+  display: block;
+  font-style: italic;
 }
 
 
