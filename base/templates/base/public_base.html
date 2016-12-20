@@ -68,9 +68,9 @@
             </div>
         {% endif %}
         <!-- Top Navigation -->
-        <nav class="navbar navbar-default" role="navigation"> <!-- Navwrapper -->
+        <nav role="banner" class="navbar navbar-default" role="navigation"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->
-                <div class="mobile-topnav visible-xs visible-sm">
+                <div role="navigation" class="mobile-topnav visible-xs visible-sm">
                     <a href="{{hours_page_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Library Hours"><i title="Library Hours" class="fa fa-clock-o fa-lg"><span class="sr-only">Library Hours</span></i></a> | 
                     <a href="{{chat_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Ask a Librarian"><i title="Ask a Librarian" class="fa fa-comment fa-lg"><span class="sr-only">Ask a Librarian</span></i></a> | 
                     <a href="/about/thelibrary/supportus/" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Support the Library"><i title="Support the Library" class="fa fa-gift fa-lg"><span class="sr-only">Support the Library</span></i></a> | 
@@ -97,7 +97,7 @@
                 <!-- // Mobile + Menu Toggle  -->
 
             <!-- Top right nav --> <!-- Hidden XS + SM -->
-            <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
+            <ul role="navigation" class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
               <li><a href="{{chat_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Ask a Librarian"><i id="chat-status" class="fa fa-comment fa-lg ask-icon" data-default-ask-name="uofc-ask" aria-hidden="true"></i> Ask 
                 {% if unfriendly_a %} 
                     an 
@@ -163,7 +163,7 @@
 
                         <!-- Borrow/Request Dropdown -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Borrow &amp; Request" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Borrow &amp; Request <span class="caret"></span></a>
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Borrow &amp; Request" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Borrow<span class="hidden-sm hidden-md"> &amp; Request</span> <span class="caret"></span></a>
                             <ul class="dropdown-menu twocol-drop">
                                 <li>
                                     <ul class="list-unstyled col-sm-6 ul-left">
@@ -254,38 +254,42 @@
                         </li>
                         <!-- // Collection/Exhibits Dropdown -->
 
+                        <!-- Spaces  Dropdown  -->
+                        <li class="dropdown">
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Spaces" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Spaces <span class="hidden-sm hidden-md">&amp; Services</span><span class="caret"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-right onecol-drop">
+                                <li class="twocol-head">Using Our Spaces</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="/research/help/infofor/information-visitors/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Visiting the Library">Visiting the Library</a></li>
+                                <li><a href="http://rooms.lib.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Book a Room">Book a Room</a></li>
+                                <li><a href="/spaces/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Places to Study">Places to Study</a></li>
+                                <li><a href="/using/access-privileges/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Access &amp; Privileges">Access &amp; Privileges</a></li>
+                                <li><a href="/research/help/offcampus" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Off-Campus Access">Off-Campus Access</a></li>
+                                <li><a href="https://printing.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Copy, Print &amp; Scan">Copy, Print &amp; Scan</a></li>
+                                <li><a href="https://itservices.uchicago.edu/page/techbr" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; TECHB@R">TECHB@R</a></li>
+                            </ul>
+                        </li>
+                        <!-- // Spaces Dropdown -->
+
                         <!-- Locations  Dropdown  -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Using the Library" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Using<span class="hidden-xs hidden-sm"> the Library </span><span class="caret"></span></a>
-                            <ul class="dropdown-menu dropdown-menu-right twocol-drop">
-                                <li>
-                                    <ul class="list-unstyled col-sm-6 ul-left">
-                                        <li class="twocol-head">Libraries</li>
-                                        <li role="separator" class="divider visible-xs"></li>
-                                        <li><a href="/crerar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Crerar">Crerar</a></li>
-                                        <li><a href="/law/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; D'Angelo Law">D'Angelo Law</a></li>
-                                        <li><a href="/eck/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Eckhart">Eckhart</a></li>
-                                        <li><a href="/mansueto/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Mansueto">Mansueto</a></li>
-                                        <li><a href="/spaces/joseph-regenstein-library/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Regenstein">Regenstein</a></li>
-                                        <li><a href="/scrc/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Special Collections">Special Collections</a></li>
-                                        <li><a href="/ssa/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; SSA">SSA</a></li>
-                                        <li><a href="{{hours_page_url}}" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; View all hours">View all hours</a></li>
-                                    </ul>
-                                    <ul class="list-unstyled col-sm-6">
-                                        <li class="twocol-head">Using Spaces &amp; Services</li>
-                                        <li role="separator" class="divider visible-xs"></li>
-                                        <li><a href="/research/help/infofor/information-visitors/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Visiting the Library">Visiting the Library</a></li>
-                                        <li><a href="http://rooms.lib.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Book a Room">Book a Room</a></li>
-                                        <li><a href="/spaces/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Places to Study">Places to Study</a></li>
-                                        <li><a href="/using/access-privileges/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Access &amp; Privileges">Access &amp; Privileges</a></li>
-                                        <li><a href="/research/help/offcampus" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Off-Campus Access">Off-Campus Access</a></li>
-                                        <li><a href="https://printing.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Copy, Print &amp; Scan">Copy, Print &amp; Scan</a></li>
-                                        <li><a href="https://itservices.uchicago.edu/page/techbr" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; TECHB@R">TECHB@R</a></li>
-                                    </ul>
-                                </li>
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Libraries" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Libraries <span class="caret"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-right onecol-drop">
+                                <li class="twocol-head">Our Locations</li>
+                                <li role="separator" class="divider visible-xs"></li>
+                                <li><a href="/crerar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Crerar">Crerar</a></li>
+                                <li><a href="/law/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; D'Angelo Law">D'Angelo Law</a></li>
+                                <li><a href="/eck/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Eckhart">Eckhart</a></li>
+                                <li><a href="/mansueto/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Mansueto">Mansueto</a></li>
+                                <li><a href="/spaces/joseph-regenstein-library/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Regenstein">Regenstein</a></li>
+                                <li><a href="/scrc/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; Special Collections">Special Collections</a></li>
+                                <li><a href="/ssa/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; SSA">SSA</a></li>
+                                <li><a href="{{hours_page_url}}" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Using the Library &gt; View all hours">View all hours</a></li>
                             </ul>
                         </li>
                         <!-- // Locations Dropdown -->
+
+
 
                         <!-- About Mega Dropdown -->
                         <li class="dropdown">
@@ -391,7 +395,7 @@
         <div class="{{breadcrumb_div_css}}">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
-        <div class="{{content_div_css}}" id="content">
+        <div class="{{content_div_css}}" id="content" role="main">
             <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
             {% block under_h1 %}{% endblock %}
             {% if has_left_sidebar %}
@@ -491,7 +495,7 @@
                             {#featured_lib_expert.block.library_expert #}
                             <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert">
                                 <div class="home-module">
-                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all">View all {{self.friendly_name}} experts</a>
+                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
                                 </div>
                                 <div class="col-xs-8">
                                     {% if featured_lib_expert_profile %}
@@ -538,7 +542,7 @@
             {% endif %}
 
             {% if self.has_right_sidebar %}
-                <div class="col-xs-12 col-md-3 rightside {% block right_sidebar_classes %}{% endblock %}"> <!-- Right Sidebar Content -->
+                <div class="col-xs-12 col-md-3 rightside {% block right_sidebar_classes %}{% endblock %}" role="complementary"> <!-- Right Sidebar Content -->
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks %}
@@ -664,7 +668,7 @@
     <div id="push"></div>
 </div><!--// #body-wrap-->
 <!-- Footer -->
-    <footer id="footer" class="container-fluid footer">
+    <footer id="footer" role="contentinfo" class="container-fluid footer">
 
         <!-- Contact -->
         <div class="col-xs-12 col-sm-2 col-footer">
