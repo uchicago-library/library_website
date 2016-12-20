@@ -895,6 +895,7 @@ thead a {
 
 tbody a {
   color: #32327f;
+  text-decoration: underline;
 }
 
 .etable {
@@ -1690,7 +1691,7 @@ padding: 10px 0px 0px 15px;
 }
 
 tr.seealso {
-  background-color: #eeeeeb;
+  background-color: #eeeeeb!important;
   td {
     font-style: italic;
   }

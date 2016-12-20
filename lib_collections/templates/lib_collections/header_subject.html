@@ -1,14 +1,14 @@
 <div class="col-sm-6">
   <div class="btn-group spaces-toggle">
-    <a class="btn btn-list-toggle" href="?view=collections">Collections</a>
-    <a class="btn btn-list-toggle" href="?view=exhibits">Exhibits</a>
-    <a class="btn btn-list-toggle active" href="?view=subjects">Subjects</a>
+    <a class="btn btn-list-toggle" href="?view=collections"><span class="visually-hidden">Switch to</span> Collections</a>
+    <a class="btn btn-list-toggle" href="?view=exhibits"><span class="visually-hidden">Switch to</span> Exhibits</a>
+    <a class="btn btn-list-toggle active" href="?view=subjects"><span class="visually-hidden">Currently viewing</span> Subjects</a>
   </div>
 </div>
       
 <div class="col-sm-6">
   <form class="searchbox">
-    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" placeholder="Search subjects"{% if search %} value="{{ search }}"{% endif %}/>
+    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aira-label="search subjects" placeholder="Search subjects"{% if search %} value="{{ search }}"{% endif %}/>
     <input name="view" type="hidden" value="subjects"/>
     <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
       <input type="submit" style="background-color: transparent; color: transparent;" class="searchbox-submit"/>
@@ -20,7 +20,7 @@
   <span class="headline">Browse by</span>
   <div class="btn-group">
     <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-      Subject Area{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
+      <span class="visually-hidden">Browse by</span> Subject Area{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul id="listings-dropdown" class="dropdown-menu">
       {% if subject %}<li><a href=".?view=subjects" class="dropdown-item">All Subject Areas</a></li>{% endif %}
