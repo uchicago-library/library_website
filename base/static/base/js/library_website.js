@@ -38,7 +38,7 @@ function renderHours(libcalid){
                 html += '<li><a href="' + hlink + '">' + hours + '</a></li>';
             } else {
                 // Render the current building hours as selected
-                var currentHoursHtml = '<span>' + hours  + '</span>';
+                var currentHoursHtml = '<span><strong>Hours:</strong> ' + hours  + '</span>';
                 $('#current-hours-target').replaceWith(currentHoursHtml);
             }
         });

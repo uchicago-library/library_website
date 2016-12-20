@@ -231,7 +231,7 @@ def get_building_hours_and_lid(current_site):
     for page in library_hours['locations']:
         llid = int(page['lid'])
         if llid in llids:
-            hours = HOURS_TEMPLATE % (library_data[llid]['name'], process_hours(page['rendered']))
+            hours = HOURS_TEMPLATE % (page['name'], process_hours(page['rendered']))
             buildings.append((str(llid), str(hours), library_data[llid]['url']))
     return buildings
 
