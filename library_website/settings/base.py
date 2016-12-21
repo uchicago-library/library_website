@@ -259,7 +259,7 @@ ROOT_UNIT = 2455
 PUBLIC_HOMEPAGE = 3378
 
 # String templates for hours and address display in the header and footer
-HOURS_TEMPLATE = '%s: %s'
+HOURS_TEMPLATE = '%s &nbsp; %s'
 ADDRESS_TEMPLATE = '%s, %s, %s %s'
 
 # Location and hours page
