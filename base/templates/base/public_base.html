@@ -68,7 +68,7 @@
             </div>
         {% endif %}
         <!-- Top Navigation -->
-        <nav role="banner" class="navbar navbar-default" role="navigation"> <!-- Navwrapper -->
+        <nav role="navigation" class="navbar navbar-default"> <!-- Navwrapper -->
                 <!-- Mobile top right nav -->
                 <div role="navigation" class="mobile-topnav visible-xs visible-sm">
                     <a href="{{hours_page_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Library Hours"><i title="Library Hours" class="fa fa-clock-o fa-lg"><span class="sr-only">Library Hours</span></i></a> | 
@@ -97,7 +97,7 @@
                 <!-- // Mobile + Menu Toggle  -->
 
             <!-- Top right nav --> <!-- Hidden XS + SM -->
-            <ul role="navigation" class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
+            <ul class="nav navbar-nav hidden-xs hidden-sm navbar-right" id="navbar-right">
               <li><a href="{{chat_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Ask a Librarian"><i id="chat-status" class="fa fa-comment fa-lg ask-icon" data-default-ask-name="uofc-ask" aria-hidden="true"></i> Ask 
                 {% if unfriendly_a %} 
                     an 

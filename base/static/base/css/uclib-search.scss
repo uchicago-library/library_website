@@ -58,32 +58,12 @@ h1.searchbox-header {
           display: flex;
           padding-top: 0;
         }
-        &:after {
-          content: "";
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          border-top: 10px solid #642822;
-          border-left: 10px solid transparent;
-          border-right: 10px solid transparent;
-          margin-left: -10px;
-        }
       }
       &:hover {
         color: #C16622;
         border-bottom: 3px solid #C16622;
         position: relative;
         bottom: -3px;
-        &:after {
-          content: "";
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          border-top: 10px solid #C16622;
-          border-left: 10px solid transparent;
-          border-right: 10px solid transparent;
-          margin-left: -10px;
-        }
       }
     }
   }
