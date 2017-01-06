@@ -40,6 +40,10 @@ Alerts
  * --------------------------------------------------
  */
 
+$font-large: 2.5em;
+$font-medium: 1.5em;
+$font-small: 1.1em;
+
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
@@ -90,6 +94,9 @@ h2{
       margin-top: 5px;
     }
   }
+  &+h3 {
+    margin-top: 0;
+  }
 }
 
 h3 {
@@ -98,6 +105,9 @@ h3 {
   font-weight: 600;
   font-style: italic;
   line-height: 1.4em;
+  &+h4 {
+    margin-top: 0;
+  }
 }
 
 h4 {
@@ -108,6 +118,9 @@ h4 {
   .newsblock & {
     margin-bottom: 3px;
   }
+  &+h5 {
+    margin-top: 0;
+  }
 }
 
 h5 {
@@ -115,6 +128,9 @@ h5 {
   font-weight: 600;
   color: #800000;
   line-height: 1.4em;
+  &+h6 {
+    margin-top: 0;
+  }
 }
 
 h6 {

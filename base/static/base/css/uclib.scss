@@ -229,6 +229,10 @@ p q { //Inline Quote
     padding-bottom: 20px!important;
 }
 
+.block-image + div {
+  margin-top: 1em;
+}
+
 img.richtext-image {  //images placed in richtext streamfield
   &.left {
     float: left;
