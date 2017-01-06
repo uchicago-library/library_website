@@ -101,7 +101,6 @@
 				      padding-top: 0px;
 				      margin-bottom: 0;
 				      background-color: $darkred; //fallback if all else fails
-				      background-image: url("../images/banner.gif"); //fallback if no image uploaded
 				      background-size: cover;
 				      h2 {
 				        color: #fff;
@@ -202,7 +201,7 @@
 				            background-color: #fff;
 				            border-right: 1px dotted #767676;
 				        }
-				        h3 a {
+				        h2 a {
 				            color: lighten($base-color, 20%);
 				        }
 				        > ul {
@@ -238,7 +237,7 @@
 				
 				    .coll-rightside {
 				        background-color: lighten($base-color, 75%);
-				        h3, h3 a {
+				        h2, h2 a {
 				            color: lighten($base-color, 10%);
 				            border-bottom-color: lighten($base-color, 10%);
 				        }
@@ -495,7 +494,7 @@
 
 {% block right_sidebar %}
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h3>Exhibit Details</h3>
+    <h2>Exhibit Details</h2>
     <p>
       {% if self.exhibit_open_date or self.exhibit_close_date %}
         <strong>
@@ -525,7 +524,7 @@
 
   {% if self.staff_contact %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Contact</h3>
+      <h2>Contact</h2>
       <p>
         <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
         <em>{{ self.staff_contact.vcards.first.title }}</em><br>
@@ -538,7 +537,7 @@
 
   {% if self.exhibit_page_related_collection_placement.all or self.exhibit_subject_placements.all %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Explore Related Content</h3>
+      <h2>Explore Related Content</h2>
       {% if self.exhibit_page_related_collection_placement.all %}
         <strong>Related Collections</strong>
         <ul>

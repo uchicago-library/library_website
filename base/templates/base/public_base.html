@@ -367,7 +367,7 @@
             <nav role="navigation">
                 <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
                     {% if sidebartitle %}
-                        <h3><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h3>
+                        <h2><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h2>
                     {% endif %}
                     {% if sidebar %}
                         <ul>
@@ -546,7 +546,7 @@
                     {% if self.quicklinks %}
                         <div class="{% if self.change_to_callout %} call-out {%endif%} rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-quicklinks">
                             {% if self.quicklinks_title %}
-                                <h4>{{self.quicklinks_title}}</h4>
+                                <h2>{{self.quicklinks_title}}</h2>
                             {% endif %}
 
                             {% autoescape off %}
@@ -569,7 +569,7 @@
 
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
-                            <h4>Find Spaces</h4>
+                            <h2>Find Spaces</h2>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
                                     <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
@@ -592,7 +592,7 @@
 
                     {% if self.events_feed_url %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
-                            <h4>Workshops &amp; Events</h4>
+                            <h2>Workshops &amp; Events</h2>
                             <div class="calledOnce">
                             <!--<div class="jflatTimeline calledOnce">-->
                                 <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
@@ -609,7 +609,7 @@
                     {% if self.collection_page %}
                         {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h4>Featured Collection</h4>
+                            <h2>Featured Collection</h2>
                             <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
                             <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
                             <a href="/collex/?view=collections" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
@@ -618,7 +618,7 @@
 
                     {% if self.has_social_media %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media">
-                            <h4>{{self.friendly_name}}Social Media</h4>
+                            <h2>{{self.friendly_name}}Social Media</h2>
                             <ul>
                                 {% if self.twitter_page %}
                                 <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a></li>

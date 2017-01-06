@@ -283,15 +283,13 @@ a {
   }
 }
 
-/* Completely remove from the flow but leave available to screen readers. */
-.is-vishidden {
-  position: absolute !important;
-  overflow: hidden;
+.is-vishidden, .visually-hidden { // For ADA helper text
+  position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
-  border: 0;
-  clip: rect(1px, 1px, 1px, 1px); }
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
 
 /*
  * Alerts

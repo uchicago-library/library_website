@@ -440,10 +440,11 @@ i.ask-icon {
       }
     }
   }
-  h3, h3 a {
+  h2, h2 a {
     margin-bottom: 3px;
     font-size: 1em;
     color: $darkred;
+    font-style: italic;
   } 
 } // END Sidebar nesting
 

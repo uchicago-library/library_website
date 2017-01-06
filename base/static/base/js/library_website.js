@@ -95,7 +95,7 @@ function renderNews() {
                 newsHtml += '<figure class="embed"><div class="figure-wrap">'
                 newsHtml += '<a href="' + link + '"><img class="img-responsive" src="' + img + '"></a></div>'
                 newsHtml += '<figcaption class="' + css + '">' + tag + '</figcaption></figure>'
-                newsHtml += '<a href="' + link + '"><h5>' + title + '</h5></a>'
+                newsHtml += '<a href="' + link + '"><h3>' + title + '</h3></a>'
                 newsHtml += '<p>' + desc + '<br><a href="' + link + '">Read more...</a></p>'
                 newsHtml += '</div>'
             });

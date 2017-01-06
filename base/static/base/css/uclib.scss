@@ -34,14 +34,6 @@ Page Specific Alterations
  * --------------------------------------------------
  */
 
- .visually-hidden { // For ADA helper text
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-}
-
 .breadcrumbs {
   padding-top: 5px;
   padding-left: 20px;
@@ -101,7 +93,7 @@ body.staffpublicpage {
   a {
     color: $brightpurple;
   }
-  & h3 {
+  & h2 {
     margin: 5px 0 10px 0;
     font-size: 1.05em;
     padding-bottom: 5px;
@@ -127,7 +119,7 @@ body.staffpublicpage {
 }
 
 .h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs { // Hide breadcrumbs on homepages with banners
-   visibility: hidden;
+   @include visually-hidden;
 }
 
 .search-results {
@@ -311,8 +303,9 @@ a.img-src {
   a {
     color:  $active-hover;
   }
-  h3, h4 {
+  h2, h3 {
     font-weight: 400;
+    font-size:1.1em;
     margin: 5px 0 10px 0;
     padding-bottom: 5px;
     color: $brightpurple;
@@ -345,7 +338,7 @@ a.img-src {
   padding: 15px!important;
   margin-bottom: 15px;
   background-color: $maroon;
-  & h3, & h4 {
+  & h2, & h3 {
     color: #fff;
     border: none;
   }
@@ -565,6 +558,7 @@ a#event-header {
   h3 {
     color: $darkneutral;
     font-style: normal;
+    margin-top: 0.5em;
   }
   p {
     clear:both;
@@ -1135,7 +1129,7 @@ ul.index-list {
       &>ul.index-list>li { // 3rd Level
         a {
           font-weight: 300;
-          color: #616530;
+          color: $reggreen;
         }
         &>ul.index-list>li { // 4th Level
           a {
@@ -1615,8 +1609,8 @@ td.time, td.event-nav {
 .rightside.coll-rightside {
   @extend .distinct-rightside;
   border: none;
-  h3 {
-    color: #616530;
+  h2 {
+    color: $reggreen;
     font-weight: 600;
   }
   ul {
@@ -1788,6 +1782,19 @@ p.acknowledgments {
       overflow: hidden;
     }
   }
+}
+
+
+/*
+ * Temporary until all web exhibits are migrated over
+ * --------------------------------------------------
+ */
+
+.collex-loc {
+    background-color: #eee;
+    padding: 1.5em;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 

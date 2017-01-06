@@ -1,12 +1,5 @@
-/*------------------------------------------------------------------
-[Table of contents]
-
-
-
--------------------------------------------------------------------*/
-
-@import "variables";
-@import "base";
+@import "base/css/variables.scss";
+@import "base/css/base.scss";
 
 
 
@@ -15,131 +8,101 @@
  * --------------------------------------------------
  *
  */
- 
-$base-color: #271847;
-$accent-color: #271847;
+
 $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
 
 
-/*
- * Conference Customizations
- * --------------------------------------------------
- *
- */
 
 .conferencepage, .conferencesubpage {
-    h1, h2 {
-        color: $base-color;
-        font-family: $display-font;
-        font-style: normal;
-        font-size: $font-medium;
-        font-weight: 400;
+  .jumbotron {
+    min-height: 250px;
+    overflow: hidden;
+    padding-top: 0px;
+    margin-bottom: 0;
+    //background-color: $accent-color;  // needs to remain in head
+    background-size: cover;
+    h2 {
+      color: #fff;
     }
-
-    h3 {
-        color: $accent-color;
-        font-style: normal;
-        font-size: $font-small;
-        font-weight: 600;
+    .container {
+      padding: 0px;
+      margin: 0px;
+      position: relative;
+      width: 100%;
     }
-
-    h4 {
-        color: $base-color;
-        font-style: italic;
-        font-size: $font-small;
-        font-weight: 600;
-    }
-
-    .jumbotron {
-      min-height: 250px;
-      overflow: hidden;
-      padding-top: 0px;
-      margin-bottom: 0;
-      background-color: $base-color;
-      background-image: url("../images/banner.gif"); //fallback if no image uploaded
-      background-size: cover;
-      h2 {
-        color: #fff;
+    .img-wrapper {
+      display: none;
+      @include respond-to(small) {
+          display: block;
+          width: 250px;
+          overflow: hidden;
       }
-      .container {
-        padding: 0px;
-        margin: 0px;
-        position: relative;
-        width: 100%;
+      @include respond-to(medium) {
+          width: 250px;
+          overflow: hidden;
       }
-      .img-wrapper {
-          display: none;
-          @include respond-to(small) {
-              display: block;
-              width: 250px;
-              overflow: hidden;
-          }
+      img {
+          width: 200px;
+          height: auto;
           @include respond-to(medium) {
               width: 250px;
-              overflow: hidden;
-          }
-          img {
-              width: 200px;
-              height: auto;
-              @include respond-to(medium) {
-                  width: 250px;
-              }
-          }
-          &+.overlaywrap {
-              @include respond-to(small) {
-                  left: 200px;
-              }
-              @include respond-to(medium) {
-                  left: 250px;
-              }
           }
       }
-    }
-
-    .jumbotron .overlaywrap {
-        background-color: rgba( $accent-color, .9 );
-        left: 0;
-        top: 0;
-        font-family: $display-font;
-        padding: 0.5em 2em;
+      &+.overlaywrap {
         @include respond-to(small) {
-                padding-right: 6em;
-            }
-        p {
-            padding: 0;
-            margin: 0;
-            &:last-child {
-                padding-bottom: 15px;
-            }
+          left: 200px;
         }
-        h2 {
-            font-weight: 100;
-            font-size: $font-large*0.7;
-            margin: 0;
-            padding: 0px;
-            letter-spacing: 0.03em;
-            color: #fff;
-            @include respond-to(small) {
-                font-size: $font-large;
-            }
+        @include respond-to(medium) {
+          left: 250px;
         }
-        .banner-subtitle {
-            font-family: $display-font;
-            color: #eee;
-            font-size: $font-medium*0.8;
-            padding-bottom:5px;
-            @include respond-to(small) {
-                font-size: $font-medium;
-            }
-        }
-        .banner-loc, .banner-loc a, .banner-date {
-            font-family: $display-font;
-            color: #e0dddb;
-            font-style: italic;
-            font-size: $font-small*0.8;
-        }
+      }
     }
-} // End body conf. customizations
+  }
+
+  .jumbotron .overlaywrap {
+    //background-color: rgba( $base-color, .9 );  // needs to remain in head
+    left: 0;
+    top: 0;
+    font-family: $display-font;
+    padding: 0.5em 2em;
+    @include respond-to(small) {
+      padding-right: 6em;
+    }
+    p {
+      padding: 0;
+      margin: 0;
+      &:last-child {
+          padding-bottom: 15px;
+      }
+    }
+    h2 {
+      font-weight: 100;
+      font-size: $font-large*0.7;
+      margin: 0;
+      padding: 0px;
+      letter-spacing: 0.03em;
+      color: #fff;
+      @include respond-to(small) {
+          font-size: $font-large;
+      }
+    }
+    .banner-subtitle {
+      font-family: $display-font;
+      color: #eee;
+      font-size: $font-medium*0.8;
+      padding-bottom:5px;
+      @include respond-to(small) {
+          font-size: $font-medium;
+      }
+    }
+    .banner-loc, .banner-loc a, .banner-date {
+      font-family: $display-font;
+      color: #e0dddb;
+      font-style: italic;
+      font-size: $font-small*0.8;
+    }
+  }
+}
 
 
 

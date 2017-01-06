@@ -3,9 +3,6 @@
 //@import "compass/utilities/color/contrast";
 
 $base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$font-large: 2.5em;
-$font-medium: 1.5em;
-$font-small: 1.1em;
 
 @mixin borders {
     border-bottom: 1px dotted $darkgray;
@@ -54,7 +51,6 @@ h4 {
   padding-top: 0px;
   margin-bottom: 0;
   background-color: $darkred; //fallback if all else fails
-  background-image: url("../images/banner.gif"); //fallback if no image uploaded
   background-size: cover;
   h2 {
     color: #fff;
@@ -123,7 +119,7 @@ h4 {
         background-color: #fff;
         border-right: 1px dotted #767676;
     }
-    h3 {
+    h2 {
         padding-left: 2em;
         font-weight: 600;
         @include respond-to(small) {
