@@ -164,12 +164,6 @@
     </style>
 {% endblock %}
 
-{% block left_sidebar_extras %}
-    {% for button in main_registration %}
-        <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
-    {% endfor %}
-{% endblock %}
-
 {% block content %}
     {{self.body}}
 {% endblock %}
@@ -202,7 +196,11 @@
             {% endfor %}
             </ul>
         </div>
-    {% endif %}        
+    {% endif %}
+
+    {% for button in main_registration %}
+        <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
+    {% endfor %}     
 
     {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">

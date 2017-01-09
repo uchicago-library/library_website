@@ -1178,7 +1178,7 @@ ul.index-list {
     margin: 0.3em 0;
   }
   hr {
-    border-top: 1px solid $brightpurple;
+    border-top: 1px dotted $brightpurple;
   }
 }
 
@@ -1201,6 +1201,7 @@ a.btn-ask {
   border-right: 0px;
   padding: 10px 20px;
   margin: 10px 0;
+  text-decoration: none;
   &:before {
     content: "\f0e5";
     font-family: FontAwesome;
@@ -1581,7 +1582,7 @@ td.time, td.event-nav {
 }
 
 .btn-reserve {  //Reserve a room link
-  color: #fff;
+  color: #fff!important;
   letter-spacing: 0.1em;
   background-color: #58593F;
   border-right: 0px;
@@ -1791,10 +1792,10 @@ p.acknowledgments {
  */
 
 .collex-loc {
-    background-color: #eee;
-    padding: 1.5em;
-    display: flex;
-    flex-wrap: wrap;
+  background-color: #eee;
+  padding: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 
