@@ -287,6 +287,27 @@ a.img-src {
   margin: 15px 0;
 }
 
+// Solo, Duo, and Trio Image Stylings
+.standardpage .collex-solo, .standardpage .collex-duo, .standardpage .collex-trio, .standardpage .collex-verso {
+  img {
+      border: 3px solid #c8c8c8;
+  }
+  .img-title {
+    color: $mid-dark;
+    font-size: $font-small;
+    font-weight: 600;
+  }
+  .img-citation {
+    color: $darkneutral;
+    font-size: 0.95em;
+  }
+  .img-caption {
+    color: #000;
+    font-size: 1em;
+  }
+}
+
+
 /*
  * Right Sidebar
  * --------------------------------------------------
