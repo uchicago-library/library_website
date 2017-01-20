@@ -272,6 +272,7 @@ class ConferenceSubPage(PublicBasePage):
         context = super(ConferenceSubPage, self).get_context(request)
         current_site = Site.find_for_request(request)
         parent = self.get_parent_of_type('conference page')
+        main_reg = parent.main_registration.all()
         has_sidebar = parent.has_left_sidebar(context) or bool(main_reg)
 
         # Set social media fields dynamically and
