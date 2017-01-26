@@ -158,6 +158,21 @@ def get_story_summary(news_page):
         s = re.sub(r"<(?!\/?a(?=>|\s.*>))\/?.*?>", " ", s)
         s = re.sub(r"\s+", " ", s)
         return s.strip()
+
+    # get the first num_words (e.g. 50) words. 
+    # don't allow unclosed anchor tags through.
+    def get_excerpt_safely(words, num_words):
+        excerpt_words = words[:num_words]
+        opening_anchor_tag_count = sum('<a' not in word for word in excerpt_words)
+        closing_anchor_tag_count = sum('</a>' not in word for word in excerpt_words)
+        if opening_anchor_tag_count != closing_anchor_tag_count:
+            while True:
+                last_word = excerpt_words.pop()
+                if not last_word:
+                    break
+                if '<a' in last_word:
+                    break
+        return ' '.join(excerpt_words)
     
     day = int(news_page.story_date.strftime('%d'))
     if 4 <= day <= 20 or 24 <= day <= 30:
@@ -176,12 +191,12 @@ def get_story_summary(news_page):
     simplified_text = simplify_text(news_page.excerpt)
     if simplified_text:
         words = simplified_text.split(" ")
-        excerpt = " ".join(words[:50])
+        excerpt = get_excerpt_safely(words, 50)
         read_more = True
     else:
         simplified_text = simplify_text(" ".join([s.render() for s in news_page.body]))
         words = simplified_text.split(" ")
-        excerpt = " ".join(words[:50])
+        excerpt = get_excerpt_safely(words, 50)
 
         if len(words) > 50:
             excerpt = excerpt + "..."
