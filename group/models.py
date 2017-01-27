@@ -255,6 +255,8 @@ class GroupPage(BasePage, Email):
         for g in group_members:
             if g.group_member == None:
                 continue
+            if g.group_member.live == False:
+                continue
             if g.role and g.role.text in ['Chair', 'Co-Chair']:
                 group_member_chairs.append(g)
             else:
