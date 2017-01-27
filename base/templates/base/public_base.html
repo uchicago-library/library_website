@@ -367,16 +367,16 @@
             <nav role="navigation">
                 <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
                     {% if sidebartitle %}
-                        <h2><a href="{{sidebartitleurl}}">{{sidebartitle}}</a></h2>
+                        <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
                     {% endif %}
                     {% if sidebar %}
                         <ul>
                             {% for child in sidebar %}
-                                <li><a href="{{child.url}}">{{child.title}}</a>
+                                <li><a href="{{child.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{child.title}}">{{child.title}}</a>
                                 {% if child.children %}
                                     <ul>
                                         {% for grandchild in child.children %}
-                                            <li><a href="{{grandchild.url}}">{{grandchild.title}}</a></li>
+                                            <li><a href="{{grandchild.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{grandchild.title}}">{{grandchild.title}}</a></li>
                                         {% endfor %}
                                     </ul>
                                 {% endif %}
