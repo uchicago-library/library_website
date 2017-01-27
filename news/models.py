@@ -69,7 +69,10 @@ class NewsPage(BasePage):
 
         details = get_story_summary(self)
         context['story_date'] = details['story_date']
-        context['author_title'] = details['author_title']
+        try:
+            context['author_title'] = details['author_title']
+        except:
+            context['author_title'] = ''
         context['author_url'] = details['author_url']
         context['thumbnail'] = details['thumbnail']
 
@@ -185,8 +188,14 @@ def get_story_summary(news_page):
         author_url = news_page.author.url
     else:
         cnetid = news_page.owner.username
-        author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
-        author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
+        try:
+            author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
+        except:
+            author_title = ''
+        try:
+            author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
+        except:
+            author_url = ''
 
     simplified_text = simplify_text(news_page.excerpt)
     if simplified_text:
