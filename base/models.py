@@ -634,6 +634,16 @@ class BlockQuoteBlock(StructBlock):
         template = 'base/blocks/blockquote.html'
 
 
+class PullQuoteBlock(StructBlock):
+    """
+    Pullquote streamfield block.
+    """
+    quote = RichTextBlock()
+
+    class Meta:
+        icon = 'arrow-left'
+        template = 'base/blocks/pullquote.html'
+    
 class ButtonBlock(StructBlock):
     """
     Button streamfield block.
@@ -668,6 +678,7 @@ class ParagraphBlock(StructBlock):
         icon = 'pilcrow'
         form_classname = 'paragraph-block struct-block'
         template = 'base/blocks/paragraph.html'
+
 
 class CodeBlock(StructBlock):
     """
@@ -792,6 +803,7 @@ class DefaultBodyFields(StreamBlock):
     paragraph = ParagraphBlock()
     image = ImageBlock(label='Image')
     blockquote = BlockQuoteBlock()
+    pullquote = PullQuoteBlock()
     button = ButtonBlock()
     video = EmbedBlock(icon='media')
     code = CodeBlock()
