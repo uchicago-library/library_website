@@ -5,3 +5,36 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 
 ga('create', 'UA-34607019-1', 'auto');
 ga('send', 'pageview');
+
+$(document).ready(function() {
+    function looplinkclick(category, action, link, link_event) {
+        var t = $(link).text().trim();
+        var target = $(link).attr('target');
+        if (target == '_blank') {
+            ga('send', 'event', category, action, t);
+        } else {
+            var href = $(link).attr('href');
+            if (href) {
+                link_event.preventDefault();
+                ga('send', 'event', category, action, t, {
+                    hitCallback: function() {
+                        window.location = href;
+                    }
+                });
+            }
+        }
+    }
+
+    /* main navigation links */
+    $('ul.nav a').click(function (e) {
+        looplinkclick('MainNavigation', 'click', $(this), e); 
+    });
+    /* Homepage sidebar */
+    $('.swside-home a').click(function (e) {
+        looplinkclick('HomepageSidebar', 'click', $(this), e); 
+    });
+    /* TOC page links */
+    $('.sw-toc a').click(function (e) {
+        looplinkclick('TOCLinks', 'click', $(this), e); 
+    });
+});
