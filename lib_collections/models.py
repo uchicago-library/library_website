@@ -17,6 +17,8 @@ from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from library_website.settings import SCRC_BUILDING_ID, CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_EXHIBIT_FOOTER_IMG
 
+DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+
 # The abstract model for related links, complete with panels
 class SupplementaryAccessLink(models.Model):
     supplementary_access_link_label = models.CharField(max_length=255)
@@ -827,18 +829,25 @@ class ExhibitPage(PublicBasePage):
             pass
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
+
+        font = DEFAULT_WEB_EXHIBIT_FONT
+        if self.font_family:
+            font = self.font_family
  
         context = super(ExhibitPage, self).get_context(request)
         footer_img = self.get_web_exhibit_footer_img(self.location_and_hours['page_location'].id) # must be set after context
         context['default_image'] = default_image
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
-        context['font_family'] = self.font_family if self.font_family else '"Helvetica Neue", Helvetica, Arial, sans-serif'
+        context['font_family'] = font 
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
         context['is_web_exhibit'] = self.is_web_exhibit()
         context['related_collections'] = self.get_related_collections(request)
+        context['exhibit_open_date'] = self.exhibit_open_date
+        context['exhibit_close_date'] = self.exhibit_close_date
+        context['exhibit_close_date'] = self.exhibit_location
 
         return context
 
@@ -864,11 +873,19 @@ class ExhibitChildPage(PublicBasePage):
         context = super(ExhibitChildPage, self).get_context(request)
         exhibit = self.get_parent_of_type('exhibit page')
         footer_img = exhibit.get_web_exhibit_footer_img(self.location_and_hours['page_location'].id)
+
+        font = DEFAULT_WEB_EXHIBIT_FONT
+        if exhibit.font_family:
+            font = exhibit.font_family
+
         context['branding_color'] = exhibit.branding_color
-        context['font_family'] = exhibit.font_family
+        context['font_family'] = font
         context['google_font_link'] = exhibit.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
         context['is_web_exhibit'] = True
         context['related_collections'] = exhibit.get_related_collections(request)
+        context['exhibit_open_date'] = exhibit.exhibit_open_date
+        context['exhibit_close_date'] = exhibit.exhibit_close_date
+        context['exhibit_close_date'] = exhibit.exhibit_location
         return context 
