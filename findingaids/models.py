@@ -16,7 +16,7 @@ class FindingAidsPage(PublicBasePage):
             browses = []
     
             r = urllib.request.urlopen("http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")
-            xml_string = r.read()
+            xml_string = r.read().decode('utf-8')
 
             e = ElementTree.fromstring(xml_string)
             for div in e.find('body').findall('div'):
@@ -37,7 +37,7 @@ class FindingAidsPage(PublicBasePage):
         
             r = urllib.request.urlopen("http://marklogic:8011/admin/gimmeDigitalEADIDs.xqy")
 
-            xml_string = r.read()
+            xml_string = r.read().decode('utf-8')
 
             e = ElementTree.fromstring(xml_string)
             for div in e.find('body').findall('div'):
@@ -66,7 +66,7 @@ class FindingAidsPage(PublicBasePage):
 
             r = urllib.request.urlopen(u)
 
-            xml_string = r.read()
+            xml_string = r.read().decode('utf-8')
 
             e = ElementTree.fromstring(xml_string)
             try:
@@ -85,7 +85,7 @@ class FindingAidsPage(PublicBasePage):
             topics = {}
 
             r = urllib.request.urlopen("http://marklogic.lib.uchicago.edu:8011/ead/topics.xqy")
-            xml_string = "<body>" + str(r.read()) + "</body>"
+            xml_string = "<body>" + r.read().decode('utf-8') + "</body>"
 
             e = ElementTree.fromstring(xml_string)
             for div in e.findall('div'):
