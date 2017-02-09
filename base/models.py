@@ -789,6 +789,31 @@ class StaffListingFields(StructBlock):
         icon = 'form'
         label = 'Staff Listing'
 
+class ImageLink(StructBlock):
+    """
+    Normal image for web exhibits.
+    """
+    image = ImageChooserBlock(required=False)
+    alt_text = CharBlock(
+        required=False,
+        help_text='Invisible text for screen readers',
+    )
+    icon = CharBlock(
+        required=False,
+        help_text="Font Awesome icon name if you're not using an image"
+    )
+    link_text = CharBlock(
+        required=False,
+        help_text='Text to display below the image or icon',
+    )
+    link_external = URLBlock(required=False)
+    link_page = PageChooserBlock(required=False)
+    link_document = DocumentChooserBlock(required=False)
+ 
+    class Meta:
+        icon = 'image'
+        template ='base/blocks/image_link.html'
+
 
 class DefaultBodyFields(StreamBlock):
     """
@@ -838,6 +863,7 @@ class DefaultBodyFields(StreamBlock):
     staff_listing = StaffListingFields(icon='group', template='base/blocks/staff_listing.html')
     solo_image = SoloImage(help_text='Single image with caption on the right')
     duo_image = DuoImage(help_text='Two images stacked side by side')
+    image_link = ImageLink(help_text='A fancy link made out of a thumnail and simple text')
 
 
 class RawHTMLBodyField(StreamBlock):
