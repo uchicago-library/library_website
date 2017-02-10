@@ -263,7 +263,7 @@ i.ask-icon {
 
 .ul-left {
   padding-bottom: 1.5em;
-  @include respond-to(medium) {
+  @include respond-to(small) {
     padding-bottom: 0px;
     border-right: 1px solid $darkgray;
   }
