@@ -42,7 +42,10 @@ Page Specific Alterations
 
 .body-container {
   padding: 30px;
-  max-width: 2000px;
+  max-width: 1200px;
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 & {  // Exception for Homepages
+    max-width: 2000px;
+  }
   .sidebar ~ & {
     @include respond-to(medium) {
       padding-left: 45px;
@@ -71,11 +74,18 @@ body.staffpublicpage {
 
 .centermain {
   padding: 0;
+  max-width: 900px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 & {  // Exception for Homepages
+    max-width: 1200px;
+  }
+  .collectionpage & {
+    padding-top: 1.75em;
+  }
   @include respond-to(small) {
     padding: 0 30px 0 15px;
-  }
-  @include respond-to(large) {
-    max-width: 1200px;
   }
 }
 
@@ -307,6 +317,21 @@ a.img-src {
   }
 }
 
+// Image Link Streamfield
+
+.thumbnail-mod {
+  text-align: center;
+  img {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  p {
+    margin-top: 0.75em;
+    font-size: 1.1em;
+  }
+}
+
 
 /*
  * Right Sidebar
@@ -480,6 +505,10 @@ a.viewall {
 .home-profile { // featured profile on specialist module
   padding: 0;
   max-width: 110px;
+}
+
+#widget-explore-research-guides {
+  padding-left: 0;
 }
 
 

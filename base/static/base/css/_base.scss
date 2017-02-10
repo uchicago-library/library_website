@@ -89,11 +89,6 @@ h2{
     line-height: 1.3em;
     color: #FF3399;
   }
-  &:first-child {
-     @media (min-width: 48em) {
-      margin-top: 5px;
-    }
-  }
   &+h3 {
     margin-top: 0;
   }
