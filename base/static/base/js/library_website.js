@@ -1,4 +1,11 @@
 /*
+ * Decode url parameters.
+ */
+function urldecode(str) {
+   return decodeURIComponent((str+'').replace(/\+/g, '%20'));
+}
+
+/*
  * Get libal id for the page.
  */
 function getLibCalId() {
@@ -301,5 +308,25 @@ $(document).ready(function(){
         q += $("input[name='03_copy_no']").val();
 
         $("input[name='question']").val(q);
+    });
+
+    /* Prepopulate the Checkout UChicago Feedback form*/
+    $.urlParam = function(name) {
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null) {
+            return null;
+        }
+        else {
+            return results[1] || 0;
+        }
+    }
+    var name = urldecode($.urlParam('name'));
+    var email = urldecode($.urlParam('email'));
+
+    $("#knowledgetracker input:text[name='name']").each(function(){
+        $(this).val(name);
+    });
+    $("#knowledgetracker input:text[name='email'], #knowledgetracker input:text[name='email confirmed']").each(function(){
+        $(this).val(email);
     });
 });
