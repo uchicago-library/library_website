@@ -323,10 +323,12 @@ $(document).ready(function(){
     var name = urldecode($.urlParam('name'));
     var email = urldecode($.urlParam('email'));
 
-    $("#knowledgetracker input:text[name='name']").each(function(){
-        $(this).val(name);
-    });
-    $("#knowledgetracker input:text[name='email'], #knowledgetracker input:text[name='email confirmed']").each(function(){
-        $(this).val(email);
-    });
+    if (name != 'null' && email != 'null') {
+        $("#knowledgetracker input:text[name='name']").each(function(){
+            $(this).val(name);
+        });
+        $("#knowledgetracker input:text[name='email'], #knowledgetracker input:text[name='email confirmed']").each(function(){
+            $(this).val(email);
+        });
+    }
 });
