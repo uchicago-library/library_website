@@ -6,6 +6,10 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-34607019-1', 'auto');
 ga('send', 'pageview');
 
+function relocate(href) {
+    window.location = href
+}
+
 $(document).ready(function() {
     function looplinkclick(category, action, link, link_event) {
         var t = $(link).text().trim();
@@ -17,9 +21,7 @@ $(document).ready(function() {
             if (href) {
                 link_event.preventDefault();
                 ga('send', 'event', category, action, t, {
-                    hitCallback: function() {
-                        window.location = href;
-                    }
+                    hitCallback: relocate(href)
                 });
             }
         }
