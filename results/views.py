@@ -17,7 +17,7 @@ def results(request):
     if search_query:
         homepage = Site.objects.get(site_name="Public").root_page
         unit_index_page = UnitIndexPage.objects.first()
-        search_results = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page).search(search_query)
+        search_results = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).search(search_query)
         query = Query.get(search_query)
 
         # Record hit
