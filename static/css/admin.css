@@ -1,11 +1,1 @@
-a.button[href*=delete], 
-li.c-dropdown__item a[href*=delete], 
-a.shortcut[href*=delete] {
-    display: none;
-}
-
-a.button[href*=delete].button-secondary.no, 
-li.c-dropdown__item a[href*=delete].button-secondary.no, 
-a.shortcut[href*=delete].button-secondary.no {
-    display: inline-block;
-}
+/* Add styles for overriding things in the admin. */
