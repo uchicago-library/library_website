@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^results/$', results_view, name='results'),
     url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),
-    url('^sitemap\.xml$', sitemap),
+    url('^inventory\.xml$', sitemap),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^about/directory/$', unit_view, name='unit'),
