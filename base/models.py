@@ -706,7 +706,7 @@ class CodeBlock(StructBlock):
         icon = 'cog'
         label = '_SRC'
 
-    def render(self, value):
+    def render(self, value, context=None):
         src = value['code'].strip('\n')
         lang = value['language']
 
