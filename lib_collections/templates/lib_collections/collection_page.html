@@ -57,7 +57,7 @@
 {% block right_sidebar %}
   {% if staff_title %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Contact</h3>
+      <h2>Contact</h2>
       <p>
         {% if staff_url %}
           <a href="{{ staff_url }}">{{ staff_title }}</a>
@@ -114,7 +114,7 @@
 
   {% if self.related_collection_placement.all or self.exhibit_page_related_collection.all or self.collection_subject_placements.all or self.collection_placements.all %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Explore Related Content</h3>
+      <h2>Explore Related Content</h2>
       {% if self.related_collection_placement.all %}
         <strong>Related Collections</strong>
         <ul>

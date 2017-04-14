@@ -90,7 +90,7 @@ body.staffpublicpage {
 }
 
 .distinct-rightside {
-  background-color: $hovercalm;
+  background-color: $hovercalmlight;
   margin: 10px 0;
   padding: 15px 20px;
   ul {
@@ -104,6 +104,7 @@ body.staffpublicpage {
     color: $brightpurple;
   }
   & h2 {
+    color: $reggreen;
     margin: 5px 0 10px 0;
     font-size: 1.05em;
     padding-bottom: 5px;
@@ -778,7 +779,7 @@ form#knowledgetracker { // Desk Tracker
 }
 
 .extract { // copyright info box
-  background-color: #eeefe5;
+  background-color: $hovercalm;
   margin: 20px 50px;
   padding: 5px 30px;
   border-left: 3px solid #ccc;
@@ -1214,7 +1215,7 @@ ul.index-list {
   @extend .distinct-rightside;
   background-color: #fff;
   @include respond-to(medium) {
-    background-color: #e7eef2;
+    background-color: $hovercalmlight;
     border: none;
     margin-top: 10px;
   }
@@ -1748,8 +1749,8 @@ tr.seealso {
 
 p.acknowledgments {
   font-style: italic;
-  color: #6d2f6a;
-  font-size: 1.2em;
+  color: $mansuetogreen;
+  font-size: 1.1em;
 }
 
 /*
