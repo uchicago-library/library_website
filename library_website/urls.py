@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
 from django.views.generic.base import RedirectView
+from wagtail.contrib.wagtailsitemaps.views import sitemap
 
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^results/$', results_view, name='results'),
     url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/', include(wagtailapi_urls)),
+    url('^inventory\.xml$', sitemap),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^about/directory/$', unit_view, name='unit'),
