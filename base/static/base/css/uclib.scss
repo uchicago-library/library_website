@@ -78,7 +78,7 @@ body.staffpublicpage {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 & {  // Exception for Homepages
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, .floorplanpage & {  // Exception for Homepages
     max-width: 1200px;
   }
   .collectionpage & {
