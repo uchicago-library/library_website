@@ -7,20 +7,21 @@
 {% block content %}
   <article>
     <div class="row">
-      <div class="col-xs-12 col-sm-3">
+      <div class="col-xs-12">
+
+      <figure class="imgcaption coll-thumb">
         {% if self.thumbnail %}
           {% image self.thumbnail width-200 class="img-responsive" %}
           {% if self.thumbnail_caption %}
-            {{ self.thumbnail_caption }}
+            <figcaption>{{ self.thumbnail_caption }}</figcaption>
           {% endif %}
         {% else %}
           {% if default_image %}
             {% image default_image width-200 %}
           {% endif %}
         {% endif %}
-      </div>
+      </figure>
 
-      <div class="col-xs-12 col-sm-9">
         {% for block in self.full_description %}
           {{ block }}
         {% endfor %}
@@ -29,25 +30,21 @@
           <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
         {% endif %}
 
-        {% if self.collection_location or supplementary_access_links %}
-          <h3>Location &amp; Access</h3>
-          {% if self.collection_location %}
-            <p>
-              <strong><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></strong>
-              {% if self.access_instructions %}
-                <br/>{{ self.access_instructions }}
-              {% endif %}
-            </p>
+
+          {% if self.access_instructions %}
+          <h3>Access Information</h3>
+            <p>{{ self.access_instructions }}</p>
           {% endif %}
+          
   
           {% if supplementary_access_links %}
-            <p style="font-size: 1.1em;">
+            <p>
               {% for l in supplementary_access_links %}
-                <strong><a href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a></strong><br/>
+                <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
               {% endfor %}
             </p>
           {% endif %}
-        {% endif %}
+
 
       </div>
     </div><!--/.row-->
@@ -55,9 +52,18 @@
 {% endblock %}
 
 {% block right_sidebar %}
+{% if self.collection_location or supplementary_access_links %}
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Access Location</h2>
+      {% if self.collection_location %}
+        <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
+      {% endif %}
+  </div>
+{% endif %}
+
   {% if staff_title %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Contact</h2>
+      <h2>Subject Specialist</h2>
       <p>
         {% if staff_url %}
           <a href="{{ staff_url }}">{{ staff_title }}</a>
