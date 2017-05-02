@@ -78,7 +78,7 @@ body.staffpublicpage {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 & {  // Exception for Homepages
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, .floorplanpage & {  // Exception for Homepages
     max-width: 1200px;
   }
   .collectionpage & {
@@ -298,6 +298,17 @@ a.img-src {
   margin: 15px 0;
 }
 
+figure.coll-thumb {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 25em;
+    margin-bottom: 1.5em;
+    @include respond-to(small) {
+        float: left!important;
+        margin-right: 2em;
+    }
+}
+
 // Solo, Duo, and Trio Image Stylings
 .standardpage .collex-solo, .standardpage .collex-duo, .standardpage .collex-trio, .standardpage .collex-verso {
   img {
@@ -447,6 +458,9 @@ a.img-src {
 
 .rightside-mod { //Wrapper for individual modules
   padding: 0 0 2em 0;
+  .collectionpage & {
+    padding-bottom: 1em;
+  }
   @include respond-to(small) {
     padding: 0 1em 2em 1em;
   }
@@ -1751,6 +1765,13 @@ p.acknowledgments {
   font-style: italic;
   color: $mansuetogreen;
   font-size: 1.1em;
+}
+
+a.coll-access {
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
 }
 
 /*
