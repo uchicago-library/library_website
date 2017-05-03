@@ -11,7 +11,7 @@ import json
 from wagtail.wagtailcore.models import Page
 from library_website.settings import REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 
-HOURS_UNAVIALABLE = 'Hours Unavailable'
+HOURS_UNAVIALABLE = 'Unavailable'
 
 def get_xml_from_directory_api(url):
     assert url.startswith('https://')
@@ -96,14 +96,17 @@ def get_json_for_libraries(lids):
         libcal.
 
     Returns:
-        string, json
+        dict, json data
     """
     lids = ','.join([str(i) for i in lids])
     url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
         str(LIBCAL_IID) + '&lids=' + str(lids) + '&format=json'
 
-    json = requests.get(url).json()
-    return json
+    try:
+        jdict = requests.get(url, timeout=12).json()
+    except requests.exceptions.Timeout:
+        jdict = json.loads('{"locations":[{"lid":1373,"name":"Crerar","rendered":""},{"lid":1378,"name":"D\'Angelo Law","rendered":""},{"lid":1377,"name":"Eckhart","rendered":""},{"lid":1379,"name":"Mansueto","rendered":""},{"lid":1357,"name":"Regenstein","rendered":""},{"lid":2449,"name":"Special Collections","rendered":""},{"lid":1380,"name":"SSA","rendered":""}]}')
+    return jdict
 
 
 def get_hours_by_id(lid):
