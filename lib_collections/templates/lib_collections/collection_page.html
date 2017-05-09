@@ -30,13 +30,9 @@
           <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
         {% endif %}
 
+        {% if self.access_instructions or supplementary_access_links %}
+        <h3>Access Information</h3>         
 
-          {% if self.access_instructions %}
-          <h3>Access Information</h3>
-            <p>{{ self.access_instructions }}</p>
-          {% endif %}
-          
-  
           {% if supplementary_access_links %}
             <p>
               {% for l in supplementary_access_links %}
@@ -45,6 +41,12 @@
             </p>
           {% endif %}
 
+          {% if self.access_instructions %}
+            <p>{{ self.access_instructions }}</p>
+          {% endif %}
+
+        {% endif %}
+
 
       </div>
     </div><!--/.row-->
@@ -52,45 +54,46 @@
 {% endblock %}
 
 {% block right_sidebar %}
-{% if self.collection_location or supplementary_access_links %}
+{% if self.collection_location %}
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Access Location</h2>
-      {% if self.collection_location %}
         <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
-      {% endif %}
   </div>
 {% endif %}
 
-  {% if staff_title %}
+  {% if staff_title or unit_title %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Subject Specialist</h2>
-      <p>
-        {% if staff_url %}
-          <a href="{{ staff_url }}">{{ staff_title }}</a>
-        {% else %}
-          {{ staff_title }}
-        {% endif %}
-       
-        {% if staff_vcard_title %} 
-          <br/><em>{{ staff_vcard_title }}</em><br/>
-        {% endif %}
+      {% if staff_title %}
+        <h2>Subject Specialist</h2>
+        <p>
+          {% if staff_url %}
+            <a href="{{ staff_url }}">{{ staff_title }}</a>
+          {% else %}
+            {{ staff_title }}
+          {% endif %}
+         
+          {% if staff_vcard_title %} 
+            <br/><em>{{ staff_vcard_title }}</em><br/>
+          {% endif %}
 
-        {% if staff_vcard_email %}
-          <a href="mailto:{{ staff_vcard_email }}">{{ staff_vcard_email }}</a><br/>
-        {% endif %}
+          {% if staff_vcard_email %}
+            <a href="mailto:{{ staff_vcard_email }}">{{ staff_vcard_email }}</a><br/>
+          {% endif %}
 
-        {% if staff_vcard_phone_number %}
-          {{ staff_vcard_phone_number }}<br/>
-        {% endif %}
-    
-        {% if staff_vcard_faculty_exchange %}
-          {{ staff_vcard_faculty_exchange }}
-        {% endif %}
-      </p>
+          {% if staff_vcard_phone_number %}
+            {{ staff_vcard_phone_number }}<br/>
+          {% endif %}
+      
+          {% if staff_vcard_faculty_exchange %}
+            {{ staff_vcard_faculty_exchange }}
+          {% endif %}
+        </p>
+      {% endif %}
 
       {% if unit_title %}
         <p>
           {% if unit_url %}
+          <h2>Contact</h2>
             <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
           {% else %}
             {{ unit_title }}<br/>
