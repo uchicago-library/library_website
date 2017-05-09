@@ -175,7 +175,7 @@ class CollectionPage(PublicBasePage):
         null=True, blank=True, on_delete=models.SET_NULL)
     unit_contact = models.BooleanField(default=False)
 
-    subpage_types = []
+    subpage_types = ['public.StandardPage']
 
     content_panels = Page.content_panels + [
         FieldPanel('acknowledgments'),
