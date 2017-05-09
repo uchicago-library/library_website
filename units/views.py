@@ -155,7 +155,7 @@ def get_staff_pages_for_library(library = None):
 
     # get StaffPages themselves from the pk list. 
     if staff_pks:
-        staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
+        staff_pages_all = StaffPage.objects.live().filter(pk__in=staff_pks).order_by('last_name', 'first_name')
     else:
         staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
     return staff_pages_all
