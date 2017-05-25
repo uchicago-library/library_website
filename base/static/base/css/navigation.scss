@@ -363,6 +363,7 @@ i.ask-icon {
 
   .row-offcanvas-left {
     left: 0;
+    min-height: 900px; // fix to sidebar overlapping footer in mobile.
       .sidebar-offcanvas {
         left: -50%; /* 6 columns */
     }
