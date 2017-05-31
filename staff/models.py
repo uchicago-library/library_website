@@ -1,9 +1,9 @@
 from django.db import models
 from django.core.validators import EmailValidator, RegexValidator
-from django.db.models.fields import BooleanField, CharField, TextField
+from django.db.models.fields import BooleanField, CharField, IntegerField, TextField
 from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
-from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG, PHONE_FORMAT, PHONE_ERROR_MSG
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page, PageManager
 from wagtail.wagtaildocs.models import Document
@@ -16,6 +16,19 @@ from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
 import json, re
+
+EMPLOYEE_TYPES = (
+    (1, 'Clerical'),
+    (2, 'Exempt'),
+    (3, 'IT'),
+    (4, 'Librarian')
+)
+
+POSITION_STATUS = (
+    (1, 'Active'),
+    (2, 'Vacant'),
+    (3, 'Eliminated')
+)
 
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
@@ -62,6 +75,21 @@ class VCard(Email, PhoneNumber):
     ]
 
 
+class StaffPageLibraryUnits(Orderable, models.Model):
+    page = ParentalKey('staff.StaffPage', related_name='staff_page_units')
+    library_unit = models.ForeignKey(
+       'units.UnitPage',
+       blank=True,
+       null=True,
+       on_delete=models.SET_NULL,
+       related_name='%(app_label)s_%(class)s_related'
+    )
+
+    panels = [
+        PageChooserPanel('library_unit')
+    ]
+
+
 class StaffPagePageVCards(Orderable, VCard):
     """
     Create a through table for linking vcards
@@ -81,32 +109,71 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     """
     Staff profile content type.
     """
+
+    # editable by HR. 
     cnetid = CharField(
-        max_length=255,
-        blank=False)
+        blank=False,
+        help_text='Campus-wide unique identifier which links this record to the campus directory.',
+        max_length=255)
+    chicago_id = CharField(
+        blank=True,
+        help_text='Campus-wide unique identifier',
+        max_length=9
+    )
     display_name = CharField(
+        blank=True,
+        help_text='Version of this staff person\'s name to display.',
         max_length=255,
-        null=True,
-        blank=True)
+        null=True)
     official_name = CharField(
+        blank=True,
+        help_text='Official version of this staff person\'s name.',
         max_length=255,
-        null=True,
-        blank=True)
+        null=True)
     first_name = CharField(
+        blank=True,
+        help_text='First name, for sorting.',
         max_length=255,
-        null=True,
-        blank=True)
+        null=True)
     middle_name = CharField(
+        blank=True,
+        help_text='Middle name, for sorting.',
         max_length=255,
-        null=True,
-        blank=True)
+        null=True)
     last_name = CharField(
+        blank=True,
+        help_text='Last name, for sorting.',
         max_length=255,
-        null=True,
-        blank=True)
-    supervisor = models.ForeignKey(
+        null=True)
+    position_title = CharField(
+        blank=True,
+        help_text='Position title.',
+        max_length=255,
+        null=True)
+    email = models.EmailField(max_length=254, blank=True)
+    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
+    phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
+    faculty_exchange = models.CharField(max_length=255, blank=True)
+    employee_type = IntegerField(
+        choices=EMPLOYEE_TYPES, 
+        default=1,
+        help_text='Clerical, exempt, IT or Librarian.'
+    )
+        
+    position_status = IntegerField(
+        choices=POSITION_STATUS,
+        default=1,
+        help_text='Help remember and reassign editing responsibilities when staff change positions.'
+    )
+    supervisor_override = models.ForeignKey(
         'staff.StaffPage',
-        null=True, blank=True, on_delete=models.SET_NULL)
+        blank=True,
+        help_text='If supervisor cannot be determined by the staff person\'s unit, specify supervisor here.',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='supervisor_override_for'
+    )
+    supervises_students = BooleanField(default=False)
     profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
                 null=True,
@@ -176,6 +243,31 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         subject_list = self.staff_subject_placements.values_list('subject', flat=True)
         return '\n'.join(Subject.objects.get(id=subject).name for subject in subject_list)
 
+    def get_staff(self):
+        """
+        Get a queryset of the staff members this 
+        person supervises.
+
+        TO DO: include a parameter that controls whether this is recursive or not. If it's recursive it should look into the heirarchy of UnitPages to 
+        get sub-staff. 
+
+        Returns:
+            a queryset of StaffPage objects.
+        """
+
+        cnetids = []
+        for s in StaffPage.objects.all():
+            if s.supervisor_override and s.supervisor_override == self:
+                cnetids.append(s.cnetid)
+            else:
+                for u in s.staff_page_units.filter(library_unit__department_head=self):
+                    try:
+                        cnetids.append(u.page.cnetid)
+                    except:
+                        continue
+
+        return StaffPage.objects.filter(cnetid__in=cnetids)
+         
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),
         StreamFieldPanel('bio'),
@@ -187,6 +279,37 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         FieldPanel('orcid')
     ] + BasePageWithoutStaffPageForeignKeys.content_panels
 
+    # for a thread about upcoming support for read-only fields,
+    # see: https://github.com/wagtail/wagtail/issues/2893
+    human_resources_panels = [
+        FieldPanel('cnetid'),
+        MultiFieldPanel(
+            [
+                FieldPanel('display_name'),
+                FieldPanel('official_name'),
+                FieldPanel('first_name'),
+                FieldPanel('middle_name'),
+                FieldPanel('last_name'),
+                FieldPanel('position_title'),
+                FieldPanel('email'),
+                FieldPanel('phone_number'),
+                FieldPanel('faculty_exchange'),
+                InlinePanel('staff_page_units', label='Library Units'),
+                FieldPanel('employee_type'),
+                FieldPanel('position_status'),
+                FieldPanel('supervises_students'),
+                FieldPanel('supervisor_override'),
+            ],
+            heading='Human-resources editable fields. These fields will push to the campus directory (where appropriate).'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('chicago_id'),
+            ],
+            heading='Read-only fields. These values are pulled from the campus directory.'
+        )
+    ]
+
     search_fields = BasePageWithoutStaffPageForeignKeys.search_fields + [
         index.SearchField('profile_picture'),
         index.SearchField('cv'),
@@ -194,6 +317,13 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         index.SearchField('orcid'),
         index.SearchField('get_subjects')
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+        ObjectList(human_resources_panels, heading='Human Resources Info'),
+    ])
 
     subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
 

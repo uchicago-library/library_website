@@ -2,7 +2,7 @@ from django.db import models
 from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
@@ -107,6 +107,25 @@ class UnitPage(BasePage, ContactFields):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
+    department_head = models.ForeignKey(
+        'staff.StaffPage',
+        blank=True,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='department_head_of'
+    )
+    department_head_is_interim = models.BooleanField(
+        default=False
+    )
+    street_address = models.CharField(max_length=255, blank=True)
+    internal_email = models.EmailField(max_length=255, blank=True)
+    faculty_exchange = models.CharField(max_length=32, blank=True)
+    public_url = models.CharField(max_length=255, blank=True)
+    public_url_label = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=255, blank=True)
+    phone_number_label = models.CharField(max_length=255, blank=True)
+    is_a_division = models.BooleanField(default=False)
+    display_in_campus_directory = models.BooleanField(default=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('contact_point_title'),
@@ -121,12 +140,33 @@ class UnitPage(BasePage, ContactFields):
         FieldPanel('directory_unit'), 
     ] + BasePage.content_panels + ContactFields.content_panels
 
+    human_resources_panels = [
+        PageChooserPanel('department_head'),
+        FieldPanel('department_head_is_interim'),
+        FieldPanel('street_address'),
+        FieldPanel('faculty_exchange'),
+        FieldPanel('public_url'),
+        FieldPanel('public_url_label'),
+        FieldPanel('phone_number'),
+        FieldPanel('phone_number_label'),
+        FieldPanel('is_a_division'),
+        FieldPanel('display_in_campus_directory'),
+        FieldPanel('internal_email'),
+    ]
+
     subpage_types = []
 
     search_fields = BasePage.search_fields + [
         index.SearchField('alphabetical_directory_name'),
         index.FilterField('display_in_directory')
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+        ObjectList(human_resources_panels, heading='Human Resources Info'),
+    ])
 
     @staticmethod
     def hierarchical_units():
