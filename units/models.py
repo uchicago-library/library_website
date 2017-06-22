@@ -154,7 +154,7 @@ class UnitPage(BasePage, ContactFields):
         FieldPanel('internal_email'),
     ]
 
-    subpage_types = []
+    subpage_types = ['units.UnitPage']
 
     search_fields = BasePage.search_fields + [
         index.SearchField('alphabetical_directory_name'),
@@ -167,6 +167,9 @@ class UnitPage(BasePage, ContactFields):
         ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
         ObjectList(human_resources_panels, heading='Human Resources Info'),
     ])
+
+    def __str__(self):
+        return self.get_full_name()
 
     @staticmethod
     def hierarchical_units():
