@@ -19,12 +19,14 @@ from wagtail.wagtailembeds.blocks import EmbedBlock
 from wagtail.wagtailsearch import index
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtailmedia.blocks import AbstractMediaChooserBlock
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
 from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from wagtail.contrib.table_block.blocks import TableBlock
 from django.utils import translation
+from django.utils.html import format_html
 from units.utils import get_default_unit
 from alerts.utils import get_alert
 
@@ -814,6 +816,34 @@ class ImageLink(StructBlock):
         icon = 'image'
         template ='base/blocks/image_link.html'
 
+class LocalMediaBlock(AbstractMediaChooserBlock):
+    def render_basic(self, value, context=None):
+        if not value:
+            return ''
+
+        if value.type == 'video':
+            player_code = '''
+            <div>
+                <video width="320" height="240" controls>
+                    <source src="{0}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            '''
+        else:
+            player_code = '''
+            <div>
+                <audio controls>
+                    <source src="{0}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            '''
+
+        return format_html(player_code, value.file.url)
+
+    class Meta:
+        icon = 'media'
 
 class DefaultBodyFields(StreamBlock):
     """
@@ -864,6 +894,7 @@ class DefaultBodyFields(StreamBlock):
     solo_image = SoloImage(help_text='Single image with caption on the right')
     duo_image = DuoImage(help_text='Two images stacked side by side')
     image_link = ImageLink(help_text='A fancy link made out of a thumnail and simple text')
+    local_media = LocalMediaBlock(help_text='Audio or video files that are locally hosted')
 
 
 class RawHTMLBodyField(StreamBlock):

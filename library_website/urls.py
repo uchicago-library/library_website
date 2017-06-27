@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 from wagtail.contrib.wagtailsitemaps.views import sitemap
@@ -42,7 +43,7 @@ urlpatterns = [
     url(r'^collex/exhibits/$', RedirectView.as_view(url='/collex/?view=exhibits')),
 
     url(r'', include(wagtail_urls)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Prepend the shibboleth logout url if the application
 # is configured for shibboleth 
