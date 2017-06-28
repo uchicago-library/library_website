@@ -11,7 +11,7 @@ import json
 from wagtail.wagtailcore.models import Page
 from library_website.settings import REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 
-HOURS_UNAVIALABLE = 'Unavailable'
+HOURS_UNAVAILABLE = 'Unavailable'
 
 def get_xml_from_directory_api(url):
     assert url.startswith('https://')
@@ -120,7 +120,7 @@ def get_hours_by_id(lid):
         string, today's hours for location.
     """
     data = get_json_for_library(int(lid))
-    msg = HOURS_UNAVIALABLE
+    msg = HOURS_UNAVAILABLE
     try:
         hours = data['rendered']
         if hours != '': 
@@ -138,7 +138,7 @@ def process_hours(hours):
     Args:
         hours: string, json array
     """
-    msg = HOURS_UNAVIALABLE 
+    msg = HOURS_UNAVAILABLE
     if hours != '': 
         return hours
     else:
@@ -194,7 +194,7 @@ def get_json_hours_by_id(llid, hours):
     for item in json.loads(hours):
         if item[0] == llid:
             return item[1]
-    return HOURS_UNAVIALABLE 
+    return HOURS_UNAVAILABLE
     
 
 

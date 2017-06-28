@@ -15,7 +15,7 @@
         <div class="input-group"> <!-- Input Group -->
           <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="..." class="form-control"/>
           <select class="selectpicker btn-searchtype" name="type">
-            <option value="">All Fields</option>
+            <option value="AllFields">All Fields</option>
             <option value="Title">Title</option>
             <option value="Subject">Subject</option>
             <option value="Author">Author</option>
@@ -93,7 +93,7 @@
     <!-- TAB 3 - Database Finder -->
     <div data-radio-button-content-panel="database-finder">
       <h1 class="searchbox-header">Database Finder</h1>
-      <form method="post" action="https://www.lib.uchicago.edu/cgi-bin/nand/search/databasefinder" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
+      <form method="get" action="https://www.lib.uchicago.edu/cgi-bin/nand/search/databasefinder" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
         <input type="hidden" value="::CONFIG::titlesearch" name="search">
         <input type="hidden" value="::CONFIG::keyword" name="search-field-0">
         <div class="col-xs-9 col-sm-10 nopadding">

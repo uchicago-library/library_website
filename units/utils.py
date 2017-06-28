@@ -137,9 +137,10 @@ def get_quick_nums_for_library_or_dept(request):
         try:
             html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(department)])
         except(KeyError):
-            from units.models import UnitPage
+            from units.models import UnitIndexPage, UnitPage
+            url_path = UnitIndexPage.objects.first().url_path + '/'.join(map(slugify, department.split(' - '))) + '/'
             try:
-                unitpage = UnitPage.objects.live().get(title=department)
+                unitpage = UnitPage.objects.live().get(url_path=url_path)
                 html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(unitpage.location)])
             except(UnitPage.DoesNotExist, AssertionError, KeyError):
                 pass
