@@ -174,7 +174,7 @@ class UnitPage(BasePage, ContactFields):
     @staticmethod
     def hierarchical_units():
         records = []
-        for u in UnitPage.objects.filter(display_in_directory=True):
+        for u in UnitPage.objects.live().filter(display_in_directory=True):
             records.append([u.get_full_name().split(' - '), u])
 
         # sort records by full name. 
