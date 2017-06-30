@@ -12,8 +12,16 @@
     {% endcompress %}
     <style>
     {% inlinecompile "scss" %}
-    $base-color: {{primary_branding_color}};
-    $accent-color: {{secondary_branding_color}};
+    {% if primary_branding_color %}
+        $base-color: {{primary_branding_color}};
+    {% else %}
+        $base-color: #800000;
+    {% endif %}
+    {% if secondary_branding_color %}
+        $accent-color: {{secondary_branding_color}};
+    {% else %}
+        $accent-color: #9a5324;
+    {% endif %}
     $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
     $font-large: 2.5em;
     $font-medium: 1.5em;
