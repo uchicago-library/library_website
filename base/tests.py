@@ -339,7 +339,7 @@ class TestUtilityFunctions(TestCase):
         """
         crerar = 1373
         assert(len(get_hours_by_id(crerar)) > 1)
-        self.assertEqual(get_hours_by_id(999), 'Hours Unavailable')
+        self.assertEqual(get_hours_by_id(999), 'Unavailable')
 
 
 
