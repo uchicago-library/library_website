@@ -1,0 +1,69 @@
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+
+.is-vishidden, .visually-hidden { // For ADA helper text
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+
+$darkgray: #767676;
+$darkergray: #434343;
+$darkeraccent: #666A35;
+$darkaccent: #565A25;
+$accentlink: #8A9045;
+$accentlink-light: #ADB17D;
+
+
+
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+
+
+@mixin fluiddiv {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+@mixin gradient {
+    background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
+    color: #dadada;
+}
+
+@mixin listinline {
+    padding-left: 0;
+    margin-left: -5px;
+    list-style: none;
+}
+
+@mixin plainlist {
+    list-style-type: none;
+    line-height: 1.7em;
+    padding-left: 0;
+    //margin-bottom: 30px;
+}
+
+@mixin linkicons {
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #000;
+    font-size: 1em;
+    padding-left: 0.5em;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}

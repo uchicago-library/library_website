@@ -1,101 +1,141 @@
 @charset "UTF-8";
+/*------------------------------------------------------------------
+
+[Table of contents]
+
+Fonts
+Images, Video, and other Media
+Content
+Link and File Extension Icons  ** Currently deactivated **
+Tables
+Intranet Index Page
+Dept Home Page
+Group Home Page
+
+-------------------------------------------------------------------*/
 /*
- *  Global Items
+ * Accessibility
  * --------------------------------------------------
  */
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
 @import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
-@font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url("fonts/glyphicons-halflings-regular.eot");
-  src: url("fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded- opentype"), url("Content/fonts/glyphicons-halflings-regular.woff") format("woff"), url("Content/fonts/glyphicons-halflings-regular.ttf") format("truetype"), url("Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular") format("svg"); }
+.is-vishidden, .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px); }
 
-.font-secondary {
-  font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif; }
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+/*
+ * Media Queries
+ * --------------------------------------------------
+ *
+ * Use as: @include respond-to(small) { ... }
+ *      @include respond-to(medium) { ... }
+ *      @include respond-to(large) { ... }
+ */
+/*
+ * Print Styles
+ * --------------------------------------------------
+ */
+@media print {
+  background-color: #fff;
+  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
+    display: none; }
+  img {
+    max-width: 100%; }
+  @page {
+    size: 330mm 427mm;
+    margin: 2cm; }
+  .container-fluid:before {
+    content: "University of Chicago Library";
+    margin-bottom: 10px;
+    border: 1px solid #bbb;
+    padding: 3px 5px; }
+  h2, h3 {
+    page-break-after: avoid; }
+  ul, img {
+    page-break-inside: avoid; }
+  .rich-text a {
+    color: #000;
+    word-wrap: break-word; }
+    .rich-text a:after {
+      content: " (" attr(href) ")";
+      font-size: 80%; } }
 
-body {
-  font-family: 'ProximaNova-Regular', "Arial", sans-serif;
-  margin-bottom: 100px; }
+/*------------------------------------------------------------------
 
-html {
-  position: relative;
-  min-height: 100%; }
+[Table of contents]
 
-html, body {
-  overflow-x: hidden;
-  /* Off Canvas: Prevent scroll on narrow devices */ }
+Top Navigation
+Sidebar and Off Canvas (Sidebar Mobile Toggle)
+Footer
 
-a {
-  color: #565A25; }
-  a:hover {
-    color: #8A9045; }
-  p a, .rich-text a {
-    color: #5B8FA8;
-    text-decoration: underline; }
-  a.list-group-item:hover {
-    background-color: #ADB17D;
-    color: #fff; }
+-------------------------------------------------------------------*/
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+.is-vishidden, .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px); }
 
-h1 {
-  font-size: 1.3em;
-  line-height: .8em;
-  margin-bottom: 10px;
-  color: #8A9045;
-  font-weight: 600; }
-  .swside-home h1 {
-    color: #565A25; }
-
-h2 {
-  font-size: 1.2em;
-  margin: 2em 0 5px 0;
-  font-weight: 700;
-  color: #9A5324; }
-
-h3 {
-  font-size: 1.1em;
-  margin: 30px 0 5px 0;
-  color: #565A25;
-  font-weight: 600; }
-  h3.description {
-    margin-top: 0px;
-    padding-bottom: 10px; }
-
-h4 {
-  font-size: 1.1em;
-  font-style: italic;
-  color: #725663;
-  font-weight: 600;
-  margin-top: 2em; }
-
-h5 {
-  font-size: 1.1em;
-  font-weight: 600;
-  color: #767676; }
-
-h6 {
-  font-size: 1.1em;
-  font-weight: 100;
-  color: #9A5324; }
-
-h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
-  margin-top: 0; }
-
-.rich-text {
-  margin-bottom: 20px; }
-
-.media-heading {
-  margin-top: 5px;
-  margin-bottom: 3px;
-  font-size: 1.1em;
-  color: #9A5324; }
-  .media-heading a {
-    color: #9A5324; }
-
-.date {
-  font-weight: 100;
-  font-size: 1.1em;
-  color: #767676; }
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+/*
+ * Media Queries
+ * --------------------------------------------------
+ *
+ * Use as: @include respond-to(small) { ... }
+ *      @include respond-to(medium) { ... }
+ *      @include respond-to(large) { ... }
+ */
+/*
+ * Print Styles
+ * --------------------------------------------------
+ */
+@media print {
+  background-color: #fff;
+  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
+    display: none; }
+  img {
+    max-width: 100%; }
+  @page {
+    size: 330mm 427mm;
+    margin: 2cm; }
+  .container-fluid:before {
+    content: "University of Chicago Library";
+    margin-bottom: 10px;
+    border: 1px solid #bbb;
+    padding: 3px 5px; }
+  h2, h3 {
+    page-break-after: avoid; }
+  ul, img {
+    page-break-inside: avoid; }
+  .rich-text a {
+    color: #000;
+    word-wrap: break-word; }
+    .rich-text a:after {
+      content: " (" attr(href) ")";
+      font-size: 80%; } }
 
 /*
  *  Top Navigation
@@ -222,6 +262,10 @@ h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
  * Sidebar and Off Canvas (Sidebar Mobile Toggle)
  * --------------------------------------------------
  */
+html, body {
+  overflow-x: hidden;
+  /* Off Canvas: Prevent scroll on narrow devices */ }
+
 .swside {
   border-right: 1px solid #ADB17D;
   margin-bottom: 20px; }
@@ -304,6 +348,210 @@ h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
   .toggle-side {
     padding-bottom: 20px;
     margin-bottom: 20px; } }
+
+/*
+ *  Footer
+ * --------------------------------------------------
+ */
+html {
+  position: relative;
+  min-height: 100%; }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
+  color: #dadada; }
+  @media (min-width: 768px) {
+    .footer {
+      padding-top: 0px;
+      padding-bottom: 0px; } }
+  .footer a {
+    color: #fff;
+    font-size: 0.85em;
+    padding: 7px; }
+    .footer a:hover {
+      color: #8A9045;
+      text-decoration: none; }
+    @media (min-width: 768px) {
+      .footer a {
+        padding: 10px;
+        font-size: 1em; } }
+  .footer ul {
+    margin: 0;
+    padding-left: 0;
+    padding-top: 5px; }
+    @media (min-width: 768px) {
+      .footer ul {
+        padding-top: 0; } }
+    .footer ul li {
+      display: inline-block;
+      padding-left: 0;
+      margin-left: -5px;
+      list-style: none; }
+      @media (max-width: 768px) {
+        .footer ul li:after {
+          content: "|\00a0"; } }
+      @media (min-width: 768px) {
+        .footer ul li {
+          height: 100%;
+          border-right: 1px solid #282828;
+          padding: 20px 10px; }
+          .footer ul li:first-child {
+            border-left: 1px solid #282828; } }
+
+.footer-brand {
+  float: left; }
+  .footer-brand img {
+    max-width: 100px; }
+    @media (min-width: 768px) {
+      .footer-brand img {
+        max-width: 150px;
+        padding: 10px 20px 0 0; } }
+
+/*
+ * Fonts
+ * --------------------------------------------------
+ */
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url("fonts/glyphicons-halflings-regular.eot");
+  src: url("fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded- opentype"), url("Content/fonts/glyphicons-halflings-regular.woff") format("woff"), url("Content/fonts/glyphicons-halflings-regular.ttf") format("truetype"), url("Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular") format("svg"); }
+
+.font-secondary {
+  font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif; }
+
+body {
+  font-family: 'ProximaNova-Regular', "Arial", sans-serif;
+  margin-bottom: 100px; }
+
+a {
+  color: #565A25; }
+  a:hover {
+    color: #8A9045; }
+  p a, .rich-text a {
+    color: #5B8FA8;
+    text-decoration: underline; }
+  a.list-group-item:hover {
+    background-color: #ADB17D;
+    color: #fff; }
+
+h1 {
+  font-size: 1.3em;
+  line-height: .8em;
+  margin-bottom: 10px;
+  color: #8A9045;
+  font-weight: 600; }
+  .swside-home h1 {
+    color: #565A25; }
+
+h2 {
+  font-size: 1.2em;
+  margin: 2em 0 5px 0;
+  font-weight: 700;
+  color: #9A5324; }
+
+h3 {
+  font-size: 1.1em;
+  margin: 30px 0 5px 0;
+  color: #565A25;
+  font-weight: 600; }
+  h3.description {
+    margin-top: 0px;
+    padding-bottom: 10px; }
+
+h4 {
+  font-size: 1.1em;
+  font-style: italic;
+  color: #725663;
+  font-weight: 600;
+  margin-top: 2em; }
+
+h5 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #767676; }
+
+h6 {
+  font-size: 1.1em;
+  font-weight: 100;
+  color: #9A5324; }
+
+h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
+  margin-top: 0; }
+
+.rich-text {
+  margin-bottom: 20px; }
+
+.media-heading {
+  margin-top: 5px;
+  margin-bottom: 3px;
+  font-size: 1.1em;
+  color: #9A5324; }
+  .media-heading a {
+    color: #9A5324; }
+
+.date {
+  font-weight: 100;
+  font-size: 1.1em;
+  color: #767676; }
+
+.pullquote {
+  border-left: 5px solid #c8c8c8;
+  padding-left: 1em;
+  margin-left: 1em; }
+
+/* Blockquote */
+blockquote {
+  margin: 30px 50px 0 50px;
+  padding: 0.5em 5px;
+  quotes: "“" "”" "‘" "’";
+  line-height: 1.7em;
+  padding-right: 4em;
+  border-left: 0px; }
+
+blockquote:before {
+  color: #767676;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.1em;
+  vertical-align: -0.4em; }
+
+blockquote:after {
+  color: #767676;
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.5em;
+  margin-left: 0.1em;
+  vertical-align: -0.4em; }
+
+blockquote p {
+  display: inline; }
+
+.citation {
+  margin-bottom: 30px;
+  text-align: center; }
+
+/* Dictionary List */
+dt {
+  float: left;
+  clear: left;
+  width: 100px;
+  text-align: right;
+  font-weight: 600;
+  color: #725663; }
+
+dt:after {
+  content: ":"; }
+
+dd {
+  margin: 0 0 0 110px;
+  padding: 0 0 0.5em 0; }
 
 /*
  * Images, Video, and other Media
@@ -452,43 +700,6 @@ figure.center-block {
     color: #fff;
     background-color: #B1746F; }
 
-.pullquote {
-  border-left: 5px solid #c8c8c8;
-  padding-left: 1em;
-  margin-left: 1em; }
-
-/* Blockquote */
-blockquote {
-  margin: 30px 50px 0 50px;
-  padding: 0.5em 5px;
-  quotes: "“" "”" "‘" "’";
-  line-height: 1.7em;
-  padding-right: 4em;
-  border-left: 0px; }
-
-blockquote:before {
-  color: #767676;
-  content: open-quote;
-  font-size: 4em;
-  line-height: 0.1em;
-  margin-right: 0.1em;
-  vertical-align: -0.4em; }
-
-blockquote:after {
-  color: #767676;
-  content: close-quote;
-  font-size: 4em;
-  line-height: 0.5em;
-  margin-left: 0.1em;
-  vertical-align: -0.4em; }
-
-blockquote p {
-  display: inline; }
-
-.citation {
-  margin-bottom: 30px;
-  text-align: center; }
-
 /*
  * Link and File Extension Icons
  * --------------------------------------------------
@@ -621,25 +832,6 @@ table a, tbody a {
     width: 25%; } }
 
 /*
- *  Dictionary List
- * --------------------------------------------------
- */
-dt {
-  float: left;
-  clear: left;
-  width: 100px;
-  text-align: right;
-  font-weight: 600;
-  color: #725663; }
-
-dt:after {
-  content: ":"; }
-
-dd {
-  margin: 0 0 0 110px;
-  padding: 0 0 0.5em 0; }
-
-/*
  *  Intranet Index Page
  * --------------------------------------------------
  */
@@ -733,90 +925,4 @@ ul.index-list {
         color: #434343;
         line-height: 2em; }
 
-/*
- *  Footer
- * --------------------------------------------------
- */
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  padding-top: 15px;
-  padding-bottom: 5px;
-  background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
-  color: #dadada; }
-  @media (min-width: 768px) {
-    .footer {
-      padding-top: 0px;
-      padding-bottom: 0px; } }
-  .footer a {
-    color: #fff;
-    font-size: 0.85em;
-    padding: 7px; }
-    .footer a:hover {
-      color: #8A9045;
-      text-decoration: none; }
-    @media (min-width: 768px) {
-      .footer a {
-        padding: 10px;
-        font-size: 1em; } }
-  .footer ul {
-    margin: 0;
-    padding-left: 0;
-    padding-top: 5px; }
-    @media (min-width: 768px) {
-      .footer ul {
-        padding-top: 0; } }
-    .footer ul li {
-      display: inline-block;
-      padding-left: 0;
-      margin-left: -5px;
-      list-style: none; }
-      @media (max-width: 768px) {
-        .footer ul li:after {
-          content: "|\00a0"; } }
-      @media (min-width: 768px) {
-        .footer ul li {
-          height: 100%;
-          border-right: 1px solid #282828;
-          padding: 20px 10px; }
-          .footer ul li:first-child {
-            border-left: 1px solid #282828; } }
-
-.footer-brand {
-  float: left; }
-  .footer-brand img {
-    max-width: 100px; }
-    @media (min-width: 768px) {
-      .footer-brand img {
-        max-width: 150px;
-        padding: 10px 20px 0 0; } }
-
-/*
- * Print Styling
- * --------------------------------------------------
- */
-@media print {
-  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
-    display: none; }
-  img {
-    max-width: 100% !important; }
-  a[href]:after {
-    content: none !important; }
-  .container-fluid:before {
-    content: "University of Chicago Library";
-    margin-bottom: 10px;
-    border: 1px solid #bbb;
-    padding: 3px 5px; }
-  h2, h3 {
-    page-break-after: avoid; }
-  ul, img {
-    page-break-inside: avoid; }
-  .rich-text a {
-    color: #000;
-    word-wrap: break-word; }
-  @page {
-    margin: 2cm;
-    background-color: #fff; } }
-
+/*# sourceMappingURL=loop.css.map */
