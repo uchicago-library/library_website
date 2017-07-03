@@ -71,11 +71,14 @@
     .navbar, #footer {
         display: none;
     }
-    // nav:after {
-    //   display: block;
-    //   content: "The University of Chicago Library";
-    // }
-    div.breadcrumbs, div#sidebar, div.jumbotron {
+    nav:after {
+      display: block;
+      content: "The University of Chicago Library ( lib.uchicago.edu )";
+      font-size: 1.5em;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
         display: none;
     }
     body {
