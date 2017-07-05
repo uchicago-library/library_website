@@ -75,6 +75,15 @@ class VCard(Email, PhoneNumber):
     ]
 
 
+class StaffPageEmailAddresses(Orderable, models.Model):
+    page = ParentalKey('staff.StaffPage', related_name='staff_page_email')
+    email = models.EmailField(max_length=254, blank=True)
+
+    panels = [
+        FieldPanel('email')
+    ]
+
+
 class StaffPageLibraryUnits(Orderable, models.Model):
     page = ParentalKey('staff.StaffPage', related_name='staff_page_units')
     library_unit = models.ForeignKey(
@@ -150,7 +159,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         help_text='Position title.',
         max_length=255,
         null=True)
-    email = models.EmailField(max_length=254, blank=True)
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
     faculty_exchange = models.CharField(max_length=255, blank=True)
@@ -291,8 +299,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 FieldPanel('middle_name'),
                 FieldPanel('last_name'),
                 FieldPanel('position_title'),
-                FieldPanel('email'),
                 FieldPanel('phone_number'),
+                InlinePanel('staff_page_email', label='Email Addresses'),
                 FieldPanel('faculty_exchange'),
                 InlinePanel('staff_page_units', label='Library Units'),
                 FieldPanel('employee_type'),
