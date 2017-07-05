@@ -1,0 +1,313 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Off Canvas (Sidebar Mobile Toggle)
+Left Sidebar
+Right Sidebar
+Right Sidebar: Widget Items
+
+-------------------------------------------------------------------*/
+
+
+// Widget styling for items in the sidebar are in uclib.scss
+// Collections & Exhibits sidebars are in collex.scss
+
+
+@import "variables.scss";
+@import "media.scss";
+
+/*
+ * Off Canvas (Sidebar Mobile Toggle)
+ * --------------------------------------------------
+ */
+
+@media screen and (max-width: 986px) { // Keep as @media (instead of @include) for stability
+ .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+      .sidebar-offcanvas {
+        right: -50%; /* 6 columns */
+    }
+    &.active {
+        right: 50%; /* 6 columns */
+    }
+  }
+
+  .row-offcanvas-left {
+    left: 0;
+    min-height: 900px; // fix to sidebar overlapping footer in mobile.
+      .sidebar-offcanvas {
+        left: -50%; /* 6 columns */
+    }
+    &.active {
+        left: 50%; /* 6 columns */
+    }
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+  }
+
+  .toggle-side {
+      padding-bottom: 5px;
+  }
+}
+
+
+/*
+ * Left Sidebar
+ * --------------------------------------------------
+ */
+
+.sidebar {
+  background-color: rgba(210,205,204,0.6);
+  padding: 1em 1em 1em 2em;
+  @include respond-to(medium) {
+    padding-left: 1em;
+    padding-top: 35px;
+  }
+
+  // Library specific colors
+  &.crerar>ul>li>a {
+    color: $crerarblue;
+  }
+  &.eckhart>ul>li>a {
+    color: $eckhartpurple;
+  }
+  &.mansueto>ul>li>a {
+    color: $mansuetogreen;
+  }
+  &.reg>ul>li>a {
+    color: $reggreen;
+  }
+  &.ssa>ul>li>a {
+    color: $ssaorange;
+  }
+  // END Library specific colors
+
+  >ul {
+    list-style-type: none;
+    padding-left: 1em;
+    text-indent: -1em;
+    >li { // Direct child page
+      margin: 1em 0;
+      font-weight: 600;
+      a {
+        color: $maroon;
+      }
+      & ul { // Grandchild page
+        list-style-type: none;
+        padding-left: 1em;
+        text-indent: -1em;
+        li {
+          font-weight: 200;
+          margin-top: 0.5em;
+          &:first-child {
+            margin-top: 0.2em;
+          }
+          a {
+            color: $mid-dark;
+          }
+        }
+      }
+    }
+  }
+  h2, h2 a {
+    margin-bottom: 3px;
+    font-size: 1em;
+    font-weight: 600;
+    color: $darkred;
+    font-style: italic;
+  } 
+} // END Sidebar nesting
+
+.btn-sidebar {  // Toggle button for mobile view
+  background: #ddd;
+  color: $darkgray;
+  position: absolute;
+  padding: 10px;
+  left: 0;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  margin-left: 0;
+  margin-top: -25px;
+  z-index: 1000;
+  background-color: rgba(210,205,204, 0.9);
+  box-shadow: 0px 2px 7px $darkgray;
+  & a {
+    color: $darkgray;
+  }
+}
+
+
+/*
+ * Right Sidebar
+ * --------------------------------------------------
+ */
+
+
+// .btn-morelink and .distinct-rightside in  "_variables.scss"
+
+.rightside {
+  border-top: 1px dotted $darkgray;
+  border-left: 0;
+  margin: 10px 0;
+  padding: 20px 15px 0px 15px;
+  li {
+  color: $darkgray;
+  }
+  a {
+    color:  $active-hover;
+  }
+  h2, h3 {
+    font-weight: 400;
+    font-size:1.1em;
+    margin: 5px 0 10px 0;
+    padding-bottom: 5px;
+    color: $brightpurple;
+    font-style: normal;
+    border-bottom: 2px solid $brightpurple;
+    &:first-child {
+      margin-top: 5px;
+    }
+  }
+  @include respond-to(small) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  @include respond-to(medium) {
+    border-left: 1px dotted $darkgray;
+    border-top: 0;
+    margin: 0;
+    padding: 0 15px;
+  }
+  @include respond-to(large) {
+    max-width: 30em;
+  }
+  .btn-morelink {
+    margin-bottom: 10px;
+  }
+}
+
+.call-out {
+  color: #fff;
+  padding: 15px!important;
+  margin-bottom: 15px;
+  background-color: $maroon;
+  & h2, & h3 {
+    color: #fff;
+    border: none;
+  }
+  & a {
+    color: #fff;
+  }
+}
+
+
+/*
+ * Right Sidebar: Widget Items
+ * --------------------------------------------------
+ */
+
+ .home-modwrapper {
+  padding-top: 20px;
+  margin: 10px 0;
+  & h2 {
+    display: inline;
+    font-size: 1.2em;
+    color: $maroon;
+  }
+  & h3 {
+    font-size: 1em;
+    font-weight: 600;
+    color: $darkgray;
+    margin: 0 0 5px 0;
+  }
+  @include respond-to(small) {
+    padding-top: 0;
+  }
+  & ul:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.home-module {
+  border-bottom: 1px solid $darkgray;
+  padding: 0px 0px 10px 15px;
+  margin-bottom: 15px;
+  a {
+    color: $darkgray;
+    display: inline;
+    &.viewall:before {
+      content: "\0020|\0020";
+      margin: 0 0.5em;
+    }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+ .rightside ul, .home-modwrapper ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.rightside-mod { //Wrapper for individual modules
+  padding: 0 0 2em 0;
+  .collectionpage & {
+    padding-bottom: 1em;
+  }
+  @include respond-to(small) {
+    padding: 0 1em 2em 1em;
+  }
+  @include respond-to(medium) {
+    padding: 0 0 2em 0;
+  }
+}
+
+a.viewall {
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
+}
+
+.flex-sidebar {  // right sidebar that has push/pull div properties
+  @extend .rightside;
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+  @include respond-to(small) {
+    display: block;
+    flex-wrap: nowrap;
+  }
+}
+
+
+//Collections & Exhibits
+
+.rightside.coll-rightside {
+  @extend .distinct-rightside;
+  border: none;
+  h2 {
+    color: $reggreen;
+    font-weight: 600;
+  }
+  ul {
+    padding-left: 2em;
+    text-indent: -2em;
+    margin-bottom: 10px;
+  }
+}
+
+

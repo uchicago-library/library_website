@@ -1,0 +1,360 @@
+/*------------------------------------------------------------------
+
+[Table of contents]
+
+Top Navigation
+Sidebar and Off Canvas (Sidebar Mobile Toggle)
+Footer
+
+-------------------------------------------------------------------*/
+
+@import "loop-variables.scss";
+@import "loop-media.scss";
+
+
+/*
+ *  Top Navigation
+ * --------------------------------------------------
+ */
+
+#wagtail-userbar {
+    position: absolute;
+    z-index: 1;
+}
+
+.navbar-header .navbar-toggle {
+    position: relative;
+    z-index: 2;
+}
+
+.navbar>.container-fluid .navbar-brand {
+    max-width: 75px;
+    padding: 0;
+    margin-top: 5px;
+    margin-left: 10px;
+        @media (min-width: 768px) {
+            max-width: 100px;
+            margin-left: 20px;
+        }
+}
+
+.container-fluid>.navbar-header {
+    @media (min-width: 768px) {
+        }
+}
+
+.navbar-right {
+    padding: 15px 50px 15px 15px;
+    @media (min-width: 768px) {
+        padding: 15px 30px;
+        margin: 20px 0 0 0;
+        padding: 0px;
+    }
+    &>.input-group {
+      @media (max-width: 768px) { // mobile only
+        width: 250px;
+    }
+  }
+}
+
+.btn-default {
+    color: #fff;
+    background-color: $accentlink;
+    border-color: #ccc;
+        &:hover {
+            background-color: $accentlink-light;
+        }
+}
+
+.breadcrumbs {
+    padding-bottom: 5px;
+    @media (min-width: 768px) {
+        padding-bottom: 20px;
+    }
+}
+
+// -- Navigation links --
+
+
+.navbar-default {
+    border: 0px;
+    @include gradient;
+    @media (min-width: 768px) {
+        .divider-vertical { // Lines between link blocks
+            height: 100%;
+            border-right: 1px solid #282828;
+        }
+        }
+    .licaption { // Link description
+        font-style: italic;
+        font-size: 0.8em;
+        color: #D6D6CE;
+    }
+    .navbar-toggle {
+        .icon-bar {
+            background-color: #fff;
+        }
+        &:hover {
+            background-color: $accentlink;
+        }
+        &:visited, &:focus {
+            background-color: $accentlink-light;
+        }
+    }
+}
+
+.navbar-form, .navbar-collapse {
+        border: 0px;
+}
+
+/* Navbar links to fill the entire space of the .navbar */
+.navbar {
+    margin-bottom: 5px;
+    & .navbar-inner {
+        @media (min-width: 768px) {
+        padding: 0;
+        }
+    }
+
+    & .nav {
+        @media (min-width: 768px) {
+        margin: 0;
+        display: table;
+        width: 100%;
+        }
+        & li {
+            color: #fff;
+            @media (min-width: 768px) {
+                display: table-cell;
+                width: auto;
+                float: none;
+                text-align: center;
+                padding-bottom: 10px;
+            }
+            &:hover, &.current {
+                background-color: $accentlink;
+            }               
+            a {
+                color: #fff;
+                @media (min-width: 768px) {
+                    font-size: 1.1em;
+                    padding-bottom: 3px;
+                }
+                &:hover {
+                    color: #fff;
+                }
+                &:first-child a {
+                    border-left: 0;
+                    border-radius: 3px 0 0 3px;
+                }
+            }
+            &:last-child a {
+                border-right: 0;
+                border-radius: 0 3px 3px 0;
+            }
+        }
+    }
+}
+
+.navbar-default .navbar-nav>li>a:focus {
+    color: #fff;
+}
+
+
+#bs-example-navbar-collapse-1 {
+    background-color: #404040;
+    font-size: 1.1em;
+    @media (min-width: 768px) {
+        margin-top: 75px;
+        @include fluiddiv;
+        @include gradient;
+        border-top: 1px solid #282828;
+        text-align: center;
+    }
+}
+
+/*
+ * Sidebar and Off Canvas (Sidebar Mobile Toggle)
+ * --------------------------------------------------
+ */
+
+html, body {
+  overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
+}
+
+.swside {
+    border-right: 1px solid $accentlink-light;
+    margin-bottom: 20px;
+    //margin-right: 15px;
+    & h3 {
+      font-weight: 400;
+      margin-top: 1em;
+    }
+    ul {
+            @include plainlist;
+            padding-left: 2em;
+            text-indent: -2em;
+            &>li {
+                margin-top: 5px;
+                a {
+                    color: #725663;
+                    font-weight: 600;
+                    font-size: 1em;
+                }
+                &>ul>li {
+                    line-height: 2em;
+                    margin-top: 0;
+                    margin-left: 10px;
+                    a {
+                        color: #5b5b5b;
+                        font-weight: 300;
+                        font-size: 1em;
+                    }
+                }
+            }
+        }
+    @media screen and (max-width: 767px) {
+        padding-left: 25px;
+    }
+}
+
+.btn-sidebar {
+    background: $accentlink-light;
+    color: #fff;
+    position: absolute;
+    padding: 10px;
+    left: 0;
+    border-color: $accentlink;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    margin-left: 0;
+    & a, &:hover {
+        color: #fff;
+        background: $accentlink;
+        }
+}
+
+.row-offcanvas {
+    @media screen and (max-width: 767px) {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+    }
+}
+
+.row-offcanvas-right {
+    @media screen and (max-width: 767px) {
+    right: 0;
+        .sidebar-offcanvas {
+            right: -50%; /* 6 columns */
+        }
+        &.active {
+            right: 50%; /* 6 columns */
+        }
+    }
+}
+
+.row-offcanvas-left {
+    @media screen and (max-width: 767px) {
+    left: 0;
+        .sidebar-offcanvas {
+            left: -50%; /* 6 columns */
+        }
+        &.active {
+            left: 50%; /* 6 columns */
+        }
+    }
+}
+
+.sidebar-offcanvas {
+    @media screen and (max-width: 767px) {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+    }
+}
+
+.toggle-side {
+    @media (max-width: 767px) { //Mobile
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+}
+
+
+
+/*
+ *  Footer
+ * --------------------------------------------------
+ */
+
+html { // For sticky footer
+  position: relative;
+  min-height: 100%;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  @include gradient;
+  @media (min-width: 768px) {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+  a {
+    color: #fff;
+    font-size: 0.85em;
+    padding: 7px;
+      &:hover {
+      color: $accentlink;
+      text-decoration: none;
+      }
+    @media (min-width: 768px) {
+      padding: 10px;  
+      font-size: 1em; 
+    }
+  }
+  ul {
+    margin:0;
+    padding-left: 0;
+    padding-top: 5px;
+    @media (min-width: 768px) {
+      padding-top: 0;
+    }
+    & li {
+      display: inline-block;
+      @include listinline;
+        @media (max-width: 768px) { // Mobile
+        &:after {
+            content: "|\00a0";
+        }
+      }
+      @media (min-width: 768px) {
+        height: 100%;
+        border-right: 1px solid #282828;
+        padding: 20px 10px;
+        &:first-child {
+          border-left: 1px solid #282828;
+        }
+      }
+    }
+  }
+}
+
+.footer-brand {
+  float: left;
+  img {
+    max-width: 100px;
+    @media (min-width: 768px) {
+      max-width: 150px;
+      padding: 10px 20px 0 0;
+    }
+  }
+}
+
+

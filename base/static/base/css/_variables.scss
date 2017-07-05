@@ -1,3 +1,43 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Accessibility {Global Classes}
+Fonts
+Colors
+Elements
+Mixins
+
+-------------------------------------------------------------------*/
+
+@import "media.scss";
+
+/*
+ * Accessibility {Global Classes}
+ * --------------------------------------------------
+ */
+
+.is-vishidden, .visually-hidden { // For ADA helper text
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+
+/*
+ * Fonts
+ * --------------------------------------------------
+ */
+
+$font-large: 2.5em;
+$font-medium: 1.5em;
+$font-small: 1.1em;
+
+//For Collex (Collections and Exhibits)
+$base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+
+
 /*
  * Colors
  * --------------------------------------------------
@@ -49,6 +89,62 @@ $trans-orange: rgba(154, 83, 46, 0.8);
 
 $divider: 1px solid $darkgray;
 
+.nopadding {  // For use when do not want to wrap in row 
+   padding-right: 0;
+   padding-left: 0;
+   margin-right: 0;
+   margin-left: 0;
+}
+
+.btn-morelink {  // "View more ..." link for sidebar
+  font-size: 0.9em;
+  color: $crerarblue;
+  background: $lightneutral;
+  border: 1px solid $lightgray;
+  border-radius: 0;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
+  &:hover {
+    background: #d8b9b7;
+    color: $maroon; 
+  }
+}
+
+.distinct-rightside {
+  background-color: $hovercalmlight;
+  margin: 10px 0;
+  padding: 15px 20px;
+  ul {
+    list-style-type: none;
+    margin-bottom: 10px;
+  }
+  li {
+  color: $brightpurple;
+  }
+  a {
+    color: $brightpurple;
+  }
+  & h2 {
+    color: $reggreen;
+    margin: 5px 0 10px 0;
+    font-size: 1.05em;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #a0a282;
+  }
+  @include respond-to(medium) {
+    border-top: 0;
+    margin: 0;
+    max-width: 350px;
+  }
+  @include respond-to(large) {
+    max-width: 30em;
+  }
+}
+
 
 /*
  * Mixins
@@ -79,6 +175,10 @@ $divider: 1px solid $darkgray;
   text-overflow: ellipsis;
   white-space: nowrap;
   word-wrap: normal;
+}
+
+@mixin borders {
+    border-bottom: 1px dotted $darkgray;
 }
 
 @mixin visually-hidden { // For ADA helper text

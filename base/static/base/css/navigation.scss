@@ -1,44 +1,19 @@
 /*------------------------------------------------------------------
+
+> Styles can be used on public site and third party platforms <
+
 [Table of contents]
 
 Top Right Navbar (time/account/ask)
 Main Navbar
 Navigation Drop Downs
-Fancy Splash Image (Jumbotron)
-Off Canvas (Sidebar Mobile Toggle)
-Left Sidebar
-Footer
+
 -------------------------------------------------------------------*/
 
-// Right sidebar is in uclib.scss
 
 @import "variables.scss";
-@import "base.scss";
+@import "media.scss";
 
-html,
-body {
-  //overflow-y: scroll; /* has to be scroll, not auto */
-  -webkit-overflow-scrolling: touch;
-  height: 100%;
-  /* The html and body elements cannot have any padding or margin. */
-}
-
-/* Sticky Footer, a part 1: Wrapper for page content to push down footer */
-#body-wrap {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  margin: 0 auto -10px;
-  @include respond-to(medium) {
-    margin: 0 auto -200px;
-  }
-}
-
-#push {
-  @include respond-to(small) {
-    height: 250px;
-  }
-}
 
 
 /*
@@ -183,6 +158,7 @@ i.ask-icon {
   }
 }
 
+
 /*
  * Navigation Drop Downs
  * --------------------------------------------------
@@ -202,6 +178,8 @@ i.ask-icon {
   }
 }
 
+
+/* Not currently using, but saved for when nav changes */
 // .dropdown-menu-right {
 //   @include respond-to(medium) {
 //     right: auto;
@@ -269,279 +247,4 @@ i.ask-icon {
   }
 }
 
-/*
- * Fancy Splash Image (Jumbotron)
- * --------------------------------------------------
- */
 
-.jumbotron {
-  max-height: 50px;
-  padding-top: 0px;
-  margin-bottom: 0;
-  background-color: $darkred; //fallback if all else fails
-  background-image: url("../images/banner.gif"); //fallback if no image uploaded
-  background-size: cover;
-  h2 {
-    color: #fff;
-  }
-  .container {
-    padding: 0px;
-  }
-  @include respond-to(small) { 
-    min-height: 75px;
-    .container {
-      position: relative;
-      margin: 0px;
-    }
-  }
-}
-
-.overlaywrap {
-  background-color: $trans-red; // Also applies to Law. Default if location is not specified
-  color: #E7E5E2;
-  left: 0;
-  top: 0;
-  h2 {
-    font-weight: 400;
-    font-size: 1.2em;
-    margin-top: 0;
-    padding: 10px 15px;
-    &:hover {
-      text-decoration: none;
-    }
-  }
-  &.crerar {
-    background-color: $trans-blue;
-  }
-  &.eckhart {
-    background-color: $trans-purple;
-  }
-  &.mansueto {
-    background-color: $trans-darkgreen;
-  }
-  &.reg {
-    background-color: $trans-lightgreen;
-  }
-  &.ssa {
-    background-color: $trans-orange;
-  }
-  @include respond-to(small) {
-    position: absolute;
-    padding-right: 3em;
-    padding-left: 1.7em;
-    h2 {
-      font-size: 1.6em;
-      margin-top: 10px;
-      padding: 0;
-    }
-  }
-}
-
-
-/*
- * Off Canvas (Sidebar Mobile Toggle)
- * --------------------------------------------------
- */
-
-@media screen and (max-width: 986px) { // Keep as @media (instead of @include) for stability
- .row-offcanvas {
-    position: relative;
-    -webkit-transition: all .25s ease-out;
-         -o-transition: all .25s ease-out;
-            transition: all .25s ease-out;
-  }
-
-  .row-offcanvas-right {
-    right: 0;
-      .sidebar-offcanvas {
-        right: -50%; /* 6 columns */
-    }
-    &.active {
-        right: 50%; /* 6 columns */
-    }
-  }
-
-  .row-offcanvas-left {
-    left: 0;
-    min-height: 900px; // fix to sidebar overlapping footer in mobile.
-      .sidebar-offcanvas {
-        left: -50%; /* 6 columns */
-    }
-    &.active {
-        left: 50%; /* 6 columns */
-    }
-  }
-
-  .sidebar-offcanvas {
-    position: absolute;
-    top: 0;
-    width: 50%; /* 6 columns */
-  }
-
-  .toggle-side {
-      padding-bottom: 5px;
-  }
-}
-
-/*
- * Left Sidebar
- * --------------------------------------------------
- */
-
-.sidebar {
-  background-color: rgba(210,205,204,0.6);
-  padding: 1em 1em 1em 2em;
-  @include respond-to(medium) {
-    padding-left: 1em;
-    padding-top: 35px;
-  }
-
-  // Library specific colors
-  &.crerar>ul>li>a {
-    color: $crerarblue;
-  }
-  &.eckhart>ul>li>a {
-    color: $eckhartpurple;
-  }
-  &.mansueto>ul>li>a {
-    color: $mansuetogreen;
-  }
-  &.reg>ul>li>a {
-    color: $reggreen;
-  }
-  &.ssa>ul>li>a {
-    color: $ssaorange;
-  }
-  // END Library specific colors
-
-  >ul {
-    list-style-type: none;
-    padding-left: 1em;
-    text-indent: -1em;
-    >li { // Direct child page
-      margin: 1em 0;
-      font-weight: 600;
-      a {
-        color: $maroon;
-      }
-      & ul { // Grandchild page
-        list-style-type: none;
-        padding-left: 1em;
-        text-indent: -1em;
-        li {
-          font-weight: 200;
-          margin-top: 0.5em;
-          &:first-child {
-            margin-top: 0.2em;
-          }
-          a {
-            color: $mid-dark;
-          }
-        }
-      }
-    }
-  }
-  h2, h2 a {
-    margin-bottom: 3px;
-    font-size: 1em;
-    font-weight: 600;
-    color: $darkred;
-    font-style: italic;
-  } 
-} // END Sidebar nesting
-
-.btn-sidebar {  // Toggle button for mobile view
-  background: #ddd;
-  color: $darkgray;
-  position: absolute;
-  padding: 10px;
-  left: 0;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  margin-left: 0;
-  margin-top: -25px;
-  z-index: 1000;
-  background-color: rgba(210,205,204, 0.9);
-  box-shadow: 0px 2px 7px $darkgray;
-  & a {
-    color: $darkgray;
-  }
-}
-
-
-
-/*
- * Footer
- * --------------------------------------------------
- */
-
-/* Sticky Footer, a part 2 */
-#footer {
-  @include respond-to(small-only) {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-.footer {
-  width: 100%;
-  background: $darkgray; // fallback
-  background-image: url("../images/warm_grey_reddish.jpg");
-  background-repeat: repeat;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  &>hr {
-    border-top: 1px solid $darkgray;
-  }
-  p, small {
-    color: $neutral;
-  }
-  & a {
-  color: #eee;
-  line-height: 1.7em;
-  text-decoration: none;
-    &:hover {
-    	color: $hoveraccent;
-    }
-	}
-  h5 {
-    margin-bottom: 0px;
-  }
-  .col-footer {
-      border-top: 1px solid #5e5e5e;
-      padding-top: 15px;
-      &:first-child {
-        border-top: none;
-      }
-    @include respond-to(small) {
-      @include flex;
-      border-top: none;
-      padding-top: 0;
-    }
-  }
-  @include respond-to(small) { // Full width footer div
-    margin: 0;
-    display: table;
-    width: 100%;
-    .divider-vertical { // Lines between link blocks
-      height: 100%;
-      border-right: 1px solid #5e5e5e;
-      border-left: 1px solid #5e5e5e;
-    }
-  }
-}
-
-.centerdiv {
-  img {
-    padding-bottom:20px;
-    width: 150px;
-    height: auto;
-  }
-  @include respond-to(small) {
-    @include center;
-    text-align: center;
-  }
-}
-
-
-      

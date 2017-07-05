@@ -1,13 +1,21 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Fonts
+Header
+Sidebars
+Images
+
+-------------------------------------------------------------------*/
+
+
 @import "base/css/variables.scss";
-@import "base/css/base.scss";
-//@import "compass/utilities/color/contrast";
+@import "base/css/media.scss";
 
-$base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
-
-@mixin borders {
-    border-bottom: 1px dotted $darkgray;
-}
-
+/*
+ * Fonts
+ * --------------------------------------------------
+ */
 
 body {
     font-family: $base-font;
@@ -31,20 +39,11 @@ h4 {
     font-weight: 600;
 }
 
-//remove?
-.subnav {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 5px 0;
-    font-size: 0.9em;
-    text-align: right;
-    a {
-        color: #eee;
-        text-decoration: none;
-        padding: 0 20px;
-    }
-}
+
+/*
+ * Header
+ * --------------------------------------------------
+ */
 
 .exhibitpage .jumbotron {
   min-height: 250px;
@@ -112,6 +111,12 @@ h4 {
     float: right;
 }
 
+
+/*
+ * Sidebars
+ * --------------------------------------------------
+ */
+
 .sidebar.collex {
     background-color: #eee;
     padding: 1em 0 0 0;
@@ -152,14 +157,6 @@ h4 {
     & ~ #push {
         background-color: #eee;
     }
-    // img {
-    //     float: left;
-    //     padding-right: 1.5em;
-    //     max-width: 30%;
-        // &~.loc-title {
-        //     clear: both;
-        // }
-    //}
     .loc-title {
         margin-bottom: 0.5em;
         font-weight: 600;
@@ -196,6 +193,12 @@ h4 {
         margin-top: 1.2em;
     }
 }
+
+
+/*
+ * Images
+ * --------------------------------------------------
+ */
 
 .collex-gallery {
     border-top: 1px dotted #767676;
@@ -247,8 +250,6 @@ h4 {
 }
 
 .duo-wrapper {
-    //display:flex;
-    //flex-wrap: wrap;
     padding: 2em 1em;
     @include respond-to(small) {
         @include borders;
@@ -257,7 +258,6 @@ h4 {
 
 .collex-duo {
     padding: 0;
-    //@extend .collex;
     @include respond-to(medium) {
         &:not(.collex-solo):nth-of-type(odd) {
             border-right: 1px dotted $darkgray;
@@ -310,7 +310,17 @@ h4 {
     border-left: 30px solid #c0c0c0;
 }
 
+/*
+ * Temporary until all web exhibits are migrated over
+ * --------------------------------------------------
+ */
 
+.collex-loc {
+  background-color: #eee;
+  padding: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+}
 
 
 

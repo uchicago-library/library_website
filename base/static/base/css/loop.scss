@@ -1,52 +1,26 @@
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
-@import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
+/*------------------------------------------------------------------
 
-$darkgray: #767676;
-$darkergray: #434343;
-$darkeraccent: #666A35;
-$darkaccent: #565A25;
-$accentlink: #8A9045;
-$accentlink-light: #ADB17D;
-@mixin fluiddiv {
-    margin-left: -15px;
-    margin-right: -15px;
-}
-@mixin gradient {
-    background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
-    color: #dadada;
-}
+[Table of contents]
 
-@mixin listinline {
-    padding-left: 0;
-    margin-left: -5px;
-    list-style: none;
-}
+Fonts
+Images, Video, and other Media
+Content
+Link and File Extension Icons  ** Currently deactivated **
+Tables
+Intranet Index Page
+Dept Home Page
+Group Home Page
 
-@mixin plainlist {
-    list-style-type: none;
-    line-height: 1.7em;
-    padding-left: 0;
-    //margin-bottom: 30px;
-}
+-------------------------------------------------------------------*/
 
-@mixin linkicons {
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-    color: #000;
-    font-size: 1em;
-    padding-left: 0.5em;
-    position: absolute;
-    top: 10px;
-    left: 0;
-}
+@import "loop-variables.scss";
+@import "loop-media.scss";
+@import "loop-navigation.scss";
 
-// -- Start Styling ---
+
 
 /*
- *  Global Items
+ * Fonts
  * --------------------------------------------------
  */
 
@@ -65,15 +39,6 @@ $accentlink-light: #ADB17D;
 body {
   font-family: 'ProximaNova-Regular', "Arial", sans-serif;
   margin-bottom: 100px;
-}
-
-html { // For sticky footer
-  position: relative;
-  min-height: 100%;
-}
-
-html, body {
-  overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
 }
 
 a {
@@ -165,271 +130,72 @@ h1+h2, h2+h3, h3+h4, h4+h5, h5+h6 {
     color: $darkgray;
 }
 
-/*
- *  Top Navigation
- * --------------------------------------------------
- */
-
-#wagtail-userbar {
-    position: absolute;
-    z-index: 1;
+.pullquote {
+  border-left: 5px solid #c8c8c8;
+  padding-left: 1em;
+  margin-left: 1em;
 }
 
-.navbar-header .navbar-toggle {
-    position: relative;
-    z-index: 2;
+/* Blockquote */
+
+blockquote {
+  margin: 30px 50px 0 50px;
+  padding: 0.5em 5px;
+  quotes: "\201C""\201D""\2018""\2019";
+  line-height: 1.7em;
+  padding-right: 4em;
+  border-left: 0px;
 }
 
-.navbar>.container-fluid .navbar-brand {
-    max-width: 75px;
-    padding: 0;
-    margin-top: 5px;
-    margin-left: 10px;
-        @media (min-width: 768px) {
-            max-width: 100px;
-            margin-left: 20px;
-        }
+blockquote:before {
+  color: #767676;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.1em;
+  vertical-align: -0.4em;
 }
 
-.container-fluid>.navbar-header {
-    @media (min-width: 768px) {
-        }
+blockquote:after {
+  color: #767676;
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.5em;
+  margin-left: 0.1em;
+  vertical-align: -0.4em;
 }
 
-.navbar-right {
-    padding: 15px 50px 15px 15px;
-    @media (min-width: 768px) {
-        padding: 15px 30px;
-        margin: 20px 0 0 0;
-        padding: 0px;
-    }
-    &>.input-group {
-      @media (max-width: 768px) { // mobile only
-        width: 250px;
-    }
-  }
+blockquote p {
+  display: inline;
 }
 
-.btn-default {
-    color: #fff;
-    background-color: $accentlink;
-    border-color: #ccc;
-        &:hover {
-            background-color: $accentlink-light;
-        }
-}
-
-.breadcrumbs {
-    padding-bottom: 5px;
-    @media (min-width: 768px) {
-        padding-bottom: 20px;
-    }
-}
-
-// -- Navigation links --
-
-
-.navbar-default {
-    border: 0px;
-    @include gradient;
-    @media (min-width: 768px) {
-        .divider-vertical { // Lines between link blocks
-            height: 100%;
-            border-right: 1px solid #282828;
-        }
-        }
-    .licaption { // Link description
-        font-style: italic;
-        font-size: 0.8em;
-        color: #D6D6CE;
-    }
-    .navbar-toggle {
-        .icon-bar {
-            background-color: #fff;
-        }
-        &:hover {
-            background-color: $accentlink;
-        }
-        &:visited, &:focus {
-            background-color: $accentlink-light;
-        }
-    }
-}
-
-.navbar-form, .navbar-collapse {
-        border: 0px;
-}
-
-/* Navbar links to fill the entire space of the .navbar */
-.navbar {
-    margin-bottom: 5px;
-    & .navbar-inner {
-        @media (min-width: 768px) {
-        padding: 0;
-        }
-    }
-
-    & .nav {
-        @media (min-width: 768px) {
-        margin: 0;
-        display: table;
-        width: 100%;
-        }
-        & li {
-            color: #fff;
-            @media (min-width: 768px) {
-                display: table-cell;
-                width: auto;
-                float: none;
-                text-align: center;
-                padding-bottom: 10px;
-            }
-            &:hover, &.current {
-                background-color: $accentlink;
-            }               
-            a {
-                color: #fff;
-                @media (min-width: 768px) {
-                    font-size: 1.1em;
-                    padding-bottom: 3px;
-                }
-                &:hover {
-                    color: #fff;
-                }
-                &:first-child a {
-                    border-left: 0;
-                    border-radius: 3px 0 0 3px;
-                }
-            }
-            &:last-child a {
-                border-right: 0;
-                border-radius: 0 3px 3px 0;
-            }
-        }
-    }
-}
-
-.navbar-default .navbar-nav>li>a:focus {
-    color: #fff;
+.citation {
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 
-#bs-example-navbar-collapse-1 {
-    background-color: #404040;
-    font-size: 1.1em;
-    @media (min-width: 768px) {
-        margin-top: 75px;
-        @include fluiddiv;
-        @include gradient;
-        border-top: 1px solid #282828;
-        text-align: center;
-    }
+/* Dictionary List */
+
+dt {
+  float: left;
+  clear: left;
+  width: 100px;
+  text-align: right;
+  font-weight: 600;
+  color: #725663;
 }
 
-/*
- * Sidebar and Off Canvas (Sidebar Mobile Toggle)
- * --------------------------------------------------
- */
-
-.swside {
-    border-right: 1px solid $accentlink-light;
-    margin-bottom: 20px;
-    //margin-right: 15px;
-    & h3 {
-      font-weight: 400;
-      margin-top: 1em;
-    }
-    ul {
-            @include plainlist;
-            padding-left: 2em;
-            text-indent: -2em;
-            &>li {
-                margin-top: 5px;
-                a {
-                    color: #725663;
-                    font-weight: 600;
-                    font-size: 1em;
-                }
-                &>ul>li {
-                    line-height: 2em;
-                    margin-top: 0;
-                    margin-left: 10px;
-                    a {
-                        color: #5b5b5b;
-                        font-weight: 300;
-                        font-size: 1em;
-                    }
-                }
-            }
-        }
-    @media screen and (max-width: 767px) {
-        padding-left: 25px;
-    }
+dt:after {
+  content: ":";
 }
 
-.btn-sidebar {
-    background: $accentlink-light;
-    color: #fff;
-    position: absolute;
-    padding: 10px;
-    left: 0;
-    border-color: $accentlink;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-    margin-left: 0;
-    & a, &:hover {
-        color: #fff;
-        background: $accentlink;
-        }
+dd {
+  margin: 0 0 0 110px;
+  padding: 0 0 0.5em 0;
 }
 
-.row-offcanvas {
-    @media screen and (max-width: 767px) {
-    position: relative;
-    -webkit-transition: all .25s ease-out;
-         -o-transition: all .25s ease-out;
-            transition: all .25s ease-out;
-    }
-}
 
-.row-offcanvas-right {
-    @media screen and (max-width: 767px) {
-    right: 0;
-        .sidebar-offcanvas {
-            right: -50%; /* 6 columns */
-        }
-        &.active {
-            right: 50%; /* 6 columns */
-        }
-    }
-}
-
-.row-offcanvas-left {
-    @media screen and (max-width: 767px) {
-    left: 0;
-        .sidebar-offcanvas {
-            left: -50%; /* 6 columns */
-        }
-        &.active {
-            left: 50%; /* 6 columns */
-        }
-    }
-}
-
-.sidebar-offcanvas {
-    @media screen and (max-width: 767px) {
-    position: absolute;
-    top: 0;
-    width: 50%; /* 6 columns */
-    }
-}
-
-.toggle-side {
-    @media (max-width: 767px) { //Mobile
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-    }
-}
 
 /*
  * Images, Video, and other Media
@@ -615,49 +381,7 @@ figure {
     }
 }
 
-.pullquote {
-  border-left: 5px solid #c8c8c8;
-  padding-left: 1em;
-  margin-left: 1em;
-}
 
-/* Blockquote */
-
-blockquote {
-  margin: 30px 50px 0 50px;
-  padding: 0.5em 5px;
-  quotes: "\201C""\201D""\2018""\2019";
-  line-height: 1.7em;
-  padding-right: 4em;
-  border-left: 0px;
-}
-
-blockquote:before {
-  color: #767676;
-  content: open-quote;
-  font-size: 4em;
-  line-height: 0.1em;
-  margin-right: 0.1em;
-  vertical-align: -0.4em;
-}
-
-blockquote:after {
-  color: #767676;
-  content: close-quote;
-  font-size: 4em;
-  line-height: 0.5em;
-  margin-left: 0.1em;
-  vertical-align: -0.4em;
-}
-
-blockquote p {
-  display: inline;
-}
-
-.citation {
-  margin-bottom: 30px;
-  text-align: center;
-}
 
 /*
  * Link and File Extension Icons
@@ -815,28 +539,6 @@ table, tbody {
     }
 }
 
-/*
- *  Dictionary List
- * --------------------------------------------------
- */
-
-dt {
-  float: left;
-  clear: left;
-  width: 100px;
-  text-align: right;
-  font-weight: 600;
-  color: #725663;
-}
-
-dt:after {
-  content: ":";
-}
-
-dd {
-  margin: 0 0 0 110px;
-  padding: 0 0 0.5em 0;
-}
 
 /*
  *  Intranet Index Page
@@ -968,108 +670,6 @@ dd {
 }
 
 
-/*
- *  Footer
- * --------------------------------------------------
- */
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  padding-top: 15px;
-  padding-bottom: 5px;
-  @include gradient;
-  @media (min-width: 768px) {
-    padding-top: 0px;
-    padding-bottom: 0px;
-  }
-  a {
-    color: #fff;
-    font-size: 0.85em;
-    padding: 7px;
-      &:hover {
-      color: $accentlink;
-      text-decoration: none;
-      }
-    @media (min-width: 768px) {
-      padding: 10px;  
-      font-size: 1em; 
-    }
-  }
-  ul {
-    margin:0;
-    padding-left: 0;
-    padding-top: 5px;
-    @media (min-width: 768px) {
-      padding-top: 0;
-    }
-    & li {
-      display: inline-block;
-      @include listinline;
-        @media (max-width: 768px) { // Mobile
-        &:after {
-            content: "|\00a0";
-        }
-      }
-      @media (min-width: 768px) {
-        height: 100%;
-        border-right: 1px solid #282828;
-        padding: 20px 10px;
-        &:first-child {
-          border-left: 1px solid #282828;
-        }
-      }
-    }
-  }
-}
-
-.footer-brand {
-  float: left;
-  img {
-    max-width: 100px;
-    @media (min-width: 768px) {
-      max-width: 150px;
-      padding: 10px 20px 0 0;
-    }
-  }
-}
 
 
-/*
- * Print Styling
- * --------------------------------------------------
- */
 
-@media print {
-  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
-    display: none;
-  }
-  img {
-    max-width: 100%!important;
-  }
-  a[href]:after {
-    content: none!important;
-  }
-  .container-fluid:before {
-    content: "University of Chicago Library";
-    margin-bottom: 10px;
-    border: 1px solid #bbb;
-    padding: 3px 5px;
-  }
-  h2, h3 {
-    page-break-after: avoid;
-  }
-  ul, img {
-    page-break-inside: avoid;
-  }
-  .rich-text a {
-    color: #000;
-    word-wrap: break-word;
-  }
-  @page {
-    margin: 2cm;
-    background-color: #fff;
-  }
-}

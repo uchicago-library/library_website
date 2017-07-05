@@ -1,44 +1,48 @@
 /*------------------------------------------------------------------
+
 [Table of contents]
 
+Page Specific Alterations
+Fancy Splash Image (Jumbotron)
 Content
 Text
 Images, Video, and other Media
-Right Sidebar
+Light Box Styling
+Carousel
 Homepage Modules / Widgets  
 Workshops & Events Homepage Module
 News Homepage Module
-Ask A Librarian
-Forms
+Ask A Librarian Pages
 Buttons
 Tables
 Mini Search (For Lists / Tables)
-Light Box Styling
 Index List Page
 Hours (Mods to LibCal Feed)
 Agenda (Conferences)
 Event Calendar List
 Spaces
-Collections & Exhibits
-Directory
+Collections & Exhibits Listing
+Directory Listing
 Staff Profile Page
-Page Specific Alterations
+
 -------------------------------------------------------------------*/
 
 @import "variables.scss";
-@import "base.scss";
+@import "media.scss";
 
 
 /*
- * Content
+ * Page Specific Alterations
  * --------------------------------------------------
  */
 
-.breadcrumbs {
-  padding-top: 5px;
-  padding-left: 20px;
-  font-size: 85%;
- }
+.block-paragraph > .rich-text { // Giving Pages
+  #p-3413 &, #p-3415 &, #p-3417 &, #p-3418 &, #p-3419 & {
+    @include respond-to(small) {
+      overflow: hidden;
+    }
+  }
+}
 
 .body-container {
   padding: 30px;
@@ -53,24 +57,93 @@ Page Specific Alterations
   }
 }
 
-body.staffpublicpage {
-  h1 {
-    border-bottom: none;
-    &~h2 {
-      border-bottom: 1px solid #D6D6CE;
-      margin-top: 0px;
-      padding-bottom: 5px;
-      font-weight: 400;
+.h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs { // Hide breadcrumbs on homepages with banners
+   @include visually-hidden;
+}
+
+ .h1-banner, #p-4898 h1, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
+  @include visually-hidden;
+}
+
+/*
+ * Fancy Splash Image (Jumbotron)
+ * --------------------------------------------------
+ */
+
+.jumbotron {
+  max-height: 50px;
+  padding-top: 0px;
+  margin-bottom: 0;
+  background-color: $darkred; //fallback if all else fails
+  background-image: url("../images/banner.gif"); //fallback if no image uploaded
+  background-size: cover;
+  h2 {
+    color: #fff;
+  }
+  .container {
+    padding: 0px;
+  }
+  @include respond-to(small) { 
+    min-height: 75px;
+    .container {
+      position: relative;
+      margin: 0px;
     }
   }
 }
 
-.nopadding {  // For use when do not want to wrap in row 
-   padding-right: 0;
-   padding-left: 0;
-   margin-right: 0;
-   margin-left: 0;
+.overlaywrap {
+  background-color: $trans-red; // Also applies to Law. Default if location is not specified
+  color: #E7E5E2;
+  left: 0;
+  top: 0;
+  h2 {
+    font-weight: 400;
+    font-size: 1.2em;
+    margin-top: 0;
+    padding: 10px 15px;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  &.crerar {
+    background-color: $trans-blue;
+  }
+  &.eckhart {
+    background-color: $trans-purple;
+  }
+  &.mansueto {
+    background-color: $trans-darkgreen;
+  }
+  &.reg {
+    background-color: $trans-lightgreen;
+  }
+  &.ssa {
+    background-color: $trans-orange;
+  }
+  @include respond-to(small) {
+    position: absolute;
+    padding-right: 3em;
+    padding-left: 1.7em;
+    h2 {
+      font-size: 1.6em;
+      margin-top: 10px;
+      padding: 0;
+    }
+  }
 }
+
+/*
+ * Content
+ * --------------------------------------------------
+ */
+
+.breadcrumbs {
+  padding-top: 5px;
+  padding-left: 20px;
+  font-size: 85%;
+ }
+
 
 .centermain {
   padding: 0;
@@ -87,50 +160,6 @@ body.staffpublicpage {
   @include respond-to(small) {
     padding: 0 30px 0 15px;
   }
-}
-
-.distinct-rightside {
-  background-color: $hovercalmlight;
-  margin: 10px 0;
-  padding: 15px 20px;
-  ul {
-    list-style-type: none;
-    margin-bottom: 10px;
-  }
-  li {
-  color: $brightpurple;
-  }
-  a {
-    color: $brightpurple;
-  }
-  & h2 {
-    color: $reggreen;
-    margin: 5px 0 10px 0;
-    font-size: 1.05em;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #a0a282;
-  }
-  @include respond-to(medium) {
-    border-top: 0;
-    margin: 0;
-    max-width: 350px;
-  }
-  @include respond-to(large) {
-    max-width: 30em;
-  }
-}
-
-.h1-banner, #p-4898 h1, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
-  position:absolute;
-  right:-10000px; 
-  top:auto; 
-  width:1px; 
-  height:1px; 
-  overflow:hidden;
-}
-
-.h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs { // Hide breadcrumbs on homepages with banners
-   @include visually-hidden;
 }
 
 .search-results {
@@ -151,6 +180,7 @@ body.staffpublicpage {
     font-style: italic;
   }
 }
+
 
 /*
  * Text
@@ -351,62 +381,57 @@ figure.coll-thumb {
 
 
 /*
- * Right Sidebar
+ * Lightbox Styling
  * --------------------------------------------------
  */
 
-.rightside {
-  border-top: 1px dotted $darkgray;
-  border-left: 0;
-  margin: 10px 0;
-  padding: 20px 15px 0px 15px;
-  li {
-  color: $darkgray;
-  }
-  a {
-    color:  $active-hover;
-  }
-  h2, h3 {
-    font-weight: 400;
-    font-size:1.1em;
-    margin: 5px 0 10px 0;
-    padding-bottom: 5px;
-    color: $brightpurple;
-    font-style: normal;
-    border-bottom: 2px solid $brightpurple;
-    &:first-child {
-      margin-top: 5px;
-    }
-  }
-  @include respond-to(small) {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  @include respond-to(medium) {
-    border-left: 1px dotted $darkgray;
-    border-top: 0;
-    margin: 0;
-    padding: 0 15px;
-  }
-  @include respond-to(large) {
-    max-width: 30em;
-  }
-  .btn-morelink {
-    margin-bottom: 10px;
-  }
+.modal-content {
+  -webkit-box-shadow: 0 5px 35px rgba(0,0,0,.8);
+  box-shadow: 0 5px 35px rgba(0,0,0,.8);
 }
 
-.call-out {
-  color: #fff;
-  padding: 15px!important;
-  margin-bottom: 15px;
-  background-color: $maroon;
-  & h2, & h3 {
-    color: #fff;
-    border: none;
+.modal-header {
+    padding: 15px 20px 0px 15px;
+    border-bottom: none;
+    &> .close {
+      font-size: 2em;
+      opacity: .6;
+      &:hover {
+        opacity: .5;
+      }
+    }
+}
+
+
+/*
+ * Carousel
+ * --------------------------------------------------
+ */
+
+.carousel {
+  margin-bottom: 20px;
+}
+
+.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
+  width: 100%
+}
+
+.carousel-caption {
+  //font-family: Garamond, serif;
+  padding-top: 0;
+  text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
+  font-size: 0.7em;
+  z-index: 5;
+  @include respond-to(small) {
+    font-size: 1em;
   }
   & a {
     color: #fff;
+    line-height: 2.3em;
+    &:hover {
+      color: $darkgray;
+      text-decoration: none;
+    }
   }
 }
 
@@ -416,88 +441,6 @@ figure.coll-thumb {
  * --------------------------------------------------
  */
 
-.home-modwrapper {
-  padding-top: 20px;
-  margin: 10px 0;
-  & h2 {
-    display: inline;
-    font-size: 1.2em;
-    color: $maroon;
-  }
-  & h3 {
-    font-size: 1em;
-    font-weight: 600;
-    color: $darkgray;
-    margin: 0 0 5px 0;
-  }
-  @include respond-to(small) {
-    padding-top: 0;
-  }
-  & ul:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.home-module {
-  border-bottom: 1px solid $darkgray;
-  padding: 0px 0px 10px 15px;
-  margin-bottom: 15px;
-  a {
-    color: $darkgray;
-    display: inline;
-    &.viewall:before {
-      content: "\0020|\0020";
-      margin: 0 0.5em;
-    }
-    &:hover {
-      text-decoration: none;
-    }
-  }
-}
-
-.rightside ul, .home-modwrapper ul {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.rightside-mod { //Wrapper for individual modules
-  padding: 0 0 2em 0;
-  .collectionpage & {
-    padding-bottom: 1em;
-  }
-  @include respond-to(small) {
-    padding: 0 1em 2em 1em;
-  }
-  @include respond-to(medium) {
-    padding: 0 0 2em 0;
-  }
-}
-
-a.viewall {
-  &:after {
-    content: "\0020\f101";
-    font-family: FontAwesome;
-  }
-}
-
-.btn-morelink {  // "View more ..." link for sidebar
-  font-size: 0.9em;
-  color: $crerarblue;
-  background: $lightneutral;
-  border: 1px solid $lightgray;
-  border-radius: 0;
-  padding: 6px 12px;
-  margin-bottom: 10px;
-  &:after {
-    content: "\0020\f101";
-    font-family: FontAwesome;
-  }
-  &:hover {
-    background: #d8b9b7;
-    color: $maroon; 
-  }
-}
 
 .studymod { //Study Spaces
   p {
@@ -579,37 +522,7 @@ a#event-header {
   }
 }
 
-/*
- * Carousel
- * --------------------------------------------------
- */
 
-.carousel {
-  margin-bottom: 20px;
-}
-
-.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
-  width: 100%
-}
-
-.carousel-caption {
-  //font-family: Garamond, serif;
-  padding-top: 0;
-  text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
-  font-size: 0.7em;
-  z-index: 5;
-  @include respond-to(small) {
-    font-size: 1em;
-  }
-  & a {
-    color: #fff;
-    line-height: 2.3em;
-    &:hover {
-      color: $darkgray;
-      text-decoration: none;
-    }
-  }
-}
 
 /*
  * News Homepage Module
@@ -714,98 +627,6 @@ figure.embed {
   overflow: hidden;
 }
 
-/*
- * Forms
- * --------------------------------------------------
- */
-
-form ol, form ul {
-  list-style: none;
-  margin-left: 0; }
-
-fieldset {
-  border: 0;
-  padding: 0;
-  margin: 0; }
-
-label {
-  display: block;
-  padding-bottom: 0.5em; }
-
-button, input, select, textarea {
-  font-family: inherit;
-  font-size: 100%;
-  margin: 0 1px 0; }
-
-input, textarea {
-  border: 1px solid gray; }
-
-input[type=text], input[type=search], input[type=url], input[type=number], textarea {
-  -webkit-appearance: none; }
-
-button, input[type="submit"] {
-  padding: 0.5em;
-  color: #fff;
-  background: #800000;
-  border: none;
-  cursor: pointer; }
-
-input[type="checkbox"],
-input[type="radio"] {
-  width: auto;
-  margin-right: 0.3em; }
-
-input[type="search"] {
-  -webkit-appearance: none;
-  border-radius: 0; }
-
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none; }
-
-.field-container {
-  margin-bottom: 1em; }
-
-.inline-form fieldset, .inline-form .inline-container {
-  position: relative; }
-.inline-form input[type=submit], .inline-form button, .inline-form .btn {
-  font-size: 0.875em;
-  padding: 0.65rem 1.3rem;
-  background: $darkgray;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  width: auto; }
-  .inline-form input[type=submit]:hover, .inline-form input[type=submit]:focus, .inline-form button:hover, .inline-form button:focus, .inline-form .btn:hover, .inline-form .btn:focus {
-    background: gray;
-    color: white; }
-
-/* Validation */
-.has-error {
-  border-color: red; }
-
-.is-valid {
-  border-color: #089e00; }
-
-form#knowledgetracker { // Desk Tracker
-  & input#submit {
-    padding: 0.5em 1.5em;
-  }
-  & input[type="reset"] { // Hide "clear form" button
-    display: none;
-  }
-}
-
-.extract { // copyright info box
-  background-color: $hovercalm;
-  margin: 20px 50px;
-  padding: 5px 30px;
-  border-left: 3px solid #ccc;
-  border-right: 3px solid #ccc;
-  box-shadow: 5px 5px 5px #888888;
-}
-
 
 /*
  * Buttons
@@ -897,44 +718,14 @@ form#knowledgetracker { // Desk Tracker
   }
 }
 
-
 /*
- * Tables 
+ * Tables
  * --------------------------------------------------
  */
 
-table {
-  @include respond-to(smallonly) {
-    margin-top: 15px;
-  }
-}
+ // Table base (mobile friendly magic) is in global.scss
 
-table.table-striped, .table-striped>tbody {
-  @include respond-to(smallonly) { //mobile friendly magic
-    display: block;
-    width: 100%;
-    & thead, & tr, & th, & td {
-      display: block;
-      padding: 0;
-      text-align: left;
-      white-space: normal;
-    }
-    & tr {
-      border-bottom: 1px solid #eee;
-    }
-    & td {
-      border: none;
-      margin-bottom: 6px;
-      color: #444;
-    }
-  }
-}
-
-thead th {
-  white-space: nowrap;
-}
-
-.distinct-list { //table base
+ .distinct-list { //table base
   a {
     color: #8a4a20;
   }
@@ -1072,6 +863,7 @@ table.etable>tbody>tr {
   }
 }
 
+
 /*
  * Mini Search (For Browse / Lists / Tables)
  * --------------------------------------------------
@@ -1153,70 +945,12 @@ table.etable>tbody>tr {
 }
 
 
-/*
- * Lightbox Styling
- * --------------------------------------------------
- */
-
-.modal-content {
-  -webkit-box-shadow: 0 5px 35px rgba(0,0,0,.8);
-  box-shadow: 0 5px 35px rgba(0,0,0,.8);
-}
-
-.modal-header {
-    padding: 15px 20px 0px 15px;
-    border-bottom: none;
-    &> .close {
-      font-size: 2em;
-      opacity: .6;
-      &:hover {
-        opacity: .5;
-      }
-    }
-}
-
-/*
- *  Index List Page
- * --------------------------------------------------
- */
-
-ul.index-list {
-  list-style: none;
-  &>li {
-    margin: 1em 0;
-    padding-left: 0;
-    a {
-      font-weight: 600;
-      color: $ssaorange;
-    }
-    &>ul.index-list>li { // 2nd Level
-      margin: 5px 0;
-      padding-left: 0;
-      a {
-        font-weight: 400;
-        color:$darkgray;
-      }
-      &>ul.index-list>li { // 3rd Level
-        a {
-          font-weight: 300;
-          color: $reggreen;
-        }
-        &>ul.index-list>li { // 4th Level
-          a {
-            font-weight: 300;
-            color:$darkgray;
-            font-style: italic;
-          }
-        }
-      }
-    }
-  }
-}
 
 /*
  * Ask A Librarian Pages
  * --------------------------------------------------
  */
+
  //Ask a Librarian menu item from global nave is in "navigation.scss"
 
 .libraryh3lp {
@@ -1297,6 +1031,7 @@ a.btn-ask {
     background-color: $darkneutral;     
   }
 }
+
 
 /*
  * Hours (Mods to LibCal Feed)
@@ -1673,23 +1408,9 @@ td.time, td.event-nav {
 }
 
 /*
- * Collections & Exhibits
+ * Collections & Exhibits Listing
  * --------------------------------------------------
  */
-
-.rightside.coll-rightside {
-  @extend .distinct-rightside;
-  border: none;
-  h2 {
-    color: $reggreen;
-    font-weight: 600;
-  }
-  ul {
-    padding-left: 2em;
-    text-indent: -2em;
-    margin-bottom: 10px;
-  }
-}
 
 .listings-dropdown {
   margin-top: 0;
@@ -1780,7 +1501,7 @@ a.coll-access {
 }
 
 /*
- * Directory
+ * Directory Listing
  * --------------------------------------------------
  */
 
@@ -1831,48 +1552,22 @@ a.coll-access {
  * --------------------------------------------------
  */
 
-.flex-sidebar {  // right sidebar that has push/pull div properties
-  @extend .rightside;
-  border-top: none;
-  margin-top: 0;
-  padding-top: 0;
-  @include respond-to(small) {
-    display: block;
-    flex-wrap: nowrap;
-  }
-}
-
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {
     padding: 0 3em 1.2em 3em;
   }
 }
 
-
-/*
- * Page Specific Alterations
- * --------------------------------------------------
- */
-
-.block-paragraph > .rich-text { // Giving Pages
-  #p-3413 &, #p-3415 &, #p-3417 &, #p-3418 &, #p-3419 & {
-    @include respond-to(small) {
-      overflow: hidden;
+body.staffpublicpage {
+  h1 {
+    border-bottom: none;
+    &~h2 {
+      border-bottom: 1px solid #D6D6CE;
+      margin-top: 0px;
+      padding-bottom: 5px;
+      font-weight: 400;
     }
   }
-}
-
-
-/*
- * Temporary until all web exhibits are migrated over
- * --------------------------------------------------
- */
-
-.collex-loc {
-  background-color: #eee;
-  padding: 1.5em;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 

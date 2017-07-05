@@ -1,0 +1,146 @@
+/*------------------------------------------------------------------
+
+> Styles can be used on public site and third party platforms <
+
+[Table of contents]
+
+Accessibility
+Icons
+Alerts
+
+-------------------------------------------------------------------*/
+
+@import "variables.scss";
+@import "media.scss";
+
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+
+#skip  {
+  background: #f5f5f5;
+  color: #222;
+  a { 
+    position:absolute;
+    padding: 1em 0 1em 3em;
+    line-height: 2em;
+    left:-10000px; 
+    top:auto; 
+    width:1px; 
+    height:1px; 
+    overflow:hidden;
+    color: #222;
+    &:focus { 
+      position:static; 
+      width:auto; 
+      height:auto; 
+    } 
+  }
+}
+
+
+/*
+ * Icons
+ * --------------------------------------------------
+ */
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(/static/base/css/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+  font-size: 1.2em;
+  line-height: 1.2em;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.
+  text-rendering: optimizeLegibility; // Support for Safari and Chrome.
+  -moz-osx-font-smoothing: grayscale; // Support for Firefox.
+  font-feature-settings: 'liga'; // Support for IE.
+}
+
+
+/*
+ * Alerts
+ * --------------------------------------------------
+ */
+
+.alert {
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 0.5em;
+  border: 1px solid gray;
+  background: #f9f9f9;
+  & p {
+    margin-bottom: 0;
+    display: inline;
+  }
+  .rich-text {
+    display: inline;
+  }
+}
+
+.alert-error {
+  color: red;
+  border-color: red;
+  background: #ffbebe;
+}
+
+.alert-high {
+    text-align: center;
+    font-size: 1em;
+    padding: 0.5em;
+    margin-bottom: 0em;
+    border-radius: 0;
+    color: #fff;
+    background-color: #642822;
+    a {
+      color: #f9f9f9;
+      text-decoration: underline;
+    }
+}
+
+.alert-low {
+    text-align: center;
+    font-size: 1.1em;
+    padding: 1em;
+    margin-bottom: 0em;
+    border: 0;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-bottom: 2px solid #31708f;
+    a {
+      color: #31708f;
+      text-decoration: underline;
+    }
+}
+
+.alert-info {
+  @extend .alert-low;
+  font-size: 0.9em;
+  padding: 0.5em;
+  border-bottom: none;
+  border-radius: 0;
+  & .close {
+    opacity: .4;
+  }
+  @include respond-to(small) {
+    padding: 0.5em 3em;
+  }
+}
+
+
+
