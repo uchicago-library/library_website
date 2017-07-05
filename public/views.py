@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from public.models import LocationPage, LocationPageFloorPlacement, StandardPage
 from wagtail.wagtailimages.models import Image
@@ -8,6 +9,30 @@ from public.utils import get_features, has_feature
 from wagtail.wagtailcore.models import Site
 from base.models import UNFRIENDLY_ARTICLES
 
+import simplejson
+
+def navigation(request):
+    format = request.GET.get('format', None)
+    callback = request.GET.get('callback', None)
+
+    # set up some variables to render things on the page. 
+    home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
+    location_and_hours = get_hours_and_location(home_page)
+    llid = home_page.get_granular_libcal_lid(home_page.unit)
+    location = str(location_and_hours['page_location'])
+    unit = location_and_hours['page_unit']
+
+    # html_str is not serializable...what is this thing? 
+    html_str = render(request, 'public/standard_page.html', {
+        'address': location_and_hours['address'],
+        'chat_url': get_unit_chat_link(unit, request),
+        'hours_page_url': home_page.get_hours_page(request),
+        'libcalid': llid,
+        'page_location': location,
+    }).content
+
+    data = '%s(%s);' % (callback, simplejson.dumps(html_str))
+    return HttpResponse(data, 'text/javascript')
 
 def spaces(request):
     building = request.GET.get('building', None)

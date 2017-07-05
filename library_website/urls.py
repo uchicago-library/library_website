@@ -10,6 +10,7 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from events.views import events as events_view
 from public.views import spaces as spaces_view
+from public.views import navigation as navigation_view
 from results.views import results as results_view
 from search.views import loop_search as search_view 
 from units.views import units as unit_view
@@ -25,6 +26,7 @@ urlpatterns = [
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
+    url(r'^navigation-elements/', navigation_view, name='navigation-view'),
     url(r'^json-hours/', json_hours, name='json-hours'),
     url(r'^json-events/', json_events, name='json-events'),
     url(r'^json-news/', json_news, name='json-news'),

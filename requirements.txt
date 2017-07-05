@@ -30,6 +30,7 @@ pytz==2016.10
 rcssmin==1.0.6
 requests==2.13.0
 rjsmin==1.0.12
+simplejson==3.11.1
 six==1.10.0
 sqlparse==0.1.18
 Unidecode==0.4.20
