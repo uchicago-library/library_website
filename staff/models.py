@@ -99,6 +99,18 @@ class StaffPageLibraryUnits(Orderable, models.Model):
     ]
 
 
+class StaffPagePhoneFacultyExchange(Orderable, models.Model):
+    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
+    page = ParentalKey('staff.StaffPage', related_name='staff_page_phone_faculty_exchange')
+    phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
+    faculty_exchange = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldPanel('phone_number'),
+        FieldPanel('faculty_exchange')
+    ]
+
+
 class StaffPagePageVCards(Orderable, VCard):
     """
     Create a through table for linking vcards
@@ -159,9 +171,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         help_text='Position title.',
         max_length=255,
         null=True)
-    phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
-    phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
-    faculty_exchange = models.CharField(max_length=255, blank=True)
     employee_type = IntegerField(
         choices=EMPLOYEE_TYPES, 
         default=1,
@@ -299,9 +308,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 FieldPanel('middle_name'),
                 FieldPanel('last_name'),
                 FieldPanel('position_title'),
-                FieldPanel('phone_number'),
                 InlinePanel('staff_page_email', label='Email Addresses'),
-                FieldPanel('faculty_exchange'),
+                InlinePanel('staff_page_phone_faculty_exchange', label='Phone Number and Faculty Exchange'),
                 InlinePanel('staff_page_units', label='Library Units'),
                 FieldPanel('employee_type'),
                 FieldPanel('position_status'),
