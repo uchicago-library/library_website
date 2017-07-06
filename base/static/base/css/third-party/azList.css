@@ -1,0 +1,28 @@
+
+// Overrides specifically for SFX's A-Z browse.
+
+
+.mdl-button--accent.mdl-button--accent { // X of search box
+    color: #800000;
+}
+
+.mdl-checkbox.is-checked .mdl-checkbox__box-outline, .mdl-radio.is-checked .mdl-radio__outer-circle, .sfx-accent-border { //Radio buttons
+    border-color: #800000;
+}
+
+.mdl-checkbox.is-checked .mdl-checkbox__tick-outline, .mdl-checkbox .mdl-checkbox__ripple-container .mdl-ripple, .mdl-checkbox .mdl-radio__inner-circle, .mdl-radio.is-checked .mdl-radio__inner-circle, .mdl-radio .mdl-radio__ripple-container .mdl-ripple, .sfx-accent-bg {
+    background-color: #800000;
+}
+
+button.button-with-icon.mdl-button.mdl-js-button.mdl-button--raised.mdl-button--accent.mdl-js-ripple-effect.flex-noshrink { // Search buttons
+    background-color: #800000;
+}
+
+#sfx-results-set-full-button+.mdl-menu__container .mdl-menu .mdl-menu__item, .sfx-results-list .sfx-result-item h3, .sfx-results-toolbar a.mdl-button, .sfx-title-color { // Top links
+    color: #800000;
+}
+
+.title_color { // Journal links
+    color: #800000;
+    text-decoration-color: #800000 !important;
+}

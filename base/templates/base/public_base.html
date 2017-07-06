@@ -35,6 +35,7 @@
 
     {% compress css %}
     {# SCSS compilation relies on django compressor #}
+        <link href="{% static "base/css/uclib_print.scss" %}" rel="stylesheet" type="text/x-scss"/>
         <link href="{% static "base/css/uclib.scss" %}" rel="stylesheet" type="text/x-scss"/>
         <link href="{% static "base/css/uclib-search.scss" %}" rel="stylesheet" type="text/x-scss"/>
         <link href="{% static "base/css/navigation.scss" %}" rel="stylesheet" type="text/x-scss"/>

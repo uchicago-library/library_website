@@ -49,56 +49,5 @@
   }
 }
 
-/*
- * Print Styles
- * --------------------------------------------------
- *
- *
- */
 
-
-@media print {
-    @page {
-        size: 330mm 427mm;
-        margin: 1cm;
-    }
-    a[href]:after {
-        content: none !important;
-    }
-    .container {
-        width: 1170px;
-    }
-    .navbar, #footer {
-        display: none;
-    }
-    nav:after {
-      display: block;
-      content: "The University of Chicago Library ( lib.uchicago.edu )";
-      font-size: 1.5em;
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-    div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
-        display: none;
-    }
-    body {
-        overflow: visible !important; 
-    }
-    div.container, div.container-fluid {
-        margin: none;
-        padding: none;
-    }
-    div.row, div.row-fluid {
-        margin: none;
-        padding: none;
-    }
-    h2, h3, h4, h5, h6, ul, img {
-       page-break-after: avoid;
-    }
-    .rightside {
-      border-top: 1px solid #bbb;
-      margin-top: 30px;
-      display: block;
-    }
-}
-
+// Print style sheet is uclib_print.scss
