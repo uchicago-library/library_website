@@ -23,8 +23,8 @@ class Command (BaseCommand):
         Add required positional options and optional
         named arguments.
         """
-        # Required positional options
-        parser.add_argument('cnetid', type=str)
+        # optional argument.
+        parser.add_argument('cnetid', nargs='?', type=str)
 
     def handle(self, *args, **options):
         """
@@ -34,19 +34,11 @@ class Command (BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
-        try:
-            cnetid = options['cnetid']
-        except:
-            sys.exit(1)
+        cnetid = options['cnetid']
 
-        display_all = False
-        
         records = []
         records.append(('URL', 'Page Title', 'Last Modified', 'Last Reviewed', 'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor', 'Content Specialist CNetID', 'Content Specialist'))
-        for p in Page.objects.all():
-            # Skip pages that aren't live. 
-            if not p.specific.full_url:
-                continue
+        for p in Page.objects.live():
             # Get cnetid and full name of page maintainer.
             if not hasattr(p.specific, 'page_maintainer'):
                 continue
@@ -80,7 +72,7 @@ class Command (BaseCommand):
                 content_specialist_title = ''
         
             # Skip this record if a cnetid has been specified. 
-            if not display_all:
+            if cnetid:
                 if not page_maintainer_cnetid == cnetid and not editor_cnetid == cnetid and not content_specialist_cnetid == cnetid:
                     continue
             
