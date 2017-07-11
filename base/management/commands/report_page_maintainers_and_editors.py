@@ -38,7 +38,10 @@ class Command (BaseCommand):
 
         records = []
         records.append(('URL', 'Page Title', 'Last Modified', 'Last Reviewed', 'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor', 'Content Specialist CNetID', 'Content Specialist'))
-        for p in Page.objects.live():
+        for p in Page.objects.all():
+            # Skip pages that aren't live. 
+            if not p.specific.full_url:
+                continue
             # Get cnetid and full name of page maintainer.
             if not hasattr(p.specific, 'page_maintainer'):
                 continue
