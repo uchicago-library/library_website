@@ -277,11 +277,19 @@ def get_individual_info_from_wagtail_2017(cnetid):
         "cnetid": cnetid,
         "officialName": staff_page.official_name,
         "displayName": staff_page.display_name,
-        "positionTitle": staff_page.position_title,
-        "email": set(staff_page.staff_page_email.all().values_list('email', flat=True)),
+        "positionTitle": '',
+        "email": set(),
         "departments": set(),
         "phoneFacultyExchanges": set()
     }
+
+    for e in staff_page.staff_page_email.all():
+        email_str = e.email.strip()
+        if email_str:
+            output['email'].add(email_str)
+
+    if staff_page.position_title:
+        output['positionTitle'] = re.sub('\s+', ' ', staff_page.position_title).strip()
 
     for v in staff_page.staff_page_phone_faculty_exchange.all():
         tmp = []

@@ -47,9 +47,6 @@ class Command (BaseCommand):
             api = get_individual_info_from_directory(xml_string)
             wag = get_individual_info_from_wagtail_2017(s)
 
-            if not api['officialName'] == wag['officialName']:
-                output.append(s + "'s officialName is " + api['officialName'] + ", not " + wag['officialName'])
-
             if not api['displayName'] == wag['displayName']:
                 output.append(s + "'s displayName is " + api['displayName'] + ", not " + wag['displayName'])
                 # In the user management command, change the following things in the User object:
@@ -57,6 +54,24 @@ class Command (BaseCommand):
                 # prompt a human for first_name, last_name.
                 # In the StaffPage object,
                 # check displayName and officialName.
+
+            if not api['officialName'] == wag['officialName']:
+                output.append(s + "'s officialName is " + api['officialName'] + ", not " + wag['officialName'])
+
+            if not api['positionTitle'] == wag['positionTitle']:
+                output.append(s + "'s positionTitle is " + api['positionTitle'] + ", not " + wag['positionTitle'])
+
+            diffs = wag['email'].difference(api['email'])
+            if diffs:
+                output.append("THE FOLLOWING EMAIL ADDRESSES APPEAR FOR " + s + " IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:")
+                for d in diffs:
+                    output.append(d)
+
+            diffs = api['email'].difference(wag['email'])
+            if diffs:
+                output.append("THE FOLLOWING EMAIL ADDRESSES APPEAR FOR " + s + " IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
+                for d in diffs:
+                    output.append(d)
 
             diffs = api['phoneFacultyExchanges'].difference(wag['phoneFacultyExchanges'])
             if diffs:
