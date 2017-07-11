@@ -42,34 +42,29 @@ class Command (BaseCommand):
             # Get cnetid and full name of page maintainer.
             if not hasattr(p.specific, 'page_maintainer'):
                 continue
+            page_maintainer_cnetid = ''
             if hasattr(p.specific.page_maintainer, 'cnetid'):
                 page_maintainer_cnetid = p.specific.page_maintainer.cnetid
-            else:
-                page_maintainer_cnetid = ''
+            page_maintainer_title = ''
             if hasattr(p.specific.page_maintainer, 'title'):
                 page_maintainer_title  = p.specific.page_maintainer.title
-            else:
-                page_maintainer_title = ''
         
             # Get cnetid and full name of page maintainer.
             if not hasattr(p.specific, 'editor'):
                 continue
+            editor_cnetid = ''
             if hasattr(p.specific.editor, 'cnetid'):
                 editor_cnetid = p.specific.editor.cnetid
-            else:
-                editor_cnetid = ''
+            editor_title = ''
             if hasattr(p.specific.editor, 'title'):
                 editor_title  = p.specific.editor.title
-            else:
-                editor_title = ''
         
             # Content specialist. (Note that these will always be blank on Loop.)
+            content_specialist_cnetid = ''
+            content_specialist_title = ''
             if hasattr(p.specific, 'content_specialist') and hasattr(p.specific.content_specialist, 'cnetid') and hasattr(p.specific.content_specialist, 'title'):
                 content_specialist_cnetid = p.specific.content_specialist.cnetid
                 content_specialist_title = p.specific.content_specialist.title
-            else:
-                content_specialist_cnetid = ''
-                content_specialist_title = ''
         
             # Skip this record if a cnetid has been specified. 
             if cnetid:
@@ -77,14 +72,29 @@ class Command (BaseCommand):
                     continue
             
             # Append to output.
-            records.append((p.specific.full_url, p.title, p.latest_revision_created_at, p.specific.last_reviewed, page_maintainer_cnetid, page_maintainer_title, editor_cnetid, editor_title, content_specialist_cnetid, content_specialist_title))
+
+            full_url = ''
+            if p.specific.full_url:
+                full_url = p.specific.full_url
+                        
+            latest_revision_created_at = ''
+            if p.latest_revision_created_at:
+                latest_revision_created_at = p.latest_revision_created_at.strftime('%Y-%m-%d %H:%M:%S')
+
+            last_reviewed = ''
+            if p.specific.last_reviewed:
+                last_reviewed = p.specific.last_reviewed.strftime('%Y-%m-%d %H:%M:%S')
+
+            records.append((full_url, p.title, latest_revision_created_at, last_reviewed, page_maintainer_cnetid, page_maintainer_title, editor_cnetid, editor_title, content_specialist_cnetid, content_specialist_title))
        
-        output = io.StringIO() 
-        writer = csv.writer(output)
+        writer = csv.writer(sys.stdout)
         for record in records:
-            writer.writerow(record)
+            try:
+                writer.writerow(record)
+            except UnicodeEncodeError:
+                pass
         
-        return output.getvalue()
+        return ''
             
         
         
