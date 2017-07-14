@@ -231,10 +231,10 @@ class CollectionPage(PublicBasePage):
         staff_vcard_faculty_exchange = ''
         try:
             staff_title = self.staff_contact.title
-            staff_vcard_title = self.staff_contact.vcards.first().title
-            staff_vcard_email = self.staff_contact.vcards.first().email
-            staff_vcard_phone_number = self.staff_contact.vcards.first().phone_number
-            staff_vcard_faculty_exchange = self.staff_contact.vcards.first().faculty_exchange
+            staff_vcard_title = self.staff_contact.position_title
+            staff_vcard_email = self.staff_contact.staff_page_email.first().email
+            staff_vcard_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
+            staff_vcard_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
         except:
             pass
 
