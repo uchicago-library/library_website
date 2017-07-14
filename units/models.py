@@ -10,6 +10,16 @@ from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
 from base.models import BasePage, ContactFields, DefaultBodyFields
 
+BUILDINGS = (
+    (1, 'Crerar Library'),
+    (2, 'D\'Angelo Law Library'),
+    (3, 'Eckhart Library'),
+    (4, 'Mansueto Library'),
+    (5, 'Regenstein Library'),
+    (6, 'Special Collections Research Center'),
+    (7, 'SSA Library')
+)
+
 class Tree(object):
     def __init__(self, name='root', unit_page=None, children=None):
         self.name = name
@@ -117,12 +127,17 @@ class UnitPage(BasePage, ContactFields):
     department_head_is_interim = models.BooleanField(
         default=False
     )
+    building = models.IntegerField(
+        choices=BUILDINGS,
+        default=5,
+        help_text='The physical building where this unit is located.'
+    )
     street_address = models.CharField(max_length=255, blank=True)
     internal_email = models.EmailField(max_length=255, blank=True)
     faculty_exchange = models.CharField(max_length=32, blank=True)
     public_url = models.CharField(max_length=255, blank=True)
     public_url_label = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=255, blank=True, help_text=PHONE_ERROR_MSG)
     phone_number_label = models.CharField(max_length=255, blank=True)
     is_a_division = models.BooleanField(default=False)
     display_in_campus_directory = models.BooleanField(default=True)
@@ -143,6 +158,7 @@ class UnitPage(BasePage, ContactFields):
     human_resources_panels = [
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
+        FieldPanel('building'),
         FieldPanel('street_address'),
         FieldPanel('faculty_exchange'),
         FieldPanel('public_url'),

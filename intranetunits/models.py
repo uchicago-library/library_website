@@ -104,6 +104,14 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         on_delete=models.SET_NULL
     )
 
+    unit_page = models.ForeignKey(
+        'units.UnitPage',
+        related_name='loop_page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
     intro = StreamField(DefaultBodyFields(), blank=True)
 
     internal_location = models.CharField(max_length=255, blank=True)
@@ -236,6 +244,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),
     FieldPanel('unit'),
+    FieldPanel('unit_page'),
     MultiFieldPanel(
         [
             FieldPanel('internal_location'),
