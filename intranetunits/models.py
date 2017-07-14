@@ -168,21 +168,9 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
             staff_pages = supervisor_staff + non_supervisor_staff 
 
             for staff_page in staff_pages:
-                titles = []
-                emails = []
-                phone_numbers = []
-                for v in StaffPagePageVCards.objects.filter(page=staff_page, unit__in=units):
-                    if not v.title in titles:
-                        titles.append(v.title)
-                    if not v.email in emails:
-                        emails.append(v.email)
-                    if not v.phone_number in phone_numbers:
-                        phone_numbers.append(v.phone_number)
-
-                if len(emails) > 0:
-                    email = emails[0]
-                else:
-                    email = ''
+                email = staff_page.staff_page_email.first().email
+                phone_numbers = staff_page.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True) 
+                titles = [staff_page.position_title]
 
                 department_members.append({
                     'title': staff_page.title,
@@ -213,8 +201,8 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                             supervisors.append({
                                 'title': s.supervisor.title,
                                 'url': s.supervisor.url,
-                                'phone_number': s.supervisor.vcards.all()[0].phone_number,
-                                'email': s.supervisor.vcards.all()[0].email,
+                                'phone_number': s.supervisor.staff_page_phone_faculty_exchange.first().phone_number,
+                                'email': s.supervisor.staff_page_email.first().email
                             })
                     unit['supervisors'] = supervisors
                     department_units.append(unit)
