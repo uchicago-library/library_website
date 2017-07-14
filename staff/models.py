@@ -347,18 +347,13 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         ordering = ['last_name', 'first_name']
 
     def get_context(self, request):
-        vcard_titles = set()
-        faculty_exchanges = set()
-        emails = set()
-        phones = set()
-        units = set()
-    
-        for vcard in self.vcards.all():
-            vcard_titles.add(re.sub('\s+', ' ', vcard.title).strip())
-            faculty_exchanges.add(re.sub('\s+', ' ', vcard.faculty_exchange).strip())
-            emails.add(vcard.email)
-            phones.add(vcard.phone_number)
+        vcard_titles = [self.position_title]
+        faculty_exchanges = self.staff_page_phone_faculty_exchange.all().values_list('faculty_exchange', flat=True)
+        emails = self.staff_page_email.all().values_list('email', flat=True)
+        phones = self.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True)
 
+        units = set()
+        for vcard in self.vcards.all():
             try:
                 unit_title = vcard.unit.fullName
             except:
@@ -371,11 +366,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 'title': unit_title,
                 'url': unit_url
             }))
-
-        vcard_titles = list(vcard_titles)
-        faculty_exchanges = list(faculty_exchanges)
-        emails = list(emails)
-        phones = list(phones)
         units = list(map(json.loads, list(units)))
 
         subjects = []
