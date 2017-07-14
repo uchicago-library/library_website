@@ -309,7 +309,7 @@ class GroupPage(BasePage, Email):
 
         context['minutes'] = minutes
         context['reports'] = reports
-        context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.unit.fullName, m.group_member.vcards.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
+        context['group_members'] = list(map(lambda m: { 'title': m.group_member.title, 'unit': '<br/>'.join(sorted(map(lambda u: u.library_unit.get_full_name(), m.group_member.staff_page_units.all()))), 'url': m.group_member.url, 'role': m.role }, group_members))
         return context
 
 
