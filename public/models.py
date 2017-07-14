@@ -813,17 +813,17 @@ class StaffPublicPage(PublicBasePage):
         context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
         context['cv'] = cv
         context['default_image'] = default_image
-        context['department_name'] = v.unit.name
-        context['email'] = v.email
+        context['department_name'] = s.staff_page_units.first().library_unit.title
+        context['email'] = s.staff_page_email.first().email
         context['expertises'] = expertises
         context['libguide_url'] = libguide_url
         context['library'] = v.unit.get_parent_library_name()
         context['orcid'] = s.orcid
-        context['phone_number'] = v.phone_number
+        context['phone_number'] = s.staff_page_phone_faculty_exchange.first().phone_number
         context['profile_picture'] = s.profile_picture
-        context['room_number'] = v.faculty_exchange.split(' ').pop()
+        context['room_number'] = s.staff_page_phone_faculty_exchange.first().faculty_exchange.split(' ').pop()
         context['subjects'] = get_subjects_html(s.staff_subject_placements.all())
-        context['vcardtitle'] = v.title
+        context['vcardtitle'] = s.position_title
         return context
 
     search_fields = PublicBasePage.search_fields + [
