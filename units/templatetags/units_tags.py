@@ -7,14 +7,14 @@ register = template.Library()
 @register.inclusion_tag('units/staff_email_addresses.html')
 def staff_email_addresses(staff_page):
     return {
-        'emails': list(set(staff_page.vcards.all().values_list('email', flat=True)))
+        'emails': list(set(staff_page.staff_page_email.all().values_list('email', flat=True)))
     }
 
 @register.inclusion_tag('units/staff_faculty_exchanges_phone_numbers.html')
 def staff_faculty_exchanges_phone_numbers(staff_page):
     facex_phone_pairs = set()
-    for vcard in staff_page.vcards.all():
-        facex_phone_pairs.add(vcard.faculty_exchange + '\t' + vcard.phone_number)
+    for p in staff_page.staff_page_phone_faculty_exchange.all():
+        facex_phone_pairs.add(p.faculty_exchange + '\t' + p.phone_number)
     
     facex_phone_pairs_list = list(map(lambda p: p.split('\t'), list(facex_phone_pairs)))
 
