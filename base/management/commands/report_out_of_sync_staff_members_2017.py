@@ -10,10 +10,10 @@ from staff.utils import get_all_library_cnetids_from_directory, get_all_library_
 
 class Command (BaseCommand):
     """
-    Report staff members and VCards that are out of sync between the University directory and Wagtail.
+    Report staff member data that is out of sync between the University directory and Wagtail.
 
     Example: 
-        python manage.py report_out_of_sync_staff_members
+        python manage.py report_out_of_sync_staff_members_2017
     """
 
     def handle(self, *args, **options):
