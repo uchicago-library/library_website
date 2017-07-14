@@ -7,7 +7,7 @@ from directory_unit.models import DirectoryUnit
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db import models, migrations
-from staff.models import StaffIndexPage, StaffPage, StaffPagePageVCards
+from staff.models import StaffIndexPage, StaffPage
 from staff.utils import get_individual_info_from_directory
 from xml.etree import ElementTree
 
@@ -80,42 +80,12 @@ class Command (BaseCommand):
             official_name=info['officialName'],
             )
 
-        # Add new VCards
-        for vcard in info['title_department_subdepartments_dicts']:
-            faculty_exchange = ''
-            if hasattr(vcard, 'facultyexchange'):
-                faculty_exchange = vcard['facultyexchange']
+        # Add new contact information. 
+        # for contact_info in info['title_department_subdepartments_dicts']:
+        # add new email addresses, phone faculty exchange pairs, 
+        # telephone numbers. 
 
-            email = ''
-            if hasattr(vcard, 'email'):
-                email = vcard['email']
-
-            phone_label = ''
-            phone_number = ''
-            if hasattr(vcard, 'phone'):
-                phone_label = 'work'
-                phone_number = vcard['phone']
-
-            v, created = StaffPagePageVCards.objects.get_or_create(
-                title=vcard['title'], 
-                unit=DirectoryUnit.objects.get(pk=vcard['department']), 
-                faculty_exchange=faculty_exchange,
-                email=email,
-                phone_label=phone_label,
-                phone_number=phone_number,
-                page=StaffPage.objects.get(cnetid=cnetid))
-
-        # Delete unnecesary VCards
-        for vcard in StaffPage.objects.get(cnetid=info['cnetid']).vcards.all():
-            d = {
-                'title': vcard.title,
-                'department': vcard.unit.id,
-                'facultyexchange': vcard.faculty_exchange,
-                'email': vcard.email,
-                'phone': vcard.phone_number
-            }
-            if not d in info['title_department_subdepartments_dicts']:
-                vcard.delete()
+        # Delete unnecesary contact information.
         
         staff_page = StaffPage.objects.get(cnetid=info['cnetid'])
         staff_page.page_maintainer = staff_page
