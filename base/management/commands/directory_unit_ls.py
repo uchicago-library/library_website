@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 from directory_unit.models import DirectoryUnit
 from intranetunits.models import IntranetUnitsPage
-from staff.models import StaffPage, VCard
+from staff.models import StaffPage
 
 class Command (BaseCommand):
     """
@@ -54,15 +54,6 @@ class Command (BaseCommand):
         if intranet_units_pages:
             output.append("THE '" + kwargs['fullname'] + "' DirectoryUnit IS REFERENCED BY THE FOLLOWING INTRANETUNITSPAGE(S):")
             output = output + sorted(intranet_units_pages)
-
-        # get a list of VCards and StaffPages
-        staff_pages = []
-        for v in VCard.objects.filter(unit=directory_unit):
-            staff_pages = staff_pages + list(StaffPage.objects.filter(vcards=v).values_list('url_path', flat=True))
-
-        if staff_pages:
-            output.append("THE '" + kwargs['fullname'] + "' DirectoryUnit IS REFERENCED BY VCARDS BELONGING TO THE FOLLOWING STAFF MEMBER(S):")
-            output = output + sorted(staff_pages)
 
         return "\n".join(output)
 
