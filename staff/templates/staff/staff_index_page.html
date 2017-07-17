@@ -90,36 +90,29 @@
                                                 <strong>{{ staff_page.title }}</strong>
                                             </a>
                                             <br/>
-                                            {% regroup staff_page.vcards.all by unit as vcards %}
-                                            {% for vcard in vcards %}
-                                                {{ vcard.grouper.name }}
-                                                <br/>
-                                            {% endfor %}
+                                            {{ staff_page.staff_page_units.first.library_unit.title }}
                                         </td>
                                         <td>
                                             <strong>Contact</strong>
                                             <br/>
-                                            {% regroup staff_page.vcards.all by email as vcards %}
-                                            {% for vcard in vcards %}
-                                                {% if vcard.grouper != '' %}
-                                                    <a href="mailto:{{ vcard.grouper }}">{{ vcard.grouper }}</a>
-                                                    <br/>
+                                            {% with staff_page.staff_page_email.first.email as email %}
+                                                {% if email %}
+                                                    <a href="{{ email }}">
+                                                        {{ email }}
+                                                    </a><br/>
                                                 {% endif %}
-                                            {% endfor %}
-                                            {% regroup staff_page.vcards.all by phone_number as vcards %}
-                                            {% for vcard in vcards %}
-                                                {% if vcard.grouper != '' %}
-                                                    {{ vcard.grouper }}
-                                                    <br/>
+                                            {% endwith %}
+                                            
+                                            {% with staff_page.staff_page_phone_faculty_exchange.first.phone_number as phone_number %}
+                                                {% if phone_number %}
+                                                    {{ phone_number }}<br/>
                                                 {% endif %}
-                                            {% endfor %}
-                                            {% regroup staff_page.vcards.all by faculty_exchange as vcards %}
-                                            {% for vcard in vcards %}
-                                                {% if vcard.grouper != '' %}
-                                                    {{ vcard.grouper }}
-                                                    <br/>
+                                            {% endwith %}
+                                            {% with staff_page.staff_page_phone_faculty_exchange.first.faculty_exchange as faculty_exchange %}
+                                                {% if faculty_exchange %}
+                                                    {{ faculty_exchange }}<br/>
                                                 {% endif %}
-                                            {% endfor %}
+                                            {% endwith %}
                                         </td>
                                         <td></td>
                                     </tr>
