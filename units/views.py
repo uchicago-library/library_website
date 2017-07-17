@@ -125,40 +125,21 @@ def get_vcards_for_department(department):
         return set([])
 
 def get_staff_pages_for_library(library = None):
-    staff_pks = []
     if library:
-        # get a queryset of units from each library building, then get a list of distinct StaffPage pks for each queryset. 
-        if library == get_page_loc_name(ECKHART_HOMEPAGE):
-            eckhart_units = DirectoryUnit.objects.get(name='Eckhart Library').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.filter(unit__in=eckhart_units).values_list('page', flat=True).distinct()
-        elif library == get_page_loc_name(CRERAR_HOMEPAGE):
-            crerar_units = DirectoryUnit.objects.get(name='Science Libraries').get_descendants(True)
-            eckhart_units = DirectoryUnit.objects.get(name='Eckhart Library').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.filter(unit__in=crerar_units).exclude(unit__in=eckhart_units).values_list('page', flat=True).distinct()
-        elif library == get_page_loc_name(DANGELO_HOMEPAGE):
-            dangelo_units = DirectoryUnit.objects.get(name='D\'Angelo Law Library').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.filter(unit__in=dangelo_units).values_list('page', flat=True).distinct()
-        elif library == get_page_loc_name(SSA_HOMEPAGE):
-            ssa = DirectoryUnit.objects.get(name='Social Service Administration Library (SSA)').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.filter(unit__in=ssa).values_list('page', flat=True).distinct()
-        elif library == LocationPage.objects.live().get(id=REGENSTEIN_HOMEPAGE).title:
-            crerar = DirectoryUnit.objects.get(name='Science Libraries').get_descendants(True)
-            dangelo = DirectoryUnit.objects.get(name='D\'Angelo Law Library').get_descendants(True)
-            ssa = DirectoryUnit.objects.get(name='Social Service Administration Library (SSA)').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.all().exclude(unit__in=crerar).exclude(unit__in=dangelo).exclude(unit__in=ssa).values_list('page', flat=True).distinct()
-        elif library == get_page_loc_name(SCRC_HOMEPAGE):
-            scrc = DirectoryUnit.objects.get(name='Special Collections Research Center').get_descendants(True)
-            staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=scrc).values_list('page', flat=True).distinct()
-        elif library == get_page_loc_name(MANSUETO_HOMEPAGE):
-            mansueto = DirectoryUnit.objects.filter(Q(name='Mansueto') | Q(name='Mansueto Library'))
-            staff_pks = StaffPagePageVCards.objects.all().filter(unit__in=mansueto).values_list('page', flat=True).distinct()
-
-    # get StaffPages themselves from the pk list. 
-    if staff_pks:
-        staff_pages_all = StaffPage.objects.live().filter(pk__in=staff_pks).order_by('last_name', 'first_name')
+        # see units.models.BUILDINGS
+        library_name_to_building = {
+            get_page_loc_name(ECKHART_HOMEPAGE): 3,
+            get_page_loc_name(CRERAR_HOMEPAGE): 1,
+            get_page_loc_name(DANGELO_HOMEPAGE): 2,
+            get_page_loc_name(SSA_HOMEPAGE): 7,
+            LocationPage.objects.live().get(id=REGENSTEIN_HOMEPAGE).title: 5,
+            get_page_loc_name(SCRC_HOMEPAGE): 6,
+            get_page_loc_name(MANSUETO_HOMEPAGE): 4
+        }
+        building = library_name_to_building[library]
+        return StaffPage.objects.filter(staff_page_units__library_unit__building=building).order_by('last_name', 'first_name')
     else:
-        staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
-    return staff_pages_all
+        return StaffPage.objects.live().order_by('last_name', 'first_name')
 
 def units(request):
     def get_unit_info_from_unit_page(unit_page):
