@@ -4,7 +4,7 @@ from directory_unit.models import DirectoryUnit, UnitSupervisor
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
-from staff.models import StaffPage, StaffPagePageVCards, VCard
+from staff.models import StaffPage
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page
@@ -160,14 +160,9 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         context['show_departments'] = self.show_departments
 
         department_members = []
-        if self.specific.unit:
-            units = self.specific.unit.get_descendants(True)
-    
-            staff_pages = []
-            for v in StaffPagePageVCards.objects.filter(page__live=True, unit__in=units):
-                staff_page = v.staffpagepagevcards.page
-                if staff_page not in staff_pages:
-                    staff_pages.append(staff_page)
+        if self.specific.unit_page:
+            unit_pages = self.specific.unit_page.get_descendants(True)
+            staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__in=unit_pages)
 
             # sorting: supervisors first, alphabetically; then non-supervisors, alphabetically. 
             supervisors = list(map(lambda u: u.supervisor, UnitSupervisor.objects.filter(unit=self.specific.unit)))
