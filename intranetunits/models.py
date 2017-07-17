@@ -206,11 +206,20 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                     supervisors = [] 
                     for s in UnitSupervisor.objects.filter(unit=directory_unit):
                         if s.supervisor != None:
+                            try:
+                                email = s.supervisor.staff_page_email.first().email
+                            except AttributeError:
+                                email = ''
+                            try:
+                                phone_number = s.supervisor.staff_page_phone_faculty_exchange.first().phone_number
+                            except AttributeError:
+                                phone_number = ''
+
                             supervisors.append({
                                 'title': s.supervisor.title,
                                 'url': s.supervisor.url,
-                                'phone_number': s.supervisor.staff_page_phone_faculty_exchange.first().phone_number,
-                                'email': s.supervisor.staff_page_email.first().email
+                                'phone_number': phone_number,
+                                'email': email
                             })
                     unit['supervisors'] = supervisors
                     department_units.append(unit)
