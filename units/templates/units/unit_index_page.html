@@ -57,8 +57,8 @@
                                     <strong>{% staff_public_page_link staff_page %}</strong>
                                     <br/>
                                     <p>
-                                      {{ staff_page.vcards.first.title }}<br/>
-                                      {{ staff_page.vcards.first.unit.fullName }}
+                                      {{ staff_page.position_title }}<br/>
+                                      {{ staff_page.staff_page_units.first.library_unit.get_full_name }}
                                     </p>
                                 </td>
                                 <td>
