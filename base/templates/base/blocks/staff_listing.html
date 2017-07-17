@@ -24,8 +24,8 @@
               <strong>{{ staff.title }}</strong>
               <br/>
               <p>
-                {{ staff.specific.vcards.first.title }}<br/>
-                {{ staff.specific.vcards.first.unit.fullName }}
+                {{ staff.specific.position_title }}<br/>
+                {{ staff.specific.staff_page_units.first.library_unit.get_full_name }}
               </p>
             </td>
             {% if value.show_contact_info %}
@@ -56,7 +56,7 @@
   <ul>
     {% for staff in value.staff_listing %}
       {% if staff.live %}
-        <li>{{ staff.title }} &#8212; <em>{{ staff.specific.vcards.first.title }}</em></li>
+        <li>{{ staff.title }} &#8212; <em>{{ staff.specific.position_title }}</em></li>
       {% endif %}
     {% endfor %}
   </ul>
