@@ -823,7 +823,7 @@ class StaffPublicPage(PublicBasePage):
         context['profile_picture'] = s.profile_picture
         context['room_number'] = s.staff_page_phone_faculty_exchange.first().faculty_exchange.split(' ').pop()
         context['subjects'] = get_subjects_html(s.staff_subject_placements.all())
-        context['vcardtitle'] = s.position_title
+        context['positiontitle'] = s.position_title
         return context
 
     search_fields = PublicBasePage.search_fields + [
