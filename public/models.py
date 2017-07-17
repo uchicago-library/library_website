@@ -16,6 +16,7 @@ from staff.models import StaffPage
 from wagtail.wagtailimages.models import Image
 from subjects.utils import get_subjects_html
 from public.utils import get_features
+from units.models import BUILDINGS
 
 import urllib
 
@@ -792,7 +793,6 @@ class StaffPublicPage(PublicBasePage):
         context = super(StaffPublicPage, self).get_context(request)
 
         s = StaffPage.objects.get(cnetid=self.cnetid)
-        v = s.vcards.first()
 
         cv = None
         if s.cv:
@@ -808,6 +808,9 @@ class StaffPublicPage(PublicBasePage):
 
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
+        building_int = s.staff_page_units.first().library_unit.building
+        building_str = list(filter(lambda b: b[0] == building_int, BUILDINGS))[0][1]
+
         context['bio'] = self.get_bio()
         context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
         context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
@@ -817,7 +820,7 @@ class StaffPublicPage(PublicBasePage):
         context['email'] = s.staff_page_email.first().email
         context['expertises'] = expertises
         context['libguide_url'] = libguide_url
-        context['library'] = v.unit.get_parent_library_name()
+        context['library'] = building_str
         context['orcid'] = s.orcid
         context['phone_number'] = s.staff_page_phone_faculty_exchange.first().phone_number
         context['profile_picture'] = s.profile_picture
