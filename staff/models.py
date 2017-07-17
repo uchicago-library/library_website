@@ -347,7 +347,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         ordering = ['last_name', 'first_name']
 
     def get_context(self, request):
-        vcard_titles = [self.position_title]
+        position_title = self.position_title
         faculty_exchanges = self.staff_page_phone_faculty_exchange.all().values_list('faculty_exchange', flat=True)
         emails = self.staff_page_email.all().values_list('email', flat=True)
         phones = self.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True)
@@ -387,7 +387,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 })
             
         context = super(StaffPage, self).get_context(request)
-        context['vcard_titles'] = vcard_titles
+        context['position_title'] = position_title
         context['faculty_exchanges'] = faculty_exchanges
         context['emails'] = emails
         context['phones'] = phones
