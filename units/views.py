@@ -55,14 +55,6 @@ def get_subjects(department = None):
                 subjects.append(s.name)
         return subjects
 
-def get_vcards_for_department(department):
-    try:
-        depts = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
-        vcards = VCard.objects.filter(unit__in=depts)
-        return set(vcards)
-    except(DirectoryUnit.DoesNotExist):
-        return set([])
-
 def get_staff_pages_for_library(library = None):
     if library:
         # see units.models.BUILDINGS
@@ -77,6 +69,18 @@ def get_staff_pages_for_library(library = None):
         }
         building = library_name_to_building[library]
         return StaffPage.objects.filter(staff_page_units__library_unit__building=building).order_by('last_name', 'first_name')
+    else:
+        return StaffPage.objects.live().order_by('last_name', 'first_name')
+
+def get_staff_pages_for_unit(unit_page_full_name = None):
+    if unit_page_full_name:
+        unit_page = None
+        for u in UnitPage.objects.live():
+            if u.get_full_name() == unit_page_full_name:
+                unit_page = u
+                break
+    if unit_page:
+        return StaffPage.objects.live().filter(staff_page_units__library_unit=unit_page).order_by('last_name', 'first_name')
     else:
         return StaffPage.objects.live().order_by('last_name', 'first_name')
 
@@ -181,7 +185,7 @@ def units(request):
 
         # departments.
         if department:
-            staff_pages_all = sorted(list(set(staff_pages_all.filter(vcards__in=get_vcards_for_department(department)))), key=lambda s: s.last_name if s.last_name else '')
+            staff_pages_all = get_staff_pages_for_unit(department)
 
         # search staff pages.
         if query:
