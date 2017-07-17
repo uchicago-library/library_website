@@ -353,13 +353,13 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         phones = self.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True)
 
         units = set()
-        for vcard in self.vcards.all():
+        for staff_page_unit in self.staff_page_units.all():
             try:
-                unit_title = vcard.unit.fullName
+                unit_title = staff_page_unit.library_unit.get_full_name()
             except:
                 unit_title = None
             try:
-                unit_url = vcard.unit.intranet_unit_page.first().url
+                unit_url = staff_page_unit.library_unit.intranet_unit_page.first().url
             except:
                 unit_url = None
             units.add(json.dumps({
