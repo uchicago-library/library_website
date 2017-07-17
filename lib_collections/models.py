@@ -225,16 +225,16 @@ class CollectionPage(PublicBasePage):
 
     def get_context(self, request):
         staff_title = '' 
-        staff_vcard_title = ''
-        staff_vcard_email = ''
-        staff_vcard_phone_number = ''
-        staff_vcard_faculty_exchange = ''
+        staff_position_title = ''
+        staff_email = ''
+        staff_phone_number = ''
+        staff_faculty_exchange = ''
         try:
             staff_title = self.staff_contact.title
-            staff_vcard_title = self.staff_contact.position_title
-            staff_vcard_email = self.staff_contact.staff_page_email.first().email
-            staff_vcard_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
-            staff_vcard_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
+            staff_position_title = self.staff_contact.position_title
+            staff_email = self.staff_contact.staff_page_email.first().email
+            staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
+            staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
         except:
             pass
 
@@ -316,10 +316,10 @@ class CollectionPage(PublicBasePage):
         context['default_image'] = default_image
         context['staff_title'] = staff_title
         context['staff_url'] = staff_url
-        context['staff_vcard_title'] = staff_vcard_title
-        context['staff_vcard_email'] = staff_vcard_email
-        context['staff_vcard_phone_number'] = staff_vcard_phone_number
-        context['staff_vcard_faculty_exchange'] = staff_vcard_faculty_exchange
+        context['staff_position_title'] = staff_position_title
+        context['staff_email'] = staff_email
+        context['staff_phone_number'] = staff_phone_number
+        context['staff_faculty_exchange'] = staff_faculty_exchange
         context['unit_title'] = unit_title
         context['unit_url'] = unit_url
         context['unit_email_label'] = unit_email_label

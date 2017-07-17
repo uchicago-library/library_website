@@ -72,20 +72,20 @@
             {{ staff_title }}
           {% endif %}
          
-          {% if staff_vcard_title %} 
-            <br/><em>{{ staff_vcard_title }}</em><br/>
+          {% if staff_position_title %} 
+            <br/><em>{{ staff_position_title }}</em><br/>
           {% endif %}
 
-          {% if staff_vcard_email %}
-            <a href="mailto:{{ staff_vcard_email }}">{{ staff_vcard_email }}</a><br/>
+          {% if staff_email %}
+            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
           {% endif %}
 
-          {% if staff_vcard_phone_number %}
-            {{ staff_vcard_phone_number }}<br/>
+          {% if staff_phone_number %}
+            {{ staff_phone_number }}<br/>
           {% endif %}
       
-          {% if staff_vcard_faculty_exchange %}
-            {{ staff_vcard_faculty_exchange }}
+          {% if staff_faculty_exchange %}
+            {{ staff_faculty_exchange }}
           {% endif %}
         </p>
       {% endif %}
