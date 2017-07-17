@@ -55,67 +55,6 @@ def get_subjects(department = None):
                 subjects.append(s.name)
         return subjects
 
-def get_departments(library = None):
-    if library == get_page_loc_name(CRERAR_HOMEPAGE):
-        departments = [
-            'Science Libraries - Administration',
-            'Science Libraries - Crerar Library Access Services',
-            'Science Libraries - Science Technical Services'
-        ]
-    elif library == get_page_loc_name(DANGELO_HOMEPAGE):
-        departments = [
-            'D\'Angelo Law Library',
-            'D\'Angelo Law Library - Administration',
-            'D\'Angelo Law Library - Law Collection Services',
-            'D\'Angelo Law Library - Law User Services',
-            'D\'Angelo Law Library - Law User Services - Access Services',
-            'D\'Angelo Law Library - Law User Services - Reference'
-        ]
-    elif library == get_page_loc_name(ECKHART_HOMEPAGE):
-        departments = []
-    elif library == get_page_loc_name(MANSUETO_HOMEPAGE):
-        departments = []
-    elif library == LocationPage.objects.live().get(id=REGENSTEIN_HOMEPAGE).title:
-        departments = [
-            'Administration - Communications',
-            'Administration - Development',
-            'Administration - Director\'s Office',
-            'Adminstrative Services - Budget',
-            'Adminstrative Services - Building Services',
-            'Adminstrative Services - Human Resources',
-            'Adminstrative Services - Shipping and Receiving',
-            'Collection Services',
-            'Collection Services - Preservation',
-            'Collection Services - Technical Services',
-            'Digital Services',
-            'User Services - Access Services - ID & Privileges Office & Entry Control',
-            'User Services - Access Services - Regenstein Circulation',
-            'User Services - Collection Management and Special Projects - Regenstein Search Services',
-            'User Services - Dissertation Office',
-            'User Services - Reference, Instruction, and Outreach'
-        ]
-    elif library == get_page_loc_name(SCRC_HOMEPAGE):
-        departments = [
-            'Special Collections Research Center - SCRC Administration',
-            'Special Collections Research Center - SCRC Archives and Manuscripts',
-            'Special Collections Research Center - SCRC Collection Management',
-            'Special Collections Research Center - SCRC Exhibits',
-            'Special Collections Research Center - SCRC Rare Books',
-            'Special Collections Research Center - SCRC Reader Services'
-        ]
-    elif library == get_page_loc_name(SSA_HOMEPAGE):
-        departments = []
-    else:
-        departments = []
-
-    output = []
-    for d in departments:
-        output.append({
-            'directory_unit': DirectoryUnit.objects.get(fullName=d),
-            'label': d.split(' - ').pop()
-        })
-    return sorted(output, key=lambda d: d['label'])
-
 def get_vcards_for_department(department):
     try:
         depts = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
@@ -297,7 +236,6 @@ def units(request):
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
         'department_label': department_label,
-        'departments': get_departments(library),
         'default_image': default_image,
         'hierarchical_units': hierarchical_html,
         'libraries': [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
