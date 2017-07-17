@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from base.utils import get_xml_from_directory_api
-from directory_unit.models import DirectoryUnit
 from django.core.management.base import BaseCommand
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
