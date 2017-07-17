@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.shortcuts import render
 from django.utils.html import escape
-from staff.models import StaffPage, StaffPagePageVCards, StaffPageSubjectPlacement, VCard
+from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.models import UnitPage
 from units.utils import get_quick_nums_for_library_or_dept
@@ -23,37 +23,14 @@ import urllib.parse
 
 for each subject, check to see there are any entries in the staffpage subject placement table that contain those staff. if so, this one is ok. 
 '''
-def get_subjects(department = None):
-    '''
-    return Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True)
-    '''
-
-    if department and not DirectoryUnit.objects.filter(fullName=department).exists():
-        return get_subjects(None)
-
-    if department:
-        # get the department's directory unit and all of that directory unit's descendants. 
-        units = DirectoryUnit.objects.get(fullName=department).get_descendants(True)
-        # get all staff who have vcards in those departments. 
-        staff_pks = StaffPagePageVCards.objects.filter(unit__in=units).values_list('page', flat=True).distinct()
-        # get all subjects for those staff.
-        subjects_for_department = set(StaffPageSubjectPlacement.objects.filter(page__in=staff_pks).values_list('subject__name', flat=True))
-        # only return relevant possible subjects for the pulldown. 
-        subjects = []
-        for s in Subject.objects.filter(display_in_dropdown=True):
-            subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
-            if subjects_for_department.intersection(subject_and_descendants):
-                subjects.append(s.name)
-        return list(set(subjects))
-            
-    else:
-        placed_subjects_and_descendants = set(StaffPageSubjectPlacement.objects.all().values_list('subject__name', flat=True))
-        subjects = []
-        for s in Subject.objects.filter(display_in_dropdown=True):
-            dropdown_subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
-            if placed_subjects_and_descendants.intersection(dropdown_subject_and_descendants):
-                subjects.append(s.name)
-        return subjects
+def get_subjects():
+    placed_subjects_and_descendants = set(StaffPageSubjectPlacement.objects.all().values_list('subject__name', flat=True))
+    subjects = []
+    for s in Subject.objects.filter(display_in_dropdown=True):
+        dropdown_subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
+        if placed_subjects_and_descendants.intersection(dropdown_subject_and_descendants):
+            subjects.append(s.name)
+    return subjects
 
 def get_staff_pages_for_library(library = None):
     if library:
@@ -247,7 +224,7 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
-        'subjects': get_subjects(None),
+        'subjects': get_subjects(),
         'subject': subject,
         'view': view,
         'self': {
