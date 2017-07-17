@@ -1,5 +1,4 @@
 from .models import Tree
-from directory_unit.models import DirectoryUnit
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
@@ -19,7 +18,7 @@ import urllib.parse
 
 '''
 "subject" means a subject and all of it's descendants.
-"department" means the directory unit attached to the Unit Page- and all of that directory unit's descendants. .get_descendants(True)
+"department" means the Unit Page and all of its descendants. .get_descendants(True)
 
 for each subject, check to see there are any entries in the staffpage subject placement table that contain those staff. if so, this one is ok. 
 '''
@@ -96,8 +95,8 @@ def units(request):
 
         # intercept this in the future to link to unit pages. 
         staff_link = ''
-        if t.unit_page.directory_unit:
-            staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.directory_unit.fullName}) + "'>staff</a>"
+        if t.unit_page:
+            staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.get_full_name()}) + "'>staff</a>"
 
         room_number = ''
         if t.unit_page.room_number:
