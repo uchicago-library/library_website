@@ -110,13 +110,6 @@ class UnitPage(BasePage, ContactFields):
         on_delete=models.SET_NULL, 
         related_name='%(app_label)s_%(class)s_related'
     )
-    directory_unit = models.ForeignKey(
-        'directory_unit.DirectoryUnit',
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
-        related_name='%(app_label)s_%(class)s_related'
-    )
     department_head = models.ForeignKey(
         'staff.StaffPage',
         blank=True,
@@ -152,7 +145,6 @@ class UnitPage(BasePage, ContactFields):
         InlinePanel('unit_role_placements', label='Role'),
         PageChooserPanel('public_web_page'),
         FieldPanel('location'), 
-        FieldPanel('directory_unit'), 
     ] + BasePage.content_panels + ContactFields.content_panels
 
     human_resources_panels = [
@@ -252,9 +244,9 @@ class UnitIndexPage(BasePage):
         for u in UnitPage.objects.filter(display_in_directory = True):
             unit_page = {} 
             if u.contact_point_title:
-                unit_page['full_name'] = u.directory_unit.fullName + ' - ' + u.contact_point_title
+                unit_page['full_name'] = u.get_full_name() + ' - ' + u.contact_point_title
             else:
-                unit_page['full_name'] = u.directory_unit.fullName
+                unit_page['full_name'] = u.get_full_name()
             context['units_hierarchical'].append(unit_page)
 
         return context

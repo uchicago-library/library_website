@@ -95,14 +95,6 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     Content type for department pages on the intranet. 
     """
 
-    unit = models.ForeignKey(
-        'directory_unit.DirectoryUnit',
-        related_name='intranet_unit_page',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
     unit_page = models.ForeignKey(
         'units.UnitPage',
         related_name='loop_page',
@@ -245,7 +237,6 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
     StreamFieldPanel('intro'),
-    FieldPanel('unit'),
     FieldPanel('unit_page'),
     MultiFieldPanel(
         [
