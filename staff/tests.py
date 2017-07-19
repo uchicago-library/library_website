@@ -1,5 +1,4 @@
 from base.utils import get_xml_from_directory_api
-from directory_unit.models import DirectoryUnit
 from django.test import TestCase
 from io import StringIO
 from lxml import etree
@@ -197,20 +196,12 @@ class UniversityDirectoryTestCase(TestCase):
         </responseData>
         """
 
-        DirectoryUnit.objects.create(
-            name = "Library",
-            fullName = "Library",
-            parentUnit = None,
-            xmlUrl = "https://directory.uchicago.edu/api/v2/divisions/16"
-        )
-
         info = {
             'cnetid': 'scootermcdanger',
             'officialName': 'Scooter McDanger',
             'displayName': 'Scooter McDanger',
             'title_department_subdepartments': {'Programmer Analyst\nLibrary\nJRL 220\n773-702-1234'},
             'title_department_subdepartments_dicts': [{
-                'department': DirectoryUnit.objects.get(name='Library'),
                 'title': 'Programmer Analyst',
                 'email': 'scootermcdanger@uchicago.edu',
                 'facultyexchange': 'JRL 220',

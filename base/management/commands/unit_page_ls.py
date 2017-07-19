@@ -2,16 +2,16 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-from directory_unit.models import DirectoryUnit
 from intranetunits.models import IntranetUnitsPage
 from staff.models import StaffPage
+from units.models import UnitPage
 
 class Command (BaseCommand):
     """
-    List information about a directory unit. 
+    List information about a unit page.
 
     Example: 
-        python manage.py directory_unit_ls
+        python manage.py unit_page_ls
     """
 
     def add_arguments(self, parser):
@@ -40,20 +40,19 @@ class Command (BaseCommand):
 
         output = []
 
-        # get the directory unit by it's full name
-        directory_unit = DirectoryUnit.objects.get(fullName=kwargs['fullname'])
+        unit_page = None
+        for u in UnitPage.objects.live():
+            if u.get_full_name() == kwargs['fullname']:
+                unit_page = u
 
-        # get the fullname, name, and xmlurl.
-        output.append(directory_unit.fullName)
-        output.append(directory_unit.name)
-        output.append(directory_unit.xmlUrl)
+        if unit_page:
+            output.append(unit_page.get_full_name())
 
-        # get IntranetUnitsPages
-        intranet_units_pages = list(IntranetUnitsPage.objects.filter(unit=directory_unit).values_list('url_path', flat=True))
+            intranet_units_pages = list(IntranetUnitsPage.objects.filter(unit_page=unit_page).values_list('url_path', flat=True))
 
-        if intranet_units_pages:
-            output.append("THE '" + kwargs['fullname'] + "' DirectoryUnit IS REFERENCED BY THE FOLLOWING INTRANETUNITSPAGE(S):")
-            output = output + sorted(intranet_units_pages)
+            if intranet_units_pages:
+                output.append("THE '" + kwargs['fullname'] + "' UnitPage IS REFERENCED BY THE FOLLOWING INTRANETUNITSPAGE(S):")
+                output = output + sorted(intranet_units_pages)
 
         return "\n".join(output)
 

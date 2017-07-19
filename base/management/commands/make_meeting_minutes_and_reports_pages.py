@@ -14,8 +14,6 @@ from http.client import HTTPSConnection
 from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from xml.etree import ElementTree
 
-from directory_unit.models import DirectoryUnit
-
 class Command (BaseCommand):
     """
     Report library units that are out of sync between Wagtail and the University Directory.
