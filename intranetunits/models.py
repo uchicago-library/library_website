@@ -1,6 +1,5 @@
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
 from group.models import get_page_objects_grouped_by_date, get_page_objects_as_list, enforce_name_as_year, enforce_name_as_reports
-from directory_unit.models import DirectoryUnit, UnitSupervisor
 from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
@@ -162,13 +161,14 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         department_members = []
         if self.specific.unit_page:
             unit_pages = self.specific.unit_page.get_descendants(True)
-            staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__in=unit_pages)
+            staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__in=unit_pages).distinct()
 
             # sorting: supervisors first, alphabetically; then non-supervisors, alphabetically. 
-            supervisors = list(map(lambda u: u.supervisor, UnitSupervisor.objects.filter(unit=self.specific.unit)))
-            supervisor_staff = sorted(list(set(staff_pages).intersection(supervisors)), key=lambda s: s.title)
-            non_supervisor_staff = sorted(list(set(staff_pages).difference(supervisors)), key=lambda s: s.title)
-            staff_pages = supervisor_staff + non_supervisor_staff 
+            supervisor = self.specific.unit_page.department_head
+            if supervisor:
+                staff_pages = [supervisor] + list(staff_pages.exclude(pk=supervisor.pk).order_by('last_name'))
+            else:
+                staff_pages = list(staff_pages.order_by('last_name'))
 
             for staff_page in staff_pages:
                 email = staff_page.staff_page_email.first().email

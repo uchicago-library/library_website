@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from base.utils import get_xml_from_directory_api
-from directory_unit.models import DirectoryUnit
 from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
 from django.core.management.base import BaseCommand
 
@@ -58,9 +57,6 @@ class Command (BaseCommand):
             except:
                 facultyexchange = ''
 
-            department_id = info['title_department_subdepartments_dicts'][0]['department']
-            department_string = DirectoryUnit.objects.get(id=department_id).name
-        
             fields = [
                 cnetid,
                 displayname,
@@ -68,7 +64,6 @@ class Command (BaseCommand):
                 phone,
                 email,
                 facultyexchange,
-                department_string
             ]
             output.append("\t".join(fields)) 
 

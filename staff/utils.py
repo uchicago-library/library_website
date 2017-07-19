@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 import re
 
 from base.utils import get_xml_from_directory_api
-from directory_unit.models import DirectoryUnit
 from django.contrib.auth.models import User
 from django.db.models import F
 from staff.models import StaffPage
@@ -95,16 +94,6 @@ def get_individual_info_from_directory(xml_string):
                 chunks = chunks + subdepartment.split(" | ")
         except:
             pass
-
-        if chunks:
-            parent_unit = DirectoryUnit.objects.get(name='Library')
-            c = 0
-            while c < len(chunks):
-                unit = DirectoryUnit.objects.get(parentUnit=parent_unit, name=chunks[c])
-                parent_unit = unit
-                c = c + 1 
-            output_dict['department'] = unit.pk
-            output.append(chunks.pop())
 
         try:
             email = re.sub('\s+', ' ', vcard.find('email').text).strip()

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from base.models import get_available_path_under, make_slug
 from base.utils import get_xml_from_directory_api
-from directory_unit.models import DirectoryUnit
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db import models, migrations
