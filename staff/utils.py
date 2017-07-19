@@ -211,47 +211,6 @@ def get_all_library_cnetids_from_wagtail():
             pass
     return output
 
-def get_individual_info_from_wagtail(cnetid):
-    staff_page = StaffPage.objects.get(cnetid=cnetid)
-
-    if staff_page.display_name == None:
-        raise ValueError(cnetid + ' has a display_name of None.')
-
-    if staff_page.official_name == None:
-        raise ValueError(cnetid + ' has an official_name of None.')
-       
-    # officialName is slightly more formal- e.g. "John E. Jung"
-    # displayName is a bit more casual- e.g. "John Jung"
-    output = {
-        "cnetid": cnetid,
-        "officialName": staff_page.official_name,
-        "displayName": staff_page.display_name,
-        "title_department_subdepartments": set()
-    }
-
-    for v in staff_page.vcards.all():
-        tmp = []
-
-        title = v.title
-        if title:
-            tmp.append(re.sub('\s+', ' ', title).strip())
-
-        department = v.unit.name
-        if department:
-            tmp.append(re.sub('\s+', ' ', department).strip())
-
-        facultyexchange = v.faculty_exchange
-        if facultyexchange:
-            tmp.append(re.sub('\s+', ' ', facultyexchange).strip())
-
-        phone = v.phone_number
-        if phone:
-            tmp.append(re.sub('\s+', ' ', phone).strip())
-
-        output['title_department_subdepartments'].add("\n".join(tmp))
-
-    return output
-
 # the data format changed with our 2017 update to the StaffPage object.
 # instead of keeping VCards in bundles, now they are split into different
 # pieces. 
@@ -262,7 +221,7 @@ def get_individual_info_from_wagtail(cnetid):
 #
 # TODO: Add units. 
 # 
-def get_individual_info_from_wagtail_2017(cnetid):
+def get_individual_info_from_wagtail(cnetid):
     staff_page = StaffPage.objects.get(cnetid=cnetid)
 
     if staff_page.display_name == None:

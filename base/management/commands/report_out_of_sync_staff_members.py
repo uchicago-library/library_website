@@ -10,7 +10,7 @@ from staff.utils import get_all_library_cnetids_from_directory, get_all_library_
 
 class Command (BaseCommand):
     """
-    Report staff members and VCards that are out of sync between the University directory and Wagtail.
+    Report staff member data that is out of sync between the University directory and Wagtail.
 
     Example: 
         python manage.py report_out_of_sync_staff_members
@@ -30,15 +30,6 @@ class Command (BaseCommand):
 
         output = []
 
-        '''
-        # JEJ
-        print(
-        get_individual_info_from_directory('amybuckland')
-        )
-        import sys
-        sys.exit()
-        '''
-
         missing_in_api = wag_staff.difference(api_staff)
         if missing_in_api:
             output.append("THE FOLLOWING STAFF APPEAR IN WAGTAIL, BUT NOT IN THE UNIVERSITY'S API:")
@@ -56,9 +47,6 @@ class Command (BaseCommand):
             api = get_individual_info_from_directory(xml_string)
             wag = get_individual_info_from_wagtail(s)
 
-            if not api['officialName'] == wag['officialName']:
-                output.append(s + "'s officialName is " + api['officialName'] + ", not " + wag['officialName'])
-
             if not api['displayName'] == wag['displayName']:
                 output.append(s + "'s displayName is " + api['displayName'] + ", not " + wag['displayName'])
                 # In the user management command, change the following things in the User object:
@@ -67,15 +55,33 @@ class Command (BaseCommand):
                 # In the StaffPage object,
                 # check displayName and officialName.
 
-            diffs = api['title_department_subdepartments'].difference(wag['title_department_subdepartments'])
+            if not api['officialName'] == wag['officialName']:
+                output.append(s + "'s officialName is " + api['officialName'] + ", not " + wag['officialName'])
+
+            if not api['positionTitle'] == wag['positionTitle']:
+                output.append(s + "'s positionTitle is " + api['positionTitle'] + ", not " + wag['positionTitle'])
+
+            diffs = wag['email'].difference(api['email'])
             if diffs:
-                output.append("THE FOLLOWING VCARDS APPEAR FOR " + s + " IN THE UNIVERSITY'S API, BUT NOT IN WAGTAIL:")
+                output.append("THE FOLLOWING EMAIL ADDRESSES APPEAR FOR " + s + " IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:")
                 for d in diffs:
                     output.append(d)
 
-            diffs = wag['title_department_subdepartments'].difference(api['title_department_subdepartments'])
+            diffs = api['email'].difference(wag['email'])
             if diffs:
-                output.append("THE FOLLOWING VCARDS APPEAR FOR " + s + " IN WAGTAIL, BUT NOT IN THE UNIVERSITY'S API:")
+                output.append("THE FOLLOWING EMAIL ADDRESSES APPEAR FOR " + s + " IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
+                for d in diffs:
+                    output.append(d)
+
+            diffs = api['phoneFacultyExchanges'].difference(wag['phoneFacultyExchanges'])
+            if diffs:
+                output.append("THE FOLLOWING PHONE/FACULTY EXCHANGE PAIRS APPEAR FOR " + s + " IN THE UNIVERSITY'S API, BUT NOT IN WAGTAIL:")
+                for d in diffs:
+                    output.append(d)
+
+            diffs = wag['phoneFacultyExchanges'].difference(api['phoneFacultyExchanges'])
+            if diffs:
+                output.append("THE FOLLOWING PHONE/FACULTY EXCHANGE PAIRS APPEAR FOR " + s + " IN WAGTAIL, BUT NOT IN THE UNIVERSITY'S API:")
                 for d in diffs:
                     output.append(d)
 

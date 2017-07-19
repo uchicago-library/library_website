@@ -49,32 +49,6 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.subject.name
 
 
-class VCard(Email, PhoneNumber):
-    """
-    VCard model for repeatable VCards on the 
-    StaffPage.
-    """
-    title = CharField(
-        max_length=255, 
-        blank=False)
-    unit = models.ForeignKey(
-       'directory_unit.DirectoryUnit',
-       null=True,
-       blank=True,
-       on_delete=models.SET_NULL,
-       related_name='%(app_label)s_%(class)s_related'
-    )
-    faculty_exchange = CharField(
-        max_length=255, 
-        blank=True)
-
-    content_panels = [
-        FieldPanel('title'),
-        FieldPanel('unit'),
-        FieldPanel('faculty_exchange'),
-    ]
-
-
 class StaffPageEmailAddresses(Orderable, models.Model):
     page = ParentalKey('staff.StaffPage', related_name='staff_page_email')
     email = models.EmailField(max_length=254, blank=True)
@@ -110,13 +84,6 @@ class StaffPagePhoneFacultyExchange(Orderable, models.Model):
         FieldPanel('faculty_exchange')
     ]
 
-
-class StaffPagePageVCards(Orderable, VCard):
-    """
-    Create a through table for linking vcards
-    to StaffPage content types.
-    """
-    page = ParentalKey('staff.StaffPage', related_name='vcards')
 
 class StaffPageManager(PageManager):
     def get_queryset(self):
