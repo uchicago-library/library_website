@@ -14,6 +14,8 @@ from units.models import UnitPage
 import datetime
 import re
 
+from django.core.cache import caches
+
 def collections(request):
     # PARAMETERS
     digital = request.GET.get('digital', None)
@@ -112,7 +114,7 @@ def collections(request):
     # business, medicine and law. See DB's "collections subjects" lucid chart for more 
     # info. 
 
-    subjects_queryset = Subject.objects.all()
+    subjects_queryset = Subject.objects.all().prefetch_related('see_also')
 
     if search:
         s = get_search_backend()
@@ -126,8 +128,15 @@ def collections(request):
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
+    subjects_cache = caches['default']
+
     for s in subjects_queryset:
-        subject_descendants = set(s.get_descendants().values_list('id', flat=True))
+        subject_descendants = subjects_cache.get(s.id)
+
+        if not subject_descendants:
+            subject_descendants = set(s.get_descendants().values_list('id', flat=True))
+            subjects_cache.set(s.id, subject_descendants, 60*5)
+
         parents = SubjectParentRelations.objects.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
         has_collections = bool(subjects_with_collections.intersection(subject_descendants))
         has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
