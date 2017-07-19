@@ -128,6 +128,8 @@ def collections(request):
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
+#    subjects_queryset = subjects_queryset.prefetch_related('see_also')
+
     subjects_cache = caches['default']
 
     for s in subjects_queryset:
