@@ -15,9 +15,25 @@ import datetime
 import re
 
 from django.core.cache import caches
+from django.views.decorators.cache import cache_page
+from django.db import connection
 
+def explain_queryset(self, query):
+    with connection.cursor() as cursor:
+        cursor.execute("EXPLAIN ANALYZE %s", query)
+        result = cursor.fetchall()
+
+    return result
+
+@cache_page(60*5)
 def collections(request):
     # PARAMETERS
+    default_cache = caches['default']
+#    collections = default_cache.get('collections_list')
+#    if not default_cache.get('collections_list'):
+#        collections = CollectionPage.objects.all()
+#        default_cache.set('collections_list', collections)
+
     digital = request.GET.get('digital', None)
     if not digital == 'on':
         digital = None
@@ -57,11 +73,12 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
+        collections = collections.live().filter(**filter_arguments).distinct()
+#        print('\n'.join(r[0] for r in CollectionPage.explain_queryset(collections.query)))
 
         # digital
         if digital:
-            collections = collections.filter(collection_placements__format__text='Digital')
+            collections = CollectionPage.objects.filter(collection_placements__format__text='Digital')
 
         # sort browses by title, omitting leading articles. 
         if not search:
@@ -128,16 +145,12 @@ def collections(request):
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
-#    subjects_queryset = subjects_queryset.prefetch_related('see_also')
-
-    subjects_cache = caches['default']
-
     for s in subjects_queryset:
-        subject_descendants = subjects_cache.get(s.id)
+        subject_descendants = default_cache.get(s.id)
 
         if not subject_descendants:
             subject_descendants = set(s.get_descendants().values_list('id', flat=True))
-            subjects_cache.set(s.id, subject_descendants, 60*5)
+            default_cache.set(s.id, subject_descendants, 60*5)
 
         parents = SubjectParentRelations.objects.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
         has_collections = bool(subjects_with_collections.intersection(subject_descendants))
