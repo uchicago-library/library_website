@@ -3,6 +3,7 @@ from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
+from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
@@ -145,7 +146,7 @@ class UnitPage(BasePage, ContactFields):
         InlinePanel('unit_role_placements', label='Role'),
         PageChooserPanel('public_web_page'),
         FieldPanel('location'), 
-    ] + BasePage.content_panels + ContactFields.content_panels
+    ] + BasePage.content_panels
 
     human_resources_panels = [
         PageChooserPanel('department_head'),
@@ -160,6 +161,25 @@ class UnitPage(BasePage, ContactFields):
         FieldPanel('is_a_division'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('internal_email'),
+        MultiFieldPanel(
+            [
+                FieldPanel('email_label'),
+                FieldPanel('email'),
+            ],
+            heading='Email'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('phone_label'),
+                FieldPanel('phone_number'),
+            ],
+            heading='Phone Number'
+        ),
+        FieldPanel('fax_number'),
+        FieldPanel('link_text'),
+        FieldPanel('link_external'),
+        PageChooserPanel('link_page'),
+        DocumentChooserPanel('link_document'),
     ]
 
     subpage_types = ['units.UnitPage']
