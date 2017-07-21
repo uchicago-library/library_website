@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
         ('subjects', '0001_squashed_0006_subject_display_in_dropdown'),
         ('wagtailimages', '0008_image_created_at_index'),
-        ('directory_unit', '0002_auto_20151208_1739'),
     ]
 
     operations = [

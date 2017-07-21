@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtaildocs', '0004_capitalizeverbose'),
-        ('directory_unit', '0004_auto_20151213_2022'),
         ('wagtailcore', '0023_alter_page_revision_on_delete_behaviour'),
         ('units', '0044_auto_20160307_2147'),
     ]

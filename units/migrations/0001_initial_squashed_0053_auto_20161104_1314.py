@@ -19,7 +19,6 @@ class Migration(migrations.Migration):
         ('public', '0002_auto_20151113_2245'),
         ('units', '0000_manual_pre_initial'),
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
-        ('directory_unit', '0004_auto_20151213_2022'),
         ('wagtaildocs', '0004_capitalizeverbose'),
         ('staff', '0000_manual_pre_initial'),
         ('wagtaildocs', '0003_add_verbose_names'),

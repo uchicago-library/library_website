@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailcore', '0020_add_index_on_page_first_published_at'),
-        ('directory_unit', '0002_auto_20151208_1739'),
         ('staff', '0000_manual_pre_initial'),
     ]
 
