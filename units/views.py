@@ -64,10 +64,11 @@ def units(request):
     def get_unit_info_from_unit_page(unit_page):
         h = ''
         # phone number
-        if unit_page.phone_number:
-            if unit_page.phone_label:
-                h = h + '<em>' + unit_page.phone_label + ':' + '</em> '
-            h = h + "<a href='tel:" + unit_page.phone_number.replace('-', '') + "'>" + unit_page.phone_number + "</a>"
+        if len(unit_page.unit_page_phone_number.all()) > 0:
+            unit_page_phone_number = unit_page.unit_page_phone_number.first()
+            if unit_page_phone_number.phone_label:
+                h = h + '<em>' + unit_page.unit_page_phone_number.phone_label + ':' + '</em> '
+            h = h + "<a href='tel:" + unit_page_phone_number.phone_number.replace('-', '') + "'>" + unit_page_phone_number.phone_number + "</a>"
             h = h + '<br/>'
 
         # fax_number  

@@ -9,7 +9,7 @@ from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, ContactFields, DefaultBodyFields
+from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, LinkedText, PhoneNumber
 
 BUILDINGS = (
     (1, 'Crerar Library'),
@@ -87,7 +87,13 @@ class UnitPageRolePlacement(Orderable, models.Model):
         return self.page.title + ' -> ' + self.role.text
 
 
-class UnitPage(BasePage, ContactFields):
+class UnitPagePhoneNumbers(Orderable, PhoneNumber):
+    page = ParentalKey('units.UnitPage', related_name='unit_page_phone_number')
+    
+    panels = PhoneNumber.content_panels
+
+
+class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     """
     Basic structure for units and departments.
     """
@@ -131,8 +137,6 @@ class UnitPage(BasePage, ContactFields):
     faculty_exchange = models.CharField(max_length=32, blank=True)
     public_url = models.CharField(max_length=255, blank=True)
     public_url_label = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=255, blank=True, help_text=PHONE_ERROR_MSG)
-    phone_number_label = models.CharField(max_length=255, blank=True)
     is_a_division = models.BooleanField(default=False)
     display_in_campus_directory = models.BooleanField(default=True)
 
@@ -156,31 +160,12 @@ class UnitPage(BasePage, ContactFields):
         FieldPanel('faculty_exchange'),
         FieldPanel('public_url'),
         FieldPanel('public_url_label'),
-        FieldPanel('phone_number'),
-        FieldPanel('phone_number_label'),
         FieldPanel('is_a_division'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('internal_email'),
-        MultiFieldPanel(
-            [
-                FieldPanel('email_label'),
-                FieldPanel('email'),
-            ],
-            heading='Email'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('phone_label'),
-                FieldPanel('phone_number'),
-            ],
-            heading='Phone Number'
-        ),
-        FieldPanel('fax_number'),
-        FieldPanel('link_text'),
-        FieldPanel('link_external'),
-        PageChooserPanel('link_page'),
-        DocumentChooserPanel('link_document'),
-    ]
+    ] + Email.content_panels + [
+        InlinePanel('unit_page_phone_number', label='Phone Numbers'),
+    ] + FaxNumber.content_panels + LinkedText.content_panels
 
     subpage_types = ['units.UnitPage']
 

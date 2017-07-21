@@ -276,11 +276,11 @@ class CollectionPage(PublicBasePage):
                 pass
 
             try:
-                unit_phone_label = self.unit.phone_label
+                unit_phone_label = self.unit.unit_page_phone_number.first().phone_label
             except:
                 pass
             try:
-                unit_phone_number = self.unit.phone_number
+                unit_phone_number = self.unit.unit_page_phone_number.first().phone_number
             except:
                 pass
 
