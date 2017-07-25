@@ -17,6 +17,7 @@ import re
 from django.core.cache import caches
 from django.views.decorators.cache import cache_page
 from django.db import connection
+from django.conf import settings
 
 def explain_queryset(self, query):
     with connection.cursor() as cursor:
@@ -25,14 +26,10 @@ def explain_queryset(self, query):
 
     return result
 
-@cache_page(60*5)
+@cache_page(settings.DEFAULT_TTL)
 def collections(request):
     # PARAMETERS
     default_cache = caches['default']
-#    collections = default_cache.get('collections_list')
-#    if not default_cache.get('collections_list'):
-#        collections = CollectionPage.objects.all()
-#        default_cache.set('collections_list', collections)
 
     digital = request.GET.get('digital', None)
     if not digital == 'on':
@@ -73,12 +70,12 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        collections = collections.live().filter(**filter_arguments).distinct()
+        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
 #        print('\n'.join(r[0] for r in CollectionPage.explain_queryset(collections.query)))
 
         # digital
         if digital:
-            collections = CollectionPage.objects.filter(collection_placements__format__text='Digital')
+            collections = collections.filter(collection_placements__format__text='Digital')
 
         # sort browses by title, omitting leading articles. 
         if not search:
@@ -132,6 +129,7 @@ def collections(request):
     # info. 
 
     subjects_queryset = Subject.objects.all().prefetch_related('see_also')
+#    subjects_queryset = Subject.objects.all()
 
     if search:
         s = get_search_backend()
@@ -145,7 +143,7 @@ def collections(request):
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
-    for s in subjects_queryset:
+    for s in subjects_queryset.iterator():
         subject_descendants = default_cache.get(s.id)
 
         if not subject_descendants:

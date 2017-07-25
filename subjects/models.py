@@ -55,7 +55,6 @@ class Subject(ClusterableModel, index.Indexed):
 
         relations_cache = caches['default']
 
-        # problem: can't uniquely define cache keys by child subject ids
         while subject_ids_to_check:
             s = subject_ids_to_check.pop()
             checked_subjects.append(s)
