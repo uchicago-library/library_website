@@ -126,11 +126,6 @@ class Migration(migrations.Migration):
             bases=('staff.vcard', models.Model),
         ),
         migrations.AddField(
-            model_name='vcard',
-            name='unit',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='staff_vcard_related', to='directory_unit.DirectoryUnit'),
-        ),
-        migrations.AddField(
             model_name='staffpage',
             name='cv',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtaildocs.Document'),

@@ -12,9 +12,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='vcard',
-            name='unit',
-            field=models.ForeignKey(null=True, related_name='staff_vcard_related', on_delete=django.db.models.deletion.SET_NULL, to='directory_unit.DirectoryUnit', blank=True),
-        ),
     ]

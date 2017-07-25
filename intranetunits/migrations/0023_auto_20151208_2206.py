@@ -12,9 +12,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='intranetunitspage',
-            name='unit',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='intranet_unit_page', to='directory_unit.DirectoryUnit', blank=True),
-        ),
     ]

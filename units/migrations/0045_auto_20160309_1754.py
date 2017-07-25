@@ -51,11 +51,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='unitpage',
-            name='directory_unit',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='units_unitpage_related', to='directory_unit.DirectoryUnit'),
-        ),
-        migrations.AddField(
-            model_name='unitpage',
             name='display_in_dropdown',
             field=models.BooleanField(default=False),
         ),

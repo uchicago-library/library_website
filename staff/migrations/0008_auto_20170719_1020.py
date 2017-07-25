@@ -20,10 +20,6 @@ class Migration(migrations.Migration):
             model_name='staffpagepagevcards',
             name='vcard_ptr',
         ),
-        migrations.RemoveField(
-            model_name='vcard',
-            name='unit',
-        ),
         migrations.DeleteModel(
             name='StaffPagePageVCards',
         ),
