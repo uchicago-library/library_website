@@ -87,6 +87,8 @@ INSTALLED_APPS = (
     'subjects',
     'units',
     'static_precompiler',
+
+    'yet_another_django_profiler',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,6 +109,8 @@ MIDDLEWARE_CLASSES = (
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+
+    'yet_another_django_profiler.middleware.ProfilerMiddleware',
 )
 
 ROOT_URLCONF = 'library_website.urls'
