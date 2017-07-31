@@ -109,8 +109,6 @@ MIDDLEWARE_CLASSES = (
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
-
-    'yet_another_django_profiler.middleware.ProfilerMiddleware',
 )
 
 ROOT_URLCONF = 'library_website.urls'
@@ -331,3 +329,14 @@ CRERAR_BUILDING_ID = 2713
 # Web Exhibit footers
 CRERAR_EXHIBIT_FOOTER_IMG = 1130 
 SCRC_EXHIBIT_FOOTER_IMG = 1129
+
+# Redis cache configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'redis_cache.DefaultClient'
+        },
+    }
+}
