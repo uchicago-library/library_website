@@ -87,8 +87,6 @@ INSTALLED_APPS = (
     'subjects',
     'units',
     'static_precompiler',
-
-    'yet_another_django_profiler',
 )
 
 MIDDLEWARE_CLASSES = (
