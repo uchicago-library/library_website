@@ -109,13 +109,9 @@ def collections(request):
             exhibits = exhibits.search(search).results()
             exhibits_current = exhibits_current.search(search).results()
 
-        if not search:
-            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
-            if default_cache.get('exhibits_cache'):
-                exhibits_current = default_cache.get('exhibits_cache')
-            else:
-                exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
-                default_cache.set('exhibits_cache', exhibits_current)
+#        if not search:
+#            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
+#            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
 
     # formats.
     formats = Format.objects.all().values_list('text', flat=True)
@@ -144,13 +140,13 @@ def collections(request):
         subject_ids = Subject.objects.get(name=subject).get_descendants()
         subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
-    subjects_queryset = list(subjects_queryset)
+#    subjects_queryset = subjects_queryset
 
     subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
-    qs = SubjectParentRelations.objects.all()
+    qs = SubjectParentRelations.objects.all().prefetch_related('parent')
 
     for s in subjects_queryset:
         to_append = default_cache.get('subject_id_%s' % s.id)
