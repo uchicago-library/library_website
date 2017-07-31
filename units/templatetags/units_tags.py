@@ -28,7 +28,7 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
         elif facex_parts[0] == 'JRL':
             lib = LocationPage.objects.get(title='The Joseph Regenstein Library')
         elif facex_parts[0] == 'LBQ':
-            lib = None
+            lib = LocationPage.objects.get(title='The D\'Angelo Law Library')
         elif facex_parts[0] in ['MAN', 'Mansueto']:
             lib = LocationPage.objects.get(title='The Joe and Rika Mansueto Library')
         elif facex_parts[0] == 'SSA':
