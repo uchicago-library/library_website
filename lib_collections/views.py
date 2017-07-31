@@ -99,7 +99,7 @@ def collections(request):
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
         exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct()
-        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
+        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct().prefetch_related('exhibit_subject_placements')
 
         if digital:
             exhibits = exhibits.filter(web_exhibit = True)
@@ -111,7 +111,11 @@ def collections(request):
 
         if not search:
             exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
-            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
+            if default_cache.get('exhibits_cache'):
+                exhibits_current = default_cache.get('exhibits_cache')
+            else:
+                exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
+                default_cache.set('exhibits_cache', exhibits_current)
 
     # formats.
     formats = Format.objects.all().values_list('text', flat=True)
