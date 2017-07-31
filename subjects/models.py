@@ -7,6 +7,8 @@ from wagtail.wagtailcore.models import Orderable
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
+from django.core.cache import caches
+
 class SubjectParentRelations(Orderable, models.Model):
     """
     Through table for capturing subjects with multiple
@@ -51,12 +53,23 @@ class Subject(ClusterableModel, index.Indexed):
         subject_ids_to_check = [self.id]
         checked_subjects = []
 
+        relations_cache = caches['default']
+
         while subject_ids_to_check:
             s = subject_ids_to_check.pop()
             checked_subjects.append(s)
-            subject_ids_to_check = subject_ids_to_check + list(SubjectParentRelations.objects.filter(parent__id=s).values_list("child", flat=True))
 
-        if not include_self: 
+            key = 'parent_' + str(s)
+
+            ids_to_add = relations_cache.get(key)
+
+            if not ids_to_add:
+                ids_to_add = list(SubjectParentRelations.objects.filter(parent__id=s).select_related('parent').values_list("child", flat=True))
+                relations_cache.set(key, ids_to_add, 60*5)
+
+            subject_ids_to_check = subject_ids_to_check + ids_to_add
+
+        if not include_self:
             checked_subjects.remove(self.id)
 
         return Subject.objects.filter(id__in=checked_subjects)
@@ -70,5 +83,3 @@ class Subject(ClusterableModel, index.Indexed):
 
     class Meta:
         ordering = ['name']
-
-

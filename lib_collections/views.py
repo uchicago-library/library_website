@@ -14,22 +14,40 @@ from units.models import UnitPage
 import datetime
 import re
 
+from django.core.cache import caches, cache
+from django.views.decorators.cache import cache_page
+from django.db import connection
+from django.conf import settings
+
+def explain_queryset(self, query):
+    with connection.cursor() as cursor:
+        cursor.execute("EXPLAIN ANALYZE %s", query)
+        result = cursor.fetchall()
+
+    return result
+
+#@cache_page(settings.DEFAULT_TTL)
 def collections(request):
     # PARAMETERS
+    default_cache = caches['default']
+
     digital = request.GET.get('digital', None)
     if not digital == 'on':
         digital = None
     format = request.GET.get('format', None)
-    if not format in Format.objects.all().values_list('text', flat=True):
+    if not Format.objects.filter(text=format).exists():
         format = None
     location = request.GET.get('location', None)
-    if not location in LocationPage.objects.live().values_list('title', flat=True):
+    if not LocationPage.objects.live().filter(title=location).exists():
         location = None
     search = request.GET.get('search', None)
     subject = request.GET.get('subject', None)
-    if not subject in Subject.objects.all().values_list('name', flat=True):
+    if not Subject.objects.all().filter(name=subject).exists():
         subject = None
+
+    # broken... what does this even do???
     unit = request.GET.get('unit', None)
+
     view = request.GET.get('view', 'collections')
     if not view in ['collections', 'exhibits', 'subjects']:
         view = 'collections'
@@ -81,7 +99,7 @@ def collections(request):
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
         exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct()
-        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
+        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct().prefetch_related('exhibit_subject_placements')
 
         if digital:
             exhibits = exhibits.filter(web_exhibit = True)
@@ -91,9 +109,9 @@ def collections(request):
             exhibits = exhibits.search(search).results()
             exhibits_current = exhibits_current.search(search).results()
 
-        if not search:
-            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
-            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
+#        if not search:
+#            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
+#            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
 
     # formats.
     formats = Format.objects.all().values_list('text', flat=True)
@@ -122,26 +140,42 @@ def collections(request):
         subject_ids = Subject.objects.get(name=subject).get_descendants()
         subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
+#    subjects_queryset = subjects_queryset
+
     subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
     subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
+    qs = SubjectParentRelations.objects.all().prefetch_related('parent')
+
     for s in subjects_queryset:
-        subject_descendants = set(s.get_descendants().values_list('id', flat=True))
-        parents = SubjectParentRelations.objects.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
-        has_collections = bool(subjects_with_collections.intersection(subject_descendants))
-        has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
-        has_subject_specialists = s.id in subjects_with_specialists
-        subjects.append({
-            'has_collections': has_collections,
-            'has_exhibits': has_exhibits,
-            'has_subject_specialists': has_subject_specialists,
-            'libguide_url': s.libguide_url,
-            'name': s.name,
-            'parents': parents,
-            'see_also': None
-        })
-        for see_also in s.see_also.all():
+        to_append = default_cache.get('subject_id_%s' % s.id)
+
+        if not to_append:
+            subject_descendants = default_cache.get('descendants_%s' % s.id)
+
+            if not subject_descendants:
+                subject_descendants = set(s.get_descendants().values_list('id', flat=True))
+                default_cache.set('descendants_%s' % s.id, subject_descendants, 60*5)
+
+            parents = qs.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
+            has_collections = bool(subjects_with_collections.intersection(subject_descendants))
+            has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
+            has_subject_specialists = s.id in subjects_with_specialists
+
+            to_append = {
+                'has_collections': has_collections,
+                'has_exhibits': has_exhibits,
+                'has_subject_specialists': has_subject_specialists,
+                'libguide_url': s.libguide_url,
+                'name': s.name,
+                'parents': parents,
+                'see_also': None
+            }
+            default_cache.set('subject_id_%s' % s.id, to_append)
+
+        subjects.append(to_append)
+        for see_also in s.see_also.all().select_related('snippet'):
             subjects.append({
                 'has_collections': False,
                 'has_exhibits': False,
@@ -206,3 +240,6 @@ def collections(request):
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
     })
+
+def cached_queries():
+    return {'cache', cache.get('default')}
