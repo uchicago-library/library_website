@@ -1,0 +1,4 @@
+{% for u in units %}
+    <a href="/about/directory/?view=staff&amp;department={{ u.0|urlencode }}">{{ u.1 }}</a>
+    {% if not forloop.last %} - {% endif %}
+{% endfor %}

@@ -4,6 +4,35 @@ from staff.models import StaffPage
 
 register = template.Library()
 
+@register.filter
+def ofKey(value, arg):
+    if value:
+        return value.get(arg)
+    else:
+        return ''
+
+@register.inclusion_tag('units/library_unit_links.html')
+def library_unit_links(library_unit):
+    try:
+        library_unit_pieces = library_unit.get_full_name().split(' - ')
+    except AttributeError:
+        return {
+            'units': []
+        }
+    units = []
+    i = 0
+    while i < len(library_unit_pieces):
+        link_param = ' - '.join(library_unit_pieces[:i+1])
+        link_text = library_unit_pieces[i]
+        units.append([
+            link_param,
+            link_text
+        ])
+        i = i + 1
+    return {
+        'units': units
+    }
+
 @register.inclusion_tag('units/staff_email_addresses.html')
 def staff_email_addresses(staff_page):
     return {
