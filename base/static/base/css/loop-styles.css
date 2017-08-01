@@ -1,76 +1,48 @@
 @charset "UTF-8";
-/*------------------------------------------------------------------
-
-[Table of contents]
-
-Fonts
-Images, Video, and other Media
-Content
-Link and File Extension Icons  ** Currently deactivated **
-Tables
-Intranet Index Page
-Dept Home Page
-Group Home Page
-
--------------------------------------------------------------------*/
 /*
- * Accessibility
+ * Print Styles
  * --------------------------------------------------
+ *
+ *
  */
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
 @import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
 @import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
-.is-vishidden, .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px); }
-
-/*
- * Colors
- * --------------------------------------------------
- */
-/*
- * Mixins
- * --------------------------------------------------
- */
-/*
- * Media Queries
- * --------------------------------------------------
- *
- * Use as: @include respond-to(small) { ... }
- *      @include respond-to(medium) { ... }
- *      @include respond-to(large) { ... }
- */
-/*
- * Print Styles
- * --------------------------------------------------
- */
 @media print {
-  background-color: #fff;
-  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
-    display: none; }
-  img {
-    max-width: 100%; }
   @page {
     size: 330mm 427mm;
     margin: 2cm; }
-  .container-fluid:before {
-    content: "University of Chicago Library";
-    margin-bottom: 10px;
-    border: 1px solid #bbb;
-    padding: 3px 5px; }
-  h2, h3 {
+  a[href]:after {
+    content: none !important; }
+  .container {
+    width: 1170px; }
+  .navbar, #footer {
+    display: none; }
+  nav:after {
+    display: block;
+    content: "The University of Chicago Library ( lib.uchicago.edu )";
+    font-size: 1.5em;
+    font-style: italic;
+    margin-bottom: 10px; }
+  .navbar, .footer, .breadcrumbs, div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
+    display: none; }
+  body {
+    overflow: visible !important; }
+  div.container, div.container-fluid {
+    margin: none;
+    padding: none; }
+  div.row, div.row-fluid {
+    margin: none;
+    padding: none; }
+  h2, h3, h4, h5, h6, ul, img {
     page-break-after: avoid; }
-  ul, img {
-    page-break-inside: avoid; }
+  .rightside {
+    border-top: 1px solid #bbb;
+    margin-top: 30px;
+    display: block; }
   .rich-text a {
     color: #000;
-    word-wrap: break-word; }
-    .rich-text a:after {
-      content: " (" attr(href) ")";
-      font-size: 80%; } }
+    word-wrap: break-word; } }
 
 /*------------------------------------------------------------------
 
@@ -105,38 +77,9 @@ Footer
  * --------------------------------------------------
  *
  * Use as: @include respond-to(small) { ... }
- *      @include respond-to(medium) { ... }
- *      @include respond-to(large) { ... }
+ *		@include respond-to(medium) { ... }
+ *		@include respond-to(large) { ... }
  */
-/*
- * Print Styles
- * --------------------------------------------------
- */
-@media print {
-  background-color: #fff;
-  .navbar, .footer, .breadcrumbs, div#sidebar, iframe {
-    display: none; }
-  img {
-    max-width: 100%; }
-  @page {
-    size: 330mm 427mm;
-    margin: 2cm; }
-  .container-fluid:before {
-    content: "University of Chicago Library";
-    margin-bottom: 10px;
-    border: 1px solid #bbb;
-    padding: 3px 5px; }
-  h2, h3 {
-    page-break-after: avoid; }
-  ul, img {
-    page-break-inside: avoid; }
-  .rich-text a {
-    color: #000;
-    word-wrap: break-word; }
-    .rich-text a:after {
-      content: " (" attr(href) ")";
-      font-size: 80%; } }
-
 /*
  *  Top Navigation
  * --------------------------------------------------
@@ -413,6 +356,47 @@ html {
         max-width: 150px;
         padding: 10px 20px 0 0; } }
 
+/*------------------------------------------------------------------
+
+[Table of contents]
+
+Fonts
+Images, Video, and other Media
+Content
+Link and File Extension Icons  ** Currently deactivated **
+Tables
+Intranet Index Page
+Dept Home Page
+Group Home Page
+
+-------------------------------------------------------------------*/
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+.is-vishidden, .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px); }
+
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+/*
+ * Media Queries
+ * --------------------------------------------------
+ *
+ * Use as: @include respond-to(small) { ... }
+ *		@include respond-to(medium) { ... }
+ *		@include respond-to(large) { ... }
+ */
 /*
  * Fonts
  * --------------------------------------------------
@@ -924,5 +908,3 @@ ul.index-list {
         font-weight: 400;
         color: #434343;
         line-height: 2em; }
-
-/*# sourceMappingURL=loop.css.map */

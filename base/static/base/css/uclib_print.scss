@@ -9,7 +9,7 @@
 @media print {
     @page {
         size: 330mm 427mm;
-        margin: 1cm;
+        margin: 2cm;
     }
     a[href]:after {
         content: none !important;
@@ -27,7 +27,7 @@
       font-style: italic;
       margin-bottom: 10px;
     }
-    div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
+    .navbar, .footer, .breadcrumbs, div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
         display: none;
     }
     body {
@@ -48,6 +48,10 @@
       border-top: 1px solid #bbb;
       margin-top: 30px;
       display: block;
+    }
+    .rich-text a {
+      color: #000;
+      word-wrap: break-word;
     }
 }
 
