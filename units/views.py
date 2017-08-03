@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils.html import escape
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
-from units.models import UnitPage
+from units.models import UnitIndexPage, UnitPage
 from units.utils import get_quick_nums_for_library_or_dept
 from wagtail.wagtailimages.models import Image
 from public.models import StandardPage, LocationPage
@@ -48,17 +48,30 @@ def get_staff_pages_for_library(library = None):
     else:
         return StaffPage.objects.live().order_by('last_name', 'first_name')
 
-def get_staff_pages_for_unit(unit_page_full_name = None):
+def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, display_supervisor_first = False):
+    unit_page_ids = None
+    unit_page = None
     if unit_page_full_name:
-        unit_page = None
         for u in UnitPage.objects.live():
             if u.get_full_name() == unit_page_full_name:
                 unit_page = u
+                if recursive:
+                    unit_page_ids = list(u.get_descendants(True).values_list('id', flat=True))
+                else:
+                    unit_page_ids = [u.id]
                 break
-    if unit_page:
-        return StaffPage.objects.live().filter(staff_page_units__library_unit=unit_page).order_by('last_name', 'first_name')
-    else:
-        return StaffPage.objects.live().order_by('last_name', 'first_name')
+
+    if unit_page_ids == None:
+        recursive = True
+        unit_page_ids = list(UnitIndexPage.objects.first().get_descendants(True).values_list('id', flat=True))
+  
+    staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__id__in=unit_page_ids).order_by('last_name', 'first_name')
+    
+    if display_supervisor_first:
+        if unit_page and unit_page.department_head:
+            staff_pages = [unit_page.department_head] + list(staff_pages.exclude(id=unit_page.department_head.id))
+        
+    return staff_pages
 
 def units(request):
     def get_unit_info_from_unit_page(unit_page):
@@ -162,7 +175,7 @@ def units(request):
 
         # departments.
         if department:
-            staff_pages_all = get_staff_pages_for_unit(department)
+            staff_pages_all = get_staff_pages_for_unit(department, True, True)
 
         # search staff pages.
         if query:
