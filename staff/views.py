@@ -48,24 +48,23 @@ def staff(request):
     elif view == 'department':
         if query:
             for i in IntranetUnitsPage.objects.live().search(query):
-                if hasattr(i.unit, 'fullName'):
-                    flat_units.append({
-                        'internal_location': i.internal_location,
-                        'internal_phone_number': i.internal_phone_number,
-                        'library': i.unit.get_parent_library_name(),
-                        'title': i.unit.fullName,
-                        'url': i.url,
-                    })
+                flat_units.append({
+                    'internal_location': i.internal_location,
+                    'internal_phone_number': i.internal_phone_number,
+                    'library': i.unit_page.get_building(),
+                    'title': i.unit_page.get_full_name(),
+                    'url': i.url,
+                })
         else:
-            for i in IntranetUnitsPage.objects.live().order_by('unit__fullName'):
-                if hasattr(i.unit, 'fullName'):
-                    flat_units.append({
-                        'internal_location': i.internal_location,
-                        'internal_phone_number': i.internal_phone_number,
-                        'library': i.unit.get_parent_library_name(),
-                        'title': i.unit.fullName,
-                        'url': i.url,
-                    })
+            for i in IntranetUnitsPage.objects.live():
+                flat_units.append({
+                    'internal_location': i.internal_location,
+                    'internal_phone_number': i.internal_phone_number,
+                    'library': i.unit_page.get_building(),
+                    'title': i.unit_page.get_full_name(),
+                    'url': i.url,
+                })
+        flat_units = sorted(flat_units, key=lambda k: k['title'])
 
     # Set up paging. 
     paginator = Paginator(staff_pages_all, 50)

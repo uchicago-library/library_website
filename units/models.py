@@ -184,6 +184,13 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     def __str__(self):
         return self.get_full_name()
 
+    def get_building(self):
+        if self.building is not None:
+            for b in BUILDINGS:
+                if self.building == b[0]:
+                    return b[1]
+        return ''
+
     @staticmethod
     def hierarchical_units():
         records = []
