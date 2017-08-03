@@ -157,6 +157,9 @@ def units(request):
     subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'department')
 
+    if library == 'The University of Chicago Library':
+        library = None
+
     if view == 'department' and query:
         sort = 'alphabetical'
 
