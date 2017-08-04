@@ -26,7 +26,6 @@ def explain_queryset(self, query):
 
     return result
 
-#@cache_page(settings.DEFAULT_TTL)
 def collections(request):
     # PARAMETERS
     default_cache = caches['default']
@@ -73,7 +72,7 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct()
+        collections = CollectionPage.objects.live().filter(**filter_arguments).distinct().select_related('thumbnail').prefetch_related('collection_subject_placements')
 
         # digital
         if digital:
@@ -98,8 +97,11 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct()
-        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct().prefetch_related('exhibit_subject_placements')
+        exhibits = ExhibitPage.objects.live().filter(
+            **filter_arguments).distinct().select_related('thumbnail', 'exhibit_location')
+        exhibits_current = exhibits.filter(
+            exhibit_open_date__lt=datetime.datetime.now().date(), 
+            exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
 
         if digital:
             exhibits = exhibits.filter(web_exhibit = True)
@@ -109,9 +111,12 @@ def collections(request):
             exhibits = exhibits.search(search).results()
             exhibits_current = exhibits_current.search(search).results()
 
-#        if not search:
-#            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
-#            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
+        if not search:
+            exhibits = sorted(exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title))
+            exhibits_current = sorted(exhibits_current, key=lambda e: re.sub('r^(A|An|The) ', '', e.title))
+
+    # locations
+    locations = sorted(list(set(ExhibitPage.objects.exclude(exhibit_location=None).values_list('exhibit_location__title', flat=True))))
 
     # formats.
     formats = Format.objects.all().values_list('text', flat=True)
@@ -121,71 +126,71 @@ def collections(request):
 'Images', 'Maps', 'Microform', 'Music Scores', 'Photographs', 'Reference Works', \
 'Statistics & Datasets', 'Video']
 
-    # locations
-    locations = sorted(list(set(ExhibitPage.objects.exclude(exhibit_location=None).values_list('exhibit_location__title', flat=True))))
-
     subjects = []
-    # for the code below, list all subjects that are children of the subjects in the list
-    # above, plus anything with a libguide id. right now that is equal to
-    # business, medicine and law. See DB's "collections subjects" lucid chart for more 
-    # info. 
+    if view == 'subjects':
+        # for the code below, list all subjects that are children of the subjects in the list
+        # above, plus anything with a libguide id. right now that is equal to
+        # business, medicine and law. See DB's "collections subjects" lucid chart for more 
+        # info. 
+        subjects_queryset = Subject.objects.all().prefetch_related('see_also')
 
-    subjects_queryset = Subject.objects.all()
+        if search:
+            s = get_search_backend()
+            subjects_queryset = s.search(search, Subject)
 
-    if search:
-        s = get_search_backend()
-        subjects_queryset = s.search(search, Subject)
+        if subject:
+            subject_ids = Subject.objects.get(name=subject).get_descendants()
+            subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
-    if subject:
-        subject_ids = Subject.objects.get(name=subject).get_descendants()
-        subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
+        exhibitpagesubjectplacement_qs = ExhibitPageSubjectPlacement.objects.all().prefetch_related('subject')
 
-#    subjects_queryset = subjects_queryset
+        subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
+        subjects_with_exhibits = set(exhibitpagesubjectplacement_qs.values_list('subject', flat=True))
+        subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
-    subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
-    subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.values_list('subject', flat=True))
-    subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
+        qs = SubjectParentRelations.objects.all().prefetch_related('panels')
 
-    qs = SubjectParentRelations.objects.all().prefetch_related('parent')
+        for s in subjects_queryset:
+            if default_cache.has_key('subject_id_%s' % s.id):
+                to_append = default_cache.get('subject_id_%s' % s.id)
+            else:
+                subject_descendants = default_cache.get('descendants_%s' % s.id)
 
-    for s in subjects_queryset:
-        to_append = default_cache.get('subject_id_%s' % s.id)
+                if not subject_descendants:
+                    subject_descendants = set(s.get_descendants().values_list('id', flat=True))
+                    default_cache.set('descendants_%s' % s.id, subject_descendants, 60*5)
 
-        if not to_append:
-            subject_descendants = default_cache.get('descendants_%s' % s.id)
+                parents = qs.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True).prefetch_related('subject')
+                has_collections = bool(subjects_with_collections.intersection(subject_descendants))
+                has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
+                has_subject_specialists = s.id in subjects_with_specialists
 
-            if not subject_descendants:
-                subject_descendants = set(s.get_descendants().values_list('id', flat=True))
-                default_cache.set('descendants_%s' % s.id, subject_descendants, 60*5)
+                to_append = {
+                    'has_collections': has_collections,
+                    'has_exhibits': has_exhibits,
+                    'has_subject_specialists': has_subject_specialists,
+                    'libguide_url': s.libguide_url,
+                    'name': s.name,
+                    'parents': parents,
+                    'see_also': None
+                }
+                default_cache.set('subject_id_%s' % s.id, to_append)
 
-            parents = qs.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True)
-            has_collections = bool(subjects_with_collections.intersection(subject_descendants))
-            has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
-            has_subject_specialists = s.id in subjects_with_specialists
+            subjects.append(to_append)
 
-            to_append = {
-                'has_collections': has_collections,
-                'has_exhibits': has_exhibits,
-                'has_subject_specialists': has_subject_specialists,
-                'libguide_url': s.libguide_url,
-                'name': s.name,
-                'parents': parents,
-                'see_also': None
-            }
-            default_cache.set('subject_id_%s' % s.id, to_append)
-
-        subjects.append(to_append)
-        for see_also in s.see_also.all().select_related('snippet'):
-            subjects.append({
-                'has_collections': False,
-                'has_exhibits': False,
-                'has_subject_specialists': False,
-                'libguide_url': None,
-                'name': see_also.alias,
-                'parents': [],
-                'see_also': see_also.snippet.name
-            })
-    subjects = sorted(subjects, key=lambda s: s['name'])
+            see_also_qs = s.see_also.all()
+            if see_also_qs:
+                for see_also in see_also_qs:
+                    subjects.append({
+                        'has_collections': False,
+                        'has_exhibits': False,
+                        'has_subject_specialists': False,
+                        'libguide_url': None,
+                        'name': see_also.alias,
+                        'parents': [],
+                        'see_also': see_also.snippet.name
+                    })
+        subjects = sorted(subjects, key=lambda s: s['name'])
 
     # for the subject pulldown, find subjects that are first generation children- their parents should have no parent. 
     # still need these:
@@ -210,6 +215,10 @@ def collections(request):
     location_and_hours = get_hours_and_location(home_page)
     page_location = str(location_and_hours['page_location'])
     page_unit = location_and_hours['page_unit']
+
+#    if not default_cache.has_key('exhibits_current_list'):
+#        exhibits_current_list = set(exhibits)
+#        default_cache.set('exhibits_current_list', exhibits_current_list)
 
     return render(request, 'lib_collections/collections_index_page.html', {
         'collections': collections,

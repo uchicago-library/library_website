@@ -64,7 +64,7 @@ class Subject(ClusterableModel, index.Indexed):
             ids_to_add = relations_cache.get(key)
 
             if not ids_to_add:
-                ids_to_add = list(SubjectParentRelations.objects.filter(parent__id=s).select_related('parent').values_list("child", flat=True))
+                ids_to_add = list(SubjectParentRelations.objects.filter(parent__id=s).values_list("child", flat=True))
                 relations_cache.set(key, ids_to_add, 60*5)
 
             subject_ids_to_check = subject_ids_to_check + ids_to_add
