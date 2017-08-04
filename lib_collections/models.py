@@ -1,9 +1,9 @@
 from base.models import DefaultBodyFields, LinkFields
 from django.db import models
 from django.core.validators import RegexValidator
-from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page, Site
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -337,106 +337,21 @@ class CollectionPage(PublicBasePage):
     def has_right_sidebar(self):
         return True
 
-class SubjectSpecialistPlacement(Orderable, models.Model):
-    """
-    Creates a through table that connects StaffPage objects to
-    the CollectionAreaPages as subject specialists .
-    """
-    parent = ParentalKey(
-        'lib_collections.CollectingAreaPage',
-        related_name='subject_specialist_placement',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
 
-    subject_specialist = models.ForeignKey(
-        'staff.StaffPage',
-        related_name='subject_specialist',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-
-class StacksRange(models.Model):
-    """
-    Abstract model for call number ranges.
-    """
-    stacks_range = models.CharField(max_length=100, blank=True) 
-    stacks_URL = models.URLField(max_length=254, blank=True, default='')
-
-    panels = [
-        FieldPanel('stacks_range'),
-        FieldPanel('stacks_URL'),
-    ]
-
-    class Meta:
-        abstract = True
-
-
-class CollectingAreaPageStacksRanges(Orderable, StacksRange):
-    """
-    Create a through table for call number stacks ranges
-    linked to the CollectingAreaPages.
-    """
-    page = ParentalKey('lib_collections.CollectingAreaPage', related_name='stacks_ranges')
-
-
-class CollectingAreaReferenceLocationPlacement(Orderable, models.Model):
-    """
-    Through table for repeatable reference locations in the
-    CollectingAreaPage content type.
-    """
-    parent = ParentalKey(
-        'lib_collections.CollectingAreaPage',
-        related_name='reference_location_placements',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-    related_collection = models.ForeignKey(
-        'public.LocationPage',
-        related_name='reference_location',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-
-class HighlightedCollectionsPlacement(Orderable, models.Model):
-    """
-    Through table for repeatable highlighted collections
-    in the CollectingAreaPage content type.
-    """
-    parent = ParentalKey(
-        'lib_collections.CollectingAreaPage', 
-        related_name='highlighted_collection_placements', 
-        null=True, 
-        blank=False, 
-        on_delete=models.SET_NULL
-    )
-
-    collection = models.ForeignKey(
-        'CollectionPage', 
-        related_name='highlighted_collections', 
-        null=True, 
-        blank=False, 
-        on_delete=models.SET_NULL
-    )
-
+# CollectingArea page models
 
 class RegionalCollection(models.Model):
     """
     Abstract model for regional collections.
     """
-    collection_name = models.CharField(max_length=254, blank=True) 
-    collection_description =  models.TextField(blank=True)
+    regional_collection_name = models.CharField(max_length=254, blank=True)
+    regional_collection_url = models.URLField("Regional Collection URL", blank=True, null=True)
+    regional_collection_description = models.TextField(blank=True)
 
     panels = [
-        FieldPanel('collection_name'),
-        FieldPanel('collection_description'),
+        FieldPanel('regional_collection_name'),
+        FieldPanel('regional_collection_url'),
+        FieldPanel('regional_collection_description'),
     ]
 
     class Meta:
@@ -445,7 +360,7 @@ class RegionalCollection(models.Model):
 
 class RegionalCollectionPlacements(Orderable, RegionalCollection):
     """
-    Through table for repeatable regional collection fields.
+    Through table for repeatable regional collections.
     """
     page = ParentalKey('lib_collections.CollectingAreaPage', related_name='regional_collections')
 
@@ -455,8 +370,8 @@ class LibGuide(models.Model):
     """
     Abstract model for lib guides.
     """
-    guide_link_text = models.CharField(max_length=255, blank=False, default='')
-    guide_link_url = models.URLField("Libguide URL", blank=False, default='')
+    guide_link_text = models.CharField(max_length=255, blank=True, null=True)
+    guide_link_url = models.URLField("Libguide URL", blank=True, null=True)
 
     panels = [
         FieldPanel('guide_link_text'),
@@ -469,11 +384,12 @@ class LibGuide(models.Model):
 
 class CollectingAreaPageLibGuides(Orderable, LibGuide):
     """
-    Through table for repeatable "Other guides".
+    Through table for repeatable guides.
     """
     page = ParentalKey('lib_collections.CollectingAreaPage', related_name='lib_guides')
 
 
+# Collecting Area page content type
 class CollectingAreaPage(PublicBasePage, LibGuide):
     """
     Content type for collecting area pages.
@@ -485,26 +401,113 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_related'
     )
-    collecting_statement = models.TextField(null=False, blank=False)
-    
+    collecting_statement = StreamField(DefaultBodyFields(), blank=False, null=True)
+    policy_link_text = models.CharField(max_length=255, blank=True, null=True)
+    policy_link_url = models.URLField("Policy URL", blank=True, null=True)
+    short_abstract = models.TextField(null=True, blank=True)
+    thumbnail = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    collection_location = models.ForeignKey('public.LocationPage',
+        null=True, blank=True, on_delete=models.SET_NULL)
+    reference_materials = RichTextField(blank=True, null=True)
+    circulating_materials = RichTextField(blank=True, null=True)
+    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_url = models.URLField("Archival URL", blank=True, null=True)
+    first_feature = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    second_feature = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    third_feature = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    fourth_feature = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    supplementary_header = models.CharField(max_length=255, blank=True, null=True)
+    supplementary_text = RichTextField(blank=True, null=True)
+    related_collecting_area = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+
     subpage_types = []
 
     content_panels = Page.content_panels + [
         FieldPanel('subject'),
-        FieldPanel('collecting_statement'),
-        InlinePanel('subject_specialist_placement', label='Subject Specialist'),
-        InlinePanel('stacks_ranges', label='Stacks Ranges'),
-        InlinePanel('reference_location_placements', label='Reference Locations'),
-        InlinePanel('highlighted_collection_placements', label='Highlighted Collections'),
-        InlinePanel('regional_collections', label='Regional Collections'),
+        StreamFieldPanel('collecting_statement'),
         MultiFieldPanel(
             [
-                FieldPanel('guide_link_text'),
-                FieldPanel('guide_link_url'),
+                FieldPanel('policy_link_text'),
+                FieldPanel('policy_link_url'),
             ],
-            heading='Primary Guide'
+            heading='Collecting Policy Link',
+            classname='collapsible collapsed',
         ),
-        InlinePanel('lib_guides', label='Other Guides'),
+        FieldPanel('short_abstract'),
+        ImageChooserPanel('thumbnail'),
+        FieldPanel('collection_location'),
+        InlinePanel('lib_guides', label='Subject Guides'),
+        MultiFieldPanel(
+            [
+                FieldPanel('reference_materials'),
+                FieldPanel('circulating_materials'),
+            ],
+            heading='Reference and Stacks Materials',
+            classname='collapsible collapsed',
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('archival_link_text'),
+                FieldPanel('archival_link_url'),
+            ],
+            heading='Archive Materials',
+            classname='collapsible collapsed',
+        ),
+        MultiFieldPanel([
+                PageChooserPanel('first_feature', ['lib_collections.CollectionPage', 'lib_collections.ExhibitPage']),
+                PageChooserPanel('second_feature', ['lib_collections.CollectionPage', 'lib_collections.ExhibitPage']),
+                PageChooserPanel('third_feature', ['lib_collections.CollectionPage', 'lib_collections.ExhibitPage']),
+                PageChooserPanel('fourth_feature', ['lib_collections.CollectionPage', 'lib_collections.ExhibitPage']),
+            ],
+            heading='Featured Collections and Exhibits',
+            classname='collapsible collapsed',
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('supplementary_header'),
+                FieldPanel('supplementary_text'),
+            ],
+            heading='Supplementary Text',
+            classname='collapsible collapsed',
+        ),
+        PageChooserPanel('related_collecting_area', ['lib_collections.CollectingAreaPage']),
+        InlinePanel('regional_collections', label='Other Local Collections', help_text='Related collections that are held by other institutions, like BMRC, Newberry, etc.'),
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -514,6 +517,14 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         index.SearchField('guide_link_url'),
     ]
 
+    # def get_features
+        # thumbnail image source
+        # page title
+        # short_abstract
+
+    def has_right_sidebar(self):
+        return True
+
 
 class ExhibitPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey('lib_collections.ExhibitPage', related_name='exhibit_subject_placements')
@@ -521,7 +532,7 @@ class ExhibitPageSubjectPlacement(Orderable, models.Model):
 
     class Meta:
         verbose_name = "Subject Placement"
-        verbose_name_plural = "Subbject Placements"
+        verbose_name_plural = "Subject Placements"
 
     panels = [
         SnippetChooserPanel('subject'),

@@ -1,0 +1,194 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+  <article>
+    <div class="row">
+      <div class="col-xs-12">
+
+      <figure class="imgcaption coll-thumb">
+        {% if self.thumbnail %}
+          {% image self.thumbnail width-200 class="img-responsive" %}
+          {% if self.thumbnail_caption %}
+            <figcaption>{{ self.thumbnail_caption }}</figcaption>
+          {% endif %}
+        {% else %}
+          {% if default_image %}
+            {% image default_image width-200 %}
+          {% endif %}
+        {% endif %}
+      </figure>
+
+        {% for block in self.collecting_statement %}
+          {{ block }}
+        {% endfor %}
+
+        {% if self.policy_link_url and self.policy_link_text %}
+          <a role="button" class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</i></a>
+        {% endif %}
+
+        {% if self.guide_link_text or self.guide_link_url %}
+        <h2>Research Guides</h2>
+        <p>Find articles, online texts, and other resources.</p>         
+
+          {% if lib_guides %}
+            <p>
+              {% for l in lib_guides %}
+                <a class="coll-access" href="{{ l.self.guide_link_url }}">{{ l.self.guide_link_text }}</a><br/>
+              {% endfor %}
+            </p>
+          {% endif %}
+
+        {% endif %}
+
+
+       <!--  need to format below richtextfields - showing p tags -->
+
+          {% if self.reference_materials %}
+          <h2>Reference Materials</h2>
+            <p>{{ self.reference_materials }}</p>
+          {% endif %}
+
+          {% if self.circulating_materials %}
+          <h2>Circulating Materials</h2>
+            <p>{{ self.circulating_materials }}</p>
+          {% endif %}
+
+          {% if self.archival_link_url and self.archival_link_text %}
+          <h2>Archival Materials</h2>
+            <a class="coll-access" href="{{ self.archival_link_url }}">{{ self.archival_link_text }}</a>
+          {% endif %}
+
+
+<!-- IN WORK Featured Collex -->
+
+            <div class="home-modwrapper">
+                <h2>Featured Collections &amp; Exhibits</h2>
+              <div class="news-wrap">
+                <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+                  <figure class="embed">
+                    <div class="figure-wrap">
+                      <a href="#"><img class="img-responsive" src="#"></a>
+                    </div>
+                  </figure>
+                  <a href="#"><h3>#</h3></a>
+                  <p>#</p>
+                </div>      
+              </div>
+
+              <!-- Repeat newsblock 4 more times, once data model is in place -->
+
+            </div>
+
+
+
+          {% if self.supplementary_header and self.supplementary_text %}
+            <h2>{{ self.supplementary_header }}</h2>
+            <p>{{ self.supplementary_text }}</p>
+          {% endif %}
+
+
+<!-- NOT Showing-up In Preview -->
+          {% if self.regional_collection_name %}
+            <h2>Other Local Collections</h2>      
+
+            {% if regional_collections %}
+              <p>
+                {% for coll in regional_collections %}
+                  <a href="{{ coll.self.regional_collection_url }}">{{ coll.self.regional_collection_name }}</a><br/>{{ coll.self.regional_collection_description }}
+                {% endfor %}
+              </p>
+            {% endif %}
+          {% endif %}
+
+      </div>
+    </div><!--/.row-->
+  </article>
+{% endblock %}
+
+{% block right_sidebar %}
+{% if self.collection_location %}
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Access Location</h2>
+        <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
+  </div>
+{% endif %}
+
+<!--   {% if staff_title %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      {% if staff_title %}
+        <h2>Subject Specialist</h2>
+        <p>
+          {% if staff_url %}
+            <a href="{{ staff_url }}">{{ staff_title }}</a>
+          {% else %}
+            {{ staff_title }}
+          {% endif %}
+         
+          {% if staff_position_title %} 
+            <br/><em>{{ staff_position_title }}</em><br/>
+          {% endif %}
+
+          {% if staff_email %}
+            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
+          {% endif %}
+
+          {% if staff_phone_number %}
+            {{ staff_phone_number }}<br/>
+          {% endif %}
+      
+          {% if staff_faculty_exchange %}
+            {{ staff_faculty_exchange }}
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  {% endif %} -->
+
+<!--   {% if self.related_collection_placement.all or self.exhibit_page_related_collection.all or self.collection_subject_placements.all or self.collection_placements.all %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Explore Related Content</h2>
+      {% if self.related_collection_placement.all %}
+        <strong>Related Collections</strong>
+        <ul>
+          {% for c in self.related_collection_placement.all %}
+            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+  
+      {% if self.exhibit_page_related_collection.all %}
+        <strong>Related Exhibits</strong>
+        <ul>
+        {% for e in self.exhibit_page_related_collection.all %}
+          <li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+  
+      {% if self.collection_subject_placements.all %}
+        <strong>Collections by Subject</strong>
+        <ul>
+          {% for s in self.collection_subject_placements.all %}
+            <li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+  
+      {% if self.collection_placements.all %}
+        <strong>Collections by Format</strong>
+        <ul>
+          {% for f in self.collection_placements.all %}
+            <li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endif %} -->
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+
