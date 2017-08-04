@@ -109,7 +109,7 @@ def units(request):
 
         # intercept this in the future to link to unit pages. 
         staff_link = ''
-        if t.unit_page:
+        if StaffPage.objects.filter(staff_page_units__library_unit=t.unit_page).exists():
             staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.get_full_name()}) + "'>staff</a>"
 
         room_number = ''
