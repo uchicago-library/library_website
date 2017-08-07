@@ -77,11 +77,11 @@ def units(request):
     def get_unit_info_from_unit_page(unit_page):
         h = ''
         # phone number
-        if len(unit_page.unit_page_phone_number.all()) > 0:
-            unit_page_phone_number = unit_page.unit_page_phone_number.first()
+        for unit_page_phone_number in unit_page.unit_page_phone_number.all():
             if unit_page_phone_number.phone_label:
-                h = h + '<em>' + unit_page.unit_page_phone_number.phone_label + ':' + '</em> '
-            h = h + "<a href='tel:" + unit_page_phone_number.phone_number.replace('-', '') + "'>" + unit_page_phone_number.phone_number + "</a>"
+                h = h + '<em>' + unit_page_phone_number.phone_label + ':' + '</em> '
+            if unit_page_phone_number.phone_number:
+                h = h + "<a href='tel:" + unit_page_phone_number.phone_number.replace('-', '') + "'>" + unit_page_phone_number.phone_number + "</a>"
             h = h + '<br/>'
 
         # fax_number  
