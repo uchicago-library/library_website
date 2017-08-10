@@ -8,18 +8,19 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', 'UA-15705691-1', 'auto');
 /* Enhanced link attribution */
 ga('require', 'linkid');
-/* Skipping _setDomainName for now. Does it cause too much trouble? */
 /* Anonymize IP */
 ga('set', 'anonymizeIp', true);
-ga('send', 'pageview');
 
 $(document).ready(function() {
+    //var response_status = false;
     var q = 'https://www.lib.uchicago.edu/cgi-bin/subnetclass?jsoncallback=?';
     $.getJSON(q, function(data) {
-        // Store subnetclass.
+        response_status = true;
+        // Store subnetclass before sending the pageview. See:
+        // https://stackoverflow.com/questions/23528368/google-analytics-custom-dimension-not-being-set
         ga('set', 'dimension1', data);
+        ga('send', 'pageview');
     });
-    //$('body').track({ debug: true });
     $('body').track();
 });
     
