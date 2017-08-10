@@ -212,7 +212,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         """
         from public.models import StaffPublicPage # Should try to do better
         try:
-            return StaffPublicPage.objects.live().filter(title=self.cnetid)[0]
+            return StaffPublicPage.objects.get(cnetid=self.cnetid)
         except(IndexError):
             return None
 
@@ -226,6 +226,16 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         """
         subject_list = self.staff_subject_placements.values_list('subject', flat=True)
         return '\n'.join(Subject.objects.get(id=subject).name for subject in subject_list)
+
+    def get_subject_objects(self):
+        """
+        Get all the subject objects for a staff member.
+
+        Returns:
+            Set of subjects for a staff member.
+        """
+        subject_ids = (Subject.objects.get(id=sid) for sid in self.staff_subject_placements.values_list('subject_id', flat=True))
+        return set(subject_ids)
 
     def get_staff(self):
         """
