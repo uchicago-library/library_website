@@ -517,14 +517,137 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         index.SearchField('guide_link_url'),
     ]
 
-    # def get_features
-        # thumbnail image source
-        # page title
-        # short_abstract
-
     def has_right_sidebar(self):
         return True
 
+    def get_subjects(self, children=False):
+        """
+        Get the subject assigned to this
+        CollectingAreaPage.
+
+        Args:
+            children: defaults to False.
+            If true, get child subjects.
+
+        Return:
+            A set of subjects
+        """
+        if children:
+            return set(self.subject.get_descendants())
+        return set([self.subject])
+
+    def _build_related_link(self, page_id):
+        """
+        Args:
+            page_id, integer
+
+        Return:
+            tuple of strings representing a link to
+            a page where the first item in the tuple
+            is a page title and the second item is a url.
+        """
+        current_site = Site.objects.get(is_default_site=True)
+        page = Page.objects.get(id=page_id)
+        title = str(page)
+        url = page.relative_url(current_site)
+        return (title, url)
+
+    def _build_subject_specialist(self, librarian):
+        """
+        Build a data object representing a subject
+        specialist.
+
+        Args:
+            librarian: StaffPage object.
+
+        Returns:
+            Mixed tuple
+        """
+        current_site = Site.objects.get(is_default_site=True)
+        staff_member = str(librarian)
+        title = librarian.position_title
+        url = librarian.public_page.relative_url(current_site)
+        thumb = librarian.profile_picture
+        email = librarian.staff_page_email.values_list('email', flat=True).first()
+        phone_and_fac = tuple(librarian.staff_page_phone_faculty_exchange.values_list('phone_number', 'faculty_exchange'))
+        return (staff_member, title, url, email, phone_and_fac, thumb)
+
+
+    def get_related(self, children=False):
+        """
+        Get related exhibits or collections by subject.
+
+        Args:
+            children: boolean, show hierarchical subjects.
+
+        Return:
+            A dictionary of sets. The dictionary has a
+            key for 'collections', 'exhibits', and
+            'subject_specialists'. Collection and exhibit
+            sets contain tuples of strings where the first
+            string is a page title and the second string
+            is a relative url. Subject specialist sets
+            contain tuples with a slightly more complicated
+            structure.
+        """
+        related = {'collections': set([]),
+                   'exhibits': set([])}
+        subjects = self.get_subjects(children)
+        # Related collections and exhibits
+        for subject in subjects:
+            related['collections'] = related['collections'] | set(self._build_related_link(page[0]) for page in subject.collection_pages.values_list('page_id'))
+            related['exhibits'] = related['exhibits'] | set(self._build_related_link(page[0]) for page in subject.exhibit_pages.values_list('page_id'))
+
+        # Staff pages for subject specialists
+        # Can make this more efficient if HR starts using the employee_type field
+        librarians = StaffPage.objects.live()
+        subject_specialists = set([])
+        for staff in librarians:
+            intersecting = len(staff.get_subject_objects().intersection(subjects)) > 0
+            if intersecting:
+                subject_specialists.add(self._build_subject_specialist(staff))
+        related['subject_specialists'] = subject_specialists
+        return related
+
+
+    def get_features(self):
+        """
+        Return a list of tuples representing featured CollectionPages
+        or ExhibitPages.
+
+        Return:
+            A list of tuples representing featured collections
+            and exhibits. Each tupal has four items: 1. string
+            representing the page title, 2. string, page url,
+            3. string, short description, 4. image object.
+        """
+        retval = []
+        current_site = Site.objects.get(is_default_site=True)
+        features = [self.first_feature, self.second_feature, self.third_feature, self.fourth_feature]
+        for feature in features:
+            if feature:
+                retval.append((str(feature), feature.relative_url(current_site), feature.specific.short_abstract, feature.specific.thumbnail))
+        return retval
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(CollectingAreaPage, self).get_context(request)
+
+        related = self.get_related(False)
+        limit = -1
+        context['related_collections'] = sorted(related['collections'])[:limit]
+        context['related_exhibits'] = sorted(related['exhibits'])[:limit]
+        context['related_subject_specialists'] = sorted(related['subject_specialists'])
+        context['features'] = self.get_features()
+
+        try:
+            regional_collections = self.regional_collections.all()
+        except(AttributeError):
+            regional_collections = []
+        context['regional_collections'] = regional_collections
+        return context
 
 class ExhibitPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey('lib_collections.ExhibitPage', related_name='exhibit_subject_placements')

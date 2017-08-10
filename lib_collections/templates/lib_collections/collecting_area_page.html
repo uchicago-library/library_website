@@ -22,9 +22,7 @@
         {% endif %}
       </figure>
 
-        {% for block in self.collecting_statement %}
-          {{ block }}
-        {% endfor %}
+        {{self.collecting_statement }}
 
         {% if self.policy_link_url and self.policy_link_text %}
           <a role="button" class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</i></a>
@@ -49,12 +47,12 @@
 
           {% if self.reference_materials %}
           <h2>Reference Materials</h2>
-            <p>{{ self.reference_materials }}</p>
+            {{ self.reference_materials|richtext }}
           {% endif %}
 
           {% if self.circulating_materials %}
           <h2>Circulating Materials</h2>
-            <p>{{ self.circulating_materials }}</p>
+            {{ self.circulating_materials|richtext }}
           {% endif %}
 
           {% if self.archival_link_url and self.archival_link_text %}
@@ -63,47 +61,46 @@
           {% endif %}
 
 
-<!-- IN WORK Featured Collex -->
-
             <div class="home-modwrapper">
-                <h2>Featured Collections &amp; Exhibits</h2>
+              <h2>Featured Collections &amp; Exhibits</h2>
               <div class="news-wrap">
+               {% for title, url, abstract, thumb in features %}
                 <div class="newsblock col-xs-12 col-sm-6 col-md-3">
-                  <figure class="embed">
-                    <div class="figure-wrap">
-                      <a href="#"><img class="img-responsive" src="#"></a>
-                    </div>
-                  </figure>
-                  <a href="#"><h3>#</h3></a>
-                  <p>#</p>
-                </div>      
+
+                  {% if thumb %}
+                    <figure class="embed">
+                      <div class="figure-wrap">
+                        <a href="{{url}}">
+                          {% if thumb %}
+                            {% image thumb width-200 class="img-responsive" %}
+                          {% endif %}
+                        </a>
+                      </div>
+                    </figure>
+                  {% endif %}
+                  <a href="{{url}}"><h3>{{title}}</h3></a>
+                  <p>{{abstract}}</p>
+                </div>
+              {% endfor %}
               </div>
-
-              <!-- Repeat newsblock 4 more times, once data model is in place -->
-
             </div>
 
 
+        {% if self.supplementary_header and self.supplementary_text %}
+          <h2>{{ self.supplementary_header }}</h2>
+          <p>{{ self.supplementary_text|richtext }}</p>
+        {% endif %}
 
-          {% if self.supplementary_header and self.supplementary_text %}
-            <h2>{{ self.supplementary_header }}</h2>
-            <p>{{ self.supplementary_text }}</p>
-          {% endif %}
 
+        <h2>Other Local Collections</h2>      
 
-<!-- NOT Showing-up In Preview -->
-          {% if self.regional_collection_name %}
-            <h2>Other Local Collections</h2>      
-
-            {% if regional_collections %}
-              <p>
-                {% for coll in regional_collections %}
-                  <a href="{{ coll.self.regional_collection_url }}">{{ coll.self.regional_collection_name }}</a><br/>{{ coll.self.regional_collection_description }}
-                {% endfor %}
-              </p>
-            {% endif %}
-          {% endif %}
-
+        {% if regional_collections %}
+          <p>
+            {% for coll in regional_collections %}
+              <a href="{{ coll.regional_collection_url }}">{{ coll.regional_collection_name }}</a><br/>{{ coll.regional_collection_description }}<br/>
+            {% endfor %}
+          </p>
+        {% endif %}
       </div>
     </div><!--/.row-->
   </article>
@@ -148,46 +145,54 @@
     </div>
   {% endif %} -->
 
-<!--   {% if self.related_collection_placement.all or self.exhibit_page_related_collection.all or self.collection_subject_placements.all or self.collection_placements.all %}
+  {% if related_subject_specialists %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      {% for staff_title, staff_position_title, staff_url, staff_email, phone_and_fac, staff_thumb in related_subject_specialists %}
+        <h2>Subject Specialist</h2>
+        <p>
+          {% if staff_url and staff_title%}
+            <a href="{{ staff_url }}">{{ staff_title }}</a>
+          {% else %}
+            {{ staff_title }}
+          {% endif %}
+
+          {% if staff_position_title %}
+            <br/><em>{{ staff_position_title }}</em><br/>
+          {% endif %}
+
+          {% if staff_email %}
+            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
+          {% endif %}
+
+          {% for staff_phone, staff_fac in phone_and_fac %}
+
+            {% if staff_phone %}
+              {{ staff_phone }}<br/>
+            {% endif %}
+
+            {% if staff_facu %}
+              {{ staff_fac }}
+            {% endif %}
+
+          {% endfor %}
+        </p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if related_collections %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Explore Related Content</h2>
-      {% if self.related_collection_placement.all %}
-        <strong>Related Collections</strong>
-        <ul>
-          {% for c in self.related_collection_placement.all %}
-            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.exhibit_page_related_collection.all %}
-        <strong>Related Exhibits</strong>
-        <ul>
-        {% for e in self.exhibit_page_related_collection.all %}
-          <li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.collection_subject_placements.all %}
-        <strong>Collections by Subject</strong>
-        <ul>
-          {% for s in self.collection_subject_placements.all %}
-            <li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.collection_placements.all %}
-        <strong>Collections by Format</strong>
-        <ul>
-          {% for f in self.collection_placements.all %}
-            <li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+      <h3>Related Collections</h3>
+      {% for title, href in related_collections %}
+        <p><a href="{{href}}">{{title}}</a></p>
+      {% endfor %}
+      <h3>Related Exhibits</h3>
+      {% for title, href in related_exhibits %}
+        <p><a href="{{href}}">{{title}}</a></p>
+      {% endfor %}
     </div>
-  {% endif %} -->
+  {% endif %}
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
