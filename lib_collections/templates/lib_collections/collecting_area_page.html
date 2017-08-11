@@ -28,22 +28,16 @@
           <a role="button" class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</i></a>
         {% endif %}
 
-        {% if self.guide_link_text or self.guide_link_url %}
-        <h2>Research Guides</h2>
-        <p>Find articles, online texts, and other resources.</p>         
 
-          {% if lib_guides %}
-            <p>
+        {% if lib_guides %}
+          <h2>Research Guides</h2>
+            <p>Find articles, online texts, and other resources.<br/>
               {% for l in lib_guides %}
-                <a class="coll-access" href="{{ l.self.guide_link_url }}">{{ l.self.guide_link_text }}</a><br/>
+                <a class="coll-access" href="{{ l.guide_link_url }}">{{ l.guide_link_text }}</a><br/>
               {% endfor %}
             </p>
-          {% endif %}
-
         {% endif %}
 
-
-       <!--  need to format below richtextfields - showing p tags -->
 
           {% if self.reference_materials %}
           <h2>Reference Materials</h2>
@@ -57,10 +51,10 @@
 
           {% if self.archival_link_url and self.archival_link_text %}
           <h2>Archival Materials</h2>
-            <a class="coll-access" href="{{ self.archival_link_url }}">{{ self.archival_link_text }}</a>
+            <p><a class="coll-access" href="{{ self.archival_link_url }}">{{ self.archival_link_text }}</a></p>
           {% endif %}
 
-
+          {% if self.first_feature %}
             <div class="home-modwrapper">
               <h2>Featured Collections &amp; Exhibits</h2>
               <div class="news-wrap">
@@ -84,20 +78,19 @@
               {% endfor %}
               </div>
             </div>
-
+          {% endif %}
 
         {% if self.supplementary_header and self.supplementary_text %}
           <h2>{{ self.supplementary_header }}</h2>
           <p>{{ self.supplementary_text|richtext }}</p>
         {% endif %}
-
-
-        <h2>Other Local Collections</h2>      
+     
 
         {% if regional_collections %}
+        <h2>Other Local Collections</h2> 
           <p>
             {% for coll in regional_collections %}
-              <a href="{{ coll.regional_collection_url }}">{{ coll.regional_collection_name }}</a><br/>{{ coll.regional_collection_description }}<br/>
+              <p><a href="{{ coll.regional_collection_url }}">{{ coll.regional_collection_name }}</a><br/>{{ coll.regional_collection_description }}</p>
             {% endfor %}
           </p>
         {% endif %}
@@ -113,37 +106,6 @@
         <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
   </div>
 {% endif %}
-
-<!--   {% if staff_title %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      {% if staff_title %}
-        <h2>Subject Specialist</h2>
-        <p>
-          {% if staff_url %}
-            <a href="{{ staff_url }}">{{ staff_title }}</a>
-          {% else %}
-            {{ staff_title }}
-          {% endif %}
-         
-          {% if staff_position_title %} 
-            <br/><em>{{ staff_position_title }}</em><br/>
-          {% endif %}
-
-          {% if staff_email %}
-            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
-          {% endif %}
-
-          {% if staff_phone_number %}
-            {{ staff_phone_number }}<br/>
-          {% endif %}
-      
-          {% if staff_faculty_exchange %}
-            {{ staff_faculty_exchange }}
-          {% endif %}
-        </p>
-      {% endif %}
-    </div>
-  {% endif %} -->
 
   {% if related_subject_specialists %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
@@ -180,17 +142,39 @@
     </div>
   {% endif %}
 
+
+  <!-- NEEDS HELP for data models: related_collecting_area 
+
+  {% if self.related_collecting_area %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Related Collecting Area</h2>
+        {% for title, href in related_area %}
+            <p><a href="{{href}}">{{title}}</a></p>
+          {% endfor %}
+    </div>
+  {% endif %}
+  
+  -->
+
   {% if related_collections %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Explore Related Content</h2>
-      <h3>Related Collections</h3>
-      {% for title, href in related_collections %}
-        <p><a href="{{href}}">{{title}}</a></p>
-      {% endfor %}
-      <h3>Related Exhibits</h3>
-      {% for title, href in related_exhibits %}
-        <p><a href="{{href}}">{{title}}</a></p>
-      {% endfor %}
+    <h2>Related Collections</h2>
+      <ul>
+        {% for title, href in related_collections %}
+          <li><a href="{{href}}">{{title}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if related_exhibits %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Related Exhibits</h2>
+        <ul>
+          {% for title, href in related_exhibits %}
+            <li><a href="{{href}}">{{title}}</a></li>
+          {% endfor %}
+        </ul>
     </div>
   {% endif %}
 {% endblock %}
