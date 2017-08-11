@@ -641,6 +641,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         context['related_exhibits'] = sorted(related['exhibits'])[:limit]
         context['related_subject_specialists'] = sorted(related['subject_specialists'])
         context['features'] = self.get_features()
+        context['lib_guides'] = self.lib_guides.get_object_list()
 
         try:
             regional_collections = self.regional_collections.all()
