@@ -365,6 +365,26 @@ class RegionalCollectionPlacements(Orderable, RegionalCollection):
     page = ParentalKey('lib_collections.CollectingAreaPage', related_name='regional_collections')
 
 
+class RelatedCollectingAreas(Orderable, models.Model):
+    """
+    Through table for repeatable regional collections.
+    """
+    parent = ParentalKey(
+        'lib_collections.CollectingAreaPage',
+        related_name='related_collecting_areas',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    related_collecting_area = models.ForeignKey(
+        'CollectingAreaPage',
+        related_name='related_collecting_area',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
 
 class LibGuide(models.Model):
     """
@@ -448,13 +468,6 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     supplementary_header = models.CharField(max_length=255, blank=True, null=True)
     supplementary_text = RichTextField(blank=True, null=True)
-    related_collecting_area = models.ForeignKey(
-        'wagtailcore.Page',
-        null=True,
-        blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
-    )
 
     subpage_types = []
 
@@ -506,7 +519,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             heading='Supplementary Text',
             classname='collapsible collapsed',
         ),
-        PageChooserPanel('related_collecting_area', ['lib_collections.CollectingAreaPage']),
+        InlinePanel('related_collecting_areas', label='Related Collecting Area'),
         InlinePanel('regional_collections', label='Other Local Collections', help_text='Related collections that are held by other institutions, like BMRC, Newberry, etc.'),
     ] + PublicBasePage.content_panels
 

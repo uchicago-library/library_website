@@ -143,18 +143,15 @@
   {% endif %}
 
 
-  <!-- NEEDS HELP for data models: related_collecting_area 
-
-  {% if self.related_collecting_area %}
+  {% if self.related_collecting_areas.all %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Related Collecting Area</h2>
-        {% for title, href in related_area %}
-            <p><a href="{{href}}">{{title}}</a></p>
-          {% endfor %}
+        {% for rca in self.related_collecting_areas.all %}
+            <p><a href="{% pageurl rca.related_collecting_area %}">{{ rca.related_collecting_area.title }}</a></p>
+        {% endfor %}
     </div>
   {% endif %}
   
-  -->
 
   {% if related_collections %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
