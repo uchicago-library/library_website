@@ -32,6 +32,7 @@ def get_subjects():
     return subjects
 
 def get_staff_pages_for_library(library = None):
+    all_staff = StaffPage.objects.live().order_by('last_name', 'first_name')
     if library:
         # see units.models.BUILDINGS
         library_name_to_building = {
@@ -43,10 +44,13 @@ def get_staff_pages_for_library(library = None):
             get_page_loc_name(SCRC_HOMEPAGE): 6,
             get_page_loc_name(MANSUETO_HOMEPAGE): 4
         }
-        building = library_name_to_building[library]
-        return StaffPage.objects.filter(staff_page_units__library_unit__building=building).order_by('last_name', 'first_name')
+        try:
+            building = library_name_to_building[library]
+            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).order_by('last_name', 'first_name')
+        except:
+            return all_staff 
     else:
-        return StaffPage.objects.live().order_by('last_name', 'first_name')
+        return all_staff
 
 def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, display_supervisor_first = False):
     unit_page_ids = None

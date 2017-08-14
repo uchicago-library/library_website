@@ -22,7 +22,7 @@ class test_lib_collections_view(TestCase):
 
     def tearDown(self):
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
         caches['default'].clear()
         # clear cache
@@ -35,7 +35,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_collections(self):
         request = self.factory.get('/collection/?view=collections')
@@ -45,7 +45,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_digital(self):
         request = self.factory.get('/collection/?view=collections&digital=on')
@@ -56,7 +56,7 @@ class test_lib_collections_view(TestCase):
         self.assertContains(response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_format(self):
         formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals', \
@@ -67,7 +67,7 @@ class test_lib_collections_view(TestCase):
             request = self.factory.get('/collection/?view=collections&format=%s' % f)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_location(self):
         locations_list = list(LocationPage.objects.live().values_list('title', flat=True))
@@ -88,19 +88,17 @@ class test_lib_collections_view(TestCase):
             self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
-    def test_collections_unit(self):
-        unit_list = list(UnitPage.objects.all().values_list("title", flat=True))
-        for u in unit_list:
-            request = self.factory.get('/collection/?view=collections&unit=%s' % u)
-            request.user = self.user
-            response = collections(request)
-
-            self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+    #def test_collections_unit(self):
+    #    unit_list = list(UnitPage.objects.all().values_list("title", flat=True))
+    #    for u in unit_list:
+    #        request = self.factory.get('/collection/?view=collections&unit=%s' % u)
+    #        request.user = self.user
+    #        response = collections(request)
+    #        self.assertEqual(response.status_code, 200)
+    #    t = time.time() - self.startTime
+    #    print("%s: %.3f" % (self.id(), t))
 
     def test_view_exhibit(self):
         request = self.factory.get('/collection/?view=exhibits')
@@ -110,7 +108,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_location_none(self):
         request = self.factory.get('/collection/?view=exhibits&location=%s' % None)
@@ -120,7 +118,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_subject_none(self):
         request = self.factory.get('/collection/?view=exhibits&subject=%s' % None)
@@ -130,17 +128,15 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
-    def test_exhibit_unit_none(self):
-        request = self.factory.get('/collection/?view=exhibits&unit=%s' % None)
-        request.user = self.user
-        response = collections(request)
-
-        self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+    #def test_exhibit_unit_none(self):
+    #    request = self.factory.get('/collection/?view=exhibits&unit=%s' % None)
+    #    request.user = self.user
+    #    response = collections(request)
+    #    self.assertEqual(response.status_code, 200)
+    #    t = time.time() - self.startTime
+    #    print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_digital_none(self):
         request = self.factory.get('/collection/?view=exhibits&digital=%s' % None)
@@ -150,7 +146,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_subjects(self):
         request = self.factory.get('/collection/?view=subjects')
@@ -160,7 +156,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_none(self):
         request = self.factory.get('/collection/?view=%s' % None)
@@ -170,7 +166,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_invalid(self):
         request = self.factory.get('/collection/?view=gibberish')
@@ -180,12 +176,11 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        print("%s: %.3f" % (self.id(), t))
+        #print("%s: %.3f" % (self.id(), t))
 
-    def test_sorted(self):
-        request = self.factory.get('/collection/')
-        request.user = self.user
-        response = collections(request)
-
-        self.assertEqual(response['collections'].is_sorted, True)
-        self.assertEqual(response['subjects'].is_sorted, True)
+    #def test_sorted(self):
+    #    request = self.factory.get('/collection/')
+    #    request.user = self.user
+    #    response = collections(request)
+    #    self.assertEqual(response['collections'].is_sorted, True)
+    #    self.assertEqual(response['subjects'].is_sorted, True)
