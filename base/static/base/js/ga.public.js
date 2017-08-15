@@ -1,4 +1,4 @@
-/* This contains the Loop UA. */
+/* Requires jquery. */
 /* analytics_debug.js for testing, analytics.js for production. */
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -12,16 +12,18 @@ ga('require', 'linkid');
 ga('set', 'anonymizeIp', true);
 
 $(document).ready(function() {
-    //var response_status = false;
     var q = 'https://www.lib.uchicago.edu/cgi-bin/subnetclass?jsoncallback=?';
     $.getJSON(q, function(data) {
-        response_status = true;
-        // Store subnetclass before sending the pageview. See:
-        // https://stackoverflow.com/questions/23528368/google-analytics-custom-dimension-not-being-set
+        // Store subnetclass. Must send the pageview event after this. 
         ga('set', 'dimension1', data);
         ga('send', 'pageview');
     });
-    $('body').track();
+    // if track everything has been installed on this page, run it now. 
+    // for sites that include this file from other servers (rooms.lib, etc.)
+    // skip it. 
+    if (typeof $('body').track === 'function') {
+        $('body').track();
+    }
 });
     
     
