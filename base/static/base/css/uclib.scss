@@ -65,6 +65,7 @@ Staff Profile Page
   @include visually-hidden;
 }
 
+
 /*
  * Fancy Splash Image (Jumbotron)
  * --------------------------------------------------
@@ -539,9 +540,8 @@ a#event-header {
 .newsblock {
   padding: 0 5px;
   h3 {
-    color: $darkneutral;
     font-style: normal;
-    margin-top: 0.5em;
+    padding: 0.75em 0 0.25em;
   }
   p {
     clear:both;
@@ -665,6 +665,9 @@ figure.embed {
     color: $maroon;
     -webkit-box-shadow: none;
     box-shadow: none;   
+    &:after {
+      @extend .menu-marker;
+    }
   }
   &:hover {
     border-top: 2px solid #d8b9b7;
@@ -738,7 +741,7 @@ figure.embed {
   }
   &>tbody>tr {
     &:last-child {
-      border-bottom: 2px solid #ADB17D;
+      border-bottom: 2px solid $table-main;
     }
   }
   @include respond-to(medium) {
@@ -774,9 +777,14 @@ tbody a {
   }
 }
 
-tr.etable-header, th.etable-header, table.etable thead {
-  border-bottom: 2px solid #ADB17D;
-  background-color: #c5c8a4 !important;
+tr.etable-header>th, th.etable-header, table.etable thead {
+  border-top: none!important;
+  border-bottom: 2px solid $table-main;
+  font-family: $accent-font;
+  font-size: 1.1em;
+  color: darken($table-main, 27%);
+  font-weight: 600;
+  background: lighten($table-main, 35%)!important;
   @include respond-to(smallonly) {
     display: inline-block;
     width: inherit;
@@ -785,6 +793,10 @@ tr.etable-header, th.etable-header, table.etable thead {
 
 table.etable>thead>tr>th {
   border-bottom: 0;
+}
+
+.coll-list.table>thead>tr>th {
+  border-bottom-color: $table-main;
 }
 
 table.etable>tbody>tr {
@@ -1040,6 +1052,7 @@ a.btn-ask {
 
 .s-lc-whw {
   width: 100%;
+  margin-top: 0;
   margin-bottom: 20px;
   max-width: 100%;
   background-color: transparent;
@@ -1048,8 +1061,9 @@ a.btn-ask {
   border-collapse: collapse;
   border-spacing: 0;
   & thead {
-    background-color: #c5c8a4;
-    color: #000;
+    background-color: lighten($table-main, 15%);;
+    color: #323232;
+    font-style: italic;
     &>tr>th {
       vertical-align: bottom;
       border-bottom: 2px solid #ADB17D;
@@ -1088,16 +1102,19 @@ a.btn-ask {
 }
 
 .s-lc-whw-head-date {
-  color: $darkgray;
-  font-style: italic;
+  color: #4c4c4c;
+  font-size: 0.9em;
 }
 
-.s-lc-whw-today-h {
+.s-lc-whw-today-h, .s-lc-whw-today-h>.s-lc-whw-head-date {
+  color: #000;
   background-color: #ADB17D;
+  font-style: normal;
 }
 
 .s-lc-whw-today {
-  background-color: #edeee3;
+  background-color: lighten($table-main, 32%);
+  font-weight: 600;
 }
 
 .s-lc-whw-locname {
@@ -1188,12 +1205,19 @@ a.btn-ask {
   }
  }
 
-//Quick Fix for showing all days
-//  .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
-//   @include respond-to(smallonly) {
-//     display: none;
-//   }
-// }
+
+////// Mobile override for Hours table - Part 1
+ .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
+  @include respond-to(mobileonly) {
+    display: none;
+  }
+}
+
+.bldg-image {  ////// Mobile override for Hours table - Part 2
+  @include respond-to(mobileonly) {
+    display: none;
+  }
+}
 
 .s-lc-whw>thead>tr>th, .s-lc-whw>tbody>tr>th {
     display: table-cell;
@@ -1205,11 +1229,11 @@ th.s-lc-whw-bh {
   @include respond-to(smallonly) {
     background-color: #ADB17D;
   }
-  // & button {  ////// Quick Fix to show all days
-  //   @include respond-to(smallonly) {
-  //     display: none;
-  //   }
-  // }
+  & button {  ////// Mobile override for Hours table - Part 3
+    @include respond-to(mobileonly) {
+      display: none;
+    }
+  }
 }
 
 /*

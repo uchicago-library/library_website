@@ -133,12 +133,11 @@ Right Sidebar: Widget Items
   background: #ddd;
   color: $darkgray;
   position: absolute;
-  padding: 10px;
   left: 0;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   margin-left: 0;
-  margin-top: -25px;
+  margin-top: -2em;
   z-index: 1000;
   background-color: rgba(210,205,204, 0.9);
   box-shadow: 0px 2px 7px $darkgray;
@@ -169,7 +168,7 @@ Right Sidebar: Widget Items
   }
   h2, h3 {
     font-weight: 400;
-    font-size:1.1em;
+    font-size:$font-small;
     margin: 5px 0 10px 0;
     padding-bottom: 5px;
     color: $brightpurple;
@@ -226,9 +225,9 @@ Right Sidebar: Widget Items
     color: $maroon;
   }
   & h3 {
+    font-family: $base-font;
     font-size: 1em;
     font-weight: 600;
-    color: $darkgray;
     margin: 0 0 5px 0;
   }
   @include respond-to(small) {
