@@ -1,15 +1,17 @@
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
 from lib_collections.views import collections
+from lib_collections.models import CollectingAreaPage
 from django.core.cache import caches
 from django.urls import reverse
 from subjects.models import Subject
 from units.models import UnitPage
-from public.models import LocationPage
+from public.models import LocationPage, StaffPublicPage
+from wagtail.wagtailcore.models import Page, Site
+from staff.models import StaffPage, StaffPageEmailAddresses
+from units.models import UnitPage
 
 import time
-
-# Create your tests here.
 
 class test_lib_collections_view(TestCase):
     fixtures = ['test.json']
@@ -184,3 +186,161 @@ class test_lib_collections_view(TestCase):
     #    response = collections(request)
     #    self.assertEqual(response['collections'].is_sorted, True)
     #    self.assertEqual(response['subjects'].is_sorted, True)
+
+
+class TestCollectingAreaPages(TestCase):
+
+    def setUp(self):
+
+        # Configuration for subjects
+        subjects_json = {
+            'tng': {
+                'name': 'Star Trek: The Next Generation',
+                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            },
+            'ds9': {
+                'name': 'Star Trek: Deep Space Nine',
+                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            },
+            'original': {
+                'name': 'Star Trek: The Original Series',
+                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            },
+            'tribbles': {
+                'name': 'Tribbles', 
+                'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}, {"sort_order": 1, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
+
+            },
+            'quadrotriticale': { 
+                'name': 'Quadrotriticale',
+                'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
+            }
+        }
+
+        # Create subjects to operate on
+        Subject.objects.create(name=subjects_json['tng']['name']).save()
+        Subject.objects.create(name=subjects_json['ds9']['name']).save()
+        Subject.objects.create(name=subjects_json['original']['name']).save()
+        Subject.objects.create(name=subjects_json['tribbles']['name']).save()
+        Subject.objects.create(name=subjects_json['quadrotriticale']['name']).save()
+
+        # Load the subjects into variables
+        subjects = Subject.objects.all()
+        self.tng = subjects.get(name=subjects_json['tng']['name'])
+        self.ds9 = subjects.get(name=subjects_json['ds9']['name'])
+        self.original = subjects.get(name=subjects_json['original']['name'])
+        self.tribbles = subjects.get(name=subjects_json['tribbles']['name'])
+        self.quadrotriticale = subjects.get(name=subjects_json['quadrotriticale']['name'])
+
+        # Create parent / child relationships for subjects
+        self.tribbles.from_json(subjects_json['tribbles']['json'] % (self.ds9.pk, self.ds9.pk, self.tribbles.pk, self.original.pk, self.original.pk, self.tribbles.pk, self.tribbles.pk, self.tribbles.name)).save()
+        self.quadrotriticale.from_json(subjects_json['quadrotriticale']['json'] % (self.tribbles.pk, self.tribbles.pk, self.quadrotriticale.pk, self.quadrotriticale.pk, self.quadrotriticale.name)).save()
+
+        # Get the default homepage
+        self.space = Page.objects.get(id=2) # Homepage
+
+        # Create a site 
+        self.site = Site.objects.create(root_page=self.space)
+
+        # Create StaffPage
+        self.captain = StaffPage(
+            title='Jean-Luc Picard',
+            cnetid='picard'
+        )
+        self.space.add_child(instance=self.captain)
+
+        # Create UnitPage
+        self.ship = UnitPage(
+            title='USS Enterprise (NCC-1701-D)',
+            page_maintainer=self.captain,
+            editor=self.captain,
+            display_in_dropdown=True
+        )
+        self.space.add_child(instance=self.ship)
+
+        # Create a StaffPublicPage
+        self.captain_public_page = StaffPublicPage(
+            title=self.captain.title,
+            cnetid=self.captain.cnetid,
+            page_maintainer=self.captain,
+            editor=self.captain,
+            content_specialist=self.captain,
+            unit=self.ship,
+            slug='jean-luc-picard-public',
+        )
+        self.space.add_child(instance=self.captain_public_page)
+
+        # Create a staff page email and append it
+        self.picard_email = StaffPageEmailAddresses(
+            sort_order='None',
+            id=self.captain.id,
+            page_id=4,
+            page = self.captain,
+            email='picard@starfleet.io'
+        )
+        #self.captain.staff_page_email.create(
+        #    sort_order='None',
+        #    id=self.captain.id,
+        #    page_id=4,
+        #    page = self.captain,
+        #    email='picard@starfleet.io'
+        #)
+
+        # Make a collecting area page to test on 
+        # Set the default subject to tng
+        self.collecting_area = CollectingAreaPage(title='Star Trek', subject=self.ds9, page_maintainer=self.captain, editor=self.captain, content_specialist=self.captain, unit=self.ship)
+        self.space.add_child(instance=self.collecting_area)
+
+    def test_get_subjects_children_false_only_returns_one_top_level_subject(self):
+        subject = self.collecting_area.get_subjects(children=False)
+        self.assertEqual(len(subject), 1)
+        self.assertEqual(subject.pop(), self.ds9)
+
+    def test_get_subjects_children_true_returns_hierarchy(self):
+        subjects = self.collecting_area.get_subjects(children=True)
+        self.assertEqual(len(subjects), 3)
+        self.assertEqual(subjects.difference(set([self.ds9, self.tribbles, self.quadrotriticale])), set([]))
+
+    def test_get_subjects_with_a_different_subject(self):
+        self.collecting_area.subject = self.original
+
+        subject = self.collecting_area.get_subjects(children=False)
+        self.assertEqual(len(subject), 1)
+        self.assertEqual(subject.pop(), self.original)
+
+        subjects = self.collecting_area.get_subjects(children=True)
+        self.assertEqual(len(subjects), 3)
+        self.assertEqual(subjects.difference(set([self.original, self.tribbles, self.quadrotriticale])), set([]))
+
+        self.collecting_area.subject = self.tribbles
+
+        subject = self.collecting_area.get_subjects(children=False)
+        self.assertEqual(len(subject), 1)
+        self.assertEqual(subject.pop(), self.tribbles)
+
+        subjects = self.collecting_area.get_subjects(children=True)
+        self.assertEqual(len(subjects), 2)
+        self.assertEqual(subjects.difference(set([self.tribbles, self.quadrotriticale])), set([]))
+
+    def test_get_subjects_without_a_subject(self):
+        # This should never happen in the wild because
+        # subject is a required field. Let's handle
+        # for it anyhow
+        void = CollectingAreaPage(title='Nagilum', page_maintainer=self.captain, editor=self.captain, content_specialist=self.captain, unit=self.ship)
+        self.assertEqual(void.get_subjects(children=False), set([]))
+        self.assertEqual(void.get_subjects(children=True), set([]))
+
+    def test_build_related_link_normal(self):
+        page = self.collecting_area
+        link = page._build_related_link(self.captain.id)
+        self.assertEqual(link, ('Jean-Luc Picard', '/jean-luc-picard/'))
+
+    def test_build_related_link_no_page_does_not_blow_up(self):
+        page = self.collecting_area
+        link = page._build_related_link(999)
+        self.assertEqual(link, ('', ''))
+
+    #def test_build_subject_specialist_normal(self):
+    #    page = self.collecting_area
+    #    subject_specialist = page._build_subject_specialist(self.captain)
+
