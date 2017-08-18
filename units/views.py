@@ -99,12 +99,21 @@ def units(request):
             else:
                 h = h + "<a href='mailto:" + unit_page.email + "'>" + unit_page.email + "</a><br/>"
 
-        # link_text, link_external
+        # link_text, link_external, link_page, link_document
+        url = ''
         if unit_page.link_external:
+            url = unit_page.link_external
+        elif unit_page.link_page:
+            url = unit_page.link_page.url
+        elif unit_page.link_document:
+            url =  unit_page.link_document.url
+
+        if url:
             if unit_page.link_text:
-                h = h + "<a href='" + unit_page.link_external + "'>" + unit_page.link_text + "</a><br/>"
+                link_text = unit_page.link_text
             else:
-                h = h + "<a href='" + unit_page.link_external + "'>" + unit_page.link_external + "</a><br/>"
+                link_text = url
+            h = h + "<a href='" + url + "'>" + link_text + "</a><br/>"
 
         return h
 
