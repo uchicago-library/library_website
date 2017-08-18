@@ -17,18 +17,18 @@
             {% if search %}
               <th colspan="4">Search Results for "{{ search }}"</th>
             {% else %}
-              <th colspan="4">All Collections</th>
+              <th colspan="4">Collections</th>
             {% endif %}
           </tr>
           </thead>
           <tbody>
-          {% for collection_page in collections %}
           <tr class="visually-hidden">
             <th scope="col">Collection Thumbnail</th>
             <th scope="col">Title</th>
             <th scope="col">Formats</th>
             <th scope="col">Subjects</th>
           </tr>
+          {% for collection_page in collections %}
             <tr>
               <td scope="row">
                 {% if collection_page.thumbnail %}
@@ -121,7 +121,7 @@
           {% endfor %}
           {% if exhibits %}
             <tr class="etable-header">
-              <th colspan="4">All Exhibits</th>
+              <th colspan="4">Exhibits</th>
             </tr>
           {% endif %}
           {% for exhibit in exhibits %}
@@ -177,7 +177,7 @@
         <table class="table table-striped coll-list">
           <thead>
             <tr class="etable-header">
-              <th colspan="4">All Subjects</th>
+              <th colspan="4">Subjects</th>
             </tr>
             </thead>
             <tbody>

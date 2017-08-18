@@ -16,8 +16,8 @@ Other Search Row
  */
 
 h1.searchbox-header {
-  font-size: 1.1em;
-  color: #5e5e5e;
+  font-size: $font-small;
+  color: $darkred;
   margin: 10px 0 10px 5px;
   font-weight: 600;
   border: none;
@@ -31,7 +31,7 @@ h1.searchbox-header {
     list-style: none;
     padding: 0;
     margin: 0;
-    border-bottom: 3px solid #D6D6CE;
+    border-bottom: 3px solid $lightgray;
     @include respond-to(smallonly) {
       color: #fff;
       display: flex;
@@ -48,13 +48,16 @@ h1.searchbox-header {
       padding: 0.3em 1.5em;
       font-weight: 600;
       &.active {
-        color: lighten(#642822, 20%);
+        color: lighten($darkred, 20%);
         border-bottom: 3px solid transparent;
-        border-bottom-color: #642822;
+        border-bottom-color: $darkred;
         position: relative;
         bottom: -3px;
+        &:after {
+          @extend .menu-marker;
+        }
         @include respond-to(smallonly) {
-          color: #642822;
+          color: $darkred;
           display: flex;
           padding-top: 0;
         }
@@ -75,7 +78,11 @@ h1.searchbox-header {
     padding: 1em;
   }
   &.main-search {
-    background-color: rgba(210,205,204, 0.5);
+    background: rgba(210,205,204, 0.5);
+    background: -moz-linear-gradient(top,  rgba(214,214,206, 0.7) 20%, rgba(226,221,215, 0.6) 99%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(214,214,206, 0.7) 20%,rgba(226,221,215, 0.6) 99%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(214,214,206, 0.7) 20%,rgba(226,221,215, 0.6) 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(214,214,206, 0.5)', endColorstr='rgba(226,221,215, 0.5)',GradientType=0 ); /* IE6-9 */
     margin-bottom: 10px;
 
   }
@@ -130,7 +137,7 @@ h1.searchbox-header {
     & > li > a {
       color: #fff;
       &:hover, &:focus {
-        color: #800000;
+        color: $maroon;
         background-color: rgba(210, 205, 204, 0.95); //#f7f1f0
         text-decoration: none;
       }
@@ -139,10 +146,10 @@ h1.searchbox-header {
 }
 
 .btn-search {
-  background-color: #642822;
+  background-color: $darkred;
   color: #fff;
   width: 100%;
-  font-size: 1.1em;
+  font-size: $font-small;
   padding: 0.6em;
   line-height: 0.45em;
   margin-top: 0;

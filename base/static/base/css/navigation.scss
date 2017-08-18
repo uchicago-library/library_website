@@ -25,10 +25,10 @@ Navigation Drop Downs
   text-align: center;
   border-bottom: 1px solid $darkgray;
   background-color: rgba(67, 67, 67, 0.7);
-  padding: 5px 0;
+  padding: 0.5em 0;
       a {
       color: #fff;
-      padding: 0 1em;
+      padding: 0 1.5em;
   }
 }
 
@@ -140,7 +140,7 @@ i.ask-icon {
 
 #global-navbar {
   background-color: rgba(67, 67, 67, 0.4);
-  font-size: 1.1em;
+  font-size: $font-small;
   padding-left:0.5em;
   &.navbar-nav>li>a:focus {
     color: #fff;
@@ -204,7 +204,7 @@ i.ask-icon {
     margin-bottom: 10px;
     a {
       color: #fff;
-      font-size: 1.1em;
+      font-size: $font-small;
       text-decoration: none;
       &:hover {
         color: $hoveraccent;
@@ -226,7 +226,7 @@ i.ask-icon {
       color: #fff!important;
       padding: 0!important;
       text-decoration: none;
-      font-size: 1.1em;
+      font-size: $font-small;
       margin-bottom: 12px;
       &:hover {
         color: $hoveraccent!important;
