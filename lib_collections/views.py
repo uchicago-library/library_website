@@ -41,7 +41,8 @@ def do_line_profiler(view=None, extra_view=None):
 
     return wrapper
 
-@do_line_profiler
+# Python Line Profiler, use when debugging
+#@do_line_profiler
 def collections(request):
     # PARAMETERS
     default_cache = caches['default']
