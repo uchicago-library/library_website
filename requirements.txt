@@ -40,4 +40,4 @@ wagtailmedia==0.1.4
 wheel==0.24.0
 Willow==0.4
 zope.interface==4.1.2
-django-redis-cache
+django-redis

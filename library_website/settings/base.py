@@ -16,7 +16,6 @@ import os
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -88,7 +87,8 @@ INSTALLED_APPS = (
     'units',
     'static_precompiler',
 
-    'yet_another_django_profiler',
+#    'yet_another_django_profiler',
+#    'cachalot',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -109,6 +109,8 @@ MIDDLEWARE_CLASSES = (
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+
+#    'yet_another_django_profiler.middleware.ProfilerMiddleware',
 )
 
 ROOT_URLCONF = 'library_website.urls'
@@ -119,7 +121,6 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(PROJECT_DIR, 'templates'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -128,6 +129,12 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shibboleth.context_processors.login_link',
                 'shibboleth.context_processors.logout_link',
+            ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
             ],
         },
     },
@@ -168,6 +175,9 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = (
     os.path.join(PROJECT_DIR, 'static'),
 )
+
+#change
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
@@ -333,10 +343,11 @@ SCRC_EXHIBIT_FOOTER_IMG = 1129
 # Redis cache configuration
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://localhost:6379/1',
         'OPTIONS': {
-            'CLIENT_CLASS': 'redis_cache.DefaultClient'
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
         },
-    }
+    },
 }
