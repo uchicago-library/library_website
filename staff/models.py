@@ -216,6 +216,24 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         except(IndexError):
             return None
 
+    @property
+    def get_supervisors(self):
+        if self.supervisor_override:
+            return [self.supervisor_override]
+        else:
+            supervisors = []
+            for u in self.staff_page_units.all():
+                try:
+                    if u.library_unit.department_head.cnetid == self.cnetid:
+                        p = u.library_unit.get_parent().specific
+                        if p.department_head:
+                            supervisors.append(p.department_head)
+                    else:
+                        supervisors.append(u.library_unit.department_head)
+                except AttributeError:
+                    continue
+            return supervisors 
+                    
     def get_subjects(self):
         """
         Get all the subjects for a staff member. 
