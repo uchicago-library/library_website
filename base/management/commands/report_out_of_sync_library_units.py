@@ -42,11 +42,11 @@ class Command (BaseCommand):
         output = []
         if au:
             output.append("THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:")
-            output = output + au
+            output = output + wu
             output.append("")
         if wu:
             output.append("THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
-            output = output + wu
+            output = output + au
             output.append("")
 
         return "\n".join(output)
