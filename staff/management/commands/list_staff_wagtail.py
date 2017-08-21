@@ -22,7 +22,7 @@ class Command (BaseCommand):
         python manage.py list_staff_wagtail --supervisor_cnetid=chas
         python manage.py list_staff_wagtail --title=manager
 
-        outputs cnetid, name (of previous staff member?), title, phone, email,
+        outputs id, last_modified, cnetid, name (of previous staff member?), title, phone, email,
             faculty_exchange, department (full name), employee_type, supervises_students,
             supervisor_cnetid.
                 is department full name the unit?
@@ -30,10 +30,11 @@ class Command (BaseCommand):
 
     def add_arguments(self, parser):
         cnetids = sorted(StaffPage.objects.all().values_list('cnetid', flat=True))
+        parser.add_argument('--all', action='store_true', default=False)
         parser.add_argument('--cnetid', type=str, choices=cnetids)
         parser.add_argument('--department', type=str)
         parser.add_argument('--department_and_subdepartments', type=str)
-        parser.add_argument('--include_unpublished', action='store_true', default=False)
+        parser.add_argument('--live', action='store_true', default=False)
         parser.add_argument('--modified_since', type=str)
         parser.add_argument('--position_status', type=str, choices=[status[1] for status in POSITION_STATUS])
         parser.add_argument('--supervises_students', action='store_true', default=False)
@@ -51,10 +52,11 @@ class Command (BaseCommand):
 
         if (len(sys.argv) < 3):
             print('Usage:')
+            print('--all')
             print('--cnetid abc')
             print('--department title')
             print('--department_and_subdepartments title')
-            print('--include_unpublished: search all StaffPage objects, not just live pages.')
+            print('--live')
             print('--modified_since yyyymmdd.')
             print('-position_status: Exempt, etc.')
             print('--supervises_students: true or false.')
@@ -65,49 +67,48 @@ class Command (BaseCommand):
 
         cnetids = set()
 
-        if options['include_unpublished']:
+        if options['all']:
             cnetids = set(StaffPage.objects.all().values_list('cnetid', flat=True))
-        else:
-            if options['cnetid']:
-                cnetids = set([options['cnetid']])
-            else:
-                cnetids = set(StaffPage.objects.live().values_list('cnetid', flat=True))
-    
-            if options['department']:
-                new_cnetids = list(StaffPageLibraryUnits.objects.filter(library_unit__title=options['department']).values_list('page__cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+        elif options['live']:
+            cnetids = set(StaffPage.objects.live().values_list('cnetid', flat=True))
+        elif options['cnetid']:
+            cnetids = set([options['cnetid']])
 
-            if options['department_and_subdepartments']:
-                unit_pages = UnitPage.objects.descendant_of(UnitPage.objects.get(title=options['department_and_subdepartments']), True)
-                new_cnetids = list(StaffPageLibraryUnits.objects.filter(library_unit__in=unit_pages).values_list('page__cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['modified_since']:
-                modified_since_string = '{}-{}-{} 00:00-0600'.format(options['modified_since'][0:4],
-                    options['modified_since'][4:6], options['modified_since'][6:8])
-                new_cnetids = list(StaffPage.objects.filter(latest_revision_created_at__gte=modified_since_string).values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['position_status']:
-                position_status_int = [i for i, v in POSITION_STATUS if v == options['position_status']][0]
-                new_cnetids = list(StaffPage.objects.filter(position_status=position_status_int).values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['supervises_students']:
-                new_cnetids = list(StaffPage.objects.filter(supervises_students=True).values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['supervisor_cnetid']:
-                new_cnetids = list(StaffPage.objects.get(cnetid=options['supervisor_cnetid']).get_staff().values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['supervisor_override_set']:
-                new_cnetids = list(StaffPage.objects.exclude(supervisor_override=None).values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
-    
-            if options['title']:
-                new_cnetids = list(StaffPage.objects.filter(position_title=options['title']).values_list('cnetid', flat=True))
-                cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+        if options['department']:
+            new_cnetids = list(StaffPageLibraryUnits.objects.filter(library_unit__title=options['department']).values_list('page__cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['department_and_subdepartments']:
+            unit_pages = UnitPage.objects.descendant_of(UnitPage.objects.get(title=options['department_and_subdepartments']), True)
+            new_cnetids = list(StaffPageLibraryUnits.objects.filter(library_unit__in=unit_pages).values_list('page__cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['modified_since']:
+            modified_since_string = '{}-{}-{} 00:00-0600'.format(options['modified_since'][0:4],
+                options['modified_since'][4:6], options['modified_since'][6:8])
+            new_cnetids = list(StaffPage.objects.filter(latest_revision_created_at__gte=modified_since_string).values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['position_status']:
+            position_status_int = [i for i, v in POSITION_STATUS if v == options['position_status']][0]
+            new_cnetids = list(StaffPage.objects.filter(position_status=position_status_int).values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['supervises_students']:
+            new_cnetids = list(StaffPage.objects.filter(supervises_students=True).values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['supervisor_cnetid']:
+            new_cnetids = list(StaffPage.objects.get(cnetid=options['supervisor_cnetid']).get_staff().values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['supervisor_override_set']:
+            new_cnetids = list(StaffPage.objects.exclude(supervisor_override=None).values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
+
+        if options['title']:
+            new_cnetids = list(StaffPage.objects.filter(position_title=options['title']).values_list('cnetid', flat=True))
+            cnetids = cnetids.intersection(new_cnetids) if cnetids else set(new_cnetids)
 
         # sort by last name
         cnetids = StaffPage.objects.filter(cnetid__in=cnetids).order_by('last_name').values_list('cnetid', flat=True)
@@ -118,6 +119,11 @@ class Command (BaseCommand):
             units = StaffPageLibraryUnits.objects.filter(page__cnetid=cnetid).values_list('library_unit__title', flat=True)
 
             s = StaffPage.objects.get(cnetid=cnetid)
+
+            try:
+                latest_revision_created_at = s.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
+            except AttributeError:
+                latest_revision_created_at = ''
 
             name_and_cnetid = '%s (%s)' % (s.title, cnetid)
 
@@ -132,6 +138,8 @@ class Command (BaseCommand):
             position_status_string = [v for i, v in POSITION_STATUS if i == s.position_status][0]
 
             fields = [
+                str(s.id),
+                latest_revision_created_at,
                 name_and_cnetid,
                 s.position_title or '',
                 '|'.join(emails) or '',

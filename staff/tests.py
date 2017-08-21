@@ -502,7 +502,7 @@ class ListStaffWagtail(TestCase):
 
     def test_cnetid_returns_correct_name(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][0], 'John Jung (jej)')
+        self.assertEqual(records[0][2], 'John Jung (jej)')
 
     def test_position_status(self):
         records = self.run_command(position_status='Active')
@@ -522,42 +522,42 @@ class ListStaffWagtail(TestCase):
 
     def test_report_column_count(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(len(records[0]), 9)
+        self.assertEqual(len(records[0]), 11)
 
     def test_report_columns_name_and_cnetid(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][0], 'John Jung (jej)')
+        self.assertEqual(records[0][2], 'John Jung (jej)')
 
     def test_report_columns_position_title(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][1], 'Programmer/Analyst')
+        self.assertEqual(records[0][3], 'Programmer/Analyst')
 
     def test_report_columns_position_title(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][2], 'jej@uchicago.edu|jej@jej.com')
+        self.assertEqual(records[0][4], 'jej@uchicago.edu|jej@jej.com')
 
     def test_report_columns_faculty_exchange_phone_number(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][3], 'JRL 100,773-702-1234|JRL 101,773-834-1234')
+        self.assertEqual(records[0][5], 'JRL 100,773-702-1234|JRL 101,773-834-1234')
 
     def test_report_columns_units(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][4], 'Digital Library Development Center|Digital Services')
+        self.assertEqual(records[0][6], 'Digital Library Development Center|Digital Services')
 
     def test_report_columns_employee_type(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][5], 'IT')
+        self.assertEqual(records[0][7], 'IT')
 
     def test_report_columns_supervises_students(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][6], 'False')
+        self.assertEqual(records[0][8], 'False')
 
     def test_report_columns_position_status(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][7], 'Active')
+        self.assertEqual(records[0][9], 'Active')
 
     def test_report_columns_supervisor_name_and_cnetid(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][8].rstrip(), 'Charles Blair (chas)')
+        self.assertEqual(records[0][10].rstrip(), 'Charles Blair (chas)')
        
      
