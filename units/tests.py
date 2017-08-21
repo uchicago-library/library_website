@@ -167,3 +167,46 @@ class TestQuickNumberUtils(TestCase):
         """
         self.assertHTMLEqual(get_all_quick_nums_html(self.dlist), self.dlist_expected)
 
+
+class ListUnitsWagtail(TestCase):
+    def run_command(self, **options):
+        output = StringIO()
+        management.call_command('list_units_wagtail', stdout=output, **options)
+        output.seek(0)
+
+        records = []
+        for line in output:
+            records.append(line.split("\t"))
+
+        return records
+            
+    def setUp(self):
+        welcome = Page.objects.get(path='00010001')
+
+        staff_person = StaffPage(
+            cnetid='staff-person',
+            slug='staff-person',
+            title='Staff Person')
+        welcome.add_child(instance=staff_person)
+
+        # UnitPages
+        some_unit = UnitPage(
+            department_head=staff_person,
+            editor=staff_person,
+            page_maintainer=staff_person,
+            slug='some-unit',
+            title='Some Unit'
+        )
+        root.add_child(instance=some_unit)
+
+        def test_report_column_count(self):
+            records = self.runcommand(all='True')
+            self.assertEqual(len(records[0]), 3)
+
+        def test_report_record_count(self):
+            records = self.runcommand(all='True')
+            self.assertEqual(len(records), 1)
+
+
+
+       
