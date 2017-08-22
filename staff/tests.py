@@ -217,70 +217,83 @@ class UniversityDirectoryTestCase(TestCase):
 
 class StaffPageSupervisors(TestCase):
     def setUp(self):
-        root = Page.objects.get(path='0001')
+        try:
+            welcome = Page.objects.get(path='00010001')
+        except:
+            root = Page.objects.create(
+                depth=1,
+                path='0001',
+                slug='root',
+                title='Root')
+
+            welcome = Page(
+                path='00010001',
+                slug='welcome',
+                title='Welcome')
+            root.add_child(instance=welcome)
 
         # StaffPages
         official_supervisor = StaffPage(
             cnetid='official_supervisor', 
             slug='official-supervisor', 
             title='Official Supervisor')
-        root.add_child(instance=official_supervisor)
+        welcome.add_child(instance=official_supervisor)
 
         another_official_supervisor = StaffPage(
             cnetid='another_official_supervisor', 
             slug='another-official-supervisor', 
             title='Another Official Supervisor')
-        root.add_child(instance=another_official_supervisor)
+        welcome.add_child(instance=another_official_supervisor)
 
         director = StaffPage(
             cnetid='director', 
             slug='director', 
             title='Director')
-        root.add_child(instance=director)
+        welcome.add_child(instance=director)
 
         supervisor_override = StaffPage(
             cnetid='supervisor_override', 
             slug='supervisor-override',
             title='Supervisor Override')
-        root.add_child(instance=supervisor_override)
+        welcome.add_child(instance=supervisor_override)
 
         employee_override = StaffPage(
             cnetid='employee_override',
             slug='employee_override',
             supervisor_override=supervisor_override,
             title='Employee Override')
-        root.add_child(instance=employee_override)
+        welcome.add_child(instance=employee_override)
 
         employee_no_override = StaffPage(
             cnetid='employee_no_override',
             slug='employee_no_override',
             title='Employee No Override')
-        root.add_child(instance=employee_no_override)
+        welcome.add_child(instance=employee_no_override)
 
         employee_two_units = StaffPage(
             cnetid='employee_two_units',
             slug='employee_two_units',
             title='Employee Two Units')
-        root.add_child(instance=employee_two_units)
+        welcome.add_child(instance=employee_two_units)
 
         content_specialist = StaffPage(
             cnetid='content_specialist',
             slug='content-specialist',
             title='Content Specialist'
         )
-        root.add_child(instance=content_specialist)
+        welcome.add_child(instance=content_specialist)
 
         editor = StaffPage(
             cnetid='editor',
             slug='editor',
             title='Editor')
-        root.add_child(instance=editor)
+        welcome.add_child(instance=editor)
 
         page_maintainer = StaffPage(
             cnetid='page_maintainer',
             slug='page-maintainer',
             title='Page Maintainer')
-        root.add_child(instance=page_maintainer)
+        welcome.add_child(instance=page_maintainer)
 
         # UnitPages
         unit_division = UnitPage(
@@ -290,7 +303,7 @@ class StaffPageSupervisors(TestCase):
             slug='unit-division',
             title='Unit Division'
         )
-        root.add_child(instance=unit_division)
+        welcome.add_child(instance=unit_division)
 
         unit_one = UnitPage(
             department_head=official_supervisor,
@@ -318,7 +331,7 @@ class StaffPageSupervisors(TestCase):
             title='Standard Page',
             unit=unit_one
         )
-        root.add_child(instance=standard_page)
+        welcome.add_child(instance=standard_page)
 
         # assign staff to units
         StaffPageLibraryUnits.objects.create(
@@ -363,7 +376,17 @@ class StaffPageSupervisors(TestCase):
 
 class ListStaffWagtail(TestCase):
     def setUp(self):
-        welcome = Page.objects.get(path='00010001')
+        root = Page.objects.create(
+            depth=1,
+            path='0001',
+            slug='root',
+            title='Root')
+
+        welcome = Page(
+            path='00010001',
+            slug='welcome',
+            title='Welcome')
+        root.add_child(instance=welcome)
 
         chas = StaffPage(
             cnetid='chas',
@@ -534,11 +557,11 @@ class ListStaffWagtail(TestCase):
 
     def test_report_columns_position_title(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][4], 'jej@uchicago.edu|jej@jej.com')
+        self.assertEqual(set(records[0][4].split('|')), set(('jej@uchicago.edu', 'jej@jej.com')))
 
     def test_report_columns_faculty_exchange_phone_number(self):
         records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][5], 'JRL 100,773-702-1234|JRL 101,773-834-1234')
+        self.assertEqual(set(records[0][5].split('|')), set(('JRL 100,773-702-1234', 'JRL 101,773-834-1234')))
 
     def test_report_columns_units(self):
         records = self.run_command(cnetid='jej')

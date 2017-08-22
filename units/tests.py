@@ -1,9 +1,16 @@
-from django.test import TestCase, Client, override_settings
-from units.utils import get_quick_num_or_link, get_quick_num_html, get_all_quick_nums_html, get_quick_nums_for_library_or_dept
-from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
-from wagtail.wagtailcore.models import Site
 from diablo_tests import assert_assertion_error
 from django.conf import settings
+from django.core import management
+from django.test import TestCase, Client, override_settings
+from io import StringIO
+from unittest.mock import patch
+from wagtail.wagtailcore.models import Page, Site
+
+from .models import UnitPage
+from .utils import get_quick_num_or_link, get_quick_num_html, get_all_quick_nums_html, get_quick_nums_for_library_or_dept
+from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
+from staff.models import StaffPage
+
 
 class TestQuickNumberUtils(TestCase):
     """
@@ -181,7 +188,20 @@ class ListUnitsWagtail(TestCase):
         return records
             
     def setUp(self):
-        welcome = Page.objects.get(path='00010001')
+        try:
+            welcome = Page.objects.get(path='00010001')
+        except:
+            root = Page.objects.create(
+                depth=1,
+                path='0001',
+                slug='root',
+                title='Root')
+
+            welcome = Page(
+                path='00010001',
+                slug='welcome',
+                title='Welcome')
+            root.add_child(instance=welcome)
 
         staff_person = StaffPage(
             cnetid='staff-person',
@@ -189,24 +209,20 @@ class ListUnitsWagtail(TestCase):
             title='Staff Person')
         welcome.add_child(instance=staff_person)
 
-        # UnitPages
         some_unit = UnitPage(
-            department_head=staff_person,
             editor=staff_person,
+            department_head=staff_person,
             page_maintainer=staff_person,
             slug='some-unit',
-            title='Some Unit'
-        )
-        root.add_child(instance=some_unit)
+            title='Some Unit')
+        welcome.add_child(instance=some_unit)
 
-        def test_report_column_count(self):
-            records = self.runcommand(all='True')
-            self.assertEqual(len(records[0]), 3)
+    def test_report_column_count(self):
+        records = self.run_command(all='True')
+        self.assertEqual(len(records[0]), 3)
 
-        def test_report_record_count(self):
-            records = self.runcommand(all='True')
-            self.assertEqual(len(records), 1)
-
-
+    def test_report_record_count(self):
+        records = self.run_command(all='True')
+        self.assertEqual(len(records), 1)
 
        
