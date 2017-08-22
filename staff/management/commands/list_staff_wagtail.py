@@ -71,7 +71,8 @@ class Command (BaseCommand):
             cnetids = set(StaffPage.objects.all().values_list('cnetid', flat=True))
         elif options['live']:
             cnetids = set(StaffPage.objects.live().values_list('cnetid', flat=True))
-        elif options['cnetid']:
+
+        if options['cnetid']:
             cnetids = set([options['cnetid']])
 
         if options['department']:
