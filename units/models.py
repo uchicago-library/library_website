@@ -214,17 +214,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         return hierarchical_units
 
-    def get_full_name(self):
-        chunks = []
-        unit = self
-        while True:
-            if unit == None:
-                break
-            if not isinstance(unit.specific_class(), UnitPage):
-                break
-            chunks.append(unit.title)
-            unit = unit.get_parent()
-        return ' - '.join(list(reversed(chunks)))
+    def get_full_name(self, library_directory = True):
+        return ' - '.join(self.get_ancestors(True).type(UnitPage).values_list('title', flat=True))
+
+    def get_campus_directory_full_name(self):
+        return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(unitpage__display_in_campus_directory=True).values_list('title', flat=True))
 
     def get_short_name(self):
         if self.contact_point_title:
