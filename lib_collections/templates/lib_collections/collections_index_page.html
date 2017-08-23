@@ -197,7 +197,7 @@
                 <tr id="{{ s.name }}">
                   <td scope="row"><strong>{{ s.name }}</strong>
                     {% if s.has_collecting_area %}<br/>
-                      <a href="{{ collecting_area.url }}"><i class="material-icons" aria-hidden="true">style</i>View Collecting Area Page<span class="visually-hidden"> for {{ s.name }} </span></a><br/>
+                      <a href="{{ s.collecting_area_url }}"><i class="material-icons" aria-hidden="true">style</i>View Collecting Area Page<span class="visually-hidden"> for {{ s.name }} </span></a><br/>
                     {% endif %}
                   </td>
                   <td>

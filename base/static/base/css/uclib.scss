@@ -47,7 +47,7 @@ Staff Profile Page
 .body-container {
   padding: 30px;
   max-width: 1200px;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 & {  // Exception for Homepages
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 & {  // Exception for Homepages
     max-width: 2000px;
   }
   .sidebar ~ & {
@@ -57,7 +57,7 @@ Staff Profile Page
   }
 }
 
-.h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs { // Hide breadcrumbs on homepages with banners
+.h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs, #p-1757 .breadcrumbs { // Hide breadcrumbs on homepages with banners
    @include visually-hidden;
 }
 

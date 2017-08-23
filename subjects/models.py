@@ -3,7 +3,7 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
-from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailcore.models import Orderable, Site
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
@@ -73,6 +73,15 @@ class Subject(ClusterableModel, index.Indexed):
             checked_subjects.remove(self.id)
 
         return Subject.objects.filter(id__in=checked_subjects)
+
+    def get_collecting_area_page_url(self):
+        current_site = Site.objects.get(is_default_site=True)
+        collecting_area_page = self.lib_collections_collectingareapage_related.first()
+        url = ''
+        if collecting_area_page and collecting_area_page.live:
+            url = collecting_area_page.relative_url(current_site)
+        return url
+
 
     def __str__(self):
         return self.name
