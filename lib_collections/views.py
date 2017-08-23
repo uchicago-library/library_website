@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, ExhibitPage, ExhibitPageSubjectPlacement, Format
+from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, CollectingAreaPage, ExhibitPage, ExhibitPageSubjectPlacement, Format
 from public.models import LocationPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject, SubjectParentRelations
@@ -143,9 +143,11 @@ def collections(request):
             subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
         exhibitpagesubjectplacement_qs = ExhibitPageSubjectPlacement.objects.all().prefetch_related('subject')
+        collectingarea_qs = CollectingAreaPage.objects.all().prefetch_related('subject')
 
         subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
         subjects_with_exhibits = set(exhibitpagesubjectplacement_qs.values_list('subject', flat=True))
+        subjects_with_collecting_area = set(collectingarea_qs.values_list('subject', flat=True))
         subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
         qs = SubjectParentRelations.objects.all().prefetch_related('panels')
@@ -163,11 +165,13 @@ def collections(request):
                 parents = qs.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True).prefetch_related('subject')
                 has_collections = bool(subjects_with_collections.intersection(subject_descendants))
                 has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
+                has_collecting_area = bool(subjects_with_collecting_area.intersection(subject_descendants))
                 has_subject_specialists = s.id in subjects_with_specialists
 
                 to_append = {
                     'has_collections': has_collections,
                     'has_exhibits': has_exhibits,
+                    'has_collecting_area': has_collecting_area,
                     'has_subject_specialists': has_subject_specialists,
                     'libguide_url': s.libguide_url,
                     'name': s.name,
