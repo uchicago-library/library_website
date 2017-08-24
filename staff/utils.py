@@ -8,7 +8,9 @@ import re
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
 from django.db.models import F
-from staff.models import StaffPage
+from openpyxl import Workbook
+from staff.models import EMPLOYEE_TYPES, POSITION_STATUS, StaffPage, StaffPageLibraryUnits
+from units.models import UnitPage
 from xml.etree import ElementTree
 
 # need a list of all individuals. 
@@ -254,6 +256,112 @@ def get_individual_info_from_wagtail(cnetid):
             output['phoneFacultyExchanges'].add("\n".join(tmp))
 
     return output
+
+def get_staff_wagtail(**options):
+    staffpages = set()
+
+    if options['all']:
+        staffpages = set(StaffPage.objects.all())
+    elif options['live']:
+        staffpages = set(StaffPage.objects.live())
+
+    if options['cnetid']:
+        staffpages = set([StaffPage.objects.get(cnetid=options['cnetid'])])
+
+    if options['department']:
+        library_units = [u for u in UnitPage.objects.live() if u.get_full_name()==options['department']]
+        new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=library_units))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['department_and_subdepartments']:
+        library_units = set()
+        for u in [u for u in UnitPage.objects.live() if u.get_full_name()==options['department_and_subdepartments']]:
+            library_units = library_units.union(set(u.get_descendants(True).type(UnitPage).specific()))
+        new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=list(library_units)))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['modified_since']:
+        modified_since_string = '{}-{}-{} 00:00-0600'.format(options['modified_since'][0:4],
+            options['modified_since'][4:6], options['modified_since'][6:8])
+        new_staffpages = set(StaffPage.objects.filter(latest_revision_created_at__gte=modified_since_string))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['position_status']:
+        position_status_int = [i for i, v in POSITION_STATUS if v == options['position_status']][0]
+        new_staffpages = set(StaffPage.objects.filter(position_status=position_status_int))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['supervises_students']:
+        new_staffpages = set(StaffPage.objects.filter(supervises_students=True))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['supervisor_cnetid']:
+        new_staffpages = set(StaffPage.objects.get(cnetid=options['supervisor_cnetid']).get_staff())
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['supervisor_override_set']:
+        new_staffpages = set(StaffPage.objects.exclude(supervisor_override=None))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    if options['title']:
+        new_staffpages = set(StaffPage.objects.filter(position_title=options['title']))
+        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+
+    return sorted(staffpages, key=lambda s: s.last_name)
+
+def report_staff_wagtail(**options):
+    staffpages = get_staff_wagtail(**options)
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.append([
+        'ID',
+        'LATEST REVISION CREATED AT',
+        'NAME AND CNETID',
+        'POSITION TITLE',
+        'EMAILS',
+        'PHONE, FACEX',
+        'UNITS',
+        'EMPLOYEE TYPE',
+        'SUPERVISES STUDENTS',
+        'POSITION STATUS',
+        'SUPERVISOR NAME AND CNETID'
+    ])
+    for s in staffpages:
+        units = StaffPageLibraryUnits.objects.filter(page=s).values_list('library_unit__title', flat=True)
+
+        try:
+            latest_revision_created_at = s.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
+        except AttributeError:
+            latest_revision_created_at = ''
+
+        name_and_cnetid = '%s (%s)' % (s.title, s.cnetid)
+
+        supervisor_names_and_cnetids = ['%s (%s)' % (s.title, s.cnetid) for s in s.get_supervisors]
+
+        emails = [e.email for e in s.staff_page_email.all()]
+
+        phone_facexes = ['%s,%s' % (p.faculty_exchange, p.phone_number) for p in s.staff_page_phone_faculty_exchange.all()]
+
+        employee_type_string = [v for i, v in EMPLOYEE_TYPES if i == s.employee_type][0]
+
+        position_status_string = [v for i, v in POSITION_STATUS if i == s.position_status][0]
+
+        worksheet.append([
+            str(s.id),
+            latest_revision_created_at,
+            name_and_cnetid,
+            s.position_title or '',
+            '|'.join(emails) or '',
+            '|'.join(phone_facexes) or '',
+            '|'.join(units) or '',
+            employee_type_string,
+            str(s.supervises_students),
+            position_status_string,
+            '|'.join(supervisor_names_and_cnetids)
+        ])
+    return workbook
+
+
 
 
 

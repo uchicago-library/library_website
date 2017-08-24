@@ -1,0 +1,46 @@
+{% extends "wagtailadmin/base.html" %}
+{% load wagtailadmin_tags i18n staticfiles gravatar %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'wagtailstyleguide/css/styleguide.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block titletag %}Staff Reporting Form{% endblock %}
+{% block bodyclass %}staffreportingform{% endblock %}
+
+{% block content %}
+    {% trans "Staff Reporting Form" as title_trans %}
+    {% include "wagtailadmin/shared/header.html" with title=title_trans %}
+
+    <div class="nice-padding">
+        <h2>Staff Reporting</h2>
+        <p>Download a staff report in Microsoft Excel format.</p>
+        <form action="{% url 'list_staff_wagtail' %}" method="POST">
+            {% csrf_token %}
+    
+            <section id="account" class="active nice-padding">
+                <ul class="fields">
+                    {% block fields %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.all_or_live %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.cnetid %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.department %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.department_and_subdepartments %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.modified_since %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervises_students %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.position_status %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervisor_cnetid %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervisor_override_set %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.title %}
+                    {% endblock fields %}
+                    <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
+                </ul>
+            </section>
+        </form>
+    </div>
+{% endblock %}
+
