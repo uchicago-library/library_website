@@ -582,13 +582,18 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Returns:
             Mixed tuple
         """
+        is_staff_page = librarian.__class__.__name__ == 'StaffPage'
+        if not is_staff_page:
+            raise TypeError('The wrong page type was passed')
         current_site = Site.objects.get(is_default_site=True)
         staff_member = str(librarian)
         title = librarian.position_title
         url = librarian.public_page.relative_url(current_site)
         thumb = librarian.profile_picture
-        print(librarian.staff_page_email.values_list('email', flat=True))
-        email = librarian.staff_page_email.values_list('email', flat=True).first()
+        try:
+            email = librarian.staff_page_email.values_list('email', flat=True)[0]
+        except:
+            email = ''
         phone_and_fac = tuple(librarian.staff_page_phone_faculty_exchange.values_list('phone_number', 'faculty_exchange'))
         return (staff_member, title, url, email, phone_and_fac, thumb)
 
