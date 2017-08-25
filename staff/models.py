@@ -201,8 +201,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         See if the staff member is a subject
         specialist - PLACEHOLDER
         """
-        subjects = self.get_subjects()
-        return None
+        return self.get_subjects() != ''
 
     @property
     def public_page(self):

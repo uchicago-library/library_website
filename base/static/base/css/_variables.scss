@@ -9,6 +9,8 @@ Mixins
 
 -------------------------------------------------------------------*/
 
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond');
+
 @import "media.scss";
 
 /*
@@ -35,7 +37,8 @@ $font-medium: 1.5em;
 $font-small: 1.1em;
 
 //For Collex (Collections and Exhibits)
-$base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$base-font: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+$accent-font: 'Cormorant Garamond', serif;
 
 
 /*
@@ -80,6 +83,11 @@ $trans-purple: rgba(53, 14, 32, 0.8);
 $trans-darkgreen: rgba(70, 71, 51, 0.8);
 $trans-lightgreen: rgba(101, 105, 51, 0.8);
 $trans-orange: rgba(154, 83, 46, 0.8);
+
+// Table Color Scheme
+
+$table-main: #ADB17D;
+$table-accent: ;
 
 
 /*
@@ -143,6 +151,20 @@ $divider: 1px solid $darkgray;
   @include respond-to(large) {
     max-width: 30em;
   }
+}
+
+.menu-marker {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: #642822 transparent transparent;
+  border-style: solid;
+  border-width: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  top:100%;
 }
 
 

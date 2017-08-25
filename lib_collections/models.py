@@ -543,11 +543,14 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             If true, get child subjects.
 
         Return:
-            A set of subjects
+            A set of subjects or an empty set
         """
-        if children:
+        if self.subject == None:
+            return set([])
+        elif children:
             return set(self.subject.get_descendants())
-        return set([self.subject])
+        else:
+            return set([self.subject])
 
     def _build_related_link(self, page_id):
         """
@@ -560,9 +563,12 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             is a page title and the second item is a url.
         """
         current_site = Site.objects.get(is_default_site=True)
-        page = Page.objects.get(id=page_id)
-        title = str(page)
-        url = page.relative_url(current_site)
+        try:
+            page = Page.objects.get(id=page_id)
+            title = str(page)
+            url = page.relative_url(current_site)
+        except(Page.DoesNotExist):
+            return ('', '')
         return (title, url)
 
     def _build_subject_specialist(self, librarian):
@@ -576,12 +582,18 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Returns:
             Mixed tuple
         """
+        is_staff_page = librarian.__class__.__name__ == 'StaffPage'
+        if not is_staff_page:
+            raise TypeError('The wrong page type was passed')
         current_site = Site.objects.get(is_default_site=True)
         staff_member = str(librarian)
         title = librarian.position_title
         url = librarian.public_page.relative_url(current_site)
         thumb = librarian.profile_picture
-        email = librarian.staff_page_email.values_list('email', flat=True).first()
+        try:
+            email = librarian.staff_page_email.values_list('email', flat=True)[0]
+        except:
+            email = ''
         phone_and_fac = tuple(librarian.staff_page_phone_faculty_exchange.values_list('phone_number', 'faculty_exchange'))
         return (staff_member, title, url, email, phone_and_fac, thumb)
 

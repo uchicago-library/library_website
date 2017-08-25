@@ -13,18 +13,12 @@ from units.models import UnitPage
 
 import datetime
 import re
+import pickle
 
 from django.core.cache import caches, cache
 from django.views.decorators.cache import cache_page
 from django.db import connection
 from django.conf import settings
-
-def explain_queryset(self, query):
-    with connection.cursor() as cursor:
-        cursor.execute("EXPLAIN ANALYZE %s", query)
-        result = cursor.fetchall()
-
-    return result
 
 def collections(request):
     # PARAMETERS
@@ -60,6 +54,10 @@ def collections(request):
         if format:
             filter_arguments['collection_placements__format__text'] = format
 
+        # digital
+        if digital:
+            filter_arguments['collection_placements__format__text'] = 'Digital'
+
         # subject 
         if subject:
             filter_arguments['collection_subject_placements__subject__in'] = Subject.objects.get(name=subject).get_descendants()
@@ -73,10 +71,6 @@ def collections(request):
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
         collections = CollectionPage.objects.live().filter(**filter_arguments).distinct().select_related('thumbnail').prefetch_related('collection_subject_placements')
-
-        # digital
-        if digital:
-            collections = collections.filter(collection_placements__format__text='Digital')
 
         # sort browses by title, omitting leading articles. 
         if not search:
@@ -97,15 +91,11 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        exhibits = ExhibitPage.objects.live().filter(
-            **filter_arguments).distinct().select_related('thumbnail', 'exhibit_location')
-        exhibits_current = exhibits.filter(
-            exhibit_open_date__lt=datetime.datetime.now().date(), 
-            exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
-
         if digital:
-            exhibits = exhibits.filter(web_exhibit = True)
-            exhibits_current = exhibits_current.filter(web_exhibit = True)
+            filter_arguments['web_exhibit'] = True
+
+        exhibits = ExhibitPage.objects.live().filter(**filter_arguments).distinct().select_related('thumbnail', 'exhibit_location').prefetch_related('exhibit_subject_placements')
+        exhibits_current = exhibits.filter(exhibit_open_date__lt=datetime.datetime.now().date(), exhibit_close_date__gt=datetime.datetime.now().date()).distinct()
 
         if search:
             exhibits = exhibits.search(search).results()
@@ -142,17 +132,15 @@ def collections(request):
             subject_ids = Subject.objects.get(name=subject).get_descendants()
             subjects_queryset = subjects_queryset.filter(id__in=subject_ids)
 
-        exhibitpagesubjectplacement_qs = ExhibitPageSubjectPlacement.objects.all().prefetch_related('subject')
-
         subjects_with_collections = set(CollectionPageSubjectPlacement.objects.values_list('subject', flat=True))
-        subjects_with_exhibits = set(exhibitpagesubjectplacement_qs.values_list('subject', flat=True))
+        subjects_with_exhibits = set(ExhibitPageSubjectPlacement.objects.all().values_list('subject', flat=True))
         subjects_with_specialists = set(StaffPageSubjectPlacement.objects.values_list('subject', flat=True))
 
         qs = SubjectParentRelations.objects.all().prefetch_related('panels')
 
         for s in subjects_queryset:
             if default_cache.has_key('subject_id_%s' % s.id):
-                to_append = default_cache.get('subject_id_%s' % s.id)
+                subjects_list_entry = default_cache.get('subject_id_%s' % s.id)
             else:
                 subject_descendants = default_cache.get('descendants_%s' % s.id)
 
@@ -167,7 +155,7 @@ def collections(request):
                 has_collecting_area = bool(collecting_area_url)
                 has_subject_specialists = s.id in subjects_with_specialists
 
-                to_append = {
+                subjects_list_entry = {
                     'has_collections': has_collections,
                     'has_exhibits': has_exhibits,
                     'has_collecting_area': has_collecting_area,
@@ -178,9 +166,9 @@ def collections(request):
                     'parents': parents,
                     'see_also': None
                 }
-                default_cache.set('subject_id_%s' % s.id, to_append)
+                default_cache.set('subject_id_%s' % s.id, subjects_list_entry)
 
-            subjects.append(to_append)
+            subjects.append(subjects_list_entry)
 
             see_also_qs = s.see_also.all()
             if see_also_qs:
@@ -253,6 +241,3 @@ def collections(request):
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
     })
-
-def cached_queries():
-    return {'cache', cache.get('default')}

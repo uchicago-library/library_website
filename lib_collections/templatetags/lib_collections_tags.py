@@ -5,7 +5,7 @@ register = template.Library()
 @register.inclusion_tag('lib_collections/collections_formats.html')
 def collections_formats(collection_page):
     formats = []
-    for c in collection_page.collection_placements.all():
+    for c in collection_page.collection_placements.all().select_related('format'):
         formats.append(c.format.text)
 
     formats.sort()
