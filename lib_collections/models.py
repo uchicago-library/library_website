@@ -552,26 +552,27 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         else:
             return set([self.subject])
 
-    def _build_related_link(self, page_id):
+    def _build_related_link(self, page_id, site):
         """
         Args:
             page_id, integer
+
+            site: object
 
         Return:
             tuple of strings representing a link to
             a page where the first item in the tuple
             is a page title and the second item is a url.
         """
-        current_site = Site.objects.get(is_default_site=True)
         try:
             page = Page.objects.get(id=page_id)
             title = str(page)
-            url = page.relative_url(current_site)
+            url = page.relative_url(site)
         except(Page.DoesNotExist):
             return ('', '')
         return (title, url)
 
-    def _build_subject_specialist(self, librarian):
+    def _build_subject_specialist(self, librarian, site):
         """
         Build a data object representing a subject
         specialist.
@@ -579,16 +580,17 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Args:
             librarian: StaffPage object.
 
+            site: object
+
         Returns:
             Mixed tuple
         """
         is_staff_page = librarian.__class__.__name__ == 'StaffPage'
         if not is_staff_page:
             raise TypeError('The wrong page type was passed')
-        current_site = Site.objects.get(is_default_site=True)
         staff_member = str(librarian)
         title = librarian.position_title
-        url = librarian.public_page.relative_url(current_site)
+        url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
             email = librarian.staff_page_email.values_list('email', flat=True)[0]
@@ -598,12 +600,14 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         return (staff_member, title, url, email, phone_and_fac, thumb)
 
 
-    def get_related(self, children=False):
+    def get_related(self, site, children=False):
         """
         Get related exhibits or collections by subject.
 
         Args:
             children: boolean, show hierarchical subjects.
+
+            site: object
 
         Return:
             A dictionary of sets. The dictionary has a
@@ -620,8 +624,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         subjects = self.get_subjects(children)
         # Related collections and exhibits
         for subject in subjects:
-            related['collections'] = related['collections'] | set(self._build_related_link(page[0]) for page in subject.collection_pages.values_list('page_id'))
-            related['exhibits'] = related['exhibits'] | set(self._build_related_link(page[0]) for page in subject.exhibit_pages.values_list('page_id'))
+            related['collections'] = related['collections'] | set(self._build_related_link(page[0], site) for page in subject.collection_pages.values_list('page_id'))
+            related['exhibits'] = related['exhibits'] | set(self._build_related_link(page[0], site) for page in subject.exhibit_pages.values_list('page_id'))
 
         # Staff pages for subject specialists
         # Can make this more efficient if HR starts using the employee_type field
@@ -630,15 +634,18 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         for staff in librarians:
             intersecting = len(staff.get_subject_objects().intersection(subjects)) > 0
             if intersecting:
-                subject_specialists.add(self._build_subject_specialist(staff))
+                subject_specialists.add(self._build_subject_specialist(staff, site))
         related['subject_specialists'] = subject_specialists
         return related
 
 
-    def get_features(self):
+    def get_features(self, site):
         """
         Return a list of tuples representing featured CollectionPages
         or ExhibitPages.
+
+        Args:
+            site: object
 
         Return:
             A list of tuples representing featured collections
@@ -647,11 +654,10 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             3. string, short description, 4. image object.
         """
         retval = []
-        current_site = Site.objects.get(is_default_site=True)
         features = [self.first_feature, self.second_feature, self.third_feature, self.fourth_feature]
         for feature in features:
             if feature:
-                retval.append((str(feature), feature.relative_url(current_site), feature.specific.short_abstract, feature.specific.thumbnail))
+                retval.append((str(feature), feature.relative_url(site), feature.specific.short_abstract, feature.specific.thumbnail))
         return retval
 
     def get_context(self, request):
@@ -660,12 +666,13 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         """
         context = super(CollectingAreaPage, self).get_context(request)
 
-        related = self.get_related(False)
+        current_site = Site.find_for_request(request)
+        related = self.get_related(current_site, False)
         limit = -1
         context['related_collections'] = sorted(related['collections'])[:limit]
         context['related_exhibits'] = sorted(related['exhibits'])[:limit]
         context['related_subject_specialists'] = sorted(related['subject_specialists'])
-        context['features'] = self.get_features()
+        context['features'] = self.get_features(current_site)
         context['lib_guides'] = self.lib_guides.get_object_list()
 
         try:

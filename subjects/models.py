@@ -74,8 +74,17 @@ class Subject(ClusterableModel, index.Indexed):
 
         return Subject.objects.filter(id__in=checked_subjects)
 
-    def get_collecting_area_page_url(self):
-        current_site = Site.objects.get(is_default_site=True)
+    def get_collecting_area_page_url(self, request):
+        """
+        Get the relative url to a CollectingAreaPage.
+
+        Args:
+            request: object
+
+        Returns:
+            string, relative url
+        """
+        current_site = Site.find_for_request(request)
         collecting_area_page = self.lib_collections_collectingareapage_related.first()
         url = ''
         if collecting_area_page and collecting_area_page.live:

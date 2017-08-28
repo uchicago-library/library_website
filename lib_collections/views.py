@@ -151,7 +151,7 @@ def collections(request):
                 parents = qs.filter(child=s).order_by('parent__name').values_list('parent__name', flat=True).prefetch_related('subject')
                 has_collections = bool(subjects_with_collections.intersection(subject_descendants))
                 has_exhibits = bool(subjects_with_exhibits.intersection(subject_descendants))
-                collecting_area_url = s.get_collecting_area_page_url()
+                collecting_area_url = s.get_collecting_area_page_url(request)
                 has_collecting_area = bool(collecting_area_url)
                 has_subject_specialists = s.id in subjects_with_specialists
 

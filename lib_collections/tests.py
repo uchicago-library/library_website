@@ -240,7 +240,7 @@ class TestCollectingAreaPages(TestCase):
         self.space = Page.objects.get(id=2) # Homepage
 
         # Create a site 
-        self.site = Site.objects.create(root_page=self.space)
+        self.site = Site.objects.get(is_default_site=True)
 
         # Create StaffPages
         self.captain = StaffPage(
@@ -409,6 +409,11 @@ class TestCollectingAreaPages(TestCase):
         )
         self.space.add_child(instance=self.collecting_area)
 
+    def tearDown(self):
+        """
+        Clear the cache between every test.
+        """
+        caches['default'].clear()
 
     def test_get_subjects_children_false_only_returns_one_top_level_subject(self):
         subject = self.collecting_area.get_subjects(children=False)
@@ -451,31 +456,31 @@ class TestCollectingAreaPages(TestCase):
 
     def test_build_related_link_normal(self):
         page = self.collecting_area
-        link = page._build_related_link(self.captain.id)
+        link = page._build_related_link(self.captain.id, self.site)
         self.assertEqual(link, ('Jean-Luc Picard', '/jean-luc-picard/'))
 
     def test_build_related_link_no_page_does_not_blow_up(self):
         page = self.collecting_area
-        link = page._build_related_link(999)
+        link = page._build_related_link(999, self.site)
         self.assertEqual(link, ('', ''))
 
     def test_build_subject_specialist_normal(self):
         page = self.collecting_area
-        subject_specialist = page._build_subject_specialist(self.captain)
+        subject_specialist = page._build_subject_specialist(self.captain, self.site)
         self.assertEqual(subject_specialist, ('Jean-Luc Picard', 'Captain of the USS Enterprise', '/jean-luc-picard-public/', 'picard@starfleet.io', (('012-345-6789', 'Bridge'),), None))
 
     def test_build_subject_specialist_with_wrong_page_type(self):
         page = self.collecting_area
-        self.assertRaises(TypeError, page._build_subject_specialist, self.ship)
+        self.assertRaises(TypeError, page._build_subject_specialist, self.ship, self.site)
 
     def test_get_related_no_children(self):
         page = self.collecting_area
         expected = {'collections': set([('Benjamin Sisko', '/benjamin-sisko/')]), 'subject_specialists': set([('Jean-Luc Picard', 'Captain of the USS Enterprise', '/jean-luc-picard-public/', '', (), None)]), 'exhibits': set([('Lieutenant Commander Worf', '/lieutenant-commander-worf/')])}
-        self.assertEqual(page.get_related(), expected)
+        self.assertEqual(page.get_related(self.site), expected)
 
     def test_get_related_with_children(self):
         page = self.collecting_area
-        related = page.get_related(children=True)
+        related = page.get_related(self.site, children=True)
         specialists = set(r[0] for r in related['subject_specialists'])
         collections = set(r[0] for r in related['collections'])
         exhibits = set(r[0] for r in related['exhibits'])
@@ -488,7 +493,7 @@ class TestCollectingAreaPages(TestCase):
 
     def test_get_features(self):
         page = self.collecting_area
-        features = page.get_features()
+        features = page.get_features(self.site)
         self.assertEqual(len(features), 4)
         for f in features:
             self.assertEqual(len(f), 4)
