@@ -1,9 +1,10 @@
-from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
 from django.conf import settings
-from wagtail.wagtailcore.models import Page, Site
-from file_parsing import is_int
-from django.utils.text import slugify
 from django.db.models.base import ObjectDoesNotExist
+from django.utils.text import slugify
+from file_parsing import is_int
+from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
+from openpyxl import Workbook
+from wagtail.wagtailcore.models import Page, Site
 
 def get_default_unit():
     """
@@ -145,3 +146,56 @@ def get_quick_nums_for_library_or_dept(request):
             except(UnitPage.DoesNotExist, AssertionError, KeyError):
                 pass
     return html
+
+def get_units_wagtail(**options):
+    from units.models import UnitPage
+    try:
+        if options['live']:
+            unitpages = set(UnitPage.objects.live())
+        else:
+            unitpages = set(UnitPage.objects.all())
+    except KeyError:
+        unitpages = set(UnitPage.objects.all())
+
+    try:
+        if options['latest_revision_created_at']:
+            latest_revision_created_at_string = '{}-{}-{} 00:00-0600'.format(options['latest_revision_created_at'][0:4],
+                options['latest_revision_created_at'][4:6], options['latest_revision_created_at'][6:8])
+            new_unitpages = set(UnitPage.objects.filter(latest_revision_created_at__gte=latest_revision_created_at_string))
+            unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
+    except KeyError:
+        pass
+
+    try:
+        if options['display_in_campus_directory']:
+            new_unitpages = set(UnitPage.objects.filter(display_in_campus_directory=True))
+            unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
+    except KeyError:
+        pass
+
+    return sorted(list(unitpages), key=lambda u: u.get_full_name())            
+
+
+def report_units_wagtail(**options):
+    unitpages = get_units_wagtail(**options)
+
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.append([
+        'ID',
+        'LATEST REVISION CREATED AT',
+        'LIBRARY DIRECTORY FULL NAME',
+        'CAMPUS DIRECTORY FULL NAME'
+    ])
+    for u in unitpages:
+        try:
+            latest_revision_created_at = u.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
+        except AttributeError:
+            latest_revision_created_at = ''
+        worksheet.append([
+            str(u.id),
+            latest_revision_created_at,
+            u.get_full_name(),
+            u.get_campus_directory_full_name()
+        ])
+    return workbook

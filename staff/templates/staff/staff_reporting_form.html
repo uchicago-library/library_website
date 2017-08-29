@@ -26,16 +26,16 @@
                 <ul class="fields">
                     {% block fields %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.all_or_live %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.live %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.cnetid %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.department %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.department_and_subdepartments %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.modified_since %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.latest_revision_created_at %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervises_students %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.position_status %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervisor_cnetid %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervisor_override_set %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.title %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.supervisor_override %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.position_title %}
                     {% endblock fields %}
                     <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
                 </ul>

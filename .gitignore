@@ -10,3 +10,5 @@
 node_modules/
 package.json
 
+django-errors.log
+library_website/settings/database.db

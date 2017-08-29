@@ -266,18 +266,19 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             a queryset of StaffPage objects.
         """
 
-        cnetids = []
+        cnetids = set()
         for s in StaffPage.objects.all():
-            if s.supervisor_override and s.supervisor_override == self:
-                cnetids.append(s.cnetid)
-            else:
-                for u in s.staff_page_units.filter(library_unit__department_head=self):
-                    try:
-                        cnetids.append(u.page.cnetid)
-                    except:
-                        continue
+            if not s == self:
+                if s.supervisor_override:
+                    cnetids.add(s.cnetid)
+                else:
+                    for u in s.staff_page_units.filter(library_unit__department_head=self):
+                        try:
+                            cnetids.add(u.page.cnetid)
+                        except:
+                            continue
 
-        return StaffPage.objects.filter(cnetid__in=cnetids)
+        return StaffPage.objects.filter(cnetid__in=list(cnetids))
          
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),

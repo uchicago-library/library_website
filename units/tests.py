@@ -9,7 +9,9 @@ from wagtail.wagtailcore.models import Page, Site
 from .models import UnitPage
 from .utils import get_quick_num_or_link, get_quick_num_html, get_all_quick_nums_html, get_quick_nums_for_library_or_dept
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
+from openpyxl import load_workbook
 from staff.models import StaffPage
+from tempfile import NamedTemporaryFile
 
 
 class TestQuickNumberUtils(TestCase):
@@ -177,13 +179,23 @@ class TestQuickNumberUtils(TestCase):
 
 class ListUnitsWagtail(TestCase):
     def run_command(self, **options):
-        output = StringIO()
-        management.call_command('list_units_wagtail', stdout=output, **options)
-        output.seek(0)
+        temp_filename = NamedTemporaryFile().name
+        options['filename'] = temp_filename
 
+        import sys
+        sys.stdout.write(temp_filename)
+        sys.exit()
+
+        management.call_command('list_units_wagtail', **options)
+
+        wb = load_workbook(temp_filename)
+        ws = wb.active
+
+        r = 1
         records = []
-        for line in output:
-            records.append(line.split("\t"))
+        while r < ws.len(rows):
+            records.append([cell.value for cell in ws.rows[r]])
+            r = r + 1
 
         return records
             

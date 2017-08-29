@@ -1,0 +1,39 @@
+{% extends "wagtailadmin/base.html" %}
+{% load wagtailadmin_tags i18n staticfiles gravatar %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'wagtailstyleguide/css/styleguide.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block titletag %}Unit Reporting Form{% endblock %}
+{% block bodyclass %}unitreportingform{% endblock %}
+
+{% block content %}
+    {% trans "Unit Reporting Form" as title_trans %}
+    {% include "wagtailadmin/shared/header.html" with title=title_trans %}
+
+    <div class="nice-padding">
+        <h2>Unit Reporting</h2>
+        <p>Download a unit report in Microsoft Excel format.</p>
+        <form action="{% url 'list_units_wagtail' %}" method="POST">
+            {% csrf_token %}
+    
+            <section id="account" class="active nice-padding">
+                <ul class="fields">
+                    {% block fields %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.live %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.display_in_campus_directory %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.latest_revision_created_at %}
+                    {% endblock fields %}
+                    <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
+                </ul>
+            </section>
+        </form>
+    </div>
+{% endblock %}
+

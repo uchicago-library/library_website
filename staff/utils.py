@@ -258,59 +258,74 @@ def get_individual_info_from_wagtail(cnetid):
     return output
 
 def get_staff_wagtail(**options):
-    staffpages = set()
-
-    if options['all']:
+    try:
+        if options['live']:
+            staffpages = set(StaffPage.objects.live())
+        else:
+            staffpages = set(StaffPage.objects.all())
+    except KeyError:
         staffpages = set(StaffPage.objects.all())
-    elif options['live']:
-        staffpages = set(StaffPage.objects.live())
 
-    if options['cnetid']:
-        staffpages = set([StaffPage.objects.get(cnetid=options['cnetid'])])
+    filter_keys = ('cnetid', 'position_status', 'position_title')
+    filter_options = {k: v for (k, v) in options.items() if k in filter_keys and v}
 
-    if options['department']:
-        library_units = [u for u in UnitPage.objects.live() if u.get_full_name()==options['department']]
-        new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=library_units))
+    if filter_options:
+        new_staffpages = set(StaffPage.objects.filter(**filter_options))
         staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
 
-    if options['department_and_subdepartments']:
-        library_units = set()
-        for u in [u for u in UnitPage.objects.live() if u.get_full_name()==options['department_and_subdepartments']]:
-            library_units = library_units.union(set(u.get_descendants(True).type(UnitPage).specific()))
-        new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=list(library_units)))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['supervises_students']:
+            new_staffpages = set(StaffPage.objects.filter(supervises_students=True))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['modified_since']:
-        modified_since_string = '{}-{}-{} 00:00-0600'.format(options['modified_since'][0:4],
-            options['modified_since'][4:6], options['modified_since'][6:8])
-        new_staffpages = set(StaffPage.objects.filter(latest_revision_created_at__gte=modified_since_string))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['department']:
+            library_units = [u for u in UnitPage.objects.live() if u.get_full_name()==options['department']]
+            new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=library_units))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['position_status']:
-        position_status_int = [i for i, v in POSITION_STATUS if v == options['position_status']][0]
-        new_staffpages = set(StaffPage.objects.filter(position_status=position_status_int))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['department_and_subdepartments']:
+            library_units = set()
+            for u in [u for u in UnitPage.objects.live() if u.get_full_name()==options['department_and_subdepartments']]:
+                library_units = library_units.union(set(u.get_descendants(True).type(UnitPage).specific()))
+            new_staffpages = set(StaffPage.objects.filter(staff_page_units__library_unit__in=list(library_units)))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['supervises_students']:
-        new_staffpages = set(StaffPage.objects.filter(supervises_students=True))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['latest_revision_created_at']:
+            latest_revision_created_at_string = '{}-{}-{} 00:00-0600'.format(options['latest_revision_created_at'][0:4],
+                options['latest_revision_created_at'][4:6], options['latest_revision_created_at'][6:8])
+            new_staffpages = set(StaffPage.objects.filter(latest_revision_created_at__gte=latest_revision_created_at_string))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['supervisor_cnetid']:
-        new_staffpages = set(StaffPage.objects.get(cnetid=options['supervisor_cnetid']).get_staff())
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['supervisor_override']:
+            new_staffpages = set(StaffPage.objects.exclude(supervisor_override=None))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['supervisor_override_set']:
-        new_staffpages = set(StaffPage.objects.exclude(supervisor_override=None))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    try:
+        if options['supervisor_cnetid']:
+            new_staffpages = set(StaffPage.objects.get(cnetid=options['supervisor_cnetid']).get_staff())
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
 
-    if options['title']:
-        new_staffpages = set(StaffPage.objects.filter(position_title=options['title']))
-        staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
-
-    return sorted(staffpages, key=lambda s: s.last_name)
+    return sorted(list(staffpages), key=lambda s: s.last_name)
 
 def report_staff_wagtail(**options):
     staffpages = get_staff_wagtail(**options)
+
     workbook = Workbook()
     worksheet = workbook.active
     worksheet.append([
@@ -320,15 +335,21 @@ def report_staff_wagtail(**options):
         'POSITION TITLE',
         'EMAILS',
         'PHONE, FACEX',
-        'UNITS',
+        'UNITS (LIBRARY DIRECTORY FULL NAME)',
+        'UNITS (CAMPUS DIRECTORY FULL NAME)',
         'EMPLOYEE TYPE',
         'SUPERVISES STUDENTS',
         'POSITION STATUS',
         'SUPERVISOR NAME AND CNETID'
     ])
     for s in staffpages:
-        units = StaffPageLibraryUnits.objects.filter(page=s).values_list('library_unit__title', flat=True)
+        staffpage_library_units = set(StaffPageLibraryUnits.objects.filter(page=s))
 
+        units = []
+        for slu in staffpage_library_units:
+            units.append((slu.library_unit.get_full_name(), slu.library_unit.get_campus_directory_full_name()))
+        units.sort(key=lambda u: u[0])   
+     
         try:
             latest_revision_created_at = s.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
         except AttributeError:
@@ -353,7 +374,8 @@ def report_staff_wagtail(**options):
             s.position_title or '',
             '|'.join(emails) or '',
             '|'.join(phone_facexes) or '',
-            '|'.join(units) or '',
+            '|'.join([u[0] for u in units]) or '',
+            '|'.join([u[1] for u in units]) or '',
             employee_type_string,
             str(s.supervises_students),
             position_status_string,
