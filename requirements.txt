@@ -24,6 +24,7 @@ feedparser==5.2.1
 html5lib==0.999999999
 libsass==0.10.1
 lxml==3.5.0
+openpyxl
 Pillow==4.1.1
 psycopg2==2.7.1
 Pygments==2.0.2
