@@ -1,6 +1,13 @@
 import base64
 from http.client import HTTPSConnection
-from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
+try:
+    from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
+except(ImportError):
+    import os
+    DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
+    DIRECTORY_WEB_SERVICE = os.environ['DIRECTORY_WEB_SERVICE']
+    DIRECTORY_PASSWORD = os.environ['DIRECTORY_PASSWORD']
+
 import requests
 from library_website.settings import LIBCAL_IID, HOURS_TEMPLATE, ADDRESS_TEMPLATE, NEWS_CATEGORIES, HOURS_PAGE
 import feedparser

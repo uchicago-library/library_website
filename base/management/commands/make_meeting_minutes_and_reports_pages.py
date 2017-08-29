@@ -11,8 +11,14 @@ from base.models import get_available_path_under
 from group.models import GroupMeetingMinutesIndexPage, GroupMeetingMinutesPage, GroupPage, GroupReportsIndexPage, GroupReportsPage
 from intranetunits.models import IntranetUnitsPage, IntranetUnitsReportsIndexPage, IntranetUnitsReportsPage
 from http.client import HTTPSConnection
-from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 from xml.etree import ElementTree
+
+try:
+    from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
+except(ImportError):
+    import os
+    DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
+    DIRECTORY_PASSWORD = os.environ['DIRECTORY_PASSWORD']
 
 class Command (BaseCommand):
     """
