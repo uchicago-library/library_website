@@ -1,75 +1,35 @@
+import os
+import time
+
 from base.utils import get_xml_from_directory_api
 from django.core import management
 from django.test import TestCase
 from io import StringIO
 from lxml import etree
+from openpyxl import load_workbook
 from public.models import StandardPage
 from .models import StaffPage, StaffPageEmailAddresses, StaffPageLibraryUnits, StaffPagePhoneFacultyExchange
 from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
+from tempfile import NamedTemporaryFile
 from units.models import UnitPage
 from wagtail.wagtailcore.models import Page
 
+def print_test_time_elapsed(method):
+    """
+    Utility method for print verbalizing test suite, prints out
+    time taken for test and functions name, and status
+    """
+    def run(*args, **kw):
+        ts = time.time()
+        print('\n\ttesting function %r' % method.__name__)
+        method(*args, **kw)
+        te = time.time()
+        print('\t[OK] in %r %2.2f sec' % (method.__name__, te - ts))
+
+    return run
+
 class UniversityDirectoryTestCase(TestCase):
-    def test_directory_xml_validates(self):
-        dtd = etree.DTD(StringIO("""
-        <!ELEMENT responseData    (response, totalResults, organizations)>
-        <!ELEMENT response        (#PCDATA)>
-        <!ELEMENT totalResults    (#PCDATA)>
-        <!ELEMENT organizations   (organization+)>
-        <!ELEMENT organization    (name, type, departments, members, resources)>
-        <!ELEMENT name            (#PCDATA)>
-        <!ELEMENT type            (#PCDATA)>
-        <!ELEMENT departments     (department+)>
-        <!ELEMENT department      (name, resources)>
-        <!--      name (see above) -->
-        <!ELEMENT resources       (directoryURL, xmlURL)>
-        <!ELEMENT directoryURL    (#PCDATA)>
-        <!ELEMENT xmlURL          (#PCDATA)>
-        <!ELEMENT members         (member+)>
-        <!ELEMENT member          (name, displayName, cnetid, chicagoid, title, email, phone, facultyExchange, resources)>
-        <!--      name (see above) -->
-        <!ELEMENT displayName     (#PCDATA)>
-        <!ELEMENT cnetid          (#PCDATA)>
-        <!ELEMENT chicagoid       (#PCDATA)>
-        <!ELEMENT title           (#PCDATA)>
-        <!ELEMENT email           (#PCDATA)>
-        <!ELEMENT phone           (#PCDATA)>
-        <!ELEMENT facultyExchange (#PCDATA)>
-        <!--      resources (see above) -->
-        """))
-
-        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
-        self.assertEqual(dtd.validate(root), True)
-
-    def test_individual_xml_validates(self):
-        dtd = etree.DTD(StringIO("""
-        <!ELEMENT responseData    (response, totalResults, individuals)>
-        <!ELEMENT response        (#PCDATA)>
-        <!ELEMENT totalResults    (#PCDATA)>
-        <!ELEMENT individuals     (individual+)>
-        <!ELEMENT individual      (name, displayName, cnetid, chicagoid, contacts, resources)>
-        <!ELEMENT name            (#PCDATA)>
-        <!ELEMENT displayName     (#PCDATA)>
-        <!ELEMENT cnetid          (#PCDATA)>
-        <!ELEMENT chicagoid       (#PCDATA)>
-        <!ELEMENT contacts        (contact)>
-        <!ELEMENT contact         (title, division, department, subDepartment, email, phone, facultyExchange)>
-        <!ELEMENT title           (#PCDATA)>
-        <!ELEMENT division        (name, resources)>
-        <!ELEMENT resources       (directoryURL, xmlURL)>
-        <!ELEMENT directoryURL    (#PCDATA)>
-        <!ELEMENT xmlURL          (#PCDATA)>
-        <!ELEMENT department      (name, resources)>
-        <!ELEMENT subDepartment   (name, resources)>
-        <!ELEMENT email           (#PCDATA)>
-        <!ELEMENT phone           (#PCDATA)>
-        <!ELEMENT facultyExchange (#PCDATA)>
-        """))
-
-        cnetids = get_all_library_cnetids_from_directory()
-        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetids[0] + '.xml'))
-        self.assertEqual(dtd.validate(root), True)
-
+    @print_test_time_elapsed
     def test_get_all_library_cnet_ids_from_directory_two_staff(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
         <responseData>
@@ -163,6 +123,7 @@ class UniversityDirectoryTestCase(TestCase):
 
         return True
 
+    @print_test_time_elapsed
     def test_get_individual_info_from_directory(self):
         self.maxDiff = None
 
@@ -216,6 +177,7 @@ class UniversityDirectoryTestCase(TestCase):
         self.assertInfoEqual(get_individual_info_from_directory(xml), info)
 
 class StaffPageSupervisors(TestCase):
+    @print_test_time_elapsed
     def setUp(self):
         try:
             welcome = Page.objects.get(path='00010001')
@@ -358,23 +320,26 @@ class StaffPageSupervisors(TestCase):
             page=employee_two_units, 
             library_unit=unit_two)
 
-    def test_official_supervisor(self):
+    @print_test_time_elapsed
+    def test_supervisor_relationships(self):
+        # official supervisor
         self.assertEqual(StaffPage.objects.get(cnetid='employee_no_override').get_supervisors, [StaffPage.objects.get(cnetid='official_supervisor')])
-
-    def test_supervisor_override(self):
+ 
+        # supervisor override
         self.assertEqual(StaffPage.objects.get(cnetid='employee_override').get_supervisors, [StaffPage.objects.get(cnetid='supervisor_override')])
 
-    def test_employee_in_two_units(self):
+        # employee in two units
         self.assertEqual(StaffPage.objects.get(cnetid='employee_two_units').get_supervisors, [StaffPage.objects.get(cnetid='official_supervisor'), StaffPage.objects.get(cnetid='another_official_supervisor')])
 
-    def test_department_head_supervisor(self):
+        # department head supervisor
         self.assertEqual(StaffPage.objects.get(cnetid='official_supervisor').get_supervisors, [StaffPage.objects.get(cnetid='director')])
 
-    def test_unit_one_child_of_division(self):
+        # one child of division.
         self.assertEqual(UnitPage.objects.get(slug='unit-one').get_parent().specific, UnitPage.objects.get(slug='unit-division'))
     
 
 class ListStaffWagtail(TestCase):
+    @print_test_time_elapsed
     def setUp(self):
         root = Page.objects.create(
             depth=1,
@@ -509,78 +474,67 @@ class ListStaffWagtail(TestCase):
         welcome.add_child(instance=tyler)
 
     def run_command(self, **options):
-        output = StringIO()
-        management.call_command('list_staff_wagtail', stdout=output, **options)
-        output.seek(0)
+        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        management.call_command('list_staff_wagtail', tempfile.name, **options)
 
-        records = []
-        for line in output:
-            records.append(line.split("\t"))
+        wb = load_workbook(tempfile.name)
+        ws = wb.active
+        os.unlink(tempfile.name)
 
-        return records
-            
-    def test_cnetid_returns_one_record(self):
+        return [[cell.value for cell in row] for row in ws.iter_rows(min_row=2)]
+       
+    @print_test_time_elapsed
+    def test_report_columns(self):
         records = self.run_command(cnetid='jej')
+
+        # column count
+        self.assertEqual(len(records[0]), 12)
+
+        # row count
         self.assertEqual(len(records), 1)
 
-    def test_cnetid_returns_correct_name(self):
-        records = self.run_command(cnetid='jej')
+        # name and cnetid
         self.assertEqual(records[0][2], 'John Jung (jej)')
 
-    def test_position_status(self):
+        # position title
+        self.assertEqual(records[0][3], 'Programmer/Analyst')
+
+        # emails
+        self.assertEqual(set(records[0][4].split('|')), set(('jej@uchicago.edu', 'jej@jej.com')))
+
+        # faculty exchange, phone number pairs
+        self.assertEqual(set(records[0][5].split('|')), set(('JRL 100,773-702-1234', 'JRL 101,773-834-1234')))
+
+        # units
+        self.assertEqual(set(records[0][6].split('|')), set(['Digital Services - Digital Library Development Center', 'Digital Services']))
+
+        # employee type
+        self.assertEqual(records[0][8], 'IT')
+
+        # supervises students
+        self.assertEqual(records[0][9], 'False')
+
+        # position status
+        self.assertEqual(records[0][10], 'Active')
+
+        # supervisor
+        self.assertEqual(records[0][11].rstrip(), 'Charles Blair (chas)')
+
+    @print_test_time_elapsed
+    def test_report_queries(self):
+        # position status
         records = self.run_command(position_status='Active')
         self.assertEqual(len(records), 6)
 
-    def test_supervises_students(self):
-        records = self.run_command(supervises_students=True)
+        # position title
+        records = self.run_command(position_title='Programmer/Analyst')
         self.assertEqual(len(records), 2)
-
-    def test_supervisor_cnetid(self):
+    
+        # supervisor
         records = self.run_command(supervisor_cnetid='chas')
         self.assertEqual(len(records), 4)
 
-    def test_title(self):
-        records = self.run_command(title='Programmer/Analyst')
+        # supervises students
+        records = self.run_command(supervises_students=True)
         self.assertEqual(len(records), 2)
 
-    def test_report_column_count(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(len(records[0]), 11)
-
-    def test_report_columns_name_and_cnetid(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][2], 'John Jung (jej)')
-
-    def test_report_columns_position_title(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][3], 'Programmer/Analyst')
-
-    def test_report_columns_position_title(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(set(records[0][4].split('|')), set(('jej@uchicago.edu', 'jej@jej.com')))
-
-    def test_report_columns_faculty_exchange_phone_number(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(set(records[0][5].split('|')), set(('JRL 100,773-702-1234', 'JRL 101,773-834-1234')))
-
-    def test_report_columns_units(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][6], 'Digital Library Development Center|Digital Services')
-
-    def test_report_columns_employee_type(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][7], 'IT')
-
-    def test_report_columns_supervises_students(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][8], 'False')
-
-    def test_report_columns_position_status(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][9], 'Active')
-
-    def test_report_columns_supervisor_name_and_cnetid(self):
-        records = self.run_command(cnetid='jej')
-        self.assertEqual(records[0][10].rstrip(), 'Charles Blair (chas)')
-       
-     

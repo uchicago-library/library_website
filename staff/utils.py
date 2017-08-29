@@ -266,7 +266,7 @@ def get_staff_wagtail(**options):
     except KeyError:
         staffpages = set(StaffPage.objects.all())
 
-    filter_keys = ('cnetid', 'position_status', 'position_title')
+    filter_keys = ('cnetid', 'position_title')
     filter_options = {k: v for (k, v) in options.items() if k in filter_keys and v}
 
     if filter_options:
@@ -307,6 +307,14 @@ def get_staff_wagtail(**options):
     except KeyError:
         pass
 
+    try: 
+        if options['position_status']:
+            position_status_int = [i for i, v in POSITION_STATUS if v == options['position_status']][0]
+            new_staffpages = set(StaffPage.objects.filter(position_status=position_status_int))
+            staffpages = staffpages.intersection(new_staffpages) if staffpages else new_staffpages
+    except KeyError:
+        pass
+
     try:
         if options['supervisor_override']:
             new_staffpages = set(StaffPage.objects.exclude(supervisor_override=None))
@@ -321,7 +329,7 @@ def get_staff_wagtail(**options):
     except KeyError:
         pass
 
-    return sorted(list(staffpages), key=lambda s: s.last_name)
+    return sorted(list(staffpages), key=lambda s: s.last_name if s.last_name else '')
 
 def report_staff_wagtail(**options):
     staffpages = get_staff_wagtail(**options)

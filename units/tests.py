@@ -13,6 +13,8 @@ from openpyxl import load_workbook
 from staff.models import StaffPage
 from tempfile import NamedTemporaryFile
 
+import os
+
 
 class TestQuickNumberUtils(TestCase):
     """
@@ -179,26 +181,15 @@ class TestQuickNumberUtils(TestCase):
 
 class ListUnitsWagtail(TestCase):
     def run_command(self, **options):
-        temp_filename = NamedTemporaryFile().name
-        options['filename'] = temp_filename
+        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        management.call_command('list_units_wagtail', tempfile.name, **options)
 
-        import sys
-        sys.stdout.write(temp_filename)
-        sys.exit()
-
-        management.call_command('list_units_wagtail', **options)
-
-        wb = load_workbook(temp_filename)
+        wb = load_workbook(tempfile.name)
         ws = wb.active
+        os.unlink(tempfile.name)
 
-        r = 1
-        records = []
-        while r < ws.len(rows):
-            records.append([cell.value for cell in ws.rows[r]])
-            r = r + 1
+        return [[cell.value for cell in row] for row in ws.iter_rows(min_row=2)]
 
-        return records
-            
     def setUp(self):
         try:
             welcome = Page.objects.get(path='00010001')
