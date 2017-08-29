@@ -341,17 +341,20 @@ class StaffPageSupervisors(TestCase):
 class ListStaffWagtail(TestCase):
     @print_test_time_elapsed
     def setUp(self):
-        root = Page.objects.create(
-            depth=1,
-            path='0001',
-            slug='root',
-            title='Root')
+        try:
+            welcome = Page.objects.get(path='00010001')
+        except:
+            root = Page.objects.create(
+                depth=1,
+                path='0001',
+                slug='root',
+                title='Root')
 
-        welcome = Page(
-            path='00010001',
-            slug='welcome',
-            title='Welcome')
-        root.add_child(instance=welcome)
+            welcome = Page(
+                path='00010001',
+                slug='welcome',
+                title='Welcome')
+            root.add_child(instance=welcome)
 
         chas = StaffPage(
             cnetid='chas',

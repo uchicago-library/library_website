@@ -222,7 +222,7 @@ class ListUnitsWagtail(TestCase):
 
     def test_report_column_count(self):
         records = self.run_command(all='True')
-        self.assertEqual(len(records[0]), 3)
+        self.assertEqual(len(records[0]), 4)
 
     def test_report_record_count(self):
         records = self.run_command(all='True')
