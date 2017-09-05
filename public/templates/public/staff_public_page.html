@@ -34,17 +34,23 @@
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Contact</h4>
     <p>
-      <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
-      {{ phone_number }}<br/>
-      {{ library }}, Rm {{ room_number }}
+      {% if email %}
+        <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
+      {% endif %}
+      {% if phone_number %}
+        {{ phone_number }}<br/>
+      {% endif %}
+      {% if library %}{{ library }}{% endif %}{% if room_number %}, Rm {{ room_number }}{% endif %}
     </p>
   </div>
 
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Library &amp; Department</h4>
     <p>
-      <strong><a href="#">{{ library }}</a></strong><br>
-      {{ department_name }}
+      {% if library %}<strong><a href="#">{{ library }}</a></strong>{% endif %}
+      {% if department_name %}
+        <br>{{ department_name }}
+      {% endif %}
     </p>
   </div>
 

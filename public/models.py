@@ -794,39 +794,63 @@ class StaffPublicPage(PublicBasePage):
 
         s = StaffPage.objects.get(cnetid=self.cnetid)
 
-        cv = None
-        if s.cv:
+        try:
             cv = s.cv.file.url
-
-        libguide_url = None
-        if s.libguide_url:
-            libguide_url = s.libguide_url
+        except AttributeError:
+            cv = ''
 
         expertises = []
         for expertise in s.expertise_placements.all():
             expertises.append(expertise.expertise.text)
 
+        libguide_url = s.libguide_url
+
         default_image = Image.objects.get(title="Default Placeholder Photo")
+        
+        try:
+            department_name = s.staff_page_units.first().library_unit.title
+        except AttributeError:
+            department_name = None
 
-        building_int = s.staff_page_units.first().library_unit.building
-        building_str = list(filter(lambda b: b[0] == building_int, BUILDINGS))[0][1]
+        try:
+            email = s.staff_page_email.first().email
+        except AttributeError:
+            email = None
 
-        context['bio'] = self.get_bio()
-        context['breadcrumb_div_css'] = 'col-md-12 breadcrumbs hidden-xs hidden-sm'
-        context['content_div_css'] = 'container body-container col-xs-12 col-lg-11 col-lg-offset-1'
-        context['cv'] = cv
-        context['default_image'] = default_image
-        context['department_name'] = s.staff_page_units.first().library_unit.title
-        context['email'] = s.staff_page_email.first().email
-        context['expertises'] = expertises
-        context['libguide_url'] = libguide_url
-        context['library'] = building_str
-        context['orcid'] = s.orcid
-        context['phone_number'] = s.staff_page_phone_faculty_exchange.first().phone_number
-        context['profile_picture'] = s.profile_picture
-        context['room_number'] = s.staff_page_phone_faculty_exchange.first().faculty_exchange.split(' ').pop()
-        context['subjects'] = get_subjects_html(s.staff_subject_placements.all())
-        context['positiontitle'] = s.position_title
+        try:
+            building_int = s.staff_page_units.first().library_unit.building
+            building_str = list(filter(lambda b: b[0] == building_int, BUILDINGS))[0][1]
+        except AttributeError:
+            building_str = None
+
+        try:
+            phone_number = s.staff_page_phone_faculty_exchange.first().phone_number
+        except AttributeError:
+            phone_number = None
+
+        try:
+            room_number = s.staff_page_phone_faculty_exchange.first().faculty_exchange.split(' ').pop()
+        except AttributeError:
+            room_number = None
+
+        context.update({
+            'bio': self.get_bio(),
+            'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
+            'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+            'cv': cv,
+            'default_image': default_image,
+            'department_name': department_name,
+            'email': email,
+            'expertises': expertises,
+            'libguide_url': libguide_url,
+            'library': building_str,
+            'orcid': s.orcid,
+            'phone_number': phone_number,
+            'profile_picture': s.profile_picture,
+            'room_number': room_number,
+            'subjects': get_subjects_html(s.staff_subject_placements.all()),
+            'positiontitle': s.position_title
+        })
         return context
 
     search_fields = PublicBasePage.search_fields + [
