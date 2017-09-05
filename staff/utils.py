@@ -27,6 +27,7 @@ def get_all_library_cnetids_from_directory(xml_string = None):
     cnetids = set()
     for cnetid in x.findall(".//member/cnetid"):
         cnetids.add(cnetid.text)
+
     return sorted(list(cnetids))
 
 def get_individual_info_from_directory(xml_string):
@@ -194,7 +195,7 @@ def get_individual_info_from_directory(xml_string):
 
 def get_all_library_cnetids_from_wagtail():
     output = []
-    for s in StaffPage.objects.all():
+    for s in StaffPage.objects.live():
         try:
             if User.objects.get(username=s.cnetid).is_active:
                 output.append(s.cnetid)

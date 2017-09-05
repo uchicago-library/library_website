@@ -26,6 +26,9 @@ class Command (BaseCommand):
 
         # api staff, wagtail staff
         api_staff = set(get_all_library_cnetids_from_directory())
+        # exception for judi. She appears in the university directory
+        # but should not appear in this report. 
+        api_staff.discard('judi')
         wag_staff = set(get_all_library_cnetids_from_wagtail())
 
         output = []
