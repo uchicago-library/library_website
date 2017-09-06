@@ -237,10 +237,32 @@ class TestCollectingAreaPages(TestCase):
         self.quadrotriticale.from_json(subjects_json['quadrotriticale']['json'] % (self.tribbles.pk, self.tribbles.pk, self.quadrotriticale.pk, self.quadrotriticale.pk, self.quadrotriticale.name)).save()
 
         # Get the default homepage
-        self.space = Page.objects.get(id=2) # Homepage
+        try:
+            self.space = Page.objects.get(path='00010001')
+        except:
+            root = Page.objects.create(
+                depth=1,
+                path='0001',
+                slug='root',
+                title='Root')
+
+            self.space = Page(
+                path='00010001',
+                slug='welcome',
+                title='Welcome')
+            root.add_child(instance=self.space)
 
         # Create a site 
-        self.site = Site.objects.get(is_default_site=True)
+        try:
+            self.site = Site.objects.get(is_default_site=True)
+        except:
+            self.site = Site.objects.create(    
+                hostname='localhost',
+                is_default_site=True,
+                port=8000,
+                root_page=self.space,
+                site_name='test site'
+            )
 
         # Create StaffPages
         self.captain = StaffPage(
