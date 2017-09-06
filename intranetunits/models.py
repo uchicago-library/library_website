@@ -217,7 +217,10 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         unit_reports_pages = IntranetUnitsReportsPage.objects.descendant_of(self)
         for unit_reports_page in unit_reports_pages:
             for r in unit_reports_page.intranet_units_reports.all():
-                if not r.link and not r.document.url:
+                try:
+                    if not r.link and not r.document.url:
+                        continue
+                except AttributeError:
                     continue
                 report = {
                     'summary': r.summary,
