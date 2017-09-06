@@ -163,7 +163,10 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                 staff_pages = list(staff_pages.order_by('last_name'))
 
             for staff_page in staff_pages:
-                email = staff_page.staff_page_email.first().email
+                try:
+                    email = staff_page.staff_page_email.first().email
+                except AttributeError:
+                    email = None
                 phone_numbers = staff_page.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True) 
                 titles = [staff_page.position_title]
 
