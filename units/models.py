@@ -123,7 +123,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
     room_number = models.CharField(
         blank=True,
-        help_text='Appears in departmental directory.',
+        help_text='This will appear in the departmental directory on Wagtail.',
         max_length=32
     )
     public_web_page = models.ForeignKey(
