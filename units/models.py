@@ -171,7 +171,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_dropdown'),
         FieldPanel('room_number'),
-        InlinePanel('unit_role_placements', label='Role'),
         PageChooserPanel('public_web_page'),
         FieldPanel('location'),
     ] + BasePage.content_panels
