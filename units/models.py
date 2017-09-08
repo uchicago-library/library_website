@@ -146,6 +146,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     department_head = models.ForeignKey(
         'staff.StaffPage',
         blank=True,
+        help_text='Sorts to the top in staff listings.',
         on_delete=models.SET_NULL,
         null=True,
         related_name='department_head_of'
