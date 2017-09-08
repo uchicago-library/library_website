@@ -220,12 +220,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     def get_campus_directory_full_name(self):
         return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(unitpage__display_in_campus_directory=True).values_list('title', flat=True))
 
-    def get_short_name(self):
-        if self.contact_point_title:
-            return self.contact_point_title
-        else:
-            return self.get_full_name().split(' - ')[-1]
-
     class Meta:
         ordering = ['title']
 
