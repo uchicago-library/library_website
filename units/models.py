@@ -105,7 +105,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
                    (friendly_name) study spaces."',
         max_length=255,
     )
-    display_in_directory = models.BooleanField(default=True)
+    display_in_directory = models.BooleanField(
+        help_text='Display this unit in the library\'s departmental \
+                   directory.',
+        default=True
+    )
     display_in_dropdown = models.BooleanField(default=False)
     room_number = models.CharField(max_length=32, blank=True)
     public_web_page = models.ForeignKey(
