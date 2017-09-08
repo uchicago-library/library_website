@@ -99,7 +99,12 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     """
     contact_point_title = models.CharField(max_length=255, blank=True)
     alphabetical_directory_name = models.CharField(max_length=255, blank=True)
-    friendly_name = models.CharField(max_length=255, blank=True)
+    friendly_name = models.CharField(
+        blank=True,
+        help_text='e.g.: "Ask a (friendly_name) librarian", or "view all \
+                   (friendly_name) study spaces."',
+        max_length=255,
+    )
     display_in_directory = models.BooleanField(default=True)
     display_in_dropdown = models.BooleanField(default=False)
     room_number = models.CharField(max_length=32, blank=True)
