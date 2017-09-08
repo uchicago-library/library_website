@@ -106,11 +106,15 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         max_length=255,
     )
     display_in_directory = models.BooleanField(
+        default=True,
         help_text='Display this unit in the library\'s departmental \
-                   directory.',
-        default=True
+                   directory.'
     )
-    display_in_dropdown = models.BooleanField(default=False)
+    display_in_dropdown = models.BooleanField(
+        default=False,
+        help_text='Display this unit in the Wagtail admin when a UnitPage \
+                   is selectable in a dropdown menu.'
+    )
     room_number = models.CharField(max_length=32, blank=True)
     public_web_page = models.ForeignKey(
         'wagtailcore.Page',
