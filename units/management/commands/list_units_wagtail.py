@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from base.utils import get_xml_from_directory_api
 from django.core.management.base import BaseCommand
-from staff.models import EMPLOYEE_TYPES, POSITION_STATUS, StaffPage, StaffPageLibraryUnits
-from units.models import UnitPage
-
-import datetime
-import pytz
-import sys
-import time
 
 from units.utils import report_units_wagtail
 
