@@ -8,10 +8,10 @@ from units.models import UnitPage
 
 class Command (BaseCommand):
     """
-    List information about a unit page.
+    List information about an intranet unit page.
 
     Example: 
-        python manage.py unit_page_ls
+        python manage.py list_intranetunits_wagtail
     """
 
     def add_arguments(self, parser):
