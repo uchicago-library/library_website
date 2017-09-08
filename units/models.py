@@ -123,13 +123,16 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
     room_number = models.CharField(
         blank=True,
-        help_text='This will appear in the departmental directory on Wagtail.',
+        help_text='This will appear in the departmental directory on the \
+                   library website.',
         max_length=32
     )
     public_web_page = models.ForeignKey(
         'wagtailcore.Page',
-        null=True,
         blank=True,
+        help_text='A link to this page will appear in the departmental \
+                   directory on the library website.',
+        null=True,
         on_delete=models.SET_NULL,
         related_name='+',
     )
