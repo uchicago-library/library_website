@@ -121,7 +121,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         help_text='Display this unit in the Wagtail admin when a UnitPage \
                    is selectable in a dropdown menu.'
     )
-    room_number = models.CharField(max_length=32, blank=True)
+    room_number = models.CharField(
+        blank=True,
+        help_text='Appears in departmental directory.',
+        max_length=32
+    )
     public_web_page = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
