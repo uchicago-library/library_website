@@ -2,14 +2,17 @@ from django.db import models
 from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, \
+    InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, \
+    StreamFieldPanel, TabbedInterface
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, LinkedText, PhoneNumber
+from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, \
+    LinkedText, PhoneNumber
 
 BUILDINGS = (
     (1, 'Crerar Library'),
@@ -21,6 +24,7 @@ BUILDINGS = (
     (7, 'SSA Library')
 )
 
+
 class Tree(object):
     def __init__(self, name='root', unit_page=None, children=None):
         self.name = name
@@ -29,13 +33,16 @@ class Tree(object):
         if children is not None:
             for child in children:
                 self.add_child(child)
+
     def __repr__(self):
         return self.name
+
     def add_child(self, node):
         assert isinstance(node, Tree)
-        if self.get_child(node.name) == None:
+        if self.get_child(node.name) is None:
             self.children.append(node)
             self.children.sort(key=lambda t: t.name)
+
     def get_child(self, name):
         c = 0
         while c < len(self.children):
@@ -89,7 +96,6 @@ class UnitPageRolePlacement(Orderable, models.Model):
 
 class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     page = ParentalKey('units.UnitPage', related_name='unit_page_phone_number')
-    
     panels = PhoneNumber.content_panels
 
 
@@ -125,9 +131,9 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
     location = models.ForeignKey(
         'public.LocationPage',
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_related'
     )
     department_head = models.ForeignKey(
@@ -160,7 +166,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('room_number'),
         InlinePanel('unit_role_placements', label='Role'),
         PageChooserPanel('public_web_page'),
-        FieldPanel('location'), 
+        FieldPanel('location'),
     ] + BasePage.content_panels
 
     human_resources_panels = [
@@ -186,10 +192,23 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(Page.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-        ObjectList(human_resources_panels, heading='Human Resources Info'),
+        ObjectList(
+            content_panels,
+            heading='Content'
+        ),
+        ObjectList(
+            Page.promote_panels,
+            heading='Promote'
+        ),
+        ObjectList(
+            Page.settings_panels,
+            classname="settings",
+            heading='Settings'
+        ),
+        ObjectList(
+            human_resources_panels,
+            heading='Human Resources Info'
+        ),
     ])
 
     def __str__(self):
@@ -208,7 +227,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         for u in UnitPage.objects.live().filter(display_in_directory=True):
             records.append([u.get_full_name().split(' - '), u])
 
-        # sort records by full name. 
+        # sort records by full name.
         records = sorted(records, key=lambda r: r[1].get_full_name())
 
         hierarchical_units = Tree()
@@ -217,7 +236,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
             f = 0
             while f < len(record):
                 next_child = t.get_child(record[f])
-                if next_child == None:
+                if next_child is None:
                     next_child = Tree(record[f], unit_page)
                     t.add_child(next_child)
                 t = next_child
@@ -225,11 +244,16 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         return hierarchical_units
 
-    def get_full_name(self, library_directory = True):
-        return ' - '.join(self.get_ancestors(True).type(UnitPage).values_list('title', flat=True))
+    def get_full_name(self, library_directory=True):
+        return ' - '.join(self.get_ancestors(True).type(UnitPage).values_list(
+            'title',
+            flat=True
+        ))
 
     def get_campus_directory_full_name(self):
-        return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(unitpage__display_in_campus_directory=True).values_list('title', flat=True))
+        return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(
+            unitpage__display_in_campus_directory=True
+        ).values_list('title', flat=True))
 
     class Meta:
         ordering = ['title']
@@ -237,7 +261,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
 class UnitIndexPage(BasePage):
     intro = RichTextField()
-   
+
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ] + BasePage.content_panels
@@ -245,20 +269,23 @@ class UnitIndexPage(BasePage):
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
     ]
-   
+
     subpage_types = ['units.UnitPage']
 
     def get_context(self, request):
         context = super(UnitIndexPage, self).get_context(request)
 
         context['units_hierarchical'] = []
-        for u in UnitPage.objects.filter(display_in_directory = True):
-            unit_page = {} 
+        for u in UnitPage.objects.filter(display_in_directory=True):
             if u.contact_point_title:
-                unit_page['full_name'] = u.get_full_name() + ' - ' + u.contact_point_title
+                unit_page_full_name = ' - '.join(
+                    [u.get_full_name(), u.contact_point_title]
+                )
             else:
-                unit_page['full_name'] = u.get_full_name()
-            context['units_hierarchical'].append(unit_page)
+                unit_page_full_name = u.get_full_name()
+
+            context['units_hierarchical'].append({
+                'full_name': unit_page_full_name,
+            })
 
         return context
-            
