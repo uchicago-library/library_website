@@ -138,8 +138,10 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
     location = models.ForeignKey(
         'public.LocationPage',
-        null=True,
         blank=True,
+        help_text='Controls the address, hours and quick numbers that will \
+                   appear on various web pages.',
+        null=True,
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_related'
     )
@@ -152,7 +154,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         related_name='department_head_of'
     )
     department_head_is_interim = models.BooleanField(
-        default=False
+        default=False,
+        help_text='For HR reports.'
     )
     building = models.IntegerField(
         choices=BUILDINGS,
