@@ -141,7 +141,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     display_in_campus_directory = models.BooleanField(default=True)
 
     content_panels = Page.content_panels + [
-        FieldPanel('contact_point_title'),
         FieldPanel('friendly_name'),
         FieldPanel('alphabetical_directory_name'),
         FieldPanel('display_in_directory'),
