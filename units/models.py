@@ -252,12 +252,51 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         return hierarchical_units
 
     def get_full_name(self, library_directory=True):
+        """
+        Get a UnitPage's full name according to Wagtail.
+
+        The full name of a UnitPage includes a breadcrumb trail of the titles
+        its ancestor UnitPages. 
+        
+        Example:
+        Wagtail contains a UnitPage for "Collections & Access". That Unit Page
+        contains "Access Services". The full name for Access Services is
+        "Collections & Access - Access Services".
+
+        Compare this method's output with get_campus_directory_full_name().
+        """
         return ' - '.join(self.get_ancestors(True).type(UnitPage).values_list(
             'title',
             flat=True
         ))
 
     def get_campus_directory_full_name(self):
+        """
+        Get a UnitPage's campus directory name.
+
+        The campus directory describes a university department in a three level
+        heirarchy: division, department, and sub-department. For library
+        departments division is always "Library". 
+
+        The library's own view of its org chart has more levels than what we
+        can represent in the campus directory, so we skip some levels to make
+        room for the departments below it. To skip a level, uncheck the 
+        display_in_campus_directory boolean on a UnitPage in the Wagtail admin.
+
+        Unchecking that boolean has two effects: first, the
+        report_out_of_sync_library_units management command will skip this 
+        unit. Second, any sub-units will not include "Collections & Access"
+        when we retrieve the campus directory's version of this unit's full
+        name using this method. 
+
+        Example:
+        Wagail contains a UnitPage for "Collections & Access - Access
+        Services". Access Services has display_in_campus_directory set to 
+        true, but Collections & Access has that boolean set to false.
+
+        The campus directory full name for Access Services should be "Access
+        Services". 
+        """
         return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(
             unitpage__display_in_campus_directory=True
         ).values_list('title', flat=True))
