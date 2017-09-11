@@ -184,7 +184,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('building'),
         FieldPanel('is_a_division'),
         FieldPanel('display_in_campus_directory'),
-        FieldPanel('internal_email'),
         PageChooserPanel('public_web_page')
     ] + Email.content_panels + [
         InlinePanel('unit_page_phone_number', label='Phone Numbers'),
