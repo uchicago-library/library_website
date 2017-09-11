@@ -174,17 +174,16 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
                    UnitPages differ from campus directory units.'
     )
 
-    content_panels = Page.content_panels + [
-        PageChooserPanel('location'),
-    ] + BasePage.content_panels
+    content_panels = Page.content_panels + BasePage.content_panels
 
     human_resources_panels = [
-        FieldPanel('friendly_name'),
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('display_in_dropdown'),
+        FieldPanel('friendly_name'),
+        PageChooserPanel('location'),
         FieldPanel('building'),
         PageChooserPanel('public_web_page'),
         FieldPanel('room_number')
