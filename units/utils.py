@@ -1,3 +1,4 @@
+from base.utils import get_xml_from_directory_api
 from django.conf import settings
 from django.db.models.base import ObjectDoesNotExist
 from django.utils.text import slugify
@@ -5,6 +6,9 @@ from file_parsing import is_int
 from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
 from openpyxl import Workbook
 from wagtail.wagtailcore.models import Page, Site
+from xml.etree import ElementTree
+
+import re
 
 def get_default_unit():
     """
@@ -146,6 +150,38 @@ def get_quick_nums_for_library_or_dept(request):
             except(UnitPage.DoesNotExist, AssertionError, KeyError):
                 pass
     return html
+
+def get_units_from_campus_directory():
+    """
+    Report units in the campus directory.
+
+    Returns:
+        a set() of unit page names, each a string in the format produced by
+        UnitPage's get_campus_directory_full_name() method.
+    """
+    units = set()
+    x = ElementTree.fromstring(
+        get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
+    )
+    for d in x.findall(".//departments/department"):
+        department_name = re.sub(
+            '\s+',
+            ' ',
+            d.find('name').text
+        ).strip()
+        units.add(department_name)
+        department_xml = d.find('resources/xmlURL').text
+        x2 = ElementTree.fromstring(
+            get_xml_from_directory_api(department_xml)
+        )
+        for d2 in x2.findall(".//subDepartments/subDepartment"):
+            subdepartment_name = re.sub(
+                '\s+',
+                ' ',
+                d2.find('name').text
+            ).strip()
+            units.add(department_name + ' - ' + subdepartment_name)
+    return units
 
 def get_units_wagtail(**options):
     from units.models import UnitPage

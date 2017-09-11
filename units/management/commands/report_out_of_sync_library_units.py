@@ -2,11 +2,8 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-from base.utils import get_xml_from_directory_api
 from units.models import UnitPage
-from xml.etree import ElementTree
-
-import re
+from units.utils import get_units_from_campus_directory
 
 class Command (BaseCommand):
     """
@@ -24,29 +21,7 @@ class Command (BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
-        api_units = set()
-        x = ElementTree.fromstring(
-            get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
-        )
-        for d in x.findall(".//departments/department"):
-            department_name = re.sub(
-                '\s+',
-                ' ',
-                d.find('name').text
-            ).strip()
-            api_units.add(department_name)
-            department_xml = d.find('resources/xmlURL').text
-            x2 = ElementTree.fromstring(
-                get_xml_from_directory_api(department_xml)
-            )
-            for d2 in x2.findall(".//subDepartments/subDepartment"):
-                subdepartment_name = re.sub(
-                    '\s+',
-                    ' ',
-                    d2.find('name').text
-                ).strip()
-                api_units.add(department_name + ' - ' + subdepartment_name)
-
+        api_units = get_units_from_campus_directory()
         wag_units = set()
         for unit_page in UnitPage.objects.live().filter(display_in_campus_directory=True):
             wag_units.add(unit_page.get_campus_directory_full_name())
