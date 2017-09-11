@@ -151,15 +151,49 @@ def get_quick_nums_for_library_or_dept(request):
                 pass
     return html
 
-def get_units_from_campus_directory():
+def units_out_of_sync():
     """
-    Report units in the campus directory.
+    Get lists of unit pages that are out of sync.
+
+    This function returns two lists--first, a list of the names of unit pages
+    that are present in Wagtail, but missing in the campus directory. Second,
+    a list of the names of unit pages that are present in the campus directory
+    but missing in Wagtail.
+
+    Note: We have to return names in the style of the campus directory (like
+    those returned by the UnitPage's get_campus_directory_full_name() method)
+    because we may only have access to a given unit in the campus directory. If
+    that's the case it would be impossible to tell what its full name might be
+    in the library directory.
+
+    Returns: two lists of strings.
+    """
+    from units.models import UnitPage
+    api_unit_names = get_campus_directory_unit_names()
+    wag_unit_names = set()
+
+    for u in UnitPage.objects.filter(
+        display_in_campus_directory=True,
+        live=True
+    ):
+        wag_unit_names.add(u.get_campus_directory_full_name())
+
+    missing_in_campus_directory = sorted(
+        list(api_unit_names.difference(wag_unit_names))
+    )
+    missing_in_wagtail = sorted(
+        list(wag_unit_names.difference(api_unit_names))
+    )
+    return missing_in_campus_directory, missing_in_wagtail
+
+def get_campus_directory_unit_names():
+    """
+    Report unit names in the campus directory.
 
     Returns:
-        a set() of unit page names, each a string in the format produced by
-        UnitPage's get_campus_directory_full_name() method.
+        a set() of campus directory full names, as strings.
     """
-    units = set()
+    unit_names = set()
     x = ElementTree.fromstring(
         get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
     )
@@ -169,7 +203,7 @@ def get_units_from_campus_directory():
             ' ',
             d.find('name').text
         ).strip()
-        units.add(department_name)
+        unit_names.add(department_name)
         department_xml = d.find('resources/xmlURL').text
         x2 = ElementTree.fromstring(
             get_xml_from_directory_api(department_xml)
@@ -180,8 +214,8 @@ def get_units_from_campus_directory():
                 ' ',
                 d2.find('name').text
             ).strip()
-            units.add(department_name + ' - ' + subdepartment_name)
-    return units
+            unit_names.add(department_name + ' - ' + subdepartment_name)
+    return unit_names
 
 def get_units_wagtail(**options):
     from units.models import UnitPage

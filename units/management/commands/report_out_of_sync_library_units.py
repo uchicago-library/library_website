@@ -2,43 +2,27 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-from units.models import UnitPage
-from units.utils import get_units_from_campus_directory
+from units.utils import units_out_of_sync
+
 
 class Command (BaseCommand):
     """
-    Report library units that are out of sync between Wagtail and the University Directory.
+    Report library units that are out of sync between Wagtail and the
+    University Directory.
 
-    Example: 
+    Example:
         python manage.py report_out_of_sync_library_units
     """
 
     def handle(self, *args, **options):
-        """
-        The actual logic of the command. Subclasses must implement this 
-        method. It may return a Unicode string which will be printed to 
-        stdout. More: https://docs.djangoproject.com/en/1.8/howto/custom
-        -management-commands/#django.core.management.BaseCommand.handle
-        """
-
-        api_units = get_units_from_campus_directory()
-        wag_units = set()
-        for unit_page in UnitPage.objects.live().filter(display_in_campus_directory=True):
-            wag_units.add(unit_page.get_campus_directory_full_name())
-
-        au = sorted(list(api_units.difference(wag_units)))
-        wu = sorted(list(wag_units.difference(api_units)))
-
+        cu, wu = units_out_of_sync()
         output = []
-        if au:
+        if wu:
             output.append("THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:")
             output = output + wu
             output.append("")
-        if wu:
+        if cu:
             output.append("THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
-            output = output + au
+            output = output + cu
             output.append("")
-
         return "\n".join(output)
-
-
