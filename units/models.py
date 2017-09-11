@@ -256,8 +256,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         Get a UnitPage's full name according to Wagtail.
 
         The full name of a UnitPage includes a breadcrumb trail of the titles
-        its ancestor UnitPages. 
-        
+        its ancestor UnitPages.
+
         Example:
         Wagtail contains a UnitPage for "Collections & Access". That Unit Page
         contains "Access Services". The full name for Access Services is
@@ -276,26 +276,26 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         The campus directory describes a university department in a three level
         heirarchy: division, department, and sub-department. For library
-        departments division is always "Library". 
+        departments division is always "Library".
 
         The library's own view of its org chart has more levels than what we
         can represent in the campus directory, so we skip some levels to make
-        room for the departments below it. To skip a level, uncheck the 
+        room for the departments below it. To skip a level, uncheck the
         display_in_campus_directory boolean on a UnitPage in the Wagtail admin.
 
         Unchecking that boolean has two effects: first, the
-        report_out_of_sync_library_units management command will skip this 
+        report_out_of_sync_library_units management command will skip this
         unit. Second, any sub-units will not include "Collections & Access"
         when we retrieve the campus directory's version of this unit's full
-        name using this method. 
+        name using this method.
 
         Example:
         Wagail contains a UnitPage for "Collections & Access - Access
-        Services". Access Services has display_in_campus_directory set to 
+        Services". Access Services has display_in_campus_directory set to
         true, but Collections & Access has that boolean set to false.
 
         The campus directory full name for Access Services should be "Access
-        Services". 
+        Services".
         """
         return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(
             unitpage__display_in_campus_directory=True
