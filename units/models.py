@@ -168,7 +168,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     public_url = models.CharField(max_length=255, blank=True)
     public_url_label = models.CharField(max_length=255, blank=True)
     is_a_division = models.BooleanField(default=False)
-    display_in_campus_directory = models.BooleanField(default=True)
+    display_in_campus_directory = models.BooleanField(
+        default=True,
+        help_text='This unit will appear in reports showing where Wagtail \
+                   UnitPages differ from campus directory units.'
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('friendly_name'),
