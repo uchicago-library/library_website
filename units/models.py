@@ -183,8 +183,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
         FieldPanel('building'),
-        FieldPanel('public_url'),
-        FieldPanel('public_url_label'),
         FieldPanel('is_a_division'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('internal_email'),
