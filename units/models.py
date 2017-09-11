@@ -183,11 +183,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     human_resources_panels = [
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
-        FieldPanel('building'),
         FieldPanel('is_a_division'),
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('display_in_dropdown'),
+        FieldPanel('building'),
         PageChooserPanel('public_web_page')
     ] + Email.content_panels + [
         InlinePanel('unit_page_phone_number', label='Phone Numbers'),
