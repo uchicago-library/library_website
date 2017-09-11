@@ -183,7 +183,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     human_resources_panels = [
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
-        FieldPanel('is_a_division'),
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('display_in_dropdown'),
