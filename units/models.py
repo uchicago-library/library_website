@@ -130,8 +130,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     public_web_page = models.ForeignKey(
         'wagtailcore.Page',
         blank=True,
-        help_text='A link to this page will appear in the departmental \
-                   directory on the library website.',
+        help_text='The name of this department will hyperlink to this page in \
+                   the departmental directory on the library website.',
         null=True,
         on_delete=models.SET_NULL,
         related_name='+',
@@ -175,7 +175,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('display_in_directory'),
         FieldPanel('display_in_dropdown'),
         FieldPanel('room_number'),
-        PageChooserPanel('public_web_page'),
         PageChooserPanel('location'),
     ] + BasePage.content_panels
 
@@ -186,6 +185,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('is_a_division'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('internal_email'),
+        PageChooserPanel('public_web_page')
     ] + Email.content_panels + [
         InlinePanel('unit_page_phone_number', label='Phone Numbers'),
     ] + FaxNumber.content_panels + LinkedText.content_panels
