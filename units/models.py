@@ -175,12 +175,12 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('friendly_name'),
         FieldPanel('room_number'),
         PageChooserPanel('location'),
     ] + BasePage.content_panels
 
     human_resources_panels = [
+        FieldPanel('friendly_name'),
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
         FieldPanel('display_in_directory'),
