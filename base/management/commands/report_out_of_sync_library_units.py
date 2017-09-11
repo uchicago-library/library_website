@@ -6,6 +6,8 @@ from base.utils import get_xml_from_directory_api
 from units.models import UnitPage
 from xml.etree import ElementTree
 
+import re
+
 class Command (BaseCommand):
     """
     Report library units that are out of sync between Wagtail and the University Directory.
@@ -23,18 +25,31 @@ class Command (BaseCommand):
         """
 
         api_units = set()
-        x = ElementTree.fromstring(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16'))
+        x = ElementTree.fromstring(
+            get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
+        )
         for d in x.findall(".//departments/department"):
-            department_name = d.find('name').text
+            department_name = re.sub(
+                '\s+',
+                ' ',
+                d.find('name').text
+            ).strip()
+            api_units.add(department_name)
             department_xml = d.find('resources/xmlURL').text
-            x2 = ElementTree.fromstring(get_xml_from_directory_api(department_xml))
+            x2 = ElementTree.fromstring(
+                get_xml_from_directory_api(department_xml)
+            )
             for d2 in x2.findall(".//subDepartments/subDepartment"):
-                subdepartment_name = d2.find('name').text
+                subdepartment_name = re.sub(
+                    '\s+',
+                    ' ',
+                    d2.find('name').text
+                ).strip()
                 api_units.add(department_name + ' - ' + subdepartment_name)
 
         wag_units = set()
         for unit_page in UnitPage.objects.live().filter(display_in_campus_directory=True):
-            wag_units.add(unit_page.get_full_name())
+            wag_units.add(unit_page.get_campus_directory_full_name())
 
         au = sorted(list(api_units.difference(wag_units)))
         wu = sorted(list(wag_units.difference(api_units)))
