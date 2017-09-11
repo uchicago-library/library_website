@@ -175,7 +175,6 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('room_number'),
         PageChooserPanel('location'),
     ] + BasePage.content_panels
 
@@ -187,7 +186,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         FieldPanel('display_in_campus_directory'),
         FieldPanel('display_in_dropdown'),
         FieldPanel('building'),
-        PageChooserPanel('public_web_page')
+        PageChooserPanel('public_web_page'),
+        FieldPanel('room_number')
     ] + Email.content_panels + [
         InlinePanel('unit_page_phone_number', label='Phone Numbers'),
     ] + FaxNumber.content_panels + LinkedText.content_panels
