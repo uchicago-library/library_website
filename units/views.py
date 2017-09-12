@@ -1,9 +1,17 @@
 from .models import Tree
+from .forms import UnitReportingForm
+from .utils import add_units_out_of_sync_worksheet
+from .utils import add_wagtail_units_report_worksheet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.html import escape
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formatdate
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
@@ -14,6 +22,10 @@ from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOM
 from base.utils import get_hours_and_location, get_page_loc_name
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+
+import smtplib
 import urllib.parse
 
 '''
@@ -268,3 +280,48 @@ def units(request):
         'hours_page_url': home_page.get_hours_page(request),
         'quick_nums': get_quick_nums_for_library_or_dept(request),
     })
+
+def unit_reporting_admin_view(request):
+    """
+    Provide a form in the Wagtail admin for HR to get reports on Library units.
+    """
+    if request.method == 'POST':
+        form = UnitReportingForm(request.POST)
+        options = {
+            'live': form.data.get('live', None),
+            'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
+        }
+        filename = form.data.get('filename', 'unit_report')
+        email_to = form.data.get('email_to', None)
+        if form.is_valid():
+            workbook = Workbook()
+            workbook.remove_sheet(workbook.active)
+            add_wagtail_units_report_worksheet(workbook, **options)
+            add_units_out_of_sync_worksheet(workbook)
+
+            virtual_workbook = save_virtual_workbook(workbook)
+
+            msg = MIMEMultipart()
+            msg['From'] = 'jej@uchicago.edu'
+            msg['To'] = email_to
+            msg['Date'] = formatdate(localtime=True)
+            msg['Subject'] = 'Library Units Report'
+
+            msg.attach(MIMEText('A report of Library units is attached.'))
+            part = MIMEApplication(virtual_workbook, name=filename)
+            part['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+            msg.attach(part)
+
+            s = smtplib.SMTP('localhost')
+            s.send_message(msg)
+            s.quit()
+        
+            return render(request, 'units/unit_reporting_form_thank_you.html') 
+        else:
+            return render(request, 'units/unit_reporting_form.html', {'form': form})
+    else:
+        form = UnitReportingForm({'live': True, 'filename': 'unit_report'})
+    return render(request, 'units/unit_reporting_form.html', {
+        'form': form
+    })
+

@@ -1,0 +1,26 @@
+{% extends "wagtailadmin/base.html" %}
+{% load wagtailadmin_tags i18n staticfiles gravatar %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'wagtailstyleguide/css/styleguide.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block titletag %}Unit Reporting Form Thank You{% endblock %}
+{% block bodyclass %}unitreportingformthankyou{% endblock %}
+
+{% block content %}
+    {% trans "Unit Reporting Form Thank You" as title_trans %}
+    {% include "wagtailadmin/shared/header.html" with title=title_trans %}
+
+    <div class="nice-padding">
+        <h2>Thank You</h2>
+        <p>Your report is being generated, it will be sent to the email address
+you provided. If it does not arrive in a few minutes please contact
+web-admin@lib.uchicago.edu for support.</p>
+    </div>
+{% endblock %}
+

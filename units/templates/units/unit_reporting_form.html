@@ -18,7 +18,10 @@
 
     <div class="nice-padding">
         <h2>Unit Reporting</h2>
-        <p>Download a unit report in Microsoft Excel format.</p>
+        <p>Download a unit report in Microsoft Excel format. The spreadsheet
+will contain a worksheet for this report and a worksheet listing the units that
+are present in the Library directory but not in the campus directory, and vice
+versa.</p>
         <form action="{% url 'list_units_wagtail' %}" method="POST">
             {% csrf_token %}
     
@@ -26,6 +29,7 @@
                 <ul class="fields">
                     {% block fields %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.email_to %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.live %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.display_in_campus_directory %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.latest_revision_created_at %}

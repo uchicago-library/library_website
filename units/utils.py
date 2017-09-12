@@ -4,7 +4,6 @@ from django.db.models.base import ObjectDoesNotExist
 from django.utils.text import slugify
 from file_parsing import is_int
 from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
-from openpyxl import Workbook
 from wagtail.wagtailcore.models import Page, Site
 from xml.etree import ElementTree
 
@@ -217,7 +216,38 @@ def get_campus_directory_unit_names():
             unit_names.add(department_name + ' - ' + subdepartment_name)
     return unit_names
 
+def add_units_out_of_sync_worksheet(workbook):
+    """
+    Adds a report of the units that are present in Wagtail but not in the
+    campus directory, and vice versa, to a Microsoft Excel spreadsheet.
+
+    Arguments:
+        An OpenPyXL Workbook.
+
+    Side Effect:
+        Adds an OpenPyXL worksheet with information about out of sync units. 
+    """
+    cu, wu = units_out_of_sync()
+    worksheet = workbook.create_sheet(title='units out of sync')
+    if wu:
+        worksheet.append(["THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:"])
+        for w in wu:
+            worksheet.append([w])
+        worksheet.append([""])
+    if cu:
+        worksheet.append(["THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:"])
+        for c in cu:
+            worksheet.append([c])
+        worksheet.append([""])
+
 def get_units_wagtail(**options):
+    """
+    Query for a list of UnitPage objects. The options passed to this function
+    basically get applied as a Django filter().
+
+    Returns:
+        A sorted list of UnitPage objects.
+    """
     from units.models import UnitPage
     try:
         if options['live']:
@@ -243,14 +273,17 @@ def get_units_wagtail(**options):
     except KeyError:
         pass
 
-    return sorted(list(unitpages), key=lambda u: u.get_full_name())            
+    return sorted(list(unitpages), key=lambda u: u.get_full_name())
 
+def add_wagtail_units_report_worksheet(workbook, **options):
+    """
+    Get a report of library units in Microsoft Excel format, for HR reporting.
 
-def report_units_wagtail(**options):
+    Returns:
+        An OpenPyXL Workbook.
+    """
     unitpages = get_units_wagtail(**options)
-
-    workbook = Workbook()
-    worksheet = workbook.active
+    worksheet = workbook.create_sheet(title='wagtail units')
     worksheet.append([
         'ID',
         'LATEST REVISION CREATED AT',
@@ -268,4 +301,3 @@ def report_units_wagtail(**options):
             u.get_full_name(),
             u.get_campus_directory_full_name()
         ])
-    return workbook
