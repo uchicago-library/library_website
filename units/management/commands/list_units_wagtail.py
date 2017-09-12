@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-from units.utils import report_units_wagtail
+from openpyxl import Workbook
+from units.utils import add_wagtail_units_report_worksheet
 
 class Command (BaseCommand):
     """
@@ -24,5 +25,7 @@ class Command (BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
-        workbook = report_units_wagtail(**options)
+        workbook = Workbook()
+        workbook.remove_sheet(workbook.active)
+        add_wagtail_units_report_worksheet(workbook, **options)
         workbook.save(options['filename'])
