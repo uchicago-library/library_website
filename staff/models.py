@@ -310,7 +310,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 FieldPanel('employee_type'),
                 FieldPanel('position_status'),
                 FieldPanel('supervises_students'),
-                FieldPanel('supervisor_override'),
+                PageChooserPanel('supervisor_override'),
             ],
             heading='Human-resources editable fields. These fields will push to the campus directory (where appropriate).'
         ),
