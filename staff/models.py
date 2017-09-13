@@ -158,7 +158,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         on_delete=models.SET_NULL,
         related_name='supervisor_override_for'
     )
-    supervises_students = BooleanField(default=False)
+    supervises_students = BooleanField(
+        default=False,
+        help_text='For HR reporting.'
+    )
     profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
                 blank=True,
