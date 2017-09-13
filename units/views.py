@@ -295,7 +295,7 @@ def unit_reporting_admin_view(request):
         if form.is_valid():
             units_report = WagtailUnitsReport(
                 sync_report = True,
-                units_report = True,
+                unit_report = True,
                 all = not options['live'],
                 display_in_campus_directory = options['display_in_campus_directory'],
                 latest_revision_created_at = options['latest_revision_created_at'],
