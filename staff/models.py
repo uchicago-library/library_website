@@ -171,7 +171,12 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         max_length=255, 
         null=True
     )
-    bio = StreamField(DefaultBodyFields(), blank=True, null=True)
+    bio = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        help_text='A brief bio highlighting what you offer to Library users.',
+        null=True
+    )
     cv = models.ForeignKey(
         'wagtaildocs.Document',
         blank=True,
