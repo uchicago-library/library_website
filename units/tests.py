@@ -182,10 +182,14 @@ class TestQuickNumberUtils(TestCase):
 class ListUnitsWagtail(TestCase):
     def run_command(self, **options):
         tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
-        management.call_command('list_units_wagtail', tempfile.name, **options)
+        options.update({
+            'filename': tempfile.name,
+            'output_format': 'excel'
+        })
+        management.call_command('list_units_wagtail', **options)
 
         wb = load_workbook(tempfile.name)
-        ws = wb.active
+        ws = wb[wb.sheetnames[0]]
         os.unlink(tempfile.name)
 
         return [[cell.value for cell in row] for row in ws.iter_rows(min_row=2)]

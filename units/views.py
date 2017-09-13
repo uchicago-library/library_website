@@ -1,7 +1,6 @@
 from .models import Tree
 from .forms import UnitReportingForm
-from .utils import add_units_out_of_sync_worksheet
-from .utils import add_wagtail_units_report_worksheet
+from .utils import WagtailUnitsReport
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
@@ -22,7 +21,6 @@ from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOM
 from base.utils import get_hours_and_location, get_page_loc_name
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
-from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
 import smtplib
@@ -288,18 +286,23 @@ def unit_reporting_admin_view(request):
     if request.method == 'POST':
         form = UnitReportingForm(request.POST)
         options = {
+            'display_in_campus_directory': form.data.get('display_in_campus_directory', False),
             'live': form.data.get('live', None),
             'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
         }
         filename = form.data.get('filename', 'unit_report')
         email_to = form.data.get('email_to', None)
         if form.is_valid():
-            workbook = Workbook()
-            workbook.remove_sheet(workbook.active)
-            add_wagtail_units_report_worksheet(workbook, **options)
-            add_units_out_of_sync_worksheet(workbook)
+            units_report = WagtailUnitsReport(
+                sync_report = True,
+                units_report = True,
+                all = not options['live'],
+                display_in_campus_directory = options['display_in_campus_directory'],
+                latest_revision_created_at = options['latest_revision_created_at'],
+                live = options['live']
+            )
 
-            virtual_workbook = save_virtual_workbook(workbook)
+            virtual_workbook = save_virtual_workbook(units_report.workbook())
 
             msg = MIMEMultipart()
             msg['From'] = 'jej@uchicago.edu'
@@ -308,9 +311,9 @@ def unit_reporting_admin_view(request):
             msg['Subject'] = 'Library Units Report'
 
             msg.attach(MIMEText('A report of Library units is attached.'))
-            part = MIMEApplication(virtual_workbook, name=filename)
-            part['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
-            msg.attach(part)
+            attachment = MIMEApplication(virtual_workbook, name=filename + '.xlsx')
+            attachment['Content-Disposition'] = 'attachment; filename="{}.xlsx"'.format(filename)
+            msg.attach(attachment)
 
             s = smtplib.SMTP('localhost')
             s.send_message(msg)

@@ -4,9 +4,12 @@ from django.db.models.base import ObjectDoesNotExist
 from django.utils.text import slugify
 from file_parsing import is_int
 from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
+from openpyxl import Workbook
 from wagtail.wagtailcore.models import Page, Site
 from xml.etree import ElementTree
 
+import csv
+import io
 import re
 
 def get_default_unit():
@@ -150,154 +153,248 @@ def get_quick_nums_for_library_or_dept(request):
                 pass
     return html
 
-def units_out_of_sync():
+
+class WagtailUnitsReport:
     """
-    Get lists of unit pages that are out of sync.
-
-    This function returns two lists--first, a list of the names of unit pages
-    that are present in Wagtail, but missing in the campus directory. Second,
-    a list of the names of unit pages that are present in the campus directory
-    but missing in Wagtail.
-
-    Note: We have to return names in the style of the campus directory (like
-    those returned by the UnitPage's get_campus_directory_full_name() method)
-    because we may only have access to a given unit in the campus directory. If
-    that's the case it would be impossible to tell what its full name might be
-    in the library directory.
-
-    Returns: two lists of strings.
+    Reporting on Wagtail units for the HR department. This class includes
+    methods to report on the units that are present in the campus directory but
+    not in Wagtail, and it includes general reporting for library units.
     """
-    from units.models import UnitPage
-    api_unit_names = get_campus_directory_unit_names()
-    wag_unit_names = set()
+    
+    def __init__(self, sync_report=False, unit_report=False, **options):
+        self.sync_report = sync_report
+        self.unit_report = unit_report
+        self.options = {
+            k: options[k] for k in (
+                'all',
+                'display_in_campus_directory',
+                'latest_revision_created_at',
+                'live'
+            )
+        }
 
-    for u in UnitPage.objects.filter(
-        display_in_campus_directory=True,
-        live=True
-    ):
-        wag_unit_names.add(u.get_campus_directory_full_name())
+    def workbook(self):
+        """ 
+        Returns:
+            An OpenPyXL Workbook. 
+        """
+        self.workbook = Workbook()
+        self.workbook.remove_sheet(self.workbook.active)
+        if self.unit_report:
+            self._add_wagtail_units_report_worksheet()
+        if self.sync_report:
+            self._add_units_out_of_sync_worksheet()
+        return self.workbook
 
-    missing_in_campus_directory = sorted(
-        list(api_unit_names.difference(wag_unit_names))
-    )
-    missing_in_wagtail = sorted(
-        list(wag_unit_names.difference(api_unit_names))
-    )
-    return missing_in_campus_directory, missing_in_wagtail
+    def tab_delimited(self):
+        """
+        Returns:
+            A string. Tab-delimited fields with newlines between records.
+        """
+        output = ''
+        if self.unit_report:
+            output = output + self._get_wagtail_units_report_tab_delimited()
+        if self.unit_report and self.sync_report:
+            output = output + "\n\n\n"
+        if self.sync_report:
+            output = output + self._get_units_out_of_sync_tab_delimited()
+        return output
 
-def get_campus_directory_unit_names():
-    """
-    Report unit names in the campus directory.
-
-    Returns:
-        a set() of campus directory full names, as strings.
-    """
-    unit_names = set()
-    x = ElementTree.fromstring(
-        get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
-    )
-    for d in x.findall(".//departments/department"):
-        department_name = re.sub(
-            '\s+',
-            ' ',
-            d.find('name').text
-        ).strip()
-        unit_names.add(department_name)
-        department_xml = d.find('resources/xmlURL').text
-        x2 = ElementTree.fromstring(
-            get_xml_from_directory_api(department_xml)
+    def _units_out_of_sync(self):
+        """
+        Get lists of unit pages that are out of sync.
+    
+        This function returns two lists--first, a list of the names of unit pages
+        that are present in Wagtail, but missing in the campus directory. Second,
+        a list of the names of unit pages that are present in the campus directory
+        but missing in Wagtail.
+    
+        Note: We have to return names in the style of the campus directory (like
+        those returned by the UnitPage's get_campus_directory_full_name() method)
+        because we may only have access to a given unit in the campus directory. If
+        that's the case it would be impossible to tell what its full name might be
+        in the library directory.
+    
+        Returns: two lists of strings.
+        """
+        from units.models import UnitPage
+        api_unit_names = self._get_campus_directory_unit_names()
+        wag_unit_names = set()
+    
+        for u in UnitPage.objects.filter(
+            display_in_campus_directory=True,
+            live=True
+        ):
+            wag_unit_names.add(u.get_campus_directory_full_name())
+    
+        missing_in_campus_directory = sorted(
+            list(api_unit_names.difference(wag_unit_names))
         )
-        for d2 in x2.findall(".//subDepartments/subDepartment"):
-            subdepartment_name = re.sub(
+        missing_in_wagtail = sorted(
+            list(wag_unit_names.difference(api_unit_names))
+        )
+        return missing_in_campus_directory, missing_in_wagtail
+
+    def _get_campus_directory_unit_names(self):
+        """
+        Report unit names in the campus directory.
+    
+        Returns:
+            a set() of campus directory full names, as strings.
+        """
+        unit_names = set()
+        x = ElementTree.fromstring(
+            get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16')
+        )
+        for d in x.findall(".//departments/department"):
+            department_name = re.sub(
                 '\s+',
                 ' ',
-                d2.find('name').text
+                d.find('name').text
             ).strip()
-            unit_names.add(department_name + ' - ' + subdepartment_name)
-    return unit_names
+            unit_names.add(department_name)
+            department_xml = d.find('resources/xmlURL').text
+            x2 = ElementTree.fromstring(
+                get_xml_from_directory_api(department_xml)
+            )
+            for d2 in x2.findall(".//subDepartments/subDepartment"):
+                subdepartment_name = re.sub(
+                    '\s+',
+                    ' ',
+                    d2.find('name').text
+                ).strip()
+                unit_names.add(department_name + ' - ' + subdepartment_name)
+        return unit_names
 
-def add_units_out_of_sync_worksheet(workbook):
-    """
-    Adds a report of the units that are present in Wagtail but not in the
-    campus directory, and vice versa, to a Microsoft Excel spreadsheet.
+    def _get_units_out_of_sync_data(self):
+        """
+        Get the data for an out of sync units report, independant of whatever
+        format the final report will be in (e.g. Excel or tab-delimited.)
+        """
+        output = []
+        campus_units, wagtail_units = self._units_out_of_sync()
+        if wagtail_units:
+            output.append(["THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:"])
+            for w in wagtail_units:
+                output.append([w])
+            output.append([""])
+        if campus_units:
+            output.append(["THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:"])
+            for c in campus_units:
+                output.append([c])
+            output.append([""])
+        return output
 
-    Arguments:
-        An OpenPyXL Workbook.
+    def _add_units_out_of_sync_worksheet(self):
+        """
+        Adds a report of the units that are present in Wagtail but not in the
+        campus directory, and vice versa, to a Microsoft Excel spreadsheet.
+    
+        Side Effect:
+            Adds an OpenPyXL worksheet with information about out of sync units. 
+        """
+        worksheet = self.workbook.create_sheet('out of sync units')
+        for record in self._get_units_out_of_sync_data():
+            worksheet.append(record)
 
-    Side Effect:
-        Adds an OpenPyXL worksheet with information about out of sync units. 
-    """
-    cu, wu = units_out_of_sync()
-    worksheet = workbook.create_sheet(title='units out of sync')
-    if wu:
-        worksheet.append(["THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:"])
-        for w in wu:
-            worksheet.append([w])
-        worksheet.append([""])
-    if cu:
-        worksheet.append(["THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:"])
-        for c in cu:
-            worksheet.append([c])
-        worksheet.append([""])
+    def _get_units_out_of_sync_tab_delimited(self):
+        """
+        Get a report of library units that are present in Wagtail but not in
+        the campus directory, and vice versa. 
 
-def get_units_wagtail(**options):
-    """
-    Query for a list of UnitPage objects. The options passed to this function
-    basically get applied as a Django filter().
+        Returns:
+            A string. Tab delimited data, separated by newlines. 
+        """
+        stringio = io.StringIO()
+        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        for record in self._get_units_out_of_sync_data():
+            writer.writerow(record)
+        return stringio.getvalue()
 
-    Returns:
-        A sorted list of UnitPage objects.
-    """
-    from units.models import UnitPage
-    try:
-        if options['live']:
-            unitpages = set(UnitPage.objects.live())
-        else:
-            unitpages = set(UnitPage.objects.all())
-    except KeyError:
-        unitpages = set(UnitPage.objects.all())
-
-    try:
-        if options['latest_revision_created_at']:
-            latest_revision_created_at_string = '{}-{}-{} 00:00-0600'.format(options['latest_revision_created_at'][0:4],
-                options['latest_revision_created_at'][4:6], options['latest_revision_created_at'][6:8])
-            new_unitpages = set(UnitPage.objects.filter(latest_revision_created_at__gte=latest_revision_created_at_string))
-            unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
-    except KeyError:
-        pass
-
-    try:
-        if options['display_in_campus_directory']:
-            new_unitpages = set(UnitPage.objects.filter(display_in_campus_directory=True))
-            unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
-    except KeyError:
-        pass
-
-    return sorted(list(unitpages), key=lambda u: u.get_full_name())
-
-def add_wagtail_units_report_worksheet(workbook, **options):
-    """
-    Get a report of library units in Microsoft Excel format, for HR reporting.
-
-    Returns:
-        An OpenPyXL Workbook.
-    """
-    unitpages = get_units_wagtail(**options)
-    worksheet = workbook.create_sheet(title='wagtail units')
-    worksheet.append([
-        'ID',
-        'LATEST REVISION CREATED AT',
-        'LIBRARY DIRECTORY FULL NAME',
-        'CAMPUS DIRECTORY FULL NAME'
-    ])
-    for u in unitpages:
+    def _get_units_wagtail(self):
+        """
+        Query for a list of UnitPage objects. The options passed to this function
+        basically get applied as a Django filter().
+    
+        Returns:
+            A sorted list of UnitPage objects.
+        """
+        from units.models import UnitPage
         try:
-            latest_revision_created_at = u.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
-        except AttributeError:
-            latest_revision_created_at = ''
-        worksheet.append([
-            str(u.id),
-            latest_revision_created_at,
-            u.get_full_name(),
-            u.get_campus_directory_full_name()
+            if self.options['live']:
+                unitpages = set(UnitPage.objects.live())
+            else:
+                unitpages = set(UnitPage.objects.all())
+        except KeyError:
+            unitpages = set(UnitPage.objects.all())
+    
+        try:
+            if self.options['latest_revision_created_at']:
+                latest_revision_created_at_string = '{}-{}-{} 00:00-0600'.format(
+                    self.options['latest_revision_created_at'][0:4],
+                    self.options['latest_revision_created_at'][4:6],
+                    self.options['latest_revision_created_at'][6:8]
+                )
+                new_unitpages = set(UnitPage.objects.filter(latest_revision_created_at__gte=latest_revision_created_at_string))
+                unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
+        except KeyError:
+            pass
+    
+        try:
+            if self.options['display_in_campus_directory']:
+                new_unitpages = set(UnitPage.objects.filter(display_in_campus_directory=True))
+                unitpages = unitpages.intersection(new_unitpages) if unitpages else new_unitpages
+        except KeyError:
+            pass
+    
+        return sorted(list(unitpages), key=lambda u: u.get_full_name())
+
+    def _get_units_report_data(self):
+        """
+        Get the data for a report of library units, independant of whatever
+        format the final report will be in (e.g. Excel or tab-delimited.)
+        """
+        output = []
+        output.append([
+            'ID',
+            'LATEST REVISION CREATED AT',
+            'LIBRARY DIRECTORY FULL NAME',
+            'CAMPUS DIRECTORY FULL NAME'
         ])
+        unitpages = self._get_units_wagtail()
+        for u in unitpages:
+            try:
+                latest_revision_created_at = u.latest_revision_created_at.strftime('%m/%d/%Y %-I:%M:%S %p')
+            except AttributeError:
+                latest_revision_created_at = ''
+            output.append([
+                str(u.id),
+                latest_revision_created_at,
+                u.get_full_name(),
+                u.get_campus_directory_full_name()
+            ])
+        return output
+
+    def _add_wagtail_units_report_worksheet(self):
+        """
+        Add a report of library units in Microsoft Excel format, for HR reporting.
+    
+        Side Effect:
+            Adds an OpenPyXL worksheet with information about units.
+        """
+        worksheet = self.workbook.create_sheet(title='wagtail units')
+        for record in self._get_units_report_data():
+            worksheet.append(record)
+
+    def _get_wagtail_units_report_tab_delimited(self):
+        """
+        Get a report of library units in tab delimited format, for HR reporting.
+
+        Returns:
+            A string. Tab delimited data, separated by newlines. 
+        """
+        stringio = io.StringIO()
+        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        for record in self._get_units_report_data():
+            writer.writerow(record)
+        return stringio.getvalue()
