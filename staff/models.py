@@ -161,8 +161,9 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     supervises_students = BooleanField(default=False)
     profile_picture = models.ForeignKey(
                 'wagtailimages.Image',
-                null=True,
                 blank=True,
+                help_text='Profile pictures should be frontal headshots, preferrably on a gray background.',
+                null=True,
                 on_delete=models.SET_NULL,
                 related_name='+')
     libguide_url = models.URLField(
