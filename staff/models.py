@@ -177,7 +177,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    is_public_persona = BooleanField(default=False)
+    is_public_persona = BooleanField(
+        default=False,
+        help_text='(display changes not yet implemented)'
+    )
     orcid_regex = RegexValidator(regex=ORCID_FORMAT, message=ORCID_ERROR_MSG)
     orcid = CharField(
         blank=True,
