@@ -166,9 +166,11 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 on_delete=models.SET_NULL,
                 related_name='+')
     libguide_url = models.URLField(
+        blank=True,
+        help_text='Your profile page on guides.lib.uchicago.edu.',
         max_length=255, 
-        null=True, 
-        blank=True)
+        null=True
+    )
     bio = StreamField(DefaultBodyFields(), blank=True, null=True)
     cv = models.ForeignKey(
         'wagtaildocs.Document',
