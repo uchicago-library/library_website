@@ -142,7 +142,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     employee_type = IntegerField(
         choices=EMPLOYEE_TYPES, 
         default=1,
-        help_text='Clerical, exempt, IT or Librarian.'
+        help_text='Clerical, exempt, non-exempt, IT or Librarian.'
     )
         
     position_status = IntegerField(
