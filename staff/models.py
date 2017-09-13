@@ -180,9 +180,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     is_public_persona = BooleanField(default=False)
     orcid_regex = RegexValidator(regex=ORCID_FORMAT, message=ORCID_ERROR_MSG)
     orcid = CharField(
+        blank=True,
+        help_text='See https://orcid.org for more information.',
         max_length=255,
         null=True,
-        blank=True,
         validators=[orcid_regex]
     )
 
