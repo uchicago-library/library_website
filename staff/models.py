@@ -21,7 +21,8 @@ EMPLOYEE_TYPES = (
     (1, 'Clerical'),
     (2, 'Exempt'),
     (3, 'IT'),
-    (4, 'Librarian')
+    (4, 'Librarian'),
+    (5, 'Non-exempt')
 )
 
 POSITION_STATUS = (
