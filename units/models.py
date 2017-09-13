@@ -111,7 +111,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
                    (friendly_name) study spaces."',
         max_length=255,
     )
-    display_in_directory = models.BooleanField(
+    display_in_library_directory = models.BooleanField(
         default=True,
         help_text='Display this unit in the library\'s departmental \
                    directory.'
@@ -179,7 +179,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     human_resources_panels = [
         PageChooserPanel('department_head'),
         FieldPanel('department_head_is_interim'),
-        FieldPanel('display_in_directory'),
+        FieldPanel('display_in_library_directory'),
         FieldPanel('display_in_campus_directory'),
         FieldPanel('display_in_dropdown'),
         FieldPanel('friendly_name'),
@@ -195,7 +195,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
     search_fields = BasePage.search_fields + [
         index.SearchField('alphabetical_directory_name'),
-        index.FilterField('display_in_directory')
+        index.FilterField('display_in_library_directory')
     ]
 
     edit_handler = TabbedInterface([
@@ -231,7 +231,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     @staticmethod
     def hierarchical_units():
         records = []
-        for u in UnitPage.objects.live().filter(display_in_directory=True):
+        for u in UnitPage.objects.live().filter(display_in_library_directory=True):
             records.append([u.get_full_name().split(' - '), u])
 
         # sort records by full name.
@@ -322,7 +322,7 @@ class UnitIndexPage(BasePage):
         context = super(UnitIndexPage, self).get_context(request)
 
         context['units_hierarchical'] = []
-        for u in UnitPage.objects.filter(display_in_directory=True):
+        for u in UnitPage.objects.filter(display_in_library_directory=True):
             if u.contact_point_title:
                 unit_page_full_name = ' - '.join(
                     [u.get_full_name(), u.contact_point_title]

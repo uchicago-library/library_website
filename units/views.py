@@ -232,7 +232,7 @@ def units(request):
         hierarchical_html = ''
 
         if query:
-            units = UnitPage.objects.filter(display_in_directory=True).search(query)
+            units = UnitPage.objects.filter(display_in_library_directory=True).search(query)
             h = []
             for u in units:
                 h.append(get_unit_info(Tree(u.title, u)))
