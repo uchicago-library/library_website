@@ -174,8 +174,9 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     bio = StreamField(DefaultBodyFields(), blank=True, null=True)
     cv = models.ForeignKey(
         'wagtaildocs.Document',
-        null=True,
         blank=True,
+        help_text='Your CV or resume.',
+        null=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
