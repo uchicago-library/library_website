@@ -478,7 +478,11 @@ class ListStaffWagtail(TestCase):
 
     def run_command(self, **options):
         tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
-        management.call_command('list_staff_wagtail', tempfile.name, **options)
+        options.update({
+            'filename': tempfile.name,
+            'output_format': 'excel'
+        })
+        management.call_command('list_staff_wagtail', **options)
 
         wb = load_workbook(tempfile.name)
         ws = wb.active

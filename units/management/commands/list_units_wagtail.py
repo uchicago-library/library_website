@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 from units.utils import WagtailUnitsReport
 
 class Command (BaseCommand):
@@ -22,11 +24,11 @@ class Command (BaseCommand):
             default=False
         )
         parser.add_argument(
-            '--latest_revision_created_at',
+            '--latest-revision-created-at',
             type=str
         )
         parser.add_argument(
-            '--display_in_campus_directory',
+            '--display-in-campus-directory',
             action='store_true',
             default=False
         )
@@ -83,7 +85,7 @@ class Command (BaseCommand):
                     units_report.workbook(),
                     Name='unitreport.xlsx'
                 )
-                attachment['Content-Disposition'] = 'attachment; filename="unitreport.xlsx'
+                attachment['Content-Disposition'] = 'attachment; filename="unitreport.xlsx"'
                 ms.attach(attachment)
                 s = smtplib.SMTP('localhost')
                 s.send_message(msg)

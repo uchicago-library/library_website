@@ -7,8 +7,6 @@ from openpyxl.writer.excel import save_virtual_workbook
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
-from .utils import report_staff_wagtail
-
 def admin_view(request):
     # Needs to be inside for unit tests
     from .forms import StaffReportingForm
