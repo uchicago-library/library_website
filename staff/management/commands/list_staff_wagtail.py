@@ -138,9 +138,9 @@ class Command (BaseCommand):
                 msg.attach(MIMEText('A report of Library staff is attached.'))
                 attachment = MIMEApplication(
                     virtual_workbook,
-                    Name=options['filename'] + '.xlsx'
+                    Name=options['filename']
                 )
-                attachment['Content-Disposition'] = 'attachment; filename="{}.xlsx"'.format(options['filename'])
+                attachment['Content-Disposition'] = 'attachment; filename="{}"'.format(options['filename'])
                 msg.attach(attachment)
 
                 s = smtplib.SMTP('localhost')
