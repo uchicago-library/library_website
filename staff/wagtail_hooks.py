@@ -14,6 +14,7 @@ def admin_view(request):
         form = StaffReportingForm(request.POST)
         options = {
             'filename': form.data.get('filename', 'staff_report'),
+            'email_to': form.data.get('email-to', None),
             'cnetid': form.data.get('cnetid', None),
             'department': form.data.get('department', None),
             'department_and_subdepartments': form.data.get('department_and_subdepartments', None),

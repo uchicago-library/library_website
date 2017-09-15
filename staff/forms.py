@@ -7,6 +7,9 @@ class StaffReportingForm(forms.Form):
     l = 'Filename'
     filename = forms.CharField(label=l, required=True)
 
+    l = 'Email to'
+    email_to = forms.EmailField(label=l, required=True)
+
     l = 'Live pages only'
     live = forms.BooleanField(label=l, required=False)
 
