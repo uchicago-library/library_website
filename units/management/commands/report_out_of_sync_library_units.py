@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 
-from units.utils import units_out_of_sync
+from units.utils import WagtailUnitsReport
 
 
 class Command (BaseCommand):
@@ -15,14 +15,13 @@ class Command (BaseCommand):
     """
 
     def handle(self, *args, **options):
-        cu, wu = units_out_of_sync()
-        output = []
-        if wu:
-            output.append("THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:")
-            output = output + wu
-            output.append("")
-        if cu:
-            output.append("THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:")
-            output = output + cu
-            output.append("")
-        return "\n".join(output)
+        units_report = WagtailUnitsReport(
+            sync_report = True,
+            unit_report = False,
+            all = False,
+            display_in_campus_directory = False,
+            latest_revision_created_at = None,
+            live = True
+        )
+
+        return units_report.tab_delimited()
