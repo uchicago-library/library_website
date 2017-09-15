@@ -1,16 +1,9 @@
 from .models import Tree
 from .forms import UnitReportingForm
-from .utils import WagtailUnitsReport
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.utils.html import escape
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.utils import formatdate
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
@@ -21,9 +14,7 @@ from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOM
 from base.utils import get_hours_and_location, get_page_loc_name
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
-from openpyxl.writer.excel import save_virtual_workbook
 
-import smtplib
 import urllib.parse
 
 '''
@@ -287,38 +278,31 @@ def unit_reporting_admin_view(request):
         form = UnitReportingForm(request.POST)
         options = {
             'display_in_campus_directory': form.data.get('display_in_campus_directory', False),
+            'email_to': form.data.get('email_to', None),
+            'filename': form.data.get('filename', 'unit_report'),
             'live': form.data.get('live', None),
             'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
         }
-        filename = form.data.get('filename', 'unit_report')
-        email_to = form.data.get('email_to', None)
         if form.is_valid():
-            units_report = WagtailUnitsReport(
-                sync_report = True,
-                unit_report = True,
-                all = not options['live'],
-                display_in_campus_directory = options['display_in_campus_directory'],
-                latest_revision_created_at = options['latest_revision_created_at'],
-                live = options['live']
+            manage_dir = os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__))
             )
-
-            virtual_workbook = save_virtual_workbook(units_report.workbook())
-
-            msg = MIMEMultipart()
-            msg['From'] = 'jej@uchicago.edu'
-            msg['To'] = email_to
-            msg['Date'] = formatdate(localtime=True)
-            msg['Subject'] = 'Library Units Report'
-
-            msg.attach(MIMEText('A report of Library units is attached.'))
-            attachment = MIMEApplication(virtual_workbook, name=filename + '.xlsx')
-            attachment['Content-Disposition'] = 'attachment; filename="{}.xlsx"'.format(filename)
-            msg.attach(attachment)
-
-            s = smtplib.SMTP('localhost')
-            s.send_message(msg)
-            s.quit()
-        
+            args = [
+                'python',
+                manage_dir + os.path.sep + 'manage.py',
+                'list_units_wagtail',
+                '--report-out-of-sync-units',
+                '--output-format=excel'
+            ]
+            for k, v in options.items():
+                if bool(v):
+                    if k == 'filename':
+                        args.append('--{}={}.xlsx'.format(k, v))
+                    elif k in ('all', 'live'):
+                        args.append('--{}'.format(k.replace('_', '-')))
+                    else:
+                        args.append('--{}={}'.format(k.replace('_', '-'), v))
+            subprocess.Popen(args) 
             return render(request, 'units/unit_reporting_form_thank_you.html') 
         else:
             return render(request, 'units/unit_reporting_form.html', {'form': form})

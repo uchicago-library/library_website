@@ -54,9 +54,9 @@ def admin_view(request):
                                'live',
                                'supervises-students',
                                'supervisor-override'):
-                        args.append('--{}'.format(k))
+                        args.append('--{}'.format(k.replace('_', '-')))
                     else:
-                        args.append('--{}={}'.format(k, v))
+                        args.append('--{}={}'.format(k.replace('_', '-'), v))
             subprocess.Popen(args)
             return render(request, 'staff/staff_reporting_form_thank_you.html') 
         else:
