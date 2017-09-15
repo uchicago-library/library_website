@@ -15,6 +15,8 @@ from base.utils import get_hours_and_location, get_page_loc_name
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
 
+import os
+import subprocess
 import urllib.parse
 
 '''
