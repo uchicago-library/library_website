@@ -125,7 +125,7 @@ class Command (BaseCommand):
                 msg = MIMEMultipart()
                 msg['Subject'] = 'Wagtail Staff Report'
                 msg['From'] = 'jej@uchicago.edu'
-                msg['To'] = options['email-to']
+                msg['To'] = options['email_to']
                 msg['Date'] = formatdate(localtime=True)
 
                 attachment = MIMEApplication(
