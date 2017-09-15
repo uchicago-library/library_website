@@ -3,8 +3,13 @@ from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formatdate
+from openpyxl.writer.excel import save_virtual_workbook
 from staff.models import POSITION_STATUS
 from staff.utils import WagtailStaffReport
+
+import smtplib
 
 class Command (BaseCommand):
     """
@@ -122,18 +127,22 @@ class Command (BaseCommand):
 
         if options['output_format'] == 'excel':
             if options['email_to']:        
+                virtual_workbook = save_virtual_workbook(staff_report.workbook())
+
                 msg = MIMEMultipart()
                 msg['Subject'] = 'Wagtail Staff Report'
                 msg['From'] = 'jej@uchicago.edu'
                 msg['To'] = options['email_to']
                 msg['Date'] = formatdate(localtime=True)
 
+                msg.attach(MIMEText('A report of Library staff is attached.'))
                 attachment = MIMEApplication(
-                    staff.workbook(),
-                    Name='staffreport.xlsx'
+                    virtual_workbook,
+                    Name=options['filename'] + '.xlsx'
                 )
-                attachment['Content-Disposition'] = 'attachment; filename="staffreport.xlsx"'
-                ms.attach(attachment)
+                attachment['Content-Disposition'] = 'attachment; filename="{}.xlsx"'.format(options['filename'])
+                msg.attach(attachment)
+
                 s = smtplib.SMTP('localhost')
                 s.send_message(msg)
                 s.quit()
