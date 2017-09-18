@@ -394,6 +394,8 @@ class WagtailStaffReport:
 
         api_staff_info = set()
         for cnetid in get_all_library_cnetids_from_directory():
+            if cnetid == 'judi':
+                continue
             api_staff_info.add(cnetid)
             xml_string = get_xml_from_directory_api(
                 'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.format(cnetid)
