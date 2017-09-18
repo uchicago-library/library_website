@@ -16,6 +16,7 @@ from xml.etree import ElementTree
 
 import csv
 import io
+import re
 
 # need a list of all individuals.
 # this thing needs to deal with VCards.
@@ -342,6 +343,14 @@ class WagtailStaffReport:
             )
         }
 
+    def _clean(self, string):
+        """
+        "Clean" a string that came in from the campus directory or from
+        Wagtail. Remove leading spaces, replace multiple spaces with a single
+        space, etc.
+        """
+        return re.sub('\s+', ' ', string).strip()
+
     def workbook(self):
         """
         Returns:
@@ -380,6 +389,9 @@ class WagtailStaffReport:
 
         Returns: two lists of strings.
         """
+        def _format(cnetid, value, field):
+            return '{} -{}- ({})'.format(cnetid, self._clean(value), field)
+
         api_staff_info = set()
         for cnetid in get_all_library_cnetids_from_directory():
             api_staff_info.add(cnetid)
@@ -387,43 +399,65 @@ class WagtailStaffReport:
                 'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.format(cnetid)
             )
             info = get_individual_info_from_directory(xml_string)
-            api_staff_info.add('{} {} (officialName)'.format(
-                cnetid,
-                info['officialName'])
+            api_staff_info.add(
+                _format(cnetid, info['officialName'], 'officialName')
             )
-            api_staff_info.add('{} {} (displayName)'.format(
-                cnetid,
-                info['displayName'])
+            api_staff_info.add(
+                _format(cnetid, info['displayName'], 'displayName') 
             )
-            api_staff_info.add('{} {}'.format(cnetid, info['positionTitle']))
+            api_staff_info.add(
+                _format(cnetid, info['positionTitle'], 'positionTitle')
+            )
             for email in info['email']:
-                api_staff_info.add('{} {}'.format(cnetid, email))
+                api_staff_info.add(
+                    _format(cnetid, email, 'email')
+                )
             for phone_facex in info['phoneFacultyExchanges']:
-                api_staff_info.add('{} {}'.format(cnetid, re.sub(r"\n", " ", phone_facex)))
+                api_staff_info.add(
+                    _format(
+                        cnetid,
+                        re.sub(r"\n", " ", phone_facex),
+                        'phoneFacultyExchange'
+                    )
+                )
             for department in info['departments']:
-                api_staff_info.add('{} {}'.format(cnetid, department))
+                api_staff_info.add(
+                    _format(cnetid, department, 'department')
+                )
 
         wag_staff_info = set()
         for s in StaffPage.objects.live():
             wag_staff_info.add(s.cnetid)
-            wag_staff_info.add('{} {} (officialName)'.format(s.cnetid, s.official_name))
-            wag_staff_info.add('{} {} (displayName)'.format(s.cnetid, s.display_name))
-            wag_staff_info.add('{} {}'.format(s.cnetid, s.position_title))
+            wag_staff_info.add(
+                _format(s.cnetid, s.official_name, 'officialName')
+            )
+            wag_staff_info.add(
+                _format(s.cnetid, s.display_name, 'displayName')
+            )
+            wag_staff_info.add(
+                _format(s.cnetid, s.position_title, 'positionTitle')
+            )
             for e in s.staff_page_email.all():
-                wag_staff_info.add('{} {}'.format(s.cnetid, e.email))
+                wag_staff_info.add(
+                    _format(s.cnetid, e.email, 'email')
+                )
             for p in s.staff_page_phone_faculty_exchange.all():
                 wag_staff_info.add(
-                    '{} {} {}'.format(
+                    _format(
                         s.cnetid,
-                        p.faculty_exchange,
-                        p.phone_number
+                        '{} {}'.format(
+                            p.faculty_exchange,
+                            p.phone_number
+                        ),
+                        'phoneFacultyExchange'
                     )
                 )
             for d in s.staff_page_units.all():
                 wag_staff_info.add(
-                    '{} {}'.format(
+                    _format(
                         s.cnetid,
-                        d.library_unit.get_campus_directory_full_name()
+                        d.library_unit.get_campus_directory_full_name(),
+                        'department'
                     )
                 )
 
