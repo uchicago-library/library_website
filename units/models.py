@@ -284,10 +284,10 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         display_in_campus_directory boolean on a UnitPage in the Wagtail admin.
 
         Unchecking that boolean has two effects: first, the
-        report_out_of_sync_library_units management command will skip this
-        unit. Second, any sub-units will not include "Collections & Access"
-        when we retrieve the campus directory's version of this unit's full
-        name using this method.
+        management command to see if the campus directory and Wagtail are in
+        sync will skip this unit. Second, any sub-units will not include
+        "Collections & Access" when we retrieve the campus directory's version
+        of this unit's full name using this method.
 
         Example:
         Wagail contains a UnitPage for "Collections & Access - Access
