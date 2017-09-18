@@ -25,7 +25,7 @@ class Command (BaseCommand):
     Report library units that are out of sync between Wagtail and the University Directory.
 
     Example: 
-        python manage.py report_out_of_sync_library_units
+        python manage.py make_meeting_minutes_and_reports_pages
     """
     def add_arguments(self, parser):
         """
