@@ -475,18 +475,18 @@ class WagtailStaffReport:
         format the final report will be in (e.g. Excel or tab-delimited.)
         """
         output = []
-        campus_staff, wagtail_staff = self._staff_out_of_sync()
-        if wagtail_staff:
+        missing_in_campus_directory, missing_in_wagtail = self._staff_out_of_sync()
+        if missing_in_campus_directory:
             output.append(["THE FOLLOWING STAFF DATA APPEARS IN WAGTAIL, " +
                            "BUT NOT THE UNIVERSITY'S API:"])
-            for w in wagtail_staff:
-                output.append([w])
+            for c in missing_in_campus_directory:
+                output.append([c])
             output.append([""])
-        if campus_staff:
+        if missing_in_wagtail:
             output.append(["THE FOLLOWING STAFF DATA APPEARS IN THE " +
                            "UNIVERSITY'S API, BUT NOT WAGTAIL:"])
-            for c in campus_staff:
-                output.append([c])
+            for w in missing_in_wagtail:
+                output.append([w])
             output.append([""])
         return output
 
