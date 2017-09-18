@@ -40,7 +40,9 @@ def admin_view(request):
                 os.path.dirname(os.path.abspath(__file__))
             )
             import logging
-            logging.warn('JEJ ' + manage_dir)
+            logger = logging.getLogger('jej')
+            logger.setLevel(logging.DEBUG)
+            logger.warn('JEJ ' + manage_dir)
             args = [
                 'python',
                 manage_dir + os.path.sep + 'manage.py',
