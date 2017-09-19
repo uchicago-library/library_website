@@ -10,7 +10,7 @@ class StaffReportingForm(forms.Form):
     l = 'Live pages only'
     live = forms.BooleanField(label=l, required=False)
 
-    cnetid_choices = [(s.cnetid, s.title) for s in StaffPage.objects.all().order_by('last_name', 'first_name')]
+    cnetid_choices = [(s.cnetid, s.title) for s in StaffPage.objects.live().order_by('last_name', 'first_name')]
     l = 'Invidual staffperson'
     cnetid = forms.ChoiceField(choices=[('', '')] + cnetid_choices, label=l, required=False)
 
