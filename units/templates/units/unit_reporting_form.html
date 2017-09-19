@@ -29,12 +29,11 @@ versa.</p>
                 <ul class="fields">
                     {% block fields %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.email_to %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.live %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.display_in_campus_directory %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.latest_revision_created_at %}
                     {% endblock fields %}
-                    <li><input type="submit" value="{% trans 'Email Report' %}" class="button" /></li>
+                    <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
                 </ul>
             </section>
         </form>

@@ -1,21 +1,19 @@
 from django.conf.urls import url
 from django.core import management
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.shortcuts import render
+from openpyxl.writer.excel import save_virtual_workbook
+from staff.forms import StaffReportingForm
+from staff.utils import WagtailStaffReport
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
-import os
-import subprocess
-
 def admin_view(request):
-    # Needs to be inside for unit tests
-    from .forms import StaffReportingForm
     if request.method == 'POST':
         form = StaffReportingForm(request.POST)
         options = {
             'filename': form.data.get('filename', 'staff_report'),
-            'email_to': form.data.get('email-to', None),
             'cnetid': form.data.get('cnetid', None),
             'department': form.data.get('department', None),
             'department_and_subdepartments': form.data.get('department_and_subdepartments', None),
@@ -34,35 +32,18 @@ def admin_view(request):
                     options[i] = True
             except KeyError:
                 continue
+        options['all'] = not(bool(options['live']))
 
         if form.is_valid():
-            manage_dir = os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__))
+            staff_report = WagtailStaffReport(
+                sync_report = False,
+                staff_report = True,
+                **options
             )
-            import logging
-            #logger = logging.getLogger('jej')
-            #logger.setLevel(logging.DEBUG)
-            logging.warning('JEJ ' + manage_dir)
-            args = [
-                'python',
-                manage_dir + os.path.sep + 'manage.py',
-                'list_staff_wagtail',
-                '--report-out-of-sync-staff',
-                '--output-format=excel'
-            ]
-            for k, v in options.items():
-                if bool(v):
-                    if k == 'filename':
-                        args.append('--{}={}.xlsx'.format(k, v))
-                    elif k in ('all',
-                               'live',
-                               'supervises-students',
-                               'supervisor-override'):
-                        args.append('--{}'.format(k.replace('_', '-')))
-                    else:
-                        args.append('--{}={}'.format(k.replace('_', '-'), v))
-            subprocess.Popen(args)
-            return render(request, 'staff/staff_reporting_form_thank_you.html') 
+            virtual_workbook = save_virtual_workbook(staff_report.workbook())
+            response = HttpResponse(virtual_workbook, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['content-disposition'] = 'attachment; filename="' + options['filename'] + '.xlsx"'
+            return response
         else:
             return render(request, 'staff/staff_reporting_form.html', {'form': form})
     else:

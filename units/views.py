@@ -3,11 +3,14 @@ from .forms import UnitReportingForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
+from django.http import HttpResponse
 from django.shortcuts import render
+from openpyxl.writer.excel import save_virtual_workbook
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import get_quick_nums_for_library_or_dept
+from units.utils import WagtailUnitsReport
 from wagtail.wagtailimages.models import Image
 from public.models import StandardPage, LocationPage
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
@@ -285,27 +288,17 @@ def unit_reporting_admin_view(request):
             'live': form.data.get('live', None),
             'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
         }
+        options['all'] = not(bool(options['live']))
         if form.is_valid():
-            manage_dir = os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__))
+            unit_report = WagtailUnitsReport(
+                sync_report = False,
+                unit_report = True,
+                **options
             )
-            args = [
-                'python',
-                manage_dir + os.path.sep + 'manage.py',
-                'list_units_wagtail',
-                '--report-out-of-sync-units',
-                '--output-format=excel'
-            ]
-            for k, v in options.items():
-                if bool(v):
-                    if k == 'filename':
-                        args.append('--{}={}.xlsx'.format(k, v))
-                    elif k in ('all', 'live'):
-                        args.append('--{}'.format(k.replace('_', '-')))
-                    else:
-                        args.append('--{}={}'.format(k.replace('_', '-'), v))
-            subprocess.Popen(args) 
-            return render(request, 'units/unit_reporting_form_thank_you.html') 
+            virtual_workbook = save_virtual_workbook(unit_report.workbook())
+            response = HttpResponse(virtual_workbook, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['content-disposition'] = 'attachment; filename="' + options['filename'] + '.xlsx"'
+            return response
         else:
             return render(request, 'units/unit_reporting_form.html', {'form': form})
     else:
