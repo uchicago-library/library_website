@@ -187,42 +187,32 @@ def units(request):
         department_label = department.split(' - ').pop()
 
     # staff pages
-    staff_pages_all = []
     staff_pages = []
 
     if view == 'staff':
         # returns all staff pages if library is None.
         # otherwise, returns staff pages for the given library.
-        staff_pages_all = get_staff_pages_for_library(library)
+        staff_pages = get_staff_pages_for_library(library)
 
         # departments.
         if department:
-            staff_pages_all = get_staff_pages_for_unit(department, True, True)
+            staff_pages = get_staff_pages_for_unit(department, True, True)
 
         # search staff pages.
         if query:
-            staff_pages_all = staff_pages_all.search(query)
+            staff_pages = staff_pages.search(query)
 
         # subjects.
         if subject:
             if subject == 'All Subject Specialists':
-                staff_pages_all = staff_pages_all.filter(id__in=StaffPageSubjectPlacement.objects.all().values_list('page', flat=True).distinct())
+                staff_pages = staff_pages.filter(id__in=StaffPageSubjectPlacement.objects.all().values_list('page', flat=True).distinct())
             else:
                 # get a subject and all it's descendants. 
                 subject_and_descendants = Subject.objects.get(name=subject).get_descendants()
                 # from staff page subject placements, get all of the staff that match those subjects. 
                 subject_staff_ids = StaffPageSubjectPlacement.objects.filter(subject__in=subject_and_descendants).values_list('page', flat=True)
-                # filter staff_pages_all to only include those staff pages. 
-                staff_pages_all = staff_pages_all.filter(id__in=subject_staff_ids).order_by('last_name')
-
-        # add paging.
-        paginator = Paginator(staff_pages_all, 100)
-        try:
-            staff_pages = paginator.page(page)
-        except PageNotAnInteger:
-            staff_pages = paginator.page(1)
-        except EmptyPage:
-            staff_pages = paginator.page(paginator.num_pages)
+                # filter staff_pages to only include those staff pages. 
+                staff_pages = staff_pages.filter(id__in=subject_staff_ids).order_by('last_name')
 
     elif view == 'department':
         hierarchical_html = ''
