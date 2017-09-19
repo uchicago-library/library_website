@@ -1375,7 +1375,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
         sidebar = self.has_left_sidebar(context)
         section_info = self.get_banner(current_site)
-        branch_name = section_info[4] 
+        branch_name = section_info[3] 
         has_alert = False if not get_alert(current_site) else True
         context['has_left_sidebar'] = sidebar
         context['content_div_css'] = self.get_conditional_css_classes('content', sidebar)

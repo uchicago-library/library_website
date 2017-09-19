@@ -123,7 +123,7 @@ def spaces(request):
     # Find banner for given home_page and add to context
     current_site = Site.find_for_request(request)
     section_info = home_page.get_banner(current_site)
-    branch_name = section_info[4]
+    branch_name = section_info[3]
     return render(request, 'public/spaces_index_page.html', {
         'building': building,
         'buildings': buildings,
