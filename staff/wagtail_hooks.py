@@ -17,6 +17,7 @@ def admin_view(request):
             'cnetid': form.data.get('cnetid', None),
             'department': form.data.get('department', None),
             'department_and_subdepartments': form.data.get('department_and_subdepartments', None),
+            'group': form.data.get('group', None),
             'live': form.data.get('live', None),
             'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
             'position_status': form.data.get('position_status', None),

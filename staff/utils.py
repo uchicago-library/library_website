@@ -333,6 +333,7 @@ class WagtailStaffReport:
                 'cnetid',
                 'department',
                 'department_and_subdepartments',
+                'group',
                 'live',
                 'latest_revision_created_at',
                 'position_status',
@@ -605,6 +606,20 @@ class WagtailStaffReport:
             pass
 
         try:
+            if self.options['group']:
+                new_staffpages = set(
+                    StaffPage.objects.filter(
+                        member__parent__title=self.options['group']
+                    )
+                )
+                if staffpages:
+                    staffpages = staffpages.intersection(new_staffpages)
+                else:
+                    staffpages = new_staffpages
+        except KeyError:
+            pass
+
+        try:
             if self.options['latest_revision_created_at']:
                 l = '{}-{}-{} 00:00-0600'.format(
                         self.options['latest_revision_created_at'][0:4],
@@ -683,6 +698,7 @@ class WagtailStaffReport:
             'PHONE, FACEX',
             'UNITS (LIBRARY DIRECTORY FULL NAME)',
             'UNITS (CAMPUS DIRECTORY FULL NAME)',
+            'GROUPS',
             'EMPLOYEE TYPE',
             'SUPERVISES STUDENTS',
             'POSITION STATUS',
@@ -703,6 +719,8 @@ class WagtailStaffReport:
                     )
                 )
             units.sort(key=lambda u: u[0])
+
+            groups = sorted([g.parent.title for g in s.member.all()])
 
             try:
                 latest_revision_created_at = \
@@ -744,6 +762,7 @@ class WagtailStaffReport:
                 '|'.join(phone_facexes) or '',
                 '|'.join([u[0] for u in units]) or '',
                 '|'.join([u[1] for u in units]) or '',
+                '|'.join(groups),
                 employee_type_string,
                 str(s.supervises_students),
                 position_status_string,

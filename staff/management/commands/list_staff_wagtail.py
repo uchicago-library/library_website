@@ -38,6 +38,11 @@ class Command (BaseCommand):
             action='store'
         )
         parser.add_argument(
+            '--group',
+            type=str,
+            action='store'
+        )
+        parser.add_argument(
             '--live',
             default=False,
             action='store_true'
@@ -111,6 +116,7 @@ class Command (BaseCommand):
                             bool(options['cnetid']),
                             bool(options['department']),
                             bool(options['department_and_subdepartments']),
+                            bool(options['group']),
                             bool(options['live']),
                             bool(options['latest_revision_created_at']),
                             bool(options['position_status']),

@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import RegexValidator
 from .models import POSITION_STATUS, StaffPage
+from group.models import GroupPage
 from units.models import UnitPage
 
 class StaffReportingForm(forms.Form):
@@ -20,6 +21,10 @@ class StaffReportingForm(forms.Form):
 
     l = 'By department (including subdepartments)'
     department_and_subdepartments = forms.ChoiceField(choices=[('', '')] + department_choices, label=l, required=False)
+
+    group_choices = [(g.title, g.title) for g in GroupPage.objects.all()]
+    l = 'By group'
+    group = forms.ChoiceField(choices=[('', '')] + group_choices, label=l, required=False)
 
     v = RegexValidator(r'^[0-9]{8}$', 'Please enter dates in YYYYMMDD format.')
     l = 'Latest revision created at YYYYMMDD'

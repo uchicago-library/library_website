@@ -495,7 +495,7 @@ class ListStaffWagtail(TestCase):
         records = self.run_command(cnetid='jej')
 
         # column count
-        self.assertEqual(len(records[0]), 12)
+        self.assertEqual(len(records[0]), 13)
 
         # row count
         self.assertEqual(len(records), 1)
@@ -516,16 +516,16 @@ class ListStaffWagtail(TestCase):
         self.assertEqual(set(records[0][6].split('|')), set(['Digital Services - Digital Library Development Center', 'Digital Services']))
 
         # employee type
-        self.assertEqual(records[0][8], 'IT')
+        self.assertEqual(records[0][9], 'IT')
 
         # supervises students
-        self.assertEqual(records[0][9], 'False')
+        self.assertEqual(records[0][10], 'False')
 
         # position status
-        self.assertEqual(records[0][10], 'Active')
+        self.assertEqual(records[0][11], 'Active')
 
         # supervisor
-        self.assertEqual(records[0][11].rstrip(), 'Charles Blair (chas)')
+        self.assertEqual(records[0][12].rstrip(), 'Charles Blair (chas)')
 
     @print_test_time_elapsed
     def test_report_queries(self):
