@@ -413,29 +413,33 @@ figure.coll-thumb {
   margin-bottom: 20px;
 }
 
-.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
-  width: 100%
+.carousel-indicators {
+    bottom: 0px;
 }
 
-.hero-image {
-  max-width: 100%;
-}
-
-.hero-image::after {
-  display: block;
-  position: relative;
-  background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
-  margin-top: -175px;
-  height: 175px;
-  width: 100%;
-  content: '';
+.carousel-inner {
+  &>.item>a>img, &>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
+    width: 100%
+  }
+  .hero-image {
+    max-width: 100%;
+  }
+  .hero-image::after {
+    display: block;
+    position: relative;
+    background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
+    margin-top: -175px;
+    height: 175px;
+    width: 100%;
+    content: '';
+  }
 }
 
 .carousel-caption {
   padding-top: 0;
   text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
   z-index: 5;
-  padding-bottom: 15px;
+  padding-bottom: 25px;
   .image-title {
     font-size: 2em;
     display: block;
