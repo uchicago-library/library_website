@@ -417,14 +417,34 @@ figure.coll-thumb {
   width: 100%
 }
 
+.hero-image {
+  max-width: 100%;
+}
+
+.hero-image::after {
+  display: block;
+  position: relative;
+  background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
+  margin-top: -175px;
+  height: 175px;
+  width: 100%;
+  content: '';
+}
+
 .carousel-caption {
-  //font-family: Garamond, serif;
   padding-top: 0;
   text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
-  font-size: 0.7em;
   z-index: 5;
-  @include respond-to(small) {
-    font-size: 1em;
+  padding-bottom: 15px;
+  .image-title {
+    font-size: 2em;
+    display: block;
+  }
+  .image-subtitle {
+    font-size: 1.2em; 
+    @include respond-to(small) {
+      font-size: 1.5em;
+    }
   }
   & a {
     color: #fff;

@@ -441,24 +441,24 @@
                                 {% image item.image original as nifty %}
                                 {% if nifty %} 
                                     <div class="item {% if forloop.first %}active{% endif %}">
-                                        <img src="{{nifty.url}}"/>
+                                        {% if item.link %}
+                                            <a href="{{item.link}}">
+                                        {% endif %}
+                                        <div class="hero-image">
+                                        <img src="{{nifty.url}}"/></div>
                                         <div class="carousel-caption">
                                             {% if item.image_title or item.image_subtitle %}
-                                                <p> {% if item.link %}
-                                                        <a href="{{item.link}}">
-                                                    {% endif %}
-                                                    {% if item.image_title %}
-                                                        <span style="font-size: 2em;">{{item.image_title}}</span><br/>
-                                                    {% endif %}
-                                                    {% if item.image_subtitle %}
-                                                        {{item.image_subtitle}}
-                                                    {% endif %}
-                                                    {% if item.link %}
-                                                        </a>
-                                                    {% endif %}
-                                                </p>
+                                                {% if item.image_title %}
+                                                    <span class="image-title">{{item.image_title}}</span>
+                                                {% endif %}
+                                                {% if item.image_subtitle %}
+                                                    <span class="image-subtitle">{{item.image_subtitle}}</span>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
+                                        {% if item.link %}
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 {% endif %}
                             {% endfor %}
