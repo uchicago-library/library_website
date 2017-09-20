@@ -893,7 +893,7 @@ class DefaultBodyFields(StreamBlock):
     staff_listing = StaffListingFields(icon='group', template='base/blocks/staff_listing.html')
     solo_image = SoloImage(help_text='Single image with caption on the right')
     duo_image = DuoImage(help_text='Two images stacked side by side')
-    image_link = ImageLink(help_text='A fancy link made out of a thumnail and simple text')
+    image_link = ImageLink(help_text='A fancy link made out of a thumbnail and simple text')
     local_media = LocalMediaBlock(help_text='Audio or video files that are locally hosted')
 
 
