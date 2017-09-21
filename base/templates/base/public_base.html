@@ -696,10 +696,19 @@
         <!-- Information -->
         <div class="col-xs-12 col-sm-2 col-footer divider-vertical">
             <p>Information for<br/>
-            <a href="/research/help/infofor/faculty/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Faculty</a><br/>
-            <a href="/research/help/infofor/students/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Students</a><br/>
+            {% if is_law %}
+                <a href="http://guides.lib.uchicago.edu/lawfacultyservices" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Law Faculty</a><br/>
+                <a href="http://guides.lib.uchicago.edu/lawstudents" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Law Students</a><br/>
+            {% else %}
+                <a href="/research/help/infofor/faculty/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Faculty</a><br/>
+                <a href="/research/help/infofor/students/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Students</a><br/>
+            {% endif %}
             <a href="/research/help/infofor/staff/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; University Staff">University Staff</a><br/>
-            <a href="/research/help/infofor/information-visitors/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visitors</a><br/>
+            {% if is_law %}
+                <a href="/law/about/access/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visiting the Law Library</a><br/>
+            {% else %}
+                <a href="/research/help/infofor/information-visitors/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visitors</a><br/>
+            {% endif %}
             <a href="/research/help/infofor/alumni/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Alumni &amp; Library Friends">Alumni &amp; Library Friends</a><br/>
             <a href="/research/help/infofor/accessibility/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Patrons with Disabilities">Patrons with Disabilities</a></p>
         </div>
@@ -721,9 +730,17 @@
         <!-- Social -->
         <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4">
             <p>Library Social Media<br/>
-            <a href="http://www.facebook.com/uchicagolibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Facebook</a><br/>
+            {% if is_law %}
+                <a href="https://www.facebook.com/dangelolawlibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Law Library Facebook</a><br/>
+            {% else %}
+                <a href="http://www.facebook.com/uchicagolibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Facebook</a><br/>
+            {% endif %}
             <a href="https://www.instagram.com/uchicagolibrary/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Instagram"><i class="fa fa-instagram" aria-hidden="true"></i> &nbsp; Instagram</a><br/>
-            <a href="http://news.lib.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Library News"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Library News</a><br/>
+            {% if is_law %}
+                <a href="http://news.lib.uchicago.edu/law/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Library News"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Law Library News</a><br/>
+            {% else %}
+                <a href="http://news.lib.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Library News"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Library News</a><br/>
+            {% endif %}
             <a href="https://www.youtube.com/user/uchicagolibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; YouTube"><i class="fa fa-youtube-square" aria-hidden="true"></i> &nbsp; YouTube</a><br/>
             <a href="/about/news-events/social-media/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; More Library Accounts"><i class="fa fa-clone" aria-hidden="true"></i> &nbsp; More Library Accounts...</a></p>
         </div>

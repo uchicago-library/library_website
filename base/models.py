@@ -1352,10 +1352,14 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         url_filter = '~()*!.\''
 
         try: 
+            location_id = self.location_and_hours['page_location'].id
             location = str(self.location_and_hours['page_location'])
+            is_law = False
+            if location_id == 3393:
+               is_law = True
             context['page_unit'] = str(unit) 
             context['page_location'] = location
-            context['page_location_id'] = self.location_and_hours['page_location'].id
+            context['page_location_id'] = location_id
             #context['current_building_hours'] = self.location_and_hours['hours']
             context['address'] = self.location_and_hours['address']
             #context['all_building_hours'] = get_all_building_hours()
@@ -1396,6 +1400,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(self.events_feed_url, safe=url_filter)
         context['news_feed'] = urllib.parse.quote(self.news_feed_url, safe=url_filter)
         context['unfriendly_a'] = True if self.friendly_name.strip() in UNFRIENDLY_ARTICLES else False
+        context['is_law'] = is_law
         context['has_alert'] = has_alert
         if has_alert:
             context['alert_message'], \
