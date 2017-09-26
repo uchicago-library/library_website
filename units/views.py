@@ -75,7 +75,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
         recursive = True
         unit_page_ids = list(UnitIndexPage.objects.first().get_descendants(True).values_list('id', flat=True))
   
-    staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__id__in=unit_page_ids).order_by('last_name', 'first_name')
+    staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__id__in=unit_page_ids).distinct().order_by('last_name', 'first_name')
     
     if display_supervisor_first:
         if unit_page and unit_page.department_head:
