@@ -187,14 +187,12 @@ def get_story_summary(news_page):
         author_title = news_page.author.title
         author_url = news_page.author.url
     else:
-        cnetid = news_page.owner.username
         try:
+            cnetid = news_page.owner.username
             author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
-        except:
-            author_title = ''
-        try:
             author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
         except:
+            author_title = ''
             author_url = ''
 
     simplified_text = simplify_text(news_page.excerpt)
