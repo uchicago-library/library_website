@@ -181,36 +181,39 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         context['department_members'] = department_members
 
         department_units = []
-        for unit_page in self.unit_page.get_descendants():
-            intranet_unit_page = unit_page.specific.loop_page.live().filter(show_in_menus=True).first()
-            if intranet_unit_page:
-                unit = {
-                    'title': intranet_unit_page.title,
-                    'url': intranet_unit_page.url,
-                    'location': intranet_unit_page.internal_location,
-                    'phone_number': intranet_unit_page.internal_phone_number,
-                    'email': intranet_unit_page.internal_email
-                }
-                   
-                supervisors = [] 
-                if unit_page.specific.department_head:
-                    try:
-                        email = unit_page.specific.department_head.staff_page_email.first().email
-                    except AttributeError:
-                        email = ''
-                    try:
-                       phone_number = unit_page.specific.department_head.staff_page_phone_faculty_exchange.first().phone_number
-                    except AttributeError:
-                        phone_number = ''
+        try:
+            for unit_page in self.unit_page.get_descendants():
+                intranet_unit_page = unit_page.specific.loop_page.live().filter(show_in_menus=True).first()
+                if intranet_unit_page:
+                    unit = {
+                        'title': intranet_unit_page.title,
+                        'url': intranet_unit_page.url,
+                        'location': intranet_unit_page.internal_location,
+                        'phone_number': intranet_unit_page.internal_phone_number,
+                        'email': intranet_unit_page.internal_email
+                    }
+                       
+                    supervisors = [] 
+                    if unit_page.specific.department_head:
+                        try:
+                            email = unit_page.specific.department_head.staff_page_email.first().email
+                        except AttributeError:
+                            email = ''
+                        try:
+                           phone_number = unit_page.specific.department_head.staff_page_phone_faculty_exchange.first().phone_number
+                        except AttributeError:
+                            phone_number = ''
 
-                    supervisors.append({
-                        'title': unit_page.specific.department_head.title,
-                        'url': unit_page.specific.department_head.url,
-                        'phone_number': phone_number,
-                        'email': email
-                    })
-                unit['supervisors'] = supervisors
-                department_units.append(unit)
+                        supervisors.append({
+                            'title': unit_page.specific.department_head.title,
+                            'url': unit_page.specific.department_head.url,
+                            'phone_number': phone_number,
+                            'email': email
+                        })
+                    unit['supervisors'] = supervisors
+                    department_units.append(unit)
+        except(AttributeError):
+            pass
 
         # split the department units into lists of lists, each inner list containing 4 or less items.
         context['department_unit_rows'] = [department_units[i:i+4] for i in range(0, len(department_units), 4)]
