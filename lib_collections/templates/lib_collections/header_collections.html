@@ -49,9 +49,9 @@
     <span class="headline">Limit to</span> &nbsp;
     <input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
     <input name="view" type="hidden" value="collections"/>
-    {% if format %}<input name="format" type="hidden" value="{{ format|urlencode }}"/>{% endif %}
-    {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
-    {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
+    {% if format %}<input name="format" type="hidden" value="{{ format }}"/>{% endif %}
+    {% if search %}<input name="search" type="hidden" value="{{ search }}"/>{% endif %}
+    {% if subject %}<input name="subject" type="hidden" value="{{ subject }}"/>{% endif %}
     <input type="submit"/>
   </form>
 </div>

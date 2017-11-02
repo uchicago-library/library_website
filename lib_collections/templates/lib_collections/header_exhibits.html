@@ -59,9 +59,9 @@
   <form action="." method="get" style="display: inline;">
     <input name="digital" type="checkbox" arial-label="limit to web exhibits" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> web exhibits &nbsp;
     <input name="view" type="hidden" value="exhibits"/>
-    {% if location %}<input name="location" type="hidden" value="{{ location|urlencode }}"/>{% endif %}
-    {% if search %}<input name="search" type="hidden" value="{{ search|urlencode }}"/>{% endif %}
-    {% if subject %}<input name="subject" type="hidden" value="{{ subject|urlencode }}"/>{% endif %}
+    {% if location %}<input name="location" type="hidden" value="{{ location }}"/>{% endif %}
+    {% if search %}<input name="search" type="hidden" value="{{ search }}"/>{% endif %}
+    {% if subject %}<input name="subject" type="hidden" value="{{ subject }}"/>{% endif %}
     <input type="submit"/>
   </form>
 </div>
