@@ -174,7 +174,6 @@ class Command (BaseCommand):
                 child = parent
 
     def handle(self, *args, **options):
-        sys.exit()
         directories = True
 
         related = True
@@ -227,6 +226,10 @@ class Command (BaseCommand):
         delete_pages = all_pages - save_pages
 
         hostname = socket.gethostname()
+
+        if not hostname in ('moss.lib.uchicago.edu', 'xibalba.lib.uchicago.edu'):
+            print('Development servers only.')
+            sys.exit()
 
         if input(
             'You are about to delete {} pages from {}. {} pages will remain. Type the name of this server to delete these pages: '.format(

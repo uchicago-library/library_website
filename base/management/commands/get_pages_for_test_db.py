@@ -1,7 +1,6 @@
 import sys
 from django.core.management.base import BaseCommand, CommandError
 from wagtail.wagtailcore.models import Page
-from ask_a_librarian.models import AskPage
 import django.apps
 
 def get_all_page_models():
@@ -51,9 +50,17 @@ class Command(BaseCommand):
         kiosk_pages = set([1752, 1754, 1755, 1753, 1797, 1756, 1758])
         hours_page = set([4084])
         ask_pages = set([p.id for p in set(AskPage.objects.live())])
+        location_pages = set([p.id for p in LocationPage.objects.live()])
+        news_pages = set([665])
+        public_raw_html_pages = set([4084, 4127, 4568])
+        redirect_pages = set([4717, 6474])
+        standard_pages = set([1633, 1634, 1636, 1638, 1648, 1656, 1664, 1672,
+        1673, 1752, 1753, 1754, 1755, 1756, 1758, 1833, 1837, 1843, 1844, 3269,
+        3275, 3284, 3285, 3289, 3314, 3369, 3896, 3942, 4145, 4234, 4510, 4534,
+        4643, 4715, 4841, 5911, 5961, 5962, 5967, 7071, 7072])
         one_of_each = self._get_one_of_each(PAGE_TYPES) # First of every page type
 
-        all_pages = home_page | kiosk_pages | hours_page | ask_pages | one_of_each
+        all_pages = home_page | kiosk_pages | hours_page | ask_pages | location_pages | news_pages | public_raw_html_pages | redirect_pages | standard_pages | one_of_each
 
         formatted_pages = ''.join(self._format_pages(all_pages))
 
@@ -89,7 +96,6 @@ class Command(BaseCommand):
         """
         for page in pages:
             yield self._get_classanme_and_id(Page.objects.get(id=page))
-
 
     def _get_one_of_each(self, page_types):
         """
