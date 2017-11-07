@@ -47,23 +47,22 @@ def staff(request):
             staff_pages_all = StaffPage.objects.live().order_by('title').order_by('last_name', 'first_name')
     elif view == 'department':
         if query:
-            for i in IntranetUnitsPage.objects.live().search(query):
-                flat_units.append({
-                    'internal_location': i.internal_location,
-                    'internal_phone_number': i.internal_phone_number,
-                    'library': i.unit_page.get_building(),
-                    'title': i.unit_page.get_full_name(),
-                    'url': i.url,
-                })
+            intranetunits_qs = IntranetUnitsPage.objects.live().search(query)
         else:
-            for i in IntranetUnitsPage.objects.live():
-                flat_units.append({
-                    'internal_location': i.internal_location,
-                    'internal_phone_number': i.internal_phone_number,
-                    'library': i.unit_page.get_building(),
-                    'title': i.unit_page.get_full_name(),
-                    'url': i.url,
-                })
+            intranetunits_qs = IntranetUnitsPage.objects.live()
+        for i in IntranetUnitsPage.objects.live().search(query):
+            try:
+                i_library = i.unit_page.get_building()
+                i_title = i.unit_page.get_full_name()
+            except AttributeError:
+                i_library = i_title = ''
+            flat_units.append({
+                'internal_location': i.internal_location,
+                'internal_phone_number': i.internal_phone_number,
+                'library': i_library,
+                'title': i_title,
+                'url': i.url,
+            })
         flat_units = sorted(flat_units, key=lambda k: k['title'])
 
     # Set up paging. 

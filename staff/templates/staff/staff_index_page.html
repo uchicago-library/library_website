@@ -141,7 +141,7 @@
                             <tr>
                                 <td><a href="{{ i.url }}">{{ i.title }}</a></td>
                                 <td>{{ i.internal_phone_number }}</td>
-                                <td>{{ i.library }}<br/>{{ i.internal_location }}</td>
+                                <td>{% if i.library %}{{ i.library }}<br/>{% endif %}{{ i.internal_location }}</td>
                             </tr>
                         {% endfor %}
                     </table>
