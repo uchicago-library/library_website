@@ -140,7 +140,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         StreamFieldPanel('body'),
     ] + SocialMediaFields.panels + PublicBasePage.content_panels
 
-    subpage_types = ['conferences.ConferenceSubPage', 'redirects.RedirectPage']
+    subpage_types = ['conferences.ConferencePage', 'conferences.ConferenceSubPage', 'redirects.RedirectPage']
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('banner_image'),
