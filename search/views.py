@@ -11,8 +11,7 @@ def loop_search(request):
 
     # Search
     if search_query:
-        sandbox = IntranetHomePage.objects.get(title__contains='Sandbox')
-        search_results = Page.objects.live().not_descendant_of(sandbox).search(search_query)
+        search_results = Page.objects.live().search(search_query)
         query = Query.get(search_query)
 
         # Record hit
