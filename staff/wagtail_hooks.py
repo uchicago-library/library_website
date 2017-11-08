@@ -4,12 +4,12 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render
 from openpyxl.writer.excel import save_virtual_workbook
-from staff.forms import StaffReportingForm
 from staff.utils import WagtailStaffReport
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
 def admin_view(request):
+    from staff.forms import StaffReportingForm
     if request.method == 'POST':
         form = StaffReportingForm(request.POST)
         options = {
