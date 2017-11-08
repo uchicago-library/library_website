@@ -55,7 +55,7 @@ def staff(request):
                 i_library = i.unit_page.get_building()
                 i_title = i.unit_page.get_full_name()
             except AttributeError:
-                i_library = i_title = ''
+                continue
             flat_units.append({
                 'internal_location': i.internal_location,
                 'internal_phone_number': i.internal_phone_number,
