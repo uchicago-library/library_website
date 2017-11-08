@@ -168,7 +168,7 @@ class GroupMembers(Orderable, models.Model):
         related_name='group_members',
         null=True,
         blank=False,
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
 
     group_member = models.ForeignKey(
@@ -176,7 +176,7 @@ class GroupMembers(Orderable, models.Model):
         related_name='member',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.CASCADE
     )
     role = models.ForeignKey(
         'group.GroupMemberRole', 
