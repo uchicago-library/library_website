@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from base.management.commands.get_pages_for_test_db import Command as GetPagesForTestDb
 from django.core.management.base import BaseCommand
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, PageRevision
 
 import ast
 import networkx
@@ -224,6 +224,8 @@ class Command (BaseCommand):
             all_pages.add(n)
 
         delete_pages = all_pages - save_pages
+        page_revisions = PageRevision.objects.all()
+        revisions_count = page_revisions.count()
 
         hostname = socket.gethostname()
 
@@ -232,10 +234,11 @@ class Command (BaseCommand):
             sys.exit()
 
         if input(
-            'You are about to delete {} pages from {}. {} pages will remain. Type the name of this server to delete these pages: '.format(
+            'You are about to delete {} pages from {}. {} pages will remain. All {} page revisions will be deleted. Type the name of this server to delete these pages: '.format(
                 len(delete_pages),
                 hostname,
-                len(save_pages)
+                len(save_pages),
+                revisions_count
             )
         ) == hostname:
             objects = [self.get_object_from_tuple(n) for n in delete_pages]
@@ -245,6 +248,7 @@ class Command (BaseCommand):
                     o.delete()
                 except:
                     pass
-            return '{} pages deleted.'.format(len(delete_pages))
+            page_revisions.delete()
+            return '{} pages deleted. {}'.format(len(delete_pages), revisions_count)
         else:
             return '0 pages deleted.'
