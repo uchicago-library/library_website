@@ -51,6 +51,8 @@ class Command(BaseCommand):
         hours_page = set([4084])
         ask_pages = set([p.id for p in set(AskPage.objects.live())])
         location_pages = set([p.id for p in LocationPage.objects.live()])
+        collection_pages = set([p.id for p in CollectionPage.objects.live()])
+        exhibit_pages = set([p.id for p in ExhibitPage.objects.live()])
         news_pages = set([591, 592, 593, 594, 595, 596, 598, 601, 611, 663, 665, 743, 898, 902])
         public_raw_html_pages = set([4084, 4127, 4568])
         redirect_pages = set([4717, 6474])
@@ -61,7 +63,7 @@ class Command(BaseCommand):
         4643, 4715, 4841, 5911, 5961, 5962, 5967, 7071, 7072])
         one_of_each = self._get_one_of_each(PAGE_TYPES) # First of every page type
 
-        all_pages = home_page | kiosk_pages | hours_page | ask_pages | location_pages | news_pages | public_raw_html_pages | redirect_pages | standard_pages | toc_pages | one_of_each
+        all_pages = home_page | kiosk_pages | hours_page | ask_pages | location_pages | news_pages | public_raw_html_pages | redirect_pages | standard_pages | toc_pages | collection_pages | exhibit_pages | one_of_each
 
         formatted_pages = ''.join(self._format_pages(all_pages))
 
