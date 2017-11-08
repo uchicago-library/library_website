@@ -50,7 +50,7 @@ def staff(request):
             intranetunits_qs = IntranetUnitsPage.objects.live().search(query)
         else:
             intranetunits_qs = IntranetUnitsPage.objects.live()
-        for i in IntranetUnitsPage.objects.live().search(query):
+        for i in intranetunits_qs:
             try:
                 i_library = i.unit_page.get_building()
                 i_title = i.unit_page.get_full_name()
