@@ -2,7 +2,6 @@ from base.utils import get_xml_from_directory_api
 from django.test import TestCase, Client
 from wagtail.wagtailcore.models import Page, Site
 from base.models import BasePage, get_available_path_under, PublicBasePage
-from django.contrib.auth.models import User
 from django.http import HttpRequest
 from news.models import NewsPage
 from staff.models import StaffIndexPage, StaffPage
