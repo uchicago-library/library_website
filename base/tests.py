@@ -118,16 +118,16 @@ class TestUsersAndServingLivePages(TestCase):
         from django.core.urlresolvers import clear_url_caches
         clear_url_caches()
 
-    def test_news_party_hat_return_page(self):
+    def test_random_news_page(self):
         """
         Test an arbitrary web page. For similar tests look at:
         https://github.com/torchbox/wagtail/blob/master/wagtail
         /wagtailcore/tests/test_page_model.py
         """
         hostname = Site.objects.filter(site_name='Loop')[0].hostname
-        news_page = Page.objects.get(url_path='/loop/news/party-hat-download/')
+        news_page = NewsPage.objects.live().first()
         request = HttpRequest()
-        request.user = User.objects.get(username='elong')
+        request.user = User.objects.all().filter(is_staff=True, is_active=True).first()
         request.site = Site.objects.filter(hostname=hostname)
         response = news_page.serve(request)
         self.assertEqual(response.status_code, 200)
@@ -249,7 +249,7 @@ class TestStreamFields(TestCase):
         # get a few pages for the test. 
         home_page = Site.objects.first().root_page
         staff_index_page = StaffIndexPage.objects.first()
-        dbietila = StaffPage.objects.get(cnetid='dbietila')
+        alien = StaffPage.objects.live().first()
     
         try:
             StaffPage.objects.get(cnetid='ignatius').delete()
@@ -288,7 +288,7 @@ class TestStreamFields(TestCase):
             body=body,
             content_specialist=staff_page,
             depth=home_page.depth+1,
-            editor=dbietila,
+            editor=alien,
             page_maintainer=staff_page,
             path=get_available_path_under(home_page.path),
             slug="a-standard-page",
