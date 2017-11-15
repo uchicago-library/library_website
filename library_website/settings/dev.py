@@ -32,5 +32,5 @@ if 'TRAVIS' in os.environ:
             },
         },
     }
-                                                                                                                                 346,0-1       99%
+
     COMPRESS_OFFLINE = False
