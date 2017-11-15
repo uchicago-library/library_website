@@ -19,3 +19,18 @@ try:
     from .local import *
 except ImportError:
     pass
+
+
+# Travis CI specific settings
+if 'TRAVIS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+            'TEST': {
+                'NAME': ':memory:',
+            },
+        },
+    }
+                                                                                                                                 346,0-1       99%
+    COMPRESS_OFFLINE = False
