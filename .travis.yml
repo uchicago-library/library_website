@@ -11,4 +11,4 @@ services:
   - redis-server
 
 # command to run tests
-script: python manage.py test base.tests.TestUsersAndServingLivePages
+script: python manage.py test
