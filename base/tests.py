@@ -176,8 +176,8 @@ class TestUsersAndServingLivePages(TestCase):
                 response = user.client.get(page.url, HTTP_HOST=site.hostname)
                 self.assertEqual(response.status_code in possible, True, msg=page.url + ' returned a ' + str(response.status_code))
             except:
-                msg = page.relative_url(site) + ' has a problem'
-                raise RuntimeError(msg)
+                print(page.relative_url(site) + ' has a problem')
+                raise
 
     #def test_loop_page_with_anonymous_user(self):
     #    """
