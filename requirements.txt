@@ -12,13 +12,13 @@ django-debug-toolbar==1.4
 django-libsass==0.6
 django-localflavor==1.2
 django-macros==0.4.0
-django-modelcluster==3.0.1
+django-modelcluster==3.1
 django-redis
 -e git+https://github.com/Brown-University-Library/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
 django-static-precompiler==1.4
-django-taggit==0.22.0
-django-treebeard==4.1.0
-djangorestframework==3.6.2
+django-taggit==0.22.1
+django-treebeard==4.1.2
+djangorestframework==3.6.4
 elasticsearch==1.7.0
 feedparser==5.2.1
 html5lib==0.999999999
@@ -37,7 +37,7 @@ simplejson==3.11.1
 six==1.11.0
 sqlparse==0.1.18
 Unidecode==0.4.20
-urllib3==1.12
+urllib3==1.22
 wagtail==1.13.1
 wagtailmedia==0.1.4
 wheel==0.24.0
