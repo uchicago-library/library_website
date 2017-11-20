@@ -18,6 +18,7 @@ from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
 from staff.views import staff
 from base.views import json_hours, json_events, json_news, chat_status
+from .api import api_router
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -33,7 +34,7 @@ urlpatterns = [
     url(r'^chat-status/', chat_status, name='chat-status'),
     url(r'^results/$', results_view, name='results'),
     url(r'^loop-search/$', search_view, name='search'),
-    url(r'^api/', include(wagtailapi_urls)),
+    url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),

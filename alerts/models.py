@@ -3,6 +3,7 @@ from base.models import PublicBasePage
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.api import APIField
 
 class AlertPage(PublicBasePage):
     """
@@ -32,10 +33,10 @@ class AlertPage(PublicBasePage):
     subpage_types = []
 
     api_fields = [
-        'banner_message',
-        'more_info',
-        'alert_level',
-        'url',
+        APIField('banner_message'),
+        APIField('more_info'),
+        APIField('alert_level'),
+        APIField('url'),
     ]
 
     search_fields = PublicBasePage.search_fields

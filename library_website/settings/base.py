@@ -55,7 +55,7 @@ INSTALLED_APPS = (
     'wagtail.contrib.wagtailsearchpromotions',
     'wagtail.contrib.wagtailsitemaps',
     'wagtail.contrib.wagtailstyleguide',
-    'wagtail.contrib.wagtailapi',
+    'wagtail.api.v2',
     
     'corsheaders',
     'rest_framework',

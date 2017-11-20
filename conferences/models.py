@@ -7,6 +7,7 @@ from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from django.core.validators import RegexValidator
 from wagtail.wagtailsearch import index
 from modelcluster.fields import ParentalKey
+from wagtail.api import APIField
 
 # Through tables
 class ConferencePageMainRegistrationLinks(Orderable, AbstractButton):
@@ -151,7 +152,9 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         index.SearchField('conference_logo'),
         index.SearchField('body'),
     ]
-    api_fields = ('body',)
+    api_fields = [
+        APIField('body'),
+    ]
 
     @property
     def has_right_sidebar(self):
@@ -242,7 +245,9 @@ class ConferenceSubPage(PublicBasePage):
         index.SearchField('body'),
     ]
 
-    api_fields = ('body',)
+    api_fields = [
+        APIField('body'),
+    ]
 
     @property
     def has_right_sidebar(self):

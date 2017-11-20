@@ -17,7 +17,7 @@ from wagtail.wagtailimages.models import Image
 from subjects.utils import get_subjects_html
 from public.utils import get_features
 from units.models import BUILDINGS
-
+from wagtail.api import APIField
 import urllib
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
@@ -598,9 +598,9 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     ]
 
     api_fields = [
-        'libcal_library_id',
-        'google_map_link',
-        'reservation_url',
+        APIField('libcal_library_id'),
+        APIField('google_map_link'),
+        APIField('reservation_url'),
     ]
 
 
