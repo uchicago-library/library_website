@@ -12,6 +12,7 @@ from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from wagtail.wagtailsnippets.models import register_snippet
+from wagtail.api import APIField
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
@@ -203,6 +204,15 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     )
 
     objects = StaffPageManager()
+
+    api_fields = [
+        APIField('cnetid'),
+        APIField('employee_type'),
+        APIField('position_title'),
+        APIField('position_status'),
+        APIField('supervises_students'),
+        APIField('staff_page_units'),
+    ]
 
     @property
     def get_staff_subjects(self):
