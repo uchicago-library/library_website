@@ -101,8 +101,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
  
     # Featured Library Expert
-    featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(), default=[]) 
-    featured_library_experts = StreamField(FeaturedLibraryExpertFields(), default=[])
+    featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(required=False), default=[], blank=True)
+    featured_library_experts = StreamField(FeaturedLibraryExpertFields(required=False), default=[], blank=True)
 
     subpage_types = ['alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
         'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
