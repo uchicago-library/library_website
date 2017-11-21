@@ -66,7 +66,7 @@ class StaffPageLibraryUnits(Orderable, models.Model):
        'units.UnitPage',
        blank=True,
        null=True,
-       on_delete=models.SET_NULL,
+       on_delete=models.CASCADE,
        related_name='%(app_label)s_%(class)s_related'
     )
 

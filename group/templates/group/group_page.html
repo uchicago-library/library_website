@@ -8,9 +8,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12">
       <article>
         <h1>{{ self.title }}</h1>
-        {% for block in self.intro %}
-          {{ block }}
-        {% endfor %}
+        {{ self.intro }}
         <p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
    
         {% if self.meeting_frequency or self.meeting_location or self.meeting_start_time %} 
@@ -68,10 +66,7 @@
             <li><a href="reports/">more...</a></li>
           </ul>
         {% endif %}
-    
-        {% for block in self.body %}
-          {{ block }}
-        {% endfor %}
+        {{ self.body }} 
       </article>
     </div>
   </div>

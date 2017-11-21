@@ -896,6 +896,9 @@ class DefaultBodyFields(StreamBlock):
     image_link = ImageLink(help_text='A fancy link made out of a thumbnail and simple text')
     local_media = LocalMediaBlock(help_text='Audio or video files that are locally hosted')
 
+    class Meta:
+        required = False
+
 
 class RawHTMLBodyField(StreamBlock):
     """
