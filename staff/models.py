@@ -13,6 +13,7 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.api import APIField
+from rest_framework import serializers
 from modelcluster.fields import ParentalKey
 from subjects.models import Subject
 from base.models import PhoneNumber, Email
@@ -205,13 +206,52 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     objects = StaffPageManager()
 
+    def get_employee_type(self):
+        """
+        Get the serialized employee type for display
+        in the api. Converts the integer representation
+        from the database to a human readable string.
+
+        Returns:
+            String
+        """
+        try:
+            return EMPLOYEE_TYPES[0][self.employee_type]
+        except(IndexError):
+            return ''
+
+    def get_position_status(self):
+        """
+        Get the serialized position status for display
+        in the api. Converts the integer representation
+        from the database to a human readable string.
+
+        Returns:
+            String
+        """
+        try:
+            return POSITION_STATUS[0][self.position_status]
+        except(IndexError):
+            return ''
+
+    def get_serialized_units(self):
+        """
+        Return a serialized list of library units assigned to
+        the staff member.
+
+        Returns:
+            List
+        """
+        return [str(Page.objects.get(id=u['library_unit_id'])) for u in self.staff_page_units.values()]
+
     api_fields = [
         APIField('cnetid'),
-        APIField('employee_type'),
+        APIField('employee_type', serializer=serializers.CharField(source='get_employee_type')),
         APIField('position_title'),
         APIField('position_status'),
+        APIField('position_status', serializer=serializers.CharField(source='get_position_status')),
         APIField('supervises_students'),
-        APIField('staff_page_units'),
+        APIField('library_units', serializer=serializers.ListField(source='get_serialized_units')),
     ]
 
     @property
