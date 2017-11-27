@@ -343,3 +343,6 @@ CACHES = {
         },
     },
 }
+
+# API configuration
+WAGTAILAPI_LIMIT_MAX = None
