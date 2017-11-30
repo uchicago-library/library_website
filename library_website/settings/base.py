@@ -225,8 +225,10 @@ CORS_ORIGIN_WHITELIST = (
     'dldc1.lib.uchicago.edu',
     'dldc2.lib.uchicago.edu',
     'dldc3.lib.uchicago.edu',
-    'vufindtest.lib.uchicago.edu',
     'guides.lib.uchicago.edu',
+    'sfx.lib.uchicago.edu',
+    'sfx.lib.uchicago.edu:3103',
+    'vufindtest.lib.uchicago.edu',
 )
 CORS_ALLOW_METHODS = (
     'GET',
