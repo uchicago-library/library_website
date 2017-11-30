@@ -1,0 +1,82 @@
+{% load static %}
+<!-- Footer -->
+    <footer id="footer" role="contentinfo" class="container-fluid footer">
+
+        <!-- Contact -->
+        <div class="col-xs-12 col-sm-2 col-footer">
+            <p>Contact<br/>
+            <a href="/about/thelibrary/contact/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Contact Us">Contact Us</a><br/>
+            <a href="/about/directory/?view=department" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Library Departments">Library Departments</a><br/>
+            <a href="/about/directory/?view=staff" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Staff Directory">Staff Directory</a><br/></p>
+        </div>
+        <!-- // Contact -->
+
+
+        <!-- Information -->
+        <div class="col-xs-12 col-sm-2 col-footer divider-vertical">
+            <p>Information for<br/>
+            {% if is_law %}
+                <a href="http://guides.lib.uchicago.edu/lawfacultyservices" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Law Faculty</a><br/>
+                <a href="http://guides.lib.uchicago.edu/lawstudents" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Law Students</a><br/>
+            {% else %}
+                <a href="/research/help/infofor/faculty/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Faculty</a><br/>
+                <a href="/research/help/infofor/students/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Students</a><br/>
+            {% endif %}
+            <a href="/research/help/infofor/staff/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; University Staff">University Staff</a><br/>
+            {% if is_law %}
+                <a href="/law/about/access/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visiting the Law Library</a><br/>
+            {% else %}
+                <a href="/research/help/infofor/information-visitors/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visitors</a><br/>
+            {% endif %}
+            <a href="/research/help/infofor/alumni/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Alumni &amp; Library Friends">Alumni &amp; Library Friends</a><br/>
+            <a href="/research/help/infofor/accessibility/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Patrons with Disabilities">Patrons with Disabilities</a></p>
+        </div>
+        <!-- // Information -->
+
+        <!-- Libraries -->
+        <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4 divider-vertical">
+            <p>Libraries<br/>
+            <a href="/crerar/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Crerar">Crerar</a><br/>
+            <a href="/law/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; D'Angelo Law">D’Angelo Law</a><br/>
+            <a href="/eck/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Eckhart">Eckhart</a><br/>
+            <a href="/mansueto/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Mansueto">Mansueto</a><br/>
+            <a href="/spaces/joseph-regenstein-library/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Regenstein">Regenstein</a><br/>
+            <a href="/scrc/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Special Collections">Special Collections</a><br/>
+            <a href="/ssa/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; SSA">SSA</a></p>
+        </div>
+        <!-- // Libraries -->
+
+        <!-- Social -->
+        <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4">
+            <p>Library Social Media<br/>
+            {% if is_law %}
+                <a href="https://www.facebook.com/dangelolawlibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Law Library Facebook</a><br/>
+            {% else %}
+                <a href="http://www.facebook.com/uchicagolibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Facebook</a><br/>
+            {% endif %}
+            <a href="https://www.instagram.com/uchicagolibrary/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Instagram"><i class="fa fa-instagram" aria-hidden="true"></i> &nbsp; Instagram</a><br/>
+            {% if is_law %}
+                <a href="http://news.lib.uchicago.edu/law/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Library News"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Law Library News</a><br/>
+            {% else %}
+                <a href="http://news.lib.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Library News"><i class="fa fa-rss-square" aria-hidden="true"></i> &nbsp; Library News</a><br/>
+            {% endif %}
+            <a href="https://www.youtube.com/user/uchicagolibrary" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; YouTube"><i class="fa fa-youtube-square" aria-hidden="true"></i> &nbsp; YouTube</a><br/>
+            <a href="/about/news-events/social-media/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; More Library Accounts"><i class="fa fa-clone" aria-hidden="true"></i> &nbsp; More Library Accounts...</a></p>
+        </div>
+        <!-- // Social -->
+
+        <!-- Address - Push/Pull Col for viewport-->
+        <div class="col-xs-12 col-sm-4 col-footer col-sm-pull-4">
+            <div class="centerdiv" itemscope itemtype="http://schema.org/Library">
+                <a href="//www.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="The University of Chicago"><img alt="The University of Chicago" src="{% static "base/images/unvlogo-white.png" %}" width="150" /></a>
+                <!-- Library Location: Address -->
+                <p><span itemprop="name">{{page_location}}</span><br/><span itemprop="address">{{address}}</span></p>
+                <small><a href="/about/thelibrary/policies/privacy/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Privacy Statement">Privacy Statement</a><br/>
+                    &copy; <span itemprop="parentOrganization">The University of Chicago</span><br/>
+                    <span class="staff-login"><a href="/admin" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Staff Login">Staff Login</a></span>
+                </small>
+            </div>
+        </div>
+        <!-- // Address -->
+    </footer>
+<!-- // Footer --> 

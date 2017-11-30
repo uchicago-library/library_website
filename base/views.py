@@ -1,14 +1,17 @@
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from base.utils import get_all_building_hours, get_hours_and_location, get_json_hours_by_id, get_building_hours_and_lid, get_news
 from events.utils import flatten_events, get_events
 from units.utils import get_default_unit
-from ask_a_librarian.utils import get_chat_status_and_css
+from ask_a_librarian.utils import get_chat_status_and_css, get_unit_chat_link, get_chat_status, get_chat_status_css
 import datetime
 import urllib
 from wagtail.wagtailcore.models import Site
+from bs4 import BeautifulSoup
+from public.models import StandardPage
+from library_website.settings import PUBLIC_HOMEPAGE
 
 def breadcrumbs(request):
     breadcrumbs = [{
@@ -107,3 +110,69 @@ def chat_status(request):
         )
 
 
+def external_include(request):
+    """
+    CSS, headers and footers for external sites like guides.lib or sfx.lib.
+    Make hrefs absolute.
+    """
+    callback = request.GET.get('callback', None)
+    include = request.GET.get('include', None)
+
+    # Variables to use in context
+    home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
+    location_and_hours = get_hours_and_location(home_page)
+    llid = home_page.get_granular_libcal_lid(home_page.unit)
+    location = str(location_and_hours['page_location'])
+    unit = location_and_hours['page_unit']
+
+    if include in ('css', 'js', 'header', 'footer'):
+        response = render(
+            request,
+            'base/includes/{}.html'.format(include),
+            {
+                'prefix': '{}://{}'.format(
+                    request.scheme,
+                    request.get_host
+                ),
+                'address': location_and_hours['address'],
+                'chat_url': get_unit_chat_link(unit, request),
+                'chat_status': get_chat_status('uofc-ask'),
+                'chat_status_css': get_chat_status_css('uofc-ask'),
+                'hours_page_url': home_page.get_hours_page(request),
+                'libcalid': llid,
+                'page_unit': str(location_and_hours['page_unit']),
+                'page_location': location,
+                'site_url': request.scheme + '://' + request.get_host(),
+            },
+        )
+        def absolute_url(href):
+            """
+            Helper function to make links absolute.
+            """
+            protocol = '{}://'.format(request.scheme)
+            if href.startswith('http://') or href.startswith('https://'):
+                protocol = ''
+            domain = request.get_host()
+            if not href.startswith('/'):
+                domain = ''
+            return '{}{}{}'.format(protocol, domain, href)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        for a in soup.find_all('a'):
+            a['href'] = absolute_url(a['href'])
+        for img in soup.find_all('img'):
+            img['src'] = absolute_url(img['src'])
+        for link in soup.find_all('link'):
+            link['href'] = absolute_url(link['href'])
+        response.content = str(soup)
+        if callback:
+            return HttpResponse(
+                '{}({});'.format(
+                    callback,
+                    json.dumps(response.content.decode('utf-8'))
+                ),
+                'application/javascript'
+            )
+        else:
+            return response
+    else:
+        raise ValueError
