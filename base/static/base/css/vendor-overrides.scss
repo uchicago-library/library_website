@@ -1,0 +1,21 @@
+/*------------------------------------------------------------------
+
+> Override styles on external systems. Only used in 3rd party platforms.  <
+
+[Table of contents]
+
+SFX
+
+-------------------------------------------------------------------*/
+
+/*
+ * SFX
+ * --------------------------------------------------
+ */
+
+.mdl-layout__container label {
+    display: block;
+    max-width: none;
+    margin-bottom: 0;
+    font-weight: normal;
+}
