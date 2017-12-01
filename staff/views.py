@@ -53,7 +53,7 @@ def staff(request):
         for i in intranetunits_qs:
             try:
                 i_library = i.unit_page.get_building()
-                i_title = i.unit_page.get_full_name()
+                i_title = i.get_full_name()
             except AttributeError:
                 continue
             flat_units.append({
