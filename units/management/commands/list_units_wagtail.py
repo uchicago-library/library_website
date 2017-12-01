@@ -42,6 +42,11 @@ class Command (BaseCommand):
             default=False
         )
         parser.add_argument(
+            '--report-out-of-sync-intranet-units',
+            action='store_true',
+            default=False
+        )
+        parser.add_argument(
             '--output-format',
             choices=('excel', 'text'),
             default='text',
@@ -73,6 +78,7 @@ class Command (BaseCommand):
 
         units_report = WagtailUnitsReport(
             sync_report = options['report_out_of_sync_units'],
+            intranet_sync_report = options['report_out_of_sync_intranet_units'],
             unit_report = options['all'] or options['live'],
             **options
         )

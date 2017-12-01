@@ -161,8 +161,9 @@ class WagtailUnitsReport:
     not in Wagtail, and it includes general reporting for library units.
     """
     
-    def __init__(self, sync_report=False, unit_report=False, **options):
+    def __init__(self, sync_report=False, intranet_sync_report=False, unit_report=False, **options):
         self.sync_report = sync_report
+        self.intranet_sync_report = intranet_sync_report
         self.unit_report = unit_report
         self.options = {
             k: options[k] for k in (
@@ -184,6 +185,8 @@ class WagtailUnitsReport:
             self._add_wagtail_units_report_worksheet()
         if self.sync_report:
             self._add_units_out_of_sync_worksheet()
+        if self.intranet_sync_report:
+            self._add_intranet_units_out_of_sync_worksheet()
         return self.workbook
 
     def tab_delimited(self):
@@ -198,6 +201,8 @@ class WagtailUnitsReport:
             output = output + "\n\n\n"
         if self.sync_report:
             output = output + self._get_units_out_of_sync_tab_delimited()
+        if self.intranet_sync_report:
+            output = output + self._get_intranet_units_out_of_sync_tab_delimited()
         return output
 
     def _units_out_of_sync(self):
@@ -234,6 +239,40 @@ class WagtailUnitsReport:
             list(wag_unit_names.difference(api_unit_names))
         )
         return missing_in_campus_directory, missing_in_wagtail
+
+
+    def _intranet_units_out_of_sync(self):
+        """
+        Get lists of intranet unit pages that are out of sync.
+    
+        This function returns two lists--first, a list of the names of intranet
+        unit pages that are present in Wagtail, but missing in the campus
+        directory.  Second, a list of the names of unit pages that are present
+        in the campus directory but missing in Wagtail.
+    
+        Note: We have to return names in the style of the campus directory (like
+        those returned by the UnitPage's get_campus_directory_full_name() method)
+        because we may only have access to a given unit in the campus directory. If
+        that's the case it would be impossible to tell what its full name might be
+        in the library directory.
+    
+        Returns: two lists of strings.
+        """
+        from intranetunits.models import IntranetUnitsPage
+        api_unit_names = self._get_campus_directory_unit_names()
+        wag_unit_names = set()
+    
+        for u in IntranetUnitsPage.objects.live():
+            wag_unit_names.add(u.get_campus_directory_full_name())
+    
+        missing_in_campus_directory = sorted(
+            list(api_unit_names.difference(wag_unit_names))
+        )
+        missing_in_wagtail = sorted(
+            list(wag_unit_names.difference(api_unit_names))
+        )
+        return missing_in_campus_directory, missing_in_wagtail
+
 
     def _get_campus_directory_unit_names(self):
         """
@@ -285,6 +324,25 @@ class WagtailUnitsReport:
             output.append([""])
         return output
 
+    def _get_intranet_units_out_of_sync_data(self):
+        """
+        Get the data for an out of sync units report, independant of whatever
+        format the final report will be in (e.g. Excel or tab-delimited.)
+        """
+        output = []
+        campus_units, wagtail_units = self._intranet_units_out_of_sync()
+        if wagtail_units:
+            output.append(["THE FOLLOWING UNITS APPEAR IN WAGTAIL, BUT NOT THE UNIVERSITY'S API:"])
+            for w in wagtail_units:
+                output.append([w])
+            output.append([""])
+        if campus_units:
+            output.append(["THE FOLLOWING UNITS APPEAR IN THE UNIVERSITY'S API, BUT NOT WAGTAIL:"])
+            for c in campus_units:
+                output.append([c])
+            output.append([""])
+        return output
+
     def _add_units_out_of_sync_worksheet(self):
         """
         Adds a report of the units that are present in Wagtail but not in the
@@ -295,6 +353,18 @@ class WagtailUnitsReport:
         """
         worksheet = self.workbook.create_sheet('out of sync units')
         for record in self._get_units_out_of_sync_data():
+            worksheet.append(record)
+
+    def _add_intranet_units_out_of_sync_worksheet(self):
+        """
+        Adds a report of the units that are present in Wagtail but not in the
+        campus directory, and vice versa, to a Microsoft Excel spreadsheet.
+    
+        Side Effect:
+            Adds an OpenPyXL worksheet with information about out of sync units. 
+        """
+        worksheet = self.workbook.create_sheet('out of sync units')
+        for record in self._get_intranet_units_out_of_sync_data():
             worksheet.append(record)
 
     def _get_units_out_of_sync_tab_delimited(self):
@@ -308,6 +378,20 @@ class WagtailUnitsReport:
         stringio = io.StringIO()
         writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         for record in self._get_units_out_of_sync_data():
+            writer.writerow(record)
+        return stringio.getvalue()
+
+    def _get_intranet_units_out_of_sync_tab_delimited(self):
+        """
+        Get a report of library units that are present in Wagtail but not in
+        the campus directory, and vice versa. 
+
+        Returns:
+            A string. Tab delimited data, separated by newlines. 
+        """
+        stringio = io.StringIO()
+        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        for record in self._get_intranet_units_out_of_sync_data():
             writer.writerow(record)
         return stringio.getvalue()
 

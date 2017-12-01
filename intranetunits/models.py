@@ -131,6 +131,70 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         index.SearchField('body'),
     ]
 
+    def _get_full_name_list(self):
+        """
+        Helper function for get_full_name() and
+        get_campus_directory_full_name(). This returns a list of page titles
+        that can be processed by those two functions. 
+        """
+        return list(
+            self.get_ancestors(True).live().type(IntranetUnitsPage).values_list(
+                'title', 
+                flat=True
+            )
+        )
+
+    def get_full_name(self):
+        """
+        Get an IntranetUnitsPage's full name according to Wagtail.
+
+        The full name of an IntranetUnitsPage includes a breadcrumb trail of
+        the titles its ancestor IntranetUnitsPages. 
+
+        Example:
+        Wagtail contains an IntranetUnitsPage for "Collections & Access". That
+        page contains "Access Services". The full name for Access Services is
+        "Collections & Access - Access Services".
+
+        Compare this method's output with get_campus_directory_full_name().
+        """
+        return ' - '.join(self._get_full_name_list())
+
+    def get_campus_directory_full_name(self):
+        """
+        Get an IntranetUnitsPage's campus directory name.
+
+        The campus directory describes a university department in a three level
+        heirarchy: division, department, and sub-department. For library
+        departments division is always "Library".
+
+        The library's own view of its org chart has more levels than what we
+        can represent in the campus directory, so we skip some levels to make
+        room for the departments below it. Those levels are hardcoded below.
+
+        Example:
+        Wagail contains an IntranetUnitsPage for "Collections & Access - Access
+        Services". The campus directory full name for Access Services should be
+        "Access Services".
+        """
+        titles = self._get_full_name_list()
+
+        # Remove "container units". These are top-level units in the library's
+        # system that aren't present in the campus directory.
+        skip_containing_units = ['Collections & Access', 'Research & Learning']
+        for v in skip_containing_units:
+            try:
+                titles.remove(v)
+            except ValueError:
+                continue
+
+        # Our system includes more than two levels of heiarchy, but the campus
+        # directory only includes two. 
+        titles = titles[:2]
+
+        return ' - '.join(titles)
+
+
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
 

@@ -251,7 +251,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         return hierarchical_units
 
-    def get_full_name(self, library_directory=True):
+    def get_full_name(self):
         """
         Get a UnitPage's full name according to Wagtail.
 
