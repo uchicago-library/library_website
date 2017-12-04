@@ -393,15 +393,17 @@ class WagtailStaffReport:
         def _format(cnetid, value, field):
             return '{} -{}- ({})'.format(cnetid, self._clean(value), field)
 
+        # Don't sync up some staff accounts. Former library directors may
+        # appear in the campus directory, but they shouldn't appear in
+        # staff listings on the library website. In other cases, staff
+        # might have phone numbers connected with non-library jobs. If they
+        # want those numbers to appear on the library website, they can add
+        # them manually but we won't keep their information in sync. 
+        skip_cnetids = ['judi', 'plb4']
+
         api_staff_info = set()
         for cnetid in get_all_library_cnetids_from_directory():
-            # Don't sync up some staff accounts. Former library directors may
-            # appear in the campus directory, but they shouldn't appear in
-            # staff listings on the library website. In other cases, staff
-            # might have phone numbers connected with non-library jobs. If they
-            # want those numbers to appear on the library website, they can add
-            # them manually but we won't keep their information in sync. 
-            if cnetid in ['judi', 'plb4']:
+            if cnetid in skip_cnetids:
                 continue
             api_staff_info.add(cnetid)
             xml_string = get_xml_from_directory_api(
@@ -436,6 +438,8 @@ class WagtailStaffReport:
 
         wag_staff_info = set()
         for s in StaffPage.objects.live():
+            if s.cnetid in skip_cnetids:
+                continue
             wag_staff_info.add(s.cnetid)
             wag_staff_info.add(
                 _format(s.cnetid, s.official_name, 'officialName')
