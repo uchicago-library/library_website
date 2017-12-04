@@ -16,7 +16,7 @@ from search.views import loop_search as search_view
 from units.views import units as unit_view
 from lib_collections.views import collections as collection_view
 from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
-from staff.views import staff
+from staff.views import staff, staff_api
 from base.views import json_hours, json_events, json_news, chat_status, external_include
 from .api import api_router
 
@@ -39,6 +39,7 @@ urlpatterns = [
     url('^inventory\.xml$', sitemap),
     url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
+    url(r'^staff_api/$', staff_api, name='staff_api'),
     url(r'^about/directory/$', unit_view, name='unit'),
     url(r'^about/directory/staff/$', RedirectView.as_view(url='/about/directory/?view=staff')),
     url(r'^about/news-events/events/$', events_view, name='events'),

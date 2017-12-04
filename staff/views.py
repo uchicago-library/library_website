@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from public.models import LocationPage
 from subjects.models import Subject
@@ -10,6 +11,9 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
+
+from rest_framework.decorators import api_view
+import requests
 
 def staff(request):
     library = request.GET.get('library', None)
@@ -92,3 +96,27 @@ def staff(request):
         'staff_pages': staff_pages,
         'view': view
     })
+
+@api_view(['GET'])
+def staff_api(request):
+    """
+    API view for getting information about staff members. The request must
+    provide a user token in the headers. In order to make tokenization work,
+    the Django Rest Framework requires us to use the @api_view decorator.
+    Since we can't directly apply this to the Wagtail API (build on Django
+    Rest Framework) we apply it here and pass the request on to the default
+    Wagtail api. We return the response that Wagtail API gives us.
+    """
+
+    if request.method == 'GET':
+        copy = request.GET.copy()
+        params = copy.urlencode()
+        scheme = request.is_secure() and 'https' or 'http'
+        base_url = scheme + '://' + request.get_host()
+        rest_url = base_url + '/api/v2/pages/?' + params
+
+        if request.META['HTTP_AUTHORIZATION']:
+            token = request.META['HTTP_AUTHORIZATION']
+            rest_headers = {'Authorization': token}
+            rest_response = requests.get(rest_url, headers=rest_headers)
+            return JsonResponse(rest_response.json())

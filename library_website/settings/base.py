@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'alerts',
     'ask_a_librarian',
     'base',
@@ -252,6 +253,18 @@ NO_PERMISSIONS_REDIRECT_URL = 'https://www.lib.uchicago.edu/no-permission/'
 # Settings for RESTful API and frontend cache invalidation
 WAGTAILAPI_SEARCH_ENABLED = True
 WAGTAILAPI_MAX_RESULTS = 60
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 
 # Institutional ID for libcal
 LIBCAL_IID = 482
