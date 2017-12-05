@@ -103,9 +103,25 @@ def staff_api(request):
     API view for getting information about staff members. The request must
     provide a user token in the headers. In order to make tokenization work,
     the Django Rest Framework requires us to use the @api_view decorator.
-    Since we can't directly apply this to the Wagtail API (build on Django
+    Since we can't directly apply this to the Wagtail API (built on Django
     Rest Framework) we apply it here and pass the request on to the default
-    Wagtail api. We return the response that Wagtail API gives us.
+    Wagtail API. We return the response that Wagtail API gives us. To edit
+    or add fields to this API go to the StaffPage model.
+
+    This view only passes the request to the Wagtail pages API and returns
+    the output. The view will only be rendered if the request headers contain
+    a token. Any user can have a token, however, we do not create them by
+    default.
+
+    Create a token for a user:
+    from rest_framework.authtoken.models import Token
+    Token.objects.get_or_create(user=user)
+
+    More info:
+    django-rest-framework.org/api-guide/authentication/#tokenauthentication
+
+    Example query:
+    curl -X GET 'https://loop.lib.uchicago.edu/staff_api/?format=json&limit=1000&type=staff.StaffPage&fields=*' -H 'Authorization: Token 364893-PRIVATE-TOKEN'
     """
 
     if request.method == 'GET':
