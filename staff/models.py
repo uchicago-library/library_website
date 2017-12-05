@@ -410,9 +410,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     def get_context(self, request):
         position_title = self.position_title
-        faculty_exchanges = self.staff_page_phone_faculty_exchange.all().values_list('faculty_exchange', flat=True)
         emails = self.staff_page_email.all().values_list('email', flat=True)
-        phones = self.staff_page_phone_faculty_exchange.all().values_list('phone_number', flat=True)
 
         units = set()
         for staff_page_unit in self.staff_page_units.all():
@@ -450,9 +448,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             
         context = super(StaffPage, self).get_context(request)
         context['position_title'] = position_title
-        context['faculty_exchanges'] = faculty_exchanges
         context['emails'] = emails
-        context['phones'] = phones
         context['units'] = units
         context['subjects'] = subjects
         context['group_memberships'] = group_memberships

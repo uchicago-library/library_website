@@ -1,4 +1,5 @@
 {% extends "base/intranet_base.html" %}
+{% load units_tags %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
@@ -50,12 +51,7 @@
         {% for email in emails %}
           <a href="mailto:{{ email }}">{{ email }}</a><br/>
         {% endfor %}
-        {% for phone in phones %}
-          <a href="tel:{{ phone }}">{{ phone }}</a><br/>
-        {% endfor %}
-        {% for faculty_exchange in faculty_exchanges %}
-          <span class="staffpage-faculty-exchange">{{ faculty_exchange }}</span><br/>
-        {% endfor %}
+        {% staff_faculty_exchanges_phone_numbers self %}
 
       {% if self.bio or self.libguide_url or self.cv %}
         <h2>Bio</h2>

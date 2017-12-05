@@ -1,5 +1,6 @@
 {% extends "base/intranet_base.html" %}
 {% load static %}
+{% load units_tags %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
@@ -102,17 +103,7 @@
                                                     </a><br/>
                                                 {% endif %}
                                             {% endwith %}
-                                            
-                                            {% with staff_page.staff_page_phone_faculty_exchange.first.phone_number as phone_number %}
-                                                {% if phone_number %}
-                                                    {{ phone_number }}<br/>
-                                                {% endif %}
-                                            {% endwith %}
-                                            {% with staff_page.staff_page_phone_faculty_exchange.first.faculty_exchange as faculty_exchange %}
-                                                {% if faculty_exchange %}
-                                                    {{ faculty_exchange }}<br/>
-                                                {% endif %}
-                                            {% endwith %}
+                                            {% staff_faculty_exchanges_phone_numbers staff_page %}
                                         </td>
                                         <td></td>
                                     </tr>
