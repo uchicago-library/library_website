@@ -41,40 +41,32 @@ def staff_email_addresses(staff_page):
 
 @register.inclusion_tag('units/staff_faculty_exchanges_phone_numbers.html')
 def staff_faculty_exchanges_phone_numbers(staff_page):
-    facex_phone_pairs = set()
-    for p in staff_page.staff_page_phone_faculty_exchange.all():
-        facex_phone_pairs.add(p.faculty_exchange + '\t' + p.phone_number)
-    
-    facex_phone_pairs_list = list(map(lambda p: p.split('\t'), list(facex_phone_pairs)))
+    libraries = {
+        'JCL': LocationPage.objects.get(title='The John Crerar Library'),
+        'JRL': LocationPage.objects.get(title='The Joseph Regenstein Library'),
+        'LBQ': LocationPage.objects.get(title='The D\'Angelo Law Library'),
+        'Mansueto': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
+        'MAN': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
+        'SSA': LocationPage.objects.get(title='Social Service Administration Library')
+    }
 
     lib_room_phone = []
-    for p in facex_phone_pairs_list:
-        facex_parts = p[0].split(' ')
-       
-        lib = '' 
-        if facex_parts[0] == 'JCL':     
-            lib = LocationPage.objects.get(title='The John Crerar Library')
-        elif facex_parts[0] == 'JRL':
-            lib = LocationPage.objects.get(title='The Joseph Regenstein Library')
-        elif facex_parts[0] == 'LBQ':
-            lib = LocationPage.objects.get(title='The D\'Angelo Law Library')
-        elif facex_parts[0] in ['MAN', 'Mansueto']:
-            lib = LocationPage.objects.get(title='The Joe and Rika Mansueto Library')
-        elif facex_parts[0] == 'SSA':
-            lib = LocationPage.objects.get(title='Social Service Administration Library')
+    for p in staff_page.staff_page_phone_faculty_exchange.all():
+        library_abbreviation = p.faculty_exchange.split(' ')[0]
+        if library_abbreviation in libraries:
+            lib = libraries[library_abbreviation]
         else:
             lib = None
 
-        if len(facex_parts) > 1:
-            room = facex_parts[1]
-        else:
+        try:
+            room = p.faculty_exchange.split(' ')[1]
+        except IndexError:
             room = None
 
-        if p[1]:
-            phone = p[1]
-        else:
-            phone = None
-       
+        phone = None
+        if p.phone_number:
+            phone = p.phone_number
+
         lib_room_phone.append([lib, room, phone])
     
     return {

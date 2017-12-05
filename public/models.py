@@ -823,16 +823,6 @@ class StaffPublicPage(PublicBasePage):
         except AttributeError:
             building_str = None
 
-        try:
-            phone_number = s.staff_page_phone_faculty_exchange.first().phone_number
-        except AttributeError:
-            phone_number = None
-
-        try:
-            room_number = s.staff_page_phone_faculty_exchange.first().faculty_exchange.split(' ').pop()
-        except AttributeError:
-            room_number = None
-
         context.update({
             'bio': self.get_bio(),
             'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
@@ -845,9 +835,8 @@ class StaffPublicPage(PublicBasePage):
             'libguide_url': libguide_url,
             'library': building_str,
             'orcid': s.orcid,
-            'phone_number': phone_number,
             'profile_picture': s.profile_picture,
-            'room_number': room_number,
+            'staff_page': s,
             'subjects': get_subjects_html(s.staff_subject_placements.all()),
             'positiontitle': s.position_title
         })
