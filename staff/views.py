@@ -12,7 +12,9 @@ from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 import requests
 
 def staff(request):
@@ -98,6 +100,8 @@ def staff(request):
     })
 
 @api_view(['GET'])
+@authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
+@permission_classes((IsAuthenticated,))
 def staff_api(request):
     """
     API view for getting information about staff members. The request must
