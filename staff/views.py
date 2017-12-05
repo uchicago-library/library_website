@@ -113,9 +113,12 @@ def staff_api(request):
     a token. Any user can have a token, however, we do not create them by
     default.
 
-    Create a token for a user:
+    Create and view a token for a given user:
     from rest_framework.authtoken.models import Token
-    Token.objects.get_or_create(user=user)
+    from django.contrib.auth.models import User
+    u = User.objects.get(username='tdanstrom')
+    token = Token.objects.create(user=u)
+    print(token)
 
     More info:
     django-rest-framework.org/api-guide/authentication/#tokenauthentication
