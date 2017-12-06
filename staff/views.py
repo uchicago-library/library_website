@@ -137,9 +137,5 @@ def staff_api(request):
         scheme = request.is_secure() and 'https' or 'http'
         base_url = scheme + '://' + request.get_host()
         rest_url = base_url + '/api/v2/pages/?' + params
-
-        if request.META['HTTP_AUTHORIZATION']:
-            token = request.META['HTTP_AUTHORIZATION']
-            rest_headers = {'Authorization': token}
-            rest_response = requests.get(rest_url, headers=rest_headers)
-            return JsonResponse(rest_response.json())
+        rest_response = requests.get(rest_url)
+        return JsonResponse(rest_response.json())
