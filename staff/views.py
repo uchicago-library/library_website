@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from public.models import LocationPage
@@ -13,7 +14,7 @@ from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 import requests
 
@@ -100,7 +101,7 @@ def staff(request):
     })
 
 @api_view(['GET'])
-@authentication_classes((SessionAuthentication, BasicAuthentication, TokenAuthentication))
+@authentication_classes((SessionAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated,))
 def staff_api(request):
     """
@@ -137,5 +138,12 @@ def staff_api(request):
         scheme = request.is_secure() and 'https' or 'http'
         base_url = scheme + '://' + request.get_host()
         rest_url = base_url + '/api/v2/pages/?' + params
-        rest_response = requests.get(rest_url)
-        return JsonResponse(rest_response.json())
+
+        try:
+            token = request.META['HTTP_AUTHORIZATION']
+            rest_headers = {'Authorization': token}
+            rest_response = requests.get(rest_url, headers=rest_headers)
+            return JsonResponse(rest_response.json())
+        except(KeyError):
+            raise PermissionDenied
+    raise PermissionDenied
