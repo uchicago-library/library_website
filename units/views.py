@@ -22,21 +22,6 @@ import os
 import subprocess
 import urllib.parse
 
-'''
-"subject" means a subject and all of it's descendants.
-"department" means the Unit Page and all of its descendants. .get_descendants(True)
-
-for each subject, check to see there are any entries in the staffpage subject placement table that contain those staff. if so, this one is ok. 
-'''
-def get_subjects():
-    placed_subjects_and_descendants = set(StaffPageSubjectPlacement.objects.all().values_list('subject__name', flat=True))
-    subjects = []
-    for s in Subject.objects.filter(display_in_dropdown=True):
-        dropdown_subject_and_descendants = set(s.get_descendants(True).values_list('name', flat=True))
-        if placed_subjects_and_descendants.intersection(dropdown_subject_and_descendants):
-            subjects.append(s.name)
-    return subjects
-
 def get_staff_pages_for_library(library = None):
     all_staff = StaffPage.objects.live().order_by('last_name', 'first_name')
     if library:
@@ -249,7 +234,7 @@ def units(request):
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
-        'subjects': get_subjects(),
+        'subjects': Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True),
         'subject': subject,
         'view': view,
         'self': {
