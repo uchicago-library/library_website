@@ -222,6 +222,16 @@ def units(request):
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
 
+    title = ''
+    if query:
+      title = 'Search Results'
+    elif view == 'staff':
+      title = 'Library Directory: Staff'
+    elif view == 'department': 
+      title = 'Library Directory: Departments'
+    elif view == 'org':
+      title = 'Library Directory: Org Chart'
+
     return render(request, 'units/unit_index_page.html', {
         'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
@@ -238,7 +248,7 @@ def units(request):
         'subject': subject,
         'view': view,
         'self': {
-            'title': 'Library Directory'
+            'title': title
         },
         'page_unit': str(unit),
         'page_location': location,
