@@ -50,6 +50,7 @@
     {% if is_hours_page %}
         <script src="{% static "base/js/jquery.min.js" %}"></script>
         <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
+        <script src="https://api3.libcal.com/js/hours_today.js"></script>
     {% endif %}
     <link rel="stylesheet" href="{% static "base/css/uclib-print.css" %}"/>
     {% block styles %}{% endblock %}
@@ -458,39 +459,75 @@
     {% block extra_scripts %}{% endblock %}
     {% if is_hours_page %}
         <script>
-            //Regenstein
-            $(function(){ 
-                var week1357 = new $.LibCalWeeklyGrid( $("#s-lc-whw1357"), { iid: 482, lid: 1357,  weeks: 16 }); 
-            });
-
-            //Crerar
+        // >> Crerar << //
+            // Desktop
             $(function(){ 
                 var week1373 = new $.LibCalWeeklyGrid( $("#s-lc-whw1373"), { iid: 482, lid: 1373,  weeks: 16 }); 
             });
+            //Mobile
+            $(function(){ 
+            var s_lc_tdh_482_1373 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1373"), { iid: 482, lid: 1373, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
 
-            //Law
+
+        // >> Law << //
+            // Desktop
             $(function(){ 
                 var week1378 = new $.LibCalWeeklyGrid( $("#s-lc-whw1378"), { iid: 482, lid: 1378,  weeks: 16 }); 
             });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_1378 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1378"), { iid: 482, lid: 1378, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
 
-            //Eckhart
+        // >> Eckhart << //
+            // Desktop
             $(function(){ 
                 var week1377 = new $.LibCalWeeklyGrid( $("#s-lc-whw1377"), { iid: 482, lid: 1377,  weeks: 16 }); 
             });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_1377 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1377"), { iid: 482, lid: 1377, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
 
-            //Mansueto
+        // >> Mansueto << //
+            // Desktop
             $(function(){ 
                 var week1379 = new $.LibCalWeeklyGrid( $("#s-lc-whw1379"), { iid: 482, lid: 1379,  weeks: 16 }); 
             });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_1379 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1379"), { iid: 482, lid: 1379, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
 
-            //SCRC
+        // >> Regenstein << //
+            // Desktop
+            $(function(){ 
+                var week1357 = new $.LibCalWeeklyGrid( $("#s-lc-whw1357"), { iid: 482, lid: 1357,  weeks: 16 }); 
+            });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_1357 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1357"), { iid: 482, lid: 1357, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
+
+        // >> SCRC << //
+            // Desktop
             $(function(){ 
                 var week2449 = new $.LibCalWeeklyGrid( $("#s-lc-whw2449"), { iid: 482, lid: 2449,  weeks: 16 }); 
             });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_2449 = new $.LibCalTodayHours( $("#s_lc_tdh_482_2449"), { iid: 482, lid: 2449, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
+            });
 
-            //SSA
+        // >> SSA << //
+            // Desktop
             $(function(){ 
                 var week1380 = new $.LibCalWeeklyGrid( $("#s-lc-whw1380"), { iid: 482, lid: 1380,  weeks: 16 }); 
+            });
+            //Mobile
+            $(function(){ 
+                var s_lc_tdh_482_1380 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1380"), { iid: 482, lid: 1380, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
             });
         </script>
     {% endif %}
