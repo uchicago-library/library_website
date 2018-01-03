@@ -825,7 +825,7 @@ table.etable>thead>tr>th {
 
 table.etable>tbody>tr {
   &:last-child {
-    border-bottom: 2px solid #ADB17D;
+    border-bottom: 2px solid $table-main;
   }
   &>td:last-child {
     vertical-align:middle;
@@ -1074,6 +1074,11 @@ a.btn-ask {
  * --------------------------------------------------
  */
 
+// ** Springshare requires us to have two different widgets for mobile and desktop. Enjoy the pain!  ** //
+
+
+// >> Desktop Widget << //
+
 .s-lc-whw {
   width: 100%;
   margin-top: 0;
@@ -1090,7 +1095,7 @@ a.btn-ask {
     font-style: italic;
     &>tr>th {
       vertical-align: bottom;
-      border-bottom: 2px solid #ADB17D;
+      border-bottom: 2px solid $table-main;
       padding: 5px;
     }
   }
@@ -1099,32 +1104,32 @@ a.btn-ask {
     border-bottom: none;
     border-right: none;
   }
-  & td {
-    @include respond-to(smllonly) {
-      white-space: nowrap;
-    }
-  }
   &>tbody>tr {
+    &:hover {
+      background-color: unset; // Removes hover color on table row that is not clickable
+    }
     &>td {
       padding: 5px;
       &:first-child {
-        @include respond-to(small) {
-          border-right: 1px solid #c5c8a4;
-        }
+        border-right: 1px solid #c5c8a4;
         @include respond-to(medium) {
           min-width: 150px;
         }
+      }
+      &.s-lc-whw-locname {
+        font-weight: bold;
       }
     }
     &:nth-of-type(even) {
       background-color: #f9f9f9;
     }
     &:last-child {
-      border-bottom:2px solid #ADB17D;
+      border-bottom:2px solid $table-main;
     }
   }
 }
 
+// Highlights "Today" column
 .s-lc-whw-head-date {
   color: #4c4c4c;
   font-size: 0.9em;
@@ -1132,7 +1137,7 @@ a.btn-ask {
 
 .s-lc-whw-today-h, .s-lc-whw-today-h>.s-lc-whw-head-date {
   color: #000;
-  background-color: #ADB17D;
+  background-color: $table-main;
   font-style: normal;
 }
 
@@ -1141,8 +1146,111 @@ a.btn-ask {
   font-weight: 600;
 }
 
-.s-lc-whw-locname {
-  font-weight: bold;
+.hours-today tr {
+  border-bottom: 1px solid #b8aab1;
+  & td {
+    width: 100%;
+    display: list-item;
+    list-style: none;
+    &:first-child {
+      color: $active-hover;
+      padding: 5px 0 3px 0;
+    }
+    &:last-child {
+      padding: 0 0 5px 0;
+    }
+  }
+}
+
+
+// >> Mobile "Today" Widget  << //
+// Not as clean as I would like due to Springshare being awful
+
+.s-lc-w-today {
+  width: 100%;
+  margin-bottom: 20px;
+    & thead {
+    background-color: lighten($table-main, 15%);
+    color: #323232;
+    font-style: italic;
+    &>tr>th {
+      vertical-align: bottom;
+      border-bottom: 2px solid $table-main;
+      padding: 5px;
+      text-align: center!important;
+    }
+    .s-lc-w-head-pre {
+      display: none;
+    }
+  }
+  .s-lc-w-location {
+    font-weight: 600;
+  }
+  .s-lc-w-previous, .s-lc-w-next {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    text-indent: -9999px;  // Swapping out button text, part 1
+    line-height: 0;   // Swapping out button text, part 2
+    &:disabled {
+      background-color: #efefef;
+    }
+  }
+  .s-lc-w-previous {
+    margin-left: 1em;
+    float: left;
+    &:after {   // Swapping out button text, part 3a
+      content: "\00ab";
+      text-indent: 0;
+      display: block;
+      line-height: initial;
+    }
+  }
+  .s-lc-w-next {   // Swapping out button text, part 3b
+    margin-right:1em;
+    float: right;
+    &:after {
+      content: "\00bb";
+      text-indent: 0;
+      display: block;
+      line-height: initial;
+    }
+  }
+  td {
+    padding: 5px;
+    &:first-child {
+      border-right: 1px solid #c5c8a4;
+    }
+    &.s-lc-w-time {
+      padding-left: 15px;
+    }
+  }
+  tr {
+    border: 1px solid #ddd;
+    &:nth-of-type(even) {
+      background-color: #f9f9f9;
+    }
+    &:last-child {
+      border-bottom:2px solid $table-main;
+    }
+  }
+}
+
+.s-lc-w-today-view-all {
+    display: none;
 }
 
 .s-lc-whw-sublocname {
@@ -1157,7 +1265,7 @@ a.btn-ask {
   }
 }
 
-.s-lc-whw-pr, .s-lc-whw-ne{
+.s-lc-whw-pr, .s-lc-whw-ne {
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
@@ -1181,7 +1289,7 @@ a.btn-ask {
 }
 
 
-.sr-only {
+.sr-only, .s-lc-w-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1192,73 +1300,6 @@ a.btn-ask {
   border: 0;
 }
 
-.hours-today tr {
-  border-bottom: 1px solid #b8aab1;
-  & td {
-    width: 100%;
-    display: list-item;
-    list-style: none;
-    &:first-child {
-      color: $active-hover;
-      padding: 5px 0 3px 0;
-    }
-    &:last-child {
-      padding: 0 0 5px 0;
-    }
-  }
-}
-
-.s-lc-whw-cont>.table-responsive {
-  &>table>tbody>tr>td {
-    white-space: normal;
-    @include respond-to(smallonly) {
-      white-space: normal;
-      width: 10%;
-      max-width: 100px;
-      margin-bottom: 15px;
-      overflow-y: hidden;
-      overflow-x: scroll;
-      -ms-overflow-style:
-      -ms-autohiding-scrollbar;
-      border: 1px solid #ddd;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-  @include respond-to(medium) {
-    border: 0;
-  }
- }
-
-
-////// Mobile override for Hours table - Part 1
- .s-lc-whw>thead>tr>th:not(.s-lc-whw-today-h):not(.s-lc-whw-bh), .s-lc-whw>tbody>tr>td:not(.s-lc-whw-today):not(.s-lc-whw-locname):not(.s-lc-whw-sublocname) {
-  @include respond-to(mobileonly) {
-    display: none;
-  }
-}
-
-.bldg-image {  ////// Mobile override for Hours table - Part 2
-  @include respond-to(mobileonly) {
-    display: none;
-  }
-}
-
-.s-lc-whw>thead>tr>th, .s-lc-whw>tbody>tr>th {
-    display: table-cell;
-}
-
-th.s-lc-whw-bh {
-  text-align: left;
-  white-space: nowrap;
-  @include respond-to(smallonly) {
-    background-color: #ADB17D;
-  }
-  & button {  ////// Mobile override for Hours table - Part 3
-    @include respond-to(mobileonly) {
-      display: none;
-    }
-  }
-}
 
 /*
  * Agenda (Conferences)
