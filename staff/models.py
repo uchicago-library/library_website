@@ -393,6 +393,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
         index.SearchField('orcid'),
+        index.SearchField('position_title'),
         index.SearchField('get_subjects')
     ]
 

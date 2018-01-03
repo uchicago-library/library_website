@@ -7,108 +7,103 @@
 
 {% block content %}
 	<article>
-        <div class="row">
-	        <div class="col-xs-12 col-sm-6">
-	            <div class="btn-group spaces-toggle">
-	                <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href="?view=department">Departments</a>
-	                <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href="?view=staff">Staff</a>
-	            </div><!-- /btn-group-->
-	        </div><!-- / col-xs-12 col-sm-6 -->
-	        <div class="col-xs-12 col-sm-6">
-	            <form action="." class="searchbox" method="GET">
-	                <input name="view" type="hidden" value="{% if view == 'staff' %}staff{% else %}department{% endif %}"/>
-	                <input name="query" placeholder="{% if view == 'staff' %}Jane Smith{% else %}Dissertation Office{% endif %}" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
-	                <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
-	                    <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
-                    </span>
-	           </form>
-	        </div><!-- /.col-xs-12 col-sm-6-->
-            {% if view == 'staff' %}
-                {% include "units/browse_by_pulldowns.html" %}
-            {% endif %}
-        </div><!-- /.row -->
+    <div class="col-xs-12 col-md-9 centermain directory">
+      <div class="row">
+        <div class="col-xs-12">
+          <form action="." class="searchbox" method="GET">
+  	        <input name="query" placeholder="Search by name or department" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
+            <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
+              <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
+            </span>
+          </form>
+        </div>
+ 
+        <div class="col-xs-12 col-sm-6">
+          <div class="btn-group spaces-toggle">
+            <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
+            <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
+            <a class="btn btn-list-toggle{% if view == 'org' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=org">Org Chart</a>
+          </div><!-- /btn-group-->
+        </div><!-- / col-xs-12 col-sm-6 -->
         {% if view == 'staff' %} 
-            {% if staff_pages %}
-                <table class="table table-striped quicktable">
-                    <tbody>
-                        <tr>
-                            <td>Quick Numbers</td>
-                            {% autoescape off %}
-                                {{quick_nums}}
-                            {% endautoescape %}
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table table-striped directory-list">
-                    <tbody>
-                        <tr class="etable-header">
-                            <td colspan="4">All Staff</td>
-                        </tr>
-                        {% for staff_page in staff_pages %}
-                            <tr>
-                                <td>
-                                    {% if staff_page.profile_picture %}
-                                        {% image staff_page.profile_picture fill-100x100 %}
-                                    {% else %}
-                                        {% image default_image fill-100x100 %}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <strong>{% staff_public_page_link staff_page %}</strong>
-                                    <br/>
-                                    <p>
-                                      {{ staff_page.position_title }}<br/>
-                                      {% library_unit_links staff_page.staff_page_units.first.library_unit %}
-                                    </p>
-                                </td>
-                                <td>
-                                    <strong>Contact</strong>
-                                    <br/>
-                                    {% staff_email_addresses staff_page %}
-                                    {% staff_faculty_exchanges_phone_numbers staff_page %}
-                                </td>
-                                <td>
-                                    {% if staff_page.staff_subject_placements.all %}
-                                        <strong>Subject Specialties</strong><br/>
-                                        {% staff_subjects staff_page %}
-                                    {% endif %}
-                                    {% if staff_page.libguide_url %}
-                                        <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                {% if query %}
-                    <p>There are no results for your search.</p>
-                {% endif %}
-            {% endif %}
-
-            {% if staff_pages.has_previous %}
-                <a href=".?view=staff&amp;page={{ staff_pages.previous_page_number }}">Previous</a>
-            {% endif %}
-            {% if staff_pages.has_previous and staff_pages.has_next %} 
-                | 
-            {% endif %}
-            {% if staff_pages.has_next %}
-                <a href=".?view=staff&amp;page={{ staff_pages.next_page_number }}">Next</a>
-            {% endif %}
-        {% else %}
-            <table class="table table-striped coll-list">
-                <tbody>
-                    <tr class="etable-header">
-                        <th>All Departments, Divisions, &amp; Units</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ hierarchical_units|safe }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+          {% include "units/browse_by_pulldowns.html" %}
         {% endif %}
+      </div><!-- / row -->
+
+      {% if query %}
+        <div class="col-xs-12 sdir" style="padding-top: 0; margin-top: 0">
+          <h2><a href="#">Matching Departments</a></h2>
+          <div class="col-xs-12 sdir-wrap">
+            {% for department in departments %}
+              {% include "units/unit_directory_listing.html" %}
+            {% empty %}
+              <p class="empty-state"><span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.</p>
+              <span><a class="viewall" href=".?view=department">View all departments</a></span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <table class="table table-striped directory-list">
+          <thead>
+            <tr class="sdir">
+              <td colspan="4">
+                <h2>Matching Staff</h2>
+              </td>
+            </tr>   
+          </thead>
+          <tbody>
+            {% for staff_page in staff_pages %}
+              {% include "staff/staff_directory_listing.html" %}
+            {% empty %}
+              <tr>
+                <td colspan="4">
+                  <p class="empty-state">
+                    <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+                  </p>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% elif view == 'staff' %} 
+        <table class="table table-striped directory-list">
+          <tbody>
+            <tr class="etable-header">
+              <td colspan="4">All Staff</td>
+            </tr>
+            {% for staff_page in staff_pages %}
+              {% include "staff/staff_directory_listing.html" %}
+            {% endfor %}
+          </tbody>
+        </table>
+      {% elif view == 'department' %}
+        {% include "units/unit_division_listing.html" %}
+      {% elif view == 'org' %}
+        <div style="padding: 2em 0;">
+          {% image org_chart_image original class="img-responsive" %}
+        </div>
+      {% endif %}
+    </div><!--/centermain-->
+    <div class="col-xs-12 col-md-3 rightside"> <!-- Right Sidebar Content -->
+      <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+        <h2>Quick Numbers</h2>
+        <ul>
+          {% autoescape off %}
+            {{quick_nums}}
+          {% endautoescape %}
+        </ul>
+      </div>
+
+      <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+        <h2>Ask A Librarian</h2>
+        <ul>
+          <li><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/"><i class="fa fa-envelope-o fa-2x"></i> Email</a></li>
+          <li><i class="fa fa-phone fa-2x"></i> 773-702-4685</li>
+          <li><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/appointment/"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
+          <li><a href="https://www.lib.uchicago.edu/libraries/libraries-hours/"><i class="fa fa-comments-o fa-2x"></i> Visit</a></li>
+        </ul>
+      </div>
+    </div>
 	</article>
 {% endblock %}
 

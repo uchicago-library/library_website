@@ -1,0 +1,24 @@
+{% load units_tags %}
+
+{% for division in divisions %}
+  <div class="col-xs-12 sdir" style="padding-top: 0; margin-top: 0">
+    <h2><a href=".?view=staff&amp;department={{ division.unit.title|urlencode }}">{{ division.unit.title }}</a></h2>
+    <span>
+      {% autoescape off %}
+        {% division_building_room_phone division.unit %}
+      {% endautoescape %} &nbsp; | &nbsp; 
+      <a href=".?view=staff&amp;department={{ division.unit.title|urlencode }}" class="viewall">View all {{ division.unit.title }} staff</a>
+    </span>
+    <div class="col-xs-12 sdir-wrap">
+      {% for descendant in division.descendants %}
+        <div class="col-xs-12 col-sm-4">
+          <h3><a href=".?view=staff&amp;department={{ descendant.title|urlencode }}">{{ descendant.title }}</a></h3>
+          {% department_building_room descendant %}<br>
+          {% autoescape off %}
+            {% department_contact_info descendant %}
+          {% endautoescape %}
+        </div>
+      {% endfor %}
+    </div><!-- END sdir-wrap -->
+  </div>
+{% endfor %}

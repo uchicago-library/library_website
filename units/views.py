@@ -59,7 +59,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
     if unit_page_ids == None:
         recursive = True
         unit_page_ids = list(UnitIndexPage.objects.first().get_descendants(True).values_list('id', flat=True))
-  
+ 
     staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__id__in=unit_page_ids).distinct().order_by('last_name', 'first_name')
     
     if display_supervisor_first:
@@ -69,89 +69,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
     return staff_pages
 
 def units(request):
-    def get_unit_info_from_unit_page(unit_page):
-        h = ''
-        # phone number
-        for unit_page_phone_number in unit_page.unit_page_phone_number.all():
-            if unit_page_phone_number.phone_label:
-                h = h + '<em>' + unit_page_phone_number.phone_label + ':' + '</em> '
-            if unit_page_phone_number.phone_number:
-                h = h + "<a href='tel:" + unit_page_phone_number.phone_number.replace('-', '') + "'>" + unit_page_phone_number.phone_number + "</a>"
-            h = h + '<br/>'
-
-        # fax_number  
-        if unit_page.fax_number:
-            h = h + 'Fax: ' + unit_page.fax_number + '<br/>'
-
-        # email_label, email
-        if unit_page.email:
-            if unit_page.email_label:
-                h = h + "<a href='mailto:" + unit_page.email + "'>" + unit_page.email_label + "</a><br/>"
-            else:
-                h = h + "<a href='mailto:" + unit_page.email + "'>" + unit_page.email + "</a><br/>"
-
-        # link_text, link_external, link_page, link_document
-        url = ''
-        if unit_page.link_external:
-            url = unit_page.link_external
-        elif unit_page.link_page:
-            url = unit_page.link_page.url
-        elif unit_page.link_document:
-            url =  unit_page.link_document.url
-
-        if url:
-            if unit_page.link_text:
-                link_text = unit_page.link_text
-            else:
-                link_text = url
-            h = h + "<a href='" + url + "'>" + link_text + "</a><br/>"
-
-        return h
-
-    def get_unit_info(t):
-        h = ''
-
-        # intercept this in the future to link to unit pages. 
-        staff_link = ''
-        if StaffPage.objects.filter(staff_page_units__library_unit=t.unit_page).exists():
-            staff_link = " <a href='/about/directory/?" + urllib.parse.urlencode({'view': 'staff', 'department': t.unit_page.get_full_name()}) + "'>staff</a>"
-
-        room_number = ''
-        if t.unit_page.room_number:
-            room_number = " (" + t.unit_page.room_number + ") "
-
-        if t.name:
-            directory_name = t.name
-            if t.unit_page.public_web_page:
-                directory_name = '<a href="' + t.unit_page.public_web_page.url + '">' + directory_name + '</a>'
-            
-            h = h + "<strong>" + directory_name + room_number + staff_link + "</strong><br/>"
-
-        if t.unit_page:
-            h = h + get_unit_info_from_unit_page(t.unit_page)
-
-        if h:
-            h = '<p>' + h + '</p>'
-        return h
-        
-    # hierarchical html. e.g.,
-    # <ul>
-    #   <li>Administration</li>
-    #   <li>Collection Services
-    #      <ul>
-    #         <li>Administration</li>
-    # ...
-    def get_html(tree):
-        if not tree:
-            return ''
-        else:
-            return "<ul>" + "".join(list(map(lambda t: "<li>" + get_unit_info(t) + get_html(t) + "</li>", tree.children))) + "</ul>"
-
-    # 
-    # MAIN
-    #
-
-    hierarchical_html = ''
+    divisions = []
     
     department = request.GET.get('department', None)
     library = request.GET.get('library', None)
@@ -167,14 +85,14 @@ def units(request):
     if view == 'department' and query:
         sort = 'alphabetical'
 
-    department_label = ''
-    if department:
-        department_label = department.split(' - ').pop()
-
-    # staff pages
     staff_pages = []
+    departments = []
 
-    if view == 'staff':
+    if query:
+      staff_pages = StaffPage.objects.live().search(query)
+      departments = UnitPage.objects.filter(display_in_library_directory=True, live=True).search(query)
+
+    elif view == 'staff':
         # returns all staff pages if library is None.
         # otherwise, returns staff pages for the given library.
         staff_pages = get_staff_pages_for_library(library)
@@ -182,10 +100,6 @@ def units(request):
         # departments.
         if department:
             staff_pages = get_staff_pages_for_unit(department, True, True)
-
-        # search staff pages.
-        if query:
-            staff_pages = staff_pages.search(query)
 
         # subjects.
         if subject:
@@ -200,21 +114,15 @@ def units(request):
                 staff_pages = staff_pages.filter(id__in=subject_staff_ids).order_by('last_name')
 
     elif view == 'department':
-        hierarchical_html = ''
-
-        if query:
-            units = UnitPage.objects.filter(display_in_library_directory=True).search(query)
-            h = []
-            for u in units:
-                h.append(get_unit_info(Tree(u.title, u)))
-            hierarchical_html = ''.join(h)
-        else:
-            hierarchical_html = get_html(UnitPage.hierarchical_units())
-            # replace first ul. 
-            if len(hierarchical_html) > 4:
-                hierarchical_html = "<ul class='directory'>" + hierarchical_html[4:]
+      divisions = []
+      for division in UnitIndexPage.objects.first().get_children().specific().type(UnitPage).filter(live=True, unitpage__display_in_library_directory=True).order_by('title'):
+        divisions.append({
+          'unit': division,
+          'descendants': division.get_descendants().specific().type(UnitPage).filter(live=True, unitpage__display_in_library_directory=True).order_by('title')
+        })
     
     default_image = Image.objects.get(title="Default Placeholder Photo")
+    org_chart_image = Image.objects.get(title="Org Chart")
 
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
@@ -232,15 +140,18 @@ def units(request):
     elif view == 'org':
       title = 'Library Directory: Org Chart'
 
+    quick_nums = get_quick_nums_for_library_or_dept(request).replace('<td>', '<li>').replace('</td>', '</li>')
+
     return render(request, 'units/unit_index_page.html', {
         'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
         'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
-        'department_label': department_label,
+        'departments': departments,
         'default_image': default_image,
-        'hierarchical_units': hierarchical_html,
+        'divisions': divisions,
         'libraries': [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
         'library': library,
+        'org_chart_image': org_chart_image,
         'query': query,
         'sort': sort,
         'staff_pages': staff_pages,
@@ -257,7 +168,7 @@ def units(request):
         'chat_status': get_chat_status('uofc-ask'),
         'chat_status_css': get_chat_status_css('uofc-ask'),
         'hours_page_url': home_page.get_hours_page(request),
-        'quick_nums': get_quick_nums_for_library_or_dept(request),
+        'quick_nums': quick_nums
     })
 
 def unit_reporting_admin_view(request):

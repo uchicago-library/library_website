@@ -1,6 +1,7 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
 from staff.models import StaffPage
+from units.models import BUILDINGS
 
 register = template.Library()
 
@@ -11,88 +12,82 @@ def ofKey(value, arg):
     else:
         return ''
 
-@register.inclusion_tag('units/library_unit_links.html')
-def library_unit_links(library_unit):
-    try:
-        library_unit_pieces = library_unit.get_full_name().split(' - ')
-    except AttributeError:
-        return {
-            'units': []
-        }
-    units = []
-    i = 0
-    while i < len(library_unit_pieces):
-        link_param = ' - '.join(library_unit_pieces[:i+1])
-        link_text = library_unit_pieces[i]
-        units.append([
-            link_param,
-            link_text
-        ])
-        i = i + 1
-    return {
-        'units': units
-    }
+@register.simple_tag
+def department_building_room(unit_page):
+  building_room_pieces = []
+  for b in BUILDINGS:
+    if b[0] == unit_page.building:
+      building_room_pieces.append(b[1])
 
-@register.inclusion_tag('units/staff_email_addresses.html')
-def staff_email_addresses(staff_page):
-    return {
-        'emails': list(set(staff_page.staff_page_email.all().values_list('email', flat=True)))
-    }
+  room_number_pieces = unit_page.room_number.split(' ')
+  if len(room_number_pieces) == 2:
+    building_room_pieces.append('Room ' + room_number_pieces[1])
 
-@register.inclusion_tag('units/staff_faculty_exchanges_phone_numbers.html')
-def staff_faculty_exchanges_phone_numbers(staff_page):
-    libraries = {
-        'JCL': LocationPage.objects.get(title='The John Crerar Library'),
-        'JRL': LocationPage.objects.get(title='The Joseph Regenstein Library'),
-        'LBQ': LocationPage.objects.get(title='The D\'Angelo Law Library'),
-        'Mansueto': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'MAN': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'SSA': LocationPage.objects.get(title='Social Service Administration Library')
-    }
+  return ', '.join(building_room_pieces)
 
-    lib_room_phone = []
-    for p in staff_page.staff_page_phone_faculty_exchange.all():
-        library_abbreviation = p.faculty_exchange.split(' ')[0]
-        if library_abbreviation in libraries:
-            lib = libraries[library_abbreviation]
-        else:
-            lib = None
+@register.simple_tag
+def department_contact_info(unit_page):
+  output = []
 
-        try:
-            room = p.faculty_exchange.split(' ')[1]
-        except IndexError:
-            room = None
+  for p in unit_page.unit_page_phone_number.all():
+    if p.phone_label:
+      output.append('{}: {}'.format(p.phone_label, p.phone_number))
+    else:
+      output.append(p.phone_number)
 
-        phone = None
-        if p.phone_number:
-            phone = p.phone_number
+  if unit_page.fax_number:
+    output.append('Fax: {}'.format(unit_page.fax_number))
 
-        lib_room_phone.append([lib, room, phone])
-    
-    return {
-        'lib_room_phone': lib_room_phone
-    }
-    
-@register.inclusion_tag('units/staff_subjects.html')
-def staff_subjects(staff_page):
-    subjects = []
-    for s in staff_page.staff_subject_placements.all():
-        subjects.append(s.subject.name)
-    
-    return {
-        'subjects': sorted(subjects)
-    }
+  if unit_page.email:
+    if unit_page.email_label:
+      output.append('<a href="mailto:{}">{}</a>'.format(unit_page.email, unit_page.email_label))
+    else:
+      output.append('<a href="mailto:{}">{}</a>'.format(unit_page.email, unit_page.email))
 
-@register.inclusion_tag('units/staff_public_page_link.html')
-def staff_public_page_link(staff_page):
-    
-    try:
-        href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
-    except:
-        href = ''
-       
-    return {
-        'href': href,
-        'title': staff_page.title
-    }
-    
+  if unit_page.link_external:
+    if unit_page.link_text:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_external, unit_page.link_text))
+    else:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_external, unit_page.link_external))
+
+  if unit_page.link_page:
+    if unit_page.link_text:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_page.url, unit_page.link_text))
+    else:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_page.url, unit_page.link_page.url))
+
+  if unit_page.link_document:
+    if unit_page.link_text:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_document.url, unit_page.link_text))
+    else:
+      output.append('<a href="{}">{}</a>'.format(unit_page.link_document.url, unit_page.link_document.url))
+
+  return '<br/>'.join(output)
+
+@register.simple_tag
+def division_building_room_phone(unit_page):
+  building_room_phone = []
+
+  building_room_string = department_building_room(unit_page)
+  if building_room_string:
+    building_room_phone.append(building_room_string)
+
+  phone_number = ''
+  try:
+    phone_number = unit_page.unit_page_phone_number.first().phone_number
+  except:
+    pass
+
+  if phone_number:
+    building_room_phone.append(phone_number)
+
+  return ' &nbsp; | &nbsp; '.join(building_room_phone)
+
+@register.assignment_tag
+def get_division(unit_page):
+  from units.models import UnitPage
+  division = unit_page.get_ancestors().type(UnitPage).first()
+  if division == unit_page:
+    return None
+  else:
+    return division
