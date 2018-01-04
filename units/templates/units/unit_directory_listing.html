@@ -6,7 +6,7 @@
   </h3>
   {% get_division department as division %}
   {% if division %}
-    <em>Part of: <a href=".?view=staff&amp;department={{ division.title|urlencode }}" class="viewall">{{ division.title }}</a></em><br>
+    <em>Part of: <a href=".?view=staff&amp;department={{ division.get_full_name|urlencode }}" class="viewall">{{ division.title }}</a></em><br>
   {% endif %}
   {% department_building_room department %}
 </div>

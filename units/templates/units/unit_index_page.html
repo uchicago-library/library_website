@@ -1,7 +1,8 @@
 {% extends "base/public_base.html" %}
+{% load cache %}
+{% load units_tags %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% load units_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -77,7 +78,9 @@
           </tbody>
         </table>
       {% elif view == 'department' %}
-        {% include "units/unit_division_listing.html" %}
+        {% cache 86400 department_directory_list %}
+          {% include "units/unit_division_listing.html" %}
+        {% endcache %}
       {% elif view == 'org' %}
         <div style="padding: 2em 0;">
           {% image org_chart_image original class="img-responsive" %}

@@ -75,15 +75,11 @@ def units(request):
     library = request.GET.get('library', None)
     page = request.GET.get('page', 1)
     query = request.GET.get('query', None)
-    sort = request.GET.get('sort', 'hierarchical')
     subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'department')
 
     if library == 'The University of Chicago Library':
         library = None
-
-    if view == 'department' and query:
-        sort = 'alphabetical'
 
     staff_pages = []
     departments = []
@@ -153,7 +149,6 @@ def units(request):
         'library': library,
         'org_chart_image': org_chart_image,
         'query': query,
-        'sort': sort,
         'staff_pages': staff_pages,
         'subjects': Subject.objects.filter(display_in_dropdown=True).values_list('name', flat=True),
         'subject': subject,
