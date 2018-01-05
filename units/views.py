@@ -76,10 +76,13 @@ def units(request):
     page = request.GET.get('page', 1)
     query = request.GET.get('query', None)
     subject = request.GET.get('subject', None)
-    view = request.GET.get('view', 'department')
+    view = request.GET.get('view', 'staff')
 
     if library == 'The University of Chicago Library':
         library = None
+
+    if query:
+        view = None
 
     staff_pages = []
     departments = []

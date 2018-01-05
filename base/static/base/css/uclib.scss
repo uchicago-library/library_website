@@ -724,6 +724,13 @@ figure.embed {
   }
 }
 
+.btn-obvious { // testing for directory
+  color: $mid-dark;
+  background-color: #fff;
+  border-color: #ccc;
+  padding: 0.5em 1em; 
+}
+
 .open>.dropdown-toggle.btn-textonly:focus, .open>.dropdown-toggle.btn-textonly:hover {
   background-color: $hovercalm;
 }
@@ -1643,6 +1650,50 @@ a.coll-access {
   }
   a {
     color: $darkgray;
+  }
+}
+
+.sdir-wrap {
+  @extend .news-wrap;
+  padding: 0;
+  h3 {
+    font-size: 1.1em;
+    margin-bottom: 0;
+  }
+  a, a:active, a:focus, a:hover {
+    color: $crerarblue;
+    text-decoration: underline;
+  }
+  .col-xs-12 {
+    padding-bottom: 1em;
+    margin-top: 1em;
+    @include respond-to(medium) {
+      &:nth-child(3n+2) {
+        border-right: 1px solid #eee;
+        border-left: 1px solid #eee;
+      }
+    }
+  }
+}
+
+.sdir {
+  margin: 2em 0 0.25em 0;
+  padding-left: 0;
+  h2 {
+    font-family: "Cormorant Garamond", serif;
+    color: $reggreen;
+    font-size: 1.3em;
+    padding-left: 15px;
+    margin-right: 2em;
+    margin-bottom: 0.25em;
+    border-bottom: 2px solid #ADB17D;
+      a, a:active, a:focus, a:hover {
+      color: $mid-dark;
+      text-decoration: none;
+    }
+  }
+  span {
+    padding-left: 15px;
   }
 }
 
