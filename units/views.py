@@ -118,7 +118,11 @@ def units(request):
         })
     
     default_image = Image.objects.get(title="Default Placeholder Photo")
-    org_chart_image = Image.objects.get(title="Org Chart")
+
+    try:
+        org_chart_image = Image.objects.get(title="Org Chart")
+    except:
+        org_chart_image = None
 
     # Page context variables for templates
     home_page = StandardPage.objects.live().get(id=PUBLIC_HOMEPAGE)
