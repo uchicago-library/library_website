@@ -1,6 +1,6 @@
 {% for i in lib_room_phone %}
   {% if i.0 %}
-    <a href="{{ i.0.url }}">{{ i.0.title }}</a><br/>
+    {{ i.0.title }}<br/>
   {% endif %}
   {% if i.1 %}
     Room {{ i.1 }}<br/>

@@ -8,7 +8,7 @@
 
 {% block content %}
 	<article>
-    <div class="col-xs-12 col-md-9 centermain directory">
+    <div class="col-xs-12 col-md-9 centermain">
       <div class="row">
         <div class="col-xs-12">
           <form action="." class="searchbox" method="GET">
@@ -19,7 +19,7 @@
           </form>
         </div>
  
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-xs-12">
           <div class="btn-group spaces-toggle">
             <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
             <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
@@ -70,10 +70,30 @@
         <table class="table table-striped directory-list">
           <tbody>
             <tr class="etable-header">
-              <td colspan="4">All Staff</td>
+              <td colspan="4">
+                {% if subject and library %}
+                    {{ library }} {{ subject }} Staff
+                {% elif subject and not library %}
+                    {{ subject }} Staff
+                {% elif not subject and library %}
+                    {{ library }} Staff
+                {% elif department %}
+                    {{ department }} Staff
+                {% else %}
+                    All Staff
+                {% endif %}
+              </td>
             </tr>
             {% for staff_page in staff_pages %}
               {% include "staff/staff_directory_listing.html" %}
+            {% empty %}
+              <tr>
+                <td colspan="4">
+                  <p class="empty-state">
+                    <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+                  </p>
+                </td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>

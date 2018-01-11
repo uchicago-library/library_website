@@ -19,6 +19,7 @@ from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit
 from django.utils.text import slugify
 
 import os
+import re
 import subprocess
 import urllib.parse
 
@@ -37,7 +38,7 @@ def get_staff_pages_for_library(library = None):
         }
         try:
             building = library_name_to_building[library]
-            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).order_by('last_name', 'first_name')
+            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).distinct().order_by('last_name', 'first_name')
         except:
             return all_staff 
     else:
@@ -67,6 +68,12 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
             staff_pages = [unit_page.department_head] + list(staff_pages.exclude(id=unit_page.department_head.id))
         
     return staff_pages
+
+def get_libraries():
+    return sorted(
+        [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
+        key=lambda p: re.sub(r'^The ', '', p)
+    )
 
 def units(request):
     divisions = []
@@ -147,12 +154,12 @@ def units(request):
 
     return render(request, 'units/unit_index_page.html', {
         'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
-        'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+        'content_div_css': 'container body-container directory col-xs-12 col-lg-11 col-lg-offset-1',
         'department': department,
         'departments': departments,
         'default_image': default_image,
         'divisions': divisions,
-        'libraries': [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
+        'libraries': get_libraries(),
         'library': library,
         'org_chart_image': org_chart_image,
         'query': query,

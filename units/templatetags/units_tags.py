@@ -62,6 +62,9 @@ def department_contact_info(unit_page):
     else:
       output.append('<a href="{}">{}</a>'.format(unit_page.link_document.url, unit_page.link_document.url))
 
+  if unit_page.public_web_page:
+    output.append('<a href="{}">{}</a>'.format(unit_page.public_web_page.url, unit_page.public_web_page.title))
+
   return '<br/>'.join(output)
 
 @register.simple_tag

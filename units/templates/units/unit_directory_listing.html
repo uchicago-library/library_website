@@ -2,11 +2,14 @@
 
 <div class="col-xs-12 col-sm-4">
   <h3>
-    <a href=".?view=staff&amp;department={{ department.title|urlencode }}">{{ department.title }}</a>
+    <a href=".?view=staff&amp;department={{ department.get_full_name|urlencode }}">{{ department.title }}</a>
   </h3>
   {% get_division department as division %}
   {% if division %}
-    <em>Part of: <a href=".?view=staff&amp;department={{ division.get_full_name|urlencode }}" class="viewall">{{ division.title }}</a></em><br>
+    <em>Part of: <a href=".?view=staff&amp;department={{ division.title|urlencode }}" class="viewall">{{ division.title }}</a></em><br>
   {% endif %}
   {% department_building_room department %}
+  {% autoescape off %}
+    {% department_contact_info department %}
+  {% endautoescape %}
 </div>
