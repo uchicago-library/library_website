@@ -47,7 +47,7 @@ Staff Profile Page
 .body-container {
   padding: 30px;
   max-width: 1200px;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 & {  // Exception for Homepages
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 &, &.directory {  // Exception for Home pages and directory pages
     max-width: 2000px;
   }
   .sidebar ~ & {
@@ -152,7 +152,7 @@ Staff Profile Page
   display: block;
   margin-left: auto;
   margin-right: auto;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, .floorplanpage & {  // Exception for Homepages
+  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, .floorplanpage &, .directory & {  // Exception for Home pages
     max-width: 1200px;
   }
   .collectionpage & {
@@ -380,7 +380,6 @@ figure.coll-thumb {
 .thumbnail-mod {
   text-align: center;
   img {
-    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -1091,7 +1090,7 @@ a.btn-ask {
  * --------------------------------------------------
  */
 
-// ** Springshare requires us to have two different widgets for mobile and desktop. Enjoy the pain!  ** //
+// ** Springshare requires us to have two different widgets for mobile and desktop.  ** //
 
 
 // >> Desktop Widget << //
@@ -1181,7 +1180,7 @@ a.btn-ask {
 
 
 // >> Mobile "Today" Widget  << //
-// Not as clean as I would like due to Springshare being awful
+// A little wonky to work with Springshare's code
 
 .s-lc-w-today {
   width: 100%;
@@ -1191,10 +1190,12 @@ a.btn-ask {
     color: #323232;
     font-style: italic;
     &>tr>th {
-      vertical-align: bottom;
+      vertical-align: middle;
       border-bottom: 2px solid $table-main;
       padding: 5px;
       text-align: center!important;
+      font-size: 0.9em;
+      line-height: 2em;
     }
     .s-lc-w-head-pre {
       display: none;
