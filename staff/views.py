@@ -1,6 +1,5 @@
 from django.db.models import Q
 from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
@@ -8,6 +7,7 @@ from public.models import LocationPage
 from subjects.models import Subject
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from units.views import get_staff_pages_for_library
+from units.views import get_staff_pages_for_unit
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch.models import Query
@@ -19,39 +19,40 @@ from rest_framework.permissions import IsAuthenticated
 import requests
 
 def staff(request):
+    department = request.GET.get('department', None)
     library = request.GET.get('library', None)
-    page = request.GET.get('page', 1)
     query = request.GET.get('query', None)
     subject = request.GET.get('subject', None)
     view = request.GET.get('view', 'staff')
 
     staff_pages = []
-    staff_pages_all = []
     flat_units = []
 
     if view == 'staff':
-        if library:
-            staff_pages_all = get_staff_pages_for_library(library)
+        if department:
+            staff_pages = get_staff_pages_for_unit(department, True, True)
+        elif library:
+            staff_pages = get_staff_pages_for_library(library)
         else:
-            staff_pages_all = StaffPage.objects.live().order_by('last_name', 'first_name')
+            staff_pages = StaffPage.objects.live().order_by('last_name', 'first_name')
     
         if subject:
             subject_pk = Subject.objects.get(name=subject).pk
             staff_pks = StaffPageSubjectPlacement.objects.filter(subject=subject_pk).values_list('page', flat=True).distinct()
     
-            if staff_pages_all:
-                staff_pages_all = staff_pages_all.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
+            if staff_pages:
+                staff_pages = staff_pages.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
             else:
-                staff_pages_all = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
+                staff_pages = StaffPage.objects.filter(pk__in=staff_pks).order_by('last_name', 'first_name')
     
         if query:
-            if staff_pages_all:
-                staff_pages_all = staff_pages_all.search(query)
+            if staff_pages:
+                staff_pages = staff_pages.search(query)
             else:
-                staff_pages_all = StaffPage.objects.live().search(query)
+                staff_pages = StaffPage.objects.live().search(query)
     
-        if not library and not subject and not query:
-            staff_pages_all = StaffPage.objects.live().order_by('title').order_by('last_name', 'first_name')
+        if not department and not library and not subject and not query:
+            staff_pages = StaffPage.objects.live().order_by('title').order_by('last_name', 'first_name')
     elif view == 'department':
         if query:
             intranetunits_qs = IntranetUnitsPage.objects.live().search(query)
@@ -72,15 +73,6 @@ def staff(request):
             })
         flat_units = sorted(flat_units, key=lambda k: k['title'])
 
-    # Set up paging. 
-    paginator = Paginator(staff_pages_all, 50)
-    try:
-        staff_pages = paginator.page(page)
-    except PageNotAnInteger:
-        staff_pages = paginator.page(1)
-    except EmptyPage:
-        staff_pages = paginator.page(paginator.num_pages)
-
     # Subjects
     subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject', flat=True).distinct()
     subjects = Subject.objects.filter(pk__in=subject_pks).values_list('name', flat=True)
@@ -89,6 +81,7 @@ def staff(request):
 
     return render(request, 'staff/staff_index_page.html', {
         'default_image': default_image,
+        'department': department,
         'flat_intranet_units': flat_units,
         'libraries': [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
         'library': library,

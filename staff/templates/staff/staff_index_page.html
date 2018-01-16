@@ -52,16 +52,7 @@
                         </div><!--/row-->
                         <hr/>
     
-                    {% if view == 'staff' and not query and not library %}
-                        <div class="row">
-                            <div class="col-md-12 col-xs-12 col-sm-12">
-                                <h3 style="margin:10px 0 10px 0;">
-                                    All Library Staff
-                                </h3>
-                            </div><!--/col-->
-                        </div><!--/row-->
-                        <hr/>
-                    {% elif view == 'department' and not query %}
+                    {% if view == 'department' and not query %}
                         <div class="row">
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <h3 style="margin:10px 0 20px 0;">
@@ -74,58 +65,36 @@
                 </form>
      
                 {% if view == 'staff' %} 
-                    {% if staff_pages %}
-                        <table class="table table-striped">
-                            <tbody>
-                                {% for staff_page in staff_pages %}
-                                    <tr>
-                                        <td>
-                                            {% if staff_page.profile_picture %}
-                                                {% image staff_page.profile_picture fill-100x100 %}
-                                            {% else %}
-                                                {% image default_image fill-100x100 %}
-                                            {% endif %}
-                                        </td>
-
-                                        <td>
-                                            <a href="{{ staff_page.url }}">
-                                                <strong>{{ staff_page.title }}</strong>
-                                            </a>
-                                            <br/>
-                                            {{ staff_page.staff_page_units.first.library_unit.title }}
-                                        </td>
-                                        <td>
-                                            <strong>Contact</strong>
-                                            <br/>
-                                            {% with staff_page.staff_page_email.first.email as email %}
-                                                {% if email %}
-                                                    <a href="{{ email }}">
-                                                        {{ email }}
-                                                    </a><br/>
-                                                {% endif %}
-                                            {% endwith %}
-                                            {% staff_faculty_exchanges_phone_numbers staff_page %}
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        {% if query %}
-                            <p>There are no results for your search.</p>
-                        {% endif %}
-                    {% endif %}
-
-                    {% if staff_pages.has_previous %}
-                        <a href=".?page={{ staff_pages.previous_page_number }}">Previous</a>
-                    {% endif %}
-                    {% if staff_pages.has_previous and staff_pages.has_next %} 
-                        | 
-                    {% endif %}
-                    {% if staff_pages.has_next %}
-                        <a href=".?page={{ staff_pages.next_page_number }}">Next</a>
-                    {% endif %}
+                  <table class="table table-striped directory-list">
+                    <tbody>
+                      <tr class="etable-header">
+                        <td colspan="4">
+                          {% if subject and library %}
+                              {{ library }} {{ subject }} Staff
+                          {% elif subject and not library %}
+                              {{ subject }} Staff
+                          {% elif not subject and library %}
+                              {{ library }} Staff
+                          {% elif department %}
+                              {{ department }} Staff
+                          {% else %}
+                              All Staff
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% for staff_page in staff_pages %}
+                        {% include "staff/staff_directory_listing.html" %}
+                      {% empty %}
+                        <tr>
+                          <td colspan="4">
+                            <p class="empty-state">
+                              <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+                            </p>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 {% elif view == 'department' %}
                     {# intranetunits_html|safe #}
                     <table class="table table-striped">
