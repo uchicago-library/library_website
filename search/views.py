@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from intranethome.models import IntranetHomePage
+from units.models import UnitIndexPage
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
@@ -11,7 +12,8 @@ def loop_search(request):
 
     # Search
     if search_query:
-        search_results = Page.objects.live().search(search_query)
+        unit_index_page = UnitIndexPage.objects.first()
+        search_results = Page.objects.live().not_descendant_of(unit_index_page, True).search(search_query)
         query = Query.get(search_query)
 
         # Record hit
