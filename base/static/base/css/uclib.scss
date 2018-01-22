@@ -1021,7 +1021,7 @@ table.etable>tbody>tr {
   background-color: #fff;
   @include respond-to(medium) {
     background-color: $hovercalmlight;
-    border: none;
+    border-left: none!important;
     margin-top: 10px;
   }
   ul {
