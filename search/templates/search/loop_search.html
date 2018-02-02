@@ -27,7 +27,8 @@
             <ul>
                 {% for result in search_results %}
                     <li>
-                        <h4><a href="{% pageurl result %}">{{ result }}</a> {% autoescape off %}{% pagetype result %}{% endautoescape %}</h4>
+                        <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+                        <small>Loop &gt; {{ result.specific.title }}</small>
                         {% if result.latest_revision_created_at %}
                             <p>{{ result.latest_revision_created_at }}</p>
                         {% endif %}
@@ -43,11 +44,13 @@
             </ul>
     
             {% if search_results.has_previous %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
+                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a> |
             {% endif %}
+
+            {{ search_results_count }} Results
     
             {% if search_results.has_next %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+                | <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
             {% endif %}
         {% elif search_query %}
             No results found

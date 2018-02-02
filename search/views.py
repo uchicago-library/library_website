@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from intranethome.models import IntranetHomePage
 from units.models import UnitIndexPage
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Page, Site
 from wagtail.wagtailsearch.models import Query
 from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
 
@@ -11,9 +11,13 @@ def loop_search(request):
     page = request.GET.get('page', 1)
 
     # Search
+    search_results_count = 0
+
     if search_query:
+        loop_homepage = Site.objects.get(site_name="Loop").root_page
         unit_index_page = UnitIndexPage.objects.first()
-        search_results = Page.objects.live().not_descendant_of(unit_index_page, True).search(search_query)
+        search_results = Page.objects.live().descendant_of(loop_homepage, True).not_descendant_of(unit_index_page, True).search(search_query)
+        search_results_count = search_results.count()
         query = Query.get(search_query)
 
         # Record hit
@@ -37,5 +41,6 @@ def loop_search(request):
     return render(request, 'search/loop_search.html', {
         'search_query': search_query,
         'search_results': search_results,
+        'search_results_count': search_results_count,
         'search_picks': search_picks,
     })
