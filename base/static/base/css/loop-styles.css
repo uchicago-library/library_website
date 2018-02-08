@@ -650,6 +650,12 @@ figure.center-block {
   background-color: #d5d7bd;
   padding: 15px; }
 
+.swside-home ul {
+  padding-left: 0;
+  list-style: none; }
+  .swside-home ul li {
+    margin-bottom: 0.35em; }
+
 .swside-home a {
   color: #8A9045;
   text-decoration: none; }

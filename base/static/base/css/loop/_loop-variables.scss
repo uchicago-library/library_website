@@ -3,7 +3,7 @@
  * --------------------------------------------------
  */
 
-.is-vishidden, .visually-hidden { // For ADA helper text
+@mixin visually-hidden { // For ADA helper text
   position: absolute;
   width: 1px;
   height: 1px;
@@ -37,9 +37,13 @@ $accentlink-light: #ADB17D;
     margin-right: -15px;
 }
 
-@mixin gradient {
-    background-image: linear-gradient(to bottom, #404040 0%, #3b3b3b 100%);
+@mixin gradient {  // white to gray
+    background-image: linear-gradient(to bottom, #FFFFFF, #e2e2e2);
     color: #dadada;
+}
+
+@mixin dark-gradient {  // greens
+    background-image: linear-gradient(to bottom, $accentlink, $darkeraccent);
 }
 
 @mixin listinline {

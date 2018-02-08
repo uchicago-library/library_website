@@ -14,12 +14,10 @@ Group Home Page
 -------------------------------------------------------------------*/
 
 @import "loop-variables.scss";
-@import "media.scss";
-
-
+@import "../media.scss";
 
 /*
- * Fonts
+ * Typefaces & Links
  * --------------------------------------------------
  */
 
@@ -38,70 +36,82 @@ Group Home Page
 body {
   font-family: 'ProximaNova-Regular', "Arial", sans-serif;
   margin-bottom: 100px;
+  background: #fbfbfa;
 }
 
 a {
+  color: $accentlink;
+  &:hover {
     color: $darkaccent;
-        &:hover {
-            color: $accentlink;
-        }
-    p &, .rich-text & {
-        color: #5B8FA8;
-        text-decoration: underline;
-    }
-    &.list-group-item:hover {
-        background-color: $accentlink-light;
-        color: #fff;
-    }
+    text-decoration: underline;
+  }
+  p &, .rich-text &, &.view-more {
+      color: #5B8FA8;
+      text-decoration: underline;
+  }
+  &.list-group-item:hover {
+      background-color: $accentlink-light;
+      color: #fff;
+  }
 }
 
+/*
+ * Headers
+ * --------------------------------------------------
+ */
+
 h1 {
-  font-size: 1.3em;
-  line-height: .8em;
+  font-family: 'ProximaNova-Bold';
+  font-size: 1.4em;
   margin-bottom: 10px;
   color: $accentlink;
-  font-weight: 600;
   .swside-home & {
     color: $darkaccent
   }
 }
 
 h2 {
-  font-size: 1.2em;
+  font-family: 'ProximaNova-Semibold';
+  font-size: 1.3em;
   margin: 2em 0 5px 0;
-  font-weight: 700;
   color:#9A5324;
+  .swside-home & {
+    color: $darkgray;
+  }
 }
 
 
 h3 {
-  font-size: 1.1em;
-  margin: 30px 0 5px 0;
+  font-family: 'ProximaNovaT-Thin';
+  font-size: 1.4em;
+  margin: 30px 0 15px 0;
   color: $darkaccent;
-  font-weight: 600;
-      &.description {
-        margin-top: 0px;
-        padding-bottom: 10px;
-      }
+    .swside-home & {
+      font-size: 1.2em;
+    }
+    &.description {
+      margin-top: 0px;
+      padding-bottom: 10px;
+    }
 }
 
 h4 {
+  font-family: 'ProximaNova-Semibold';
   font-size: 1.1em;
   font-style: italic;
   color:#725663;
-  font-weight: 600;
   margin-top: 2em;
 }
 
 h5 {
+  font-family: 'ProximaNova-Semibold';
   font-size: 1.1em;
-  font-weight: 600;
   color: $darkgray;
 }
 
 h6 {
+  font-family: 'ProximaNova-Semibold';
   font-size: 1.1em;
-  font-weight: 100;
   color: #9A5324;
 }
 
@@ -109,24 +119,28 @@ h1+h2, h2+h3, h3+h4, h4+h5, h5+h6 {
   margin-top: 0;
 }
 
-.rich-text {
-  margin-bottom: 20px;
+/*
+ * Fonts
+ * --------------------------------------------------
+ */
+
+p {
+  font-size: 1.2em;
+  line-height: 1.7em;
+  max-width: 46em;
 }
 
-.media-heading {
-    margin-top: 5px;
-    margin-bottom: 3px;
-    font-size: 1.1em;
-    color: #9A5324;
-    & a {
-        color: #9A5324;
-    }
+.rich-text li {
+  margin-bottom: 1em;
+  &:last-child {
+    margin-bottom: 2em;
+  }
 }
 
 .date {
-    font-weight: 100;
-    font-size: 1.1em;
-    color: $darkgray;
+  font-weight: 100;
+  font-size: 1.1em;
+  color: $darkgray;
 }
 
 .pullquote {
@@ -204,7 +218,7 @@ dd {
 img {
   max-width: 250px;
   height: auto;
-  @media (min-width: 768px) {
+  @include respond-to(small) {
       max-width: 500px;
       height: auto;     
   }
@@ -270,30 +284,6 @@ figure {
  * --------------------------------------------------
  */
 
- .badge {
-    .g-search {
-        background-color: #725663;
-    }
-    .dept-search {
-        background-color: #8A9045;
-    }
-    .f-search {
-        background-color: #777;
-    }
-    .doc-search {
-        background-color: #9A5324;
-    }
-    .staff-search {
-        background-color:  #0F425C;
-    }
-    .tech-search {
-        background-color: #CC8214;
-    }
-    .hr-search {
-        background-color: #8F3931;
-    }
- }
-
 .sw-toc {
     text-align: center;
     display: flex;
@@ -317,42 +307,57 @@ figure {
 }
 
 .swnews {
-    @media (min-width: 768px) {
+  @include respond-to(small) {
+    max-width: 70em;
     padding-right: 60px;
-    }
+  }
+}
+
+.media {
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee;
 }
 
 .media-body, .media-left, .media-right {
-  @media (max-width: 768px) { // mobile only
+  @include respond-to(mobileonly) { // mobile only
     display: block;
   }
 }
 
 .media-body {
-   @media (max-width: 768px) { // mobile only
+  h2 {
+    margin-top: 5px;
+    margin-bottom: 3px;
+    color: #9A5324;
+    & a {
+      color: #9A5324;
+    }
+  }
+  .author {
+    font-size: 1em;
+    font-style: italic;
+  }
+  .rich-text {
+    font-size: 1.2em;
+    line-height: 1.7em;
+    max-width: 46em;
+  }
+  @include respond-to(mobileonly) { // mobile only
     width: initial;
   }
 }
 
 .sticky {
-    background-color: lighten( $accentlink-light, 20% );
-    padding: 15px;
-}
-
-.swside-home {
-    a {
-        color: $accentlink;
-        text-decoration: none;
-    }
-    @media (min-width: 768px) {
-    border-left: 1px solid $accentlink-light;
-    padding-left: 30px;
-    margin-bottom: 20px;
-    }
+  background-color: lighten($accentlink-light, 20% );
+  background-image: linear-gradient(to right, lighten($accentlink-light, 25% ), lighten($accentlink-light, 20% ));
+  padding: 15px;
+  margin-bottom: 2.5em;
+  border-bottom: none;
+  box-shadow: 10px 10px #eee;
 }
 
 .list-group {
-    @media (min-width: 768px) {
+    @include respond-to(small) {
         width: 80%;
         padding-bottom: 10px;
     }
@@ -363,62 +368,24 @@ figure {
 
 .btn-bugzilla {
     background-color: #800000;
-    color: #fff !important;
+    background-image: linear-gradient(to bottom, #800000, #642822);
+    color: #fff!important;
     width: 100%;
     letter-spacing: 2px;
     font-size: 1.2em;
     margin: 10px 0 10px 0;
-    @media (min-width: 768px) {
-        width: 50%;
-    }
     a {
-        color: #fff;
+      color: #fff;
     }
     &:hover {
-        color: #fff;
-        background-color: #B1746F;
+      color: #fff;
+      background: #B1746F;
+      background-image: linear-gradient(to bottom, #642822, #B1746F);
+    }
+    @include respond-to(small) {
+        width: 50%;
     }
 }
-
-
-
-/*
- * Link and File Extension Icons
- * --------------------------------------------------
-
-
-// a[href^="http://"] {
-//  content: "\f08e";
-//     @include linkicons;
-// }
-
-a[href^="mailto:"] {
-    content: "\f1d9";
-    @include linkicons;    
-}
-
-a[href$=".pdf"]:after {
-    content: "\f1c1";
-    @include linkicons;
-}
-
-a[href$=".pptx"]:after, a[href$=".ppt"]:after {
-    content: "\f1c4";
-    @include linkicons;
-}
-
-a[href$=".xlsx"]:after {
-    content: "\f1c3";
-    @include linkicons;
-}
-
-a[href$=".docx"]:after, a[href$=".doc"]:after {
-    content: "\f1c2";
-    @include linkicons;
-}
-
- */
-
 
  /*
  * Forms
@@ -456,13 +423,13 @@ a[href$=".docx"]:after, a[href$=".doc"]:after {
 
 .bg-filter {
   padding: 0 10px 20px 10px;
-  @media (min-width: 768px) {
+  @include respond-to(small) {
       padding: 0 0 20px 0;
   }
 }
 
 .dir-header {
-  @media (min-width: 768px) {
+  @include respond-to(small) {
     padding-right: 20px;
     text-align:right;
     display: inline;
@@ -475,7 +442,7 @@ a[href$=".docx"]:after, a[href$=".doc"]:after {
   font-size: 1.1em;
   color: #725663;
   font-weight: 600;
-  @media (min-width: 768px) {
+  @include respond-to(small) {
     display:inline;
     padding: 0 10px 0 0;
   }
@@ -510,7 +477,7 @@ table, tbody {
     & a {
         color: #5B8FA8;
     }
-    @media (max-width: 640px) {
+    @include respond-to(mobileonly) {
         display: block;
         width: 100%;
         & tr, & th, & td {
@@ -533,7 +500,7 @@ table, tbody {
 }
 
 .stafflist>tbody>tr>td {
-    @media screen and (min-width: 640px) {
+    @include respond-to(xsmall) {
         width: 25%;
     }
 }
@@ -572,6 +539,8 @@ table, tbody {
     }
   }
  }
+
+
 
 /*
  *  Dept Home Page
@@ -616,6 +585,7 @@ table, tbody {
         }
     }
  }
+
 
  /*
  *  Group Home Page
@@ -667,6 +637,47 @@ table, tbody {
         }
     }
 }
+
+
+/*
+ *  Search
+ * --------------------------------------------------
+ */
+
+.template-searchresults {
+  h2 a {
+    color: #9A5324;
+  }
+  .result-number {
+    font-family: 'ProximaNova-Bold';
+    font-size: 1.1em;
+  }
+  .page-path {
+    display: block;
+    font-size: 1em;
+    font-style: italic;
+  }
+  .date {
+    display: block;
+    padding-bottom: 0.5em;
+    font-size: 0.9em;
+  }
+  .page-turn {
+    font-size: 1.1em;
+    padding: 2em 0 0.5em;
+    color: #337ab7;
+    a {
+      font-size: 1.1em;
+      color: #337ab7;
+    }
+  }
+}
+
+
+
+
+
+
 
 
 

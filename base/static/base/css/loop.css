@@ -1,0 +1,550 @@
+@charset "UTF-8";
+/*------------------------------------------------------------------
+
+[Table of contents]
+
+Fonts
+Images, Video, and other Media
+Content
+Link and File Extension Icons  ** Currently deactivated **
+Tables
+Intranet Index Page
+Dept Home Page
+Group Home Page
+
+-------------------------------------------------------------------*/
+/*
+ * Accessibility
+ * --------------------------------------------------
+ */
+/*
+ * Colors
+ * --------------------------------------------------
+ */
+/*
+ * Mixins
+ * --------------------------------------------------
+ */
+/*
+ * Media Queries
+ * --------------------------------------------------
+ *
+ * Use as: @include respond-to(small) { ... }
+ *		@include respond-to(medium) { ... }
+ *		@include respond-to(large) { ... }
+ */
+/*
+ * Typefaces & Links
+ * --------------------------------------------------
+ */
+@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
+@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
+@import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url("fonts/glyphicons-halflings-regular.eot");
+  src: url("fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded- opentype"), url("Content/fonts/glyphicons-halflings-regular.woff") format("woff"), url("Content/fonts/glyphicons-halflings-regular.ttf") format("truetype"), url("Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular") format("svg"); }
+
+.font-secondary {
+  font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif; }
+
+body {
+  font-family: 'ProximaNova-Regular', "Arial", sans-serif;
+  margin-bottom: 100px;
+  background: #fbfbfa; }
+
+a {
+  color: #8A9045; }
+  a:hover {
+    color: #565A25;
+    text-decoration: underline; }
+  p a, .rich-text a, a.view-more {
+    color: #5B8FA8;
+    text-decoration: underline; }
+  a.list-group-item:hover {
+    background-color: #ADB17D;
+    color: #fff; }
+
+/*
+ * Headers
+ * --------------------------------------------------
+ */
+h1 {
+  font-family: 'ProximaNova-Bold';
+  font-size: 1.4em;
+  margin-bottom: 10px;
+  color: #8A9045; }
+  .swside-home h1 {
+    color: #565A25; }
+
+h2 {
+  font-family: 'ProximaNova-Semibold';
+  font-size: 1.3em;
+  margin: 2em 0 5px 0;
+  color: #9A5324; }
+  .swside-home h2 {
+    color: #767676; }
+
+h3 {
+  font-family: 'ProximaNovaT-Thin';
+  font-size: 1.4em;
+  margin: 30px 0 15px 0;
+  color: #565A25; }
+  .swside-home h3 {
+    font-size: 1.2em; }
+  h3.description {
+    margin-top: 0px;
+    padding-bottom: 10px; }
+
+h4 {
+  font-family: 'ProximaNova-Semibold';
+  font-size: 1.1em;
+  font-style: italic;
+  color: #725663;
+  margin-top: 2em; }
+
+h5 {
+  font-family: 'ProximaNova-Semibold';
+  font-size: 1.1em;
+  color: #767676; }
+
+h6 {
+  font-family: 'ProximaNova-Semibold';
+  font-size: 1.1em;
+  color: #9A5324; }
+
+h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
+  margin-top: 0; }
+
+/*
+ * Fonts
+ * --------------------------------------------------
+ */
+p {
+  font-size: 1.2em;
+  line-height: 1.7em;
+  max-width: 46em; }
+
+.rich-text li {
+  margin-bottom: 1em; }
+  .rich-text li:last-child {
+    margin-bottom: 2em; }
+
+.date {
+  font-weight: 100;
+  font-size: 1.1em;
+  color: #767676; }
+
+.pullquote {
+  border-left: 5px solid #c8c8c8;
+  padding-left: 1em;
+  margin-left: 1em; }
+
+/* Blockquote */
+blockquote {
+  margin: 30px 50px 0 50px;
+  padding: 0.5em 5px;
+  quotes: "“" "”" "‘" "’";
+  line-height: 1.7em;
+  padding-right: 4em;
+  border-left: 0px; }
+
+blockquote:before {
+  color: #767676;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.1em;
+  vertical-align: -0.4em; }
+
+blockquote:after {
+  color: #767676;
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.5em;
+  margin-left: 0.1em;
+  vertical-align: -0.4em; }
+
+blockquote p {
+  display: inline; }
+
+.citation {
+  margin-bottom: 30px;
+  text-align: center; }
+
+/* Dictionary List */
+dt {
+  float: left;
+  clear: left;
+  width: 100px;
+  text-align: right;
+  font-weight: 600;
+  color: #725663; }
+
+dt:after {
+  content: ":"; }
+
+dd {
+  margin: 0 0 0 110px;
+  padding: 0 0 0.5em 0; }
+
+/*
+ * Images, Video, and other Media
+ * --------------------------------------------------
+ */
+img {
+  max-width: 250px;
+  height: auto; }
+  @media (min-width: 48em) {
+    img {
+      max-width: 500px;
+      height: auto; } }
+
+figure.imgcaption {
+  max-width: 270px;
+  border: 1px solid #8A8B79;
+  padding: 15px;
+  float: left; }
+  figure.imgcaption.fullwidth {
+    max-width: 100%;
+    border: 0px;
+    float: none; }
+  figure.imgcaption figcaption {
+    padding-top: 15px;
+    color: #58593F; }
+
+figure.pull-right {
+  margin: 10px 0 10px 20px; }
+
+figure.pull-left {
+  margin: 10px 20px 10px 0; }
+
+figure.center-block {
+  margin: 10px; }
+
+.responsive-object {
+  position: relative; }
+
+.responsive-object iframe, .responsive-object object, .responsive-object embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+.thumbnail-mod {
+  text-align: center; }
+  .thumbnail-mod img {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto; }
+  .thumbnail-mod p {
+    margin-top: 0.75em;
+    font-size: 1.1em; }
+
+/*
+ *  Content
+ * --------------------------------------------------
+ */
+.sw-toc {
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap; }
+  .sw-toc a {
+    color: #767676;
+    text-decoration: none; }
+  .sw-toc > .col-md-4 {
+    padding-bottom: 20px; }
+  .sw-toc ul {
+    list-style-type: none;
+    line-height: 1.7em;
+    padding-left: 0; }
+  .sw-toc .fa {
+    color: #ADB17D; }
+  .sw-toc h3 {
+    margin-top: 5px; }
+
+@media (min-width: 48em) {
+  .swnews {
+    max-width: 70em;
+    padding-right: 60px; } }
+
+.media {
+  padding-bottom: 1em;
+  border-bottom: 1px solid #eee; }
+
+@media (max-width: 48em) {
+  .media-body, .media-left, .media-right {
+    display: block; } }
+
+.media-body h2 {
+  margin-top: 5px;
+  margin-bottom: 3px;
+  color: #9A5324; }
+  .media-body h2 a {
+    color: #9A5324; }
+
+.media-body .author {
+  font-size: 1em;
+  font-style: italic; }
+
+.media-body .rich-text {
+  font-size: 1.2em;
+  line-height: 1.7em;
+  max-width: 46em; }
+
+@media (max-width: 48em) {
+  .media-body {
+    width: initial; } }
+
+.sticky {
+  background-color: #d5d7bd;
+  background-image: linear-gradient(to right, #dfe1cd, #d5d7bd);
+  padding: 15px;
+  margin-bottom: 2.5em;
+  border-bottom: none;
+  box-shadow: 10px 10px #eee; }
+
+@media (min-width: 48em) {
+  .list-group {
+    width: 80%;
+    padding-bottom: 10px; } }
+
+.list-group .badge {
+  margin-left: 5px; }
+
+.btn-bugzilla {
+  background-color: #800000;
+  background-image: linear-gradient(to bottom, #800000, #642822);
+  color: #fff !important;
+  width: 100%;
+  letter-spacing: 2px;
+  font-size: 1.2em;
+  margin: 10px 0 10px 0; }
+  .btn-bugzilla a {
+    color: #fff; }
+  .btn-bugzilla:hover {
+    color: #fff;
+    background: #B1746F;
+    background-image: linear-gradient(to bottom, #642822, #B1746F); }
+  @media (min-width: 48em) {
+    .btn-bugzilla {
+      width: 50%; } }
+
+/*
+ * Forms
+ * --------------------------------------------------
+ */
+.unit-body form label {
+  display: flex;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding-top: 10px; }
+
+.unit-body form ul {
+  list-style-type: none;
+  line-height: 1.7em;
+  padding-left: 0; }
+
+input[type=checkbox], input[type=radio] {
+  margin: 4px 10px 0 0; }
+
+/*
+ * Directory / Staff Profile
+ * --------------------------------------------------
+ */
+.bg-directory {
+  padding: 15px 0 15px 0;
+  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 20px; }
+
+.bg-filter {
+  padding: 0 10px 20px 10px; }
+  @media (min-width: 48em) {
+    .bg-filter {
+      padding: 0 0 20px 0; } }
+
+@media (min-width: 48em) {
+  .dir-header {
+    padding-right: 20px;
+    text-align: right;
+    display: inline; } }
+
+.dir-subheader {
+  text-align: left;
+  padding: 0;
+  font-size: 1.1em;
+  color: #725663;
+  font-weight: 600; }
+  @media (min-width: 48em) {
+    .dir-subheader {
+      display: inline;
+      padding: 0 10px 0 0; } }
+
+.guide-link {
+  line-height: 2.2em; }
+
+select {
+  font-size: 2em;
+  padding-top: 10px; }
+
+.btn-directory {
+  color: #616530;
+  background-color: #fff;
+  border: 1px solid #8a9045;
+  padding: 5px 15px; }
+  .btn-directory:hover, .btn-directory.active {
+    color: #fff;
+    background-color: #ADB17D; }
+
+/*
+ *  Tables
+ * --------------------------------------------------
+ */
+table a, tbody a {
+  color: #5B8FA8; }
+
+@media (max-width: 48em) {
+  table, tbody {
+    display: block;
+    width: 100%; }
+    table tr, table th, table td, tbody tr, tbody th, tbody td {
+      display: block;
+      padding: 0;
+      text-align: left;
+      white-space: normal; }
+    table tr, tbody tr {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 11px;
+      margin-bottom: 11px; }
+    table td, tbody td {
+      border: none;
+      margin-bottom: 6px;
+      color: #444; } }
+
+@media (min-width: 34em) {
+  .stafflist > tbody > tr > td {
+    width: 25%; } }
+
+/*
+ *  Intranet Index Page
+ * --------------------------------------------------
+ */
+ul.index-list {
+  line-height: 1.8em; }
+  ul.index-list > li a {
+    font-weight: 600;
+    color: #767676;
+    text-decoration: none; }
+  ul.index-list > li > ul > li a {
+    font-weight: 400;
+    color: #565A25; }
+  ul.index-list > li > ul > li > ul > li a {
+    font-weight: 300;
+    color: #5B8FA8; }
+  ul.index-list > li > ul > li > ul > li > ul > li a {
+    font-weight: 300;
+    color: #434343;
+    font-style: italic; }
+
+/*
+ *  Dept Home Page
+ * --------------------------------------------------
+ */
+.deptlist ul {
+  list-style: none;
+  padding-left: 20px; }
+  .deptlist ul > li {
+    margin: 15px 0 0 0; }
+    .deptlist ul > li a {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #9A5324;
+      padding-bottom: 3px; }
+    .deptlist ul > li > ul > li {
+      margin: 0 0; }
+      .deptlist ul > li > ul > li a {
+        font-size: 1.1em;
+        font-weight: 400;
+        color: #767676;
+        line-height: 2em; }
+      .deptlist ul > li > ul > li > ul > li a {
+        font-size: 1.1em;
+        font-weight: 300;
+        color: #5B8FA8;
+        line-height: 1.5em; }
+      .deptlist ul > li > ul > li > ul > li > ul > li a {
+        font-size: 1.1em;
+        font-weight: 300;
+        color: #434343;
+        line-height: 1.5em;
+        font-style: italic; }
+
+/*
+ *  Group Home Page
+ * --------------------------------------------------
+ */
+.grouplist ul {
+  list-style: none;
+  padding-left: 20px; }
+  .grouplist ul > li {
+    margin: 15px 0 0 0; }
+    .grouplist ul > li a {
+      font-size: 1.1em;
+      font-weight: 400;
+      color: #767676;
+      padding-bottom: 3px; }
+    .grouplist ul > li > ul > li {
+      margin: 0 0; }
+      .grouplist ul > li > ul > li a {
+        font-size: 1em;
+        font-weight: 400;
+        color: #5B8FA8;
+        line-height: 2em; }
+
+.inactive-groups ul {
+  list-style: none;
+  padding-left: 20px; }
+  .inactive-groups ul > li {
+    margin: 15px 0 0 0; }
+    .inactive-groups ul > li a {
+      font-size: 1em;
+      font-weight: 400;
+      color: #565A25;
+      padding-bottom: 5px; }
+    .inactive-groups ul > li > ul > li {
+      margin: 0 0; }
+      .inactive-groups ul > li > ul > li a {
+        font-size: 1em;
+        font-weight: 400;
+        color: #434343;
+        line-height: 2em; }
+
+/*
+ *  Search
+ * --------------------------------------------------
+ */
+.template-searchresults h2 a {
+  color: #9A5324; }
+
+.template-searchresults .result-number {
+  font-family: 'ProximaNova-Bold';
+  font-size: 1.1em; }
+
+.template-searchresults .page-path {
+  display: block;
+  font-size: 1em;
+  font-style: italic; }
+
+.template-searchresults .date {
+  display: block;
+  padding-bottom: 0.5em;
+  font-size: 0.9em; }
+
+.template-searchresults .page-turn {
+  font-size: 1.1em;
+  padding: 2em 0 0.5em;
+  color: #337ab7; }
+  .template-searchresults .page-turn a {
+    font-size: 1.1em;
+    color: #337ab7; }
