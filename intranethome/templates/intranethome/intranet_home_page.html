@@ -5,7 +5,7 @@
 
 {% block content %}
   <div class="row-fluid "> <!-- Main Row -->
-    <div class="col-xs-12 col-sm-12 col-md-8 swnews">
+    <div class="col-xs-12 col-md-9 swnews" role="main">
       <h1><a href="{{ news_link }}">News</a></h1>
         {% for sticky_page in sticky_pages %}
           <div class="sticky">
@@ -19,7 +19,7 @@
                 <span class="date">{{ sticky_page.story_date }}</span>
                 <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
                 <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
-                {{ sticky_page.excerpt|richtext }}
+                <p>{{ sticky_page.excerpt|richtext }}</p>
                 {% if sticky_page.read_more %}
                   <p><a href="{{ sticky_page.url }}">Read more &gt;&gt;</a></p>
                 {% endif %}
@@ -37,26 +37,33 @@
             {% endif %}
             <div class="media-body">
               <span class="date">{{ news_page.story_date }}</span>
-              <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-              <p><em>By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></em></p>
+              <h2><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+              <p class="author">By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></p>
               {{ news_page.excerpt|richtext }}
               {% if news_page.read_more %}
-                <p><a href="{{ news_page.url }}">Read more &gt;&gt;</a></p>
+                <a href="{{ news_page.url }}" class="view-more">Read more &gt;&gt;</a>
               {% endif %}
             </div>
           </div>
-          <hr/>
         {% endfor %}
 
         <p><a href="/news/">More news stories</a></p>
     </div>
 
-  <div class="col-xs-12 col-sm-12 col-md-4 swside-home"> <!-- Right Sidebar -->
+  <div class="col-xs-12 col-md-3 swside-home" role="complementary"> <!-- Right Sidebar -->
 
     <div class="row-fluid"> <!-- Quicklinks Row -->
       <h1>Quicklinks</h1>
-      <p><a href="https://workday.uchicago.edu/">WorkDay</a> &nbsp; | &nbsp; <a href="http://uchicagotime.uchicago.edu/">UChicago Time</a> &nbsp; | &nbsp; <a href="https://humanresources.uchicago.edu/benefits/">Benefits</a></p>
-<p><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/">Email Aliases</a> &nbsp; | &nbsp; <a href="/staff/">Staff</a> &nbsp; | &nbsp; <a href="https://outlook.office.com/owa/?realm=ad.uchicago.edu">Outlook</a> &nbsp; | &nbsp; <a href="https://www.lib.uchicago.edu/h/ole">OLE</a></p>
+      <ul>
+        <li><a href="https://workday.uchicago.edu/">WorkDay</a></li>
+        <li><a href="http://uchicagotime.uchicago.edu/">UChicago Time</a></li>
+        <li><a href="https://humanresources.uchicago.edu/benefits/">Benefits</a></li>
+        <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/">Email Aliases</a></li>
+        <li><a href="/staff/">Staff Directory</a></li>
+        <li><a href="https://uchicago.app.box.com">Box</a></li>
+        <li><a href="https://outlook.office.com/owa/?realm=ad.uchicago.edu">Outlook</a></li>
+        <li><a href="https://www.lib.uchicago.edu/h/ole">OLE</a></li>
+      </ul>
     </div> <!-- / Quicklinks Row -->
 
     <hr/>
@@ -70,55 +77,42 @@
 
     <div class="row-fluid"><!-- Community -->
         <h1>Our Community</h1>
-        <p><a href="/departments/administration/directors-office/">Director's Page</a><br>
-        <a href="/groups/staff-meeting/">All Staff Meeting</a></p>
+        <ul>
+          <li><a href="/departments/administration/directors-office/">Director's Page</a></li>
+          <li><a href="/groups/staff-meeting/">All Staff Meeting</a></li>
+          <li><a href="/documentation/loop-box-documentation/loop-news-best-practices/">How to: Loop News post</a></li>
+          <li><a href="https://loop.lib.uchicago.edu/admin/pages/587/">Write a News Post</a></li>
+          <li><a href="/documentation/loop-box-documentation/loop-guidelines-policies-tutorials/adding-meeting-minutes/">How to: Meeting Minutes</a></li>
+        </ul>
     </div>
 
     <hr>
-
-    <!--
-    <div class="row-fluid"> <-- Updates Row 
-      <h1>StaffWeb Updates</h1>
-      <strong>Meeting Minutes</strong>
-      <div class="list-group">
-        <a href="#" class="list-group-item"><span class="badge">PDF</span>September Staff Meeting</a>
-        <a href="#" class="list-group-item"><span class="badge">PDF</span>Web Content Group</a>
-        <a href="#" class="list-group-item"><span class="badge">PDF</span>University of Chicago Magical Knowledge Project: October Meeting</a>
-        <a href="#" class="list-group-item"><span class="badge">Word</span>Magical Hippogriff Tactical Comittee</a>
-        <a href="#" class="list-group-item">View All Meeting Minutes >></a>
-      </div>  
-      <strong>Policies</strong>
-      <div class="list-group">
-        <a href="#" class="list-group-item"><span class="badge">HTML</span>LibGuides Policies</a>
-        <a href="#" class="list-group-item"><span class="badge">Box</span>Staff Web Content Policies</a>
-        <a href="#" class="list-group-item"><span class="badge">PDF</span>Magical Hippogriff Feeding Policy</a>
-        <a href="#" class="list-group-item"><span class="badge">HTML</span>Library Food Policy</a>
-      </div>           
-    </div> <-- // Updates Row 
-
-    <hr/>
-    -->
     
     <div class="row-fluid"><!-- Work/Life -->
       <h1>Community Links</h1>
-      <p><strong>Food</strong><br/>
-      <a href="https://dining.uchicago.edu/page/locations-hours">Campus Dining: locations &amp; hours</a><br/>
-      <a href="https://twitter.com/exlibtoaster">ExLibris Toaster</a></p>
+      <h2>Food</h2>
+      <ul>
+        <li><a href="https://dining.uchicago.edu/page/locations-hours">Campus Dining: locations &amp; hours</a></li>
+        <li><a href="https://twitter.com/exlibtoaster">ExLibris Toaster</a></li>
+      </ul>
 
-      <p><strong>Interests</strong><br/>
-        <a href="http://events.uchicago.edu/cal/main/showMain.rdo;jsessionid=C22CCF8F17687AD9F8616251F7EBF532.bw04">Campus Events</a><br/>
-        <a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a><br/>
-        <a href="https://wellness.uchicago.edu/page/mindfulness-uchicago">Meditation on Campus</a><br/>
-        <a href="https://instagram.com/Rockefeller_Chapel/">Rockefeller Chapel Instagram</a><br/>
-        <a href="http://arts.uchicago.edu/">UChicago Arts</a><br/>
-        <a href="http://chicagopresents.uchicago.edu/">UChicago Presents</a>
-        </p>
+      <h2>Interests</h2>
+        <ul>
+          <li><a href="http://events.uchicago.edu/cal/main/showMain.rdo;jsessionid=C22CCF8F17687AD9F8616251F7EBF532.bw04">Campus Events</a></li>
+          <li><a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a></li>
+          <li><a href="https://wellness.uchicago.edu/page/mindfulness-uchicago">Meditation on Campus</a></li>
+          <li><a href="https://instagram.com/Rockefeller_Chapel/">Rockefeller Chapel Instagram</a></li>
+          <li><a href="http://arts.uchicago.edu/">UChicago Arts</a></li>
+          <li><a href="http://chicagopresents.uchicago.edu/">UChicago Presents</a></li>
+        </ul>
 
-      <p><strong>Resources</strong><br/>
-      <a href="https://loop.lib.uchicago.edu/library-social-media/">Library Social Media</a><br/>
-      <a href="https://loop.lib.uchicago.edu/campus/campus-webcams/">Campus Camera Feeds</a><br/>
-      <a href="http://www.law.uchicago.edu/students/students-with-families#facilities">Childcare Facilities</a><br/>
-      <a href="https://hppsn.wordpress.com/">Hyde Park Parents Support Network</a><br/>
+      <h2>Resources</h2>
+      <ul>
+        <li><a href="https://loop.lib.uchicago.edu/library-social-media/">Library Social Media</a></li>
+        <li><a href="https://loop.lib.uchicago.edu/campus/campus-webcams/">Campus Camera Feeds</a></li>
+        <li><a href="http://www.law.uchicago.edu/students/students-with-families#facilities">Childcare Facilities</a></li>
+        <li><a href="https://hppsn.wordpress.com/">Hyde Park Parents Support Network</a></li>
+      </ul>
     </div> <!-- // Work/Life -->
            
  </div><!-- // Right Sidebar -->

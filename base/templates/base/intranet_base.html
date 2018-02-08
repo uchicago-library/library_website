@@ -12,18 +12,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="//identity.uchicago.edu/c/fonts/proximanova.css">
   <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
-  <link href="{% static 'base/css/loop-styles.css' %}" rel="stylesheet">
+  <link href="{% static 'base/css/uclib_print.css' %}" rel="stylesheet">
+  <link href="{% static 'base/css/loop-navigation.css' %}" rel="stylesheet">
+  <link href="{% static 'base/css/loop.css' %}" rel="stylesheet">
   {% block extra_css %}
     {# Override this in templates to add extra stylesheets #}
   {% endblock %}
   <link rel="icon" type="image/x-icon; charset=binary" href="{% static 'base/images/favicon.png' %}"/>
 </head>
 
-<body class="{% block body_class %}{% endblock %}">
+<body id="p-{{self.id}}" class="{% block body_class %}{% endblock %}">
   {% wagtailuserbar %}
 
   <!-- Top Navigation -->
@@ -53,13 +56,13 @@
       </form>
       <!-- / top right nav -->
     
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><!-- Main Navigation -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" role="navigation" aria-label="Primary"><!-- Main Navigation -->
         <ul class="nav navbar-nav">
-          <li class="divider-vertical"><a href="/human-resources/">H<span class="hidden-sm">uman </span>R<span class="hidden-sm">esources</span></a></li>
-          <li class="divider-vertical"><a href="/departments/">Departments</a></li>
-          <li class="divider-vertical"><a href="/groups/">Committees &amp; Groups</a></li>
-          <li class="divider-vertical"><a href="/documentation/">Doc<span class="hidden-sm">ument</span>s &amp; Policies</a></li>       
-          <li class="divider-vertical"><a href="/forms/">Forms</a></li>
+          <li><a href="/human-resources/">H<span class="hidden-sm">uman </span>R<span class="hidden-sm">esources</span></a></li>
+          <li><a href="/departments/">Departments</a></li>
+          <li><a href="/groups/">Committees &amp; Groups</a></li>
+          <li><a href="/documentation/">Doc<span class="hidden-sm">ument</span>s &amp; Policies</a></li>       
+          <li><a href="/forms/">Forms</a></li>
           <li><a href="/technical-support/">Tech<span class="hidden-sm">nical</span> Support</a></li>
         </ul>
       </div> <!-- / Main Navigation -->
@@ -70,24 +73,10 @@
 
   <div class="container-fluid"> <!-- main container -->
 
-    <div class="row-fluid"> <!-- Breadcrumbs row -->
-      <div class="col-md-12 breadcrumbs">
-        <small>
-          {% for crumb in breadcrumbs %}
-            {% if crumb.url == self.url %}
-              {{ crumb.title }}
-            {% else %}
-              <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
-            {% endif %}
-          {% endfor %}
-        </small>
-      </div><!-- / .col -->
-    </div><!-- / Breadcrumbs row -->
-
     <div class="row-fluid">
 {% if page.show_sidebar and sidebar %}
     <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-      <div class="col-sm-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar"> <!-- Start side div -->
+      <div class="col-xs-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar" role="navigation" aria-label="Secondary"> <!-- Start side div -->
         <h3>{{ sidebartitle }}</h3>
         <ul>
   {% for child in sidebar %}
@@ -103,12 +92,40 @@
   {% endfor %}
         </ul>
       </div><!-- // End #sidebar -->
+
       <div class="row visible-xs toggle-side">
         <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
       </div>
-      <div class="col-sm-12 col-md-9 unit-body">
+
+
+      <div class="col-xs-12 col-md-offset-1 col-md-8 unit-body" role="main">
+        <div class="col-xs-12 breadcrumbs hidden-xs">
+        <small>
+          {% for crumb in breadcrumbs %}
+            {% if crumb.url == self.url %}
+              {{ crumb.title }}
+            {% else %}
+              <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
+            {% endif %}
+          {% endfor %}
+        </small>
+      </div><!-- / breadcrumbs -->
+
 {% else %}
-      <div class="col-sm-12 col-md-offset-1 col-md-10 unit-body">
+
+      <div class="col-xs-12 col-md-offset-1 col-md-11 unit-body" role="main">
+        <div class="col-xs-12 breadcrumbs hidden-xs">
+        <small>
+          {% for crumb in breadcrumbs %}
+            {% if crumb.url == self.url %}
+              {{ crumb.title }}
+            {% else %}
+              <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
+            {% endif %}
+          {% endfor %}
+        </small>
+      </div><!-- / breadcrumbs -->
+
 {% endif %}
 {% block content %}{% endblock %}
       </div><!-- /.col --> 
@@ -119,8 +136,7 @@
   </div> <!-- /main container -->
 
   <!-- Footer Section -->
-  <footer class="container-fluid footer"> 
-    <div class="col-sm-12"><!-- Footer -->
+  <footer class="container-fluid footer" role="contentinfo"> 
     <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="/static/base/images/color-logo.png"></a></span>
       <ul>
         <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
@@ -128,7 +144,6 @@
         <!--<li class="divider-vertical"><a href="#"><span class="hidden-xs">Library Building </span>Addresses</a></li>-->
         <li><a href="mailto:intranet@lib.uchicago.edu">Contact <span class="hidden-xs">Site Maintainer</span></a></li>
       </ul>
-    </div><!-- // Footer -->
   </footer>
 
   {# Global javascript #}

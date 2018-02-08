@@ -9,53 +9,45 @@
 {% block content %}
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-12 col-md-12">
-      <div class="deptlist">
         <h1>Search Results</h1>
-    
+        <small>There are <span class="result-number">{{ search_results_count }}</span> Results</small>
+
         {% if search_picks %}
-             <ul>
-                {% for pick in search_picks %}
-                    <li>
-                        <h2><a href="{{ pick.page.url }}">{{ pick.page }}</a></h2>
-                        <p>{{ pick.description }}</p>
-                    </li>
-                 {% endfor %}
-             </ul>
+            {% for pick in search_picks %}
+                <h2><a href="{{ pick.page.url }}">{{ pick.page }}</a></h2>
+                <p>{{ pick.description }}</p>
+            {% endfor %}
         {% endif %}
     
         {% if search_results %}
-            <ul>
-                {% for result in search_results %}
-                    <li>
-                        <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-                        <small>Loop &gt; {{ result.specific.title }}</small>
-                        {% if result.latest_revision_created_at %}
-                            <p>{{ result.latest_revision_created_at }}</p>
-                        {% endif %}
-                        {% if result.search_description %}
-                            {{ result.search_description|safe }}
-                        {% elif result.specific.intro %}
-                            {{ result.specific.intro|snippet }}
-                        {% elif result.specific.body %}
-                            {{ result.specific.body|snippet }}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-    
-            {% if search_results.has_previous %}
-                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a> |
-            {% endif %}
+            {% for result in search_results %}
+                <h2><a href="{% pageurl result %}">{{ result }}</a></h2>
+                <span class="page-path">Loop &gt; {{ result.specific.title }}</span>
+                {% if result.latest_revision_created_at %}
+                    <span class="date">Last updated: {{ result.latest_revision_created_at }}</span>
+                {% endif %}
+                {% if result.search_description %}
+                    <p>{{ result.search_description|safe }}</p>
+                {% elif result.specific.intro %}
+                   <p> {{ result.specific.intro|snippet }}</p>
+                {% elif result.specific.body %}
+                    <p>{{ result.specific.body|snippet }}</p>
+                {% endif %}
+            {% endfor %}
 
-            {{ search_results_count }} Results
+            <div class="page-turn">
+            {% if search_results.has_previous %}
+                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}"><< Previous page</a> &nbsp; | &nbsp; 
+            {% endif %}
     
             {% if search_results.has_next %}
-                | <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">More results >></a>
             {% endif %}
+            </div>
+
         {% elif search_query %}
             No results found
         {% endif %}
       </div>
     </div>
-  </div>
 {% endblock %}

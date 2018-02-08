@@ -9,7 +9,7 @@ Footer
 -------------------------------------------------------------------*/
 
 @import "loop-variables.scss";
-@import "media.scss";
+@import "../media.scss";
 
 
 /*
@@ -32,26 +32,17 @@ Footer
     padding: 0;
     margin-top: 5px;
     margin-left: 10px;
-        @media (min-width: 768px) {
-            max-width: 100px;
-            margin-left: 20px;
-        }
-}
-
-.container-fluid>.navbar-header {
-    @media (min-width: 768px) {
-        }
 }
 
 .navbar-right {
     padding: 15px 50px 15px 15px;
-    @media (min-width: 768px) {
+    @include respond-to(small) {
         padding: 15px 30px;
-        margin: 20px 0 0 0;
+        margin: 0.75em 0;
         padding: 0px;
     }
     &>.input-group {
-      @media (max-width: 768px) { // mobile only
+      @include respond-to(small) { // mobile only
         width: 250px;
     }
   }
@@ -67,39 +58,36 @@ Footer
 }
 
 .breadcrumbs {
-    padding-bottom: 5px;
-    @media (min-width: 768px) {
-        padding-bottom: 20px;
+    padding: 1em 0;
+    #p-6 & {
+       @include visually-hidden;
     }
 }
 
-// -- Navigation links --
 
+
+// -- Navigation links --
 
 .navbar-default {
     border: 0px;
-    @include gradient;
-    @media (min-width: 768px) {
-        .divider-vertical { // Lines between link blocks
-            height: 100%;
-            border-right: 1px solid #282828;
-        }
-        }
+    background-image: linear-gradient(to right, #FFFFFF, #e2e2e2);
+    @include respond-to(small) {
+        background-color: #eee;
+    }
     .licaption { // Link description
         font-style: italic;
         font-size: 0.8em;
         color: #D6D6CE;
     }
-    .navbar-toggle {
-        .icon-bar {
-            background-color: #fff;
-        }
-        &:hover {
-            background-color: $accentlink;
-        }
-        &:visited, &:focus {
-            background-color: $accentlink-light;
-        }
+    & .navbar-toggle .icon-bar {
+        background-color: #fff;
+    }
+}
+
+.navbar-toggle {
+    background: $accentlink;
+    &:hover, &:visited, &:focus {
+        background: $accentlink-light;
     }
 }
 
@@ -111,46 +99,38 @@ Footer
 .navbar {
     margin-bottom: 5px;
     & .navbar-inner {
-        @media (min-width: 768px) {
-        padding: 0;
+        @include respond-to(small) {
+            padding: 0;
         }
     }
 
     & .nav {
-        @media (min-width: 768px) {
-        margin: 0;
-        display: table;
-        width: 100%;
+        @include respond-to(small) {
+            margin: 0;
+            display: table;
+            width: 100%;
+            max-width: 90em;
         }
         & li {
-            color: #fff;
-            @media (min-width: 768px) {
+            color: $darkergray;
+            @include respond-to(small) {
                 display: table-cell;
                 width: auto;
                 float: none;
                 text-align: center;
-                padding-bottom: 10px;
             }
             &:hover, &.current {
-                background-color: $accentlink;
+                @include dark-gradient;
             }               
             a {
-                color: #fff;
-                @media (min-width: 768px) {
+                color: darken($accentlink, 10%);
+                @include respond-to(small) {
                     font-size: 1.1em;
-                    padding-bottom: 3px;
+                    padding: 0.55em;
                 }
                 &:hover {
                     color: #fff;
                 }
-                &:first-child a {
-                    border-left: 0;
-                    border-radius: 3px 0 0 3px;
-                }
-            }
-            &:last-child a {
-                border-right: 0;
-                border-radius: 0 3px 3px 0;
             }
         }
     }
@@ -162,13 +142,13 @@ Footer
 
 
 #bs-example-navbar-collapse-1 {
-    background-color: #404040;
+    background-color: #fff;
     font-size: 1.1em;
-    @media (min-width: 768px) {
-        margin-top: 75px;
+    box-shadow: 0 1px 20px #cbcbcb;
+    @include respond-to(small) {
+        margin-top: 60px;
         @include fluiddiv;
         @include gradient;
-        border-top: 1px solid #282828;
         text-align: center;
     }
 }
@@ -182,44 +162,67 @@ html, body {
   overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
 }
 
+.swside-home {
+  max-width: 25em;
+  ul {
+    padding-left: 0;
+    list-style: none;
+    li {
+      margin-bottom: 0.35em;
+    }
+  }
+  a {
+      color: $accentlink;
+      text-decoration: none;
+  }
+  @include respond-to(small) {
+  border-left: 1px solid $accentlink-light;
+  padding-left: 30px;
+  margin-bottom: 20px;
+  }
+}
+
 .swside {
     border-right: 1px solid $accentlink-light;
     margin-bottom: 20px;
-    //margin-right: 15px;
+    max-width: 20em;
+    background: #f6f5f4;
     & h3 {
       font-weight: 400;
       margin-top: 1em;
     }
     ul {
-            @include plainlist;
-            padding-left: 2em;
-            text-indent: -2em;
-            &>li {
-                margin-top: 5px;
+        @include plainlist;
+        padding-left: 1em;
+        text-indent: -1em;
+        &>li {
+            margin-top: 5px;
+            a {
+                color: #725663;
+                font-family: 'ProximaNova-Semibold';
+                font-size: 1.1em;
+            }
+            &>ul>li {
+                margin-top: 0;
+                margin-bottom: 1em;
                 a {
-                    color: #725663;
-                    font-weight: 600;
+                    color: #5b5b5b;
+                    font-family: 'ProximaNova-Regular';
                     font-size: 1em;
                 }
-                &>ul>li {
-                    line-height: 2em;
-                    margin-top: 0;
-                    margin-left: 10px;
-                    a {
-                        color: #5b5b5b;
-                        font-weight: 300;
-                        font-size: 1em;
-                    }
+                &:last-child {
+                    padding-bottom: 0.5em;
                 }
             }
         }
-    @media screen and (max-width: 767px) {
+    }
+    @include respond-to(mobileonly) {
         padding-left: 25px;
     }
 }
 
 .btn-sidebar {
-    background: $accentlink-light;
+    background: $accentlink;
     color: #fff;
     position: absolute;
     padding: 10px;
@@ -228,14 +231,14 @@ html, body {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     margin-left: 0;
-    & a, &:hover {
+    & a, &:hover, &:visited, &:focus {
         color: #fff;
-        background: $accentlink;
+        background: $accentlink-light;
         }
 }
 
 .row-offcanvas {
-    @media screen and (max-width: 767px) {
+    @include respond-to(mobileonly) {
     position: relative;
     -webkit-transition: all .25s ease-out;
          -o-transition: all .25s ease-out;
@@ -244,7 +247,7 @@ html, body {
 }
 
 .row-offcanvas-right {
-    @media screen and (max-width: 767px) {
+    @include respond-to(mobileonly) {
     right: 0;
         .sidebar-offcanvas {
             right: -50%; /* 6 columns */
@@ -256,7 +259,7 @@ html, body {
 }
 
 .row-offcanvas-left {
-    @media screen and (max-width: 767px) {
+    @include respond-to(mobileonly) {
     left: 0;
         .sidebar-offcanvas {
             left: -50%; /* 6 columns */
@@ -268,7 +271,7 @@ html, body {
 }
 
 .sidebar-offcanvas {
-    @media screen and (max-width: 767px) {
+    @include respond-to(mobileonly) {
     position: absolute;
     top: 0;
     width: 50%; /* 6 columns */
@@ -276,13 +279,35 @@ html, body {
 }
 
 .toggle-side {
-    @media (max-width: 767px) { //Mobile
+    @include respond-to(mobileonly) { //Mobile
         padding-bottom: 20px;
         margin-bottom: 20px;
     }
 }
 
-
+.rightside {
+    border-top: 1px solid $accentlink-light;
+    margin-bottom: 20px;
+    background: #f6f5f4;
+    ul {
+        list-style: none;
+        padding-left: 0;
+        padding-left: 1em;
+        text-indent: -1em;
+        li {
+            font-size: 1.1em;
+            margin-bottom: 0.5em;
+            &:last-child {
+                margin-bottom: 2em;
+            }
+        }
+    }
+    @include respond-to(medium) {
+        margin-top: -5em;
+        border-top: none;
+        border-left: 1px solid $accentlink-light;
+    }
+}
 
 /*
  *  Footer
@@ -299,10 +324,9 @@ html { // For sticky footer
   bottom: 0;
   width: 100%;
   height: 60px;
-  padding-top: 15px;
-  padding-bottom: 5px;
-  @include gradient;
-  @media (min-width: 768px) {
+  padding: 15px 5px 5px 5px;
+  @include dark-gradient;
+  @include respond-to(small) {
     padding-top: 0px;
     padding-bottom: 0px;
   }
@@ -311,10 +335,10 @@ html { // For sticky footer
     font-size: 0.85em;
     padding: 7px;
       &:hover {
-      color: $accentlink;
-      text-decoration: none;
+        color: #eee;
+        text-decoration: none;
       }
-    @media (min-width: 768px) {
+    @include respond-to(small) {
       padding: 10px;  
       font-size: 1em; 
     }
@@ -322,24 +346,16 @@ html { // For sticky footer
   ul {
     margin:0;
     padding-left: 0;
-    padding-top: 5px;
-    @media (min-width: 768px) {
+    padding-top: 1.2em;
+    @include respond-to(mobileonly) {
       padding-top: 0;
     }
     & li {
       display: inline-block;
       @include listinline;
-        @media (max-width: 768px) { // Mobile
+        @include respond-to(mobileonly) { // Mobile
         &:after {
             content: "|\00a0";
-        }
-      }
-      @media (min-width: 768px) {
-        height: 100%;
-        border-right: 1px solid #282828;
-        padding: 20px 10px;
-        &:first-child {
-          border-left: 1px solid #282828;
         }
       }
     }
@@ -350,7 +366,7 @@ html { // For sticky footer
   float: left;
   img {
     max-width: 100px;
-    @media (min-width: 768px) {
+    @include respond-to(small) {
       max-width: 150px;
       padding: 10px 20px 0 0;
     }
