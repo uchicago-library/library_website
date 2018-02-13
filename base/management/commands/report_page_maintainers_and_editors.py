@@ -42,6 +42,8 @@ class Command (BaseCommand):
             # Skip pages that aren't live. 
             if not p.specific.full_url:
                 continue
+            if not p.live:
+                continue
             # Get cnetid and full name of page maintainer.
             if not hasattr(p.specific, 'page_maintainer'):
                 continue
