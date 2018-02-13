@@ -157,5 +157,18 @@ $('#subjectspecialty').typeahead({
   name: 'subjects',
   source: substringMatcher(subjects)
 });
+
+/*
+ * hack to point staff pages to loop when the search is included in loop.
+ */
+$(document).ready(function() {
+  $('a').each(function() {
+    if ($(this).attr('href').indexOf('https://www.lib.uchicago.edu/about/directory/staff/') >= 0) {
+      var new_href = $(this).attr('href').replace('https://www.lib.uchicago.edu/about/directory/staff/', '/staff/');
+      $(this).attr('href', new_href);
+    }
+  });
+});
+
 </script>
 {% endblock %}
