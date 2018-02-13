@@ -32,6 +32,10 @@ def pagetype(context, page):
     else:
         return ""
 
+@register.simple_tag(name='pagepath')
+def pagepath(page):
+    return " > ".join(list(page.get_ancestors(True).exclude(id=1).values_list('title', flat=True)))
+
 @register.filter
 @stringfilter
 def snippet(value):

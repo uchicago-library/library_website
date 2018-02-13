@@ -22,7 +22,7 @@
         {% if search_results %}
             {% for result in search_results %}
                 <h2><a href="{% pageurl result %}">{{ result }}</a></h2>
-                <span class="page-path">Loop &gt; {{ result.specific.title }}</span>
+                <span class="page-path">{% pagepath result %}</span>
                 {% if result.latest_revision_created_at %}
                     <span class="date">Last updated: {{ result.latest_revision_created_at }}</span>
                 {% endif %}
