@@ -178,6 +178,7 @@ html, body {
   @include respond-to(small) {
   border-left: 1px solid $accentlink-light;
   padding-left: 30px;
+  padding-bottom: 1em;
   margin-bottom: 20px;
   }
 }

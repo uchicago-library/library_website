@@ -99,7 +99,6 @@ h3 {
 h4 {
   font-family: 'ProximaNova-Semibold';
   font-size: 1.1em;
-  font-style: italic;
   color: #725663;
   margin-top: 2em; }
 
@@ -121,14 +120,22 @@ h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
  * --------------------------------------------------
  */
 p {
-  font-size: 1.2em;
+  font-size: 1.1em;
   line-height: 1.7em;
-  max-width: 46em; }
+  max-width: 46em;
+  margin-bottom: 2em; }
 
-.rich-text li {
-  margin-bottom: 1em; }
-  .rich-text li:last-child {
-    margin-bottom: 2em; }
+.template-news-page .rich-text {
+  font-size: 1em; }
+
+.rich-text ul, .rich-text ol {
+  font-size: 1.1em;
+  line-height: 1.7em;
+  max-width: 50em; }
+  .rich-text ul li, .rich-text ol li {
+    margin-bottom: 1em; }
+    .rich-text ul li:last-child, .rich-text ol li:last-child {
+      margin-bottom: 2em; }
 
 .date {
   font-weight: 100;
@@ -247,22 +254,37 @@ figure.center-block {
  * --------------------------------------------------
  */
 .sw-toc {
-  text-align: center;
   display: flex;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  padding-top: 2em; }
+  .sw-toc .toc-icon {
+    display: none; }
+    @media (min-width: 48em) {
+      .sw-toc .toc-icon {
+        display: unset;
+        padding-bottom: 1em; } }
+    @media (min-width: 62em) {
+      .sw-toc .toc-icon {
+        padding: 0; } }
+    .sw-toc .toc-icon .fa {
+      color: #ADB17D; }
+  .sw-toc h2 {
+    margin-top: 0; }
+  .sw-toc .rich-text {
+    margin-bottom: 2.5em; }
+  .sw-toc p {
+    margin-bottom: 0.5em; }
   .sw-toc a {
     color: #767676;
     text-decoration: none; }
-  .sw-toc > .col-md-4 {
-    padding-bottom: 20px; }
+    .sw-toc a:hover {
+      text-decoration: underline; }
   .sw-toc ul {
     list-style-type: none;
     line-height: 1.7em;
     padding-left: 0; }
-  .sw-toc .fa {
-    color: #ADB17D; }
-  .sw-toc h3 {
-    margin-top: 5px; }
+    .sw-toc ul li {
+      margin-bottom: 0.5em; }
 
 @media (min-width: 48em) {
   .swnews {
@@ -431,6 +453,7 @@ table a, tbody a {
  * --------------------------------------------------
  */
 ul.index-list {
+  font-size: 16px;
   line-height: 1.8em; }
   ul.index-list > li a {
     font-weight: 600;
@@ -453,32 +476,29 @@ ul.index-list {
  */
 .deptlist ul {
   list-style: none;
-  padding-left: 20px; }
+  padding-left: 0;
+  font-size: 16px; }
   .deptlist ul > li {
     margin: 15px 0 0 0; }
     .deptlist ul > li a {
-      font-size: 1.1em;
       font-weight: 600;
       color: #9A5324;
       padding-bottom: 3px; }
     .deptlist ul > li > ul > li {
-      margin: 0 0; }
+      margin: 0 0;
+      padding-left: 1em; }
       .deptlist ul > li > ul > li a {
-        font-size: 1.1em;
-        font-weight: 400;
         color: #767676;
         line-height: 2em; }
       .deptlist ul > li > ul > li > ul > li a {
-        font-size: 1.1em;
-        font-weight: 300;
         color: #5B8FA8;
         line-height: 1.5em; }
       .deptlist ul > li > ul > li > ul > li > ul > li a {
-        font-size: 1.1em;
-        font-weight: 300;
         color: #434343;
-        line-height: 1.5em;
-        font-style: italic; }
+        line-height: 1.5em; }
+      .deptlist ul > li > ul > li > ul > li > ul > li > ul > li a {
+        color: #565A25;
+        line-height: 1.5em; }
 
 /*
  *  Group Home Page
