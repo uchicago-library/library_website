@@ -219,7 +219,6 @@ Right Sidebar: Widget Items
  .home-modwrapper {
   padding-top: 20px;
   margin: 10px 0;
-  white-space: nowrap;
   & h2 {
     display: inline;
     font-size: 1.2em;
@@ -243,6 +242,7 @@ Right Sidebar: Widget Items
   border-bottom: 1px solid $darkgray;
   padding: 0px 0px 10px 15px;
   margin-bottom: 15px;
+  white-space: nowrap;
   a {
     color: $darkgray;
     display: inline;

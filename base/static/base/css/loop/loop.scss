@@ -98,7 +98,6 @@ h3 {
 h4 {
   font-family: 'ProximaNova-Semibold';
   font-size: 1.1em;
-  font-style: italic;
   color:#725663;
   margin-top: 2em;
 }
@@ -125,15 +124,25 @@ h1+h2, h2+h3, h3+h4, h4+h5, h5+h6 {
  */
 
 p {
-  font-size: 1.2em;
+  font-size: 1.1em;
   line-height: 1.7em;
   max-width: 46em;
+  margin-bottom: 2em;
 }
 
-.rich-text li {
-  margin-bottom: 1em;
-  &:last-child {
-    margin-bottom: 2em;
+.template-news-page .rich-text {
+  font-size: 1em;
+}
+
+.rich-text ul, .rich-text ol {
+  font-size: 1.1em;
+  line-height: 1.7em;
+  max-width: 50em;
+    li {
+    margin-bottom: 1em;
+    &:last-child {
+      margin-bottom: 2em;
+    }
   }
 }
 
@@ -285,24 +294,43 @@ figure {
  */
 
 .sw-toc {
-    text-align: center;
     display: flex;
     flex-wrap: wrap;
+    padding-top: 2em;
+    .toc-icon {
+      display: none;
+      @include respond-to(small) {
+        display: unset;
+        padding-bottom: 1em;
+      }
+      @include respond-to(medium) {
+        padding: 0;
+      }
+      .fa {
+        color: $accentlink-light;
+      }
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .rich-text {
+      margin-bottom: 2.5em;
+    }
+    p {
+      margin-bottom: 0.5em;
+    }
     & a {
       color: $darkgray;
       text-decoration: none;
-    }
-    &>.col-md-4 {
-        padding-bottom: 20px;
+      &:hover {
+        text-decoration: underline;
+      }
     }
     ul {
         @include plainlist;
-    }
-    .fa {
-        color: $accentlink-light;
-    }
-    h3 {
-        margin-top: 5px;
+        li {
+          margin-bottom: 0.5em;
+        }
     }
 }
 
@@ -511,6 +539,7 @@ table, tbody {
  * --------------------------------------------------
  */
  ul.index-list {
+  font-size: 16px;
   line-height: 1.8em;
   &>li {
     a {
@@ -546,46 +575,48 @@ table, tbody {
  *  Dept Home Page
  * --------------------------------------------------
  */
- .deptlist ul {
-        list-style: none;
-        padding-left: 20px;
-    &>li {
-        margin: 15px 0 0 0;
-        a {
-          font-size: 1.1em;
-          font-weight: 600;
-          color:#9A5324;
-          padding-bottom: 3px;
-        }
-        &>ul>li {
-        margin: 0 0;
-            a {
-              font-size: 1.1em;
-              font-weight: 400;
-              color:$darkgray;
-              line-height: 2em;
-            }
-            &>ul>li {
-                a {
-                  font-size: 1.1em;
-                  font-weight: 300;
-                  color: #5B8FA8;
-                  line-height: 1.5em;
-                }
-                &>ul>li {
-                    a {
-                      font-size: 1.1em;
-                      font-weight: 300;
-                      color:$darkergray;
-                      line-height: 1.5em;
-                      font-style: italic;
-                    }
-                }
-            }
-        }
-    }
- }
 
+.deptlist {
+  ul { // Main ul
+    list-style: none;
+    padding-left: 0;
+    font-size: 16px;
+    &>li { // first level
+      margin: 15px 0 0 0;
+      a {
+        font-weight: 600;
+        color:#9A5324;
+        padding-bottom: 3px;
+      }
+      &>ul>li { // second level
+      margin: 0 0;
+      padding-left: 1em;
+        a {
+          color:$darkgray;
+          line-height: 2em;
+        }
+        &>ul>li { // third level
+          a {
+            color: #5B8FA8;
+            line-height: 1.5em;
+          }
+          &>ul>li { // fourth level
+            a {
+              color:$darkergray;
+              line-height: 1.5em;
+            }
+            &>ul>li { // fifth level
+              a {
+                color:$darkaccent;
+                line-height: 1.5em;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
  /*
  *  Group Home Page

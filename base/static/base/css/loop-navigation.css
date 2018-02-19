@@ -162,6 +162,7 @@ html, body {
     .swside-home {
       border-left: 1px solid #ADB17D;
       padding-left: 30px;
+      padding-bottom: 1em;
       margin-bottom: 20px; } }
 
 .swside {
