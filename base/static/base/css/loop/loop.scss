@@ -21,9 +21,6 @@ Group Home Page
  * --------------------------------------------------
  */
 
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/regular/);
-@import url(http://www.myfonts.com/fonts/marksimonson/proxima-nova/bold/);
-@import url(http://www.netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css);
 @font-face {
   font-family: 'Glyphicons Halflings';
   src: url('fonts/glyphicons-halflings-regular.eot');
@@ -34,7 +31,7 @@ Group Home Page
   font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif; }
 
 body {
-  font-family: 'ProximaNova-Regular', "Arial", sans-serif;
+  font-family: "Arial", sans-serif;
   margin-bottom: 100px;
   background: #fbfbfa;
 }
@@ -61,7 +58,7 @@ a {
  */
 
 h1 {
-  font-family: 'ProximaNova-Bold';
+  font-weight: 600;
   font-size: 1.4em;
   margin-bottom: 10px;
   color: $accentlink;
@@ -71,7 +68,7 @@ h1 {
 }
 
 h2 {
-  font-family: 'ProximaNova-Semibold';
+  font-weight: 400;
   font-size: 1.3em;
   margin: 2em 0 5px 0;
   color:#9A5324;
@@ -82,7 +79,7 @@ h2 {
 
 
 h3 {
-  font-family: 'ProximaNovaT-Thin';
+  font-weight: 100;
   font-size: 1.4em;
   margin: 30px 0 15px 0;
   color: $darkaccent;
@@ -96,20 +93,20 @@ h3 {
 }
 
 h4 {
-  font-family: 'ProximaNova-Semibold';
+  font-weight: 400;
   font-size: 1.1em;
   color:#725663;
   margin-top: 2em;
 }
 
 h5 {
-  font-family: 'ProximaNova-Semibold';
+  font-weight: 600;
   font-size: 1.1em;
   color: $darkgray;
 }
 
 h6 {
-  font-family: 'ProximaNova-Semibold';
+  font-weight: 600;
   font-size: 1.1em;
   color: #9A5324;
 }
@@ -680,7 +677,7 @@ table, tbody {
     color: #9A5324;
   }
   .result-number {
-    font-family: 'ProximaNova-Bold';
+    font-weight: 600;
     font-size: 1.1em;
   }
   .page-path {
