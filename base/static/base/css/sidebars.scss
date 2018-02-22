@@ -242,13 +242,14 @@ Right Sidebar: Widget Items
   border-bottom: 1px solid $darkgray;
   padding: 0px 0px 10px 15px;
   margin-bottom: 15px;
-  white-space: nowrap;
   a {
     color: $darkgray;
     display: inline;
-    &.viewall:before {
-      content: "\0020|\0020";
-      margin: 0 0.5em;
+    &.viewall {
+        &:before {
+        content: "\0020|\0020";
+        margin: 0 0.5em;
+      }
     }
     &:hover {
       text-decoration: none;
