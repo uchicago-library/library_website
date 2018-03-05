@@ -17,8 +17,8 @@ def get_xml_from_feed(feed):
 
     c.request('GET', p.path + "?" + p.query)
     result = c.getresponse()
-    xml_string = result.read()
-    return ElementTree.fromstring(xml_string)
+    xml_bytes = result.read()
+    return ElementTree.fromstring(xml_bytes.decode('utf-8'))
 
 def get_entries_from_events_uchicago(x):
     entries = []
