@@ -209,7 +209,7 @@ WAGTAIL_SITE_NAME = "library_website"
 
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch',
+        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch5',
     	'URLS': ['http://localhost:9200'],
         'INDEX': 'wagtail',
         'TIMEOUT': 5,
