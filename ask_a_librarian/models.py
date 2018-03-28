@@ -1,9 +1,9 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.core.models import Page, Site
 from base.models import PublicBasePage, DefaultBodyFields, ContactFields
-from wagtail.wagtailsearch import index
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.search import index
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 from .utils import get_chat_status, get_chat_status_css
 from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
 from django.core.validators import RegexValidator

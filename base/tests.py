@@ -1,6 +1,6 @@
 from base.utils import get_xml_from_directory_api
 from django.test import TestCase, Client
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.core.models import Page, Site
 from base.models import BasePage, get_available_path_under, PublicBasePage
 from django.http import HttpRequest
 from news.models import NewsPage
@@ -79,7 +79,7 @@ class TestUsersAndServingLivePages(TestCase):
     If you'd like to import the complete database and prune it down to a minimal set of pages for testing,
     you can do something like this: 
 
-    from wagtail.wagtailcore.models import Page
+    from wagtail.core.models import Page
     from ask_a_librarian.models import AskPage
     from staff.models import StaffPage
     from units.models import UnitPage
@@ -92,10 +92,10 @@ class TestUsersAndServingLivePages(TestCase):
     3314, 3378, 3380, 3392, 3393, 3640, 3643, 3692, 3699, 3961, 4084, 4127, 4186,
     4273, 4317, 4499, 4637, 4646, 4717, 4872, 4873]).not_type((AskPage, StaffPage, UnitPage)).delete()
 
-    from wagtail.wagtaildocs.models import Document
+    from wagtail.documents.models import Document
     Document.objects.all().delete()
 
-    from wagtail.wagtailimages.models import Image
+    from wagtail.images.models import Image
     Image.objects.exclude(id__in=[626, 1129, 1130]).delete()
     """
    
@@ -111,11 +111,11 @@ class TestUsersAndServingLivePages(TestCase):
 
         # also need to clear urlresolver caches before/after tests, because we override
         # ROOT_URLCONF in some tests here
-        from django.core.urlresolvers import clear_url_caches
+        from django.urls import clear_url_caches
         clear_url_caches()
 
     def tearDown(self):
-        from django.core.urlresolvers import clear_url_caches
+        from django.urls import clear_url_caches
         clear_url_caches()
 
     def test_random_news_page(self):

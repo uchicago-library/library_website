@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.wagtailcore.blocks
-import wagtail.wagtailcore.fields
+import wagtail.core.blocks
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('start_sidebar_from_here', models.BooleanField(default=False)),
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
-                ('body', wagtail.wagtailcore.fields.StreamField((('list_block', wagtail.wagtailcore.blocks.StructBlock((('icon', wagtail.wagtailcore.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.wagtailcore.blocks.CharBlock()), ('text', wagtail.wagtailcore.blocks.RichTextBlock())))), ('automatic_directory_list_block', wagtail.wagtailcore.blocks.StructBlock((('icon', wagtail.wagtailcore.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('starting_page', wagtail.wagtailcore.blocks.PageChooserBlock()))))))),
+                ('body', wagtail.core.fields.StreamField((('list_block', wagtail.core.blocks.StructBlock((('icon', wagtail.core.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.core.blocks.CharBlock()), ('text', wagtail.core.blocks.RichTextBlock())))), ('automatic_directory_list_block', wagtail.core.blocks.StructBlock((('icon', wagtail.core.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('starting_page', wagtail.core.blocks.PageChooserBlock()))))))),
                 ('editor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='intranettocs_tocpage_editor', to='staff.StaffPage')),
                 ('page_maintainer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='intranettocs_tocpage_maintainer', to='staff.StaffPage')),
             ],

@@ -1,12 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from public.models import LocationPage, LocationPageFloorPlacement, StandardPage
-from wagtail.wagtailimages.models import Image
+from wagtail.images.models import Image
 from library_website.settings import PUBLIC_HOMEPAGE, REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 from base.utils import get_hours_and_location, sort_buildings
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.utils import get_features, has_feature
-from wagtail.wagtailcore.models import Site
+from wagtail.core.models import Site
 from base.models import UNFRIENDLY_ARTICLES
 
 import simplejson

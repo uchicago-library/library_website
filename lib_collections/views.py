@@ -3,8 +3,8 @@ from lib_collections.models import CollectionPage, CollectionPageFormatPlacement
 from public.models import LocationPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject, SubjectParentRelations
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailsearch.backends import get_search_backend
+from wagtail.images.models import Image
+from wagtail.search.backends import get_search_backend
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE

@@ -23,7 +23,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,28 +33,26 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_bleach',
 
-    'debug_toolbar',
-
     'taggit',
     'compressor',
     'modelcluster',
 
-    'wagtail.wagtailcore',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtailsearch',
-    'wagtail.wagtailimages',
-    'wagtail.wagtaildocs',
+    'wagtail.core',
+    'wagtail.admin',
+    'wagtail.search',
+    'wagtail.images',
+    'wagtail.documents',
     'wagtailmedia',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtailusers',
-    'wagtail.wagtailsites',
-    'wagtail.wagtailembeds',
-    'wagtail.wagtailredirects',
-    'wagtail.wagtailforms',
+    'wagtail.snippets',
+    'wagtail.users',
+    'wagtail.sites',
+    'wagtail.embeds',
+    'wagtail.contrib.redirects',
+    'wagtail.contrib.forms',
     "wagtail.contrib.table_block",
-    'wagtail.contrib.wagtailsearchpromotions',
-    'wagtail.contrib.wagtailsitemaps',
-    'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.search_promotions',
+    'wagtail.contrib.sitemaps',
+    'wagtail.contrib.styleguide',
     'wagtail.api.v2',
     
     'corsheaders',
@@ -83,32 +81,32 @@ INSTALLED_APPS = (
     'redirects',
     'results',
     'search',
-    'shibboleth',
+    #'shibboleth',
     'staff',
     'subjects',
     'units',
     'static_precompiler',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
+    #'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
-)
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+]
 
 ROOT_URLCONF = 'library_website.urls'
 
@@ -124,8 +122,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'shibboleth.context_processors.login_link',
-                'shibboleth.context_processors.logout_link',
+                #'shibboleth.context_processors.login_link',
+                #'shibboleth.context_processors.logout_link',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
@@ -209,7 +207,7 @@ WAGTAIL_SITE_NAME = "library_website"
 
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch5',
+        'BACKEND': 'wagtail.search.backends.elasticsearch5',
     	'URLS': ['http://localhost:9200'],
         'INDEX': 'wagtail',
         'TIMEOUT': 5,

@@ -1,9 +1,9 @@
 from django.conf.urls import url
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render
-from wagtail.wagtailadmin.menu import MenuItem
-from wagtail.wagtailcore import hooks
+from wagtail.admin.menu import MenuItem
+from wagtail.core import hooks
 
 from .forms import EmailNotificationTestForm
 from .utils import send_loop_news_email_notifications

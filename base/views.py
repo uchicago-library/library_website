@@ -8,7 +8,7 @@ from units.utils import get_default_unit
 from ask_a_librarian.utils import get_chat_status_and_css, get_unit_chat_link, get_chat_status, get_chat_status_css
 import datetime
 import urllib
-from wagtail.wagtailcore.models import Site
+from wagtail.core.models import Site
 from bs4 import BeautifulSoup
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE

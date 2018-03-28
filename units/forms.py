@@ -1,8 +1,8 @@
 from django import forms
 from django.core.validators import RegexValidator
 from units.models import UnitPage
-from wagtail.wagtailadmin.widgets import AdminDateInput
-from wagtail.wagtailcore.blocks import DateBlock
+from wagtail.admin.widgets import AdminDateInput
+from wagtail.core.blocks import DateBlock
 
 class UnitReportingForm(forms.Form):
     l = 'Filename'

@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.wagtailcore.fields
-import wagtail.wagtailsearch.index
+import wagtail.core.fields
+import wagtail.search.index
 
 
 class Migration(migrations.Migration):
@@ -18,9 +18,9 @@ class Migration(migrations.Migration):
             name='NewsEmailAddition',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('extra_text', wagtail.wagtailcore.fields.RichTextField()),
+                ('extra_text', wagtail.core.fields.RichTextField()),
                 ('include_in_email_dated', models.DateField(blank=True, help_text='Emails are send automatically via cron. If that process finds an email addition snippet with the appropriate date it will attach it to the message.', null=True)),
             ],
-            bases=(models.Model, wagtail.wagtailsearch.index.Indexed),
+            bases=(models.Model, wagtail.search.index.Indexed),
         ),
     ]

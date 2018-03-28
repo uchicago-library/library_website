@@ -1,6 +1,6 @@
 from django.utils.html import format_html
 from django.conf import settings
-from wagtail.wagtailcore import hooks
+from wagtail.core import hooks
 from django.shortcuts import redirect
 from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL
 from django.contrib.staticfiles.templatetags.staticfiles import static 

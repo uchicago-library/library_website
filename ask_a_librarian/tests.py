@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from wagtail.wagtailcore.models import Site
+from wagtail.core.models import Site
 from ask_a_librarian.utils import get_unit_chat_link, get_chat_statuses
 from ask_a_librarian.models import AskPage
 from units.models import UnitPage

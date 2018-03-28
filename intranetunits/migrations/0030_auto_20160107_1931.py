@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='intranetunitsreportspagetable',
             name='link_document',
-            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True, on_delete=models.SET_NULL),
         ),
         migrations.AddField(
             model_name='intranetunitsreportspagetable',
@@ -26,6 +26,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='intranetunitsreportspagetable',
             name='link_page',
-            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL),
         ),
     ]

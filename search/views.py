@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from intranethome.models import IntranetHomePage
 from units.models import UnitIndexPage
-from wagtail.wagtailcore.models import Page, Site
-from wagtail.wagtailsearch.models import Query
-from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
+from wagtail.core.models import Page, Site
+from wagtail.search.models import Query
+from wagtail.contrib.search_promotions.models import SearchPromotion
 
 def loop_search(request):
     search_query = request.GET.get('query', None)

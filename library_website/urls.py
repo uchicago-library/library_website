@@ -3,11 +3,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import RedirectView
-from wagtail.contrib.wagtailsitemaps.views import sitemap
+from wagtail.contrib.sitemaps.views import sitemap
 
-from wagtail.wagtailadmin import urls as wagtailadmin_urls
-from wagtail.wagtaildocs import urls as wagtaildocs_urls
-from wagtail.wagtailcore import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.core import urls as wagtail_urls
 from events.views import events as events_view
 from public.views import spaces as spaces_view
 from public.views import navigation as navigation_view
@@ -15,15 +15,14 @@ from results.views import results as results_view
 from search.views import loop_search as search_view 
 from units.views import units as unit_view
 from lib_collections.views import collections as collection_view
-from wagtail.contrib.wagtailapi import urls as wagtailapi_urls
 from staff.views import staff, staff_api
 from base.views import json_hours, json_events, json_news, chat_status, external_include
 from .api import api_router
 
 urlpatterns = [
-    url(r'^django-admin/', include(admin.site.urls)),
+    url(r'^django-admin/', admin.site.urls),
 
-    url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
+    #url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 

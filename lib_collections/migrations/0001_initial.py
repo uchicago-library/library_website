@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.wagtailsearch.index
+import wagtail.search.index
 import modelcluster.fields
 import django.db.models.deletion
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectingAreaPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
                 ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('guide_link_text', models.CharField(max_length=255, default='')),
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CollectionPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
                 ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('short_abstract', models.TextField(default='')),
@@ -145,7 +145,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('text', models.CharField(max_length=255)),
             ],
-            bases=(models.Model, wagtail.wagtailsearch.index.Indexed),
+            bases=(models.Model, wagtail.search.index.Indexed),
         ),
         migrations.CreateModel(
             name='HighlightedCollectionsPlacement',

@@ -11,7 +11,7 @@ from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import get_quick_nums_for_library_or_dept
 from units.utils import WagtailUnitsReport
-from wagtail.wagtailimages.models import Image
+from wagtail.images.models import Image
 from public.models import StandardPage, LocationPage
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 from base.utils import get_hours_and_location, get_page_loc_name

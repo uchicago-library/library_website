@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IntranetUnitsReportsIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, to='wagtailcore.Page', serialize=False, primary_key=True, auto_created=True)),
+                ('page_ptr', models.OneToOneField(parent_link=True, to='wagtailcore.Page', serialize=False, primary_key=True, auto_created=True, on_delete=models.CASCADE)),
                 ('start_sidebar_from_here', models.BooleanField(default=False)),
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(verbose_name='Last Reviewed', blank=True, null=True)),

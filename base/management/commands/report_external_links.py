@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 from django.db.models import URLField
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 import csv
 import io

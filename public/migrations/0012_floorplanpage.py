@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FloorPlanPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, to='wagtailcore.Page', primary_key=True, serialize=False, auto_created=True)),
+                ('page_ptr', models.OneToOneField(parent_link=True, to='wagtailcore.Page', primary_key=True, serialize=False, auto_created=True, on_delete=models.CASCADE)),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('content_specialist', models.ForeignKey(related_name='public_floorplanpage_content_specialist', to='staff.StaffPage', on_delete=django.db.models.deletion.SET_NULL, null=True)),

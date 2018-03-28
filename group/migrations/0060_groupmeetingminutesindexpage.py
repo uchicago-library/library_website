@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GroupMeetingMinutesIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(primary_key=True, auto_created=True, parent_link=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(primary_key=True, auto_created=True, parent_link=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('start_sidebar_from_here', models.BooleanField(default=False)),
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(null=True, verbose_name='Last Reviewed', blank=True)),

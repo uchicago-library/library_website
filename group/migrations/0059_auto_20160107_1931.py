@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='groupmeetingminutespagetable',
             name='link_document',
-            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='groupmeetingminutespagetable',
@@ -26,12 +26,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='groupmeetingminutespagetable',
             name='link_page',
-            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='groupreportspagetable',
             name='link_document',
-            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtaildocs.Document', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='groupreportspagetable',
@@ -41,6 +41,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='groupreportspagetable',
             name='link_page',
-            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True),
+            field=models.ForeignKey(related_name='+', to='wagtailcore.Page', null=True, blank=True, on_delete=models.CASCADE),
         ),
     ]

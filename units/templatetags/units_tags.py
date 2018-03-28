@@ -86,7 +86,7 @@ def division_building_room_phone(unit_page):
 
   return ' &nbsp; | &nbsp; '.join(building_room_phone)
 
-@register.assignment_tag
+@register.simple_tag
 def get_division(unit_page):
   from units.models import UnitPage
   division = unit_page.get_ancestors().type(UnitPage).first()

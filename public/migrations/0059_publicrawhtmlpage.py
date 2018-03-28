@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.wagtailcore.blocks
-import wagtail.wagtailcore.fields
+import wagtail.core.blocks
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
-                ('html', wagtail.wagtailcore.fields.StreamField((('html', wagtail.wagtailcore.blocks.RawHTMLBlock()),))),
+                ('html', wagtail.core.fields.StreamField((('html', wagtail.core.blocks.RawHTMLBlock()),))),
                 ('content_specialist', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='public_publicrawhtmlpage_content_specialist', to='staff.StaffPage')),
                 ('editor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='public_publicrawhtmlpage_editor', to='staff.StaffPage')),
                 ('page_maintainer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='public_publicrawhtmlpage_maintainer', to='staff.StaffPage')),

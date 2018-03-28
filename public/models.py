@@ -2,18 +2,18 @@ from django.db import models
 from django.db.models.fields import CharField
 from django import forms
 from django.utils import timezone
-from wagtail.wagtailcore.models import Page, Orderable, Site
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore import blocks
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel, PageChooserPanel
-from wagtail.wagtailimages.blocks import ImageChooserBlock
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsearch import index
+from wagtail.core.models import Page, Orderable, Site
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core import blocks
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel, PageChooserPanel
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField, CarouselItem
 from datetime import date
 from staff.models import StaffPage
-from wagtail.wagtailimages.models import Image
+from wagtail.images.models import Image
 from subjects.utils import get_subjects_html
 from public.utils import get_features
 from units.models import BUILDINGS
@@ -21,12 +21,12 @@ from wagtail.api import APIField
 import urllib
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface as OriginalTabbedInterface
-class TabbedInterface(OriginalTabbedInterface):
-
-    def __init__(self, children, base_form_class=WagtailAdminPageForm):
-        super().__init__(children, base_form_class)
+#from wagtail.admin.forms import WagtailAdminPageForm
+#from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
+#class TabbedInterface(OriginalTabbedInterface):
+#
+#    def __init__(self, children, base_form_class=WagtailAdminPageForm):
+#        super().__init__(children, base_form_class)
 
 
 class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
@@ -213,7 +213,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
         Args:
             streamblock: streamfield block object, 
-            wagtail.wagtailcore.blocks.stream_block.StreamValue.StreamChild.
+            wagtail.core.blocks.stream_block.StreamValue.StreamChild.
 
             field: string field name that contains 
             a ListBlock of LinkBlocks.
@@ -235,7 +235,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
         Args:
             streamblock: streamfield block object, 
-            wagtail.wagtailcore.blocks.stream_block.StreamValue.StreamChild.
+            wagtail.core.blocks.stream_block.StreamValue.StreamChild.
 
             field_names: list of strings, field names.
 
@@ -335,32 +335,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             links.append(html)
 
         return {'person': person, 'image': image, 'profile': profile, 'links': links}
-
-
-    def get_directory_link_by_location(self, location, specialists=False):
-        """
-        Return a link into the directory limited for a 
-        given Library.
-
-        Args:
-            location: string, the building level locations 
-            for which to retrieve a link into the public 
-            directory.
-
-            specialists: boolean, if set to True, only show
-            subject specialists for the given location.
-
-        Returns:
-            string, link into the public directory
-            filtered by library.
-        """
-        base = '/about/directory/?view=staff&library='
-        url = base + urllib.parse.quote_plus(location)
-
-        if specialists:
-             return url + '&subject=All+Subject+Specialists'       
-        else: 
-            return url
 
 
     @property 

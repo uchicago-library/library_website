@@ -1,6 +1,6 @@
 import requests
 from defusedxml.ElementTree import fromstring
-from wagtail.wagtailcore.models import Site
+from wagtail.core.models import Site
 from library_website.settings import DEFAULT_UNIT, SCRC_MAIN_UNIT, SCRC_ASK_PAGE
 
 def get_chat_status(name):
@@ -101,7 +101,7 @@ def get_unit_chat_link(unit, request):
         upon failure.
     """
     from .models import AskPage
-    from wagtail.wagtailcore.models import Page
+    from wagtail.core.models import Page
     current_site = Site.find_for_request(request)
 
     try:

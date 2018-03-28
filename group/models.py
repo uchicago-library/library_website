@@ -5,15 +5,15 @@ from datetime import datetime, timedelta
 
 from base.models import BasePage, LinkFields, DefaultBodyFields, Email, AbstractReport, Report
 from staff.models import StaffPage
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.core.models import Orderable, Page
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailsearch import index
-from wagtail.wagtailsnippets.models import register_snippet
+from wagtail.search import index
+from wagtail.snippets.models import register_snippet
 
-from wagtail.wagtaildocs.models import Document
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.documents.models import Document
+from wagtail.documents.edit_handlers import DocumentChooserPanel
 
 from collections import OrderedDict
 from django.core.exceptions import ValidationError
@@ -179,7 +179,8 @@ class GroupMembers(Orderable, models.Model):
         on_delete=models.CASCADE
     )
     role = models.ForeignKey(
-        'group.GroupMemberRole', 
+        'group.GroupMemberRole',
+        on_delete=models.SET_NULL, 
         null=True,
         blank=True,
         related_name='+'

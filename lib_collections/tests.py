@@ -7,7 +7,7 @@ from django.urls import reverse
 from subjects.models import Subject
 from units.models import UnitPage
 from public.models import LocationPage, StaffPublicPage
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.core.models import Page, Site
 from staff.models import StaffPage, StaffPageEmailAddresses, StaffPageSubjectPlacement
 from units.models import UnitPage
 

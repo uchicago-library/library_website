@@ -12,7 +12,7 @@ from .models import StaffPage, StaffPageEmailAddresses, StaffPageLibraryUnits, S
 from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
 from tempfile import NamedTemporaryFile
 from units.models import UnitPage
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 def print_test_time_elapsed(method):
     """

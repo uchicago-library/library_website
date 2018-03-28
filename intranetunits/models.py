@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models.fields import CharField, TextField
 from modelcluster.fields import ParentalKey
 from staff.models import StaffPage
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailsearch import index
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Orderable, Page
+from wagtail.search import index
 from django.core.exceptions import ValidationError
 
 class IntranetUnitsReportsPageTable(Orderable, Report):

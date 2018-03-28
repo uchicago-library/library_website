@@ -1,14 +1,14 @@
 from django.db import models
 from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, \
+from wagtail.core.models import Orderable, Page
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.admin.edit_handlers import FieldPanel, FieldRowPanel, \
     InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, \
     StreamFieldPanel, TabbedInterface
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
-from wagtail.wagtailsearch import index
-from wagtail.wagtailsnippets.models import register_snippet
-from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
+from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.search import index
+from wagtail.snippets.models import register_snippet
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from django.core.validators import RegexValidator
 from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, \
@@ -79,8 +79,8 @@ class UnitPageRolePlacement(Orderable, models.Model):
     """
     Through table for linking Role snippets to UnitPages.
     """
-    page = ParentalKey('units.UnitPage', related_name='unit_role_placements')
-    role = models.ForeignKey('units.Role', related_name='+')
+    page = ParentalKey('units.UnitPage', on_delete=models.CASCADE, related_name='unit_role_placements')
+    role = models.ForeignKey('units.Role', on_delete=models.CASCADE, related_name='+')
 
     class Meta:
         verbose_name = 'Unit Placement'

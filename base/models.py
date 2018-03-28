@@ -8,17 +8,17 @@ from django.db.models.fields import IntegerField
 from django.utils import timezone
 from library_website.settings.base import PHONE_FORMAT, PHONE_ERROR_MSG, POSTAL_CODE_FORMAT, POSTAL_CODE_ERROR_MSG, HOURS_TEMPLATE, HOURS_PAGE, ROOT_UNIT, LIBCAL_IID
 from unidecode import unidecode
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.wagtailcore.blocks import ChoiceBlock, ChooserBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
-from wagtail.wagtaildocs.blocks import DocumentChooserBlock
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Page, Site
-from wagtail.wagtailimages.blocks import ImageChooserBlock
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailembeds.blocks import EmbedBlock 
-from wagtail.wagtailsearch import index
-from wagtail.wagtaildocs.models import Document
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.core.blocks import ChoiceBlock, ChooserBlock, TextBlock, StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, RichTextBlock, BooleanBlock, RawHTMLBlock, URLBlock, PageChooserBlock, TimeBlock
+from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Page, Site
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.embeds.blocks import EmbedBlock 
+from wagtail.search import index
+from wagtail.documents.models import Document
+from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtailmedia.blocks import AbstractMediaChooserBlock
 from localflavor.us.us_states import STATE_CHOICES
 from localflavor.us.models import USStateField
@@ -1346,6 +1346,31 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         except(AttributeError):
             return None
 
+    def get_directory_link_by_location(self, location, specialists=False):
+        """
+        Return a link into the directory limited for a
+        given Library.
+
+        Args:
+            location: string, the building level locations
+            for which to retrieve a link into the public
+            directory.
+
+            specialists: boolean, if set to True, only show
+            subject specialists for the given location.
+
+        Returns:
+            string, link into the public directory
+            filtered by library.
+        """
+        base = '/about/directory/?view=staff&library='
+        url = base + urllib.parse.quote_plus(location)
+
+        if specialists:
+             return url + '&subject=All+Subject+Specialists'
+        else:
+            return url
+
 
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
@@ -1367,7 +1392,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             context['address'] = self.location_and_hours['address']
             #context['all_building_hours'] = get_all_building_hours()
             context['chat_url'] = get_unit_chat_link(unit, request)
-            context['directory_link'] = self.get_directory_link_by_location(location, True)
+            if location:
+                context['directory_link'] = self.get_directory_link_by_location(location, True)
         except(AttributeError):
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')

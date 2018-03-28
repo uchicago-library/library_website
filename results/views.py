@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from wagtail.wagtailcore.models import Page, Site
-from wagtail.wagtailsearch.models import Query
-from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
+from wagtail.core.models import Page, Site
+from wagtail.search.models import Query
+from wagtail.contrib.search_promotions.models import SearchPromotion
 from public.models import StandardPage
 from library_website.settings import PUBLIC_HOMEPAGE
 from base.utils import get_hours_and_location

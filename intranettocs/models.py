@@ -1,11 +1,11 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.blocks import CharBlock, ListBlock, RichTextBlock
+from wagtail.core.models import Page
+from wagtail.core.fields import StreamField
+from wagtail.core.blocks import CharBlock, ListBlock, RichTextBlock
 from base.models import BasePage
 from icon_list_boxes.models import IconListBlock, IconListCluster
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
-from wagtail.wagtailsearch import index
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.search import index
 
 class TOCPage(BasePage):
     """

@@ -65,12 +65,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='collectionpagesubjectplacement',
             name='subject',
-            field=models.ForeignKey(related_name='+', to='subjects.Subject'),
+            field=models.ForeignKey(related_name='+', to='subjects.Subject', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='collectionpageformatplacement',
             name='format',
-            field=models.ForeignKey(related_name='+', to='lib_collections.Format'),
+            field=models.ForeignKey(related_name='+', to='lib_collections.Format', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='collectionpageformatplacement',

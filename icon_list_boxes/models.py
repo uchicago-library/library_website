@@ -1,11 +1,11 @@
 from django.db import models
 from django.db.models import F
-from wagtail.wagtailcore.blocks import StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, PageChooserBlock, RichTextBlock
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtaildocs.blocks import DocumentChooserBlock
+from wagtail.core.blocks import StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, PageChooserBlock, RichTextBlock
+from wagtail.core.models import Page
+from wagtail.documents.blocks import DocumentChooserBlock
 from base.models import LinkFields
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.documents.edit_handlers import DocumentChooserPanel
 
 class IconListBlock(StructBlock):
     """

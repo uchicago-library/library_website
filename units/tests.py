@@ -4,7 +4,7 @@ from django.core import management
 from django.test import TestCase, Client, override_settings
 from io import StringIO
 from unittest.mock import patch
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.core.models import Page, Site
 
 from .models import UnitPage
 from .utils import get_quick_num_or_link, get_quick_num_html, get_all_quick_nums_html, get_quick_nums_for_library_or_dept

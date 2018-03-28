@@ -1,6 +1,6 @@
 from base.models import PublicBasePage
 from django.db import models
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 from xml.etree import ElementTree
 
 import re

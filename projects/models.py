@@ -1,8 +1,8 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 from base.models import BasePage
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
-from wagtail.wagtailsearch import index
+from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.search import index
 from django.utils import timezone
 
 class ProjectPage(BasePage):

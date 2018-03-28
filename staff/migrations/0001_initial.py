@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.core.validators
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StaffIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
-                ('intro', wagtail.wagtailcore.fields.RichTextField()),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
+                ('intro', wagtail.core.fields.RichTextField()),
             ],
             options={
                 'abstract': False,
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='staff',
             name='bio',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, null=True),
+            field=wagtail.core.fields.RichTextField(blank=True, null=True),
         ),
         migrations.AddField(
             model_name='staff',
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='StaffPagePageVCards',
             fields=[
-                ('vcard_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='staff.VCard', auto_created=True)),
+                ('vcard_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='staff.VCard', auto_created=True, on_delete=models.CASCADE)),
                 ('sort_order', models.IntegerField(editable=False, blank=True, null=True)),
             ],
             options={

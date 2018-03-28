@@ -15,7 +15,7 @@ from django.utils.html import strip_tags
 from django.utils.text import slugify
 from bs4 import BeautifulSoup
 import json
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 from library_website.settings import REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
 
 HOURS_UNAVAILABLE = 'Unavailable'

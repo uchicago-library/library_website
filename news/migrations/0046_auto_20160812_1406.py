@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.utils.timezone
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='newspage',
             name='excerpt',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Shown on the News feed. Populated automatically from “Body” if left empty.', null=True),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Shown on the News feed. Populated automatically from “Body” if left empty.', null=True),
         ),
         migrations.AlterField(
             model_name='newspage',

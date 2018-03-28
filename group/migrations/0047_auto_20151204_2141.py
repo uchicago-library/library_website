@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='groupmembers',
             name='role',
-            field=models.ForeignKey(to='group.GroupMemberRole', null=True, default='', related_name='+', blank=True),
+            field=models.ForeignKey(to='group.GroupMemberRole', null=True, default='', related_name='+', blank=True, on_delete=models.SET_NULL),
         ),
     ]

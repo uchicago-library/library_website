@@ -8,10 +8,10 @@ from subjects.models import Subject
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from units.views import get_staff_pages_for_library
 from units.views import get_staff_pages_for_unit
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailsearch.models import Query
-from wagtail.contrib.wagtailsearchpromotions.models import SearchPromotion
+from wagtail.core.models import Page
+from wagtail.images.models import Image
+from wagtail.search.models import Query
+from wagtail.contrib.search_promotions.models import SearchPromotion
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication

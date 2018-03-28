@@ -1,15 +1,15 @@
 from base.models import DefaultBodyFields, LinkFields
 from django.db import models
 from django.core.validators import RegexValidator
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Orderable, Page, Site
-from wagtail.wagtailadmin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsearch import index
-from wagtail.wagtailsnippets.models import register_snippet
-from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Orderable, Page, Site
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.images.models import Image
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
+from wagtail.snippets.models import register_snippet
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from modelcluster.fields import ParentalKey
 from base.models import PublicBasePage
 from public.models import DonorPage, LocationPage, StaffPublicPage
@@ -57,8 +57,8 @@ class Format(models.Model, index.Indexed):
 
 # Interstitial model for linking the Format model to the CollectionPage
 class CollectionPageFormatPlacement(Orderable, models.Model):
-    page = ParentalKey('lib_collections.CollectionPage', related_name='collection_placements')
-    format = models.ForeignKey('lib_collections.Format', related_name='+')
+    page = ParentalKey('lib_collections.CollectionPage', on_delete=models.CASCADE, related_name='collection_placements')
+    format = models.ForeignKey('lib_collections.Format', on_delete=models.CASCADE, related_name='+')
 
     class Meta:
         verbose_name = "Collection Placement"
@@ -73,8 +73,8 @@ class CollectionPageFormatPlacement(Orderable, models.Model):
 
 
 class CollectionPageSubjectPlacement(Orderable, models.Model):
-    page = ParentalKey('lib_collections.CollectionPage', related_name='collection_subject_placements')
-    subject = models.ForeignKey('subjects.Subject', related_name='collection_pages')
+    page = ParentalKey('lib_collections.CollectionPage', on_delete=models.CASCADE, related_name='collection_subject_placements')
+    subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, related_name='collection_pages')
 
     class Meta:
         verbose_name = "Subject Placement"
@@ -683,8 +683,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         return context
 
 class ExhibitPageSubjectPlacement(Orderable, models.Model):
-    page = ParentalKey('lib_collections.ExhibitPage', related_name='exhibit_subject_placements')
-    subject = models.ForeignKey('subjects.Subject', related_name='exhibit_pages')
+    page = ParentalKey('lib_collections.ExhibitPage', on_delete=models.CASCADE, related_name='exhibit_subject_placements')
+    subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, related_name='exhibit_pages')
 
     class Meta:
         verbose_name = "Subject Placement"

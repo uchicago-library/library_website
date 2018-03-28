@@ -3,15 +3,15 @@ from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, IntegerField, TextField
 from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
 from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG, PHONE_FORMAT, PHONE_ERROR_MSG
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
-from wagtail.wagtailcore.fields import RichTextField, StreamField
-from wagtail.wagtailcore.models import Orderable, Page, PageManager
-from wagtail.wagtaildocs.models import Document
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsearch import index
-from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
-from wagtail.wagtailsnippets.models import register_snippet
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Orderable, Page, PageManager
+from wagtail.documents.models import Document
+from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.snippets.models import register_snippet
 from wagtail.api import APIField
 from rest_framework import serializers
 from modelcluster.fields import ParentalKey
@@ -37,8 +37,8 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
     """
     Through table for linking Subject snippets to StaffPages.
     """
-    page = ParentalKey('staff.StaffPage', related_name='staff_subject_placements')
-    subject = models.ForeignKey('subjects.Subject', related_name='+')
+    page = ParentalKey('staff.StaffPage', on_delete=models.CASCADE, related_name='staff_subject_placements')
+    subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, related_name='+')
 
     class Meta:
         verbose_name = 'Subject Placement'
@@ -53,7 +53,7 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
 
 
 class StaffPageEmailAddresses(Orderable, models.Model):
-    page = ParentalKey('staff.StaffPage', related_name='staff_page_email')
+    page = ParentalKey('staff.StaffPage', on_delete=models.CASCADE, related_name='staff_page_email')
     email = models.EmailField(max_length=254, blank=True)
 
     panels = [
@@ -62,7 +62,7 @@ class StaffPageEmailAddresses(Orderable, models.Model):
 
 
 class StaffPageLibraryUnits(Orderable, models.Model):
-    page = ParentalKey('staff.StaffPage', related_name='staff_page_units')
+    page = ParentalKey('staff.StaffPage', on_delete=models.CASCADE, related_name='staff_page_units')
     library_unit = models.ForeignKey(
        'units.UnitPage',
        blank=True,
@@ -78,7 +78,7 @@ class StaffPageLibraryUnits(Orderable, models.Model):
 
 class StaffPagePhoneFacultyExchange(Orderable, models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
-    page = ParentalKey('staff.StaffPage', related_name='staff_page_phone_faculty_exchange')
+    page = ParentalKey('staff.StaffPage', on_delete=models.CASCADE, related_name='staff_page_phone_faculty_exchange')
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
     faculty_exchange = models.CharField(max_length=255, blank=True)
 
@@ -504,8 +504,8 @@ class Expertise(models.Model, index.Indexed):
 
 # Interstitial model for linking the Expertise model to the StaffPage
 class StaffPageExpertisePlacement(Orderable, models.Model):
-    page = ParentalKey('staff.StaffPage', related_name='expertise_placements')
-    expertise = models.ForeignKey('staff.Expertise', related_name='+')
+    page = ParentalKey('staff.StaffPage', on_delete=models.CASCADE, related_name='expertise_placements')
+    expertise = models.ForeignKey('staff.Expertise', on_delete=models.CASCADE, related_name='+')
 
     class Meta:
         verbose_name = "Expertise Placement"

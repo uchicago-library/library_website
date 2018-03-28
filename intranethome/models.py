@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from base.models import BasePage
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage

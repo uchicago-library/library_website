@@ -1,12 +1,12 @@
 from django.conf.urls import url
 from django.core import management
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render
 from openpyxl.writer.excel import save_virtual_workbook
 from staff.utils import WagtailStaffReport
-from wagtail.wagtailadmin.menu import MenuItem
-from wagtail.wagtailcore import hooks
+from wagtail.admin.menu import MenuItem
+from wagtail.core import hooks
 
 def admin_view(request):
     from staff.forms import StaffReportingForm

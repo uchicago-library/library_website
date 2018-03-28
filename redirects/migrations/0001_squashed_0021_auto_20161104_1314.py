@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('link_page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailcore.Page')),
                 ('page_maintainer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='redirects_redirectpage_maintainer', to='staff.StaffPage')),
                 ('unit', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='redirects_redirectpage_related', to='units.UnitPage')),
-                ('quicklinks', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('quicklinks', wagtail.core.fields.RichTextField(blank=True)),
                 ('quicklinks_title', models.CharField(blank=True, max_length=100)),
                 ('view_more_link', models.URLField(blank=True, default='', max_length=255)),
                 ('view_more_link_label', models.CharField(blank=True, max_length=100)),
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 ('enable_index', models.BooleanField(default=False)),
                 ('events_feed_url', models.URLField(blank=True, help_text='Link to a Tiny Tiny RSS Feed')),
                 ('news_feed_url', models.URLField(blank=True, help_text='Link to a wordpress feed from the Library News Site')),
-                ('rich_text', wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
+                ('rich_text', wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
                 ('rich_text_heading', models.CharField(blank=True, max_length=25)),
                 ('rich_text_link', models.ForeignKey(blank=True, help_text='Optional link that displays next to the heading', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailcore.Page')),
                 ('rich_text_link_text', models.CharField(blank=True, help_text='Display text for the rich text link', max_length=25)),

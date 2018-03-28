@@ -2,10 +2,10 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.wagtailcore.blocks
+import wagtail.core.blocks
 import modelcluster.fields
 import django.utils.timezone
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GroupIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
-                ('intro', wagtail.wagtailcore.fields.RichTextField()),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
+                ('intro', wagtail.core.fields.RichTextField()),
             ],
             options={
                 'abstract': False,
@@ -40,16 +40,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GroupPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
                 ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('email', models.EmailField(max_length=254, blank=True)),
                 ('meeting_location', models.CharField(max_length=255, blank=True)),
                 ('meeting_time', models.TimeField(blank=True, default=django.utils.timezone.now)),
                 ('meeting_frequency', models.CharField(max_length=255, blank=True)),
-                ('intro', wagtail.wagtailcore.fields.RichTextField()),
+                ('intro', wagtail.core.fields.RichTextField()),
                 ('is_active', models.BooleanField(default=False)),
-                ('body', wagtail.wagtailcore.fields.StreamField((('h2', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon='pilcrow'))))),
+                ('body', wagtail.core.fields.StreamField((('h2', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.core.blocks.RichTextBlock(icon='pilcrow'))))),
             ],
             options={
                 'abstract': False,

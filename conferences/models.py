@@ -1,11 +1,11 @@
 from django.db import models
-from wagtail.wagtailcore.models import Page, Orderable, Site
-from wagtail.wagtailcore.fields import StreamField
+from wagtail.core.models import Page, Orderable, Site
+from wagtail.core.fields import StreamField
 from base.models import PublicBasePage, AbstractButton, LinkedTextOrLogo, DefaultBodyFields, SocialMediaFields
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 from django.core.validators import RegexValidator
-from wagtail.wagtailsearch import index
+from wagtail.search import index
 from modelcluster.fields import ParentalKey
 from wagtail.api import APIField
 

@@ -1,9 +1,9 @@
 from django.db import models
 from django.shortcuts import redirect
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
-from wagtail.wagtailsearch import index
+from wagtail.core.models import Page
+from wagtail.admin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel
+from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.search import index
 from base.models import PublicBasePage, LinkFields
 
 class RedirectPage(PublicBasePage, LinkFields):

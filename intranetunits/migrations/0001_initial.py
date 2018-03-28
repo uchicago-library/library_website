@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.wagtailcore.blocks
+import wagtail.core.blocks
 import django.core.validators
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -31,8 +31,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IntranetUnitsIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
-                ('intro', wagtail.wagtailcore.fields.RichTextField()),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
+                ('intro', wagtail.core.fields.RichTextField()),
             ],
             options={
                 'abstract': False,
@@ -42,15 +42,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IntranetUnitsPage',
             fields=[
-                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True)),
+                ('page_ptr', models.OneToOneField(serialize=False, primary_key=True, parent_link=True, to='wagtailcore.Page', auto_created=True, on_delete=models.CASCADE)),
                 ('last_reviewed', models.DateTimeField(verbose_name='Last Reviewed', blank=True, null=True)),
                 ('sort_order', models.IntegerField(blank=True, default=0)),
                 ('email', models.EmailField(max_length=254, blank=True)),
                 ('phone_label', models.CharField(max_length=25, blank=True)),
                 ('phone_number', models.CharField(validators=[django.core.validators.RegexValidator(regex='^[0-9]{3}-[0-9]{3}-[0-9]{4}$', message='Please enter the phone number using the format 773-123-4567')], max_length=12, blank=True)),
-                ('intro', wagtail.wagtailcore.fields.RichTextField()),
+                ('intro', wagtail.core.fields.RichTextField()),
                 ('staff_only_email', models.EmailField(max_length=254, blank=True)),
-                ('body', wagtail.wagtailcore.fields.StreamField((('h2', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.wagtailcore.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock(icon='pilcrow'))), blank=True, null=True)),
+                ('body', wagtail.core.fields.StreamField((('h2', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.core.blocks.RichTextBlock(icon='pilcrow'))), blank=True, null=True)),
             ],
             options={
                 'abstract': False,

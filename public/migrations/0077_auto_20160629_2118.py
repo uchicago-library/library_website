@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='donorpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='donorpage',
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='floorplanpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='floorplanpage',
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locationpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='locationpage',
@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='publicrawhtmlpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='publicrawhtmlpage',
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='staffpublicpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='staffpublicpage',
@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='standardpage',
             name='rich_text',
-            field=wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='standardpage',
