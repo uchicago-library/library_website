@@ -22,7 +22,7 @@ from .api import api_router
 urlpatterns = [
     url(r'^django-admin/', admin.site.urls),
 
-    #url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
+    url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 

@@ -81,7 +81,7 @@ INSTALLED_APPS = [
     'redirects',
     'results',
     'search',
-    #'shibboleth',
+    'shibboleth',
     'staff',
     'subjects',
     'units',
@@ -98,7 +98,7 @@ MIDDLEWARE = [
 
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
+    'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -122,8 +122,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                #'shibboleth.context_processors.login_link',
-                #'shibboleth.context_processors.logout_link',
+                'shibboleth.context_processors.login_link',
+                'shibboleth.context_processors.logout_link',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
