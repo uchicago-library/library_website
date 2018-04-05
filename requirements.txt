@@ -38,7 +38,7 @@ sqlparse==0.2.4
 Unidecode==0.4.21
 urllib3==1.22
 wagtail==2.0
--e git+https://github.com/Rotund/wagtailmedia.git@e687233343c1e7530e73a008e68ac854ee56b5ed#egg=wagtailmedia
+-e git+https://github.com/Rotund/wagtailmedia.git@wagtail2#egg=wagtailmedia
 wheel==0.24.0
 Willow==1.1
 zope.interface==4.1.2
