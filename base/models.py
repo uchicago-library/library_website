@@ -26,7 +26,7 @@ from base.utils import get_all_building_hours, get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from wagtail.contrib.table_block.blocks import TableBlock
 from django.utils import translation
-from django.utils.html import format_html
+from django.utils.html import format_html, strip_tags
 from units.utils import get_default_unit
 from alerts.utils import get_alert
 
@@ -1275,7 +1275,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             Boolean.
         """
-        return self.has_field([self.rich_text_heading, self.rich_text])
+        return self.has_field([self.rich_text_heading, strip_tags(self.rich_text)])
 
 
     @property
@@ -1294,7 +1294,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             boolean
         """
-        fields = [self.quicklinks, self.events_feed_url]
+        fields = [strip_tags(self.quicklinks), self.events_feed_url]
         return self.has_field(fields) or self.has_granular_hours() or (hasattr(self, 'has_social_media') and self.has_social_media)
 
 
