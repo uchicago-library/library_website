@@ -3,9 +3,6 @@ from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 from subjects.models import Subject
 
-def get_children(subject):
-    return list(Subject.objects.filter(parent_subject__parent=subject))
-
 def name(subject):
     n = subject.name
     if subject.parent_subject.count() > 1:
@@ -33,40 +30,40 @@ class Command (BaseCommand):
         output = []
 
         if text_only:
-            for a in Subject.objects.filter(parent_subject=None):
+            for a in Subject.get_top_level_subjects().order_by('name'):
                 output.append(name(a)) 
-                for b in get_children(a):
+                for b in a.get_children():
                     output.append(" - ".join([name(a), name(b)]))
-                    for c in get_children(b):
+                    for c in b.get_children():
                         output.append(" - ".join([name(a), name(b), name(c)]))
-                        for d in get_children(c):
+                        for d in c.get_children():
                             output.append(" - ".join([name(a), name(b), name(c), name(d)]))
-                            for e in get_children(d):
+                            for e in d.get_children():
                                 output.append(" - ".join([name(a), name(b), name(c), name(d), name(e)]))
-                                for f in get_children(e):
+                                for f in e.get_children():
                                     output.append(" - ".join([name(a), name(b), name(c), name(d), name(e), name(f)]))
-                                    for g in get_children(f):
+                                    for g in f.get_children():
                                         raise Exception('Not enough iterative loops!')
         else:
             output.append("<html><body><ul>")
-            for a in Subject.objects.filter(parent_subject=None):
-                output.append("<li>" + name(a)) 
+            for a in Subject.get_top_level_subjects().order_by('name'):
+                output.append("<li><a href='/collex/?view=subjects#" + a.name + "'>" + name(a) + "</a>") 
                 output.append("<ul>")
-                for b in get_children(a):
-                    output.append("<li>" + name(b)) 
+                for b in a.get_children():
+                    output.append("<li><a href='/collex/?view=subjects#" + b.name + "'>" + name(b) + "</a>") 
                     output.append("<ul>")
-                    for c in get_children(b):
-                        output.append("<li>" + name(c)) 
+                    for c in b.get_children():
+                        output.append("<li><a href='/collex/?view=subjects#" + c.name + "'>" + name(c) + "</a>") 
                         output.append("<ul>")
-                        for d in get_children(c):
-                            output.append("<li>" + name(d)) 
+                        for d in c.get_children():
+                            output.append("<li><a href='/collex/?view=subjects#" + d.name + "'>" + name(d) + "</a>") 
                             output.append("<ul>")
-                            for e in get_children(d):
-                                output.append("<li>" + name(e)) 
+                            for e in d.get_children():
+                                output.append("<li><a href='/collex/?view=subjects#" + e.name + "'>" + name(e) + "</a>") 
                                 output.append("<ul>")
-                                for f in get_children(e):
-                                    output.append("<li>" + name(f)) 
-                                    for g in get_children(f):
+                                for f in e.get_children():
+                                    output.append("<li><a href='/collex/?view=subjects#" + f.name + "'>" + name(f) + "</a>") 
+                                    for g in f.get_children():
                                         raise Exception('Not enough iterative loops!')
                                     output.append("</li>")
                                 output.append("</ul>")

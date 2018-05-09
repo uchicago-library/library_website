@@ -234,6 +234,9 @@
         </table>
       </div>
     {% endif %}
+    {% if view == 'subjecttree' %}
+       {{ subjecttree|safe }}
+    {% endif %}
   </div>
   </article>
 {% endblock %}

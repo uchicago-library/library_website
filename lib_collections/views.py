@@ -1,3 +1,4 @@
+from django.core.management import call_command
 from django.shortcuts import render
 from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, CollectingAreaPage, ExhibitPage, ExhibitPageSubjectPlacement, Format
 from public.models import LocationPage
@@ -42,7 +43,7 @@ def collections(request):
     unit = request.GET.get('unit', None)
 
     view = request.GET.get('view', 'collections')
-    if not view in ['collections', 'exhibits', 'subjects']:
+    if not view in ['collections', 'exhibits', 'subjects', 'subjecttree']:
         view = 'collections'
 
     # filter collections.
@@ -184,6 +185,14 @@ def collections(request):
                     })
         subjects = sorted(subjects, key=lambda s: s['name'])
 
+    subjecttree = ''
+    if view == 'subjecttree':
+        subjecttree = call_command('report_subjects')
+        subjecttree = subjecttree.replace('<html>', '')
+        subjecttree = subjecttree.replace('</html>', '')
+        subjecttree = subjecttree.replace('<body>', '')
+        subjecttree = subjecttree.replace('</body>', '')
+
     # for the subject pulldown, find subjects that are first generation children- their parents should have no parent. 
     # still need these:
     # Area and Cultural Studies
@@ -232,6 +241,7 @@ def collections(request):
         'subject': subject,
         'subjects': subjects,
         'subjects_pulldown': subjects_pulldown,
+        'subjecttree': subjecttree,
         'view': view,
         'page_unit': str(page_unit),
         'page_location': page_location,
