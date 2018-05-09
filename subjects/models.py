@@ -97,6 +97,12 @@ class Subject(ClusterableModel, index.Indexed):
             url = collecting_area_page.relative_url(current_site)
         return url
 
+    @staticmethod
+    def get_top_level_subjects():
+        return Subject.objects.filter(parent_subject=None)
+
+    def get_children(self):
+        return Subject.objects.filter(parent_subject__parent=self)
 
     def __str__(self):
         return self.name
