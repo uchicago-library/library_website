@@ -58,7 +58,7 @@ def spaces(request):
                 feature_label = f[1]
 
     # get spaces.
-    spaces = LocationPage.objects.live().select_related('parent_building', 'location_photo')
+    spaces = LocationPage.objects.live().order_by('title').select_related('parent_building', 'location_photo')
     if building:
         spaces = spaces.filter(parent_building = LocationPage.objects.get(title=building))
     if feature:
