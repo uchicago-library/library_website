@@ -358,7 +358,7 @@ class WagtailStaffReport:
             An OpenPyXL Workbook.
         """
         self.workbook = Workbook()
-        self.workbook.remove_sheet(self.workbook.active)
+        self.workbook.remove(self.workbook.active)
         if self.staff_report:
             self._add_staff_report_worksheet()
         if self.sync_report:
