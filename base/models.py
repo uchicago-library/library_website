@@ -917,7 +917,8 @@ class BasePageWithoutStaffPageForeignKeys(Page, AbstractBaseWithoutStaffPageFore
 
     # Searchable fields
     search_fields = Page.search_fields + AbstractBaseWithoutStaffPageForeignKeys.search_fields + [
-        index.SearchField('search_description', partial_match=True)
+        index.SearchField('search_description', partial_match=True),
+        index.SearchField('title', partial_match=True, boost=4),
     ]
 
     content_panels = AbstractBaseWithoutStaffPageForeignKeys.content_panels
