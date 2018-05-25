@@ -47,7 +47,7 @@ def spaces(request):
         building = None
     if not has_feature(feature):
         feature = None
-    if not space_type in ['is_study_space', 'is_teaching_space', 'is_event_space']:
+    if not space_type in ['is_study_space', 'is_teaching_space', 'is_event_space', 'is_special_use']:
         space_type = None
 
     # get the feature label. 

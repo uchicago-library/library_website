@@ -12,6 +12,7 @@
                   <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" href="?space_type=is_study_space">To Study</a>
                   <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" href="?space_type=is_teaching_space">To Teach</a>
                   <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" href="?space_type=is_event_space">For Events</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_special_use' %} active {% endif %}" href="?space_type=is_special_use">Special Use</a>
                 </div>
             </div>
         
@@ -93,6 +94,7 @@
                     {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
                     {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
                     {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
+                    {% if space_type == 'is_special_use' %}All Special Use Spaces{% endif %}
                 </th>
             </tr>
             {% for space in spaces %}
