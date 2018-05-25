@@ -66,7 +66,7 @@
      
                 {% if view == 'staff' %} 
                   <table class="table table-striped directory-list">
-                    <tbody>
+                    <thead>
                       <tr class="etable-header">
                         <td colspan="4">
                           {% if subject and library %}
@@ -82,6 +82,14 @@
                           {% endif %}
                         </td>
                       </tr>
+                    </thead>
+                      <tbody>
+                        <tr class="visually-hidden">
+                          <th scope="col">Staff Photo</th>
+                          <th scope="col">Staff name and title</th>
+                          <th scope="col">Contact</th>
+                          <th scope="col">Subjects</th>
+                        </tr>
                       {% for staff_page in staff_pages %}
                         {% include "staff/staff_directory_listing.html" %}
                       {% empty %}
