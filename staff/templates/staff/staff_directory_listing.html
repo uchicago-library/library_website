@@ -4,7 +4,7 @@
 
 {% cache 86400 staff_directory_listing staff_page.cnetid %}
   <tr>
-      <td>
+      <td scope="row">
           {% if staff_page.profile_picture %}
               {% image staff_page.profile_picture fill-100x100 %}
           {% else %}
