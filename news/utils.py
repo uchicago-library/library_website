@@ -124,7 +124,7 @@ def send_loop_news_email_notifications(from_email, to_email, num_days, end_date_
     # attach all the parts to the email and mail it. 
     part1 = MIMEText(text, 'plain')
     msg.attach(part1)
-    part2 = MIMEText("\n".join(textwrap.wrap(html, break_long_words=False, width=70)), 'html')
+    part2 = MIMEText("\n".join(textwrap.wrap(html, break_long_words=False, break_on_hyphens=False, width=70)), 'html')
     msg.attach(part2)
 
     s = smtplib.SMTP('localhost')
