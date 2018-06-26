@@ -38,7 +38,7 @@ def get_staff_pages_for_library(library = None):
         }
         try:
             building = library_name_to_building[library]
-            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).distinct().order_by('last_name', 'first_name')
+            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).distinct().live().order_by('last_name', 'first_name')
         except:
             return all_staff 
     else:
@@ -64,7 +64,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
     staff_pages = StaffPage.objects.live().filter(staff_page_units__library_unit__id__in=unit_page_ids).distinct().order_by('last_name', 'first_name')
     
     if display_supervisor_first:
-        if unit_page and unit_page.department_head:
+        if unit_page and unit_page.department_head and unit_page.department_head.live:
             staff_pages = [unit_page.department_head] + list(staff_pages.exclude(id=unit_page.department_head.id))
         
     return staff_pages
