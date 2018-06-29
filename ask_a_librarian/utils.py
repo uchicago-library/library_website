@@ -15,9 +15,15 @@ def get_chat_status(name):
     Returns:
         boolean
     """
-    xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
-        + name + '/chat.libraryh3lp.com/xml')
-    tree = fromstring(xml.content)
+
+    try:
+        xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
+        + name + '/chat.libraryh3lp.com/xml', timeout=12)
+        tree = fromstring(xml.content)
+    except requests.exceptions.Timeout:
+        xml = "<presence user='" + name + "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
+        tree = fromstring(xml)
+
     return tree.find('resource').attrib['show'] == 'available'
 
 
@@ -55,6 +61,7 @@ def get_chat_status_and_css(name):
         item is a boolean and the second item 
         is a string (css class).
     """
+
     try:
         xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
         + name + '/chat.libraryh3lp.com/xml', timeout=12)
