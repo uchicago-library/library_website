@@ -13,23 +13,26 @@ register = template.Library()
 
 @register.simple_tag(name='pagetype', takes_context=True)
 def pagetype(context, page):
-    if page.is_descendant_of(GroupIndexPage.objects.first()):
-        return "<span class='g-search'>Groups</span>"
-    elif page.is_descendant_of(IntranetUnitsIndexPage.objects.first()):
-        return "<span class='dept-search'>Departments</span>"
-    elif page.is_descendant_of(NewsIndexPage.objects.first()):
-        return "<span class='n-search'>News</span>"
-    elif page.is_descendant_of(StaffIndexPage.objects.first()):
-        return "<span class='s-search'>Staff</span>"
-    elif page.is_descendant_of(TOCPage.objects.get(title='Forms')):
-        return "<span class='f-search'>Forms</span>"
-    elif page.is_descendant_of(TOCPage.objects.get(title='Documents & Policies')):
-        return "<span class='doc-search'>Documents</span>"
-    elif page.is_descendant_of(TOCPage.objects.get(title='Technical Support')):
-        return "<span class='tech-search'>Tech Support</span>"
-    elif page.is_descendant_of(TOCPage.objects.get(title='Human Resources')):
-        return "<span class='hr-search'>HR</span>"
-    else:
+    try:
+        if page.is_descendant_of(GroupIndexPage.objects.first()):
+            return "<span class='g-search'>Groups</span>"
+        elif page.is_descendant_of(IntranetUnitsIndexPage.objects.first()):
+            return "<span class='dept-search'>Departments</span>"
+        elif page.is_descendant_of(NewsIndexPage.objects.first()):
+            return "<span class='n-search'>News</span>"
+        elif page.is_descendant_of(StaffIndexPage.objects.first()):
+            return "<span class='s-search'>Staff</span>"
+        elif page.is_descendant_of(TOCPage.objects.get(title='Forms')):
+            return "<span class='f-search'>Forms</span>"
+        elif page.is_descendant_of(TOCPage.objects.get(title='Documents & Policies')):
+            return "<span class='doc-search'>Documents</span>"
+        elif page.is_descendant_of(TOCPage.objects.get(title='Technical Support')):
+            return "<span class='tech-search'>Tech Support</span>"
+        elif page.is_descendant_of(TOCPage.objects.get(title='Human Resources')):
+            return "<span class='hr-search'>HR</span>"
+        else:
+            return ""
+    except:
         return ""
 
 @register.simple_tag(name='pagepath')
