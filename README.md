@@ -11,12 +11,16 @@
 5. ssh to the guest machine: `vagrant ssh`
 6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
 7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+8. In the Wagtail admin go to: `Settings > Sites` and delete ths site called `localhost`.
+9. If you're not a regular contributor to the Library website, you will need to create a superuser by running `./manage.py createsuperuser`. This will allow you access to the admin. If you're a Library developer, however, this was already done for you.
 
 ### Local config file example
 
 Create the file `library_website/settings/local.py`. It should look something like this:
 
 ```python
+import sys
+
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
@@ -61,6 +65,7 @@ LOGGING = {
     }
 }
 ```
+**Note:** You may also need to add settings for `DIRECTORY_USERNAME, DIRECTORY_WEB_SERVICE` and `DIRECTORY_PASSWORD`. Get these from another developer.
 
 ### Optional (but recommended)
 
