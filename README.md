@@ -2,12 +2,19 @@
 
 [2017-2018 Dev Priorities spreadsheet](https://docs.google.com/a/uchicago.edu/spreadsheets/d/1qn6ZDGs08tRcGPFchq75yyU04cNfdmhZ2BM3VvmqmH8/edit?usp=sharing)   *Viewable only to UChicago Staff*
 
+## Running an Instance of the Site
+*If you haven't run Vagrant yet, see the 'Setting up for Development' section below.*
+1. Start the dev environment from the root of the project directory: `vagrant up`
+5. ssh to the guest machine: `vagrant ssh`
+6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
+7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+
 ## Setting up for Development
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
 2. Clone this repo or fetch the newest code
 3. Create a local config file (see example below)
-4. Create the dev environment: `vagrant up` (this will take awhile)
+4. Create the dev environment from the root of the project directory: `vagrant up` (this will take awhile)
 5. ssh to the guest machine: `vagrant ssh`
 6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
 7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
@@ -64,8 +71,14 @@ LOGGING = {
         }
     }
 }
+
+# ** You will also need to add settings for the following. Get these from another developer. ** 
+
+DIRECTORY_USERNAME = #Get from another developer
+DIRECTORY_WEB_SERVICE = #Get from another developer
+DIRECTORY_PASSWORD = #Get from another developer
+
 ```
-**Note:** You may also need to add settings for `DIRECTORY_USERNAME, DIRECTORY_WEB_SERVICE` and `DIRECTORY_PASSWORD`. Get these from another developer.
 
 ### Optional (but recommended)
 
