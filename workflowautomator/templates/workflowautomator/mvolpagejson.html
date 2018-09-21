@@ -1,0 +1,199 @@
+{% extends "base/intranet_base.html" %}
+{% load wagtailcore_tags %}
+{% load core_intranet_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'workflowautomator/mystyle.css' %}" />
+{% endblock %}
+
+{% block extra_js %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+<script src="http://malsup.github.com/jquery.form.js"></script>
+<script type = "text/javascript" defer> 
+     $(document).on('submit', '.Validate', function(e){
+            e.preventDefault();
+            var form = $( this );
+            form.find(".btn-outline-primary").addClass("btn-disabled").prop("disabled", true);
+            $('#myloader').css("display", "block")
+            if(form.attr('id') == "all"){
+                $('#alert1').css("display", "block")
+                $( "form" ).find(".btn-outline-primary").addClass("btn-disabled").prop("disabled", true);
+            }
+            $('#alert2').css("display", "none")
+            $.ajax({
+                type:'POST',
+                url:'/workflowautomator/setready/',
+                data:{
+                    name: (form.find('input[class="name"]')).val(),
+                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                success:function(){
+                    $('#myloader').css("display", "none")
+                    $('#alert1').css("display", "none")
+                    $('#alert2').css("display", "block")
+                    form.find(".btn-outline-primary").addClass("btn-disabled").prop("disabled", false);
+                    if(form.attr('id') == "all"){
+                        $( "form" ).find(".btn-outline-primary").addClass("btn-disabled").prop("disabled", false);
+                    }
+                }
+            });
+    
+     });
+</script>
+{% endblock %}
+
+{% block content %}
+
+{% for breadcrumb in breadcrumbs %}
+<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+{% if not forloop.last %} &gt; {% endif %}
+{% endfor %}
+<div class = "row">
+  <div class = "col-sm-1" style = "width: 12.5%">
+    <h1> 
+        {{ name.0 }} 
+    </h1>
+</div>
+<div class = "col-sm-1" style = "padding-top:15px; width: 4.165%">
+    <div class="loader" id = "myloader"></div>
+</div>
+<div class = "col-sm-8" style = "padding-top:7px">
+    <div id = "alert1" style="display:none" class = "alert alert-info">
+        <strong>Alert!</strong> Readying directories could take several minutes, please be patient. Once directories are readied, validation will occur automatically.
+    </div>
+
+    <div id = "alert2" style="display:none" class = "alert alert-success">
+        Directories have been readied, validation will now occur.
+    </div>
+</div>
+<table class = "table table-hover table-sm" id = "bigtable">
+    <thead>
+        <tr>
+            <th width= "185px">
+                Name:              
+            </th>
+            <th>
+                Last modified date:
+            </th>
+            {% if oneupfrombottom == True %}
+            <th>
+                <form class = "Validate" id = "all" method = "post">
+                    {% csrf_token %}
+                    <input type = "text" class = "name" value = {{name.0}} style = "display:none">
+                    <input type = "submit" class="btn btn-outline-primary" value = "Validate All" />
+                </form>
+            </th>
+            {% endif %}
+            <th>
+                none
+            </th>
+            <th>
+                ready
+            </th>
+            <th>
+                queue
+            </th>
+            <th>
+                invalid
+            </th>
+            <th>
+                valid
+            </th>
+            <th>
+                Last Development upload date:
+            </th>
+            <th>
+                Development synced:
+            </th>
+            <th>
+                Last Production upload date:
+            </th>
+            {% if oneupfrombottom == True %}
+            <th>
+                <form method = "post">
+                    {% csrf_token %}
+                    <input type = "submit" class="btn btn-outline-primary"  value = "Push All" />
+                </form>
+            </th>
+            {% endif %}
+            <th>
+                Production synced:
+            </th>
+        </tr>
+    </thead>
+    {% for child in children %}
+    <tr>
+        <td style = "color:#5B8FA8">
+            {% if oneupfrombottom == True and child.8 %}
+            <a href ="{% url 'errpage' child.0 %}"> {{ child.0}}</a>
+            {% endif %}
+            {% if oneupfrombottom == False %}
+            <a href = "{% url 'hierarch' child.0 %}"> {{ child.0 }}</a>
+            {% endif %}
+            {% if oneupfrombottom == True and not child.8 %}
+            {{ child.0 }}
+            {% endif %}
+        </td>
+        <td>
+            {{ child.1.owncloud.1 }}
+        </td>
+        {% if oneupfrombottom == True %}
+        <td>
+            <form class = "Validate" method = "post">
+                {% csrf_token %}
+                <input type = "text" class = "name" value = {{child.0}} style = "display:none">
+                <input type = "submit" class="btn btn-outline-primary btn-sm" value = "Validate"/>
+            </form>
+        </td>
+        {% endif %}
+        <td align = "center" style = "background-color: #ddd">
+            <p class = "tooltip">{{child.5}} <span class = "tooltiptext">none</span></p>
+        </td>
+        <td align = "center">
+            <p class = "tooltip">{{child.6}} <span class = "tooltiptext">ready</span></p>
+        </td>
+        <td align = "center" style = "background-color: #ddd">
+            <p class = "tooltip">{{child.7}} <span class = "tooltiptext">queue</span></p>
+        </td>
+        <td align = "center">
+            <p class = "tooltip">{{child.8}} <span class = "tooltiptext">invalid</span></p>
+        </td>
+        <td align = "center" style = "background-color: #ddd">
+           <p class = "tooltip">{{child.2}} <span class = "tooltiptext">valid</span></p>
+        </td>
+        <td>
+            {% if child.1.development %}
+            {{ child.1.development.1 }}
+            {% else %}
+            None
+            {% endif %}
+        </td>
+        <td>
+            {{ child.3 }}
+        </td>
+        <td>
+            {% if child.1.production %}
+            {{ child.1.production.1 }}
+            {% else %}
+            None
+            {% endif %}
+        </td>
+        {% if oneupfrombottom == True %}
+        <td>
+            <form method = "post">
+                {% csrf_token %}
+                <input type = "submit" class="btn btn-outline-primary btn-sm" value = "Push to Production" />
+            </form>
+        </td>
+        {% endif %}
+        <td>
+            {{ child.4 }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

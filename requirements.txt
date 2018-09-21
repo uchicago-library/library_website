@@ -26,6 +26,7 @@ lxml==3.5.0
 networkx
 openpyxl
 Pillow==4.3.0
+pocli==0.1.10
 psycopg2==2.7.1
 Pygments==2.0.2
 pytz==2018.3

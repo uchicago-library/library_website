@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'subjects',
     'units',
     'static_precompiler',
+    'workflowautomator.apps.WorkflowautomatorConfig',
 ]
 
 MIDDLEWARE = [

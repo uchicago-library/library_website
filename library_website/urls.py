@@ -45,7 +45,7 @@ urlpatterns = [
     url(r'^collex/$', collection_view, name='collection'),
     url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
     url(r'^collex/exhibits/$', RedirectView.as_view(url='/collex/?view=exhibits')),
-
+    url(r'^workflowautomator/', include('workflowautomator.urls')),
     url(r'', include(wagtail_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,0 +1,35 @@
+{% extends "base/intranet_base.html" %}
+{% load wagtailcore_tags %}
+{% load core_intranet_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block content %}
+{% for breadcrumb in breadcrumbs %}
+<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+{% if not forloop.last %} &gt; {% endif %}
+{% endfor %}
+<h1>Mvol Directory Report</h1>
+<h3> {{ name }} </h3>
+{% if allists %}
+<table class = "table table-hover table-sm">
+  {% for key in allists %}
+  <tr>
+    <td>
+      {% if name == "invalid" %}
+      <a href ="{% url 'errpage' key.1 %}"> {{ key.1}}</a>
+      {% else %}
+      {{ key.1 }}
+
+      {% endif %} 
+    </td>
+    <td>
+     {{ key.0 }} 
+   </td>
+ </tr>
+ {% endfor %}
+ {% else %}
+ <p> "Rip" </p>
+ {% endif %}
+</table>
+{% endblock %}
