@@ -26,6 +26,7 @@ lxml==3.5.0
 networkx
 openpyxl
 Pillow==4.3.0
+-e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 pocli==0.1.10
 psycopg2==2.7.1
 Pygments==2.0.2
