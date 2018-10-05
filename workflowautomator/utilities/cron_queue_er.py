@@ -1,6 +1,6 @@
 import re
 import json
-from library_website.settings.local import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
+from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_WEB_SERVICE
 import owncloud
 import os
 import requests

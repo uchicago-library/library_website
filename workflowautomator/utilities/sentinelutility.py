@@ -4,7 +4,7 @@ import getpass
 import sys
 import re
 import tempfile
-from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
+from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_WEB_SERVICE
 import argparse
 import datetime
 try:
