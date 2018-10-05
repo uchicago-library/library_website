@@ -77,6 +77,7 @@ LOGGING = {
 DIRECTORY_USERNAME = #Get from another developer
 DIRECTORY_WEB_SERVICE = #Get from another developer
 DIRECTORY_PASSWORD = #Get from another developer
+OWNCLOUD_PASSWORD = #Get from another developer
 
 ```
 

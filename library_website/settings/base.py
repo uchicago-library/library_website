@@ -348,3 +348,7 @@ CACHES = {
 
 # API configuration
 WAGTAILAPI_LIMIT_MAX = None
+
+# OwnCloud settings
+OWNCLOUD_USERNAME = 'ldr_oc_admin'
+OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'

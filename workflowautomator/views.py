@@ -7,7 +7,7 @@ import time
 import pytz
 import requests
 import owncloud
-from library_website.settings.local import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
+from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
 from workflowautomator.utilities import sentinelutility
 
 # Create your views here.
