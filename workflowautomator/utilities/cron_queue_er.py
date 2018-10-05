@@ -4,6 +4,10 @@ from library_website.settings.local import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD,
 import owncloud
 import os
 import requests
+try:
+    from library_website.settings import OWNCLOUD_PASSWORD
+except(ImportError):
+    OWNCLOUD_PASSWORD = os.environ['OWNCLOUD_PASSWORD']
 '''
 This and cron_valid_er.py will be the two local scripts that should be put into cron.
 They in turn depend on Keith's cai.json being updated in cron, to get accurate lists.

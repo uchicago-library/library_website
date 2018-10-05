@@ -7,6 +7,10 @@ import tempfile
 from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
 import argparse
 import datetime
+try:
+    from library_website.settings import OWNCLOUD_PASSWORD
+except(ImportError):
+    OWNCLOUD_PASSWORD = os.environ['OWNCLOUD_PASSWORD']
 
 '''
 Called by the Validate and Validate All buttons on the site, this makes folders ready if:

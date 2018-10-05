@@ -1,7 +1,11 @@
 import os
 import owncloud
 import requests
-from library_website.settings.local import OWNCLOUD_USERNAME, OWNCLOUD_PASSWORD, OWNCLOUD_WEB_SERVICE
+from library_website.settings import OWNCLOUD_USERNAME, OWNCLOUD_WEB_SERVICE
+try:
+    from library_website.settings import OWNCLOUD_PASSWORD
+except(ImportError):
+    OWNCLOUD_PASSWORD = os.environ['OWNCLOUD_PASSWORD']
 
 """Running the process function on an onwcloud directory, e.g. "IIIF_Files/mvol/0500/0020/0011",
 that has failed validation for an unknown reason, should give tell you which specific file or folder
