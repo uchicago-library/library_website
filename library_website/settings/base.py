@@ -352,3 +352,7 @@ WAGTAILAPI_LIMIT_MAX = None
 # OwnCloud settings
 OWNCLOUD_USERNAME = 'ldr_oc_admin'
 OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'
+
+# Uploaded files and documents should have group read/write permissions
+# and world read permissions.
+FILE_UPLOAD_PERMISSIONS = 0o664
