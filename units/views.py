@@ -14,7 +14,7 @@ from units.utils import WagtailUnitsReport
 from wagtail.images.models import Image
 from public.models import StandardPage, LocationPage
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOMEPAGE, SSA_HOMEPAGE, MANSUETO_HOMEPAGE, CRERAR_HOMEPAGE, ECKHART_HOMEPAGE, DANGELO_HOMEPAGE, SCRC_HOMEPAGE
-from base.utils import get_hours_and_location, get_page_loc_name
+from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
 
@@ -22,27 +22,6 @@ import os
 import re
 import subprocess
 import urllib.parse
-
-def get_staff_pages_for_library(library = None):
-    all_staff = StaffPage.objects.live().order_by('last_name', 'first_name')
-    if library:
-        # see units.models.BUILDINGS
-        library_name_to_building = {
-            get_page_loc_name(ECKHART_HOMEPAGE): 3,
-            get_page_loc_name(CRERAR_HOMEPAGE): 1,
-            get_page_loc_name(DANGELO_HOMEPAGE): 2,
-            get_page_loc_name(SSA_HOMEPAGE): 7,
-            LocationPage.objects.live().get(id=REGENSTEIN_HOMEPAGE).title: 5,
-            get_page_loc_name(SCRC_HOMEPAGE): 6,
-            get_page_loc_name(MANSUETO_HOMEPAGE): 4
-        }
-        try:
-            building = library_name_to_building[library]
-            return StaffPage.objects.filter(staff_page_units__library_unit__building=building).distinct().live().order_by('last_name', 'first_name')
-        except:
-            return all_staff 
-    else:
-        return all_staff
 
 def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, display_supervisor_first = False):
     unit_page_ids = None
@@ -99,9 +78,10 @@ def units(request):
       departments = UnitPage.objects.filter(display_in_library_directory=True, live=True).search(query)
 
     elif view == 'staff':
-        # returns all staff pages if library is None.
-        # otherwise, returns staff pages for the given library.
-        staff_pages = get_staff_pages_for_library(library)
+        if library == None:
+            staff_pages = StaffPage.objects.live()
+        else:
+            staff_pages = StaffPage.get_staff_by_building(library)
 
         # departments.
         if department:

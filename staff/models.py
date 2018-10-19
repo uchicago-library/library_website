@@ -3,6 +3,7 @@ from django.core.validators import EmailValidator, RegexValidator
 from django.db.models.fields import BooleanField, CharField, IntegerField, TextField
 from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
 from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG, PHONE_FORMAT, PHONE_ERROR_MSG
+from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, PageManager
@@ -346,6 +347,17 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                             continue
 
         return StaffPage.objects.filter(cnetid__in=list(cnetids))
+
+    @staticmethod
+    def get_staff_by_building(building_str):
+        building = 0
+        for b in BUILDINGS:
+            if b[1] == building_str:
+                building = b[0]
+        if building > 0:
+            return StaffPage.objects.live().filter(staff_page_units__library_unit__building=building).distinct()
+        else:
+            return StaffPage.objects.none()
          
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),

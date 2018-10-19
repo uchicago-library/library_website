@@ -6,7 +6,6 @@ from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from public.models import LocationPage
 from subjects.models import Subject
 from staff.models import StaffPage, StaffPageSubjectPlacement
-from units.views import get_staff_pages_for_library
 from units.views import get_staff_pages_for_unit
 from wagtail.core.models import Page
 from wagtail.images.models import Image
@@ -32,7 +31,7 @@ def staff(request):
         if department:
             staff_pages = get_staff_pages_for_unit(department, True, True)
         elif library:
-            staff_pages = get_staff_pages_for_library(library)
+            staff_pages = StaffPage.get_staff_by_building(library)
         else:
             staff_pages = StaffPage.objects.live().order_by('last_name', 'first_name')
     

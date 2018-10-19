@@ -15,13 +15,13 @@ from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, \
     LinkedText, PhoneNumber
 
 BUILDINGS = (
-    (1, 'Crerar Library'),
-    (2, 'D\'Angelo Law Library'),
+    (1, 'The John Crerar Library'),
+    (2, 'The D\'Angelo Law Library'),
     (3, 'Eckhart Library'),
-    (4, 'Mansueto Library'),
-    (5, 'Regenstein Library'),
+    (4, 'The Joe and Rika Mansueto Library'),
+    (5, 'The Joseph Regenstein Library'),
     (6, 'Special Collections Research Center'),
-    (7, 'SSA Library')
+    (7, 'Social Service Administration Library')
 )
 
 

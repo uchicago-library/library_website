@@ -789,6 +789,11 @@ class StaffPublicPage(PublicBasePage):
             department_name = None
 
         try:
+            department_full_name = s.staff_page_units.first().library_unit.get_full_name()
+        except AttributeError:
+            department_full_name = None
+
+        try:
             email = s.staff_page_email.first().email
         except AttributeError:
             email = None
@@ -806,6 +811,7 @@ class StaffPublicPage(PublicBasePage):
             'cv': cv,
             'default_image': default_image,
             'department_name': department_name,
+            'department_full_name': department_full_name,
             'email': email,
             'expertises': expertises,
             'libguide_url': libguide_url,

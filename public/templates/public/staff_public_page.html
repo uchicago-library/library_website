@@ -46,9 +46,9 @@
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Library &amp; Department</h4>
     <p>
-      {% if library %}<strong><a href="#">{{ library }}</a></strong>{% endif %}
+      {% if library %}<strong><a href="/about/directory/?view=staff&amp;library={{ library|urlencode }}">{{ library }}</a></strong>{% endif %}
       {% if department_name %}
-        <br>{{ department_name }}
+        <br><a href="/about/directory/?view=staff&amp;department={{ department_full_name|urlencode }}">{{ department_name }}</a>
       {% endif %}
     </p>
   </div>
