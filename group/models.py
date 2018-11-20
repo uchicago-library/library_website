@@ -213,7 +213,7 @@ class GroupPage(BasePage, Email):
         blank=True,
         max_length=255)
     intro = StreamField(DefaultBodyFields(), blank=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     body = StreamField(DefaultBodyFields())
 
 
