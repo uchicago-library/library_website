@@ -265,6 +265,9 @@ ROOT_UNIT = 2455
 
 PUBLIC_HOMEPAGE = 3378
 
+# Restricted directory locked down to campus by shib
+RESTRICTED = 3831
+
 # String templates for hours and address display in the header and footer
 HOURS_TEMPLATE = '%s &nbsp; %s'
 ADDRESS_TEMPLATE = '%s, %s, %s %s'

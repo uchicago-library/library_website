@@ -4,7 +4,7 @@ from wagtail.core.models import Page, Site
 from wagtail.search.models import Query
 from wagtail.contrib.search_promotions.models import SearchPromotion
 from public.models import StandardPage
-from library_website.settings import PUBLIC_HOMEPAGE
+from library_website.settings import PUBLIC_HOMEPAGE, RESTRICTED
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from units.models import UnitIndexPage
@@ -17,7 +17,9 @@ def results(request):
     if search_query:
         homepage = Site.objects.get(site_name="Public").root_page
         unit_index_page = UnitIndexPage.objects.first()
-        search_results = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).search(search_query)
+        restricted = StandardPage.objects.live().get(id=RESTRICTED)
+        search_results = Page.objects.live().descendant_of(homepage).not_descendant_of(
+            unit_index_page, True).not_descendant_of(restricted, True).search(search_query)
         query = Query.get(search_query)
 
         # Record hit
