@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'redirects',
     'results',
     'search',
+    'searchable_content',
     'shibboleth',
     'staff',
     'subjects',
