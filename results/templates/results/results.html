@@ -25,9 +25,9 @@
             <ul>
                 {% for result in search_results %}
                     <li>
-                        {% if result.tag %}
+                        {% if result.searchable_content %}
                             <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
-                            <p>{{ result.datestamp }} ({{ result.tag }}) ({{ result.score }}) </p>
+                            <p>{{ result.datestamp }}</p>
                             {{ result.description }}
                         {% else %}
                             <h4><a href="{% pageurl result %}">{{ result }}</a> {% autoescape off %}{% pagetype result %}{% endautoescape %}</h4>

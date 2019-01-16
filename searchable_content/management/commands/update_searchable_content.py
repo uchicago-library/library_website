@@ -1,8 +1,8 @@
+from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
-from searchable_content.models import SearchableContent
+from searchable_content.models import LibGuidesAssetsSearchableContent, LibGuidesSearchableContent
 from wagtail.search import index
 from library_website.settings.local import LIBGUIDES_CLIENT_ID, LIBGUIDES_CLIENT_SECRET, LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT, LIBGUIDES_API_ASSETS_AZ_ENDPOINT, LIBGUIDES_API_GUIDES_ENDPOINT, LIBGUIDES_OAI_PMH_ENDPOINT 
- 
 import datetime 
 import json
 import pytz
@@ -11,6 +11,95 @@ import requests
 import sys
 import urllib.request
 import xml.etree.cElementTree as ET
+
+def get_guide_body(url):
+  """Get the body of a webpage.
+
+     Arguments:
+     url
+ 
+     Returns:
+     the webpage body, as a BeautifulSoup object.
+  """
+
+  if not url[0:4] == 'http':
+    url = 'http:{}'.format(url)
+
+  return BeautifulSoup(requests.get(url).text, "lxml").find('body')
+
+def get_guide_text(url):
+  """Get the text of a webpage, omitting HTML tags. 
+
+     Arguments:
+     url
+ 
+     Returns:
+     the webpage text, as a string.
+  """
+
+  html = get_guide_body(url)
+
+  try:
+    for h in html.findAll(['form', 'nav', 'script']):
+      h.extract()
+  except AttributeError:
+    pass
+
+  try:
+    html.find('a', {'id': 's-lg-public-skiplink'}).extract()
+  except AttributeError:
+    pass
+
+  try:
+    for h in html.findAll('div', {'class': 'mobile-topnav'}):
+      h.extract()
+  except AttributeError:
+    pass
+
+  try:
+    html.find('div', {'id': 's-lib-footer-public'}).extract()
+  except AttributeError:
+    pass
+
+  try:
+    for h in html.findAll('ol', {'class': 'breadcrumb'}):
+      h.extract()
+  except AttributeError:
+    pass
+
+  try:
+    for h in html.findAll('span', {'class': 'sr-only'}):
+      h.extract()
+  except AttributeError:
+    pass
+
+  try:
+    html.find('ul', {'id': 'navbar-right'}).extract()
+  except AttributeError:
+    pass
+
+  return html.text
+
+def get_guide_subjects(url):
+  """Get the subjects of a given libguide.
+
+     Arguments:
+     url
+ 
+     Returns:
+     a list of guide subjects. 
+  """
+
+  li = get_guide_body(url).find('li', {'id': 's-lg-guide-header-subjects'})
+
+  subjects = []
+  try:
+    for a in li.findAll('a'):
+      subjects.append(a.text)
+  except AttributeError:
+    pass
+  return subjects
+
 
 def update_libguides_assets():
   """Load the assets from libguides into Wagtail as non-page objects that are
@@ -54,7 +143,7 @@ def update_libguides_assets():
     datestamp = pytz.utc.localize(datetime.datetime.strptime(asset['updated'], '%Y-%m-%d %H:%M:%S'))
 
     try:
-      if SearchableContent.objects.get(identifier=identifier, tag='libguides-assets').datestamp == datestamp:
+      if LibGuidesAssetsSearchableContent.objects.get(identifier=identifier).datestamp == datestamp:
 	# if the asset exists in Wagtail and is newer than or equal to the
 	# date already present in the system, continue with the next asset.
         continue
@@ -66,32 +155,47 @@ def update_libguides_assets():
     if record_url == '':
       continue
 
-    if '/h/ahsi' in record_url:
-      print('HERE IT IS!!!!!!')
-      print(record_url)
-
     try:
       more_info = re.sub(strip_tags, ' ', asset['meta']['more_info'])
     except:
       more_info = ''
 
     try:
-      SearchableContent.objects.update_or_create(
+      LibGuidesAssetsSearchableContent.objects.update_or_create(
         identifier = identifier,
         title = asset['name'][:255],
         datestamp = datestamp,
         url = record_url,
         description = more_info,
-        content = '',
-        tag='libguides-assets'
+        content = ''
       )
     except:
       pass
 
   # delete records that weren't present in the data.
-  for searchable_content in SearchableContent.objects.filter(tag='libguides-assets'):
-    if not searchable_content.identifier in identifiers:
-      searchable_content.delete()
+  LibGuidesAssetsSearchableContent.objects.exclude(identifier__in=identifiers).delete()
+
+
+def get_guide_tags(url):
+  """Get the tags of a given libguide.
+
+     Arguments:
+     url
+ 
+     Returns:
+     a list of guide tags. 
+  """
+
+  li = get_guide_body(url).find('li', {'id': 's-lg-guide-header-tags'})
+
+  tags = []
+  try:
+    for a in li.findAll('a'):
+      tags.append(a.text)
+  except AttributeError:
+    pass
+  return tags
+
 
 def update_libguides_guides():
   """Load the guides from libguides into Wagtail as non-page objects that are
@@ -125,7 +229,7 @@ def update_libguides_guides():
     datestamp = pytz.utc.localize(datetime.datetime.strptime(guide['updated'], '%Y-%m-%d %H:%M:%S'))
 
     try:
-      if SearchableContent.objects.get(identifier=identifier, tag='libguides-guides').datestamp == datestamp:
+      if LibGuidesSearchableContent.objects.get(identifier=identifier).datestamp == datestamp:
 	# if the guide exists in Wagtail and is newer than or equal to the
 	# date already present in the system, continue with the next asset.
         continue
@@ -137,117 +241,25 @@ def update_libguides_guides():
     if record_url == '':
       continue
 
+    content = get_guide_text(record_url)
+
     try:
-      SearchableContent.objects.update_or_create(
-        identifier = identifier,
-        title = guide['name'][:255],
+      LibGuidesSearchableContent.objects.update_or_create(
+        content = content,
         datestamp = datestamp,
-        url = record_url,
         description = guide['description'],
-        content = '',
-        tag='libguides-guides'
+        identifier = identifier,
+        subjects = ' '.join(get_guide_subjects(record_url)),
+        tags = ' '.join(get_guide_tags(record_url)),
+        title = guide['name'][:255],
+        url = record_url,
       )
     except:
       pass
 
   # delete records that weren't present in the data.
-  for searchable_content in SearchableContent.objects.filter(tag='libguides-guides'):
-    if not searchable_content.identifier in identifiers:
-      searchable_content.delete()
+  LibGuidesSearchableContent.objects.exclude(identifier__in=identifiers).delete()
 
-def update_libguides_oai_pmh():
-  """Load libguides into Wagtail as non-page objects that are available to the
-     search index by iterating over records available via OAI-PMH. If records in 
-     OAI-PMH are newer, update the record in Wagtail. Delete records in Wagtail
-     that don't exist in OAI-PMH.
-
-     Arguments:
-     none
- 
-     Returns: 
-     none
-  """
-  ns = {
-    'oai_pmh': 'http://www.openarchives.org/OAI/2.0/',
-    'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
-    'dc': 'http://purl.org/dc/elements/1.1/'
-  }
-
-  identifiers = []
-
-  # working from OAI-PMH data, create or update any necesary SearchableContent objects. 
-  url = base_url = LIBGUIDES_OAI_PMH_ENDPOINT
- 
-  while True:
-    root = ET.ElementTree(file=urllib.request.urlopen(url)).getroot()
-
-    for record in root.findall('oai_pmh:ListRecords/oai_pmh:record', ns):
-      r = record.find('oai_pmh:metadata/oai_dc:dc/dc:identifier', ns)
-      if r == None:
-         continue
-      else:
-         record_url = r.text
-      if record_url == '':
-        continue
-
-      identifier = record.find('oai_pmh:header/oai_pmh:identifier', ns).text
-      identifiers.append(identifier)
-
-      datestamp = pytz.utc.localize(datetime.datetime.strptime(
-        record.find('oai_pmh:header/oai_pmh:datestamp', ns).text,
-        '%Y-%m-%dT%H:%M:%SZ'
-      ))
-
-      try:
-        if SearchableContent.objects.get(identifier=identifier, tag='libguides-oai-pmh').datestamp == datestamp:
-	  # if the asset exists in Wagtail and is newer than or equal to the
-	  # date already present in the system, continue with the next asset.
-          continue
-      except:
-        # if this asset doesn't exist in Wagtail, add it.
-        pass
-
-      try:    
-        description = record.find(
-          'oai_pmh:metadata/oai_dc:dc/dc:description',
-          ns
-        ).text
-      except AttributeError:
-        description = ''
-
-      s = []
-      for subject in record.findall('oai_pmh:metadata/oai_dc:dc/dc:subject', ns):
-        if subject.text is not None:
-          s.append(subject.text)
-      subjects = ' '.join(s)
-
-      try: 
-        SearchableContent.objects.update_or_create(
-          identifier = identifier,
-          title = record.find('oai_pmh:metadata/oai_dc:dc/dc:title', ns).text[:255],
-          datestamp = datestamp,
-          url = record_url,
-          description = description,
-          content = subjects,
-          tag='libguides-oai-pmh'
-        )
-      except:
-        pass
-  
-    resumption_token = root.find(
-      'oai_pmh:ListRecords/oai_pmh:resumptionToken',
-      ns
-    ).text
-
-    if resumption_token:
-      url = '{}&resumptionToken={}'.format(base_url, resumption_token)
-    else:
-      break
-
-  # delete objects in the system that aren't present in OAI-PMH data.
-  for searchable_content in SearchableContent.objects.filter(tag='libguides-oai-pmh'):
-    if not searchable_content.identifier in identifiers:
-      serachable_content.delete()
 
 class Command(BaseCommand):
   def add_arguments(self, parser):
@@ -266,20 +278,14 @@ class Command(BaseCommand):
       default=False,
       action='store_true'
     )
-    parser.add_argument(
-      '--libguides-oai-pmh',
-      default=False,
-      action='store_true'
-    )
   def handle(self, *args, **options):
-    if not (options['libguides_assets'] or options['libguides_guides']):
-      print('Usage: python manage.py update_searchable_content [--clean] [--libguides-assets] [--libguides-guides] [--libguides-oai-pmh]')
+    if not (options['clean'] or options['libguides_assets'] or options['libguides_guides']):
+      print('Usage: python manage.py update_searchable_content [--clean] [--libguides-assets] [--libguides-guides]')
       return
     if options['clean']:
-      SearchableContent.objects.all().delete()
+      LibGuidesSearchableContent.objects.all().delete()
+      LibGuidesAssetsSearchableContent.objects.all().delete()
     if options['libguides_assets']:
       update_libguides_assets()
     if options['libguides_guides']:
       update_libguides_guides()
-    if options['libguides_oai_pmh']:
-      update_libguides_oai_pmh()

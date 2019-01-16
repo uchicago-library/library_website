@@ -213,6 +213,19 @@ WAGTAILSEARCH_BACKENDS = {
     	'URLS': ['http://localhost:9200'],
         'INDEX': 'wagtail',
         'TIMEOUT': 5,
+        'INDEX_SETTINGS': {
+            'settings': {
+                'index': {
+                    'analysis': {
+                        'analyzer': {
+                            'default': {
+                                'type': 'english'
+                            },
+                        },
+                    }
+                }
+            }
+        },
     }
 }
 

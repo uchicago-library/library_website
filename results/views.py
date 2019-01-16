@@ -9,7 +9,7 @@ from library_website.settings import PUBLIC_HOMEPAGE, RESTRICTED
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from units.models import UnitIndexPage
-from searchable_content.models import SearchableContent
+from searchable_content.models import LibGuidesAssetsSearchableContent, LibGuidesSearchableContent
 from itertools import chain
 
 def results(request):
@@ -23,8 +23,25 @@ def results(request):
         restricted = StandardPage.objects.live().get(id=RESTRICTED)
         search_results1 = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).not_descendant_of(restricted, True).search(search_query, operator="and").annotate_score('score')
         search_backend = get_search_backend()
-        search_results2 = search_backend.search(search_query, SearchableContent.objects.all(), operator="and").annotate_score('score')
-        search_results = list(chain(search_results1, search_results2))
+
+        search_results2 = search_backend.search(search_query, LibGuidesSearchableContent.objects.all(), operator="and").annotate_score('score')
+        r = 0
+        while r < len(search_results2):
+          search_results2[r].score = search_results2[r].score * 1.5
+          r = r + 1
+
+        r = 0
+        while r < len(search_results2):
+          search_results2[r].searchable_content = 'guides'
+          r = r + 1
+
+        search_results3 = search_backend.search(search_query, LibGuidesAssetsSearchableContent.objects.all(), operator="and").annotate_score('score')
+        r = 0
+        while r < len(search_results3):
+          search_results3[r].searchable_content = 'assets'
+          r = r + 1
+
+        search_results = list(chain(search_results1, search_results2, search_results3))
         search_results.sort(key=lambda r: r.score, reverse=True)
         query = Query.get(search_query)
 
