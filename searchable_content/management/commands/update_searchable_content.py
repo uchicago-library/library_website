@@ -66,10 +66,6 @@ def update_libguides_assets():
     if record_url == '':
       continue
 
-    if '/h/ahsi' in record_url:
-      print('HERE IT IS!!!!!!')
-      print(record_url)
-
     try:
       more_info = re.sub(strip_tags, ' ', asset['meta']['more_info'])
     except:
