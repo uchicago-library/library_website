@@ -38,7 +38,7 @@ simplejson==3.11.1
 six==1.11.0
 sqlparse==0.2.4
 Unidecode==0.4.21
-urllib3==1.22
+urllib3==1.23
 wagtail==2.0
 -e git+https://github.com/Rotund/wagtailmedia.git@wagtail2#egg=wagtailmedia
 wheel==0.24.0
