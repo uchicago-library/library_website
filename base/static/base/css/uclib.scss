@@ -1616,7 +1616,6 @@ a.coll-access {
  .directory-list {
   @extend .distinct-list;
   & img {
-    @include desaturate;
     max-width: 7em;
   }
   &>tbody>tr>td {
