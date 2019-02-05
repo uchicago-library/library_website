@@ -126,7 +126,6 @@ p {
   font-size: 1em; }
 
 .rich-text ul, .rich-text ol {
-  font-size: 1.1em;
   line-height: 1.7em;
   max-width: 50em; }
   .rich-text ul li, .rich-text ol li {

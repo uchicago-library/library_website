@@ -9,6 +9,7 @@
 
 node_modules/
 package.json
+package-lock.json
 
 django-errors.log
 library_website/settings/database.db
