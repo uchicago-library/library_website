@@ -63,7 +63,7 @@
                     {% endautoescape %}
                   </td>
                   <td style="text-align:center;">
-                    <strong>Ask a {% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</strong><br/>
+                    <strong>Ask a {% if p.friendly_name %} {% if p.friendly_name.strip != 'Science' and  p.friendly_name.strip != 'SSA' %} {{p.friendly_name}} {% endif %}{% endif %} Librarian</strong><br/>
                     <a class="btn btn-ask" href="{{p.url}}" data-btn-chat-status="{{p.ask_form_name}}"></a><br/>
                     <a href="{{p.url}}">Other Ways to Ask a{% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</a>
                   </td> 
