@@ -46,7 +46,6 @@ class NewsPage(BasePage):
         StreamFieldPanel('body'),
         FieldPanel('author'),
         FieldPanel('story_date'),
-        FieldPanel('sticky_until'),
         MultiFieldPanel(
             [
                 ImageChooserPanel('thumbnail'),
@@ -56,6 +55,10 @@ class NewsPage(BasePage):
         ),
         FieldPanel('excerpt'),
     ] + BasePage.content_panels
+
+    promote_panels = BasePage.content_panels + [
+        FieldPanel('sticky_until'),
+    ]
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('excerpt'),
