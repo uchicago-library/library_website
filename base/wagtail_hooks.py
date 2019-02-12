@@ -1,9 +1,19 @@
+from django.conf.urls import url
 from django.utils.html import format_html
 from django.conf import settings
+from django.urls import reverse
 from wagtail.core import hooks
 from django.shortcuts import redirect
 from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL
-from django.contrib.staticfiles.templatetags.staticfiles import static 
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from wagtail.admin.menu import MenuItem
+from django.shortcuts import render
+from django.http import StreamingHttpResponse
+from django.core import management
+import csv # - TEMPORARY
+from django.http import HttpResponse
+from io import StringIO
+import sys
 
 def get_required_groups(page):
     """
@@ -70,3 +80,51 @@ def global_admin_css():
     Override the main admin css.
     """
     return format_html('<link rel="stylesheet" href="{}">', static('css/admin.css'))
+
+
+def admin_view(request):
+    """
+    View for the page owner's report form.
+    """
+    from base.forms import PageOwnersForm
+    if request.method == 'POST':
+        form = PageOwnersForm(request.POST)
+        options = {
+            'site': form.data.get('site', None),
+            'cnetid': form.data.get('cnetid', None),
+            'role': form.data.get('role', None),
+        }
+        if form.is_valid():
+            # Setup the environment
+            backup = sys.stdout
+
+            # Capture stdout
+            sys.stdout = StringIO()
+            management.call_command('report_page_maintainers_and_editors', **options)
+            output = sys.stdout.getvalue()
+
+            # Create the HttpResponse object with the appropriate CSV header
+            # and append stdout.
+            response = HttpResponse(output, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+            # Restore original stdout
+            sys.stdout.close()
+            sys.stdout = backup
+
+            return response
+    else:
+        form = PageOwnersForm()
+        return render(request, 'base/page_owners_form.html', {
+            'form': form
+        })
+
+@hooks.register('register_admin_urls')
+def urlconf_time():
+    return [
+        url(r'^page_owners_report/$', admin_view, name='page_owners_report')
+    ]
+
+@hooks.register('register_settings_menu_item')
+def register_frank_menu_item():
+  return MenuItem('Page Owners Report', reverse('page_owners_report'), classnames='icon icon-download', order=10009)

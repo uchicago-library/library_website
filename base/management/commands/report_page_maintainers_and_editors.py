@@ -28,12 +28,10 @@ class Command (BaseCommand):
 
         # Optional named arguments
         parser.add_argument('-s', '--site',
-            nargs=1,
             type=str,
             help='Restrict results to a specific site (Loop or Public).'
         )
         parser.add_argument('-r', '--role',
-            nargs=1,
             type=str,
             help='Role of the person for whom pages are being looked up (page_maintainer, editor, content_specialist)'
         )
@@ -49,9 +47,9 @@ class Command (BaseCommand):
             page objects for a given site or all page objects
         """
         if site_name:
-            site_obj = Site.objects.all().get(site_name=site_name[0])
+            site_obj = Site.objects.all().get(site_name=site_name)
             return Page.objects.in_site(site_obj).live()
-        return Page.objects.all()
+        return Page.objects.live()
 
 
     def _in_scope(self, page, cnetid, role):
@@ -98,9 +96,9 @@ class Command (BaseCommand):
                      'editor': editor_cnetid,
                      'content_specialist': content_specialist_cnetid}
 
-            if str(roles[role[0]]) == cnetid:
+            if str(roles[role]) == cnetid:
                 return True
-
+        # Return false if none of the other conditions are met
         return False
 
 
@@ -153,10 +151,6 @@ class Command (BaseCommand):
         records = []
         records.append(('Page Title', 'Last Modified', 'Last Reviewed', 'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor', 'Content Specialist CNetID', 'Content Specialist', 'URL'))
         for p in self._get_pages(site_name):
-            # Get cnetid and full name of page maintainer. - NOT SURE ABOOUT THIS
-            if not hasattr(p.specific, 'page_maintainer'):
-                continue
-
             page_maintainer = self._get_attr(p.specific, 'page_maintainer')
             page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
             page_maintainer_title = self._get_attr(page_maintainer, 'title')
@@ -170,10 +164,6 @@ class Command (BaseCommand):
             latest_revision_created_at = self._get_date_string(self._get_attr(p, 'latest_revision_created_at'))
             last_reviewed = self._get_date_string(self._get_attr(p.specific, 'last_reviewed'))
 
-            # Get cnetid and full name of page maintainer. - NOT SURE ABOOUT THIS
-            if not hasattr(p.specific, 'editor'):
-                continue
-        
             # Skip this record if it's not in scope
             if not self._in_scope(p, cnetid, role):
                 continue
@@ -189,6 +179,3 @@ class Command (BaseCommand):
                 pass
         
         return ''
-            
-        
-        
