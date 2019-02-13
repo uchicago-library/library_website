@@ -56,7 +56,7 @@ class NewsPage(BasePage):
         FieldPanel('excerpt'),
     ] + BasePage.content_panels
 
-    promote_panels = BasePage.content_panels + [
+    promote_panels = BasePage.promote_panels + [
         FieldPanel('sticky_until'),
     ]
 
