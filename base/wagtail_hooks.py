@@ -1,19 +1,21 @@
-from django.conf.urls import url
-from django.utils.html import format_html
-from django.conf import settings
-from django.urls import reverse
-from wagtail.core import hooks
-from django.shortcuts import redirect
-from library_website.settings.base import PERMISSIONS_MAPPING, NO_PERMISSIONS_REDIRECT_URL
-from django.contrib.staticfiles.templatetags.staticfiles import static
-from wagtail.admin.menu import MenuItem
-from django.shortcuts import render
-from django.http import StreamingHttpResponse
-from django.core import management
-import csv # - TEMPORARY
-from django.http import HttpResponse
-from io import StringIO
 import sys
+from io import StringIO
+
+from django.conf import settings
+from django.conf.urls import url
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.core import management
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.html import format_html
+from wagtail.admin.menu import MenuItem
+from wagtail.core import hooks
+
+from library_website.settings.base import (
+    NO_PERMISSIONS_REDIRECT_URL, PERMISSIONS_MAPPING
+)
+
 
 def get_required_groups(page):
     """
@@ -24,11 +26,11 @@ def get_required_groups(page):
         page: object
 
     Returns:
-        a set of groups of which the user must be 
-        a member of in order to see the page. 
+        a set of groups of which the user must be
+        a member of in order to see the page.
     """
     perms = []
-    if page.id in PERMISSIONS_MAPPING :
+    if page.id in PERMISSIONS_MAPPING:
         perms += PERMISSIONS_MAPPING[page.id]
     else:
         for ancestor in page.get_ancestors():
@@ -42,11 +44,11 @@ def has_permission(user, required_groups):
     """
     Determine if a user is a member of the proper
     groups to see a given page.
-    
-    Args: 
+
+    Args:
         user: object
 
-    Returns: 
+    Returns:
         boolean
     """
     user_groups = set([g.name for g in user.groups.all()])
@@ -59,9 +61,10 @@ def editor_css():
     Modify the admin css in order to hide
     option in the rich text editor etc.
     """
-    return format_html('<link rel="stylesheet" href="' \
-    + settings.STATIC_URL \
-    + 'css/editor.css">')
+    return format_html(
+        '<link rel="stylesheet" href="' + settings.STATIC_URL +
+        'css/editor.css">'
+    )
 
 
 @hooks.register('before_serve_page')
@@ -70,7 +73,7 @@ def redirect_users_without_permissions(page, request, serve_args, serve_kwargs):
     Redirect users of a site if they do not have
     group permission to see a given node.
     """
-    if not has_permission(request.user, get_required_groups(page)): 
+    if not has_permission(request.user, get_required_groups(page)):
         return redirect(NO_PERMISSIONS_REDIRECT_URL)
 
 
@@ -79,7 +82,9 @@ def global_admin_css():
     """
     Override the main admin css.
     """
-    return format_html('<link rel="stylesheet" href="{}">', static('css/admin.css'))
+    return format_html(
+        '<link rel="stylesheet" href="{}">', static('css/admin.css')
+    )
 
 
 def admin_view(request):
@@ -100,7 +105,9 @@ def admin_view(request):
 
             # Capture stdout
             sys.stdout = StringIO()
-            management.call_command('report_page_maintainers_and_editors', **options)
+            management.call_command(
+                'report_page_maintainers_and_editors', **options
+            )
             output = sys.stdout.getvalue()
 
             # Create the HttpResponse object with the appropriate CSV header
@@ -115,9 +122,8 @@ def admin_view(request):
             return response
     else:
         form = PageOwnersForm()
-        return render(request, 'base/page_owners_form.html', {
-            'form': form
-        })
+        return render(request, 'base/page_owners_form.html', {'form': form})
+
 
 @hooks.register('register_admin_urls')
 def urlconf_time():
@@ -125,6 +131,12 @@ def urlconf_time():
         url(r'^page_owners_report/$', admin_view, name='page_owners_report')
     ]
 
+
 @hooks.register('register_settings_menu_item')
 def register_frank_menu_item():
-  return MenuItem('Page Owners Report', reverse('page_owners_report'), classnames='icon icon-download', order=10009)
+    return MenuItem(
+        'Page Owners Report',
+        reverse('page_owners_report'),
+        classnames='icon icon-download',
+        order=10009
+    )
