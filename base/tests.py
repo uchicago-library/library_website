@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+from io import StringIO
 
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import management
@@ -8,35 +10,49 @@ from django.test import Client, TestCase
 from file_parsing import is_json
 from wagtail.core.models import Page, Site
 
-from base.models import BasePage, get_available_path_under
+from base.models import BasePage, IntranetPlainPage, get_available_path_under
 from base.utils import get_hours_by_id, get_json_for_library
 from news.models import NewsPage
-from public.models import StandardPage
+from public.models import LocationPage, StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
 
 
 # Helper functions
-def create_user_with_privileges():
+def create_user_with_privileges(
+    username, password, first_name, last_name, email
+):
     """
     Create a user that belongs to the proper groups
     to access the intranet.
+
+    Args:
+        username: string
+
+        password: string
+
+        first_name: string
+
+        last_name: string
+
+        email: string
     """
     from base.management.commands.create_library_user import Command
 
     # Create a user
     user = User.objects.create(
-        username='geordilaforge',
-        password='broken_visor!',
-        first_name='Geordi',
-        last_name='La Forge',
-        email='glaforge@starfleet.com')
+        username=username,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        email=email
+    )
     user.save()
 
     # Add user to groups
     groups = Command.REQUIRED_GROUP_NAMES
-    library_group = Group.objects.get(name=groups[1])
-    editors_group = Group.objects.get(name=groups[2])
+    library_group = Group.objects.get_or_create(name=groups[1])[0]
+    editors_group = Group.objects.get_or_create(name=groups[2])[0]
     library_group.user_set.add(user)
     editors_group.user_set.add(user)
 
@@ -54,6 +70,59 @@ def loggin_user_with_privileges(user):
     user.client = Client()
     user.client.login(username='geordilaforge', password='broken_visor!')
     return user
+
+
+def test_pages_with_in_scope(pages, func, *args):
+    """
+    Loop over all pages and call the _in_scope method
+    on every page with the arguments that are also
+    passed.
+
+    Args:
+        pages: iterable of page objects
+
+        func: function, _in_scope method
+
+        *args: arguments for the _in_scope method
+
+    Returns:
+        list of page objects
+    """
+    in_scope = []
+    for p in pages:
+        if func(p, *args):
+            in_scope.append(p)
+    return in_scope
+
+
+def run_report_page_maintainers_and_editors(options):
+    """
+    Run the report_page_maintainers_and_editors command
+    with options.
+
+    Args:
+        options: dictionary of options for report_page_maintainers_and_editors.
+
+    Returns:
+        string: of stdout captured.
+    """
+    # Setup the environment
+    backup = sys.stdout
+
+    # Capture stdout
+    sys.stdout = StringIO()
+    management.call_command('report_page_maintainers_and_editors', **options)
+    output = sys.stdout.getvalue()
+
+    # Concatonate output
+    csv = ''
+    csv += output
+
+    # Restore original stdout
+    sys.stdout.close()
+    sys.stdout = backup
+
+    return csv
 
 
 # Tests
@@ -123,7 +192,8 @@ class TestUsersAndServingLivePages(TestCase):
         news_page = NewsPage.objects.live().first()
         request = HttpRequest()
         request.user = User.objects.all().filter(
-            is_staff=True, is_active=True).first()
+            is_staff=True, is_active=True
+        ).first()
         request.site = Site.objects.filter(hostname=hostname)
         response = news_page.serve(request)
         self.assertEqual(response.status_code, 200)
@@ -154,7 +224,8 @@ class TestUsersAndServingLivePages(TestCase):
     #        self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
 
     def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(
-            self):
+        self
+    ):
         """
         Test all live public pages with an anonymous user.
         Most pages should return a 200, however, the redirect
@@ -172,12 +243,14 @@ class TestUsersAndServingLivePages(TestCase):
                 try:
                     url = page.relative_url(site)
                     response = user.client.get(
-                        page.url, HTTP_HOST=site.hostname)
+                        page.url, HTTP_HOST=site.hostname
+                    )
                     self.assertEqual(
                         response.status_code in possible,
                         True,
-                        msg=page.url + ' returned a ' + str(
-                            response.status_code))
+                        msg=page.url + ' returned a ' +
+                        str(response.status_code)
+                    )
                 except:
                     print(page.relative_url(site) + ' has a problem')
                     raise
@@ -207,14 +280,14 @@ class TestPageModels(TestCase):
         """
         # We get rid of the first element because it is a wagtailcore.Page
         content_types = Page.allowed_subpage_models()[1:]
-        #number_of_content_types = len(content_types)
+        # number_of_content_types = len(content_types)
 
         no_subpagetypes = set([])
         for page_type in content_types:
-            #num = len(page_type.allowed_subpage_models())
+            # num = len(page_type.allowed_subpage_models())
             try:
-                #self.assertNotEqual(num, number_of_content_types, 'This content type is missing a subpage_types declaration')
-                #assert page_type.subpage_types, 'This content type is missing a subpage_types declaration'
+                # self.assertNotEqual(num, number_of_content_types, 'This content type is missing a subpage_types declaration')
+                # assert page_type.subpage_types, 'This content type is missing a subpage_types declaration'
                 page_type.subpage_types
             except:
                 no_subpagetypes.add(page_type.__name__)
@@ -222,7 +295,8 @@ class TestPageModels(TestCase):
         self.assertEqual(
             len(no_subpagetypes), 0,
             'The following content types don\'t have a subpages_type declaration: '
-            + str(no_subpagetypes))
+            + str(no_subpagetypes)
+        )
 
     def test_page_models_have_search_fields(self):
         """
@@ -234,26 +308,31 @@ class TestPageModels(TestCase):
         content_types = Page.allowed_subpage_models()[1:]
         page_search_fields = Page.search_fields
         base_page_search_fields = BasePage.search_fields
-        default_search_fields = set(page_search_fields +
-                                    base_page_search_fields)
-        ignore = set([
-            'AlertPage', 'AlertIndexPage', 'ConferenceIndexPage',
-            'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
-            'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
-            'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
-            'ProjectIndexPage', 'GroupMeetingMinutesPage', 'GroupReportsPage',
-            'IntranetUnitsReportsPage', 'RedirectPage'
-        ])
+        default_search_fields = set(
+            page_search_fields + base_page_search_fields
+        )
+        ignore = set(
+            [
+                'AlertPage', 'AlertIndexPage', 'ConferenceIndexPage',
+                'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
+                'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
+                'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
+                'ProjectIndexPage', 'GroupMeetingMinutesPage',
+                'GroupReportsPage', 'IntranetUnitsReportsPage', 'RedirectPage'
+            ]
+        )
         no_search_fields = set([])
         for page_type in content_types:
             if not len(set(page_type.search_fields)) > len(
-                    default_search_fields) and not page_type.__name__ in ignore:
+                default_search_fields
+            ) and not page_type.__name__ in ignore:
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(
             len(no_search_fields), 0,
             'The following content types don\'t have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: '
-            + str(no_search_fields))
+            + str(no_search_fields)
+        )
 
 
 class TestStreamFields(TestCase):
@@ -278,18 +357,23 @@ class TestStreamFields(TestCase):
             depth=staff_index_page.depth + 1,
             path=get_available_path_under(staff_index_page.path),
             slug='ignatius-reilly',
-            title='Ignatius Reilly')
+            title='Ignatius Reilly'
+        )
 
         # build a streamfield by hand for testing.
-        body = json.dumps([{
-            "type": "staff_listing",
-            "value": {
-                "staff_listing": [staff_page.id],
-                "show_photos": False,
-                "show_contact_info": False,
-                "show_subject_specialties": False
-            }
-        }])
+        body = json.dumps(
+            [
+                {
+                    "type": "staff_listing",
+                    "value": {
+                        "staff_listing": [staff_page.id],
+                        "show_photos": False,
+                        "show_contact_info": False,
+                        "show_subject_specialties": False
+                    }
+                }
+            ]
+        )
 
         try:
             StandardPage.objects.get(slug='a-standard-page').delete()
@@ -306,7 +390,8 @@ class TestStreamFields(TestCase):
             path=get_available_path_under(home_page.path),
             slug="a-standard-page",
             title="A Standard Page",
-            unit=UnitPage.objects.get(title="Library"))
+            unit=UnitPage.objects.get(title="Library")
+        )
 
         # retrieve the StandardPage and make sure the status code is 200.
         request = HttpRequest()
@@ -343,10 +428,12 @@ class TestUtilityFunctions(TestCase):
         crerar = 1373
         self.assertEqual(
             is_json(json.dumps(get_json_for_library(crerar))), True,
-            'Not valid json')
+            'Not valid json'
+        )
         self.assertEqual(
             json.dumps(get_json_for_library(999)), 'null',
-            'Should be a null json value')
+            'Should be a null json value'
+        )
 
     def test_get_hours_by_id(self):
         """
@@ -372,3 +459,100 @@ class TestAssignUnitLocationCommand(TestCase):
             management.call_command('assign_unit_location', str(1), str(2))
 
         self.assertEqual(cm.exception.code, 1)
+
+
+class TestPageOwnerReports(TestCase):
+    """
+    Test cases for the page owner reports command and
+    associated views.
+    """
+    fixtures = ['test.json']
+
+    def setUp(self):
+        from base.management.commands.report_page_maintainers_and_editors import Command
+
+        class Ship(object):
+            name = 'Enterprise'
+            warp = 9
+
+        # Foobar objects to test
+        self.c = Command()
+        self.ship = Ship()
+
+        self.loop = Site.objects.get(site_name='Loop')
+        self.public = Site.objects.get(site_name='Public')
+
+        self.all_live_pages = Page.objects.live()
+
+    def test_get_attr_with_object_attributes(self):
+        self.assertEqual(self.c._get_attr(self.ship, 'name'), 'Enterprise')
+        self.assertEqual(self.c._get_attr(self.ship, 'warp'), 9)
+
+    def test_get_attr_with_object_missing_attribute(self):
+        self.assertEqual(self.c._get_attr(self.ship, 'romulans'), '')
+
+    def test_get_pages_return_correct_number_of_pages(self):
+        num_pages_loop = Page.objects.get(sites_rooted_here=self.loop).get_descendants().live().count() + 1
+        num_pages_public = Page.objects.get(
+            sites_rooted_here=self.public
+        ).get_descendants().live().count() + 1
+        self.assertEqual(self.c._get_pages('Loop').count(), num_pages_loop)
+        self.assertEqual(self.c._get_pages('Public').count(), num_pages_public)
+
+    def test_in_scope_no_cnet_or_role_returns_any_and_all_pages(self):
+        all_pages_count = self.all_live_pages.count()
+        in_scope = test_pages_with_in_scope(
+            self.all_live_pages, self.c._in_scope, None, None
+        )
+        self.assertEqual(len(in_scope), all_pages_count)
+
+    def test_in_scope_with_cnetid_only_returns_pages_with_any_role(self):
+        """
+        When only the cnetid is filled out pages with any role should
+        be returned it it's assigned to the given cnetid. There are 6
+        pages in the test db that belong to Locutus of Borg. He is a
+        he is a page_maintainor on some, editor on others and
+        content_specialist others.
+        """
+        in_scope = test_pages_with_in_scope(
+            self.all_live_pages, self.c._in_scope, 'locutus', None
+        )
+        self.assertEqual(len(in_scope), 6)
+
+    def test_in_scope_with_cnetid_and_role(self):
+        """
+        If a cnetid and a role passed, the function should only return
+        pages where the given cnetid is assigned to the given role.
+        In the test database there are this many pages for the following
+        roles that are assigned to Locutus of Borg:
+
+        page_maintainer: 3 pages
+        editor: 1 page
+        content_specialist: 2 pages
+        """
+        page_maintainer_in_scope = test_pages_with_in_scope(
+            self.all_live_pages, self.c._in_scope, 'locutus', 'page_maintainer'
+        )
+        editor_in_scope = test_pages_with_in_scope(
+            self.all_live_pages, self.c._in_scope, 'locutus', 'editor'
+        )
+        content_specialist_in_scope = test_pages_with_in_scope(
+            self.all_live_pages, self.c._in_scope, 'locutus',
+            'content_specialist'
+        )
+        self.assertEqual(len(page_maintainer_in_scope), 3)
+        self.assertEqual(len(editor_in_scope), 1)
+        self.assertEqual(len(content_specialist_in_scope), 2)
+
+    def test_main_command_when_no_pages_are_returned(self):
+        """
+        The user Q doesn't have any pages assigned to him. The command
+        should return a nearly blank spreadsheet.
+        """
+        options = {
+            'site': None,
+            'cnetid': 'q',
+            'role': None,
+        }
+        csv = run_report_page_maintainers_and_editors(options)
+        self.assertEqual(csv.strip(), ','.join(self.c.HEADER))

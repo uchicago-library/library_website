@@ -17,6 +17,12 @@ class Command(BaseCommand):
         python manage.py report_page_maintainers_and_editors cnetid
     """
 
+    HEADER = (
+        'URL', 'Page Title', 'Last Modified', 'Last Reviewed',
+        'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor',
+        'Content Specialist CNetID', 'Content Specialist'
+    )
+
     def add_arguments(self, parser):
         """
         Add required positional options and optional
@@ -62,10 +68,10 @@ class Command(BaseCommand):
         Args:
             page: page object
 
-            cnetid: string
+            cnetid: string or None
 
             role: string, the role for which you want the person
-            to be on a given page
+            to be on a given page or None
 
         Returns:
             boolean, whether or not the page should be
@@ -121,13 +127,17 @@ class Command(BaseCommand):
             attribute value or empty string
         """
         if hasattr(obj, attr):
+            # Since string attributes have a method called title
+            if obj == '' and attr == 'title':
+                return ''
             return getattr(obj, attr)
         return ''
 
     def _get_date_string(self, date):
         """
-        Returns a formatted date string or an empty string
-        if the input is wrong (e.g. None instead of a date object).
+        Returns a formatted date string or an empty string if the input
+        is wrong (e.g. None instead of a date object). Mostly just a
+        wrapper function to hold configuration.
 
         Args:
             date: date object or bad input (usually None).
@@ -137,6 +147,7 @@ class Command(BaseCommand):
         """
         if date:
             return date.strftime('%Y-%m-%d %H:%M:%S')
+        return ''
 
     def handle(self, *args, **options):
         """
@@ -151,14 +162,7 @@ class Command(BaseCommand):
         role = options['role']
 
         records = []
-        records.append(
-            (
-                'Page Title', 'Last Modified', 'Last Reviewed',
-                'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID',
-                'Editor', 'Content Specialist CNetID', 'Content Specialist',
-                'URL'
-            )
-        )
+        records.append(self.HEADER)
         for p in self._get_pages(site_name):
             page_maintainer = self._get_attr(p.specific, 'page_maintainer')
             page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
@@ -172,10 +176,9 @@ class Command(BaseCommand):
             content_specialist_cnetid = self._get_attr(
                 content_specialist, 'cnetid'
             )
-            # Ternary operator because strings have a method called 'title'
             content_specialist_title = self._get_attr(
                 content_specialist, 'title'
-            ) if content_specialist else ''
+            )
             full_url = self._get_attr(p.specific, 'full_url')
             latest_revision_created_at = self._get_date_string(
                 self._get_attr(p, 'latest_revision_created_at')
@@ -191,10 +194,10 @@ class Command(BaseCommand):
             # Append to output.
             records.append(
                 (
-                    p.title, latest_revision_created_at, last_reviewed,
-                    page_maintainer_cnetid, page_maintainer_title,
-                    editor_cnetid, editor_title, content_specialist_cnetid,
-                    content_specialist_title, full_url
+                    full_url, p.title, latest_revision_created_at,
+                    last_reviewed, page_maintainer_cnetid,
+                    page_maintainer_title, editor_cnetid, editor_title,
+                    content_specialist_cnetid, content_specialist_title
                 )
             )
 
