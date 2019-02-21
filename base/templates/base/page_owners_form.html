@@ -7,6 +7,28 @@
     {{ example_form.media.css }}
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+    <script>
+        function onSelectChange(trigger, target){
+            var trigger_text = trigger.options[trigger.selectedIndex].text;
+            if(trigger_text == ''){
+                target.disabled = true;
+            } else {
+                target.disabled = false;
+            }
+        }
+        $( document ).ready(function() {
+            var target = document.getElementById('id_role');
+            target.disabled = true;
+            var trigger = document.getElementById('id_cnetid');
+            $(trigger).on('change', function() {
+                onSelectChange(trigger, target);
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block titletag %}Staff Reporting Form{% endblock %}
 {% block bodyclass %}staffreportingform{% endblock %}
 
