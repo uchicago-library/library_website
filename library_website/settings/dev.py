@@ -16,7 +16,7 @@ COMPRESS_OFFLINE_TIMEOUT = 3
 COMPRESS_REBUILD_TIMEOUT = 3
 
 # Restricted directory locked down to campus by shib
-RESTRICTED = 7164
+RESTRICTED = 7163
 
 try:
     from .local import *

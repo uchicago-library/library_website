@@ -10,10 +10,10 @@ from django.test import Client, TestCase
 from file_parsing import is_json
 from wagtail.core.models import Page, Site
 
-from base.models import BasePage, IntranetPlainPage, get_available_path_under
+from base.models import BasePage, get_available_path_under
 from base.utils import get_hours_by_id, get_json_for_library
 from news.models import NewsPage
-from public.models import LocationPage, StandardPage
+from public.models import StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
 
@@ -317,8 +317,7 @@ class TestPageModels(TestCase):
                 'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
                 'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
                 'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
-                'ProjectIndexPage', 'GroupMeetingMinutesPage',
-                'GroupReportsPage', 'IntranetUnitsReportsPage', 'RedirectPage'
+                'ProjectIndexPage', 'RedirectPage'
             ]
         )
         no_search_fields = set([])
