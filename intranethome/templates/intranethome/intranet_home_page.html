@@ -1,6 +1,7 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
 {% load core_search_tags %}
+{% load news_tags %}
 {% load wagtailimages_tags %}
 
 {% block content %}
@@ -16,13 +17,10 @@
                 </div>
               {% endif %}
               <div class="media-body">
-                <span class="date">{{ sticky_page.story_date }}</span>
+                <span class="date">{{ sticky_page.story_date|date:'F jS' }}</span>
                 <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
-                <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
-                <p>{{ sticky_page.excerpt|richtext }}</p>
-                {% if sticky_page.read_more %}
-                  <p><a href="{{ sticky_page.url }}">Read more &gt;&gt;</a></p>
-                {% endif %}
+                {% news_author sticky_page %}
+                {% news_excerpt sticky_page %}
               </div>
             </div>
           </div>
@@ -36,18 +34,27 @@
               </div>
             {% endif %}
             <div class="media-body">
-              <span class="date">{{ news_page.story_date }}</span>
+              <span class="date">{{ news_page.story_date|date:'F jS' }}</span>
               <h2><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-              <p class="author">By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></p>
-              {{ news_page.excerpt|richtext }}
-              {% if news_page.read_more %}
-                <a href="{{ news_page.url }}" class="view-more">Read more &gt;&gt;</a>
-              {% endif %}
+              {% news_author news_page %}
+              {% news_excerpt news_page %}
             </div>
           </div>
         {% endfor %}
 
-        <p><a href="/news/?page=2">More news stories</a></p>
+        {% if prev_link or next_link %}
+          <p>
+            {% if prev_link %}
+              <a href="{{ prev_link }}">Newer Stories</a>
+            {% endif %}
+            {% if prev_link and next_link %}
+              |
+            {% endif %}
+            {% if next_link %}
+              <a href="{{ next_link }}">Older Stories</a>
+            {% endif %}
+          </p>
+        {% endif %}
     </div>
 
   <div class="col-xs-12 col-md-3 swside-home" role="complementary"> <!-- Right Sidebar -->

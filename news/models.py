@@ -67,19 +67,41 @@ class NewsPage(BasePage):
         index.SearchField('body'),
     ]
 
-    def get_context(self, request):
-        context = super(NewsPage, self).get_context(request)
+    @classmethod
+    def get_stories(cls, sticky=False, now=None):
+        """
+	A handy function to efficiently get a list of news stories to display
+        on Loop.
 
-        details = get_story_summary(self)
-        context['story_date'] = details['story_date']
-        try:
-            context['author_title'] = details['author_title']
-        except:
-            context['author_title'] = ''
-        context['author_url'] = details['author_url']
-        context['thumbnail'] = details['thumbnail']
+        Parameters:
+	sticky -- A boolean. If this is set to True, the method will return
+		  sticky stories only. Setting this to False returns non-sticky
+                  stories only.
+	now    -- A datetime.date(), or None. If None, the method will set now
+		  to the current date. This parameter is present to make this
+                  function easier to test.
+ 
+        Returns:
+        A django.core.paginator.Paginator object for Loop news stories. 
+        """
 
-        return context
+        if now == None:
+            now = datetime.date(datetime.now())
+
+        stories = cls.objects.filter(
+            live=True,
+            story_date__lte=now,
+        ).order_by(
+            '-story_date',
+            '-latest_revision_created_at'
+        )
+        if sticky:
+            stories = stories.filter(sticky_until__gte=now)
+        else:
+            stories = stories.exclude(sticky_until__gte=now)
+    
+        return Paginator(stories, 10)
+ 
 
 class NewsIndexPage(BasePage):
     """
@@ -97,137 +119,6 @@ class NewsIndexPage(BasePage):
         index.SearchField('intro'),
     ]
 
-    def get_context(self, request):
-        context = super(NewsIndexPage, self).get_context(request)
-        # need to add order_by('story_date')
-
-        sticky_pages = get_stories(sticky=True)
-        news_pages = get_stories()
-
-        page = int(request.GET.get('page', 1))
-        news_pages = get_stories_by_page(page)
-
-        prev_link = None 
-        if page > 1:
-            prev_link = "%s?page=%s" % (request.path, str(page - 1))
-        next_link = None
-        if get_story_count() > page * get_stories_by_page.page_length:
-            next_link = "%s?page=%s" % (request.path, str(page + 1))
-
-        context['sticky_pages'] = sticky_pages
-        context['news_pages'] = news_pages
-        context['prev_link'] = prev_link
-        context['next_link'] = next_link
-        return context
-
-def get_stories(sticky=False):
-    pages = []
-    if sticky:
-        for page in NewsPage.objects.live():
-            # skip stories that are in the future. 
-            if page.story_date > datetime.date(datetime.now()):
-                continue
-            # skip stories that do not have a "sticky until" date.
-            if page.sticky_until == None:
-                continue
-            # skip sticky stories that have 'expired'.
-            if page.sticky_until and datetime.date(datetime.now()) > page.sticky_until:
-                continue
-            pages.append(get_story_summary(page))
-    else:
-        for page in NewsPage.objects.live():
-            # skip stories that are in the future. 
-            if page.story_date > datetime.date(datetime.now()):
-                continue
-            # skip pages that are still sticky. 
-            # pages that have a sticky_until set to None or a date in the past fall through.
-            if page.sticky_until and datetime.date(datetime.now()) <= page.sticky_until:
-                continue
-            pages.append(get_story_summary(page))
-
-    return sorted(pages, key=lambda p: (p['story_date_sort'], p['latest_revision_created_at']), reverse=True)
-
-def get_stories_by_page(page=1, sticky=False):
-    get_stories_by_page.page_length = 10
-
-    stories = get_stories(sticky)
-    start_page = (page - 1) * get_stories_by_page.page_length
-    end_page = start_page + get_stories_by_page.page_length
-    return stories[start_page:end_page]
-
-def get_story_count(sticky=False):
-    return len(get_stories(sticky))
-
-def get_story_summary(news_page):
-    def simplify_text(s):
-        # strip out every HTML tag except opening and closing <a> tags. 
-        s = re.sub(r"<(?!\/?a(?=>|\s.*>))\/?.*?>", " ", s)
-        s = re.sub(r"\s+", " ", s)
-        return s.strip()
-
-    # get the first num_words (e.g. 50) words. 
-    # don't allow unclosed anchor tags through.
-    def get_excerpt_safely(words, num_words):
-        excerpt_words = words[:num_words]
-        opening_anchor_tag_count = sum('<a' not in word for word in excerpt_words)
-        closing_anchor_tag_count = sum('</a>' not in word for word in excerpt_words)
-        if opening_anchor_tag_count != closing_anchor_tag_count:
-            while True:
-                last_word = excerpt_words.pop()
-                if not last_word:
-                    break
-                if '<a' in last_word:
-                    break
-        return ' '.join(excerpt_words)
-    
-    day = int(news_page.story_date.strftime('%d'))
-    if 4 <= day <= 20 or 24 <= day <= 30:
-        suffix = "th"
-    else:
-        suffix = ["st", "nd", "rd"][day % 10 - 1]
-
-    if news_page.author:
-        author_title = news_page.author.title
-        author_url = news_page.author.url
-    else:
-        try:
-            cnetid = news_page.owner.username
-            author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
-            author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
-        except:
-            author_title = ''
-            author_url = ''
-
-    simplified_text = simplify_text(news_page.excerpt)
-    if simplified_text:
-        words = simplified_text.split(" ")
-        excerpt = get_excerpt_safely(words, 50)
-        read_more = True
-    else:
-        simplified_text = simplify_text(" ".join([s.render() for s in news_page.body]))
-        words = simplified_text.split(" ")
-        excerpt = get_excerpt_safely(words, 50)
-
-        if len(words) > 50:
-            excerpt = excerpt + "..."
-            read_more = True
-        else:
-            read_more = False
-
-    return {
-        'story_date_sort': news_page.story_date,
-        'story_date': news_page.story_date.strftime('%B %d').replace(' 0', ' ') + suffix,
-        'latest_revision_created_at': news_page.latest_revision_created_at,
-        'author_title': author_title,
-        'author_url': author_url,
-        'excerpt': excerpt,
-        'read_more': read_more,
-        'title': news_page.title,
-        'url': news_page.url,
-        'body': news_page.body,
-        'thumbnail': news_page.thumbnail,
-        'page_alt' : news_page.alt_text
-    }
 
 @register_snippet
 class NewsEmailAddition(models.Model, index.Indexed):

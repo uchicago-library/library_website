@@ -5,9 +5,10 @@ from datetime import datetime
 from base.models import BasePage
 from wagtail.core.models import Page
 
+from django.core.paginator import EmptyPage
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
-from news.models import get_stories_by_page, get_story_summary, NewsIndexPage, NewsPage
+from news.models import NewsIndexPage, NewsPage
 from staff.models import StaffPage
 
 class IntranetHomePage(BasePage):
@@ -21,8 +22,25 @@ class IntranetHomePage(BasePage):
         news_link = NewsIndexPage.objects.live()[0].url if NewsIndexPage.objects.live().exists() else []
         news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.live().exists() else []
 
-        sticky_pages = get_stories_by_page(1, sticky=True)
-        news_pages = get_stories_by_page(1)
+        page = int(request.GET.get('page', 1))
+
+        sticky_pages = NewsPage.get_stories(sticky=True)
+        try:
+            sticky_stories = sticky_pages.page(page).object_list
+        except EmptyPage:
+            sticky_stories = NewsPage.objects.none()
+        news_pages = NewsPage.get_stories()
+        try:
+            news_stories = news_pages.page(page).object_list
+        except EmptyPage:
+            news_stories = NewsPage.objects.none()
+
+        prev_link = None 
+        if page > 1:
+            prev_link = "/?page=%s" % (str(page - 1))
+        next_link = None
+        if page < max(news_pages.page_range):
+            next_link = "/?page=%s" % (str(page + 1))
 
         context = super(IntranetHomePage, self).get_context(request)
         context['human_resources_link'] = '#'
@@ -32,7 +50,9 @@ class IntranetHomePage(BasePage):
         context['forms_link'] = '#'
         context['technical_support_link'] = '#'
         context['news_link'] = news_link
-        context['sticky_pages'] = sticky_pages
-        context['news_pages'] = news_pages
+        context['sticky_pages'] = sticky_stories
+        context['news_pages'] = news_stories
+        context['prev_link'] = prev_link
+        context['next_link'] = next_link
         
         return context

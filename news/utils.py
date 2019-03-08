@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from library_website.settings.base import LOOP_EMAIL_NOTIFICATION_HEADER, LOOP_EMAIL_NOTIFICATION_FOOTER
-from news.models import get_story_summary, NewsPage, NewsEmailAddition
+from news.models import NewsPage, NewsEmailAddition
 from wagtail.core.rich_text import expand_db_html
 
 import datetime

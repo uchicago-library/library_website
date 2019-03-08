@@ -1,78 +1,15 @@
 {% extends "base/intranet_base.html" %}
 {% load wagtailcore_tags %}
-{% load core_search_tags %}
-{% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-12 col-md-12 swnews">
-	  <article>
-	    <h1>News</h1>
-		{{ self.intro|richtext }}
-
-        {% for sticky_page in sticky_pages %}
-          <div class="sticky">
-            <div class="media">
-              {% if sticky_page.thumbnail %}
-                <div class="media-left">
-                  {% image sticky_page.thumbnail fill-150x150 as thmb %}
-                  <img src="{{thmb.url}}" alt="{% firstof sticky_page.page_alt thmb.alt %}" class="media-object" />
-                </div>
-              {% endif %}
-              <div class="media-body">
-                <span class="date">{{ sticky_page.story_date }}</span>
-                <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
-                <p><em>By <a href="{{ sticky_page.author_url }}">{{ sticky_page.author_title }}</a></em></p>
-                {{ sticky_page.excerpt|richtext }}
-              {% if sticky_page.read_more %}
-                <p><a href="{{ sticky_page.url }}">Read more &gt;&gt;</a></p>
-              {% endif %}
-              </div>
-            </div>
-          </div>
-          <hr/>
-        {% endfor %}
-
-        {% for news_page in news_pages %}
-          <div class="news">
-            <div class="media">
-              {% if news_page.thumbnail %}
-                <div class="media-left">
-                  {% image news_page.thumbnail fill-150x150 as thmb %}
-                  <img src="{{thmb.url}}" alt="{% firstof news_page.page_alt thmb.alt %}" class="media-object" />
-                </div>
-              {% endif %}
-              <div class="media-body">
-              <span class="date">{{ news_page.story_date }}</span>
-              <h2 class="media-heading"><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-              <p><em>By <a href="{{ news_page.author_url }}">{{ news_page.author_title }}</a></em></p>
-                {{ news_page.excerpt|richtext }}
-              {% if news_page.read_more %}
-                <p><a href="{{ news_page.url }}">Read more &gt;&gt;</a></p>
-              {% endif %}
-              </div>
-            </div>
-          </div>
-          <hr/>
-        {% endfor %}
-
-        {% if prev_link or next_link %}
-          <p>
-            {% if prev_link %}
-              <a href="{{ prev_link }}">Newer Stories</a>
-            {% endif %}
-            {% if prev_link and next_link %}
-              |
-            {% endif %}
-            {% if next_link %}
-              <a href="{{ next_link }}">Older Stories</a>
-            {% endif %}
-               
-          </p>
-        {% endif %}
-  	  </article>
+      <article>
+        <h1>News</h1>
+        {{ self.intro|richtext }}
+      </article>
     </div>
   </div>
 {% endblock %}
