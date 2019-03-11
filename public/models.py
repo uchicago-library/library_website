@@ -1,29 +1,33 @@
+from datetime import date
+
 from django.db import models
 from django.db.models.fields import CharField
-from django import forms
-from django.utils import timezone
-from wagtail.core.models import Page, Orderable, Site
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core import blocks
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel, InlinePanel, PageChooserPanel
-from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.search import index
 from modelcluster.fields import ParentalKey
-from base.models import PublicBasePage, DefaultBodyFields, Address, Email, PhoneNumber, SocialMediaFields, LinkBlock, RawHTMLBodyField, CarouselItem
-from datetime import date
-from staff.models import StaffPage
-from wagtail.images.models import Image
-from subjects.utils import get_subjects_html
-from public.utils import get_features
-from units.models import BUILDINGS
+from wagtail.admin.edit_handlers import (
+    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
+    PageChooserPanel, StreamFieldPanel, TabbedInterface
+)
 from wagtail.api import APIField
-import urllib
+from wagtail.core import blocks
+from wagtail.core.fields import RichTextField, StreamField
+from wagtail.core.models import Orderable, Page, Site
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.images.models import Image
+from wagtail.search import index
+
+from base.models import (
+    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
+    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+)
+from public.utils import get_features
+from staff.models import StaffPage
+from subjects.utils import get_subjects_html
+from units.models import BUILDINGS
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
-#from wagtail.admin.forms import WagtailAdminPageForm
-#from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
-#class TabbedInterface(OriginalTabbedInterface):
+# from wagtail.admin.forms import WagtailAdminPageForm
+# from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
+# class TabbedInterface(OriginalTabbedInterface):
 #
 #    def __init__(self, children, base_form_class=WagtailAdminPageForm):
 #        super().__init__(children, base_form_class)
@@ -33,11 +37,10 @@ class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
     """
     Base treamfield block for "Featured Library Experts".
     """
-    library_expert = blocks.PageChooserBlock( # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
-        required=False, help_text='Be sure to select a StaffPage (not a StaffPublicPage)', 
-    ) 
-    libguides = blocks.ListBlock(LinkBlock(),
-        icon='link')
+    library_expert = blocks.PageChooserBlock(  # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
+        required=False, help_text='Be sure to select a StaffPage (not a StaffPublicPage)',
+    )
+    libguides = blocks.ListBlock(LinkBlock(), icon='link')
 
 
 class FeaturedLibraryExpertBlock(FeaturedLibraryExpertBaseBlock):
@@ -53,8 +56,8 @@ class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
     Base fields for a Featured Library Expert.
     """
     person = FeaturedLibraryExpertBaseBlock(
-        icon='view', 
-        required=False, 
+        icon='view',
+        required=False,
         template='public/blocks/featured_library_expert.html'
     )
 
@@ -64,8 +67,8 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     All fields for a Featured Library Expert.
     """
     person = FeaturedLibraryExpertBlock(
-        icon='view', 
-        required=False, 
+        icon='view',
+        required=False,
         template='public/blocks/featured_library_expert.html'
     )
 
@@ -99,16 +102,25 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         related_name='+',
         on_delete=models.SET_NULL
     )
- 
-    # Featured Library Expert
-    featured_library_expert_fallback = StreamField(FeaturedLibraryExpertBaseFields(required=False), default=[])
-    featured_library_experts = StreamField(FeaturedLibraryExpertFields(required=False), default=[])
 
-    subpage_types = ['alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage', 'public.DonorPage', \
-        'lib_collections.CollectingAreaPage', 'lib_collections.CollectionPage', 'lib_collections.ExhibitPage', \
-        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage', 'units.UnitIndexPage', \
-        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage', \
-        'public.StaffPublicPage', 'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage']
+    # Featured Library Expert
+    featured_library_expert_fallback = StreamField(
+        FeaturedLibraryExpertBaseFields(required=False), default=[]
+    )
+    featured_library_experts = StreamField(
+        FeaturedLibraryExpertFields(required=False), default=[]
+    )
+
+    subpage_types = [
+        'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
+        'public.DonorPage', 'lib_collections.CollectingAreaPage',
+        'lib_collections.CollectionPage', 'lib_collections.ExhibitPage',
+        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage',
+        'units.UnitIndexPage', 'conferences.ConferenceIndexPage',
+        'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage',
+        'public.StaffPublicPage', 'findingaids.FindingAidsPage',
+        'public.PublicRawHTMLPage'
+    ]
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('body'),
@@ -116,10 +128,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     widget_content_panels = [
         MultiFieldPanel(
-            [
-                FieldPanel('enable_search_widget')
-            ],
-            heading='Search Widget'
+            [FieldPanel('enable_search_widget')], heading='Search Widget'
         ),
         MultiFieldPanel(
             [
@@ -128,7 +137,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 FieldPanel('view_more_link_label'),
                 FieldPanel('view_more_link'),
                 FieldPanel('change_to_callout'),
-            ], 
+            ],
             heading='Quicklinks'
         ),
         MultiFieldPanel(
@@ -141,7 +150,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         MultiFieldPanel(
             [
                 FieldPanel('display_hours_in_right_sidebar'),
-            ], 
+            ],
             heading='Granular hours'
         ),
         MultiFieldPanel(
@@ -154,10 +163,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         MultiFieldPanel(
             [
                 FieldPanel('events_feed_url'),
-            ],
-            heading='Workshops and Events'
+            ], heading='Workshops and Events'
         ),
-       MultiFieldPanel(
+        MultiFieldPanel(
             [
                 FieldPanel('news_feed_url'),
                 FieldPanel('external_news_page'),
@@ -169,13 +177,15 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             [
                 FieldPanel('enable_find_spaces'),
                 FieldPanel('book_a_room_link'),
-            ], 
+            ],
             heading='Find Spaces'
         ),
         MultiFieldPanel(
             [
-                PageChooserPanel('collection_page', 'lib_collections.CollectionPage'),
-            ], 
+                PageChooserPanel(
+                    'collection_page', 'lib_collections.CollectionPage'
+                ),
+            ],
             heading='Featured Collection'
         ),
         MultiFieldPanel(
@@ -185,7 +195,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 PageChooserPanel('rich_text_link'),
                 FieldPanel('rich_text_external_link'),
                 FieldPanel('rich_text_link_text'),
-            ], 
+            ],
             heading='Rich Text'
         ),
         InlinePanel('carousel_items', label="Carousel items"),
@@ -197,25 +207,28 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         index.SearchField('body', partial_match=True),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-        ObjectList(widget_content_panels, heading='Widgets'),
-    ])
-
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
 
     def streamblock_has_link(self, streamblock, field):
         """
-        Check that a streamfield block object has a 
+        Check that a streamfield block object has a
         either an internal or external link when
         base.models.LinkBlock is in use.
 
         Args:
-            streamblock: streamfield block object, 
+            streamblock: streamfield block object,
             wagtail.core.blocks.stream_block.StreamValue.StreamChild.
 
-            field: string field name that contains 
+            field: string field name that contains
             a ListBlock of LinkBlocks.
         """
         block_list = streamblock.value.get(field)
@@ -227,14 +240,13 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 return False
         return True
 
-
     def streamblock_has_all_fields(self, streamblock, field_list):
         """
-        Test to see if a streamfield block has a value for all 
+        Test to see if a streamfield block has a value for all
         fields in a given list.
 
         Args:
-            streamblock: streamfield block object, 
+            streamblock: streamfield block object,
             wagtail.core.blocks.stream_block.StreamValue.StreamChild.
 
             field_names: list of strings, field names.
@@ -246,12 +258,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             value = streamblock.value.get(field)
             if not value:
                 return False
-        return True  
-
+        return True
 
     def has_featured_lib_expert_fallback(self):
         """
-        Test to see if a page has a "Featured 
+        Test to see if a page has a "Featured
         Library Expert" fallback set.
 
         Returns:
@@ -259,10 +270,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         """
         try:
             return self.streamblock_has_all_fields(
-                self.featured_library_expert_fallback[0], 
-                ['library_expert']
-            ) and self.streamblock_has_link(self.featured_library_expert_fallback[0], 'libguides')
-        except(IndexError):
+                self.featured_library_expert_fallback[0], ['library_expert']
+            ) and self.streamblock_has_link(
+                self.featured_library_expert_fallback[0], 'libguides'
+            )
+        except (IndexError):
             return False
 
     def get_featured_lib_expert(self):
@@ -270,9 +282,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         Test to see if a page has a "Featured Library Expert".
         Return a boolean and the featured library expert for
         today's date. Return False and None if there is no
-        Featured Library Expert for today. The fallback is 
-        used if nothing is available for today's date. In 
-        order to return True a proper fallback must always 
+        Featured Library Expert for today. The fallback is
+        used if nothing is available for today's date. In
+        order to return True a proper fallback must always
         be set.
 
         Returns:
@@ -281,63 +293,74 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             None when the first value is False.
         """
         fallback = self.has_featured_lib_expert_fallback()
-        #print(self.featured_library_expert_fallback[0].value.get('library_expert'))
+        # print(self.featured_library_expert_fallback[0].value.get('library_expert'))
         today = date.today()
         for block in self.featured_library_experts:
-            #print(block.value.get('library_expert'))
-            has_fields = self.streamblock_has_all_fields(block, ['library_expert', 'start_date','end_date'])
-            has_links = self.streamblock_has_link(block, 'libguides') # Could misfire, just an estimation
-            in_range = block.value.get('start_date') <= today and block.value.get('end_date') >= today
+            # print(block.value.get('library_expert'))
+            has_fields = self.streamblock_has_all_fields(
+                block, ['library_expert', 'start_date', 'end_date']
+            )
+            # Could misfire, just an estimation
+            has_links = self.streamblock_has_link(block, 'libguides')
+            in_range = block.value.get(
+                'start_date'
+            ) <= today and block.value.get('end_date') >= today
             if (fallback and (has_fields and has_links)) and in_range:
                 return (True, block)
         if (fallback):
             return (True, self.featured_library_expert_fallback[0])
         return (False, None)
 
-
     def unpack_lib_expert_block(self, block, current_site):
         """
-        Unpack the values from a "Featured Library Expert" 
-        streamfield block and return a data structure for 
-        display in the templates. This method wouldn't be 
-        needed, however, at the moment Wagtail doesn't allow 
-        for getting the page context from a block. This is 
+        Unpack the values from a "Featured Library Expert"
+        streamfield block and return a data structure for
+        display in the templates. This method wouldn't be
+        needed, however, at the moment Wagtail doesn't allow
+        for getting the page context from a block. This is
         discussed in Wagtail github issue #s 1743 and 2469.
         When a solution is implemented in the Wagtail base
         we could get rid of this.
 
         Args:
-            block: Featured Library Expert or fallback 
+            block: Featured Library Expert or fallback
             streamfield block.
 
-            current_site: Wagtail site object for the 
+            current_site: Wagtail site object for the
             request.
 
         Returns:
-            Mixed dictionary with the following values: 
-            person (StaffPage object), image (object), 
+            Mixed dictionary with the following values:
+            person (StaffPage object), image (object),
             profile (string url), links (list of html strings).
         """
-        person = block.value.get('library_expert') 
+        person = block.value.get('library_expert')
         libguides = block.value.get('libguides')
         image = person.specific.profile_picture
         try:
             public_person = StaffPublicPage.objects.get(title=str(person))
         except:
             public_person = None
-        profile = public_person.relative_url(current_site) if public_person else None
-        
-        links = [] 
+        profile = public_person.relative_url(
+            current_site
+        ) if public_person else None
+
+        links = []
         for guide in libguides:
             link_text = guide['link_text']
-            url = guide['link_external'] if guide['link_external'] else guide['link_page'].relative_url(current_site)
+            url = guide['link_external'] if guide['link_external'] else guide[
+                'link_page'].relative_url(current_site)
             html = '<a href="%s">%s</a>' % (url, link_text)
             links.append(html)
 
-        return {'person': person, 'image': image, 'profile': profile, 'links': links}
+        return {
+            'person': person,
+            'image': image,
+            'profile': profile,
+            'links': links
+        }
 
-
-    @property 
+    @property
     def has_find_spaces(self):
         """
         Determine if there is a "Find Spaces"
@@ -347,7 +370,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             Boolean
         """
         return self.has_field([self.enable_find_spaces])
-
 
     @property
     def has_right_sidebar(self):
@@ -368,22 +390,23 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         else:
             return self.has_field(fields)
 
-
     def get_context(self, request):
         """
         Override the page object's get context method.
         """
         context = super(StandardPage, self).get_context(request)
-        current_site = Site.find_for_request(request) 
+        current_site = Site.find_for_request(request)
         has_featured_lib_expert = self.get_featured_lib_expert()[0]
 
         if has_featured_lib_expert:
-            lib_expert_block = self.unpack_lib_expert_block(self.get_featured_lib_expert()[1], current_site)
+            lib_expert_block = self.unpack_lib_expert_block(
+                self.get_featured_lib_expert()[1], current_site
+            )
             context['has_featured_lib_expert'] = has_featured_lib_expert
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
-            context['featured_lib_expert_name'] = lib_expert_block['person'] 
+            context['featured_lib_expert_name'] = lib_expert_block['person']
             context['featured_lib_expert_image'] = lib_expert_block['image']
-            context['featured_lib_expert_profile'] = lib_expert_block['profile'] 
+            context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
 
         context['has_search_widget'] = self.enable_search_widget
@@ -439,9 +462,14 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     # Model fields
     short_description = models.TextField(null=False, blank=False)
-    long_description = RichTextField(null=False, blank=False) 
-    parent_building = models.ForeignKey('self',
-        null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True})
+    long_description = RichTextField(null=False, blank=False)
+    parent_building = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        limit_choices_to={'is_building': True}
+    )
     location_photo = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -498,44 +526,45 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             [
                 FieldPanel('reservation_url'),
                 FieldPanel('reservation_display_text'),
-            ], 
+            ],
             heading='Room Reservation Link'
         ),
         ImageChooserPanel('location_photo'),
-        FieldRowPanel([
-            FieldPanel('is_building', classname=ROW_CLASS),
-            FieldPanel('is_phone_zone', classname=ROW_CLASS),
-            FieldPanel('is_collaboration_zone', classname=ROW_CLASS),
-            FieldPanel('is_meal_zone', classname=ROW_CLASS),
-            FieldPanel('is_quiet_zone', classname=ROW_CLASS),
-            FieldPanel('is_study_space', classname=ROW_CLASS),
-            FieldPanel('is_teaching_space', classname=ROW_CLASS),
-            FieldPanel('is_event_space', classname=ROW_CLASS),
-            FieldPanel('is_special_use', classname=ROW_CLASS),
-            FieldPanel('is_open_space', classname=ROW_CLASS),
-            FieldPanel('is_24_hours', classname=ROW_CLASS),
-            FieldPanel('is_reservable', classname=ROW_CLASS),
-            FieldPanel('has_carrels', classname=ROW_CLASS),
-            FieldPanel('has_board', classname=ROW_CLASS),
-            FieldPanel('has_printing', classname=ROW_CLASS),
-            FieldPanel('has_soft_seating', classname=ROW_CLASS),
-            FieldPanel('has_dual_monitors', classname=ROW_CLASS),
-            FieldPanel('has_single_tables', classname=ROW_CLASS),
-            FieldPanel('has_large_tables', classname=ROW_CLASS),
-            FieldPanel('has_screen', classname=ROW_CLASS),
-            FieldPanel('has_natural_light', classname=ROW_CLASS),
-            FieldPanel('is_no_food_allowed', classname=ROW_CLASS),
-            FieldPanel('has_book_scanner', classname=ROW_CLASS),
-            FieldPanel('has_public_computer', classname=ROW_CLASS),
-            FieldPanel('is_snacks_allowed', classname=ROW_CLASS),
-            FieldPanel('has_standing_desk', classname=ROW_CLASS),
-            FieldPanel('has_lockers', classname=ROW_CLASS),
-            FieldPanel('has_day_lockers', classname=ROW_CLASS),
-        ]),
+        FieldRowPanel(
+            [
+                FieldPanel('is_building', classname=ROW_CLASS),
+                FieldPanel('is_phone_zone', classname=ROW_CLASS),
+                FieldPanel('is_collaboration_zone', classname=ROW_CLASS),
+                FieldPanel('is_meal_zone', classname=ROW_CLASS),
+                FieldPanel('is_quiet_zone', classname=ROW_CLASS),
+                FieldPanel('is_study_space', classname=ROW_CLASS),
+                FieldPanel('is_teaching_space', classname=ROW_CLASS),
+                FieldPanel('is_event_space', classname=ROW_CLASS),
+                FieldPanel('is_special_use', classname=ROW_CLASS),
+                FieldPanel('is_open_space', classname=ROW_CLASS),
+                FieldPanel('is_24_hours', classname=ROW_CLASS),
+                FieldPanel('is_reservable', classname=ROW_CLASS),
+                FieldPanel('has_carrels', classname=ROW_CLASS),
+                FieldPanel('has_board', classname=ROW_CLASS),
+                FieldPanel('has_printing', classname=ROW_CLASS),
+                FieldPanel('has_soft_seating', classname=ROW_CLASS),
+                FieldPanel('has_dual_monitors', classname=ROW_CLASS),
+                FieldPanel('has_single_tables', classname=ROW_CLASS),
+                FieldPanel('has_large_tables', classname=ROW_CLASS),
+                FieldPanel('has_screen', classname=ROW_CLASS),
+                FieldPanel('has_natural_light', classname=ROW_CLASS),
+                FieldPanel('is_no_food_allowed', classname=ROW_CLASS),
+                FieldPanel('has_book_scanner', classname=ROW_CLASS),
+                FieldPanel('has_public_computer', classname=ROW_CLASS),
+                FieldPanel('is_snacks_allowed', classname=ROW_CLASS),
+                FieldPanel('has_standing_desk', classname=ROW_CLASS),
+                FieldPanel('has_lockers', classname=ROW_CLASS),
+                FieldPanel('has_day_lockers', classname=ROW_CLASS),
+            ]
+        ),
         MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
-
 
     widget_content_panels = [
         MultiFieldPanel(
@@ -553,14 +582,18 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             ],
             heading='Granular hours'
         ),
-    ] 
+    ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-        ObjectList(widget_content_panels, heading='Widgets'),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
 
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
@@ -579,8 +612,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         APIField('reservation_url'),
     ]
 
-
-
     def has_any_features(self):
         """
         See if a location has fields, we've dubbed "features".
@@ -594,7 +625,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
                 return True
         return False
 
-
     @property
     def has_features(self):
         """
@@ -603,9 +633,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
         Returns:
             Boolean
-        """ 
+        """
         return self.has_any_features()
-
 
     def get_features_html(self):
         """
@@ -620,17 +649,18 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             for item in get_features():
                 field = 'self.' + item[0]
                 if eval(field):
-                    html += '<li><a href="/spaces/?space_type=None&feature=%s">%s %s</a></li>' % (item[0], item[2], item[1])
+                    html += '<li><a href="/spaces/?space_type=None&feature=%s">%s %s</a></li>' % (
+                        item[0], item[2], item[1]
+                    )
             html += '</ul>'
             return html
         else:
             return ''
 
-
     @property
     def features_html(self):
         """
-        Convenience property to use in templates 
+        Convenience property to use in templates
         and custom views.
 
         Returns:
@@ -638,19 +668,18 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         """
         return self.get_features_html()
 
-
     @property
     def has_right_sidebar(self):
         """
-        Test to see if a right sidebar should be 
+        Test to see if a right sidebar should be
         displayed.
 
         Returns:
             Boolean
         """
         self.has_floorplans()
-        return self.base_has_right_sidebar() or self.has_any_features() or self.has_floorplans
-
+        return self.base_has_right_sidebar() or self.has_any_features(
+        ) or self.has_floorplans
 
     def has_floorplans(self):
         """
@@ -659,12 +688,13 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         Returns:
             boolean
         """
-        objects = self.location_floor_placements.get_live_query_set().filter(parent_id=self.id)
+        objects = self.location_floor_placements.get_live_query_set().filter(
+            parent_id=self.id
+        )
         for obj in objects:
             if obj.floor_id:
                 return True
         return False
-
 
     def get_context(self, request):
         """
@@ -695,7 +725,7 @@ class DonorPage(PublicBasePage):
     )
 
     subpage_types = ['public.StandardPage']
-        
+
     content_panels = Page.content_panels + [
         FieldPanel('description'),
         ImageChooserPanel('image'),
@@ -710,7 +740,8 @@ class DonorPage(PublicBasePage):
 class FloorPlanPage(PublicBasePage):
     """
     Floor plan page model.
-    """ 
+    """
+
     def __str__(self):
         return '%s, %s' % (self.title, self.unit.location.parent_building)
 
@@ -737,10 +768,7 @@ class StaffPublicPage(PublicBasePage):
     """
     A public page for staff members.
     """
-    cnetid = CharField(
-        max_length=255,
-        blank=False,
-        null=True)
+    cnetid = CharField(max_length=255, blank=False, null=True)
 
     subpage_types = ['public.StandardPage']
     content_panels = Page.content_panels + [
@@ -756,7 +784,7 @@ class StaffPublicPage(PublicBasePage):
         """
         try:
             return StaffPage.objects.live().filter(cnetid=self.cnetid)[0].bio
-        except(IndexError):
+        except (IndexError):
             return ''
 
     def has_right_sidebar(self):
@@ -782,14 +810,15 @@ class StaffPublicPage(PublicBasePage):
         libguide_url = s.libguide_url
 
         default_image = Image.objects.get(title="Default Placeholder Photo")
-        
+
         try:
             department_name = s.staff_page_units.first().library_unit.title
         except AttributeError:
             department_name = None
 
         try:
-            department_full_name = s.staff_page_units.first().library_unit.get_full_name()
+            department_full_name = s.staff_page_units.first(
+            ).library_unit.get_full_name()
         except AttributeError:
             department_full_name = None
 
@@ -800,33 +829,39 @@ class StaffPublicPage(PublicBasePage):
 
         try:
             building_int = s.staff_page_units.first().library_unit.building
-            building_str = list(filter(lambda b: b[0] == building_int, BUILDINGS))[0][1]
+            building_str = list(
+                filter(lambda b: b[0] == building_int, BUILDINGS)
+            )[0][1]
         except AttributeError:
             building_str = None
 
-        context.update({
-            'bio': self.get_bio(),
-            'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
-            'content_div_css': 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
-            'cv': cv,
-            'default_image': default_image,
-            'department_name': department_name,
-            'department_full_name': department_full_name,
-            'email': email,
-            'expertises': expertises,
-            'libguide_url': libguide_url,
-            'library': building_str,
-            'orcid': s.orcid,
-            'profile_picture': s.profile_picture,
-            'staff_page': s,
-            'subjects': get_subjects_html(s.staff_subject_placements.all()),
-            'positiontitle': s.position_title
-        })
+        context.update(
+            {
+                'bio': self.get_bio(),
+                'breadcrumb_div_css':
+                'col-md-12 breadcrumbs hidden-xs hidden-sm',
+                'content_div_css':
+                'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+                'cv': cv,
+                'default_image': default_image,
+                'department_name': department_name,
+                'department_full_name': department_full_name,
+                'email': email,
+                'expertises': expertises,
+                'libguide_url': libguide_url,
+                'library': building_str,
+                'orcid': s.orcid,
+                'profile_picture': s.profile_picture,
+                'staff_page': s,
+                'subjects': get_subjects_html(s.staff_subject_placements.all()),
+                'positiontitle': s.position_title
+            }
+        )
         return context
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('cnetid'),
-    ] 
+    ]
 
 
 class PublicRawHTMLPage(PublicBasePage):
@@ -843,4 +878,4 @@ class PublicRawHTMLPage(PublicBasePage):
         index.SearchField('html', partial_match=True),
     ]
 
-    subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage'] 
+    subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
