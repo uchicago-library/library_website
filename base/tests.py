@@ -232,7 +232,7 @@ class TestUsersAndServingLivePages(TestCase):
         page will return a 301 and some custom views return
         a 302. Nothing should return a 404.
         """
-        if not 'TRAVIS' in os.environ:
+        if 'TRAVIS' not in os.environ:
             site = Site.objects.filter(site_name='Public')[0]
             user = AnonymousUser()
             user.client = Client()
@@ -241,7 +241,6 @@ class TestUsersAndServingLivePages(TestCase):
 
             for page in pages:
                 try:
-                    url = page.relative_url(site)
                     response = user.client.get(
                         page.url, HTTP_HOST=site.hostname
                     )
@@ -324,7 +323,7 @@ class TestPageModels(TestCase):
         for page_type in content_types:
             if not len(set(page_type.search_fields)) > len(
                 default_search_fields
-            ) and not page_type.__name__ in ignore:
+            ) and page_type.__name__ not in ignore:
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(
@@ -491,7 +490,8 @@ class TestPageOwnerReports(TestCase):
         self.assertEqual(self.c._get_attr(self.ship, 'romulans'), '')
 
     def test_get_pages_return_correct_number_of_pages(self):
-        num_pages_loop = Page.objects.get(sites_rooted_here=self.loop).get_descendants().live().count() + 1
+        num_pages_loop = Page.objects.get(sites_rooted_here=self.loop
+                                          ).get_descendants().live().count() + 1
         num_pages_public = Page.objects.get(
             sites_rooted_here=self.public
         ).get_descendants().live().count() + 1

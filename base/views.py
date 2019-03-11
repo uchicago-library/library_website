@@ -1,31 +1,37 @@
-from dateutil.relativedelta import relativedelta
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-import json
-from base.utils import get_all_building_hours, get_hours_and_location, get_json_hours_by_id, get_building_hours_and_lid, get_news
-from events.utils import flatten_events, get_events
-from units.utils import get_default_unit
-from ask_a_librarian.utils import get_chat_status_and_css, get_unit_chat_link, get_chat_status, get_chat_status_css
 import datetime
-import urllib
-from wagtail.core.models import Site
+import json
+
 from bs4 import BeautifulSoup
-from public.models import StandardPage
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from wagtail.core.models import Site
+
+from ask_a_librarian.utils import (
+    get_chat_status, get_chat_status_and_css, get_chat_status_css,
+    get_unit_chat_link
+)
+from base.utils import (
+    get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id,
+    get_news
+)
+from dateutil.relativedelta import relativedelta
+from events.utils import flatten_events, get_events
 from library_website.settings import PUBLIC_HOMEPAGE
+from public.models import StandardPage
+from units.utils import get_default_unit
+
 
 def breadcrumbs(request):
-    breadcrumbs = [{
-        "href": "/",
-        "text": "Home"
-    }]
+    breadcrumbs = [{"href": "/", "text": "Home"}]
 
-    path_components = [component for component in request.path.split('/') if component]
-    page, args, kwargs = request.site.root_page.specific.route(request, path_components)
+    path_components = [
+        component for component in request.path.split('/') if component
+    ]
+    page, args, kwargs = request.site.root_page.specific.route(
+        request, path_components
+    )
     while page:
-        breadcrumbs.append({
-            "href": page.url,
-            "text": page.title
-        })
+        breadcrumbs.append({"href": page.url, "text": page.title})
         if hasattr(page, 'parent'):
             page = page.parent
         else:
@@ -36,12 +42,11 @@ def breadcrumbs(request):
 
 def json_hours(request):
     """
-    View for rendering hours as json. 
+    View for rendering hours as json.
     """
     current_site = Site.find_for_request(request)
     if request.method == 'GET':
         if request.GET.get('fallback'):
-            fallback = request.GET['fallback']
             return JsonResponse(
                 {
                     'llid': get_default_unit().location.libcal_library_id,
@@ -49,13 +54,19 @@ def json_hours(request):
             )
         else:
             libcalid = request.GET['libcalid']
-            all_building_hours = json.dumps(get_building_hours_and_lid(current_site))
+            all_building_hours = json.dumps(
+                get_building_hours_and_lid(current_site)
+            )
             return JsonResponse(
                 {
-                    'all_building_hours': all_building_hours,
-                    'current_hours': get_json_hours_by_id(int(libcalid), all_building_hours),
-                    'llid': libcalid,
-                    'llid_fallback': get_default_unit().location.libcal_library_id,
+                    'all_building_hours':
+                    all_building_hours,
+                    'current_hours':
+                    get_json_hours_by_id(int(libcalid), all_building_hours),
+                    'llid':
+                    libcalid,
+                    'llid_fallback':
+                    get_default_unit().location.libcal_library_id,
                 }
             )
 
@@ -70,13 +81,19 @@ def json_events(request):
     if request.method == 'GET':
         ttrss_url = request.GET['feed']
 
-        # need xml for this. 
+        # need xml for this.
         university_url = 'http://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
 
         n = datetime.datetime.now()
         return JsonResponse(
             {
-                'events': flatten_events(get_events(university_url, ttrss_url, n, n + relativedelta(years=1), False))
+                'events':
+                flatten_events(
+                    get_events(
+                        university_url, ttrss_url, n,
+                        n + relativedelta(years=1), False
+                    )
+                )
             }
         )
 
@@ -87,27 +104,23 @@ def json_news(request):
     """
     if request.method == 'GET':
         feed = request.GET['feed']
-        return JsonResponse(
-            {
-                'news': get_news(feed),
-            }
-        )
+        return JsonResponse({
+            'news': get_news(feed),
+        })
 
 
 def chat_status(request):
     """
-    View for retreiving the chat status for 
+    View for retreiving the chat status for
     Ask a Librarian pages. Returns json.
     """
     if request.method == 'GET':
         ask_name = request.GET['name']
         status = get_chat_status_and_css(ask_name)
-        return JsonResponse(
-            {
-                'chat_status': status[0],
-                'chat_css': status[1],
-            }
-        )
+        return JsonResponse({
+            'chat_status': status[0],
+            'chat_css': status[1],
+        })
 
 
 def external_include(request):
@@ -130,10 +143,7 @@ def external_include(request):
             request,
             'base/includes/{}.html'.format(include),
             {
-                'prefix': '{}://{}'.format(
-                    request.scheme,
-                    request.get_host
-                ),
+                'prefix': '{}://{}'.format(request.scheme, request.get_host),
                 'address': location_and_hours['address'],
                 'chat_url': get_unit_chat_link(unit, request),
                 'chat_status': get_chat_status('uofc-ask'),
@@ -145,6 +155,7 @@ def external_include(request):
                 'site_url': request.scheme + '://' + request.get_host(),
             },
         )
+
         def absolute_url(href):
             """
             Helper function to make links absolute.
@@ -156,6 +167,7 @@ def external_include(request):
             if not href.startswith('/'):
                 domain = ''
             return '{}{}{}'.format(protocol, domain, href)
+
         soup = BeautifulSoup(response.content, 'html.parser')
         for a in soup.find_all('a'):
             a['href'] = absolute_url(a['href'])
@@ -167,10 +179,8 @@ def external_include(request):
         if callback:
             return HttpResponse(
                 '{}({});'.format(
-                    callback,
-                    json.dumps(response.content.decode('utf-8'))
-                ),
-                'application/javascript'
+                    callback, json.dumps(response.content.decode('utf-8'))
+                ), 'application/javascript'
             )
         else:
             return response

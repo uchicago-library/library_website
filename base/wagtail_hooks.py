@@ -113,7 +113,8 @@ def admin_view(request):
             # Create the HttpResponse object with the appropriate CSV header
             # and append stdout.
             response = HttpResponse(output, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="page-owner-report.csv"'
+            response['Content-Disposition'
+                     ] = 'attachment; filename="page-owner-report.csv"'
 
             # Restore original stdout
             sys.stdout.close()

@@ -96,9 +96,6 @@ def get_json_for_library(lid):
     Returns:
         string, json
     """
-    url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
-        str(LIBCAL_IID) + '&lid=' + str(lid) + '&format=json'
-
     json = requests.get(
         'https://api3.libcal.com/api_hours_today.php?iid=' + str(LIBCAL_IID) +
         '&lid=' + str(lid) + '&format=json'
@@ -182,7 +179,7 @@ def get_all_building_hours():
     buildings = list(
         (str(p), p.libcal_library_id)
         for p in LocationPage.objects.live().filter(is_building=True)
-        if p.libcal_library_id != None
+        if p.libcal_library_id is not None
     )
     return list(
         HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings
@@ -382,7 +379,8 @@ def get_specific_page_data(idnum, key):
         Mixed output, objects and strings returned from the
         get_hours_and_location data structure.
     """
-    return get_hours_and_location(Page.objects.live().get(id=idnum).specific)[key]
+    return get_hours_and_location(Page.objects.live().get(id=idnum).specific
+                                  )[key]
 
 
 def sort_buildings(spaces):
