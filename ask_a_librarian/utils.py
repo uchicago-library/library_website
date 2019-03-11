@@ -1,15 +1,19 @@
 import requests
 from defusedxml.ElementTree import fromstring
 from wagtail.core.models import Site
-from library_website.settings import DEFAULT_UNIT, SCRC_MAIN_UNIT, SCRC_ASK_PAGE
+
+from library_website.settings import (
+    DEFAULT_UNIT, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
+)
+
 
 def get_chat_status(name):
     """
-    Get the chat status for a location by name. 
+    Get the chat status for a location by name.
 
     Args:
-        name: string, the name of the chat widget 
-        you wish to retrieve. Possible values 
+        name: string, the name of the chat widget
+        you wish to retrieve. Possible values
         include: uofc-ask, law, crerar, and ssa.
 
     Returns:
@@ -17,11 +21,15 @@ def get_chat_status(name):
     """
 
     try:
-        xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
-        + name + '/chat.libraryh3lp.com/xml', timeout=12)
+        xml = requests.get(
+            'https://us.libraryh3lp.com/presence/jid/' + name +
+            '/chat.libraryh3lp.com/xml',
+            timeout=12
+        )
         tree = fromstring(xml.content)
     except requests.exceptions.Timeout:
-        xml = "<presence user='" + name + "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
+        xml = "<presence user='" + name + \
+            "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
         tree = fromstring(xml)
 
     return tree.find('resource').attrib['show'] == 'available'
@@ -33,12 +41,12 @@ def get_chat_status_css(name):
     Ask a Librarian chat widget status.
 
     Args:
-        name: string, the name of the chat widget 
-        you wish to retrieve. Possible values 
+        name: string, the name of the chat widget
+        you wish to retrieve. Possible values
         include: uofc-ask, law, crerar, and ssa.
 
     Returns:
-        string, css class. 
+        string, css class.
     """
     status = {True: 'active', False: 'off'}
     return status[get_chat_status(name)]
@@ -46,28 +54,32 @@ def get_chat_status_css(name):
 
 def get_chat_status_and_css(name):
     """
-    Get the chat status and css for Ask a 
+    Get the chat status and css for Ask a
     Librarian pages.
 
     Args:
-        name: string, the name of the chat 
-        widget you wish to retrieve. Possible 
-        values include: uofc-ask, law, crerar, 
+        name: string, the name of the chat
+        widget you wish to retrieve. Possible
+        values include: uofc-ask, law, crerar,
         and ssa.
 
     Returns:
-        Tuple representing the chat status for 
-        Ask a Librarian pages where the first 
-        item is a boolean and the second item 
+        Tuple representing the chat status for
+        Ask a Librarian pages where the first
+        item is a boolean and the second item
         is a string (css class).
     """
 
     try:
-        xml = requests.get('https://us.libraryh3lp.com/presence/jid/' \
-        + name + '/chat.libraryh3lp.com/xml', timeout=12)
+        xml = requests.get(
+            'https://us.libraryh3lp.com/presence/jid/' + name +
+            '/chat.libraryh3lp.com/xml',
+            timeout=12
+        )
         tree = fromstring(xml.content)
     except requests.exceptions.Timeout:
-        xml = "<presence user='" + name + "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
+        xml = "<presence user='" + name + \
+            "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
         tree = fromstring(xml)
     status_lookup = {True: 'active', False: 'off'}
     status_bool = tree.find('resource').attrib['show'] == 'available'
@@ -82,15 +94,17 @@ def get_chat_statuses():
     applied in the templates.
 
     Returns:
-        dictionary of css classes for all of 
+        dictionary of css classes for all of
         the Ask a Librarian chat widgets.
     """
-    return {'uofc-ask': get_chat_status_css('uofc-ask'), 
-            'crerar': get_chat_status_css('crerar'),
-            'eckhart': get_chat_status_css('crerar'),
-            'law': get_chat_status_css('law'),
-            'ssa': get_chat_status_css('ssa'),
-            'dissertation-office': get_chat_status_css('dissertation-office')}
+    return {
+        'uofc-ask': get_chat_status_css('uofc-ask'),
+        'crerar': get_chat_status_css('crerar'),
+        'eckhart': get_chat_status_css('crerar'),
+        'law': get_chat_status_css('law'),
+        'ssa': get_chat_status_css('ssa'),
+        'dissertation-office': get_chat_status_css('dissertation-office')
+    }
 
 
 def get_unit_chat_link(unit, request):
@@ -104,7 +118,7 @@ def get_unit_chat_link(unit, request):
         request: object
 
     Returns:
-        string, url. Returns an empty string 
+        string, url. Returns an empty string
         upon failure.
     """
     from .models import AskPage
@@ -113,7 +127,7 @@ def get_unit_chat_link(unit, request):
 
     try:
         if unit.id == SCRC_MAIN_UNIT:
-            return Page.objects.live().get(id=SCRC_ASK_PAGE).relative_url(current_site)    
+            return Page.objects.live().get(id=SCRC_ASK_PAGE).relative_url(current_site)
         return AskPage.objects.live().get(unit=unit).relative_url(current_site)
     except:
         return AskPage.objects.live().get(unit=DEFAULT_UNIT).relative_url(current_site)

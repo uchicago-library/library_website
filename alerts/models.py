@@ -1,9 +1,11 @@
 from django.db import models
-from base.models import PublicBasePage
-from wagtail.core.models import Page
-from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.api import APIField
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Page
+
+from base.models import PublicBasePage
+
 
 class AlertPage(PublicBasePage):
     """
@@ -19,8 +21,8 @@ class AlertPage(PublicBasePage):
     banner_message = RichTextField(blank=False)
     more_info = RichTextField(blank=True)
     alert_level = models.CharField(
-        max_length=25, 
-        choices=ALERT_TYPES, 
+        max_length=25,
+        choices=ALERT_TYPES,
         default=INFO,
     )
 
@@ -40,6 +42,7 @@ class AlertPage(PublicBasePage):
     ]
 
     search_fields = PublicBasePage.search_fields
+
 
 class AlertIndexPage(PublicBasePage):
     """
