@@ -149,21 +149,28 @@ class Command(BaseCommand):
             return date.strftime('%Y-%m-%d %H:%M:%S')
         return ''
 
-    def handle(self, *args, **options):
+    def get_records(self, cnetid, site_name, role):
         """
-        The actual logic of the command. Subclasses must implement this
-        method. It may return a Unicode string which will be printed to
-        stdout. More: https://docs.djangoproject.com/en/1.8/howto/custom
-        -management-commands/#django.core.management.BaseCommand.handle
+        Args:
+            cnetid: string
+
+            site_name: string
+
+            role: string
+
+        Returns:
+            list of tuples containing data about pages to be converted
+            into a csv. The first tuple in the list represents the column
+            names (header) that will be used on the spreadsheet.
         """
-
-        cnetid = options['cnetid']
-        site_name = options['site']
-        role = options['role']
-
         records = []
         records.append(self.HEADER)
         for p in self._get_pages(site_name):
+
+            # Skip this record if it's not in scope
+            if not self._in_scope(p, cnetid, role):
+                continue
+
             page_maintainer = self._get_attr(p.specific, 'page_maintainer')
             page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
             page_maintainer_title = self._get_attr(page_maintainer, 'title')
@@ -187,10 +194,6 @@ class Command(BaseCommand):
                 self._get_attr(p.specific, 'last_reviewed')
             )
 
-            # Skip this record if it's not in scope
-            if not self._in_scope(p, cnetid, role):
-                continue
-
             # Append to output.
             records.append(
                 (
@@ -200,9 +203,22 @@ class Command(BaseCommand):
                     content_specialist_cnetid, content_specialist_title
                 )
             )
+        return records
+
+    def handle(self, *args, **options):
+        """
+        The actual logic of the command. Subclasses must implement this
+        method. It may return a Unicode string which will be printed to
+        stdout. More: https://docs.djangoproject.com/en/1.8/howto/custom
+        -management-commands/#django.core.management.BaseCommand.handle
+        """
+
+        cnetid = options['cnetid']
+        site_name = options['site']
+        role = options['role']
 
         writer = csv.writer(sys.stdout)
-        for record in records:
+        for record in self.get_records(cnetid, site_name, role):
             try:
                 writer.writerow(record)
             except UnicodeEncodeError:
