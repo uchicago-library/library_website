@@ -46,9 +46,9 @@ class Command(BaseCommand):
             up (page_maintainer, editor, content_specialist)'
         )
 
-    def _get_pages(self, site_name):
+    def _get_pages(self, cnetid, site_name, role):
         """
-        Get pages by site name.
+        Get pages that are in scope for a given query.
 
         Args:
             site_name: string, name of a site (Loop or Public) or None.
@@ -56,61 +56,74 @@ class Command(BaseCommand):
         Returns:
             page objects for a given site or all page objects
         """
+        # Start with pages for a specific site or get all pages
+        # if a specific site wasn't given
         if site_name:
+            # Site specific pages
             site_obj = Site.objects.all().get(site_name=site_name)
-            return Page.objects.in_site(site_obj).live()
-        return Page.objects.live()
+            pages = Page.objects.in_site(site_obj).live().specific().iterator()
+        else:
+            # All pages
+            pages = Page.objects.live().specific().iterator()
 
-    def _in_scope(self, page, cnetid, role):
+        # If a cnetid and role is given, return all pages where
+        # the role is set to a user with the given cnet id. If
+        # only a cnetid is given, return all pages where any
+        # role matches the given cnetid
+        if cnetid:
+            if role:
+                return self._get_pages_with_role_for_cnet(pages, cnetid, role)
+            return self._get_pages_with_any_role_for_cnet(pages, cnetid)
+
+        # If we made it this far, return all pages
+        return pages
+
+    def _get_pages_with_role_for_cnet(self, pages, cnetid, role):
         """
-        Determine if a page is in scope for the report.
+        Filter a generator of pages and return a new generator
+        of pages where a given role is set to a user with a
+        given cnetid.
 
         Args:
-            page: page object
+            pages: generator of page objects
 
-            cnetid: string or None
+            cnetid: string
 
-            role: string, the role for which you want the person
-            to be on a given page or None
+            role: string, 'page_maintainer', 'editor' or 'content_specialist'
 
         Returns:
-            boolean, whether or not the page should be
-            included in the report. If there isn't a cnetid
-            and role, the page should pass, however,
-            if only a cnetid is passed a page with *any*
-            role matching the cnet should pass.
+            generator of page objects
         """
-        # Convenience variables
-        page_maintainer = self._get_attr(page.specific, 'page_maintainer')
-        editor = self._get_attr(page.specific, 'editor')
-        content_specialist = self._get_attr(page.specific, 'content_specialist')
-        page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
-        editor_cnetid = self._get_attr(editor, 'cnetid')
-        content_specialist_cnetid = self._get_attr(content_specialist, 'cnetid')
+        for page in pages:
+            user = self._get_attr(page, role)
+            user_cnetid = self._get_attr(user, 'cnetid')
+            if user_cnetid == cnetid:
+                yield page
 
-        # If there isn't a cnetid and there also isn't a role
-        # all pages are being requested and any page should pass
-        if not cnetid and not role:
-            return True
-        # If there's a cnetid but no role all pages with *any* role
-        # matching the cnetid should pass
-        elif cnetid and not role:
-            if not page_maintainer_cnetid == cnetid and not editor_cnetid == cnetid and not content_specialist_cnetid == cnetid:
-                return False
-            return True
-        # If we made it this far there is a cnetid and a role. Only
-        # pages that have a role matching the cnetid should pass
-        else:
-            roles = {
-                'page_maintainer': page_maintainer_cnetid,
-                'editor': editor_cnetid,
-                'content_specialist': content_specialist_cnetid
-            }
+    def _get_pages_with_any_role_for_cnet(self, pages, cnetid):
+        """
+        Filter a generator to return any page that has any role
+        assigned to a user with a given cnetid.
 
-            if str(roles[role]) == cnetid:
-                return True
-        # Return false if none of the other conditions are met
-        return False
+        Args:
+            pages: generator of page objects
+
+            cnetid: string
+
+        Returns:
+            generator of page objects
+        """
+        for page in pages:
+            page_maintainer = self._get_attr(page, 'page_maintainer')
+            editor = self._get_attr(page, 'editor')
+            content_specialist = self._get_attr(page, 'content_specialist')
+            page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
+            editor_cnetid = self._get_attr(editor, 'cnetid')
+            content_specialist_cnetid = self._get_attr(
+                content_specialist, 'cnetid'
+            )
+            if page_maintainer_cnetid == cnetid or editor_cnetid == cnetid or content_specialist_cnetid == cnetid:
+                yield page
 
     def _get_attr(self, obj, attr):
         """
@@ -149,6 +162,55 @@ class Command(BaseCommand):
             return date.strftime('%Y-%m-%d %H:%M:%S')
         return ''
 
+    def get_records(self, cnetid, site_name, role):
+        """
+        Args:
+            cnetid: string
+
+            site_name: string
+
+            role: string
+
+        Returns:
+            list of tuples containing data about pages to be converted
+            into a csv. The first tuple in the list represents the column
+            names (header) that will be used on the spreadsheet.
+        """
+        records = []
+        records.append(self.HEADER)
+        for p in self._get_pages(cnetid, site_name, role):
+            page_maintainer = self._get_attr(p, 'page_maintainer')
+            page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
+            page_maintainer_title = self._get_attr(page_maintainer, 'title')
+            editor = self._get_attr(p, 'editor')
+            editor_cnetid = self._get_attr(editor, 'cnetid')
+            editor_title = self._get_attr(editor, 'title')
+            content_specialist = self._get_attr(p, 'content_specialist')
+            content_specialist_cnetid = self._get_attr(
+                content_specialist, 'cnetid'
+            )
+            content_specialist_title = self._get_attr(
+                content_specialist, 'title'
+            )
+            full_url = self._get_attr(p, 'full_url')
+            latest_revision_created_at = self._get_date_string(
+                self._get_attr(p, 'latest_revision_created_at')
+            )
+            last_reviewed = self._get_date_string(
+                self._get_attr(p, 'last_reviewed')
+            )
+
+            # Append to output.
+            records.append(
+                (
+                    full_url, p.title, latest_revision_created_at,
+                    last_reviewed, page_maintainer_cnetid,
+                    page_maintainer_title, editor_cnetid, editor_title,
+                    content_specialist_cnetid, content_specialist_title
+                )
+            )
+        return records
+
     def handle(self, *args, **options):
         """
         The actual logic of the command. Subclasses must implement this
@@ -161,48 +223,8 @@ class Command(BaseCommand):
         site_name = options['site']
         role = options['role']
 
-        records = []
-        records.append(self.HEADER)
-        for p in self._get_pages(site_name):
-            page_maintainer = self._get_attr(p.specific, 'page_maintainer')
-            page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
-            page_maintainer_title = self._get_attr(page_maintainer, 'title')
-            editor = self._get_attr(p.specific, 'editor')
-            editor_cnetid = self._get_attr(editor, 'cnetid')
-            editor_title = self._get_attr(editor, 'title')
-            content_specialist = self._get_attr(
-                p.specific, 'content_specialist'
-            )
-            content_specialist_cnetid = self._get_attr(
-                content_specialist, 'cnetid'
-            )
-            content_specialist_title = self._get_attr(
-                content_specialist, 'title'
-            )
-            full_url = self._get_attr(p.specific, 'full_url')
-            latest_revision_created_at = self._get_date_string(
-                self._get_attr(p, 'latest_revision_created_at')
-            )
-            last_reviewed = self._get_date_string(
-                self._get_attr(p.specific, 'last_reviewed')
-            )
-
-            # Skip this record if it's not in scope
-            if not self._in_scope(p, cnetid, role):
-                continue
-
-            # Append to output.
-            records.append(
-                (
-                    full_url, p.title, latest_revision_created_at,
-                    last_reviewed, page_maintainer_cnetid,
-                    page_maintainer_title, editor_cnetid, editor_title,
-                    content_specialist_cnetid, content_specialist_title
-                )
-            )
-
         writer = csv.writer(sys.stdout)
-        for record in records:
+        for record in self.get_records(cnetid, site_name, role):
             try:
                 writer.writerow(record)
             except UnicodeEncodeError:

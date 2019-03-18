@@ -101,9 +101,10 @@ def get_json_for_library(lid):
         '&lid=' + str(lid) + '&format=json'
     ).json()
 
-    for item in json['locations']:
-        if item['lid'] == lid:
-            return item
+    if json:
+        for item in json['locations']:
+            if item['lid'] == lid:
+                return item
 
 
 def get_json_for_libraries(lids):

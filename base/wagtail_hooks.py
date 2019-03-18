@@ -1,4 +1,5 @@
 import sys
+import pandas
 from io import StringIO
 
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
+from base.management.commands.report_page_maintainers_and_editors import Command
 
 from library_website.settings.base import (
     NO_PERMISSIONS_REDIRECT_URL, PERMISSIONS_MAPPING
@@ -93,33 +95,26 @@ def admin_view(request):
     """
     from base.forms import PageOwnersForm
     if request.method == 'POST':
+        c = Command()
         form = PageOwnersForm(request.POST)
+
         options = {
-            'site': form.data.get('site', None),
             'cnetid': form.data.get('cnetid', None),
+            'site_name': form.data.get('site', None),
             'role': form.data.get('role', None),
         }
+
         if form.is_valid():
-            # Setup the environment
-            backup = sys.stdout
+            records = c.get_records(**options)
 
-            # Capture stdout
-            sys.stdout = StringIO()
-            management.call_command(
-                'report_page_maintainers_and_editors', **options
-            )
-            output = sys.stdout.getvalue()
+            head = records.pop(0)
+            df = pandas.DataFrame(records, columns=head)
 
-            # Create the HttpResponse object with the appropriate CSV header
-            # and append stdout.
-            response = HttpResponse(output, content_type='text/csv')
+            response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'
                      ] = 'attachment; filename="page-owner-report.csv"'
 
-            # Restore original stdout
-            sys.stdout.close()
-            sys.stdout = backup
-
+            df.to_csv(response, encoding='utf-8', index=False)
             return response
     else:
         form = PageOwnersForm()
