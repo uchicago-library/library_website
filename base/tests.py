@@ -72,29 +72,6 @@ def loggin_user_with_privileges(user):
     return user
 
 
-def test_pages_with_in_scope(pages, func, *args):
-    """
-    Loop over all pages and call the _in_scope method
-    on every page with the arguments that are also
-    passed.
-
-    Args:
-        pages: iterable of page objects
-
-        func: function, _in_scope method
-
-        *args: arguments for the _in_scope method
-
-    Returns:
-        list of page objects
-    """
-    in_scope = []
-    for p in pages:
-        if func(p, *args):
-            in_scope.append(p)
-    return in_scope
-
-
 def run_report_page_maintainers_and_editors(options):
     """
     Run the report_page_maintainers_and_editors command
@@ -495,17 +472,16 @@ class TestPageOwnerReports(TestCase):
         num_pages_public = Page.objects.get(
             sites_rooted_here=self.public
         ).get_descendants().live().count() + 1
-        self.assertEqual(self.c._get_pages('Loop').count(), num_pages_loop)
-        self.assertEqual(self.c._get_pages('Public').count(), num_pages_public)
-
-    def test_in_scope_no_cnet_or_role_returns_any_and_all_pages(self):
-        all_pages_count = self.all_live_pages.count()
-        in_scope = test_pages_with_in_scope(
-            self.all_live_pages, self.c._in_scope, None, None
+        get_loop_pages_count = sum(
+            1 for p in self.c._get_pages(None, 'Loop', None)
         )
-        self.assertEqual(len(in_scope), all_pages_count)
+        get_public_pages_count = sum(
+            1 for p in self.c._get_pages(None, 'Public', None)
+        )
+        self.assertEqual(get_loop_pages_count, num_pages_loop)
+        self.assertEqual(get_public_pages_count, num_pages_public)
 
-    def test_in_scope_with_cnetid_only_returns_pages_with_any_role(self):
+    def test_get_pages_with_cnetid_only_returns_pages_with_any_role(self):
         """
         When only the cnetid is filled out pages with any role should
         be returned it it's assigned to the given cnetid. There are 6
@@ -513,12 +489,12 @@ class TestPageOwnerReports(TestCase):
         he is a page_maintainor on some, editor on others and
         content_specialist others.
         """
-        in_scope = test_pages_with_in_scope(
-            self.all_live_pages, self.c._in_scope, 'locutus', None
+        get_locutus_pages_count = sum(
+            1 for p in self.c._get_pages('locutus', None, None)
         )
-        self.assertEqual(len(in_scope), 6)
+        self.assertEqual(get_locutus_pages_count, 6)
 
-    def test_in_scope_with_cnetid_and_role(self):
+    def test_get_pages_with_cnetid_and_role(self):
         """
         If a cnetid and a role passed, the function should only return
         pages where the given cnetid is assigned to the given role.
@@ -529,19 +505,25 @@ class TestPageOwnerReports(TestCase):
         editor: 1 page
         content_specialist: 2 pages
         """
-        page_maintainer_in_scope = test_pages_with_in_scope(
-            self.all_live_pages, self.c._in_scope, 'locutus', 'page_maintainer'
+        page_maintainer_in_scope = sum(
+            1 for p in self.c._get_pages('locutus', None, 'page_maintainer')
         )
-        editor_in_scope = test_pages_with_in_scope(
-            self.all_live_pages, self.c._in_scope, 'locutus', 'editor'
+        editor_in_scope = sum(
+            1 for p in self.c._get_pages('locutus', None, 'editor')
         )
-        content_specialist_in_scope = test_pages_with_in_scope(
-            self.all_live_pages, self.c._in_scope, 'locutus',
-            'content_specialist'
+        content_specialist_in_scope = sum(
+            1 for p in self.c._get_pages('locutus', None, 'content_specialist')
         )
-        self.assertEqual(len(page_maintainer_in_scope), 3)
-        self.assertEqual(len(editor_in_scope), 1)
-        self.assertEqual(len(content_specialist_in_scope), 2)
+        self.assertEqual(page_maintainer_in_scope, 3)
+        self.assertEqual(editor_in_scope, 1)
+        self.assertEqual(content_specialist_in_scope, 2)
+
+    def test_get_pages_without_cnet_site_or_role_returns_any_and_all_pages(
+        self
+    ):
+        all_pages_count = self.all_live_pages.count()
+        num_pages = sum(1 for p in self.c._get_pages(None, None, None))
+        self.assertEqual(num_pages, all_pages_count)
 
     def test_main_command_when_no_pages_are_returned(self):
         """
