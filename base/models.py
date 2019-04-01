@@ -1004,6 +1004,16 @@ class RawHTMLBodyField(StreamBlock):
     html = RawHTMLBlock()
 
 
+class IntranetDefaultBodyFields(RawHTMLBodyField, DefaultBodyFields):
+    """
+    Default StreamField options for IntranetPages. Inherits the
+    StreamFields from the public site and adds a RawHTML field.
+    """
+
+    class Meta:
+        required = False
+
+
 # Page definitions
 class BasePageWithoutStaffPageForeignKeys(
     Page, AbstractBaseWithoutStaffPageForeignKeys
@@ -1724,7 +1734,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
 
 class IntranetPlainPage(BasePage):
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(IntranetDefaultBodyFields())
 
     subpage_types = [
         'base.IntranetIndexPage', 'base.IntranetPlainPage',
