@@ -431,7 +431,11 @@ figure.coll-thumb {
     width: 100%
   }
   .hero-image {
-    max-width: 100%;
+    img {
+      @include respond-to(small) {
+        max-width: 100%;
+      }
+    }
   }
   .hero-image::after {
     display: block;
@@ -450,8 +454,11 @@ figure.coll-thumb {
   z-index: 5;
   padding-bottom: 25px;
   .image-title {
-    font-size: 2em;
+    font-size: 1.5em;
     display: block;
+    @include respond-to(small) {
+      font-size: 2em;
+    }
   }
   .image-subtitle {
     font-size: 1.2em; 
