@@ -5,9 +5,16 @@
 
 {% block content %}
     {{ self.body }}
-    <div class="libraryh3lp" data-lh3-jid="{{self.ask_widget_name}}@chat.libraryh3lp.com">
-        <iframe src="https://us.libraryh3lp.com/chat/{{self.ask_widget_name}}@chat.libraryh3lp.com?identity=Librarian&skin=13697"></iframe>
-    </div>
+    {% if self.ask_widget_name == 'dissertation-office' %}
+        <script src="https://v2.libanswers.com/load_chat.php?hash=946689341a093741c4e12f427047faa2"></script>
+        <div id="libchat_946689341a093741c4e12f427047faa2"></div>
+    {% elif self.ask_widget_name == 'law' %}
+        <script src="https://v2.libanswers.com/load_chat.php?hash=a4866467f8e4db1dd88568e7c8b01c05"></script>
+        <div id="libchat_a4866467f8e4db1dd88568e7c8b01c05"></div>
+    {% else %}
+        <script src="https://v2.libanswers.com/load_chat.php?hash=7d40a704e1d39b1c6a20f5c35faf1aaf"></script>
+        <div id="libchat_7d40a704e1d39b1c6a20f5c35faf1aaf"></div>
+    {% endif %}
 {% endblock %}
 
 {% block right_sidebar_classes %}ask-rightside{% endblock %}
