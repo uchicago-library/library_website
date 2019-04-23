@@ -3,7 +3,7 @@ bleach==2.0.0
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
-Django==2.0.10
+Django==2.0.12
 django-appconf==1.0.2
 django-bleach==0.3.0
 django-compressor==2.1
