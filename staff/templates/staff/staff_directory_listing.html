@@ -14,6 +14,12 @@
       <td>
           <strong>{% staff_public_page_link staff_page %}</strong>
           <br/>
+          {% if staff_page.cnetid == 'sgwenzel' %}
+              <strong>Sarah is out until June 3.<br/>
+              Please contact <a
+href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask A
+Librarian</a>.</strong>
+          {% endif %}
           <p>
             {{ staff_page.position_title }}<br/>
             <a href=".?view=staff&amp;department={{ staff_page.staff_page_units.first.library_unit.get_full_name|urlencode }}">{{ staff_page.staff_page_units.first.library_unit.title }}</a><br/>
