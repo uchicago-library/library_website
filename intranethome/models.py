@@ -1,27 +1,29 @@
 from __future__ import unicode_literals
 
-from datetime import datetime
-
-from base.models import BasePage
+from django.core.paginator import EmptyPage
 from wagtail.core.models import Page
 
-from django.core.paginator import EmptyPage
+from base.models import BasePage
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
-from news.models import NewsIndexPage, NewsPage
-from staff.models import StaffPage
+from news.models import NewsPage
+
 
 class IntranetHomePage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
 
-    subpage_types = ['base.IntranetPlainPage', 'intranetunits.IntranetUnitsIndexPage', 'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage', 'units.UnitIndexPage', 'intranettocs.TOCPage']
+    subpage_types = [
+        'base.IntranetPlainPage', 'intranetunits.IntranetUnitsIndexPage',
+        'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage',
+        'units.UnitIndexPage', 'intranettocs.TOCPage'
+    ]
 
     def get_context(self, request):
-        committees_and_groups_link = GroupIndexPage.objects.live()[0].url if GroupIndexPage.objects.live().exists() else []
-        departments_link = IntranetUnitsIndexPage.objects.live()[0].url if IntranetUnitsIndexPage.objects.live().exists() else []
-        news_link = NewsIndexPage.objects.live()[0].url if NewsIndexPage.objects.live().exists() else []
-        news_index_page = NewsIndexPage.objects.live()[0] if NewsIndexPage.objects.live().exists() else []
-
+        committees_and_groups_link = GroupIndexPage.objects.live(
+        )[0].url if GroupIndexPage.objects.live().exists() else []
+        departments_link = IntranetUnitsIndexPage.objects.live(
+        )[0].url if IntranetUnitsIndexPage.objects.live().exists() else []
+        news_link = '/'
         page = int(request.GET.get('page', 1))
 
         sticky_pages = NewsPage.get_stories(sticky=True)
@@ -35,7 +37,7 @@ class IntranetHomePage(BasePage):
         except EmptyPage:
             news_stories = NewsPage.objects.none()
 
-        prev_link = None 
+        prev_link = None
         if page > 1:
             prev_link = "/?page=%s" % (str(page - 1))
         next_link = None
@@ -54,5 +56,5 @@ class IntranetHomePage(BasePage):
         context['news_pages'] = news_stories
         context['prev_link'] = prev_link
         context['next_link'] = next_link
-        
+
         return context
