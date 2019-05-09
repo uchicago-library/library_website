@@ -3,7 +3,7 @@ bleach==2.0.0
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
-Django==2.0.12
+Django==2.2.1
 django-appconf==1.0.2
 django-bleach==0.3.0
 django-compressor==2.1
@@ -11,36 +11,36 @@ django-cors-headers==2.2.0
 django-libsass==0.6
 django-localflavor==1.2
 django-macros==0.4.0
-django-modelcluster==4.1
+django-modelcluster==4.4
 django-redis
 -e git+https://github.com/uchicago-library/django-shibboleth-remoteuser.git@django-2.0-patch#egg=django_shibboleth_remoteuser
 django-static-precompiler==1.8.2
-django-taggit==0.22.2
-django-treebeard==4.2.1
-djangorestframework==3.7.7
+django-taggit==0.24.0
+django-treebeard==4.3
+djangorestframework==3.9.3
 elasticsearch>=5.0.0,<6.0.0
 feedparser==5.2.1
-html5lib==0.999999999
+html5lib==1.0.1
 libsass==0.10.1
 lxml==3.5.0
 networkx
 openpyxl
-Pillow==4.3.0
+Pillow==5.4.1
 -e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 pocli==0.1.10
 psycopg2==2.7.1
 Pygments==2.0.2
-pytz==2018.3
+pytz==2019.1
 rcssmin==1.0.6
-requests==2.20.0
+requests==2.21.0
 rjsmin==1.0.12
 simplejson==3.11.1
-six==1.11.0
-sqlparse==0.2.4
-Unidecode==0.4.21
-urllib3==1.24.2
-wagtail==2.0
--e git+https://github.com/Rotund/wagtailmedia.git@wagtail2#egg=wagtailmedia
+six==1.12.0
+sqlparse==0.3.0
+Unidecode==1.0.23
+urllib3==1.24.3
+wagtail==2.5.1
+wagtailmedia==0.3.0
 wheel==0.24.0
 Willow==1.1
 zope.interface==4.1.2

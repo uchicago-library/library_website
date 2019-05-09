@@ -246,7 +246,7 @@ class PhoneNumber(models.Model):
         validators=[phone_regex], max_length=12, blank=True
     )
 
-    content_panels = [
+    panels = [
         MultiFieldPanel(
             [
                 FieldPanel('phone_label'),
@@ -306,7 +306,7 @@ class LinkFields(models.Model):
         else:
             return self.link_external
 
-    content_panels = [
+    panels = [
         FieldPanel('link_external'),
         PageChooserPanel('link_page'),
         DocumentChooserPanel('link_document'),
@@ -356,7 +356,7 @@ class LinkedText(LinkFields):
 
     content_panels = [
         FieldPanel('link_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -367,7 +367,7 @@ class ContactFields(Email, PhoneNumber, FaxNumber, LinkedText):
     Reusable general contact fields.
     """
 
-    content_panels = Email.content_panels + PhoneNumber.content_panels + \
+    content_panels = Email.content_panels + PhoneNumber.panels + \
         FaxNumber.content_panels + LinkedText.content_panels
 
     class Meta:
@@ -463,7 +463,7 @@ class AbstractButton(LinkFields):
 
     panels = [
         FieldPanel('button_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -495,7 +495,7 @@ class AbstractReport(LinkFields):
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True

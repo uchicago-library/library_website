@@ -17,8 +17,26 @@ from public.models import StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
 
+GENERIC_REQUEST_HEADERS = [
+    ('HTTP_HOST', 'foobartest.com'), ('SERVER_PORT', '80'),
+    ('SERVER_NAME', 'dungeon')
+]
+
 
 # Helper functions
+def add_generic_request_meta_fields(request):
+    """
+    Helper method for adding generic headers to requests.
+    Override GENERIC_REQUEST_HEADERS if you need to add
+    or alter the META fields provided.
+
+    Args:
+        request: HttpRequest object.
+    """
+    for key, value in GENERIC_REQUEST_HEADERS:
+        request.META[key] = value
+
+
 def create_user_with_privileges(
     username, password, first_name, last_name, email
 ):
@@ -168,6 +186,7 @@ class TestUsersAndServingLivePages(TestCase):
         hostname = Site.objects.filter(site_name='Loop')[0].hostname
         news_page = NewsPage.objects.live().first()
         request = HttpRequest()
+        add_generic_request_meta_fields(request)
         request.user = User.objects.all().filter(
             is_staff=True, is_active=True
         ).first()
@@ -370,6 +389,7 @@ class TestStreamFields(TestCase):
 
         # retrieve the StandardPage and make sure the status code is 200.
         request = HttpRequest()
+        add_generic_request_meta_fields(request)
         response = standard_page.serve(request)
         self.assertEqual(response.status_code, 200)
 
