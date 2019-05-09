@@ -4,6 +4,7 @@ from wagtail.core.models import Site
 
 from ask_a_librarian.models import AskPage
 from ask_a_librarian.utils import get_chat_statuses, get_unit_chat_link
+from base.tests import add_generic_request_meta_fields
 from base.utils import get_hours_and_location
 from library_website.settings import (
     CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, DISSERTATION_HOMEPAGE, ECKHART_HOMEPAGE,
@@ -91,6 +92,7 @@ class TestAskUtils(TestCase):
         for item in ask_widgets:
             request = HttpRequest()
             request.path = data[item][1]
+            add_generic_request_meta_fields(request)
             current_site = Site.find_for_request(request)
 
             a = get_unit_chat_link(data[item][0]['page_unit'], request)
@@ -101,6 +103,7 @@ class TestAskUtils(TestCase):
 
         # Eckhart
         request_eck = HttpRequest()
+        add_generic_request_meta_fields(request_eck)
         request_eck.path = data['eck'][1]
         current_site = Site.find_for_request(request_eck)
         eckurl = get_unit_chat_link(data['eck'][0]['page_unit'], request_eck)
@@ -109,6 +112,7 @@ class TestAskUtils(TestCase):
 
         # SCRC
         request_scrc = HttpRequest()
+        add_generic_request_meta_fields(request_scrc)
         request_scrc.path = data['scrc'][1]
         current_site = Site.find_for_request(request_scrc)
         scrcurl = get_unit_chat_link(data['scrc'][0]['page_unit'], request_scrc)

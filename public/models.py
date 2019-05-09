@@ -122,7 +122,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         'public.PublicRawHTMLPage'
     ]
 
-    content_panels = Page.content_panels + [
+    panels = Page.content_panels + [
         StreamFieldPanel('body'),
     ] + PublicBasePage.content_panels
 
@@ -209,7 +209,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
+            ObjectList(panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
             ObjectList(
                 Page.settings_panels, heading='Settings', classname="settings"
@@ -562,7 +562,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
                 FieldPanel('has_day_lockers', classname=ROW_CLASS),
             ]
         ),
-        MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
+        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
