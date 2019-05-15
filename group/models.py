@@ -389,7 +389,7 @@ class GroupMeetingMinutesPage(BasePage):
     and they should hold all of the meeting minutes for the
     given year.
     """
-    panels = Page.content_panels + [
+    content_panels = Page.content_panels + [
         InlinePanel('meeting_minutes', label='Meeting Minutes'),
     ] + BasePage.content_panels
 
@@ -495,7 +495,7 @@ class GroupReportsPage(BasePage):
     and they should hold all of the reports for the
     given year.
     """
-    panels = Page.content_panels + [
+    content_panels = Page.content_panels + [
         InlinePanel('group_reports', label='Reports'),
     ] + BasePage.content_panels
 

@@ -61,7 +61,7 @@ class IntranetUnitsReportsIndexPage(BasePage):
 
 
 class IntranetUnitsReportsPage(BasePage):
-    panels = Page.content_panels + [
+    content_panels = Page.content_panels + [
         InlinePanel('intranet_units_reports', label='Reports'),
     ] + BasePage.content_panels
 

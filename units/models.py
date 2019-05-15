@@ -96,7 +96,7 @@ class UnitPageRolePlacement(Orderable, models.Model):
 
 class UnitPagePhoneNumbers(Orderable, PhoneNumber):
     page = ParentalKey('units.UnitPage', related_name='unit_page_phone_number')
-    panels = PhoneNumber.panels
+    panels = PhoneNumber.content_panels
 
 
 class UnitPage(BasePage, Email, FaxNumber, LinkedText):

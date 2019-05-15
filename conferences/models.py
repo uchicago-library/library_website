@@ -122,7 +122,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     body = StreamField(DefaultBodyFields())
 
     # Panels and subpage types
-    panels = Page.content_panels + [
+    content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
                 ImageChooserPanel('banner_image'),
