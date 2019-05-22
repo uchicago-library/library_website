@@ -1,0 +1,56 @@
+
+{% block body %}
+
+{% if is_browse %}
+    <div class="home-module">
+        <h2 class="browse">Browse Collection</h2>
+    </div>
+{% endif %}
+
+{% if members or manifests or collections %}
+    <section class="view-row" role="navigation" aria-label="Primary">
+        {% if list_view %}
+             <a role="button" style="float:right;" class="btn btn-morecoll" href="{{ list_view }}">List View</a>
+        {% endif %}
+
+        <span class="page-links">
+            {% if prev_page %}
+                <a role="button" class="btn btn-morecoll previous" href="{{ prev_page }}">Previous Page</a> 
+            {% endif %}
+            {% if next_page %}
+                <a role="button" class="btn btn-morecoll next" href="{{ next_page }}">Next Page</a>
+            {% endif %}
+        </span>
+    </section>
+
+    <section class="thumbnails" id="content" role="main">
+    {% if collection_thumbs_html %}
+        {% autoescape off %}
+          {{collection_thumbs_html}}
+        {% endautoescape %}
+    {% endif %}
+    </section>
+{% endif %}
+
+    <section class="view-row" role="navigation" aria-label="Secondary">
+        <span class="page-links">
+            {% if prev_page %}
+                <a class="previous" href="{{ prev_page }}">Previous Page</a> 
+            {% endif %}
+
+            {% if pagination_menu %}
+                {% autoescape off %}
+                    {% for link in pagination_menu %}
+                        {{link}}
+                    {% endfor %}
+                {% endautoescape %}
+            {% endif %}
+
+            {% if next_page %}
+                <a class="next" href="{{ next_page }}">Next Page</a>
+            {% endif %}
+        </span>
+    </section>
+
+{% endblock %}
+

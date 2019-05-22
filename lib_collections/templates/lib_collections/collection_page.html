@@ -1,56 +1,60 @@
 {% extends "base/public_base.html" %}
 {% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
 {% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <article>
-    <div class="row">
-      <div class="col-xs-12">
+  {% if not self.is_viewer %}
+    <article>
+      <div class="row">
+        <div class="col-xs-12">
 
-      <figure class="imgcaption coll-thumb">
-        {% if self.thumbnail %}
-          {% image self.thumbnail width-200 class="img-responsive" %}
-          {% if self.thumbnail_caption %}
-            <figcaption>{{ self.thumbnail_caption }}</figcaption>
+        <figure class="imgcaption coll-thumb">
+          {% if self.thumbnail %}
+            {% image self.thumbnail width-200 class="img-responsive" %}
+            {% if self.thumbnail_caption %}
+              <figcaption>{{ self.thumbnail_caption }}</figcaption>
+            {% endif %}
+          {% else %}
+            {% if default_image %}
+              {% image default_image width-200 %}
+            {% endif %}
           {% endif %}
-        {% else %}
-          {% if default_image %}
-            {% image default_image width-200 %}
-          {% endif %}
-        {% endif %}
-      </figure>
+        </figure>
 
-        {% for block in self.full_description %}
-          {{ block }}
-        {% endfor %}
+          {% for block in self.full_description %}
+            {{ block }}
+          {% endfor %}
 
-        {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
-          <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
-        {% endif %}
-
-        {% if self.access_instructions or supplementary_access_links %}
-        <h3>Access Information</h3>         
-
-          {% if supplementary_access_links %}
-            <p>
-              {% for l in supplementary_access_links %}
-                <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
-              {% endfor %}
-            </p>
+          {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
+            <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
           {% endif %}
 
-          {% if self.access_instructions %}
-            <p>{{ self.access_instructions }}</p>
+          {% if self.access_instructions or supplementary_access_links %}
+          <h3>Access Information</h3>
+
+            {% if supplementary_access_links %}
+              <p>
+                {% for l in supplementary_access_links %}
+                  <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
+                {% endfor %}
+              </p>
+            {% endif %}
+
+            {% if self.access_instructions %}
+              <p>{{ self.access_instructions }}</p>
+            {% endif %}
           {% endif %}
+        </div>
+      </div><!--/.row-->
+    </article>
+  {% endif %}
 
-        {% endif %}
-
-
-      </div>
-    </div><!--/.row-->
-  </article>
+  {% if template %}
+    {% include template %}
+  {% endif %}
 {% endblock %}
 
 {% block right_sidebar %}

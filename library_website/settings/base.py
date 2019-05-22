@@ -49,12 +49,13 @@ INSTALLED_APPS = [
     'wagtail.embeds',
     'wagtail.contrib.redirects',
     'wagtail.contrib.forms',
-    "wagtail.contrib.table_block",
+    'wagtail.contrib.table_block',
+    'wagtail.contrib.routable_page',
     'wagtail.contrib.search_promotions',
     'wagtail.contrib.sitemaps',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
-    
+
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -96,7 +97,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 
-    #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -196,7 +197,7 @@ COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
-# django-static-precompilers 
+# django-static-precompilers
 STATIC_PRECOMPILER_COMPILERS = (
     ('static_precompiler.compilers.libsass.SCSS', {
         'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
@@ -210,7 +211,7 @@ WAGTAIL_SITE_NAME = "library_website"
 WAGTAILSEARCH_BACKENDS = {
     'default': {
         'BACKEND': 'wagtail.search.backends.elasticsearch5',
-    	'URLS': ['http://localhost:9200'],
+        'URLS': ['http://localhost:9200'],
         'INDEX': 'wagtail',
         'TIMEOUT': 5,
         'INDEX_SETTINGS': {
@@ -246,16 +247,16 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_ALLOW_METHODS = (
     'GET',
-    #'POST',
-    #'PUT',
-    #'PATCH',
-    #'DELETE',
-    #'OPTIONS'
+    # 'POST',
+    # 'PUT',
+    # 'PATCH',
+    # 'DELETE',
+    # 'OPTIONS'
 )
 
 # Lock down specific nodes to wagtail groups. Sections are locked down
 # by page ID. In order to see any page, a user must belong to all groups
-# set in all page ancestors. This works as a blacklist. 
+# set in all page ancestors. This works as a blacklist.
 # PERMISSIONS_MAPPING = {6: ['Library'], 319: ['Foo', 'Bar']}
 PERMISSIONS_MAPPING = {6: ['Library']}
 
@@ -299,7 +300,7 @@ SCRC_ASK_PAGE = 4127
 # UChicago Library Pages
 REGENSTEIN_HOMEPAGE = 1797
 SSA_HOMEPAGE = 1758
-MANSUETO_HOMEPAGE = 1753 
+MANSUETO_HOMEPAGE = 1753
 CRERAR_HOMEPAGE = 1752
 ECKHART_HOMEPAGE = 1755
 DANGELO_HOMEPAGE = 1754
@@ -349,7 +350,7 @@ SCRC_BUILDING_ID = 2971
 CRERAR_BUILDING_ID = 2713
 
 # Web Exhibit footers
-CRERAR_EXHIBIT_FOOTER_IMG = 1130 
+CRERAR_EXHIBIT_FOOTER_IMG = 1130
 SCRC_EXHIBIT_FOOTER_IMG = 1129
 
 # Redis cache configuration
