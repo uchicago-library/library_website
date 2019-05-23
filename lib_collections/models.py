@@ -1,4 +1,5 @@
 from base.models import DefaultBodyFields, PublicBasePage
+from diablo_utils import lazy_dotchain
 from django.core.validators import RegexValidator
 from django.db import models
 from django.template.response import TemplateResponse
@@ -329,72 +330,23 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except:
             pass
 
-        unit_title = ''
-        unit_url = ''
-        unit_email_label = ''
-        unit_email = ''
-        unit_phone_label = ''
-        unit_phone_number = ''
-        unit_fax_number = ''
-        unit_link_text = ''
-        unit_link_external = ''
-        unit_link_page = ''
-        unit_link_document = ''
-        if self.unit_contact:
-            try:
-                unit_title = self.unit.title
-            except:
-                pass
-
-            try:
-                unit_url = self.unit.public_web_page.url
-            except:
-                pass
-
-            try:
-                unit_email_label = self.unit.email_label
-            except:
-                pass
-            try:
-                unit_email = self.unit.email
-            except:
-                pass
-
-            try:
-                unit_phone_label = self.unit.unit_page_phone_number.first(
-                ).phone_label
-            except:
-                pass
-            try:
-                unit_phone_number = self.unit.unit_page_phone_number.first(
-                ).phone_number
-            except:
-                pass
-
-            try:
-                unit_fax_number = self.unit.fax_number
-            except:
-                pass
-
-            try:
-                unit_link_text = self.unit.link_text
-            except:
-                pass
-
-            try:
-                unit_link_external = self.unit.link_external
-            except:
-                pass
-
-            try:
-                unit_link_page = self.unit.link_page.url
-            except:
-                pass
-
-            try:
-                unit_link_document = self.unit.link_document.file.url
-            except:
-                pass
+        unit_title = lazy_dotchain(lambda: self.unit.title, '')
+        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email = lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
+        )
+        unit_phone_number = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
+        )
+        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document = lazy_dotchain(
+            lambda: self.unit.link_document.file.url, ''
+        )
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
@@ -407,6 +359,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['staff_email'] = staff_email
         context['staff_phone_number'] = staff_phone_number
         context['staff_faculty_exchange'] = staff_faculty_exchange
+        context['unit_contact'] = self.unit_contact
         context['unit_title'] = unit_title
         context['unit_url'] = unit_url
         context['unit_email_label'] = unit_email_label
@@ -1204,6 +1157,24 @@ class ExhibitPage(PublicBasePage):
         if self.font_family:
             font = self.font_family
 
+        unit_title = lazy_dotchain(lambda: self.unit.title, '')
+        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email = lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
+        )
+        unit_phone_number = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
+        )
+        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document = lazy_dotchain(
+            lambda: self.unit.link_document.file.url, ''
+        )
+
         context = super(ExhibitPage, self).get_context(request)
         footer_img = self.get_web_exhibit_footer_img(
             self.location_and_hours['page_location'].id
@@ -1220,6 +1191,19 @@ class ExhibitPage(PublicBasePage):
         context['exhibit_open_date'] = self.exhibit_open_date
         context['exhibit_close_date'] = self.exhibit_close_date
         context['exhibit_close_date'] = self.exhibit_location
+        context['unit_contact'] = self.unit_contact
+        context['unit_title'] = unit_title
+        context['unit_url'] = unit_url
+        context['unit_email_label'] = unit_email_label
+        context['unit_email'] = unit_email
+        context['unit_phone_label'] = unit_phone_label
+        context['unit_phone_number'] = unit_phone_number
+        context['unit_fax_number'] = unit_fax_number
+        context['unit_link_text'] = unit_link_text
+        context['unit_link_external'] = unit_link_external
+        context['unit_link_page'] = unit_link_page
+        context['unit_link_document'] = unit_link_document
+
 
         return context
 
