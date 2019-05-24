@@ -495,34 +495,36 @@
 {% endblock %}
 
 {% block right_sidebar %}
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h2>Exhibit Details</h2>
-    <p>
-      {% if self.exhibit_open_date or self.exhibit_close_date %}
-        <strong>
-          {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
-          {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
-          {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
-        </strong><br>
-      {% endif %}
-  
-      {% if self.exhibit_daily_hours %}
-        {{ self.exhibit_daily_hours }}<br/>
-      {% endif %}
-  
-      {% if self.exhibit_location %}
-        <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
-      {% endif %}
-  
-      {% if self.exhibit_cost %}
-        {{ self.exhibit_cost }}<br/>
-      {% endif %}
-  
-      {% if self.space_type %}
-        Space Type: {{ self.space_type }}<br/>
-      {% endif %}
-    </p>
-  </div>
+  {% if self.exhibit_open_date or self.exhibit_close_date or self.exhibit_daily_hours or self.exhibit_location or self.exhibit_cost or self.space_type %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Exhibit Details</h2>
+      <p>
+        {% if self.exhibit_open_date or self.exhibit_close_date %}
+          <strong>
+            {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+            {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
+            {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
+          </strong><br>
+        {% endif %}
+
+        {% if self.exhibit_daily_hours %}
+          {{ self.exhibit_daily_hours }}<br/>
+        {% endif %}
+
+        {% if self.exhibit_location %}
+          <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
+        {% endif %}
+
+        {% if self.exhibit_cost %}
+          {{ self.exhibit_cost }}<br/>
+        {% endif %}
+
+        {% if self.space_type %}
+          Space Type: {{ self.space_type }}<br/>
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
 
   {% if self.staff_contact or unit_contact%}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
