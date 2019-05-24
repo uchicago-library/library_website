@@ -65,7 +65,7 @@
   </div>
 {% endif %}
 
-  {% if staff_title or unit_title %}
+  {% if staff_title or unit_contact %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       {% if staff_title %}
         <h2>Subject Specialist</h2>
@@ -94,10 +94,10 @@
         </p>
       {% endif %}
 
-      {% if unit_title %}
+      {% if unit_contact and unit_url and unit_title %}
         <p>
-          {% if unit_url %}
-          <h2>Contact</h2>
+          {% if unit_url and unit_title%}
+            <h2>Contact</h2>
             <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
           {% else %}
             {{ unit_title }}<br/>
@@ -106,7 +106,7 @@
             <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
           {% endif %}
           {% if unit_phone_number %}
-            {% if unit_phone_label %}{{ unit_phone_label }}{% endif %}: {{ unit_phone_number }}<br/>
+            {% if unit_phone_label %}{{ unit_phone_label }}: {% endif %}{{ unit_phone_number }}<br/>
           {% endif %}
           {% if unit_fax_number %}
             Fax: {{ unit_fax_number }}<br/>

@@ -524,16 +524,47 @@
     </p>
   </div>
 
-  {% if self.staff_contact %}
+  {% if self.staff_contact or unit_contact%}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Contact</h2>
       <p>
+        {% if self.staff_contact %}
         <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
         <em>{{ self.staff_contact.position_title }}</em><br>
         <a href="mailto:{{ self.staff_contact.staff_page_email.first.email|urlencode }}">{{ self.staff_contact.staff_page_email.first.email }}</a><br>
         {{ self.staff_contact.staff_page_phone_faculty_exchange.first.phone_number }}<br>
         {{ self.staff_contact.staff_page_phone_faculty_exchange.first.faculty_exchange }}<br>
+        {% endif %}
 
+        {% if self.staff_contact and unit_contact%}
+          <br/>
+        {% endif %}
+
+        {% if unit_contact %}
+          {% if unit_url and unit_title%}
+            <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
+          {% else %}
+            {{ unit_title }}<br/>
+          {% endif %}
+          {% if unit_email %}
+            <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_phone_number %}
+            {% if unit_phone_label %}{{ unit_phone_label }}: {% endif %}{{ unit_phone_number }}<br/>
+          {% endif %}
+          {% if unit_fax_number %}
+            Fax: {{ unit_fax_number }}<br/>
+          {% endif %}
+          {% if unit_link_external %}
+            <a href="{{ unit_link_external }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_external }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_link_page %}
+            <a href="{{ unit_link_page }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
+          {% endif %}
+          {% if unit_link_document %}
+            <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
+          {% endif %}
+        {% endif %}
       </p>
     </div>
   {% endif %}
