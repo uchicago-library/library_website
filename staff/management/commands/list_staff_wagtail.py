@@ -6,7 +6,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from openpyxl.writer.excel import save_virtual_workbook
-from staff.models import POSITION_STATUS
 from staff.utils import WagtailStaffReport
 
 import smtplib
@@ -53,10 +52,9 @@ class Command (BaseCommand):
             action='store'
         )
         parser.add_argument(
-            '--position-status',
-            type=str,
-            action='store',
-            choices=[status[1] for status in POSITION_STATUS]
+            '--position-eliminated',
+            default=False,
+            action='store_true'
         )
         parser.add_argument(
             '--supervises-students',
@@ -119,7 +117,7 @@ class Command (BaseCommand):
                             bool(options['group']),
                             bool(options['live']),
                             bool(options['latest_revision_created_at']),
-                            bool(options['position_status']),
+                            bool(options['position_eliminated']),
                             bool(options['supervises_students']),
                             bool(options['supervisor_cnetid']),
                             bool(options['supervisor_override']),

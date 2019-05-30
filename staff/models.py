@@ -28,12 +28,6 @@ EMPLOYEE_TYPES = (
     (5, 'Non-exempt')
 )
 
-POSITION_STATUS = (
-    (1, 'Active'),
-    (2, 'Vacant'),
-    (3, 'Eliminated')
-)
-
 class StaffPageSubjectPlacement(Orderable, models.Model):
     """
     Through table for linking Subject snippets to StaffPages.
@@ -147,11 +141,9 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         default=1,
         help_text='Clerical, exempt, non-exempt, IT or Librarian.'
     )
-        
-    position_status = IntegerField(
-        choices=POSITION_STATUS,
-        default=1,
-        help_text='Help remember and reassign editing responsibilities when staff change positions.'
+    position_eliminated = BooleanField(
+        default=False,
+        help_text='Position will not be refilled.'
     )
     supervisor_override = models.ForeignKey(
         'staff.StaffPage',
@@ -221,20 +213,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         except(IndexError):
             return ''
 
-    def get_position_status(self):
-        """
-        Get the serialized position status for display
-        in the api. Converts the integer representation
-        from the database to a human readable string.
-
-        Returns:
-            String
-        """
-        try:
-            return POSITION_STATUS[0][self.position_status]
-        except(IndexError):
-            return ''
-
     def get_serialized_units(self):
         """
         Return a serialized list of library units assigned to
@@ -249,8 +227,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         APIField('cnetid'),
         APIField('employee_type', serializer=serializers.CharField(source='get_employee_type')),
         APIField('position_title'),
-        APIField('position_status'),
-        APIField('position_status', serializer=serializers.CharField(source='get_position_status')),
+        APIField('position_eliminated'),
         APIField('supervises_students'),
         APIField('library_units', serializer=serializers.ListField(source='get_serialized_units')),
     ]
@@ -386,7 +363,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 InlinePanel('staff_page_phone_faculty_exchange', label='Phone Number and Faculty Exchange'),
                 InlinePanel('staff_page_units', label='Library Units'),
                 FieldPanel('employee_type'),
-                FieldPanel('position_status'),
+                FieldPanel('position_eliminated'),
                 FieldPanel('supervises_students'),
                 PageChooserPanel('supervisor_override'),
             ],
@@ -405,8 +382,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         index.SearchField('cv'),
         index.SearchField('libguide_url'),
         index.SearchField('orcid'),
-        index.SearchField('position_title'),
-        index.SearchField('get_subjects')
+        index.SearchField('position_title')
     ]
 
     edit_handler = TabbedInterface([

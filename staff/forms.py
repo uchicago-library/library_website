@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator
-from .models import POSITION_STATUS, StaffPage
+from .models import StaffPage
 from group.models import GroupPage
 from units.models import UnitPage
 
@@ -12,7 +12,7 @@ class StaffReportingForm(forms.Form):
     live = forms.BooleanField(label=l, required=False)
 
     cnetid_choices = [(s.cnetid, s.title) for s in StaffPage.objects.live().order_by('last_name', 'first_name')]
-    l = 'Invidual staffperson'
+    l = 'Individual staffperson'
     cnetid = forms.ChoiceField(choices=[('', '')] + cnetid_choices, label=l, required=False)
 
     department_choices = [(u.get_full_name(), u.get_full_name()) for u in UnitPage.objects.live()]
@@ -33,8 +33,8 @@ class StaffReportingForm(forms.Form):
     l = 'Supervises students'
     supervises_students = forms.BooleanField(label=l, required=False)
 
-    l = 'Position status'
-    position_status = forms.ChoiceField(choices=[('', '')] + list(POSITION_STATUS), label=l, required=False)
+    l = 'Position eliminated'
+    position_eliminated = forms.BooleanField(label=l, required=False)
 
     l = 'Supervisor'
     supervisor_cnetid = forms.ChoiceField(choices=[('', '')] + cnetid_choices, label=l, required=False)

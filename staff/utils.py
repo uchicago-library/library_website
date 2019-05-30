@@ -9,8 +9,7 @@ from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
 from django.db.models import F
 from openpyxl import Workbook
-from staff.models import (EMPLOYEE_TYPES, POSITION_STATUS, StaffPage,
-                          StaffPageLibraryUnits)
+from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
 from xml.etree import ElementTree
 
@@ -336,7 +335,7 @@ class WagtailStaffReport:
                 'group',
                 'live',
                 'latest_revision_created_at',
-                'position_status',
+                'position_eliminated',
                 'supervises_students',
                 'supervisor_cnetid',
                 'supervisor_override',
@@ -647,13 +646,9 @@ class WagtailStaffReport:
             pass
 
         try:
-            if self.options['position_status']:
-                position_status_int = [
-                    i for i, v in POSITION_STATUS
-                    if v == self.options['position_status']
-                ][0]
+            if self.options['position_eliminated']:
                 new_staffpages = set(
-                    StaffPage.objects.filter(position_status=position_status_int)
+                    StaffPage.objects.filter(position_eliminated=True)
                 )
                 if staffpages:
                     staffpages = staffpages.intersection(new_staffpages)
@@ -711,7 +706,7 @@ class WagtailStaffReport:
             'GROUPS',
             'EMPLOYEE TYPE',
             'SUPERVISES STUDENTS',
-            'POSITION STATUS',
+            'POSITION ELIMINATED',
             'SUPERVISOR NAME AND CNETID'
         ])
         staffpages = self._get_staff_wagtail()
@@ -759,9 +754,7 @@ class WagtailStaffReport:
                 v for i, v in EMPLOYEE_TYPES if i == s.employee_type
             ][0]
 
-            position_status_string = [
-                v for i, v in POSITION_STATUS if i == s.position_status
-            ][0]
+            position_eliminated_string = str(s.position_eliminated)
 
             output.append([
                 str(s.id),
@@ -775,7 +768,7 @@ class WagtailStaffReport:
                 '|'.join(groups),
                 employee_type_string,
                 str(s.supervises_students),
-                position_status_string,
+                position_eliminated_string,
                 '|'.join(supervisor_names_and_cnetids)
             ])
         return output

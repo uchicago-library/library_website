@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import render
 from openpyxl.writer.excel import save_virtual_workbook
+from staff.models import StaffPage
 from staff.utils import WagtailStaffReport
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
@@ -20,7 +21,7 @@ def admin_view(request):
             'group': form.data.get('group', None),
             'live': form.data.get('live', None),
             'latest_revision_created_at': form.data.get('latest_revision_created_at', None),
-            'position_status': form.data.get('position_status', None),
+            'position_eliminated': form.data.get('position_eliminated', None),
             'supervises_students': form.data.get('supervises_students', False),
             'supervisor_cnetid': form.data.get('supervisor_cnetid', None),
             'supervisor_override': form.data.get('supervisor_override', None),

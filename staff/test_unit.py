@@ -360,7 +360,7 @@ class ListStaffWagtail(TestCase):
             cnetid='chas',
             employee_type=3,
             slug='charles-blair',
-            position_status=1,
+            position_eliminated=False,
             position_title='Director, Digital Library Development Center',
             supervises_students=True,
             title='Charles Blair')
@@ -370,7 +370,7 @@ class ListStaffWagtail(TestCase):
             cnetid='bbusenius',
             employee_type=3,
             slug='brad-busenius',
-            position_status=1,
+            position_eliminated=False,
             position_title='Web Administrator',
             supervisor_override=chas,
             supervises_students=False,
@@ -381,7 +381,7 @@ class ListStaffWagtail(TestCase):
             cnetid='byrne',
             employee_type=3,
             slug='maura-byrne',
-            position_status=1,
+            position_eliminated=False,
             position_title='Applications Systems Analyst/Programmer',
             supervises_students=False,
             title='Maura Byrne')
@@ -390,14 +390,14 @@ class ListStaffWagtail(TestCase):
         eliminated_position = StaffPage(
             cnetid='eliminated-position',
             slug='eliminated-position',
-            position_status=3,
+            position_eliminated=False,
             title='Eliminated Position')
         welcome.add_child(instance=eliminated_position)
 
         elong = StaffPage(
             cnetid='elong',
             slug='elisabeth-long',
-            position_status=3,
+            position_eliminated=False,
             title='Elisabeth Long')
         welcome.add_child(instance=elong)
 
@@ -421,7 +421,7 @@ class ListStaffWagtail(TestCase):
             cnetid='jej',
             employee_type=3,
             slug='john-jung',
-            position_status=1,
+            position_eliminated=False,
             position_title='Programmer/Analyst',
             supervisor_override=chas,
             supervises_students=False,
@@ -458,7 +458,7 @@ class ListStaffWagtail(TestCase):
             cnetid='kzadrozny',
             employee_type=3,
             slug='kathy-zadrozny',
-            position_status=1,
+            position_eliminated=False,
             position_title='Web Developer and Graphic Design Specialist',
             supervisor_override=chas,
             supervises_students=True,
@@ -469,7 +469,7 @@ class ListStaffWagtail(TestCase):
             cnetid='tyler',
             employee_type=3,
             slug='tyler-danstrom',
-            position_status=1,
+            position_eliminated=False,
             position_title='Programmer/Analyst',
             supervisor_override=chas,
             supervises_students=False,
@@ -521,18 +521,14 @@ class ListStaffWagtail(TestCase):
         # supervises students
         self.assertEqual(records[0][10], 'False')
 
-        # position status
-        self.assertEqual(records[0][11], 'Active')
+        # position eliminated
+        self.assertEqual(records[0][11], 'False')
 
         # supervisor
         self.assertEqual(records[0][12].rstrip(), 'Charles Blair (chas)')
 
     @print_test_time_elapsed
     def test_report_queries(self):
-        # position status
-        records = self.run_command(position_status='Active')
-        self.assertEqual(len(records), 6)
-
         # position title
         records = self.run_command(position_title='Programmer/Analyst')
         self.assertEqual(len(records), 2)
