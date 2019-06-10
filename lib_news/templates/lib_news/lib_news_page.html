@@ -1,0 +1,14 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block js %}{% endblock %}
+
+{% block content %}
+  {{ self.body }}
+  <div id="more-stories"></div>
+{% endblock %}

@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'intranettocs',
     'intranetunits',
     'lib_collections',
+    'lib_news',
     'library_website',
     'macros',
     'news',
