@@ -1,0 +1,1 @@
+{"status":"error","error":"EntryModuleNotFoundError","message":"Entry module not found: Error: Can't resolve './library_website/base/static/js/index' in '/Library/WebServer/Documents/library_website'"}
