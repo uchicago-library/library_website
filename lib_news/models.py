@@ -9,6 +9,7 @@ from wagtail.admin.edit_handlers import (
 from wagtail.api import APIField
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable, Page
+from wagtail.images.api.fields import ImageRenditionField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
@@ -88,6 +89,14 @@ class LibNewsIndexPage(PublicBasePage):
 class LibNewsPage(PublicBasePage):
 
     body = StreamField(DefaultBodyFields())
+    thumbnail = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    alt_text = models.CharField(max_length=100, blank=True)
 
     def get_categories(self):
         """
@@ -104,6 +113,13 @@ class LibNewsPage(PublicBasePage):
     subpage_types = []
 
     content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('thumbnail'),
+                FieldPanel('alt_text'),
+            ],
+            heading='Thumbnail',
+        ),
         StreamFieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
     ] + PublicBasePage.content_panels
@@ -116,5 +132,12 @@ class LibNewsPage(PublicBasePage):
         APIField(
             'categories',
             serializer=serializers.ListField(source='get_categories')
+        ),
+        APIField(
+            'thumbnail', serializer=ImageRenditionField('fill-500x425-c50')
+        ),
+        APIField(
+            'thumbnail_alt_text',
+            serializer=serializers.CharField(source='alt_text')
         ),
     ]
