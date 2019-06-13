@@ -1,5 +1,7 @@
 from base.models import DefaultBodyFields, PublicBasePage
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.template.response import TemplateResponse
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
@@ -7,6 +9,7 @@ from wagtail.admin.edit_handlers import (
     TabbedInterface
 )
 from wagtail.api import APIField
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.images.api.fields import ImageRenditionField
@@ -56,7 +59,11 @@ class LibNewsPageCategories(Orderable, models.Model):
         return self.page.title + " -> " + self.category.text
 
 
-class LibNewsIndexPage(PublicBasePage):
+class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
+
+    def __init__(self, *args, **kwargs):
+        super(PublicBasePage, self).__init__(*args, **kwargs)
+        self.is_browse = False
 
     subpage_types = ['lib_news.LibNewsPage']
 
@@ -84,6 +91,54 @@ class LibNewsIndexPage(PublicBasePage):
     )
 
     search_fields = PublicBasePage.search_fields
+
+    @route(r'^category/(?P<slug>[-\w]+)/$')
+    def viewer(self, request, *args, **kwargs):
+        """
+        Route to templete for browsing stories by
+        category.
+        """
+        self.is_browse = True
+        try:
+            slug = request.path.split('/')[-2]
+            self.category = self.get_cat_from_slug(slug)
+        except (KeyError):
+            self.category = ''
+        return TemplateResponse(
+            request, self.get_template(request), self.get_context(request)
+        )
+
+    def get_alpha_cats(self):
+        """
+        Get a list of categories sorted alphabetically.
+
+        Returns:
+            list of strings
+        """
+        return list(
+            s[0] for s in
+            PublicNewsCategories.objects.order_by('text').values_list('text')
+        )
+
+    def get_cat_from_slug(self, slug):
+        """
+        Creates a lookup table of category names by slug
+        and returns a match for the given slug.
+        """
+        categories = self.get_alpha_cats()
+        lookup_table = {}
+        for cat in categories:
+            lookup_table[slugify(cat)] = cat
+        return lookup_table[slug]
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(LibNewsIndexPage, self).get_context(request)
+        context['categories'] = self.get_alpha_cats()
+        context['category_url_base'] = self.get_url_parts()[-1] + 'category/'
+        return context
 
 
 class LibNewsPage(PublicBasePage):
@@ -141,3 +196,14 @@ class LibNewsPage(PublicBasePage):
             serializer=serializers.CharField(source='alt_text')
         ),
     ]
+
+    def get_context(self, request):
+        """
+        Override the page object's get context method.
+        """
+        context = super(LibNewsPage, self).get_context(request)
+        parent = self.get_parent_of_type('lib news index page')
+        parent_context = parent.get_context(request)
+        context['categories'] = parent.get_alpha_cats()
+        context['category_url_base'] = parent_context['category_url_base']
+        return context

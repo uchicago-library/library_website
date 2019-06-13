@@ -8,7 +8,12 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  {# Empty div used by React #}
-  <div id="news-feed" data-default-visible="2" data-increment-visible="2"></div>
-  {% render_bundle 'NewsFeed' %}
+  {% include 'lib_news/lib_news_top_nav.html' %}
+  {% if not self.is_browse %}
+    {# Empty div used by React #}
+    <div id="news-feed" data-default-visible="2" data-increment-visible="2"></div>
+    {% render_bundle 'NewsFeed' %}
+  {% else %}
+    <h2>{{ self.category }}</h2>
+  {% endif %}
 {% endblock %}
