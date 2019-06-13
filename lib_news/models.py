@@ -64,6 +64,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_browse = False
+        self.is_unrouted = True
 
     subpage_types = ['lib_news.LibNewsPage']
 
@@ -99,11 +100,28 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         category.
         """
         self.is_browse = True
+        self.is_unrouted = False
         try:
             slug = request.path.split('/')[-2]
             self.category = self.get_cat_from_slug(slug)
         except (KeyError):
             self.category = ''
+        return TemplateResponse(
+            request, self.get_template(request), self.get_context(request)
+        )
+
+    @route(r'^search/$')
+    def search(self, request, *args, **kwargs):
+        """
+        Search results view.
+        """
+        self.is_unrouted = False
+        self.search_query = request.GET.get('query', None)
+        if self.search_query:
+            self.search_results = LibNewsPage.objects.live().search(self.search_query)
+        else:
+            self.search_results = LibNewsPage.objects.none()
+
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
@@ -131,13 +149,18 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             lookup_table[slugify(cat)] = cat
         return lookup_table[slug]
 
+    @property
+    def base_url(self):
+        return self.get_url_parts()[-1]
+
     def get_context(self, request):
         """
         Override the page object's get context method.
         """
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
-        context['category_url_base'] = self.get_url_parts()[-1] + 'category/'
+        context['category_url_base'] = self.base_url + 'category/'
+        context['search_url_base'] = self.base_url + 'search/'
         return context
 
 
@@ -206,4 +229,5 @@ class LibNewsPage(PublicBasePage):
         parent_context = parent.get_context(request)
         context['categories'] = parent.get_alpha_cats()
         context['category_url_base'] = parent_context['category_url_base']
+        context['search_url_base'] = parent_context['search_url_base']
         return context

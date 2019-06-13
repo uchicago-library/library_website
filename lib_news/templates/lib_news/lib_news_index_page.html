@@ -9,11 +9,33 @@
 
 {% block content %}
   {% include 'lib_news/lib_news_top_nav.html' %}
-  {% if not self.is_browse %}
+  {% include 'lib_news/lib_news_search_form.html' %}
+
+  {# News Feed #}
+  {% if self.is_unrouted %}
     {# Empty div used by React #}
     <div id="news-feed" data-default-visible="2" data-increment-visible="2"></div>
     {% render_bundle 'NewsFeed' %}
+  {# Category Browse #}
   {% else %}
     <h2>{{ self.category }}</h2>
+
+    {# Search Results #}
+    {% if self.search_results %}
+      <ul>
+        {% for result in self.search_results %}
+          <li>
+            <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+              {% if result.search_description %}
+                {{ result.search_description|safe }}
+              {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% elif self.search_query %}
+        <p>No results found</p>
+      {% else %}
+        <p>Please type something into the search box</p>
+    {% endif %}
   {% endif %}
 {% endblock %}
