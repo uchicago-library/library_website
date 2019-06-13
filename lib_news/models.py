@@ -78,6 +78,11 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             ],
             heading='Banner'
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel('events_feed_url'),
+            ], heading='Workshops and Events'
+        ),
     ]
 
     edit_handler = TabbedInterface(
@@ -92,6 +97,17 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     )
 
     search_fields = PublicBasePage.search_fields
+
+    @property
+    def has_right_sidebar(self):
+        """
+        Determine if a right sidebar should
+        be displayed in the template.
+
+        Returns:
+            boolean
+        """
+        return True
 
     @route(r'^category/(?P<slug>[-\w]+)/$')
     def viewer(self, request, *args, **kwargs):
