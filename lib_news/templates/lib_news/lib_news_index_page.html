@@ -12,9 +12,9 @@
   {% include 'lib_news/lib_news_search_form.html' %}
 
   {# News Feed #}
-  {% if self.is_unrouted %}
+  {% if self.is_unrouted or self.category%}
     {# Empty div used by React #}
-    <div id="news-feed" data-default-visible="2" data-increment-visible="2"></div>
+    <div id="news-feed" data-default-visible="2" data-increment-visible="2" data-api-url="{{ news_feed_api }}" data-category={{ self.category }}></div>
     {% render_bundle 'NewsFeed' %}
   {# Category Browse #}
   {% else %}

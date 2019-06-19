@@ -17,6 +17,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+import urllib.parse
 
 
 @register_snippet
@@ -110,7 +111,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         return True
 
     @route(r'^category/(?P<slug>[-\w]+)/$')
-    def viewer(self, request, *args, **kwargs):
+    def category(self, request, *args, **kwargs):
         """
         Route to templete for browsing stories by
         category.
@@ -177,6 +178,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
         context['search_url_base'] = self.base_url + 'search/'
+        context['news_feed_api'] = '/api/v2/pages/?format=json&limit=500&type=lib_news.LibNewsPage&fields=*'
         return context
 
 

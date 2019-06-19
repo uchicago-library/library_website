@@ -12,6 +12,10 @@ const INCREMENT_VISIBLE = Math.trunc(
   DOM_ELEMENT.getAttribute('data-increment-visible'),
 );
 
+const API_URL = DOM_ELEMENT.getAttribute('data-api-url');
+
+const CATEGORY = DOM_ELEMENT.getAttribute('data-category');
+
 const Article = ({ item, category }) => (
   <article>
     <span className="img-object">
@@ -73,13 +77,13 @@ class NewsFeed extends React.Component {
   }
 
   componentDidMount() {
-    fetch(
-      '/api/v2/pages/?format=json&limit=500&type=lib_news.LibNewsPage&fields=*',
-    )
+    fetch(API_URL)
       .then(res => res.json())
       .then((res) => {
         this.setState({
-          items: res.items,
+          items: CATEGORY
+            ? res.items.filter(i => i.categories.includes(CATEGORY))
+            : res.items,
         });
       })
       .catch((error) => {
