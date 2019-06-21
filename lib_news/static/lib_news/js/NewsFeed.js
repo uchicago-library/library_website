@@ -83,7 +83,7 @@ class NewsFeed extends React.Component {
         this.setState({
           items: CATEGORY
             ? res.items.filter(i => i.categories.includes(CATEGORY))
-            : res.items,
+            : res.items.filter(i => i.id !== i.first_feature_id),
         });
       })
       .catch((error) => {

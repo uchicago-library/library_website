@@ -11,8 +11,36 @@
   {% include 'lib_news/lib_news_top_nav.html' %}
   {% include 'lib_news/lib_news_search_form.html' %}
 
+  {# Feature Story #}
+  {% if self.is_unrouted %}
+    {% if feature %}
+        <section class="featured-news">
+          <article>
+            <span class="title-object">
+              <a href="{{feature.url}}">
+                <h2>{{ feature.title }}</h2>
+              </a>
+                {% if feature.short_description %} 
+                  <p>
+                    {{ feature.short_description|richtext }}
+                  </p>
+                {% endif %}
+              <a href="{{feature.url}}" class="read-more">Read More</a>
+            </span>
+            {% if feature.thumbnail %}
+              <span class="img-object">
+                <a href="{{feature.url}}">
+                  {% image feature.thumbnail width-1000 class="article-img" %}
+                </a>
+              </span>
+            {% endif %}
+          </article>
+      </section>
+    {% endif %}
+  {% endif %}
+
   {# News Feed #}
-  {% if self.is_unrouted or self.category%}
+  {% if self.is_unrouted or self.category %}
     {# Empty div used by React #}
     <div id="news-feed" data-default-visible="2" data-increment-visible="2" data-api-url="{{ news_feed_api }}" data-category={{ self.category }}></div>
     {% render_bundle 'NewsFeed' %}

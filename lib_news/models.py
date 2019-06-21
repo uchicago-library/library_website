@@ -1,3 +1,6 @@
+import urllib.parse
+
+import bleach
 from base.models import DefaultBodyFields, PublicBasePage
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -10,14 +13,15 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core.fields import StreamField
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.images.api.fields import ImageRenditionField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
-import urllib.parse
+
+from .utils import get_first_feature_story
 
 
 @register_snippet
@@ -135,7 +139,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         self.is_unrouted = False
         self.search_query = request.GET.get('query', None)
         if self.search_query:
-            self.search_results = LibNewsPage.objects.live().search(self.search_query)
+            self.search_results = LibNewsPage.objects.live().search(
+                self.search_query
+            )
         else:
             self.search_results = LibNewsPage.objects.none()
 
@@ -178,7 +184,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
         context['search_url_base'] = self.base_url + 'search/'
-        context['news_feed_api'] = '/api/v2/pages/?format=json&limit=500&type=lib_news.LibNewsPage&fields=*'
+        context[
+            'news_feed_api'
+        ] = '/api/v2/pages/?format=json&limit=500&order=-first_published_at&type=lib_news.LibNewsPage&fields=*'
+        context['feature'] = get_first_feature_story()
         return context
 
 
@@ -193,6 +202,8 @@ class LibNewsPage(PublicBasePage):
         related_name='+'
     )
     alt_text = models.CharField(max_length=100, blank=True)
+    is_feature_story = models.BooleanField(default=False)
+    excerpt = RichTextField(blank=True)
 
     def get_categories(self):
         """
@@ -206,6 +217,34 @@ class LibNewsPage(PublicBasePage):
             for cat in self.lib_news_categories.values()
         ]
 
+    def get_first_feature_story_id(self):
+        """
+        Get id of the first feature story.
+
+        Returns:
+            int
+        """
+        ff = get_first_feature_story()
+        if ff:
+            return ff.id
+        else:
+            return None
+
+    @property
+    def short_description(self):
+        if self.excerpt:
+            retval = self.excerpt
+        else:
+            retval = self.body
+        # return retval
+        return bleach.clean(
+            retval,
+            tags=['a', 'b', 'i'],
+            attributes={'a': ['href', 'rel', 'data', 'id', 'linktype']},
+            strip=True,
+            strip_comments=True,
+        )
+
     subpage_types = []
 
     content_panels = Page.content_panels + [
@@ -216,6 +255,8 @@ class LibNewsPage(PublicBasePage):
             ],
             heading='Thumbnail',
         ),
+        FieldPanel('is_feature_story'),
+        FieldPanel('excerpt'),
         StreamFieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
     ] + PublicBasePage.content_panels
@@ -225,6 +266,7 @@ class LibNewsPage(PublicBasePage):
     ]
 
     api_fields = [
+        APIField('is_feature_story'),
         APIField(
             'categories',
             serializer=serializers.ListField(source='get_categories')
@@ -235,6 +277,12 @@ class LibNewsPage(PublicBasePage):
         APIField(
             'thumbnail_alt_text',
             serializer=serializers.CharField(source='alt_text')
+        ),
+        APIField(
+            'first_feature_id',
+            serializer=serializers.IntegerField(
+                source='get_first_feature_story_id'
+            )
         ),
     ]
 
