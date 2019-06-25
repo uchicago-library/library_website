@@ -1,0 +1,22 @@
+{% load wagtailcore_tags %}
+
+{% if exhibits %}
+  <h3>{{ sect_title }}</h3>
+  <div class="event-wrap">
+    {% for e in exhibits %}
+      <p>
+        <a class="event-header" href="{% pageurl e %}">{{ e.title }}</a>
+        {% if e.exhibit_open_date or e.exhibit_close_date %}
+          <br/>{{e.exhibit_open_date}}
+          {% if e.exhibit_open_date and e.exhibit_close_date %}
+            — 
+          {% endif %}
+          {{e.exhibit_close_date}}
+        {% endif %}
+        {% if e.exhibit_location %}
+          <br/>{{ e.exhibit_location }}
+        {% endif %}
+      </p>
+    {% endfor %}
+  </div>
+{% endif %}

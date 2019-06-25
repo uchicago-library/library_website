@@ -4,6 +4,7 @@
 {% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load show_exhibit_listing_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -63,5 +64,10 @@
       {% elif self.search_query %}
         <p>No results found</p>
     {% endif %}
+  {% endif %}
+{% endblock %}
+{% block right_sidebar %}
+  {% if display_current_web_exhibits %}
+    {% show_exhibits current_exhibits 'Current Exhibits' %}
   {% endif %}
 {% endblock %}

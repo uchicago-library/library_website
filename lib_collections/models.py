@@ -1,3 +1,4 @@
+import datetime
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.validators import RegexValidator
@@ -28,6 +29,22 @@ from wagtail.snippets.models import register_snippet
 from .utils import collection
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+
+
+def get_current_exhibits():
+    """
+    Get a listing of current exhibits.
+
+    Returns:
+        PageQuerySet
+    """
+    exhibits = ExhibitPage.objects.live()
+    current_exhibits = exhibits.filter(
+        exhibit_open_date__lt=datetime.datetime.now().date(),
+        exhibit_close_date__gt=datetime.datetime.now().date()
+    ).distinct()
+    return current_exhibits
+
 
 # The abstract model for related links, complete with panels
 

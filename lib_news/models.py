@@ -5,6 +5,7 @@ from base.models import DefaultBodyFields, PublicBasePage
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
+from lib_collections.models import get_current_exhibits
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
@@ -87,6 +88,12 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             [
                 FieldPanel('events_feed_url'),
             ], heading='Workshops and Events'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('display_current_web_exhibits'),
+            ],
+            heading='Current Web Exhibits'
         ),
     ]
 
@@ -188,6 +195,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             'news_feed_api'
         ] = '/api/v2/pages/?format=json&limit=500&order=-first_published_at&type=lib_news.LibNewsPage&fields=*'
         context['feature'] = get_first_feature_story()
+        context['current_exhibits'] = get_current_exhibits()
+        context['display_current_web_exhibits'] = self.display_current_web_exhibits
         return context
 
 
