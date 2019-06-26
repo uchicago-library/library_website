@@ -22,6 +22,7 @@ class SearchableContent(index.Indexed, models.Model):
   )
   # search result snippet link. 
   url = models.URLField(
+    max_length=300,
     verbose_name="url"
   )
   # search result snippet description.

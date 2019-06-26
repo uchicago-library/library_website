@@ -366,6 +366,19 @@ CACHES = {
     },
 }
 
+# Base url for the LibChat status API
+LIBCHAT_STATUS_URL = 'https://uchicago.libanswers.com/1.0/chat/widgets/status/'
+
+# Map LibraryH3lp chat widget names to LibChat widget IDs
+# Implemented to avoid changing function signatures and
+# page models when we migrated to LibChat. Preferable
+# since it documents this for us.
+LIBCHAT_IDS = {'uofc-ask': '9650',
+               'dissertation-office': '11495',
+               'law': '11496',
+               'crerar': '9650',
+               'ssa': '9650'}
+
 # API configuration
 WAGTAILAPI_LIMIT_MAX = None
 

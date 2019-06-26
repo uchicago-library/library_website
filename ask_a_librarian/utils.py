@@ -1,9 +1,10 @@
+import json
+
 import requests
-from defusedxml.ElementTree import fromstring
 from wagtail.core.models import Site
 
 from library_website.settings import (
-    DEFAULT_UNIT, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
+    DEFAULT_UNIT, LIBCHAT_IDS, LIBCHAT_STATUS_URL, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
 )
 
 
@@ -19,20 +20,14 @@ def get_chat_status(name):
     Returns:
         boolean
     """
-
     try:
-        xml = requests.get(
-            'https://us.libraryh3lp.com/presence/jid/' + name +
-            '/chat.libraryh3lp.com/xml',
-            timeout=12
-        )
-        tree = fromstring(xml.content)
+        libid = LIBCHAT_IDS[name]
+        response = requests.get(LIBCHAT_STATUS_URL + libid, timeout=12)
+        data = json.loads(response.content)
     except requests.exceptions.Timeout:
-        xml = "<presence user='" + name + \
-            "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
-        tree = fromstring(xml)
+        data = json.loads('{"online":false,"who":{}}')
 
-    return tree.find('resource').attrib['show'] == 'available'
+    return data['online']
 
 
 def get_chat_status_css(name):
@@ -69,21 +64,7 @@ def get_chat_status_and_css(name):
         item is a boolean and the second item
         is a string (css class).
     """
-
-    try:
-        xml = requests.get(
-            'https://us.libraryh3lp.com/presence/jid/' + name +
-            '/chat.libraryh3lp.com/xml',
-            timeout=12
-        )
-        tree = fromstring(xml.content)
-    except requests.exceptions.Timeout:
-        xml = "<presence user='" + name + \
-            "' server='chat.libraryh3lp.com'><resource show='unavailable' name='libraryh3lp' priority='5'/></presence>"
-        tree = fromstring(xml)
-    status_lookup = {True: 'active', False: 'off'}
-    status_bool = tree.find('resource').attrib['show'] == 'available'
-    return (status_bool, status_lookup[status_bool])
+    return (get_chat_status(name), get_chat_status_css(name))
 
 
 def get_chat_statuses():
@@ -127,7 +108,9 @@ def get_unit_chat_link(unit, request):
 
     try:
         if unit.id == SCRC_MAIN_UNIT:
-            return Page.objects.live().get(id=SCRC_ASK_PAGE).relative_url(current_site)
+            return Page.objects.live().get(id=SCRC_ASK_PAGE
+                                           ).relative_url(current_site)
         return AskPage.objects.live().get(unit=unit).relative_url(current_site)
     except:
-        return AskPage.objects.live().get(unit=DEFAULT_UNIT).relative_url(current_site)
+        return AskPage.objects.live().get(unit=DEFAULT_UNIT
+                                          ).relative_url(current_site)
