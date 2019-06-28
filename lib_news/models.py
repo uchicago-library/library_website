@@ -1,7 +1,5 @@
-import urllib.parse
-
 import bleach
-from base.models import DefaultBodyFields, PublicBasePage
+from base.models import ContactPersonBlock, DefaultBodyFields, PublicBasePage
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
@@ -72,6 +70,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         self.is_browse = False
         self.is_unrouted = True
 
+    contacts = StreamField(ContactPersonBlock(required=False), default=[])
+
     subpage_types = ['lib_news.LibNewsPage']
 
     content_panels = Page.content_panels + PublicBasePage.content_panels
@@ -95,6 +95,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             ],
             heading='Current Web Exhibits'
         ),
+        StreamFieldPanel('contacts'),
     ]
 
     edit_handler = TabbedInterface(
@@ -196,7 +197,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         ] = '/api/v2/pages/?format=json&limit=500&order=-first_published_at&type=lib_news.LibNewsPage&fields=*'
         context['feature'] = get_first_feature_story()
         context['current_exhibits'] = get_current_exhibits()
-        context['display_current_web_exhibits'] = self.display_current_web_exhibits
+        context['display_current_web_exhibits'
+                ] = self.display_current_web_exhibits
+        context['contacts'] = self.contacts
         return context
 
 
@@ -254,6 +257,17 @@ class LibNewsPage(PublicBasePage):
             strip_comments=True,
         )
 
+    @property
+    def has_right_sidebar(self):
+        """
+        Determine if a right sidebar should
+        be displayed in the template.
+
+        Returns:
+            boolean
+        """
+        return True
+
     subpage_types = []
 
     content_panels = Page.content_panels + [
@@ -305,4 +319,5 @@ class LibNewsPage(PublicBasePage):
         context['categories'] = parent.get_alpha_cats()
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
+        context['contacts'] = parent_context['contacts']
         return context

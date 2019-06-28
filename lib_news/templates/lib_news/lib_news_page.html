@@ -3,6 +3,7 @@
 {% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load public_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -12,4 +13,10 @@
   {% include 'lib_news/lib_news_top_nav.html' %}
   {% include 'lib_news/lib_news_search_form.html' %}
   {{ self.body }}
+{% endblock %}
+
+{% block right_sidebar %}
+  {% if contacts %}
+    {% list_contacts_in_sidebar contacts 'Media Contact' %}
+  {% endif %}
 {% endblock %}

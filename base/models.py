@@ -347,6 +347,28 @@ class CarouselItem(LinkFields):
         abstract = True
 
 
+class ContactPerson(StructBlock):
+    """
+    Reusable model for a contact. Will be used to
+    populate contact fields. Used on public news
+    related pages.
+    """
+    contact_person = PageChooserBlock(
+        required=False,
+        page_type='staff.StaffPage',
+        help_text='Select a StaffPage (not a StaffPublicPage)',
+    )
+
+
+class ContactPersonBlock(StreamBlock):
+    """
+    Base fields for a Featured Library Expert.
+    """
+    contact = ContactPerson(
+        icon='view', required=False, template='public/blocks/contact.html'
+    )
+
+
 class LinkedText(LinkFields):
     """
     Generic link with text.
