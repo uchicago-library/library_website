@@ -3,7 +3,6 @@
 {% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% load public_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -15,8 +14,4 @@
   {{ self.body }}
 {% endblock %}
 
-{% block right_sidebar %}
-  {% if contacts %}
-    {% list_contacts_in_sidebar contacts 'Media Contact' %}
-  {% endif %}
-{% endblock %}
+{% block right_sidebar %}{% endblock %}
