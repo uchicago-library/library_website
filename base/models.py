@@ -362,10 +362,33 @@ class ContactPerson(StructBlock):
 
 class ContactPersonBlock(StreamBlock):
     """
-    Base fields for a Featured Library Expert.
+    Base fields for a sidebar contact.
     """
     contact = ContactPerson(
         icon='view', required=False, template='public/blocks/contact.html'
+    )
+
+
+class RelatedExhibit(StructBlock):
+    """
+    Reusable model for a related exhibit widget.
+    Used on public news pages.
+    """
+    exhibit = PageChooserBlock(
+        required=False,
+        page_type='lib_collections.ExhibitPage',
+        help_text='Select an ExhibitPage',
+    )
+
+
+class RelatedExhibitBlock(StreamBlock):
+    """
+    Related exhibit StreamBlock for sidebar widget.
+    """
+    exhibit = RelatedExhibit(
+        icon='view',
+        required=False,
+        template='public/blocks/related_exhibit.html'
     )
 
 

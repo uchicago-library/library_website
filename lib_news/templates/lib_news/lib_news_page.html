@@ -3,6 +3,7 @@
 {% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load public_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -14,4 +15,8 @@
   {{ self.body }}
 {% endblock %}
 
-{% block right_sidebar %}{% endblock %}
+{% block right_sidebar %}
+  {% if self.related_exhibits %}
+    {% get_related_exhibits self.related_exhibits %}
+  {% endif %}
+{% endblock %}

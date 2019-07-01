@@ -1,0 +1,24 @@
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% if self.exhibit.thumbnail %}
+  <a href="{% pageurl self.exhibit %}" class="event-header">
+    {% image self.exhibit.thumbnail width-260 %}
+  </a>
+{% endif %}
+
+<p>
+  {% if self.exhibit %}
+    <a href="{% pageurl self.exhibit %}" class="event-header">{{self.exhibit}}</a>
+    {% if self.exhibit.exhibit_open_date or self.exhibit.exhibit_close_date %}
+      <br/>{{self.exhibit.exhibit_open_date}}
+      {% if self.exhibit.exhibit_open_date and self.exhibit.exhibit_close_date %}
+        —
+      {% endif %}
+      {{self.exhibit.exhibit_close_date}}
+    {% endif %}
+    {% if self.exhibit.exhibit_location %}
+      <br/>{{self.exhibit.exhibit_location}}
+    {% endif %}
+  {% endif %}
+</p>

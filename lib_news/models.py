@@ -1,5 +1,7 @@
 import bleach
-from base.models import ContactPersonBlock, DefaultBodyFields, PublicBasePage
+from base.models import (
+    ContactPersonBlock, DefaultBodyFields, PublicBasePage, RelatedExhibitBlock
+)
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
@@ -216,6 +218,9 @@ class LibNewsPage(PublicBasePage):
     alt_text = models.CharField(max_length=100, blank=True)
     is_feature_story = models.BooleanField(default=False)
     excerpt = RichTextField(blank=True)
+    related_exhibits = StreamField(
+        RelatedExhibitBlock(required=False), default=[]
+    )
 
     def get_categories(self):
         """
@@ -283,6 +288,21 @@ class LibNewsPage(PublicBasePage):
         StreamFieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
     ] + PublicBasePage.content_panels
+
+    widget_content_panels = [
+        StreamFieldPanel('related_exhibits'),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
