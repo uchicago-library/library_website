@@ -3,6 +3,7 @@
 {% load wagtailimages_tags %}
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
+{% load public_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -398,6 +399,10 @@
                                 {% endif %}
                             </ul>
                         </div>
+                    {% endif %}
+
+                    {% if contacts %}
+                        {% list_contacts_in_sidebar contacts 'Media Contact' %}
                     {% endif %}
                 </div>
                 <!-- // Right Sidebar Content -->
