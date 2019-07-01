@@ -337,6 +337,7 @@ class LibNewsPage(PublicBasePage):
         parent = self.get_parent_of_type('lib news index page')
         parent_context = parent.get_context(request)
         context['categories'] = parent.get_alpha_cats()
+        context['tagged'] = self.get_categories()
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']

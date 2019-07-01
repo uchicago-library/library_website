@@ -13,6 +13,11 @@
   {% include 'lib_news/lib_news_top_nav.html' %}
   {% include 'lib_news/lib_news_search_form.html' %}
   {{ self.body }}
+  {% if categories %}
+    {% for cat in tagged %}
+        <a href="{{ category_url_base }}{{ cat|slugify }}" class="badge">{{cat}}</a>
+    {% endfor %}
+  {% endif %}
 {% endblock %}
 
 {% block right_sidebar %}
