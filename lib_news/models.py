@@ -10,7 +10,7 @@ from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, StreamFieldPanel,
-    TabbedInterface
+    TabbedInterface, PageChooserPanel
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -221,6 +221,21 @@ class LibNewsPage(PublicBasePage):
     related_exhibits = StreamField(
         RelatedExhibitBlock(required=False), default=[]
     )
+    by_staff = models.ForeignKey(
+        'staff.StaffPage',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    by_unit = models.ForeignKey(
+        'units.UnitPage',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    by_text_box = models.CharField(max_length=200, blank=True)
 
     def get_categories(self):
         """
@@ -287,6 +302,14 @@ class LibNewsPage(PublicBasePage):
         FieldPanel('excerpt'),
         StreamFieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
+        MultiFieldPanel(
+            [
+                PageChooserPanel('by_staff'),
+                PageChooserPanel('by_unit'),
+                FieldPanel('by_text_box'),
+            ],
+            heading='Author'
+        ),
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [

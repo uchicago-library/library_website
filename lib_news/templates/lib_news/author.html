@@ -1,0 +1,28 @@
+{% load wagtailcore_tags %}
+
+by
+
+{% if staff %}
+  {% if staff.public_page %}
+    <a href="{% pageurl staff.public_page %}">{{staff}}</a>
+  {% else %}
+    {{staff}}
+  {% endif %}
+{% elif unit %}
+  {% if unit.public_web_page %}
+    <a href="{% pageurl unit.public_web_page %}">{{unit}}</a>
+  {% elif unit.location %}
+    <a href="{% pageurl unit.location %}">{{unit}}</a>
+  {% else %}
+    {{unit}}
+  {% endif %}
+{% elif text %}
+  {{text}}
+{% else %}
+  {# There should always be a page_maintainer #}
+  {% if maintainer.public_page %}
+    <a href="{% pageurl maintainer.public_page %}">{{maintainer}}</a>
+  {% else %}
+    {{maintainer}}
+  {% endif %}
+{% endif %}
