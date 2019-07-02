@@ -42,13 +42,14 @@
 
   {# News Feed #}
   {% if self.is_unrouted or self.category %}
+    {% if self.category %}
+      <h2>{{ self.category }}</h2>
+    {% endif %}
     {# Empty div used by React #}
     <div id="news-feed" data-default-visible="2" data-increment-visible="2" data-api-url="{{ news_feed_api }}" data-category={{ self.category }}></div>
     {% render_bundle 'NewsFeed' %}
   {# Category Browse #}
   {% else %}
-    <h2>{{ self.category }}</h2>
-
     {# Search Results #}
     {% if self.search_results %}
       <ul>
