@@ -5,6 +5,7 @@ from base.models import (
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
+from django.utils import timezone
 from lib_collections.models import get_current_exhibits
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
@@ -196,7 +197,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['search_url_base'] = self.base_url + 'search/'
         context[
             'news_feed_api'
-        ] = '/api/v2/pages/?format=json&limit=500&order=-first_published_at&type=lib_news.LibNewsPage&fields=*'
+        ] = '/api/v2/pages/?format=json&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
         context['feature'] = get_first_feature_story()
         context['current_exhibits'] = get_current_exhibits()
         context['display_current_web_exhibits'
@@ -236,6 +237,7 @@ class LibNewsPage(PublicBasePage):
         on_delete=models.SET_NULL
     )
     by_text_box = models.CharField(max_length=200, blank=True)
+    published_at = models.DateTimeField(default=timezone.now)
 
     def get_categories(self):
         """
@@ -302,6 +304,7 @@ class LibNewsPage(PublicBasePage):
         FieldPanel('excerpt'),
         StreamFieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
+        FieldPanel('published_at'),
         MultiFieldPanel(
             [
                 PageChooserPanel('by_staff'),
@@ -350,6 +353,7 @@ class LibNewsPage(PublicBasePage):
                 source='get_first_feature_story_id'
             )
         ),
+        APIField('published_at'),
     ]
 
     def get_context(self, request):

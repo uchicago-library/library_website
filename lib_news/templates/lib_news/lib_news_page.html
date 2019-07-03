@@ -14,6 +14,7 @@
 {% block content %}
   {% include 'lib_news/lib_news_top_nav.html' %}
   {% include 'lib_news/lib_news_search_form.html' %}
+  Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
   {% get_author self.by_staff self.by_unit self.by_text_block self.page_maintainer %}
   {{ self.body }}
   {% if categories %}
