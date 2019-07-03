@@ -17,10 +17,29 @@
   Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
   {% get_author self.by_staff self.by_unit self.by_text_block self.page_maintainer %}
   {{ self.body }}
+
+  {# Categories #}
   {% if categories %}
     {% for cat in tagged %}
         <a href="{{ category_url_base }}{{ cat|slugify }}" class="badge">{{cat}}</a>
     {% endfor %}
+  {% endif %}
+
+  {# Recent news stories #}
+  {% if recent_stories %}
+    <section class="related-stories">
+      <h2>More News</h2>
+      {% for p in recent_stories %}
+        <article>
+          <span class="img-object">
+            <a href="{% pageurl p %}">
+              {% image p.thumbnail fill-358x200 class="article-img" %}
+            </a>
+          </span>
+          <span class="news-category {{p.tagged|first}}">{{p.tagged|first}}</span>
+        </article>
+      {% endfor %}
+    </section>
   {% endif %}
 {% endblock %}
 

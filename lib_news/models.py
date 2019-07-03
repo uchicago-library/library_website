@@ -290,6 +290,21 @@ class LibNewsPage(PublicBasePage):
         """
         return True
 
+    def get_recent_stories(self, n, field):
+        """
+        Gets the n most rescent stories sorted by the
+        field name passed.
+
+        Args:
+            n: int, number of stories to return
+
+            field: string, field to be passed to a
+            Django QuerySet filter, e.g. '-published_at'.
+        """
+        return LibNewsPage.objects.order_by(field).exclude(
+            thumbnail=None
+        ).exclude(id=self.id)[:n]
+
     subpage_types = []
 
     content_panels = Page.content_panels + [
@@ -373,4 +388,5 @@ class LibNewsPage(PublicBasePage):
                 ] = parent_context['display_current_web_exhibits']
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
+        context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         return context
