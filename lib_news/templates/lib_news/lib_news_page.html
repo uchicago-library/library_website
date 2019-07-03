@@ -5,6 +5,7 @@
 {% load wagtailimages_tags %}
 {% load public_tags %}
 {% load lib_news_tags %}
+{% load show_exhibit_listing_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
@@ -25,5 +26,8 @@
 {% block right_sidebar %}
   {% if self.related_exhibits %}
     {% get_related_exhibits self.related_exhibits %}
+  {% endif %}
+  {% if display_current_web_exhibits %}
+    {% show_exhibits current_exhibits 'Current Exhibits' %}
   {% endif %}
 {% endblock %}

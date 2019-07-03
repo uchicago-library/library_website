@@ -9,8 +9,8 @@ from lib_collections.models import get_current_exhibits
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, StreamFieldPanel,
-    TabbedInterface, PageChooserPanel
+    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    StreamFieldPanel, TabbedInterface
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -359,9 +359,14 @@ class LibNewsPage(PublicBasePage):
         context = super(LibNewsPage, self).get_context(request)
         parent = self.get_parent_of_type('lib news index page')
         parent_context = parent.get_context(request)
+        self.events_feed_url = parent.events_feed_url
         context['categories'] = parent.get_alpha_cats()
         context['tagged'] = self.get_categories()
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
+        context['display_current_web_exhibits'
+                ] = parent_context['display_current_web_exhibits']
+        context['current_exhibits'] = parent_context['current_exhibits']
+        context['events_feed'] = parent_context['events_feed']
         return context
