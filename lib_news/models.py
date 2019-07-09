@@ -75,9 +75,21 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
+    fallback_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text='Image to be used in browse display \
+        when no thumbnail is provided',
+        related_name='+'
+    )
+
     subpage_types = ['lib_news.LibNewsPage']
 
-    content_panels = Page.content_panels + PublicBasePage.content_panels
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('fallback_image'),
+    ] + PublicBasePage.content_panels
 
     widget_content_panels = [
         MultiFieldPanel(
@@ -203,6 +215,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['display_current_web_exhibits'
                 ] = self.display_current_web_exhibits
         context['contacts'] = self.contacts
+        context['content_div_css'] = 'container-fluid main-container'
+        context['breadcrumb_div_css'] = 'hidden'
+        context['right_sidebar_classes'] = 'coll-rightside'
+        context['fallback_image'] = self.fallback_image
         return context
 
 
@@ -389,4 +405,7 @@ class LibNewsPage(PublicBasePage):
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
+        context['content_div_css'] = parent_context['content_div_css']
+        context['breadcrumb_div_css'] = parent_context['breadcrumb_div_css']
+        context['right_sidebar_classes'] = parent_context['right_sidebar_classes']
         return context

@@ -16,12 +16,14 @@ const API_URL = DOM_ELEMENT.getAttribute('data-api-url');
 
 const CATEGORY = DOM_ELEMENT.getAttribute('data-category');
 
+const FALLBACK_IMG = DOM_ELEMENT.getAttribute('data-fallback-img') || '';
+
 const Article = ({ item, category }) => (
   <article>
     <span className="img-object">
       <a href={item.meta.html_url}>
         <img
-          src={(item.thumbnail && item.thumbnail.url) || ''}
+          src={(item.thumbnail && item.thumbnail.url) || FALLBACK_IMG}
           className="article-img"
           alt={item.thumbnail_alt_text || ''}
         />
@@ -99,8 +101,8 @@ class NewsFeed extends React.Component {
     const { visible } = this.state;
     const { items } = this.state;
     return (
-      <section className="news-feed">
-        <div className="tiles" aria-live="polite">
+      <div>
+        <section className="news-stories">
           {items.slice(0, visible).map(item => (
             <Article
               item={item}
@@ -108,9 +110,9 @@ class NewsFeed extends React.Component {
               key={item.id}
             />
           ))}
-        </div>
+        </section>
         {visible < items.length && <LoadMoreBtn loadMore={this.loadMore} />}
-      </section>
+      </div>
     );
   }
 }

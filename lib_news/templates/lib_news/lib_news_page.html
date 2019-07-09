@@ -1,4 +1,4 @@
-{% extends "base/public_base.html" %}
+{% extends "lib_news/lib_news_index_page.html" %}
 {% load compress static %}
 {% load compile_static %}
 {% load wagtailcore_tags %}
@@ -12,42 +12,63 @@
 {% block js %}{% endblock %}
 
 {% block content %}
-  {% include 'lib_news/lib_news_top_nav.html' %}
-  {% include 'lib_news/lib_news_search_form.html' %}
-  Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-  {% get_author self.by_staff self.by_unit self.by_text_block self.page_maintainer %}
-  {{ self.body }}
-
-  {# Categories #}
-  {% if categories %}
-    {% for cat in tagged %}
-        <a href="{{ category_url_base }}{{ cat|slugify }}" class="badge">{{cat}}</a>
-    {% endfor %}
-  {% endif %}
-
-  {# Recent news stories #}
-  {% if recent_stories %}
-    <section class="related-stories">
-      <h2>More News</h2>
-      {% for p in recent_stories %}
+    <section class="story-page">
         <article>
-          <span class="img-object">
-            <a href="{% pageurl p %}">
-              {% image p.thumbnail fill-358x200 class="article-img" %}
-            </a>
-          </span>
-          <span class="news-category {{p.tagged|first}}">{{p.tagged|first}}</span>
+            <h1>{{self.title}}</h1>
+            Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
+            {% get_author self.by_staff self.by_unit self.by_text_block self.page_maintainer %}
+            {{ self.body }}
         </article>
-      {% endfor %}
     </section>
-  {% endif %}
+
+    <section class="social-share">
+        {# Categories #}
+        {% if categories %}
+            {% for cat in tagged %}
+                <a href="{{ category_url_base }}{{ cat|slugify }}" class="badge">{{cat}}</a>
+            {% endfor %}
+        {% endif %}
+
+        <div class="share-buttons">
+            <span class="share-title">Share this:</span>
+            {# Facebook #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-facebook-f"></i></a>
+            {# Twitter #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-twitter"></i></a>
+            {# Linkedin #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-linkedin-in"></i></a>
+            {# Instagram #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-instagram"></i></a>
+            {# Pinterest #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-pinterest"></i></a>
+            {# Reddit #}
+            <a class="btn-floating" type="button" role="button"><i class="fab fa-reddit-alien"></i></a>
+        </div>
+    </section>
+
+    {# Recent news stories #}
+    {% if recent_stories %}
+        <section class="related-stories">
+            <h2>More News</h2>
+            {% for p in recent_stories %}
+                <article>
+                    <span class="img-object">
+                        <a href="{% pageurl p %}">{% image p.thumbnail fill-358x200 class="article-img" %}</a>
+                    </span>
+                    {% with first_category=p.get_categories|first %}
+                        <span class="news-category {{first_category}}">{{first_category}}</span>
+                    {% endwith %}
+                </article>
+            {% endfor %}
+        </section>
+    {% endif %}
 {% endblock %}
 
 {% block right_sidebar %}
-  {% if self.related_exhibits %}
-    {% get_related_exhibits self.related_exhibits %}
-  {% endif %}
-  {% if display_current_web_exhibits %}
-    {% show_exhibits current_exhibits 'Current Exhibits' %}
-  {% endif %}
+    {% if self.related_exhibits %}
+        {% get_related_exhibits self.related_exhibits %}
+    {% endif %}
+    {% if display_current_web_exhibits %}
+        {% show_exhibits current_exhibits 'Current Exhibits' %}
+    {% endif %}
 {% endblock %}

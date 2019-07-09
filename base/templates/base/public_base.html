@@ -146,8 +146,12 @@
         <div class="{{breadcrumb_div_css}}">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
+        {% block above_main_content %}{% endblock %}
         <div class="{{content_div_css}}" id="content" role="main">
-            <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+            {# Don't display <h1>s outside of the main content area on news story pages #}
+            {% if page_type|slugify != 'libnewspage' %}
+                <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+            {% endif %}
             {% block under_h1 %}{% endblock %}
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
@@ -293,7 +297,7 @@
             {% endif %}
 
             {% if self.has_right_sidebar %}
-                <div class="col-xs-12 col-md-3 rightside {% block right_sidebar_classes %}{% endblock %}" role="complementary"> <!-- Right Sidebar Content -->
+                <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks %}
