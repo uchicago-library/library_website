@@ -16,7 +16,7 @@
         <article>
             <h1>{{self.title}}</h1>
             Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-            {% get_author self.by_staff self.by_unit self.by_text_block self.page_maintainer %}
+            {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
             {{ self.body }}
         </article>
     </section>
