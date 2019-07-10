@@ -6,6 +6,9 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
 from django.utils import timezone
+from library_website.settings import (
+    NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
+)
 from lib_collections.models import get_current_exhibits
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
@@ -219,6 +222,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['breadcrumb_div_css'] = 'hidden'
         context['right_sidebar_classes'] = 'coll-rightside'
         context['fallback_image'] = self.fallback_image
+        context['default_visible'] = NEWS_FEED_DEFAULT_VISIBLE
+        context['increment_by'] = NEWS_FEED_INCREMENT_BY
         return context
 
 
@@ -407,5 +412,6 @@ class LibNewsPage(PublicBasePage):
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
         context['breadcrumb_div_css'] = parent_context['breadcrumb_div_css']
-        context['right_sidebar_classes'] = parent_context['right_sidebar_classes']
+        context['right_sidebar_classes'
+                ] = parent_context['right_sidebar_classes']
         return context

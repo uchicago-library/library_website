@@ -58,7 +58,7 @@
         {# Fallback image for stories without a thumbnail #}
         {% image fallback_image fill-500x425-c50 as fallback_img %}
         {# Empty div used by React #}
-        <div id="news-feed" data-default-visible="2" data-increment-visible="2" data-api-url="{{ news_feed_api }}" data-category="{{ self.category }}" data-fallback-img='{{ fallback_img.url }}'></div>
+        <div id="news-feed" data-default-visible="{{default_visible}}" data-increment-visible="{{increment_by}}" data-api-url="{{ news_feed_api }}" data-category="{{ self.category }}" data-fallback-img='{{ fallback_img.url }}'></div>
         {% render_bundle 'NewsFeed' %}
     {# Category Browse #}
     {% else %}

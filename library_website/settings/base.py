@@ -397,3 +397,7 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }
+
+# Public news site
+NEWS_FEED_DEFAULT_VISIBLE = 9
+NEWS_FEED_INCREMENT_BY = 18
