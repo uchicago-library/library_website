@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -401,3 +402,11 @@ WEBPACK_LOADER = {
 # Public news site
 NEWS_FEED_DEFAULT_VISIBLE = 9
 NEWS_FEED_INCREMENT_BY = 18
+
+# Override settings in test
+# -------------------------------
+# THESE ONLY APPLY TO UNIT TESTS!
+# -------------------------------
+
+if 'test' in sys.argv:
+    HOURS_PAGE = 1

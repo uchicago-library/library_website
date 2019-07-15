@@ -127,7 +127,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         ]
     )
 
-    search_fields = PublicBasePage.search_fields
+    search_fields = PublicBasePage.search_fields + [
+        index.SearchField('contacts'),
+    ]
 
     @property
     def has_right_sidebar(self):
@@ -368,6 +370,14 @@ class LibNewsPage(PublicBasePage):
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
+        index.SearchField('thumbnail'),
+        index.SearchField('alt_text'),
+        index.SearchField('excerpt'),
+        index.SearchField('related_exhibits'),
+        index.SearchField('by_staff'),
+        index.SearchField('by_unit'),
+        index.SearchField('by_text_box'),
+        index.SearchField('published_at'),
     ]
 
     api_fields = [

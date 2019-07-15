@@ -82,7 +82,7 @@ OWNCLOUD_PASSWORD = #Get from another developer
 ```
 
 ### Optional (but recommended)
-
+#### Configure etc/hosts
 Add the following lines to your `/etc/hosts` file
 
 ```bash
@@ -91,3 +91,9 @@ Add the following lines to your `/etc/hosts` file
 ```
 
 This will allow you to access the public site at `http://wwwdev:8000` and the intranet at `http://loopdev:8000`.
+
+#### Get development images
+These are the images used on pages in the test database on the dev version of the site. Not having these
+is fine, however, you will have broken image links if you don't get them.
+
+All you need to do is [download the images from box](https://uchicago.box.com/s/kuib7g0hqhcf18wq51dq10sodfl2mhq0) and put them in `/media/original_images/`.
