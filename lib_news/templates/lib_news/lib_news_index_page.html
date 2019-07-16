@@ -20,6 +20,16 @@
     {% include 'lib_news/lib_news_top_nav.html' %}
 {% endblock %}
 
+{% block under_h1 %}
+    <div class="row visible-xs visible-sm toggle-side"> <!-- Off-Canvas Toggle Button -->
+        <p>
+            <button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas">
+                <i class="fa fa-caret-square-o-right fa-lg"></i>
+            </button>
+        </p>
+    </div>
+{% endblock %}
+
 {# Content #}
 {% block content %}
     {# Feature Story #}
