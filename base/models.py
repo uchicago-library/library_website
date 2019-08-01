@@ -1036,6 +1036,7 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
     local_media = LocalMediaBlock(
         help_text='Audio or video files that are locally hosted'
     )
+    html = RawHTMLBlock()
 
     class Meta:
         required = False
@@ -1048,10 +1049,11 @@ class RawHTMLBodyField(StreamBlock):
     html = RawHTMLBlock()
 
 
-class IntranetDefaultBodyFields(RawHTMLBodyField, DefaultBodyFields):
+class IntranetDefaultBodyFields(DefaultBodyFields):
     """
-    Default StreamField options for IntranetPages. Inherits the
-    StreamFields from the public site and adds a RawHTML field.
+    Default StreamField options for IntranetPlainPages. Currently only inherits
+    StreamFields from the public site but could be extended to allow for
+    loop only fields.
     """
 
     class Meta:

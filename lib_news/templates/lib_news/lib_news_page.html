@@ -15,8 +15,10 @@
     <section class="story-page">
         <article>
             <h1>{{self.title}}</h1>
-            Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-            {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
+            {% if not self.treat_as_webpage %}
+                Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
+                {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
+            {% endif %}
             {{ self.body }}
         </article>
     </section>

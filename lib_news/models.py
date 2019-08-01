@@ -6,15 +6,15 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
 from django.utils import timezone
+from lib_collections.models import get_current_exhibits
 from library_website.settings import (
     NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
 )
-from lib_collections.models import get_current_exhibits
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
-    StreamFieldPanel, TabbedInterface
+    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
+    PageChooserPanel, StreamFieldPanel, TabbedInterface
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
@@ -74,7 +74,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
-        self.news_feed_api = '/api/v2/pages/?format=json&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
+        self.news_feed_api = '/api/v2/pages/?format=json&treat_as_webpage=false&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
@@ -164,7 +164,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         Search results view.
         """
         self.search_query = request.GET.get('query', '')
-        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
+        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&treat_as_webpage=false&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
         self.is_unrouted = False
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
@@ -252,6 +252,15 @@ class LibNewsPage(PublicBasePage):
     )
     by_text_box = models.CharField(max_length=200, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
+    library_kiosk = models.BooleanField(default=False)
+    law_kiosk = models.BooleanField(default=False)
+    crerar_kiosk = models.BooleanField(default=False)
+    scrc_kiosk = models.BooleanField(default=False)
+    treat_as_webpage = models.BooleanField(
+        default=False,
+        help_text='Functionally converts this page to a standard page. \
+        If checked, the page will not appear in news feeds'
+    )
 
     def get_categories(self):
         """
@@ -321,6 +330,8 @@ class LibNewsPage(PublicBasePage):
 
     subpage_types = []
 
+    ROW_CLASS = 'col4'
+
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -342,10 +353,24 @@ class LibNewsPage(PublicBasePage):
             ],
             heading='Author'
         ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel('law_kiosk', classname=ROW_CLASS),
+                        FieldPanel('crerar_kiosk', classname=ROW_CLASS),
+                        FieldPanel('scrc_kiosk', classname=ROW_CLASS),
+                        FieldPanel('library_kiosk', classname=ROW_CLASS),
+                    ]
+                )
+            ],
+            heading='Publish to'
+        ),
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
         StreamFieldPanel('related_exhibits'),
+        FieldPanel('treat_as_webpage'),
     ]
 
     edit_handler = TabbedInterface(
@@ -388,6 +413,7 @@ class LibNewsPage(PublicBasePage):
             )
         ),
         APIField('published_at'),
+        APIField('treat_as_webpage'),
     ]
 
     def get_context(self, request):
