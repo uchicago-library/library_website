@@ -61,33 +61,16 @@
     {% endif %}
 
     {# News Feed #}
-    {% if self.is_unrouted or self.category %}
-        {% if self.category %}
-            <h2>{{ self.category }}</h2>
-        {% endif %}
-        {# Fallback image for stories without a thumbnail #}
-        {% image fallback_image fill-500x425-c50 as fallback_img %}
-        {# Empty div used by React #}
-        <div id="news-feed" data-default-visible="{{default_visible}}" data-increment-visible="{{increment_by}}" data-api-url="{{ news_feed_api }}" data-category="{{ self.category }}" data-fallback-img='{{ fallback_img.url }}'></div>
-        {% render_bundle 'NewsFeed' %}
-    {# Category Browse #}
-    {% else %}
-        {# Search Results #}
-        {% if self.search_results %}
-            <ul>
-                {% for result in self.search_results %}
-                    <li>
-                        <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-                        {% if result.search_description %}
-                            {{ result.search_description|safe }}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% elif self.search_query %}
-            <p>No results found</p>
-        {% endif %}
+    {% if self.category %}
+        <h2>{{ self.category }}</h2>
+    {% elif self.search_query %}
+       <h2>Search results for: {{ self.search_query }}</h2>
     {% endif %}
+    {# Fallback image for stories without a thumbnail #}
+    {% image fallback_image fill-500x425-c50 as fallback_img %}
+    {# Empty div used by React #}
+    <div id="news-feed" data-default-visible="{{default_visible}}" data-increment-visible="{{increment_by}}" data-api-url="{{ news_feed_api }}" data-category="{{ self.category }}" data-fallback-img='{{ fallback_img.url }}'></div>
+    {% render_bundle 'NewsFeed' %}
 {% endblock %}
 
 {# Right sidebar #}

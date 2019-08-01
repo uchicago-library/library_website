@@ -73,8 +73,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
-        self.is_browse = False
         self.is_unrouted = True
+        self.news_feed_api = '/api/v2/pages/?format=json&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
@@ -148,7 +148,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         Route to templete for browsing stories by
         category.
         """
-        self.is_browse = True
         self.is_unrouted = False
         try:
             slug = request.path.split('/')[-2]
@@ -164,15 +163,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         Search results view.
         """
+        self.search_query = request.GET.get('query', '')
+        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
         self.is_unrouted = False
-        self.search_query = request.GET.get('query', None)
-        if self.search_query:
-            self.search_results = LibNewsPage.objects.live().search(
-                self.search_query
-            )
-        else:
-            self.search_results = LibNewsPage.objects.none()
-
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
@@ -212,9 +205,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
         context['search_url_base'] = self.base_url + 'search/'
-        context[
-            'news_feed_api'
-        ] = '/api/v2/pages/?format=json&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
+        context['news_feed_api'] = self.news_feed_api
         context['feature'] = get_first_feature_story()
         context['current_exhibits'] = get_current_exhibits()
         context['display_current_web_exhibits'
@@ -370,12 +361,9 @@ class LibNewsPage(PublicBasePage):
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
-        index.SearchField('thumbnail'),
         index.SearchField('alt_text'),
         index.SearchField('excerpt'),
         index.SearchField('related_exhibits'),
-        index.SearchField('by_staff'),
-        index.SearchField('by_unit'),
         index.SearchField('by_text_box'),
         index.SearchField('published_at'),
     ]
