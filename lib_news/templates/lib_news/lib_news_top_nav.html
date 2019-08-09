@@ -1,3 +1,4 @@
+{% load wagtailcore_tags %}
 <nav class="navbar navbar-news sidebar-offcanvas">
     <ul class="nav navbar-nav">
         <li class="dropdown">
@@ -9,6 +10,9 @@
                 {% endfor %}
             </ul>
         </li>
+        {% for p in nav %}
+            <li>{{p}}</li>
+        {% endfor %}
     </ul>
     {% include 'lib_news/lib_news_search_form.html' %}
 </nav>

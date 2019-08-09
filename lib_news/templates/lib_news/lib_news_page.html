@@ -11,13 +11,67 @@
 
 {% block js %}{% endblock %}
 
+{% block meta %}
+    {% if self.thumbnail and self.excerpt %}
+        {# Twitter Card and Facebook OpenGraph #}
+        {% image self.thumbnail fill-900x471 as t_thumb %}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@UChicagoLibrary" />
+        <meta name="twitter:creator" content="@UChicagoLibrary" />
+        <meta property="og:url" content="{{self.url}}" />
+        <meta property="og:title" content="{{self.title}}" />
+        <meta property="og:type" content="article" />
+        <meta property="og:description" content="{{self.excerpt|richtext|striptags}}" />
+        <meta property="og:image" content="{{self.get_site.root_url}}{{t_thumb.url}}" />
+    {% endif %}
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{self.url}}"
+          },
+          "headline": "{{self.title}}",
+          {% if self.thumbnail %}
+            {% image self.thumbnail fill-800x800-c75 as img_1 %}
+            {% image self.thumbnail fill-1000x750-c75 as img_2 %}
+            {% image self.thumbnail fill-1920x1080-c75 as img_3 %}
+            "image": [
+              "{{self.get_site.root_url}}{{img_1.url}}",
+              "{{self.get_site.root_url}}{{img_2.url}}",
+              "{{self.get_site.root_url}}{{img_3.url}}"
+            ],
+          {% endif %}
+          "datePublished": "{{self.first_published_at}}",
+          "dateModified": "{{self.last_published_at}}",
+          "author": {
+            "@type": "Person",
+            "name": "{% spaceless %}{% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}{% endspaceless %}"
+          },
+           "publisher": {
+            "@type": "Organization",
+            "name": "The University of Chicago Library",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.lib.uchicago.edu/static/base/images/color-logo.png"
+            }
+          },
+          "description": "{{self.excerpt|richtext|striptags}}"
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
     <section class="story-page">
         <article>
             <h1>{{self.title}}</h1>
             {% if not self.treat_as_webpage %}
-                Published on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-                {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
+                <span class="news-byline">
+                    Posted on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
+                    by {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
+                </span>
             {% endif %}
             {{ self.body }}
         </article>

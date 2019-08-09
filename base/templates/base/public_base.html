@@ -28,6 +28,25 @@
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="MVKdj1ykLrwrN01_2Y85qg78KiUxrdRYTSFc6TyBkNY" />
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Library",
+          "url": "{{self.get_site.root_url}}",
+          "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
+          "name": "{{page_location|escapejs}}",
+          "address": "{{address}}",
+          {% if self.unit.location.location_photo %}
+            {% image self.unit.location.location_photo fill-1000x750-c75 as loc_pic %}
+            "image": "{{self.get_site.root_url}}{{loc_pic.url}}",
+          {% endif %}
+          {% if self.unit.location.phone_number %}
+            "telephone": "{{self.unit.location.phone_number}}",
+          {% endif %}
+          "parentOrganization": "The University of Chicago"
+        }
+    </script>
+    {% block meta %}{% endblock %}
     <link href="{% static "base/css/normalize.css" %}" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />
     <link href="{% static "base/css/iconfont/material-icons.css" %}" rel="stylesheet"/>
@@ -88,9 +107,9 @@
                         <img src="{{banner_feature.url}}" alt="{{self.banner_feature.title}}"/>
                     </div>
                 {% endif %}
-                <div class="overlaywrap {{branch_lib_css}}" itemscope itemtype="http://schema.org/Library">
+                <div class="overlaywrap {{branch_lib_css}}">
                     <a href="{{banner_url}}">
-                    <h2 itemprop="name">{{banner_title}}</h2>
+                    <h2>{{banner_title}}</h2>
                     {% if banner_subtitle %}
                         <p class="banner-subtitle">{{banner_subtitle}}</p>
                     {% endif %}
@@ -148,7 +167,6 @@
         </div>
         {% block above_main_content %}{% endblock %}
         <div class="{{content_div_css}}" id="content" role="main">
-            {# Don't display <h1>s outside of the main content area on news story pages #}
             {% if page_type|slugify != 'libnewspage' %}
                 <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
             {% endif %}

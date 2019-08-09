@@ -18,6 +18,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.images.api.fields import ImageRenditionField
@@ -78,6 +79,18 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
+    navigation = StreamField(
+        [
+            (
+                'navigation',
+                PageChooserBlock(
+                    required=False, page_type=['lib_news.LibNewsPage']
+                )
+            ),
+        ],
+        default=[]
+    )
+
     fallback_image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -92,6 +105,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('fallback_image'),
+        StreamFieldPanel('navigation'),
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
@@ -164,7 +178,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         Search results view.
         """
         self.search_query = request.GET.get('query', '')
-        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&treat_as_webpage=false&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
+        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
         self.is_unrouted = False
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
@@ -212,11 +226,11 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
                 ] = self.display_current_web_exhibits
         context['contacts'] = self.contacts
         context['content_div_css'] = 'container-fluid main-container'
-        context['breadcrumb_div_css'] = 'hidden'
         context['right_sidebar_classes'] = 'coll-rightside'
         context['fallback_image'] = self.fallback_image
         context['default_visible'] = NEWS_FEED_DEFAULT_VISIBLE
         context['increment_by'] = NEWS_FEED_INCREMENT_BY
+        context['nav'] = self.navigation
         return context
 
 
@@ -371,6 +385,16 @@ class LibNewsPage(PublicBasePage):
     widget_content_panels = [
         StreamFieldPanel('related_exhibits'),
         FieldPanel('treat_as_webpage'),
+        MultiFieldPanel(
+            [
+                FieldPanel('quicklinks_title'),
+                FieldPanel('quicklinks'),
+                FieldPanel('view_more_link_label'),
+                FieldPanel('view_more_link'),
+                FieldPanel('change_to_callout'),
+            ],
+            heading='Rich Text'
+        ),
     ]
 
     edit_handler = TabbedInterface(
@@ -435,7 +459,7 @@ class LibNewsPage(PublicBasePage):
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
-        context['breadcrumb_div_css'] = parent_context['breadcrumb_div_css']
         context['right_sidebar_classes'
                 ] = parent_context['right_sidebar_classes']
+        context['nav'] = parent_context['nav']
         return context

@@ -65,7 +65,7 @@ body.libnewsindexpage {
 		  	font-family: $base-font;
 		  	font-weight: 400;
 		  	font-size: 0.95em;
-		    margin-top: 1.5em;
+		    margin-top: 1rem;
 		    text-transform: uppercase;
 		    border-bottom: none;
 		}
@@ -78,6 +78,9 @@ body.libnewsindexpage {
 		}
 		.event-date {
 			color: $darkred;
+		}
+		.rightside-mod {
+			padding-bottom: 1.5rem;
 		}
 	}
 
@@ -204,38 +207,57 @@ body.libnewsindexpage {
  */
 
 	section.story-page {
+		margin: 30px auto;
+		@include respond-to(medium) {
 		margin: 0 auto 30px;
+		}
 		h1, h2, h3, h4, h5, h6 {
 			font-family: $base-font;
 		}
 		h1 {
 			color: $mid-dark;
-		    font-size: 2.6em;
+		    font-size: 2.8rem;
 		    line-height: 1.3em;
 		    font-weight: 200;
 		    margin-top: 0;
 		    border-bottom: none;
 		    @include respond-to(small) {
-			    margin-bottom: 1em;
+			    margin-bottom: 0.5rem;
+			}
+			@include respond-to(medium) {
+			    font-size: 3.4rem;
 			}
 		}
+		.news-byline {
+			font-size: 1.1rem;
+			font-style: italic;
+			margin-bottom: 2rem;
+			display: block;
+		}
+		.news-highlight {
+			font-size: 1.4rem;
+			font-weight: 600;
+			margin-bottom: 2rem;
+			display: block;
+		}
 		h2 {
-		    font-size: 2em;
+		    font-size: 2.4rem;
 		    font-weight: 200;
 		}
 		p {
 			font-size: 1.2em;
 		}
 		figure.imgcaption {
-			width: 100%;
-		    display: unset;
+			&.pull-right, &.pull-left {
+				@include respond-to(smallonly) {
+			    	margin: 10px;
+			    }
+			}
 		    img {
 		    	width: 100%;
-		    }
-		    figcaption {
-		    	display: unset;
-		    	background: transparent;
-		    	font-style: italic;
+				@include respond-to(small) {
+				    max-width: 400px;
+				}
 		    }
 		}
 		.collex-solo, .collex-duo {
@@ -243,6 +265,14 @@ body.libnewsindexpage {
 			border-bottom: none;
 			margin-bottom: 1em;
 			border-radius: 15px;
+		}
+		.agenda {
+			@include respond-to(small) {
+			    padding-right: 2rem;
+			}
+		}
+		.media-use {
+			margin-top: 2em;
 		}
 	}
 	
@@ -362,6 +392,7 @@ body.libnewsindexpage {
 		border: none;
 	}
 
+
 /*
  * FOR MOCKS ONLY
  * --------------------------------------------------
@@ -405,5 +436,4 @@ body.libnewsindexpage {
 }
 
 }
-
 

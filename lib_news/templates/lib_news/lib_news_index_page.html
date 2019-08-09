@@ -62,9 +62,11 @@
 
     {# News Feed #}
     {% if self.category %}
-        <h2>{{ self.category }}</h2>
+        <h1>{{ self.category }}</h1>
+        <br/>
     {% elif self.search_query %}
-       <h2>Search results for: {{ self.search_query }}</h2>
+        <h1>Search results for: {{ self.search_query }}</h1>
+        <br/>
     {% endif %}
     {# Fallback image for stories without a thumbnail #}
     {% image fallback_image fill-500x425-c50 as fallback_img %}
