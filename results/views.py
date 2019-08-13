@@ -12,6 +12,7 @@ from units.models import UnitIndexPage
 from searchable_content.models import LibGuidesAssetsSearchableContent, LibGuidesSearchableContent
 from itertools import chain
 
+
 def results(request):
     search_query = request.GET.get('query', None)
     page = request.GET.get('page', 1)
@@ -27,22 +28,26 @@ def results(request):
         search_results2 = search_backend.search(search_query, LibGuidesSearchableContent.objects.all(), operator="and").annotate_score('score')
         r = 0
         while r < len(search_results2):
-          search_results2[r].score = search_results2[r].score * 1.5
-          r = r + 1
+            search_results2[r].score = search_results2[r].score * 1.5
+            r += 1
 
         r = 0
         while r < len(search_results2):
-          search_results2[r].searchable_content = 'guides'
-          r = r + 1
+            search_results2[r].searchable_content = 'guides'
+            r += 1
 
         search_results3 = search_backend.search(search_query, LibGuidesAssetsSearchableContent.objects.all(), operator="and").annotate_score('score')
         r = 0
         while r < len(search_results3):
-          search_results3[r].searchable_content = 'assets'
-          r = r + 1
+            search_results3[r].searchable_content = 'assets'
+            r += 1
 
         search_results = list(chain(search_results1, search_results2, search_results3))
-        search_results.sort(key=lambda r: r.score, reverse=True)
+        try:
+            search_results.sort(key=lambda r: r.score, reverse=True)
+        except(TypeError):
+            pass
+
         query = Query.get(search_query)
 
         # Record hit
