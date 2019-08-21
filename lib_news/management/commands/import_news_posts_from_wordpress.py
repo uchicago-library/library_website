@@ -20,6 +20,8 @@ REQUESTS_TIMEOUT = float(10)
 POSTS_PER_PAGE = 10
 START_PAGE = 1
 API_BASE_URL = '/wp-json/wp/v2/'
+STAFF_ID = 223
+UNIT_ID = 2455
 
 
 def map_cat(name):
@@ -125,7 +127,8 @@ def wp_media_url(mid):
 
 def get_wp_post_author(wp_post):
     """
-    Get the author of a WordPress post.
+    Get the author of a WordPress post or a custom author byline
+    if it exists.
 
     Args:
         wp_post: json data representing a single WordPress post.
@@ -138,6 +141,9 @@ def get_wp_post_author(wp_post):
     wp_author_resp = requests.get(wp_author_url, timeout=REQUESTS_TIMEOUT)
     wp_author_json = wp_author_resp.json()
     wp_author_name = wp_author_json['name']
+    wp_custom_author_byline = wp_post['custom_author_byline']
+    if wp_custom_author_byline:
+        return wp_custom_author_byline
     return wp_author_name
 
 
@@ -230,6 +236,7 @@ def get_wp_post_data(wp_post_json):
         'featured_media_caption': wp_fm_caption,
         'published_at': pytz.utc.localize(parse(wp_post_json['date'])),
         'content': wp_post_json['content']['rendered'],
+        'excerpt': wp_post_json['excerpt']['rendered'],
     }
 
 
@@ -269,6 +276,21 @@ def toggle_img_alignment_class(classname):
     return css[classname]
 
 
+def clean_excerpt(excerpt):
+    """
+    Strip out the nasty Continue Reading link text from WordPress.
+
+    Args:
+        excerpt: string, html
+
+    Returns:
+        string, html
+    """
+    soup = BeautifulSoup(excerpt, 'html5lib')
+    soup.find('span', class_='meta-nav').parent.decompose()
+    return soup
+
+
 class Command(BaseCommand):
     """
     Imports WordPress posts from our news site into Wagtail.
@@ -305,8 +327,8 @@ class Command(BaseCommand):
             )
             sys.exit()
 
-        unit = UnitPage.objects.get(id=2455)
-        staff = StaffPage.objects.get(id=228)
+        unit = UnitPage.objects.get(id=UNIT_ID)
+        staff = StaffPage.objects.get(id=STAFF_ID)
 
         # TODO - setup logging of failures
         # TODO - write commands for getting all categories and author names for mapping purposes
@@ -337,6 +359,11 @@ class Command(BaseCommand):
                 wp_fm_filename = wp_post_data['featured_media_filename']
                 wp_post_published_at = wp_post_data['published_at']
                 wp_post_content = wp_post_data['content']
+                wp_post_excerpt = clean_excerpt(wp_post_data['excerpt'])
+
+                # Skip Alerts
+                if 'Alert' in wp_categories:
+                    continue
 
                 # Temporary
                 if wp_fm_title and wp_fm_url:
@@ -427,6 +454,8 @@ class Command(BaseCommand):
 
                     news_page = LibNewsPage(
                         title=wp_post_title,
+                        by_text_box=wp_author_name,
+                        excerpt=wp_post_excerpt,
                         thumbnail=thumbnail,
                         alt_text=wp_fm_title,
                         published_at=wp_post_published_at,
