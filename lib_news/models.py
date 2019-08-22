@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from lib_collections.models import get_current_exhibits
 from library_website.settings import (
-    NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
+    LIBRA_ID, NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
 )
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
@@ -48,6 +48,41 @@ class PublicNewsCategories(models.Model, index.Indexed):
     class Meta:
         verbose_name = "Public News Category"
         verbose_name_plural = "Public News Categories"
+
+
+@register_snippet
+class PublicNewsAuthors(models.Model, index.Indexed):
+    author_name = models.CharField(max_length=255, blank=False)
+    link_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    link_external = models.URLField(max_length=400, null=True, blank=True)
+
+    panels = [
+        FieldPanel('author_name'),
+        MultiFieldPanel(
+            [
+                PageChooserPanel('link_page'),
+                FieldPanel('link_external'),
+            ],
+            heading='Author Link'
+        )
+    ]
+
+    def __str__(self):
+        return self.author_name
+
+    search_fields = [
+        index.SearchField('name', partial_match=True),
+    ]
+
+    class Meta:
+        verbose_name = "Public News Author"
+        verbose_name_plural = "Public News Authors"
 
 
 class LibNewsPageCategories(Orderable, models.Model):
@@ -215,6 +250,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         Override the page object's get context method.
         """
+        try:
+            libra = Page.objects.get(id=LIBRA_ID)
+        except(Page.DoesNotExist):
+            libra = None
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
@@ -231,6 +270,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['default_visible'] = NEWS_FEED_DEFAULT_VISIBLE
         context['increment_by'] = NEWS_FEED_INCREMENT_BY
         context['nav'] = self.navigation
+        context['libra'] = libra
         return context
 
 
@@ -250,19 +290,12 @@ class LibNewsPage(PublicBasePage):
     related_exhibits = StreamField(
         RelatedExhibitBlock(required=False), default=[]
     )
-    by_staff = models.ForeignKey(
-        'staff.StaffPage',
+    by_staff_or_unit = models.ForeignKey(
+        'lib_news.PublicNewsAuthors',
         null=True,
         blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
-    )
-    by_unit = models.ForeignKey(
-        'units.UnitPage',
-        null=True,
-        blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        related_name='+'
     )
     by_text_box = models.CharField(max_length=200, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
@@ -361,8 +394,7 @@ class LibNewsPage(PublicBasePage):
         FieldPanel('published_at'),
         MultiFieldPanel(
             [
-                PageChooserPanel('by_staff'),
-                PageChooserPanel('by_unit'),
+                SnippetChooserPanel('by_staff_or_unit'),
                 FieldPanel('by_text_box'),
             ],
             heading='Author'
@@ -462,4 +494,5 @@ class LibNewsPage(PublicBasePage):
         context['right_sidebar_classes'
                 ] = parent_context['right_sidebar_classes']
         context['nav'] = parent_context['nav']
+        context['libra'] = parent_context['libra']
         return context

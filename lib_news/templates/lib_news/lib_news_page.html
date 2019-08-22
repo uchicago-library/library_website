@@ -48,7 +48,7 @@
           "dateModified": "{{self.last_published_at}}",
           "author": {
             "@type": "Person",
-            "name": "{% spaceless %}{% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}{% endspaceless %}"
+            "name": "{% spaceless %}{% get_author self.by_staff_or_unit self.by_text_box self.page_maintainer %}{% endspaceless %}"
           },
            "publisher": {
             "@type": "Organization",
@@ -70,7 +70,7 @@
             {% if not self.treat_as_webpage %}
                 <span class="news-byline">
                     Posted on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-                    by {% get_author self.by_staff self.by_unit self.by_text_box self.page_maintainer %}
+                    by {% get_author self.by_staff_or_unit self.by_text_box self.page_maintainer %}
                 </span>
             {% endif %}
             {{ self.body }}

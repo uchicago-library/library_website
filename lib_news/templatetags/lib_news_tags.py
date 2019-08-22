@@ -4,10 +4,9 @@ register = template.Library()
 
 
 @register.inclusion_tag('lib_news/author.html')
-def get_author(staff, unit, text, maintainer):
+def get_author(author, text, maintainer):
     return {
-        'staff': staff,
-        'unit': unit,
+        'author': author,
         'text': text,
         'maintainer': maintainer
     }

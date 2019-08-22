@@ -402,6 +402,7 @@ WEBPACK_LOADER = {
 # Public news site
 NEWS_FEED_DEFAULT_VISIBLE = 9
 NEWS_FEED_INCREMENT_BY = 18
+LIBRA_ID = 1664
 
 # Override settings in test
 # -------------------------------

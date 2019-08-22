@@ -423,6 +423,15 @@
                         </div>
                     {% endif %}
 
+                    {% if libra %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                            <h3>Print</h3>
+                            <div class="libra-link-wrap">
+                                <p><a href="{% pageurl libra %}">{{libra}}</a></p>
+                            </div>
+                        </div>
+                    {% endif %}
+
                     {% if contacts %}
                         {% list_contacts_in_sidebar contacts 'Media Contact' %}
                     {% endif %}

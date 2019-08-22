@@ -1,18 +1,12 @@
 {% load wagtailcore_tags %}
 
-{% if staff %}
-  {% if staff.public_page %}
-    <a href="{% pageurl staff.public_page %}">{{staff}}</a>
+{% if author.author_name %}
+  {% if author.link_page %}
+    <a href="{% pageurl author.link_page %}">{{author.author_name}}</a>
+  {% elif author.link_external %}
+    <a href="{{author.link_external}}">{{author.author_name}}</a>
   {% else %}
-    {{staff}}
-  {% endif %}
-{% elif unit %}
-  {% if unit.public_web_page %}
-    <a href="{% pageurl unit.public_web_page %}">{{unit}}</a>
-  {% elif unit.location %}
-    <a href="{% pageurl unit.location %}">{{unit}}</a>
-  {% else %}
-    {{unit}}
+    {{author.author_name}}
   {% endif %}
 {% elif text %}
   {{text}}
