@@ -73,6 +73,33 @@
                     by {% get_author self.by_staff_or_unit self.by_text_box self.page_maintainer %}
                 </span>
             {% endif %}
+
+            {% if self.related_exhibits %}
+                <span class="news-highlight">
+                    {% for ex in self.related_exhibits %}
+                        {% with e=ex.value.exhibit %}
+                            {% if e.exhibit_open_date or e.exhibit_close_date %}
+                                <strong>
+                                    {% if self.related_exhibits|length > 1 %}
+                                        {{e.title}} on view
+                                    {% else %}
+                                        Exhibit on view
+                                    {% endif %}
+
+                                    {% if e.exhibit_open_date %}{{ e.exhibit_open_date }}{% endif %}
+                                    {% if e.exhibit_open_date and e.exhibit_close_date %}&ndash;{% endif %}
+                                    {% if e.exhibit_close_date %}{{ e.exhibit_close_date }}{% endif %}
+
+                                    {% if e.exhibit_location %}
+                                      at the
+                                      <a href="{{ e.exhibit_location.url }}">{{ e.exhibit_location.title }}</a>
+                                    {% endif %}
+                                </strong><br>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </span>
+            {% endif %}
             {{ self.body }}
         </article>
     </section>
