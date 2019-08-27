@@ -1,9 +1,12 @@
 <ul class="nav navbar-nav navbar-right">
-    <form class="searchbox news" action="{{search_url_base}}" method="get">
-        <input type="search" required="" class="searchbox-input" name="query" aira-label="search news" placeholder="Search News Stories" value="{{ search_query }}"/>
-        <input type="submit" value="Search"/>
-        <span class="searchbox-icon">
-            <i title="search" class="fa fa-search"></i>
-            <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
-    </form>
+    <li>
+        <form class="searchbox news" action="{{search_url_base}}" method="get">
+            <input type="search" required="" class="searchbox-input" name="query" aira-label="search news" placeholder="Search News Stories" value="{{ search_query }}"/>
+            <input type="submit" value="Search"/>
+            <span class="searchbox-icon">
+                <i title="search" class="fa fa-search"></i>
+                <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
+            </span>
+        </form>
+    </li>
 </ul>
