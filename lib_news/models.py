@@ -297,7 +297,7 @@ class LibNewsPage(PublicBasePage):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    by_text_box = models.CharField(max_length=200, blank=True)
+    by_text_box = models.CharField(max_length=360, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
     library_kiosk = models.BooleanField(default=False)
     law_kiosk = models.BooleanField(default=False)

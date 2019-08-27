@@ -1,3 +1,4 @@
+import html
 import json
 import sys
 from io import BytesIO
@@ -8,6 +9,7 @@ from bs4 import BeautifulSoup
 from dateutil.parser import parse
 from django.core.files.images import ImageFile
 from django.core.management.base import BaseCommand
+from django.db.utils import DataError, IntegrityError
 from lib_news.models import (
     LibNewsIndexPage, LibNewsPage, LibNewsPageCategories, PublicNewsCategories
 )
@@ -16,7 +18,7 @@ from units.models import UnitPage
 from wagtail.images.models import Image
 
 WP_SITE_URL = 'http://news.lib.uchicago.edu'
-REQUESTS_TIMEOUT = float(10)
+REQUESTS_TIMEOUT = float(15)
 POSTS_PER_PAGE = 10
 START_PAGE = 1
 API_BASE_URL = '/wp-json/wp/v2/'
@@ -35,34 +37,77 @@ def map_cat(name):
     Returns:
         PublicNewsCategories object.
     """
-    return LibNewsPageCategories(
-        category=PublicNewsCategories.objects.get(text=name)
-    )
+    return PublicNewsCategories.objects.get(text=name)
 
 
 CAT_MAP = {
-    'Feature Story': map_cat('Klingons'),
-    'Law': map_cat('Borg'),
-    'New Acquisitions': map_cat('Picard'),
-    'Resources': map_cat('DS9'),
+    'Business & Economics': map_cat('Borg'),
+    'Business & Economics in the News': map_cat('Bridge'),
+    'Business & Economics News & Announcements': map_cat('Klingons'),
+    'Business & Economics Research Tips': map_cat('Voyager'),
+    'D\'Angelo Law Announcements': map_cat('Alpha Quadrant'),
+    'D\'Angelo Law Classes & Workshops': map_cat('Delta Quadrant'),
+    'Digital Scholarship': map_cat('Picard'),
+    'E-resource Trials': map_cat('The Orville'),
+    'Events': map_cat('DS9'),
+    'Exhibits': map_cat('Borg'),
+    'Feature Story': map_cat('Bridge'),
+    'Featured Collections': map_cat('Klingons'),
+    'Featured Electronic Resources': map_cat('Voyager'),
+    'Featured Research': map_cat('Alpha Quadrant'),
+    'Foreign & International Law': map_cat('Delta Quadrant'),
+    'From the Director': map_cat('Picard'),
+    'General News': map_cat('The Orville'),
+    'Hours & Access': map_cat('DS9'),
+    'Humanities & Social Sciences': map_cat('Borg'),
+    'Law': map_cat('Bridge'),
+    'Law Featured Resources': map_cat('Klingons'),
+    'Law in the News': map_cat('Voyager'),
+    'Law Research Tips': map_cat('Alpha Quadrant'),
+    'Library in the news': map_cat('Delta Quadrant'),
+    'Making of Mansueto': map_cat('Picard'),
+    'Media Kits': map_cat('The Orville'),
+    'New Acquisitions': map_cat('DS9'),
+    'People': map_cat('Borg'),
+    'Preservation': map_cat('Bridge'),
+    'Regenstein & Mansueto News': map_cat('Klingons'),
+    'Research': map_cat('Voyager'),
+    'Resources': map_cat('Alpha Quadrant'),
+    'Science': map_cat('Delta Quadrant'),
+    'Science E-resource Problems/Fixes': map_cat('Picard'),
+    'Science Featured Resources': map_cat('The Orville'),
+    'Science News & Announcements': map_cat('DS9'),
+    'Spaces': map_cat('Borg'),
+    'Special Collections': map_cat('Bridge'),
+    'Spotlight': map_cat('Klingons'),
+    'success': map_cat('Voyager'),
+    'Teaching': map_cat('Alpha Quadrant'),
+    'Teaching & Learning': map_cat('Delta Quadrant'),
+    'Trials, Betas and Tools': map_cat('Picard'),
+    'U.S. Law': map_cat('The Orville'),
+    'Workshops & Events': map_cat('DS9')
 }
 
 
-def get_cats(wp_cats):
+def get_cats(page, wp_cats):
     """
     Get a list of categories translated from WordPress.
 
     Args:
+        page: Page object
+
         wp_cats: list of strings, category names.
 
     Returns:
         list of LibNewsPageCategories.
     """
-    meow = []
+    meow = set()
     for cat in wp_cats:
         if cat in CAT_MAP:
-            meow.append(CAT_MAP[cat])
-    return meow
+            a = LibNewsPageCategories(page=page, category=CAT_MAP[cat])
+            a.save()
+            meow.add(a)
+    return list(meow)
 
 
 def wp_posts_url(site_url, ppp, pnum):
@@ -138,9 +183,20 @@ def get_wp_post_author(wp_post):
     """
     wp_author_id = wp_post['author']
     wp_author_url = wp_user_url(wp_author_id)
-    wp_author_resp = requests.get(wp_author_url, timeout=REQUESTS_TIMEOUT)
-    wp_author_json = wp_author_resp.json()
-    wp_author_name = wp_author_json['name']
+
+    try:
+        wp_author_resp = requests.get(wp_author_url, timeout=REQUESTS_TIMEOUT)
+        wp_author_json = wp_author_resp.json()
+        try:
+            wp_author_name = wp_author_json['name']
+        except(KeyError):
+            if wp_author_json['code'] == 'rest_user_invalid_id':
+                wp_author_name = 'The University of Chicago Library'
+            else:
+                raise(RuntimeError)
+    except(requests.exceptions.ConnectionError):
+        print('Bad author url: {}').format(wp_author_url)
+
     wp_custom_author_byline = wp_post['custom_author_byline']
     if wp_custom_author_byline:
         return wp_custom_author_byline
@@ -198,7 +254,7 @@ def get_wp_post_categories(wp_post):
         wp_cat_url = wp_category_url(wp_cat_id)
         wp_cat_resp = requests.get(wp_cat_url, timeout=REQUESTS_TIMEOUT)
         wp_cat_json = wp_cat_resp.json()
-        wp_cat_name = wp_cat_json['name']
+        wp_cat_name = html.unescape(wp_cat_json['name']).strip()
         cats.append(wp_cat_name)
     return cats
 
@@ -237,6 +293,7 @@ def get_wp_post_data(wp_post_json):
         'published_at': pytz.utc.localize(parse(wp_post_json['date'])),
         'content': wp_post_json['content']['rendered'],
         'excerpt': wp_post_json['excerpt']['rendered'],
+        'link': wp_post_json['link']
     }
 
 
@@ -286,9 +343,13 @@ def clean_excerpt(excerpt):
     Returns:
         string, html
     """
+    parser = html.parser.HTMLParser()
     soup = BeautifulSoup(excerpt, 'html5lib')
-    soup.find('span', class_='meta-nav').parent.decompose()
-    return soup
+    try:
+        soup.find('span', class_='meta-nav').parent.decompose()
+    except(AttributeError):
+        pass
+    return parser.unescape(soup)
 
 
 class Command(BaseCommand):
@@ -318,6 +379,7 @@ class Command(BaseCommand):
         stdout. More: https://docs.djangoproject.com/en/1.8/howto/custom
         -management-commands/#django.core.management.BaseCommand.handle
         """
+        parser = html.parser.HTMLParser()
         pid = options['pid'][0]
         try:
             news_index_page = LibNewsIndexPage.objects.get(id=pid)
@@ -332,10 +394,10 @@ class Command(BaseCommand):
 
         # TODO - setup logging of failures
         # TODO - write commands for getting all categories and author names for mapping purposes
-        # posts_url = wp_posts_url(base_url, str(POSTS_PER_PAGE), str(START_PAGE))
-        # resp = requests.get(posts_url, timeout=REQUESTS_TIMEOUT)
-        # num_pages = resp.headers['X-WP-TotalPages']
-        num_pages = 1
+        posts_url = wp_posts_url(WP_SITE_URL, str(POSTS_PER_PAGE), str(START_PAGE))
+        resp = requests.get(posts_url, timeout=REQUESTS_TIMEOUT)
+        num_pages = int(resp.headers['X-WP-TotalPages'])
+        # num_pages = 1
         for page_num in range(1, num_pages + 1):
             print(
                 'Importing posts from page {} of {}'.format(
@@ -358,19 +420,26 @@ class Command(BaseCommand):
                 wp_fm_url = wp_post_data['featured_media_url']
                 wp_fm_filename = wp_post_data['featured_media_filename']
                 wp_post_published_at = wp_post_data['published_at']
-                wp_post_content = wp_post_data['content']
+                wp_post_content = parser.unescape(wp_post_data['content'])
                 wp_post_excerpt = clean_excerpt(wp_post_data['excerpt'])
+                wp_post_link = wp_post_data['link']
 
-                # Skip Alerts
-                if 'Alert' in wp_categories:
+                # Set a title for posts that don't have one, yes this happens
+                story_title = parser.unescape(wp_post_title)
+                if not wp_post_title:
+                    story_title = 'Untitled'
+                    print('The following story didn\'t have a title: {}'.format(wp_post_link))
+
+                # Skip Alerts and Hours & Access stories
+                if 'Alert' in wp_categories or 'Hours & Access' in wp_categories:
                     continue
 
                 # Temporary
-                if wp_fm_title and wp_fm_url:
-                    # List of categories for Wagtail
-                    cats = get_cats(wp_categories)
+                # if wp_fm_title and wp_fm_url:
 
-                    # Get the thumbnail and build an entry for Wagtail
+                # Get the thumbnail and build an entry for Wagtail
+                thumbnail = None
+                if wp_fm_url:
                     img_response = get_image(wp_fm_url)
                     thumbnail = Image(
                         title=wp_fm_title,
@@ -380,94 +449,116 @@ class Command(BaseCommand):
                     )
                     thumbnail.save()
 
-                    # Prep WP content for Wagtail
-                    body_content = []
-                    soup = BeautifulSoup(wp_post_content, 'html5lib')
+                # Prep WP content for Wagtail
+                body_content = []
+                soup = BeautifulSoup(wp_post_content, 'html5lib')
 
-                    # Alignment for images
-                    align = 'pull-right'
+                # Alignment for images
+                align = 'pull-right'
 
-                    for element in soup.body.children:
-                        # Ignore whitespace between elements
-                        if isinstance(element, str) and not element.strip():
-                            continue
+                for element in soup.body.children:
+                    # Ignore whitespace between elements
+                    if isinstance(element, str) and not element.strip():
+                        continue
 
-                        # Images
+                    # Images
+                    try:
                         content_images = element.find_all('img')
+                    except(AttributeError):
+                        content_images = None
 
-                        # Is a header
-                        if element.name in ['h2', 'h3', 'h4', 'h5', 'h6']:
-                            body_content.append(
-                                {
-                                    u'type': u'{}'.format(str(element.name)),
-                                    u'value': str(element.text)
-                                }
+                    # Is a header
+                    if element.name in ['h2', 'h3', 'h4', 'h5', 'h6']:
+                        body_content.append(
+                            {
+                                u'type': u'{}'.format(str(element.name)),
+                                u'value': str(element.text)
+                            }
+                        )
+                    # Has images
+                    elif content_images:
+                        for img in content_images:
+                            wp_img_caption = img.parent.find_next_sibling(
+                                'p', class_='wp-caption-text'
                             )
-                        # Has images
-                        elif content_images:
-                            for img in content_images:
-                                wp_img_caption = img.parent.find_next_sibling(
-                                    'p', class_='wp-caption-text'
-                                )
-                                caption = ''
-                                if wp_img_caption:
-                                    caption = wp_img_caption.text
-                                align = toggle_img_alignment_class(align)
+                            caption = ''
+                            if wp_img_caption:
+                                caption = wp_img_caption.text
+                            align = toggle_img_alignment_class(align)
+
+                            try:
                                 content_img_url = img['src']
+                            except(KeyError):
+                                content_img_url = ''
+
+                            try:
                                 alt = img['alt']
+                            except(KeyError):
+                                alt = ''
+
+                            if content_img_url:
                                 filename = content_img_url.split('/')[-1]
-                                content_img_resp = get_image(content_img_url)
-                                # css = img['class']
-                                content_img = Image(
-                                    title=alt,
-                                    file=ImageFile(
-                                        BytesIO(content_img_resp.content),
-                                        name=filename
-                                    )
-                                )
-                                content_img.save()
-                                body_content.append(
-                                    {
-                                        'type': 'image',
-                                        'value': {
-                                            'image': content_img.id,
-                                            'title': caption,
-                                            'citation': '',
-                                            'caption': '',
-                                            'alt_text': alt,
-                                            'alignment': align,
-                                            'source': '',
-                                            'lightbox': True
-                                        }
-                                    }
-                                )
-                        # Anything else (normal paragraph or div with text)
-                        else:
-                            body_content.append(
-                                {
-                                    u'type': u'paragraph',
-                                    u'value': {
-                                        u'paragraph': str(element)
-                                    }
+                                try:
+                                    content_img_resp = get_image(content_img_url)
+                                    try:
+                                        content_img = Image(
+                                            title=alt,
+                                            file=ImageFile(
+                                                BytesIO(content_img_resp.content),
+                                                name=filename
+                                            )
+                                        )
+                                        content_img.save()
+                                        body_content.append(
+                                            {
+                                                'type': 'image',
+                                                'value': {
+                                                    'image': content_img.id,
+                                                    'title': caption,
+                                                    'citation': '',
+                                                    'caption': '',
+                                                    'alt_text': alt,
+                                                    'alignment': align,
+                                                    'source': '',
+                                                    'lightbox': True
+                                                }
+                                            }
+                                        )
+                                    except(DataError, IntegrityError):
+                                        print('Content image could not be imported from WordPress story: {}'.format(story_title))
+                                # Bad image links in most cases (if not all)
+                                except(requests.exceptions.MissingSchema, requests.exceptions.ConnectionError):
+                                    print('Content image could not be imported from WordPress story: {}'.format(story_title))
+
+                    # Anything else (normal paragraph or div with text)
+                    else:
+                        body_content.append(
+                            {
+                                u'type': u'paragraph',
+                                u'value': {
+                                    u'paragraph': str(element)
                                 }
-                            )
+                            }
+                        )
 
-                    news_page = LibNewsPage(
-                        title=wp_post_title,
-                        by_text_box=wp_author_name,
-                        excerpt=wp_post_excerpt,
-                        thumbnail=thumbnail,
-                        alt_text=wp_fm_title,
-                        published_at=wp_post_published_at,
-                        body=json.dumps(body_content),
-                        page_maintainer=staff,
-                        editor=staff,
-                        content_specialist=staff,
-                        unit=unit,
-                    )
-                    news_index_page.add_child(instance=news_page)
+                news_page = LibNewsPage(
+                    title=story_title,
+                    by_text_box=wp_author_name,
+                    excerpt=wp_post_excerpt,
+                    thumbnail=thumbnail,
+                    alt_text=wp_fm_title,
+                    published_at=wp_post_published_at,
+                    body=json.dumps(body_content),
+                    page_maintainer=staff,
+                    editor=staff,
+                    content_specialist=staff,
+                    unit=unit,
+                )
+                news_index_page.add_child(instance=news_page)
 
-                    # Add Wagtail categories if any were mapped
-                    if cats:
-                        news_page.lib_news_categories = cats
-                        news_page.save()
+                # List of categories for Wagtail
+                cats = get_cats(news_page, wp_categories)
+
+                # Add Wagtail categories if any were mapped
+                news_page.lib_news_categories = cats
+                news_page.save()
