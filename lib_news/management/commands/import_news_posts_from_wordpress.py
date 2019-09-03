@@ -104,9 +104,10 @@ def get_cats(page, wp_cats):
     meow = set()
     for cat in wp_cats:
         if cat in CAT_MAP:
-            a = LibNewsPageCategories(page=page, category=CAT_MAP[cat])
-            a.save()
-            meow.add(a)
+            mapped_cat = LibNewsPageCategories(page=page, category=CAT_MAP[cat])
+            if mapped_cat not in meow:
+                mapped_cat.save()
+                meow.add(mapped_cat)
     return list(meow)
 
 
