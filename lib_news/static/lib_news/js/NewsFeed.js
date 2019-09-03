@@ -18,6 +18,23 @@ const CATEGORY = DOM_ELEMENT.getAttribute('data-category');
 
 const FALLBACK_IMG = DOM_ELEMENT.getAttribute('data-fallback-img') || '';
 
+const filterItems = res => (CATEGORY
+  ? res.items.filter(i => i.categories.includes(CATEGORY))
+  : res.items.filter(i => i.id !== i.first_feature_id));
+
+const OFFSET_LIMIT = '64';
+
+const PreLoader = () => (
+  <article>
+    <span className="img-object">
+      <div className="preload">
+        <i className="fa fa-spinner fa-pulse fa-3x fa-fw" />
+        <span>Loading</span>
+      </div>
+    </span>
+  </article>
+);
+
 const Article = ({ item, category }) => (
   <article>
     <span className="img-object">
@@ -73,19 +90,34 @@ class NewsFeed extends React.Component {
     this.state = {
       items: [],
       visible: DEFAULT_VISIBLE,
+      isLoading: true,
     };
 
     this.loadMore = this.loadMore.bind(this);
   }
 
   componentDidMount() {
-    fetch(API_URL)
+    // Fetch a small number of items
+    fetch(`${API_URL}&limit=${OFFSET_LIMIT}`)
       .then(res => res.json())
       .then((res) => {
         this.setState({
-          items: CATEGORY
-            ? res.items.filter(i => i.categories.includes(CATEGORY))
-            : res.items.filter(i => i.id !== i.first_feature_id),
+          items: filterItems(res),
+          isLoading: false,
+        });
+      })
+      .catch((error) => {
+        console.error(error); // eslint-disable-line no-console
+      });
+
+    // Fetch more a large number of items (slow)
+    fetch(`${API_URL}&limit=1000&offset=${OFFSET_LIMIT}`)
+      .then(res => res.json())
+      .then((res) => {
+        const { items } = this.state;
+        const joined = items.concat(filterItems(res));
+        this.setState({
+          items: joined,
         });
       })
       .catch((error) => {
@@ -100,16 +132,21 @@ class NewsFeed extends React.Component {
   render() {
     const { visible } = this.state;
     const { items } = this.state;
+    const { isLoading } = this.state;
     return (
       <div>
         <section className="news-stories">
-          {items.slice(0, visible).map(item => (
-            <Article
-              item={item}
-              category={item.categories[0] || ''}
-              key={item.id}
-            />
-          ))}
+          {!isLoading
+            ? items
+              .slice(0, visible)
+              .map(item => (
+                <Article
+                  item={item}
+                  category={item.categories[0] || ''}
+                  key={item.id}
+                />
+              ))
+            : [...Array(visible).keys()].map(() => <PreLoader />)}
         </section>
         {visible < items.length && <LoadMoreBtn loadMore={this.loadMore} />}
       </div>

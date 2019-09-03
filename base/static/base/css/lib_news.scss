@@ -185,7 +185,7 @@ body.libnewsindexpage {
 	article {
 	  .img-object {
 	    align-self: start;
-	    img {
+	    img, .preload {
 		    height: auto;
 			max-width: 100%;
 			object-fit: contain;
@@ -194,9 +194,21 @@ body.libnewsindexpage {
 			margin-right: auto;
 			margin-left: auto;
 			grid-column: span 1;
-			object-fit: cover;height: 200px;
+			object-fit: cover;
+            height: 200px;
 			width: 100%;
 		  }
+        .preload {
+            background: $lightgray;
+            text-align: center;
+            padding: 60px 0 0 0;
+            i, span{
+                color: darken($lightgray, 30%);
+                margin: 0 auto;
+                padding: 4px 0;
+                display: block;
+            }
+        }
 	  }
 	}
 

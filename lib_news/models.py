@@ -110,7 +110,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
-        self.news_feed_api = '/api/v2/pages/?format=json&treat_as_webpage=false&limit=500&order=-published_at&type=lib_news.LibNewsPage&fields=*'
+        self.news_feed_api = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*'
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
@@ -213,7 +213,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         Search results view.
         """
         self.search_query = request.GET.get('query', '')
-        self.news_feed_api = '/api/v2/pages/?search=%s&format=json&limit=500&type=lib_news.LibNewsPage&fields=*' % self.search_query
+        self.news_feed_api = '/api/v2/pages/?search={}&format=json&type=lib_news.LibNewsPage&fields=*'.format(
+            self.search_query
+        )
         self.is_unrouted = False
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
@@ -252,7 +254,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         try:
             libra = Page.objects.get(id=LIBRA_ID)
-        except(Page.DoesNotExist):
+        except (Page.DoesNotExist):
             libra = None
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
