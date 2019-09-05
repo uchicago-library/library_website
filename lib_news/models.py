@@ -299,7 +299,7 @@ class LibNewsPage(PublicBasePage):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    by_text_box = models.CharField(max_length=360, blank=True)
+    custom_author_byline = models.CharField(max_length=360, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
     library_kiosk = models.BooleanField(default=False)
     law_kiosk = models.BooleanField(default=False)
@@ -397,7 +397,7 @@ class LibNewsPage(PublicBasePage):
         MultiFieldPanel(
             [
                 SnippetChooserPanel('by_staff_or_unit'),
-                FieldPanel('by_text_box'),
+                FieldPanel('custom_author_byline'),
             ],
             heading='Author'
         ),
@@ -447,7 +447,7 @@ class LibNewsPage(PublicBasePage):
         index.SearchField('alt_text'),
         index.SearchField('excerpt'),
         index.SearchField('related_exhibits'),
-        index.SearchField('by_text_box'),
+        index.SearchField('custom_author_byline'),
         index.SearchField('published_at'),
     ]
 
