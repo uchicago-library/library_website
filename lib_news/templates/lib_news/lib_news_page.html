@@ -73,9 +73,10 @@
                     by {% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}
                 </span>
             {% endif %}
-
+            {{ self.body }}
             {% if self.related_exhibits %}
-                <span class="news-highlight">
+                <div class="media-use">
+                    <h2>Visit the Exhibit</h2>
                     {% for ex in self.related_exhibits %}
                         {% with e=ex.value.exhibit %}
                             {% if e.exhibit_open_date or e.exhibit_close_date %}
@@ -94,13 +95,19 @@
                                       at the
                                       <a href="{{ e.exhibit_location.url }}">{{ e.exhibit_location.title }}</a>
                                     {% endif %}
-                                </strong><br>
+                                </strong><br/>
+                                {% if self.exhibit_story_hours_override %}
+                                    {{self.exhibit_story_hours_override|richtext}}
+                                {% elif e.exhibit_location.title == 'Special Collections Research Center' %}
+                                    <a href="/libraries/libraries-hours/#special-collections-research-center">Hours</a>: Mondays through Fridays, 9 a.m. – 4:45 p.m., and, when University of Chicago classes are in session, Tuesdays and Wednesdays, 9 a.m. – 5:45 p.m. Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library.
+                                {% elif e.exhibit_location.parent_building.title == 'The Joseph Regenstein Library' %}
+                                    Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library during its <a href="/libraries/libraries-hours/#the-joseph-regenstein-library">hours</a>.
+                                {% endif %}
                             {% endif %}
                         {% endwith %}
                     {% endfor %}
-                </span>
+                </div>
             {% endif %}
-            {{ self.body }}
         </article>
     </section>
 

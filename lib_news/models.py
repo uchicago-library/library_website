@@ -310,6 +310,7 @@ class LibNewsPage(PublicBasePage):
         help_text='Functionally converts this page to a standard page. \
         If checked, the page will not appear in news feeds'
     )
+    exhibit_story_hours_override = RichTextField(blank=True)
 
     def get_categories(self):
         """
@@ -429,6 +430,7 @@ class LibNewsPage(PublicBasePage):
             ],
             heading='Rich Text'
         ),
+        FieldPanel('exhibit_story_hours_override'),
     ]
 
     edit_handler = TabbedInterface(
