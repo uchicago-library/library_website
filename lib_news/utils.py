@@ -8,5 +8,5 @@ def get_first_feature_story():
     from .models import LibNewsPage
     feature = LibNewsPage.objects.filter(
         is_feature_story=True
-    ).order_by('-first_published_at').first()
+    ).order_by('-published_at').first()
     return feature
