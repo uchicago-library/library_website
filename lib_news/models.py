@@ -123,7 +123,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
                 )
             ),
         ],
-        default=[]
+        default=[],
+        null=True,
+        blank=True,
     )
 
     fallback_image = models.ForeignKey(
