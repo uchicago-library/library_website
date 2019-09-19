@@ -122,17 +122,22 @@
         <div class="share-buttons">
             <span class="share-title">Share this:</span>
             {# Facebook #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-facebook-f"></i></a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-facebook-f"></i></a>
             {# Twitter #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-twitter"></i></a>
+            <a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.excerpt|striptags|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button"><i class="fa fa-twitter"></i></a>
             {# Linkedin #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-linkedin"></i></a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{self.url|urlencode}}&title={{self.title|urlencode}}&summary={{self.excerpt|striptags|urlencode}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button"><i class="fa fa-linkedin"></i></a>
             {# Instagram #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-instagram"></i></a>
+            {# <a href="" class="btn-floating" type="button" role="button"><i class="fa fa-instagram"></i></a> #}
             {# Pinterest #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-pinterest"></i></a>
+            {% if self.thumbnail %}
+                {% image self.thumbnail fill-1000x750-c75 as pin %}
+                <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&media={{self.get_site.root_url}}{{pin.url}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-pinterest"></i></a>
+            {% else %}
+                <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-pinterest"></i></a>
+            {% endif %}
             {# Reddit #}
-            <a class="btn-floating" type="button" role="button"><i class="fa fa-reddit-alien"></i></a>
+            <a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-reddit-alien"></i></a>
         </div>
     </section>
 
@@ -148,6 +153,7 @@
                     {% with first_category=p.get_categories|first %}
                         <span class="news-category {{first_category}}">{{first_category}}</span>
                     {% endwith %}
+                    <a href="{% pageurl p %}">{{p.title}}</a>
                 </article>
             {% endfor %}
         </section>
