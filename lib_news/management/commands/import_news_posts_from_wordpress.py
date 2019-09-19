@@ -3,19 +3,20 @@ import json
 import sys
 from io import BytesIO
 
-import pytz
 import requests
 from bs4 import BeautifulSoup
-from dateutil.parser import parse
 from django.core.files.images import ImageFile
 from django.core.management.base import BaseCommand
 from django.db.utils import DataError, IntegrityError
+from wagtail.images.models import Image
+
+import pytz
+from dateutil.parser import parse
 from lib_news.models import (
     LibNewsIndexPage, LibNewsPage, LibNewsPageCategories, PublicNewsCategories
 )
 from staff.models import StaffPage
 from units.models import UnitPage
-from wagtail.images.models import Image
 
 WP_SITE_URL = 'http://news.lib.uchicago.edu'
 REQUESTS_TIMEOUT = float(25)
@@ -345,7 +346,8 @@ def get_wp_post_data(wp_post_json):
         'published_at': pytz.utc.localize(parse(wp_post_json['date'])),
         'content': wp_post_json['content']['rendered'],
         'excerpt': wp_post_json['excerpt']['rendered'],
-        'link': wp_post_json['link']
+        'link': wp_post_json['link'],
+        'last_published_at': pytz.utc.localize(parse(wp_post_json['modified'])),
     }
 
 
@@ -451,7 +453,7 @@ class Command(BaseCommand):
         )
         resp = requests.get(posts_url, timeout=REQUESTS_TIMEOUT)
         num_pages = int(resp.headers['X-WP-TotalPages'])
-        num_pages = 9
+        # num_pages = 9
         for page_num in range(1, num_pages + 1):
             print(
                 'Importing posts from page {} of {}'.format(
@@ -477,6 +479,7 @@ class Command(BaseCommand):
                 wp_post_content = parser.unescape(wp_post_data['content'])
                 wp_post_excerpt = clean_excerpt(wp_post_data['excerpt'])
                 wp_post_link = wp_post_data['link']
+                wp_post_last_published_at = wp_post_data['last_published_at']
 
                 # Set a title for posts that don't have one, yes this happens
                 story_title = parser.unescape(wp_post_title)
@@ -654,6 +657,8 @@ class Command(BaseCommand):
                     thumbnail=thumbnail,
                     alt_text=wp_fm_title,
                     published_at=wp_post_published_at,
+                    first_published_at=wp_post_published_at,
+                    last_published_at=wp_post_last_published_at,
                     body=json.dumps(body_content),
                     page_maintainer=staff,
                     editor=staff,
