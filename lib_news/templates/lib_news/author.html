@@ -1,0 +1,20 @@
+{% load wagtailcore_tags %}
+
+{% if author.author_name %}
+  {% if author.link_page %}
+    <a href="{% pageurl author.link_page %}">{{author.author_name}}</a>
+  {% elif author.link_external %}
+    <a href="{{author.link_external}}">{{author.author_name}}</a>
+  {% else %}
+    {{author.author_name}}
+  {% endif %}
+{% elif text %}
+  {{text}}
+{% else %}
+  {# There should always be a page_maintainer #}
+  {% if maintainer.public_page %}
+    <a href="{% pageurl maintainer.public_page %}">{{maintainer}}</a>
+  {% else %}
+    {{maintainer}}
+  {% endif %}
+{% endif %}

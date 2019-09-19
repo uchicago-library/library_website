@@ -1,0 +1,170 @@
+{% extends "lib_news/lib_news_index_page.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load public_tags %}
+{% load lib_news_tags %}
+{% load show_exhibit_listing_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block js %}{% endblock %}
+
+{% block meta %}
+    {% if self.thumbnail and self.excerpt %}
+        {# Twitter Card and Facebook OpenGraph #}
+        {% image self.thumbnail fill-900x471 as t_thumb %}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@UChicagoLibrary" />
+        <meta name="twitter:creator" content="@UChicagoLibrary" />
+        <meta property="og:url" content="{{self.url}}" />
+        <meta property="og:title" content="{{self.title}}" />
+        <meta property="og:type" content="article" />
+        <meta property="og:description" content="{{self.excerpt|richtext|striptags}}" />
+        <meta property="og:image" content="{{self.get_site.root_url}}{{t_thumb.url}}" />
+    {% endif %}
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{self.url}}"
+          },
+          "headline": "{{self.title}}",
+          {% if self.thumbnail %}
+            {% image self.thumbnail fill-800x800-c75 as img_1 %}
+            {% image self.thumbnail fill-1000x750-c75 as img_2 %}
+            {% image self.thumbnail fill-1920x1080-c75 as img_3 %}
+            "image": [
+              "{{self.get_site.root_url}}{{img_1.url}}",
+              "{{self.get_site.root_url}}{{img_2.url}}",
+              "{{self.get_site.root_url}}{{img_3.url}}"
+            ],
+          {% endif %}
+          "datePublished": "{{self.first_published_at}}",
+          "dateModified": "{{self.last_published_at}}",
+          "author": {
+            "@type": "Person",
+            "name": "{% spaceless %}{% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}{% endspaceless %}"
+          },
+           "publisher": {
+            "@type": "Organization",
+            "name": "The University of Chicago Library",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.lib.uchicago.edu/static/base/images/color-logo.png"
+            }
+          },
+          "description": "{{self.excerpt|richtext|striptags}}"
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <section class="story-page">
+        <article>
+            <h1>{{self.title}}</h1>
+            {% if not self.treat_as_webpage %}
+                <span class="news-byline">
+                    Posted on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
+                    by {% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}
+                </span>
+            {% endif %}
+            {{ self.body }}
+            {% if self.related_exhibits %}
+                <div class="media-use">
+                    <h2>Visit the Exhibit</h2>
+                    {% for ex in self.related_exhibits %}
+                        {% with e=ex.value.exhibit %}
+                            {% if e.exhibit_open_date or e.exhibit_close_date %}
+                                <strong>
+                                    {% if self.related_exhibits|length > 1 %}
+                                        {{e.title}} on view
+                                    {% else %}
+                                        Exhibit on view
+                                    {% endif %}
+
+                                    {% if e.exhibit_open_date %}{{ e.exhibit_open_date }}{% endif %}
+                                    {% if e.exhibit_open_date and e.exhibit_close_date %}&ndash;{% endif %}
+                                    {% if e.exhibit_close_date %}{{ e.exhibit_close_date }}{% endif %}
+
+                                    {% if e.exhibit_location %}
+                                      at the
+                                      <a href="{{ e.exhibit_location.url }}">{{ e.exhibit_location.title }}</a>
+                                    {% endif %}
+                                </strong><br/>
+                                {% if self.exhibit_story_hours_override %}
+                                    {{self.exhibit_story_hours_override|richtext}}
+                                {% elif e.exhibit_location.title == 'Special Collections Research Center' %}
+                                    <a href="/libraries/libraries-hours/#special-collections-research-center">Hours</a>: Mondays through Fridays, 9 a.m. – 4:45 p.m., and, when University of Chicago classes are in session, Tuesdays and Wednesdays, 9 a.m. – 5:45 p.m. Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library.
+                                {% elif e.exhibit_location.parent_building.title == 'The Joseph Regenstein Library' %}
+                                    Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library during its <a href="/libraries/libraries-hours/#the-joseph-regenstein-library">hours</a>.
+                                {% endif %}
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </article>
+    </section>
+
+    <section class="social-share">
+        {# Categories #}
+        {% if categories %}
+            {% for cat in tagged %}
+                <a href="{{ category_url_base }}{{ cat|slugify }}" class="badge">{{cat}}</a>
+            {% endfor %}
+        {% endif %}
+
+        <div class="share-buttons">
+            <span class="share-title">Share this:</span>
+            {# Facebook #}
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-facebook-f"></i></a>
+            {# Twitter #}
+            <a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.excerpt|striptags|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button"><i class="fa fa-twitter"></i></a>
+            {# Linkedin #}
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{self.url|urlencode}}&title={{self.title|urlencode}}&summary={{self.excerpt|striptags|urlencode}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button"><i class="fa fa-linkedin"></i></a>
+            {# Instagram #}
+            {# <a href="" class="btn-floating" type="button" role="button"><i class="fa fa-instagram"></i></a> #}
+            {# Pinterest #}
+            {% if self.thumbnail %}
+                {% image self.thumbnail fill-1000x750-c75 as pin %}
+                <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&media={{self.get_site.root_url}}{{pin.url}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-pinterest"></i></a>
+            {% else %}
+                <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-pinterest"></i></a>
+            {% endif %}
+            {# Reddit #}
+            <a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button"><i class="fa fa-reddit-alien"></i></a>
+        </div>
+    </section>
+
+    {# Recent news stories #}
+    {% if recent_stories %}
+        <section class="related-stories">
+            <h2>More News</h2>
+            {% for p in recent_stories %}
+                <article>
+                    <span class="img-object">
+                        <a href="{% pageurl p %}">{% image p.thumbnail fill-358x200 class="article-img" %}</a>
+                    </span>
+                    {% with first_category=p.get_categories|first %}
+                        <span class="news-category {{first_category}}">{{first_category}}</span>
+                    {% endwith %}
+                    <a href="{% pageurl p %}">{{p.title}}</a>
+                </article>
+            {% endfor %}
+        </section>
+    {% endif %}
+{% endblock %}
+
+{% block right_sidebar %}
+    {% if self.related_exhibits %}
+        {% get_related_exhibits self.related_exhibits %}
+    {% endif %}
+    {% if display_current_web_exhibits %}
+        {% show_exhibits current_exhibits 'Current Exhibits' %}
+    {% endif %}
+{% endblock %}

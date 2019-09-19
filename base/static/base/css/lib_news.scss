@@ -1,0 +1,451 @@
+@import "variables.scss";
+
+body.libnewspage,
+body.libnewsindexpage {
+
+	#content {
+		max-width: 2000px;
+	}
+	.body-container {
+		padding-top: 0;
+	}
+	.centermain {
+		max-width: none;
+	}
+
+
+/*
+ * Navigation & Sidebar
+ * --------------------------------------------------
+ */
+
+	.navbar-news {
+		background: #fff;
+		padding: 1.75em;
+	    border-top: 2px solid #800000;
+	    border-bottom: 2px solid #800000;
+	    border-radius: 0;
+	    a {
+	    	color: #800000;
+	    }
+	    li a {
+	    	text-transform: uppercase;
+	    }
+	    li > ul li a {
+    		text-transform: none;
+    		margin-bottom: 0.75em;
+    	}
+	    @include respond-to(small) {
+			padding: 0 5em 0 2em;
+	    }
+	    @include respond-to(xlarge) {
+			padding-right: 20em;
+	    }
+	}
+
+	.btn-sidebar {
+	    background: #ddd;
+	    color: $darkgray;
+	    position: absolute;
+	    left: 0;
+	    border-top-left-radius: 0px;
+	    border-bottom-left-radius: 0px;
+	    margin-left: 0;
+	    margin-top: 0;
+	    z-index: 1000;
+	    background-color: rgba(210, 205, 204, 0.9);
+	    box-shadow: 0px 2px 7px $darkgray;
+	}
+
+	.coll-rightside {
+		background: #fff;
+		box-shadow: -2px 2px 5px rgba(67, 67, 67, 0.5);
+		h3 {
+		  	color: $darkgray;
+		  	font-family: $base-font;
+		  	font-weight: 400;
+		  	font-size: 0.95em;
+		    margin-top: 1rem;
+		    text-transform: uppercase;
+		    border-bottom: none;
+		}
+		img {
+			max-width: 100%;
+			margin-bottom: 0.75em;
+		}
+		a {
+			color: #800000;
+		}
+		.event-date {
+			color: $darkred;
+		}
+		.rightside-mod {
+			padding-bottom: 1.5rem;
+		}
+	}
+
+
+/*
+ * Featured Story
+ * --------------------------------------------------
+ */
+
+	section.featured-news {
+		padding-bottom: 2em;
+		margin: 0 auto 30px;
+		border-bottom: 1px solid $lightgray;
+	    article {
+	    	display: grid;
+			grid-template-areas:
+			"image"
+			"title";
+			@include respond-to(small) {
+				grid-template-columns: 1fr 2fr;
+			grid-gap: 30px;
+				grid-template-rows: auto;
+				grid-template-areas:
+				"title image";
+				padding-left: 1.5em;
+			}
+			.img-object {
+				grid-area: image;
+				width: 100%;
+			    height: 100%;
+    			img {
+				    height: auto;
+					max-width: 100%;
+					object-fit: contain;
+					margin-right: auto;
+					margin-left: auto;
+					grid-column: span 1;
+				    @include respond-to(small) {
+				    	width: 100%;
+					    height: 100%;
+					    object-fit: cover;
+				    }
+				}
+			}
+
+			.title-object {
+				grid-area: title;
+				h2 {
+					color: $mid-dark;
+					font-family: $base-font;
+				    font-size: 2.6em;
+				    font-weight: 200;
+				    margin-top: 0;
+				    @include respond-to(small) {
+					    margin-bottom: 1em;
+					}
+				}
+				p {
+					color: $darkgray;
+					font-size: 1.2em;
+				}
+				a.read-more {
+					color: #800000;
+				    font-weight: 500;
+				    text-transform: uppercase;
+				    line-height: 2em;
+				}
+			}
+	    }
+	}
+
+
+
+/*
+ * News Thumbnails
+ * --------------------------------------------------
+ */
+
+	section.news-stories {
+	    display: grid;
+		grid-gap: 30px;
+		margin: 0 auto 30px;
+		@include respond-to(small) {
+			grid-template-columns: 1fr 1fr 1fr;
+			padding-left: 1.5em;
+		}
+		@include respond-to(small) {
+			article.featured {
+			  grid-column: span 3;
+			}
+		}
+		h2 {
+			font-family: $base-font;
+			color: $mid-dark;
+		    font-size: 1.4em;
+		    font-weight: 400;
+		    line-height: 1.6em;
+		    margin: 0.5em 0 5px 0;
+		}
+	}
+
+	article {
+	  .img-object {
+	    align-self: start;
+	    img, .preload {
+		    height: auto;
+			max-width: 100%;
+			object-fit: contain;
+			align-self: end;
+			object-position: 50% 20%;
+			margin-right: auto;
+			margin-left: auto;
+			grid-column: span 1;
+			object-fit: cover;
+            height: 200px;
+			width: 100%;
+		  }
+        .preload {
+            background: $lightgray;
+            text-align: center;
+            padding: 60px 0 0 0;
+            i, span{
+                color: darken($lightgray, 30%);
+                margin: 0 auto;
+                padding: 4px 0;
+                display: block;
+            }
+        }
+	  }
+	}
+
+
+/*
+ * New Story Page
+ * --------------------------------------------------
+ */
+
+	section.story-page {
+		margin: 30px auto;
+		@include respond-to(medium) {
+		margin: 0 auto 30px;
+		}
+		h1, h2, h3, h4, h5, h6 {
+			font-family: $base-font;
+		}
+		h1 {
+			color: $mid-dark;
+		    font-size: 2.8rem;
+		    line-height: 1.3em;
+		    font-weight: 200;
+		    margin-top: 0;
+		    border-bottom: none;
+		    @include respond-to(small) {
+			    margin-bottom: 0.5rem;
+			}
+			@include respond-to(medium) {
+			    font-size: 3.4rem;
+			}
+		}
+		.news-byline {
+			font-size: 1.1rem;
+			font-style: italic;
+			margin-bottom: 2rem;
+			display: block;
+		}
+		.news-highlight {
+			font-size: 1.4rem;
+			font-weight: 600;
+			margin-bottom: 2rem;
+			display: block;
+		}
+		h2 {
+		    font-size: 2.4rem;
+		    font-weight: 200;
+		}
+		p {
+			font-size: 1.2em;
+		}
+		figure.imgcaption {
+			&.pull-right, &.pull-left {
+				@include respond-to(smallonly) {
+			    	margin: 10px;
+			    }
+			}
+		    img {
+		    	width: 100%;
+				@include respond-to(small) {
+				    max-width: 400px;
+				}
+		    }
+		}
+		.collex-solo, .collex-duo {
+			background: #eee;
+			border-bottom: none;
+			margin-bottom: 1em;
+			border-radius: 15px;
+		}
+		.agenda {
+			@include respond-to(small) {
+			    padding-right: 2rem;
+			}
+		}
+		.media-use {
+			margin-top: 2em;
+		}
+	}
+	
+
+/*
+ * Social Media and Subjects Strip
+ * --------------------------------------------------
+ */
+
+	section.social-share {
+		padding-bottom: 2em;
+		margin-bottom: 2em;
+		border-bottom: 1px solid $lightgray;
+	 	.badge {
+			background-color: #eee;
+			color: $darkgray;
+			&:hover {
+				background-color: #17a2b8;
+				color: #eee;
+			}
+	 	}
+	}
+
+	.share-buttons {
+		padding-top: 2em;
+		.share-title {
+			font-weight: 600;
+		}
+	}	
+
+	.btn-floating {
+		background: $darkgray;
+	    -webkit-box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+	    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+	    width: 35px;
+	    height: 35px;
+	    position: relative;
+	    z-index: 1;
+	    vertical-align: middle;
+	    display: inline-block;
+	    overflow: hidden;
+	    -webkit-transition: all .2s ease-in-out;
+	    -o-transition: all .2s ease-in-out;
+	    transition: all .2s ease-in-out;
+	    margin: 10px;
+	    -webkit-border-radius: 50%;
+	    border-radius: 50%;
+	    padding: 0;
+	    cursor: pointer;
+	    &:hover {
+		    -webkit-box-shadow: 0 8px 17px 0 rgba(0,0,0,.2), 0 6px 20px 0 rgba(0,0,0,.19);
+		    box-shadow: 0 8px 17px 0 rgba(0,0,0,.2), 0 6px 20px 0 rgba(0,0,0,.19);
+		}
+	    i {
+		    font-size: 1.625rem;
+		    line-height: 35px;
+		    display: inline-block;
+		    width: inherit;
+		    text-align: center;
+		    color: #fff;
+		}
+	}
+
+
+/*
+ * Related Stories
+ * --------------------------------------------------
+ */
+
+	section.related-stories {
+		display: grid;
+		grid-gap: 30px;
+		margin: 0 auto 30px;
+		@include respond-to(small) {
+			grid-template-columns: 1fr 1fr 1fr;
+			padding-left: 1.5em;
+		}
+		@include respond-to(small) {
+			article.featured {
+			  grid-column: span 3;
+			}
+		}
+		.img-object {
+			margin-bottom: 1em;
+		}
+		h2 {
+			grid-column: span 3;
+			margin: 0;
+		}
+	 	a {
+		    font-size: 1.3em;
+		    font-weight: 200;
+		    color: $darkgray;
+		}
+	 }
+
+
+/*
+ * Footer
+ * --------------------------------------------------
+ */
+
+	.load-footer {
+		padding: 2em 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	button.btn-info {
+		background: $maroon;
+		grid-column: span 3;
+		width: 55%;
+		margin-left: auto;
+		margin-right: auto;
+	    font-size: 1.1em;
+		border: none;
+	}
+
+
+/*
+ * FOR MOCKS ONLY
+ * --------------------------------------------------
+ */
+
+.news-category {
+	color: #fff;
+    display: block;
+    padding: 0.5em 1em;
+    background: darken($darkgray, 30%);
+	&.exhibits {
+      background: rgb(37,25,15);
+    }
+    &.spaces {
+      background: rgb(101,109,51);
+    }
+    &.people {
+      background: rgb(153,83,36);
+    }
+    &.research {
+      background: rgb(21,67,95);
+    }
+    &.resources {
+      background: rgb(70,72,51);
+    }
+    &.teaching {
+      background: rgb(21,95,131);
+    }
+    &.events {
+      background: rgb(114,86,99);
+    }
+    &.hours-access {
+      background: rgb(128,0,0);
+    }
+    &.spotlight {
+      background: rgb(198,130,32);
+    }
+    &.from-the-director {
+      background: rgb(143,57,49);
+    }
+}
+
+}
+

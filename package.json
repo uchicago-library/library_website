@@ -1,0 +1,41 @@
+{
+  "name": "library_website",
+  "version": "1.0.0",
+  "description": "Library website javascript dependencies.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js --progress --colors --mode production",
+    "watch": "webpack --config webpack.config.js --watch --watch-poll --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uchicago-library/library_website.git"
+  },
+  "author": "bbusenius@uchicago.edu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uchicago-library/library_website/issues"
+  },
+  "homepage": "https://github.com/uchicago-library/library_website#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0",
+    "webpack": "^4.33.0",
+    "webpack-bundle-tracker": "^0.4.2-beta",
+    "webpack-cli": "^3.3.4"
+  },
+  "dependencies": {
+    "oboe": "^2.1.4",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "styled-components": "^4.3.2"
+  }
+}

@@ -1,6 +1,9 @@
 import logging
 import urllib
 
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
+from base.utils import get_hours_and_location
 from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
@@ -8,12 +11,17 @@ from django.db import models
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
+from library_website.settings.base import (
+    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
+    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
+from units.utils import get_default_unit
 from wagtail.admin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
@@ -32,15 +40,6 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtailmedia.blocks import AbstractMediaChooserBlock
-
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
-from base.utils import get_hours_and_location
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
-)
-from units.utils import get_default_unit
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -346,6 +345,51 @@ class CarouselItem(LinkFields):
 
     class Meta:
         abstract = True
+
+
+class ContactPerson(StructBlock):
+    """
+    Reusable model for a contact. Will be used to
+    populate contact fields. Used on public news
+    related pages.
+    """
+    contact_person = PageChooserBlock(
+        required=False,
+        page_type='staff.StaffPage',
+        help_text='Select a StaffPage (not a StaffPublicPage)',
+    )
+
+
+class ContactPersonBlock(StreamBlock):
+    """
+    Base fields for a sidebar contact.
+    """
+    contact = ContactPerson(
+        icon='view', required=False, template='public/blocks/contact.html'
+    )
+
+
+class RelatedExhibit(StructBlock):
+    """
+    Reusable model for a related exhibit widget.
+    Used on public news pages.
+    """
+    exhibit = PageChooserBlock(
+        required=False,
+        page_type='lib_collections.ExhibitPage',
+        help_text='Select an ExhibitPage',
+    )
+
+
+class RelatedExhibitBlock(StreamBlock):
+    """
+    Related exhibit StreamBlock for sidebar widget.
+    """
+    exhibit = RelatedExhibit(
+        icon='view',
+        required=False,
+        template='public/blocks/related_exhibit.html'
+    )
 
 
 class LinkedText(LinkFields):
@@ -992,6 +1036,7 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
     local_media = LocalMediaBlock(
         help_text='Audio or video files that are locally hosted'
     )
+    html = RawHTMLBlock()
 
     class Meta:
         required = False
@@ -1004,10 +1049,11 @@ class RawHTMLBodyField(StreamBlock):
     html = RawHTMLBlock()
 
 
-class IntranetDefaultBodyFields(RawHTMLBodyField, DefaultBodyFields):
+class IntranetDefaultBodyFields(DefaultBodyFields):
     """
-    Default StreamField options for IntranetPages. Inherits the
-    StreamFields from the public site and adds a RawHTML field.
+    Default StreamField options for IntranetPlainPages. Currently only inherits
+    StreamFields from the public site but could be extended to allow for
+    loop only fields.
     """
 
     class Meta:
@@ -1206,6 +1252,9 @@ elements and bulleted lists'
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_content_specialist',
     )
+
+    # Current Web Exhibits
+    display_current_web_exhibits = models.BooleanField(default=False)
 
     # Searchable fields
     search_fields = Page.search_fields + BasePage.search_fields

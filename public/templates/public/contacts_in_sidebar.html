@@ -1,0 +1,12 @@
+{% load wagtailcore_tags %}
+
+{% if contacts %}
+  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+  <h3>{{ sect_title }}{% if contacts|length > 1 %}s{% endif %}</h3>
+  <div class="event-wrap">
+    {% for c in contacts %}
+      {{ c }}
+    {% endfor %}
+  </div>
+  </div>
+{% endif %}

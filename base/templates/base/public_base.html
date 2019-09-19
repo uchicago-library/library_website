@@ -3,6 +3,7 @@
 {% load wagtailimages_tags %}
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
+{% load public_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +28,25 @@
     <meta name="generator" content="Bootply"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="MVKdj1ykLrwrN01_2Y85qg78KiUxrdRYTSFc6TyBkNY" />
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Library",
+          "url": "{{self.get_site.root_url}}",
+          "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
+          "name": "{{page_location|escapejs}}",
+          "address": "{{address}}",
+          {% if self.unit.location.location_photo %}
+            {% image self.unit.location.location_photo fill-1000x750-c75 as loc_pic %}
+            "image": "{{self.get_site.root_url}}{{loc_pic.url}}",
+          {% endif %}
+          {% if self.unit.location.phone_number %}
+            "telephone": "{{self.unit.location.phone_number}}",
+          {% endif %}
+          "parentOrganization": "The University of Chicago"
+        }
+    </script>
+    {% block meta %}{% endblock %}
     <link href="{% static "base/css/normalize.css" %}" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />
     <link href="{% static "base/css/iconfont/material-icons.css" %}" rel="stylesheet"/>
@@ -87,9 +107,9 @@
                         <img src="{{banner_feature.url}}" alt="{{self.banner_feature.title}}"/>
                     </div>
                 {% endif %}
-                <div class="overlaywrap {{branch_lib_css}}" itemscope itemtype="http://schema.org/Library">
+                <div class="overlaywrap {{branch_lib_css}}">
                     <a href="{{banner_url}}">
-                    <h2 itemprop="name">{{banner_title}}</h2>
+                    <h2>{{banner_title}}</h2>
                     {% if banner_subtitle %}
                         <p class="banner-subtitle">{{banner_subtitle}}</p>
                     {% endif %}
@@ -145,8 +165,11 @@
         <div class="{{breadcrumb_div_css}}">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
+        {% block above_main_content %}{% endblock %}
         <div class="{{content_div_css}}" id="content" role="main">
-            <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+            {% if page_type|slugify != 'libnewspage' %}
+                <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+            {% endif %}
             {% block under_h1 %}{% endblock %}
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
@@ -292,7 +315,7 @@
             {% endif %}
 
             {% if self.has_right_sidebar %}
-                <div class="col-xs-12 col-md-3 rightside {% block right_sidebar_classes %}{% endblock %}" role="complementary"> <!-- Right Sidebar Content -->
+                <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks %}
@@ -398,6 +421,19 @@
                                 {% endif %}
                             </ul>
                         </div>
+                    {% endif %}
+
+                    {% if libra %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                            <h3>Print</h3>
+                            <div class="libra-link-wrap">
+                                <p><a href="{% pageurl libra %}">{{libra}}</a></p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if contacts %}
+                        {% list_contacts_in_sidebar contacts 'Media Contact' %}
                     {% endif %}
                 </div>
                 <!-- // Right Sidebar Content -->
@@ -531,6 +567,7 @@
             });
         </script>
     {% endif %}
+    {% block js %}{% endblock %}
 <!-- // Scripts -->
 </body>
 </html>

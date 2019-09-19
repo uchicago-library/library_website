@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+
+<p>
+  {% if self.contact_person.public_page %}
+    <a href="{% pageurl self.contact_person.public_page %}">{{self.contact_person}}</a>
+  {% else %}
+    {{self.contact_person}}
+  {% endif %}
+  {% if self.contact_person.position_title %}
+    <br/>{{self.contact_person.position_title}}
+  {% endif %}
+  {% if self.contact_person.staff_page_email.first %}
+    <br/>{{self.contact_person.staff_page_email.values_list.first|last|urlize}}
+  {% endif %}
+</p>

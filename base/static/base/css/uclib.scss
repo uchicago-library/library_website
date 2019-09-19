@@ -57,7 +57,7 @@ Staff Profile Page
   }
 }
 
-.h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs, #p-1757 .breadcrumbs { // Hide breadcrumbs on homepages with banners
+body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs, #p-1757 .breadcrumbs { // Hide breadcrumbs on homepages with banners
    @include visually-hidden;
 }
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -74,6 +75,7 @@ INSTALLED_APPS = [
     'intranettocs',
     'intranetunits',
     'lib_collections',
+    'lib_news',
     'library_website',
     'macros',
     'news',
@@ -89,6 +91,7 @@ INSTALLED_APPS = [
     'units',
     'static_precompiler',
     'workflowautomator.apps.WorkflowautomatorConfig',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -387,3 +390,24 @@ OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'
 # Uploaded files and documents should have group read/write permissions
 # and world read permissions.
 FILE_UPLOAD_PERMISSIONS = 0o664
+
+# Config for frontent dependencies
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
+# Public news site
+NEWS_FEED_DEFAULT_VISIBLE = 9
+NEWS_FEED_INCREMENT_BY = 18
+LIBRA_ID = 1664
+
+# Override settings in test
+# -------------------------------
+# THESE ONLY APPLY TO UNIT TESTS!
+# -------------------------------
+
+if 'test' in sys.argv:
+    HOURS_PAGE = 1

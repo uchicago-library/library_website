@@ -1,8 +1,16 @@
 from datetime import date
 
+from base.models import (
+    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
+    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+)
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
+from public.utils import get_features
+from staff.models import StaffPage
+from subjects.utils import get_subjects_html
+from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
     PageChooserPanel, StreamFieldPanel, TabbedInterface
@@ -15,15 +23,6 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
 
-from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
-    PublicBasePage, RawHTMLBodyField, SocialMediaFields
-)
-from public.utils import get_features
-from staff.models import StaffPage
-from subjects.utils import get_subjects_html
-from units.models import BUILDINGS
-
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
 # from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
@@ -35,7 +34,7 @@ from units.models import BUILDINGS
 
 class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
     """
-    Base treamfield block for "Featured Library Experts".
+    Base streamfield block for "Featured Library Experts".
     """
     library_expert = blocks.PageChooserBlock(  # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
         required=False, help_text='Be sure to select a StaffPage (not a StaffPublicPage)',
@@ -115,11 +114,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
         'public.DonorPage', 'lib_collections.CollectingAreaPage',
         'lib_collections.CollectionPage', 'lib_collections.ExhibitPage',
-        'redirects.RedirectPage', 'units.UnitPage', 'ask_a_librarian.AskPage',
-        'units.UnitIndexPage', 'conferences.ConferenceIndexPage',
-        'base.IntranetPlainPage', 'dirbrowse.DirBrowsePage',
-        'public.StaffPublicPage', 'findingaids.FindingAidsPage',
-        'public.PublicRawHTMLPage'
+        'lib_news.LibNewsIndexPage', 'redirects.RedirectPage', 'units.UnitPage',
+        'ask_a_librarian.AskPage', 'units.UnitIndexPage',
+        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage',
+        'dirbrowse.DirBrowsePage', 'public.StaffPublicPage',
+        'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage'
     ]
 
     content_panels = Page.content_panels + [
