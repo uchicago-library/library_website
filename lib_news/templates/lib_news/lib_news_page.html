@@ -151,7 +151,7 @@
                         <a href="{% pageurl p %}">{% image p.thumbnail fill-358x200 class="article-img" %}</a>
                     </span>
                     {% with first_category=p.get_categories|first %}
-                        <span class="news-category {{first_category}}">{{first_category}}</span>
+                        <span class="news-category {{first_category|slugify}}">{{first_category}}</span>
                     {% endwith %}
                     <a href="{% pageurl p %}">{{p.title}}</a>
                 </article>
