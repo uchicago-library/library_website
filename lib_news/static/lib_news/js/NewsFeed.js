@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import slugify from 'react-slugify';
 
 const DOM_ELEMENT = document.getElementById('news-feed');
 
@@ -45,9 +46,7 @@ const Article = ({ item, category }) => (
           alt={item.thumbnail_alt_text || ''}
         />
       </a>
-      <span className={`news-category ${category.toLowerCase()}`}>
-        {category}
-      </span>
+      <span className={`news-category ${slugify(category)}`}>{category}</span>
     </span>
     <a href={item.meta.html_url}>
       <h2>{item.title}</h2>
