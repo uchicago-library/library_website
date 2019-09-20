@@ -625,36 +625,7 @@ figure.embed {
       position: absolute !important;
       bottom: 30px;
     }
-    &.exhibits {
-      background: rgb(37,25,15);
-    }
-    &.spaces {
-      background: rgb(101,109,51);
-    }
-    &.people {
-      background: rgb(153,83,36);
-    }
-    &.research {
-      background: rgb(21,67,95);
-    }
-    &.resources {
-      background: rgb(70,72,51);
-    }
-    &.teaching {
-      background: rgb(21,95,131);
-    }
-    &.events {
-      background: rgb(114,86,99);
-    }
-    &.hours-access {
-      background: rgb(128,0,0);
-    }
-    &.spotlight {
-      background: rgb(198,130,32);
-    }
-    &.from-the-director {
-      background: rgb(143,57,49);
-    }
+    @include news-category-colors; // located in _variables.scss
     .newsblock & {
       position: inherit;
       font-size: 1.1em;

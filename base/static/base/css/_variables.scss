@@ -173,6 +173,61 @@ $divider: 1px solid $darkgray;
  * --------------------------------------------------
  */
 
+@mixin news-category-colors { // Using the UChicago colors
+  &.business-economics {
+    background: #155F83; // light blue
+  }
+  &.digital-scholarship {
+    background: #8F3931; // light red
+  }
+  &.exhibits {
+    background: $eckhartpurple;
+  }
+  &.events {
+    background: $active-hover; // light purple
+  }
+  &.from-the-director {
+    background: #8F3931; // light red
+  }
+  &.hours-access {
+    background: $maroon;
+  }
+  &.humanities-social-sciences {
+    background: $mansuetogreen;
+  }
+  &.law {
+    background: $darkred;
+  }
+  &.library-in-the-news {
+    background: #C68220; // dark yellow
+  }
+  &.people {
+    background: $ssaorange;
+  }
+  &.research {
+    background: $crerarblue;
+  }
+  &.resources {
+    background: $mansuetogreen;
+  }
+  &.science {
+    background: $crerarblue;
+  }
+  &.spaces {
+    background: $active;
+  }
+  &.special-collections {
+    background: $eckhartpurple;
+  }
+  &.spotlight {
+    background: #C68220; // dark yellow
+  }
+  &.teaching {
+    background: #155F83; // light blue
+  }
+}
+
+
 @mixin desaturate { // for images
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
