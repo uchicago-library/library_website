@@ -46,7 +46,11 @@ const Article = ({ item, category }) => (
           alt={item.thumbnail_alt_text || ''}
         />
       </a>
-      <span className={`news-category ${slugify(category)}`}>{category}</span>
+      <span
+        className={`news-category ${slugify(category.replace(/[&]/gi, ''))}`}
+      >
+        {category}
+      </span>
     </span>
     <a href={item.meta.html_url}>
       <h2>{item.title}</h2>
