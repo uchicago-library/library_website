@@ -330,7 +330,7 @@ class LibNewsPage(PublicBasePage):
         # To handle this, we won't show any categories.
         except (AttributeError):
             return [
-                'Can\'t load categories in PEVIEW',
+                'Can\'t load categories in PREVIEW',
                 'Check categories on the LIVE page'
             ]
 
