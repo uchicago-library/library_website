@@ -321,10 +321,18 @@ class LibNewsPage(PublicBasePage):
         Returns:
             list of strings
         """
-        return [
-            str(PublicNewsCategories.objects.get(id=cat['category_id']))
-            for cat in self.lib_news_categories.values()
-        ]
+        try:
+            return [
+                str(PublicNewsCategories.objects.get(id=cat['category_id']))
+                for cat in self.lib_news_categories.values()
+            ]
+        # This is a FakeQuerySet and we are probably in preview mode.
+        # To handle this, we won't show any categories.
+        except (AttributeError):
+            return [
+                'Can\'t load categories in PREVIEW',
+                'Check categories on the LIVE page'
+            ]
 
     def get_first_feature_story_id(self):
         """
