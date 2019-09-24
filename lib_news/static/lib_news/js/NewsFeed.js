@@ -23,7 +23,7 @@ const filterItems = res => (CATEGORY
   ? res.items.filter(i => i.categories.includes(CATEGORY))
   : res.items.filter(i => i.id !== i.first_feature_id));
 
-const OFFSET_LIMIT = '64';
+const OFFSET_LIMIT = '34';
 
 const PreLoader = () => (
   <article>
@@ -113,8 +113,8 @@ class NewsFeed extends React.Component {
         console.error(error); // eslint-disable-line no-console
       });
 
-    // Fetch more a large number of items (slow)
-    fetch(`${API_URL}&limit=1000&offset=${OFFSET_LIMIT}`)
+    // Fetch a larger number of items (slow)
+    fetch(`${API_URL}&limit=750&offset=${OFFSET_LIMIT}`)
       .then(res => res.json())
       .then((res) => {
         const { items } = this.state;
