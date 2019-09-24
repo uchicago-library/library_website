@@ -11,8 +11,7 @@ from ask_a_librarian.utils import (
     get_unit_chat_link
 )
 from base.utils import (
-    get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id,
-    get_news
+    get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id
 )
 from dateutil.relativedelta import relativedelta
 from events.utils import flatten_events, get_events
@@ -96,17 +95,6 @@ def json_events(request):
                 )
             }
         )
-
-
-def json_news(request):
-    """
-    View for rendering news feed data as json.
-    """
-    if request.method == 'GET':
-        feed = request.GET['feed']
-        return JsonResponse({
-            'news': get_news(feed),
-        })
 
 
 def chat_status(request):

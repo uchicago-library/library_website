@@ -41,50 +41,6 @@ def get_xml_from_directory_api(url):
     return result.read()
 
 
-def get_news(url):
-    """
-    Get news stories from a Wordpress feed and create
-    a datastructure to hand off to a restful sevice.
-
-    Args:
-        url: string, link to a wordpress feed.
-
-    Returns:
-        A list of tuples representing a news story.
-    """
-    d = feedparser.parse(url)
-    stories = []
-    i = 4
-    garbage = [
-        'Continue&#160;reading&#160;&#187;',
-        'Continue&nbsp;reading&nbsp;&raquo;'
-    ]
-    for e in d.entries:
-        if i < 1:
-            break
-        for tag in e.tags:
-            # Categories and tags
-            cat = tag['term']
-
-            # Images
-            soup = BeautifulSoup(e.description, 'html.parser')
-            img = soup.findAll('img')
-            try:
-                img_src = img[0]['src']
-            except:
-                img_src = ''
-            if cat in NEWS_CATEGORIES and img_src:
-                description = strip_tags(e.description).strip(garbage[0]).strip(
-                    garbage[1]
-                )
-                stories.append(
-                    (e.title, e.link, cat, description, slugify(cat), img_src)
-                )
-                i -= 1
-                break
-    return stories
-
-
 def get_json_for_library(lid):
     """
     Get json data for a specific library from
