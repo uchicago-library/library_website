@@ -276,9 +276,6 @@ body.libnewsindexpage {
 			}
 		    img {
 		    	width: 100%;
-				@include respond-to(small) {
-				    max-width: 400px;
-				}
 		    }
 		}
 		.agenda {
@@ -339,6 +336,7 @@ body.libnewsindexpage {
 		    flex-wrap: wrap;
 		    padding: 1em;
 		    border-bottom: 1px dotted $darkgray;
+		    margin-bottom: 1em;
 		}
 
 		.collex-duo {
