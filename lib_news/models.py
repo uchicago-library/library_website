@@ -305,7 +305,7 @@ class LibNewsPage(PublicBasePage):
     published_at = models.DateTimeField(default=timezone.now)
     library_kiosk = models.BooleanField(default=False)
     law_kiosk = models.BooleanField(default=False)
-    crerar_kiosk = models.BooleanField(default=False)
+    sciences_kiosk = models.BooleanField(default=False)
     scrc_kiosk = models.BooleanField(default=False)
     treat_as_webpage = models.BooleanField(
         default=False,
@@ -417,7 +417,7 @@ class LibNewsPage(PublicBasePage):
                 FieldRowPanel(
                     [
                         FieldPanel('law_kiosk', classname=ROW_CLASS),
-                        FieldPanel('crerar_kiosk', classname=ROW_CLASS),
+                        FieldPanel('sciences_kiosk', classname=ROW_CLASS),
                         FieldPanel('scrc_kiosk', classname=ROW_CLASS),
                         FieldPanel('library_kiosk', classname=ROW_CLASS),
                     ]

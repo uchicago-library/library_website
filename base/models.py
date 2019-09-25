@@ -53,7 +53,7 @@ NEWS_CHOICES = (
     ('', '--------'),
     ('library_kiosk', 'Library'),
     ('law_kiosk', 'Law'),
-    ('crerar_kiosk', 'Crerar'),
+    ('sciences_kiosk', 'Sciences'),
     ('scrc_kiosk', 'SCRC'),
 )
 
@@ -1609,8 +1609,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return qs.filter(library_kiosk=True)[:n]
         elif src == 'law_kiosk':
             return qs.filter(law_kiosk=True)[:n]
-        elif src == 'crerar_kiosk':
-            return qs.filter(crerar_kiosk=True)[:n]
+        elif src == 'sciences_kiosk':
+            return qs.filter(sciences_kiosk=True)[:n]
         elif src == 'law_kiosk':
             return qs.filter(scrc_kiosk=True)[:n]
 
