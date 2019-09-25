@@ -6,7 +6,7 @@
                 Browse by Category <span class="caret"></span></a>
             <ul class="dropdown-menu">
                 {% for cat in categories %}
-                    <li><a href="{{ category_url_base }}{{ cat|slugify }}">{{cat}}</a></li>
+                    <li><a href="{{ category_url_base }}{{ cat|slugify }}/">{{cat}}</a></li>
                 {% endfor %}
             </ul>
         </li>
