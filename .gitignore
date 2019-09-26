@@ -6,6 +6,7 @@
 /library_website/settings/local.py
 /static
 /media
+/cache
 
 node_modules/
 package.json

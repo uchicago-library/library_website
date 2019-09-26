@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'compressor',
     'modelcluster',
 
+    'wagtailcache',
     'wagtail.core',
     'wagtail.admin',
     'wagtail.search',
@@ -95,6 +96,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'wagtailcache.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,6 +114,7 @@ MIDDLEWARE = [
 
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+    'wagtailcache.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'library_website.urls'
@@ -356,6 +359,8 @@ CRERAR_BUILDING_ID = 2713
 CRERAR_EXHIBIT_FOOTER_IMG = 1130
 SCRC_EXHIBIT_FOOTER_IMG = 1129
 
+WAGTAIL_CACHE_BACKEND = 'pagecache'
+
 # Redis cache configuration
 CACHES = {
     'default': {
@@ -365,6 +370,12 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         },
     },
+    'pagecache': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        'KEY_PREFIX': 'wagtailcache',
+        'TIMEOUT': 21600,
+    }
 }
 
 # Base url for the LibChat status API
