@@ -17,7 +17,7 @@ django-redis
 django-static-precompiler==1.8.2
 django-taggit==0.24.0
 django-treebeard==4.3
-djangorestframework==3.9.3
+djangorestframework==3.10.3
 django-webpack-loader
 elasticsearch>=5.0.0,<6.0.0
 feedparser==5.2.1

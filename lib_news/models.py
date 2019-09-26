@@ -1,15 +1,9 @@
 import bleach
-from base.models import (
-    ContactPersonBlock, DefaultBodyFields, PublicBasePage, RelatedExhibitBlock
-)
+from django.core.cache import caches
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from lib_collections.models import get_current_exhibits
-from library_website.settings import (
-    LIBRA_ID, NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
-)
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
@@ -26,6 +20,14 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+
+from base.models import (
+    ContactPersonBlock, DefaultBodyFields, PublicBasePage, RelatedExhibitBlock
+)
+from lib_collections.models import get_current_exhibits
+from library_website.settings import (
+    LIBRA_ID, NEWS_CACHE_TTL, NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
+)
 
 from .utils import get_first_feature_story
 
@@ -102,7 +104,7 @@ class LibNewsPageCategories(Orderable, models.Model):
     ]
 
     def __str__(self):
-        return self.page.title + " -> " + self.category.text
+        return self.category.text
 
 
 class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
@@ -235,6 +237,19 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             PublicNewsCategories.objects.order_by('text').values_list('text')
         )
 
+    def get_first_feature_story_id(self):
+        """
+        Get id of the first feature story.
+
+        Returns:
+            int
+        """
+        ff = get_first_feature_story()
+        if ff:
+            return str(ff.id)
+        else:
+            return ''
+
     def get_cat_from_slug(self, slug):
         """
         Creates a lookup table of category names by slug
@@ -264,6 +279,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['search_url_base'] = self.base_url + 'search/'
         context['news_feed_api'] = self.news_feed_api
         context['feature'] = get_first_feature_story()
+        context['feature_id'] = self.get_first_feature_story_id()
         context['current_exhibits'] = get_current_exhibits()
         context['display_current_web_exhibits'
                 ] = self.display_current_web_exhibits
@@ -279,6 +295,11 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
 
 class LibNewsPage(PublicBasePage):
+
+    def __init__(self, *args, **kwargs):
+        super(LibNewsPage, self).__init__(*args, **kwargs)
+        self.news_pages = LibNewsPage.objects.live(
+        ).prefetch_related('lib_news_categories')
 
     body = StreamField(DefaultBodyFields())
     thumbnail = models.ForeignKey(
@@ -316,16 +337,31 @@ class LibNewsPage(PublicBasePage):
 
     def get_categories(self):
         """
-        Get a list of categories assigned to the news page.
+        Get a list of categories assigned to the news page. Categories
+        are cached in redis as a dictionary where the keys are page IDs
+        and the values are lists of string category names.
 
         Returns:
             list of strings
         """
         try:
-            return [
-                str(PublicNewsCategories.objects.get(id=cat['category_id']))
-                for cat in self.lib_news_categories.values()
-            ]
+            dcache = caches['default']
+            cdict = {}
+            pid = self.id
+            if 'news_cats' not in dcache:
+                dcache.set('news_cats', cdict, NEWS_CACHE_TTL)
+            if 'news_cats' in dcache:
+                cdict = dcache.get('news_cats')
+                if pid in cdict:
+                    cats = cdict[pid]
+                else:
+                    cats = [
+                        str(cat)
+                        for cat in self.lib_news_categories.get_object_list()
+                    ]
+                    cdict[pid] = cats
+                    dcache.set('news_cats', cdict, NEWS_CACHE_TTL)
+            return cats
         # This is a FakeQuerySet and we are probably in preview mode.
         # To handle this, we won't show any categories.
         except (AttributeError):
@@ -333,19 +369,6 @@ class LibNewsPage(PublicBasePage):
                 'Can\'t load categories in PREVIEW',
                 'Check categories on the LIVE page'
             ]
-
-    def get_first_feature_story_id(self):
-        """
-        Get id of the first feature story.
-
-        Returns:
-            int
-        """
-        ff = get_first_feature_story()
-        if ff:
-            return ff.id
-        else:
-            return None
 
     @property
     def short_description(self):
@@ -384,9 +407,8 @@ class LibNewsPage(PublicBasePage):
             field: string, field to be passed to a
             Django QuerySet filter, e.g. '-published_at'.
         """
-        return LibNewsPage.objects.order_by(field).exclude(
-            thumbnail=None
-        ).exclude(id=self.id)[:n]
+        return self.news_pages.order_by(field).exclude(thumbnail=None
+                                                       ).exclude(id=self.id)[:n]
 
     subpage_types = []
 
@@ -475,12 +497,6 @@ class LibNewsPage(PublicBasePage):
         APIField(
             'thumbnail_alt_text',
             serializer=serializers.CharField(source='alt_text')
-        ),
-        APIField(
-            'first_feature_id',
-            serializer=serializers.IntegerField(
-                source='get_first_feature_story_id'
-            )
         ),
         APIField('published_at'),
         APIField('treat_as_webpage'),

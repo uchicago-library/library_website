@@ -404,6 +404,12 @@ NEWS_FEED_DEFAULT_VISIBLE = 9
 NEWS_FEED_INCREMENT_BY = 18
 LIBRA_ID = 1664
 
+# Cache time for news site categories is 60 days
+# This can be egregiously long because we're only
+# caching a dict of news page IDs and category
+# strings for the most recent pages
+NEWS_CACHE_TTL = 60 * 86400
+
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
