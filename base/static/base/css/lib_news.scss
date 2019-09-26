@@ -265,8 +265,11 @@ body.libnewsindexpage {
 		    font-size: 2.4rem;
 		    font-weight: 200;
 		}
-		p {
+		p, ul {
 			font-size: 1.2em;
+			li {
+			    margin-bottom: 1rem;
+			}
 		}
 		figure.imgcaption {
 			&.pull-right, &.pull-left {

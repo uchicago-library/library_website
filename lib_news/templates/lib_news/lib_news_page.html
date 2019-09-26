@@ -69,8 +69,7 @@
             <h1>{{self.title}}</h1>
             {% if not self.treat_as_webpage %}
                 <span class="news-byline">
-                    Posted on {{self.published_at|date:"M d Y"}} at {{self.published_at|date:"g:h"}}
-                    by {% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}
+                    Posted on {{self.published_at|date:"M d, Y"}} by {% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}
                 </span>
             {% endif %}
             {{ self.body }}
