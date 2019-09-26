@@ -1611,7 +1611,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return qs.filter(law_kiosk=True)[:n]
         elif src == 'sciences_kiosk':
             return qs.filter(sciences_kiosk=True)[:n]
-        elif src == 'law_kiosk':
+        elif src == 'scrc_kiosk':
             return qs.filter(scrc_kiosk=True)[:n]
 
         # This should never happen but just in case
