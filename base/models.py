@@ -1,9 +1,6 @@
 import logging
 import urllib
 
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
-from base.utils import get_hours_and_location
 from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
@@ -11,17 +8,12 @@ from django.db import models
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
-)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
-from units.utils import get_default_unit
 from wagtail.admin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
@@ -41,11 +33,28 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtailmedia.blocks import AbstractMediaChooserBlock
 
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
+from base.utils import get_hours_and_location
+from library_website.settings.base import (
+    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
+    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+)
+from units.utils import get_default_unit
+
 # Helper functions and constants
 BUTTON_CHOICES = (
     ('btn-primary', 'Primary'),
     ('btn-default', 'Secondary'),
     ('btn-reserve', 'Reservation'),
+)
+
+NEWS_CHOICES = (
+    ('', '--------'),
+    ('library_kiosk', 'Library'),
+    ('law_kiosk', 'Law'),
+    ('sciences_kiosk', 'Sciences'),
+    ('scrc_kiosk', 'SCRC'),
 )
 
 # Friendly names that need "an" instead of "a"
@@ -1195,9 +1204,11 @@ class PublicBasePage(BasePage):
     )
 
     # News
-    news_feed_url = models.URLField(
+    news_feed_source = models.CharField(
+        max_length=50,
         blank=True,
-        help_text='Link to a wordpress feed from the Library News Site'
+        choices=NEWS_CHOICES,
+        default='',
     )
     external_news_page = models.URLField(
         blank=True, help_text='Link to an external news page, e.g. wordpress'
@@ -1569,6 +1580,43 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         else:
             return url
 
+    def get_news(self, src, n):
+        """
+        Get recent news stories for kiosk pages.
+
+        Args:
+            src: string, kiosk for which we're getting
+            news.
+
+            n: int, number of news stories to get.
+
+        Returns:
+            QuerySet
+        """
+        from lib_news.models import LibNewsPage
+        # Bail immediately if we don't need news
+        empty_qs = LibNewsPage.objects.none()
+        if src == '':
+            return empty_qs
+
+        # Get the queryset once
+        qs = LibNewsPage.objects.order_by('-published_at').exclude(
+            thumbnail=None
+        )
+
+        # Filter for selected kiosk pages
+        if src == 'library_kiosk':
+            return qs.filter(library_kiosk=True)[:n]
+        elif src == 'law_kiosk':
+            return qs.filter(law_kiosk=True)[:n]
+        elif src == 'sciences_kiosk':
+            return qs.filter(sciences_kiosk=True)[:n]
+        elif src == 'law_kiosk':
+            return qs.filter(scrc_kiosk=True)[:n]
+
+        # This should never happen but just in case
+        return empty_qs
+
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         self.location_and_hours = get_hours_and_location(self)
@@ -1634,9 +1682,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['events_feed'] = urllib.parse.quote(
             self.events_feed_url, safe=url_filter
         )
-        context['news_feed'] = urllib.parse.quote(
-            self.news_feed_url, safe=url_filter
-        )
+        context['news_feed'] = self.get_news(self.news_feed_source, 4)
         context['unfriendly_a'] = True if self.friendly_name.strip(
         ) in UNFRIENDLY_ARTICLES else False
         context['is_law'] = is_law
