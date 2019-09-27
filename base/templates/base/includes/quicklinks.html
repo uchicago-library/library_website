@@ -1,0 +1,14 @@
+{% load wagtailcore_tags %}
+<div class="{% if self.change_to_callout %} call-out {%endif%} rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-quicklinks">
+    {% if self.quicklinks_title %}
+        <h3>{{self.quicklinks_title}}</h3>
+    {% endif %}
+
+    {% autoescape off %}
+        {{self.quicklinks|richtext}}
+    {% endautoescape %}
+
+    {% if self.view_more_link and self.view_more_link_label %}
+        <a href="{{self.view_more_link}}" class="btn btn-morelink" role="button">{{self.view_more_link_label}}</a>
+    {% endif %}
+</div>

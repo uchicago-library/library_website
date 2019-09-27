@@ -337,25 +337,14 @@
                 <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
                     {% block right_sidebar %}{% endblock %}
         
-                    {% if self.quicklinks %}
-                        <div class="{% if self.change_to_callout %} call-out {%endif%} rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-quicklinks">
-                            {% if self.quicklinks_title %}
-                                <h2>{{self.quicklinks_title}}</h2>
-                            {% endif %}
-
-                            {% autoescape off %}
-                                {{self.quicklinks|richtext}}
-                            {% endautoescape %}
-
-                            {% if self.view_more_link and self.view_more_link_label %}
-                                <a href="{{self.view_more_link}}" class="btn btn-morelink" role="button">{{self.view_more_link_label}}</a>
-                            {% endif %}
-                        </div>
+                    {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}
+                        {# Quicklinks Widget A.K.A. Richtext Widget #}
+                        {% include "base/includes/quicklinks.html" %}
                     {% endif %}
 
                     {% if self.has_granular_hours %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h2>Hours Today</h2>
+                            <h3>Hours Today</h3>
                             <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required 'script' moved to footer #}
                             <a href="/libraries/libraries-hours/" class="viewall">View all library hours</a>
                         </div> 
@@ -363,7 +352,7 @@
 
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
-                            <h2>Find Spaces</h2>
+                            <h3>Find Spaces</h3>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
                                     <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
@@ -386,7 +375,7 @@
 
                     {% if self.events_feed_url %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
-                            <h2>Workshops &amp; Events</h2>
+                            <h3>Workshops &amp; Events</h3>
                             <div class="calledOnce">
                             <!--<div class="jflatTimeline calledOnce">-->
                                 <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
@@ -403,7 +392,7 @@
                     {% if self.collection_page %}
                         {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h2>Featured Collection</h2>
+                            <h3>Featured Collection</h3>
                             <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
                             <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
                             <a href="/collex/?view=collections" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
@@ -412,7 +401,7 @@
 
                     {% if self.has_social_media %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media">
-                            <h2>{{self.friendly_name}}Social Media</h2>
+                            <h3>{{self.friendly_name}}Social Media</h3>
                             <ul>
                                 {% if self.twitter_page %}
                                 <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a></li>
