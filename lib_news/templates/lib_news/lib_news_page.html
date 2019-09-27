@@ -166,6 +166,12 @@
     {% if self.related_exhibits %}
         {% get_related_exhibits self.related_exhibits %}
     {% endif %}
+
+    {% if self.quicklinks %}
+        {# Quicklinks Widget A.K.A. Richtext Widget #}
+        {% include "base/includes/quicklinks.html" %}
+    {% endif %}
+
     {% if display_current_web_exhibits %}
         {% show_exhibits current_exhibits 'Current Exhibits' %}
     {% endif %}
