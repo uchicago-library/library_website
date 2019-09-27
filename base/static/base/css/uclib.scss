@@ -432,9 +432,7 @@ figure.coll-thumb {
   }
   .hero-image {
     img {
-      @include respond-to(small) {
         max-width: 100%;
-      }
     }
   }
   .hero-image::after {
