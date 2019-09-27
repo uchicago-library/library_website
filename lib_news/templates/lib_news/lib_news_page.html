@@ -75,36 +75,39 @@
             {{ self.body }}
             {% if self.related_exhibits %}
                 <div class="media-use">
-                    <h2>Visit the Exhibit</h2>
-                    {% for ex in self.related_exhibits %}
-                        {% with e=ex.value.exhibit %}
-                            {% if e.exhibit_open_date or e.exhibit_close_date %}
-                                <strong>
-                                    {% if self.related_exhibits|length > 1 %}
-                                        {{e.title}} on view
-                                    {% else %}
-                                        Exhibit on view
-                                    {% endif %}
 
-                                    {% if e.exhibit_open_date %}{{ e.exhibit_open_date }}{% endif %}
-                                    {% if e.exhibit_open_date and e.exhibit_close_date %}&ndash;{% endif %}
-                                    {% if e.exhibit_close_date %}{{ e.exhibit_close_date }}{% endif %}
+                    {% if self.related_exhibits.0.value.exhibit.is_current_exhibit %}
+                        <h2>Visit the Exhibit</h2>
+                        {% for ex in self.related_exhibits %}
+                            {% with e=ex.value.exhibit %}
+                                {% if e.exhibit_open_date or e.exhibit_close_date %}
+                                    <strong>
+                                        {% if self.related_exhibits|length > 1 %}
+                                            {{e.title}} on view
+                                        {% else %}
+                                            Exhibit on view
+                                        {% endif %}
 
-                                    {% if e.exhibit_location %}
-                                      at the
-                                      <a href="{{ e.exhibit_location.url }}">{{ e.exhibit_location.title }}</a>
+                                        {% if e.exhibit_open_date %}{{ e.exhibit_open_date }}{% endif %}
+                                        {% if e.exhibit_open_date and e.exhibit_close_date %}&ndash;{% endif %}
+                                        {% if e.exhibit_close_date %}{{ e.exhibit_close_date }}{% endif %}
+
+                                        {% if e.exhibit_location %}
+                                          at the
+                                          <a href="{{ e.exhibit_location.url }}">{{ e.exhibit_location.title }}</a>
+                                        {% endif %}
+                                    </strong><br/>
+                                    {% if self.exhibit_story_hours_override %}
+                                        {{self.exhibit_story_hours_override|richtext}}
+                                    {% elif e.exhibit_location.title == 'Special Collections Research Center' %}
+                                        <a href="/libraries/libraries-hours/#special-collections-research-center">Hours</a>: Mondays through Fridays, 9 a.m. – 4:45 p.m., and, when University of Chicago classes are in session, Tuesdays and Wednesdays, 9 a.m. – 5:45 p.m. Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library.
+                                    {% elif e.exhibit_location.parent_building.title == 'The Joseph Regenstein Library' %}
+                                        Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library during its <a href="/libraries/libraries-hours/#the-joseph-regenstein-library">hours</a>.
                                     {% endif %}
-                                </strong><br/>
-                                {% if self.exhibit_story_hours_override %}
-                                    {{self.exhibit_story_hours_override|richtext}}
-                                {% elif e.exhibit_location.title == 'Special Collections Research Center' %}
-                                    <a href="/libraries/libraries-hours/#special-collections-research-center">Hours</a>: Mondays through Fridays, 9 a.m. – 4:45 p.m., and, when University of Chicago classes are in session, Tuesdays and Wednesdays, 9 a.m. – 5:45 p.m. Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library.
-                                {% elif e.exhibit_location.parent_building.title == 'The Joseph Regenstein Library' %}
-                                    Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library during its <a href="/libraries/libraries-hours/#the-joseph-regenstein-library">hours</a>.
                                 {% endif %}
-                            {% endif %}
-                        {% endwith %}
-                    {% endfor %}
+                            {% endwith %}
+                        {% endfor %}
+                    {% endif %}
                 </div>
             {% endif %}
         </article>

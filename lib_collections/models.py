@@ -1104,6 +1104,23 @@ class ExhibitPage(PublicBasePage):
         ]
     )
 
+    @property
+    def is_current_exhibit(self):
+        """
+        Determines if the exhibit is current.
+
+        Returns:
+            Boolean
+        """
+        today = datetime.datetime.now().date()
+        open_date = self.exhibit_open_date
+        close_date = self.exhibit_close_date
+        if open_date and close_date:
+            is_open = open_date.__lt__(today)
+            not_closed = close_date.__gt__(today)
+            return is_open and not_closed
+        return False
+
     def is_web_exhibit(self):
         """
         Determine if an ExhibitPage is a
@@ -1125,7 +1142,7 @@ class ExhibitPage(PublicBasePage):
         Returns:
             Image object or None
         """
-        #building = self.location_and_hours['page_location'].id
+        # building = self.location_and_hours['page_location'].id
         img = {
             SCRC_BUILDING_ID: SCRC_EXHIBIT_FOOTER_IMG,
             CRERAR_BUILDING_ID: CRERAR_EXHIBIT_FOOTER_IMG
