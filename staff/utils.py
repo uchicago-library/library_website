@@ -390,6 +390,7 @@ class WagtailStaffReport:
         Returns: two lists of strings.
         """
         def _format(cnetid, value, field):
+            value = '' if value is None else str(value)
             return '{} -{}- ({})'.format(cnetid, self._clean(value), field)
 
         # Don't sync up some staff accounts. Former library directors may
