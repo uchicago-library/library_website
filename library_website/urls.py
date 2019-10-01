@@ -11,6 +11,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
 from lib_collections.views import collections as collection_view
+from lib_news.views import ltdrfr
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
 from results.views import results as results_view
@@ -31,6 +32,7 @@ urlpatterns = [
     url(r'^external-include/', external_include, name='external-include'),
     url(r'^chat-status/', chat_status, name='chat-status'),
     url(r'^results/$', results_view, name='results'),
+    url(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
     url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
@@ -63,7 +65,6 @@ urlpatterns = [
 if settings.DEBUG:
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-    from django.views.generic import TemplateView
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()

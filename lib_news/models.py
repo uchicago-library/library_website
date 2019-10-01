@@ -1,3 +1,6 @@
+import json
+from urllib.request import urlopen
+
 import bleach
 from django.core.cache import caches
 from django.db import models
@@ -15,6 +18,7 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.blocks import PageChooserBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
+from wagtail.core.signals import page_published, page_unpublished
 from wagtail.images.api.fields import ImageRenditionField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
@@ -26,7 +30,8 @@ from base.models import (
 )
 from lib_collections.models import get_current_exhibits
 from library_website.settings import (
-    LIBRA_ID, NEWS_CACHE_TTL, NEWS_FEED_DEFAULT_VISIBLE, NEWS_FEED_INCREMENT_BY
+    DRF_NEWS_FEED, LIBRA_ID, NEWS_CACHE_TTL, NEWS_FEED_DEFAULT_VISIBLE,
+    NEWS_FEED_INCREMENT_BY, STATIC_NEWS_FEED
 )
 
 from .utils import get_first_feature_story
@@ -112,7 +117,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
-        self.news_feed_api = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*'
+        self.news_feed_api = '/static/lib_news/files/lib-news.json'
 
     contacts = StreamField(ContactPersonBlock(required=False), default=[])
 
@@ -409,6 +414,30 @@ class LibNewsPage(PublicBasePage):
         """
         return self.news_pages.order_by(field).exclude(thumbnail=None
                                                        ).exclude(id=self.id)[:n]
+
+    def build_news_feed(sender, instance, **kwargs):
+        """
+        Build a static version of the news feed when a LibNewsPage is
+        published or unpublished. Query the Django Rest Framework
+        (Wagtail v2 API) and save the results to a static JSON file
+        in the static files directory.
+
+        Args:
+            sender: LibNewsPage class
+
+            instance: LibNewsPage instance
+
+        Returns:
+            None but writes a file to the static directory
+        """
+        drf_url = instance.get_site().root_url + DRF_NEWS_FEED
+        serialized_data = urlopen(drf_url).read()
+        data = json.loads(serialized_data)
+        with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=None)
+
+    page_published.connect(build_news_feed)
+    page_unpublished.connect(build_news_feed)
 
     subpage_types = []
 
