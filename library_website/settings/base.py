@@ -419,13 +419,8 @@ STATIC_NEWS_FEED = os.path.join(
 )
 DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*&limit=1000'
 
-
-
-# Cache time for news site categories is 60 days
-# This can be egregiously long because we're only
-# caching a dict of news page IDs and category
-# strings for the most recent pages
-NEWS_CACHE_TTL = 60 * 86400
+# Cache time for news site categories is 3 hours
+NEWS_CACHE_TTL = 60 * 180
 
 # Override settings in test
 # -------------------------------
