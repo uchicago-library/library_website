@@ -1,5 +1,5 @@
 import json
-from urllib.request import urlopen
+from urllib.request import URLError, urlopen
 
 import bleach
 from django.core.cache import caches
@@ -431,10 +431,14 @@ class LibNewsPage(PublicBasePage):
             None but writes a file to the static directory
         """
         drf_url = instance.get_site().root_url + DRF_NEWS_FEED
-        serialized_data = urlopen(drf_url).read()
-        data = json.loads(serialized_data)
-        with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=None)
+        try:
+            serialized_data = urlopen(drf_url).read()
+            data = json.loads(serialized_data)
+            with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=None)
+        except(URLError):
+            # We are running unit tests
+            return None
 
     page_published.connect(build_news_feed)
     page_unpublished.connect(build_news_feed)

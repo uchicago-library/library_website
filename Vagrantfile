@@ -108,5 +108,16 @@ Vagrant.configure("2") do |config|
     su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py migrate --noinput && \
                      $PYTHON $PROJECT_DIR/manage.py loaddata /vagrant/base/fixtures/test.json && \
                      $PYTHON $PROJECT_DIR/manage.py update_index"
+
+    # Create the static news feed JSON file
+    echo "Installing the news feed test file"
+    mkdir -p /vagrant/static/lib_news/files
+    cp /vagrant/base/fixtures/news-feed-test.json /vagrant/static/lib_news/files/lib-news.json
+
+    # Setup /etc/hosts
+    echo "Setting up /etc/hosts"
+    sudo su -
+    echo "127.0.0.1 wwwdev" >> /etc/hosts
+    echo "127.0.0.1 loopdev" >> /etc/hosts
   SHELL
 end
