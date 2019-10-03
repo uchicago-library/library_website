@@ -24,6 +24,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
+from wagtailcache.cache import clear_cache
 
 from base.models import (
     ContactPersonBlock, DefaultBodyFields, PublicBasePage, RelatedExhibitBlock
@@ -430,6 +431,7 @@ class LibNewsPage(PublicBasePage):
         Returns:
             None but writes a file to the static directory
         """
+        clear_cache()
         drf_url = instance.get_site().root_url + DRF_NEWS_FEED
         try:
             serialized_data = urlopen(drf_url).read()
