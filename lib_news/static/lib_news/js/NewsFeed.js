@@ -102,46 +102,17 @@ class NewsFeed extends React.Component {
   }
 
   componentDidMount() {
-    if (CATEGORY) {
-      fetch(`${API_URL}&limit=900`)
-        .then(res => res.json())
-        .then((res) => {
-          this.setState({
-            items: filterItems(res),
-            isLoading: false,
-          });
-        })
-        .catch((error) => {
-          console.error(error); // eslint-disable-line no-console
+    fetch(`${API_URL}`)
+      .then(res => res.json())
+      .then((res) => {
+        this.setState({
+          items: filterItems(res),
+          isLoading: false,
         });
-    } else {
-      // Fetch a small number of items
-      fetch(`${API_URL}&limit=${OFFSET_LIMIT}`)
-        .then(res => res.json())
-        .then((res) => {
-          this.setState({
-            items: filterItems(res),
-            isLoading: false,
-          });
-        })
-        .catch((error) => {
-          console.error(error); // eslint-disable-line no-console
-        });
-
-      // Fetch a larger number of items (slow)
-      fetch(`${API_URL}&limit=1000&offset=${OFFSET_LIMIT}`)
-        .then(res => res.json())
-        .then((res) => {
-          const { items } = this.state;
-          const joined = items.concat(filterItems(res));
-          this.setState({
-            items: joined,
-          });
-        })
-        .catch((error) => {
-          console.error(error); // eslint-disable-line no-console
-        });
-    }
+      })
+      .catch((error) => {
+        console.error(error); // eslint-disable-line no-console
+      });
   }
 
   loadMore() {
