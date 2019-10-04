@@ -266,6 +266,9 @@ Right Sidebar: Widget Items
 
 .rightside-mod { //Wrapper for individual modules
   padding: 0 0 2em 0;
+  li {
+    margin-bottom: 0.25em;
+  }
   .collectionpage & {
     padding-bottom: 1em;
   }

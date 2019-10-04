@@ -356,7 +356,30 @@ figure.coll-thumb {
 }
 
 // Solo, Duo, and Trio Image Stylings
-.standardpage .collex-solo, .standardpage .collex-duo, .standardpage .collex-trio, .standardpage .collex-verso {
+.collexbase {
+    padding: 2em 1em;
+    & figure {
+       @include respond-to(medium) {
+           display: flex;
+       }
+    }
+}
+
+.collex-solo {
+  @extend .collexbase;
+  border-bottom: 1px dotted $darkgray;
+  img {
+    padding-bottom: 1em ;
+    max-height: 40em;
+    width: auto;
+    @include respond-to(medium) {
+      float: right;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.collex-solo, .collex-duo, .collex-trio, .collex-verso {
   img {
       border: 3px solid #c8c8c8;
   }
