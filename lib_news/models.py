@@ -416,35 +416,6 @@ class LibNewsPage(PublicBasePage):
         return self.news_pages.order_by(field).exclude(thumbnail=None
                                                        ).exclude(id=self.id)[:n]
 
-    def build_news_feed(sender, instance, **kwargs):
-        """
-        Build a static version of the news feed when a LibNewsPage is
-        published or unpublished. Query the Django Rest Framework
-        (Wagtail v2 API) and save the results to a static JSON file
-        in the static files directory.
-
-        Args:
-            sender: LibNewsPage class
-
-            instance: LibNewsPage instance
-
-        Returns:
-            None but writes a file to the static directory
-        """
-        clear_cache()
-        drf_url = instance.get_site().root_url + DRF_NEWS_FEED
-        try:
-            serialized_data = urlopen(drf_url).read()
-            data = json.loads(serialized_data)
-            with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=None)
-        except(URLError):
-            # We are running unit tests
-            return None
-
-    page_published.connect(build_news_feed)
-    page_unpublished.connect(build_news_feed)
-
     subpage_types = []
 
     ROW_CLASS = 'col4'
@@ -561,3 +532,34 @@ class LibNewsPage(PublicBasePage):
         context['nav'] = parent_context['nav']
         context['libra'] = parent_context['libra']
         return context
+
+
+def build_news_feed(sender, instance, **kwargs):
+    """
+    Build a static version of the news feed when a LibNewsPage is
+    published or unpublished. Query the Django Rest Framework
+    (Wagtail v2 API) and save the results to a static JSON file
+    in the static files directory.
+
+    Args:
+        sender: LibNewsPage class
+
+        instance: LibNewsPage instance
+
+    Returns:
+        None but writes a file to the static directory
+    """
+    clear_cache()
+    drf_url = instance.get_site().root_url + DRF_NEWS_FEED
+    try:
+        serialized_data = urlopen(drf_url).read()
+        data = json.loads(serialized_data)
+        with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=None)
+    except(URLError):
+        # We are running unit tests
+        return None
+
+
+page_published.connect(build_news_feed, sender=LibNewsPage)
+page_unpublished.connect(build_news_feed, sender=LibNewsPage)
