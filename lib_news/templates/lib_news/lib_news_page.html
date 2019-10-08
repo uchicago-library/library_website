@@ -33,7 +33,7 @@
             "@type": "WebPage",
             "@id": "{{self.url}}"
           },
-          "headline": "{{self.title}}",
+          "headline": "{{self.title|escapejs}}",
           {% if self.thumbnail %}
             {% image self.thumbnail fill-800x800-c75 as img_1 %}
             {% image self.thumbnail fill-1000x750-c75 as img_2 %}
@@ -58,7 +58,7 @@
               "url": "https://www.lib.uchicago.edu/static/base/images/color-logo.png"
             }
           },
-          "description": "{{self.excerpt|richtext|striptags}}"
+          "description": "{{self.excerpt|richtext|striptags|escapejs}}"
         }
     </script>
 {% endblock %}
