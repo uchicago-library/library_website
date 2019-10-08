@@ -32,7 +32,7 @@
         {
           "@context": "https://schema.org",
           "@type": "Library",
-          "url": "{{self.get_site.root_url}}",
+          "url": "{{request.scheme}}://{{request.get_host}}",
           "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
           "name": "{{page_location|escapejs}}",
           "address": "{{address}}",
