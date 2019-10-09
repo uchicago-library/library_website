@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from http.client import HTTPConnection
+from http.client import HTTPConnection, HTTPSConnection
 from urllib.parse import parse_qs, urlparse
 from xml.etree import ElementTree
 
@@ -9,11 +9,11 @@ import re
 def get_xml_from_feed(feed):
     p = urlparse(feed)
 
-    if p.scheme != 'http':
-        raise ValueError
-
     # p.netloc is "www3.lib.uchicago.edu"
-    c = HTTPConnection(p.netloc, 80)
+    if p.scheme == 'https':
+        c = HTTPSConnection(p.netloc, 443)
+    else:
+        c = HTTPConnection(p.netloc, 80)
 
     c.request('GET', p.path + "?" + p.query)
     result = c.getresponse()
