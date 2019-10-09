@@ -15,7 +15,7 @@ from base.utils import (
 )
 from dateutil.relativedelta import relativedelta
 from events.utils import flatten_events, get_events
-from library_website.settings import PUBLIC_HOMEPAGE
+from library_website.settings import PUBLIC_HOMEPAGE, UC_EVENTS_FEED
 from public.models import StandardPage
 from units.utils import get_default_unit
 
@@ -80,16 +80,13 @@ def json_events(request):
     if request.method == 'GET':
         ttrss_url = request.GET['feed']
 
-        # need xml for this.
-        university_url = 'http://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
-
         n = datetime.datetime.now()
         return JsonResponse(
             {
                 'events':
                 flatten_events(
                     get_events(
-                        university_url, ttrss_url, n,
+                        UC_EVENTS_FEED, ttrss_url, n,
                         n + relativedelta(years=1), False
                     )
                 )

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .utils import get_events
 from public.models import StandardPage
-from library_website.settings import PUBLIC_HOMEPAGE
+from library_website.settings import PUBLIC_HOMEPAGE, UC_EVENTS_FEED
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 
@@ -33,7 +33,7 @@ def events(request):
     previous_start = start - datetime.timedelta(days=number_of_days_last_month)
     next_start = stop + datetime.timedelta(days=1)
 
-    university_url = 'http://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
+    university_url = UC_EVENTS_FEED
     ttrss_url = 'http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
 
     entries = get_events(university_url, ttrss_url, start, stop)

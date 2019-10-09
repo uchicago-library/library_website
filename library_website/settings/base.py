@@ -422,6 +422,9 @@ DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-publis
 # Cache time for news site categories is 3 hours
 NEWS_CACHE_TTL = 60 * 180
 
+# University Events Feed
+UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
+
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
