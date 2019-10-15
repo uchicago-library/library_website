@@ -17,11 +17,14 @@ from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS, REGENSTEIN_HOM
 from base.utils import get_hours_and_location
 from ask_a_librarian.utils import get_chat_status, get_chat_status_css, get_unit_chat_link
 from django.utils.text import slugify
+from wagtailcache.cache import cache_page
+
 
 import os
 import re
 import subprocess
 import urllib.parse
+
 
 def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, display_supervisor_first = False):
     unit_page_ids = None
@@ -44,7 +47,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
     
     if display_supervisor_first:
         if unit_page and unit_page.department_head and unit_page.department_head.live:
-            staff_pages = [unit_page.department_head] + list(staff_pages.exclude(id=unit_page.department_head.id))
+            staff_pages = [unit_page.department_head] + list(staff_pages.exclud,e(id=unit_page.department_head.id))
         
     return staff_pages
 
@@ -54,6 +57,8 @@ def get_libraries():
         key=lambda p: re.sub(r'^The ', '', p)
     )
 
+
+@cache_page
 def units(request):
     divisions = []
     
