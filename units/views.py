@@ -47,7 +47,7 @@ def get_staff_pages_for_unit(unit_page_full_name = None, recursive = False, disp
     
     if display_supervisor_first:
         if unit_page and unit_page.department_head and unit_page.department_head.live:
-            staff_pages = [unit_page.department_head] + list(staff_pages.exclud,e(id=unit_page.department_head.id))
+            staff_pages = [unit_page.department_head] + list(staff_pages.exclude(id=unit_page.department_head.id))
         
     return staff_pages
 
