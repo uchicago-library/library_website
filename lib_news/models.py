@@ -2,7 +2,7 @@ import json
 from urllib.request import URLError, urlopen
 
 import bleach
-from django.core.cache import caches
+from django.core.cache import cache, caches
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
@@ -550,6 +550,7 @@ def build_news_feed(sender, instance, **kwargs):
         None but writes a file to the static directory
     """
     clear_cache()
+    cache.delete('news_cats')
     drf_url = instance.get_site().root_url + DRF_NEWS_FEED
     try:
         serialized_data = urlopen(drf_url).read()
