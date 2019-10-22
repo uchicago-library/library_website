@@ -16,7 +16,9 @@ from library_website.settings import (
 from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
-from public.utils import get_features, has_feature
+from public.utils import get_features, has_feature, validate_doi, doi_lookup
+from wagtailcache.cache import cache_page
+from django.shortcuts import redirect
 
 
 def navigation(request):
@@ -44,6 +46,25 @@ def navigation(request):
     return HttpResponse(data, 'text/javascript')
 
 
+def switchboard(request):
+    """
+    route for checking DOI service
+    """
+    search_term = request.POST.get('lookfor', 'cherries')
+    dropdown = request.POST.get('type', 'AllFields')
+    if validate_doi(search_term):
+        return redirect(doi_lookup(search_term))
+    else:
+        url_prefix = 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
+        qs_params = (
+            f'?lookfor={search_term}'
+            f'&type={dropdown}'
+            )
+        vufind_url = url_prefix + qs_params
+        return redirect(vufind_url)
+
+
+@cache_page
 def spaces(request):
     building = request.GET.get('building', None)
     feature = request.GET.get('feature', None)

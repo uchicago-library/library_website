@@ -1,0 +1,53 @@
+import sys
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+            'TEST': {
+                'NAME': ':memory:',
+            },
+        },
+    }
+else:
+     DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'lib_www_dev',
+        }
+    }
+
+LOGGING = {
+     'version': 1,
+     'disable_existing_loggers': False,
+     'handlers': {
+         'file': {
+             'level': 'DEBUG',
+             'class': 'logging.FileHandler',
+             'formatter': 'default',
+             'filename': '/var/log/django-errors.log',
+         },
+     },
+     'loggers': {
+         'django.request': {
+             'handlers': ['file'],
+             'level': 'DEBUG',
+             'propagate': True,
+         },
+     },
+
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
+        }
+    }
+}
+
+# ** You will also need to add settings for the following. Get these from another developer. ** 
+
+DIRECTORY_USERNAME = 'api'
+DIRECTORY_WEB_SERVICE = 'directory.uchicago.edu'
+DIRECTORY_PASSWORD = '_Koala_Mole_'
+OWNCLOUD_PASSWORD = 'WhsV3WZEJJZ9'
+WAGTAIL_CACHE = True

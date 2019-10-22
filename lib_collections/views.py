@@ -20,7 +20,10 @@ from django.core.cache import caches, cache
 from django.views.decorators.cache import cache_page
 from django.db import connection
 from django.conf import settings
+from wagtailcache.cache import cache_page
 
+
+@cache_page
 def collections(request):
     # PARAMETERS
     default_cache = caches['default']

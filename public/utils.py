@@ -1,3 +1,6 @@
+import requests
+
+
 FEATURES_LIST = [
     (
         'is_quiet_zone', 'Quiet Zone',
@@ -90,6 +93,9 @@ FEATURES_LIST = [
 ]
 
 
+# helper functions for /switchboard route
+
+
 def get_features():
     """
     Boolean fields we use as "features" in the
@@ -118,3 +124,51 @@ def has_feature(feature):
         if item[0] == feature:
             return True
     return False
+
+
+def full_mk_url(bare_url, doi):
+    '''
+    given DOI and URL for idresolve service, output query url for SFX
+    callback is called 'redundant' because this code isn't using it
+
+    '''
+    output = (
+        f'{bare_url}'
+        '?code=9344'
+        '&function=idresolve'
+        '&callback=redundant'
+        f'&id={doi}'
+        )
+    return output
+
+
+def mk_url(doi):
+    '''
+    given just DOI, output query url for SFX
+
+    '''
+    # this is for local testing; for production, change hostname to
+    # https://lib.uchicago.edu/cgi-bin/idresolve
+    bare_url = "http://127.0.0.1:8081"
+    return full_mk_url(bare_url, doi)
+
+
+def doi_lookup(doi):
+    '''
+    query the DOI resolver service, return SFX URL if DOI is valid,
+    otherwise return None
+
+    '''
+    url = mk_url(doi)
+    response = requests.get(url)
+    if response.status_code % 400 < 100:
+        return None
+    else:
+        return response.text
+
+
+def validate_doi(doi):
+    '''
+    predicate for valid DOIs; only queries CrossRef if DOI is well-formed
+    '''
+    return doi_lookup(doi) is not None

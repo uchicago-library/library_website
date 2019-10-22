@@ -14,6 +14,7 @@ from lib_collections.views import collections as collection_view
 from lib_news.views import ltdrfr
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
+from public.views import switchboard
 from results.views import results as results_view
 from search.views import loop_search as search_view
 from staff.views import staff, staff_api
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^staff/$', staff, name='staff'),
     url(r'^staff_api/$', staff_api, name='staff_api'),
     url(r'^about/directory/$', unit_view, name='unit'),
+    url(r'^switchboard/$', switchboard, name='switchboard'),
     url(
         r'^about/directory/staff/$',
         RedirectView.as_view(url='/about/directory/?view=staff')
