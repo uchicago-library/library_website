@@ -50,8 +50,8 @@ def switchboard(request):
     """
     route for checking DOI service
     """
-    search_term = request.POST.get('lookfor', 'cherries')
-    dropdown = request.POST.get('type', 'AllFields')
+    search_term = request.POST['lookfor']
+    dropdown = request.POST['type']
     if validate_doi(search_term):
         return redirect(doi_lookup(search_term))
     else:
