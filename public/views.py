@@ -16,7 +16,12 @@ from library_website.settings import (
 from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
-from public.utils import get_features, has_feature, validate_doi, doi_lookup
+from public.utils import (
+    get_features,
+    has_feature,
+    doi_lookup,
+    get_clean_params,
+)
 from wagtailcache.cache import cache_page
 from django.shortcuts import redirect
 
@@ -52,15 +57,13 @@ def switchboard(request):
     """
     search_term = request.POST['lookfor']
     dropdown = request.POST['type']
-    if validate_doi(search_term):
-        return redirect(doi_lookup(search_term))
+    doi = doi_lookup(search_term)
+    if doi:
+        return redirect(doi)
     else:
         url_prefix = 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
-        qs_params = (
-            f'?lookfor={search_term}'
-            f'&type={dropdown}'
-            )
-        vufind_url = url_prefix + qs_params
+        query_string = get_clean_params(request)
+        vufind_url = f'{url_prefix}?{query_string}'
         return redirect(vufind_url)
 
 

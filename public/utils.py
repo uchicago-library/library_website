@@ -1,4 +1,5 @@
 import requests
+from urllib import parse
 
 
 FEATURES_LIST = [
@@ -165,6 +166,22 @@ def doi_lookup(doi):
         return None
     else:
         return response.text
+
+
+def get_clean_params(request):
+    '''
+    return parameters that have been passed to a POST request,
+    omitting the CSRF token
+
+    '''
+    params = request.POST
+    clean_params = dict(
+        filter(
+            lambda x: x[0] != 'csrfmiddlewaretoken',
+            params.items()
+        )
+    )
+    return parse.urlencode(clean_params)
 
 
 def validate_doi(doi):
