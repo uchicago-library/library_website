@@ -149,7 +149,7 @@ def mk_url(doi):
     '''
     # this is for local testing; for production, change hostname to
     # https://lib.uchicago.edu/cgi-bin/idresolve
-    bare_url = "http://127.0.0.1:8081"
+    bare_url = "http://sequent.lib.uchicago.edu:8081"
     return full_mk_url(bare_url, doi)
 
 
