@@ -78,25 +78,6 @@ def switchboard(request):
         url = f'{switchboard_url(params)}?{query_string}'
         return redirect(url)
 
-    # # TODO: make this work
-    # elif 'ebscohostsearchtext' in params.keys():
-    #     return HttpResponse(
-    #         '<script>'
-    #         'ebscoHostSearchGo(this)'
-    #         '</script>'
-    #     )
-    # elif 'param_pattern_value' in params.keys():
-    #     return sboard_redir(request, ejournals)
-
-    # elif 'q' in params.keys():
-    #     return sboard_redir(request, databases)
-
-    # elif 'query' in params.keys():
-    #     return sboard_redir(request, website)
-
-    # else:
-    #     return sboard_redir(request, catalog)
-
 
 @cache_page
 def spaces(request):

@@ -211,15 +211,20 @@ def switchboard_url(params):
     is_articles = False
     is_ejournals = 'param_pattern_value' in params.keys()
     is_databases = 'q' in params.keys()
-    is_website = 'query' in params.keys()
+    is_website = ('query' in params.keys()
+                  and 'news-search' not in params.keys())
+    is_news = 'news-search' in params.keys()
 
     if is_articles:
+        # TODO: fix this
         pass
     elif is_ejournals:
         return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
     elif is_databases:
         return 'https://www.lib.uchicago.edu/dbfinder'
     elif is_website:
-        return'/results/'
+        return '/results/'
+    elif is_news:
+        return '/search/'
     else:
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
