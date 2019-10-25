@@ -1,5 +1,4 @@
 import requests
-from urllib import parse
 
 
 FEATURES_LIST = [
@@ -148,7 +147,7 @@ def mk_url(doi):
     given just DOI, output query url for SFX
 
     '''
-    # this is for local testing; for production, change hostname to
+    # this is for local testing; for production, change bare_url to
     # https://lib.uchicago.edu/cgi-bin/idresolve
     bare_url = "http://sequent.lib.uchicago.edu:8081"
     return full_mk_url(bare_url, doi)
@@ -181,11 +180,19 @@ def get_clean_params(request):
             params.items()
         )
     )
-    return parse.urlencode(clean_params)
+    return clean_params
 
 
-def validate_doi(doi):
+def get_first_param(request):
     '''
-    predicate for valid DOIs; only queries CrossRef if DOI is well-formed
+    given a request, return the value of the first query string
+    parameter, whatever the key happens to be called
+
     '''
-    return doi_lookup(doi) is not None
+    params = get_clean_params(request)
+    if params:
+        first_key = list(params.keys())[0]
+        first_value = params[first_key]
+        return first_value
+    else:
+        return None

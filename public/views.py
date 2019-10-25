@@ -21,9 +21,11 @@ from public.utils import (
     has_feature,
     doi_lookup,
     get_clean_params,
+    get_first_param
 )
 from wagtailcache.cache import cache_page
 from django.shortcuts import redirect
+from urllib import parse
 
 
 def navigation(request):
@@ -53,16 +55,22 @@ def navigation(request):
 
 def switchboard(request):
     """
-    route for checking DOI service
+    route that intercepts a search query, forwards it to the DOI
+    resolver if it's a DOI, and otherwise forwards the query to its
+    normal destination
+
+    note: this assumes that the first parameter issued forth by the
+    relevant search box is the search term, an assumption which holds
+    for now but may not always hold
+
     """
-    search_term = request.POST['lookfor']
-    dropdown = request.POST['type']
+    search_term = get_first_param(request)
     doi = doi_lookup(search_term)
     if doi:
         return redirect(doi)
     else:
         url_prefix = 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
-        query_string = get_clean_params(request)
+        query_string = parse.urlencode(get_clean_params(request))
         vufind_url = f'{url_prefix}?{query_string}'
         return redirect(vufind_url)
 
