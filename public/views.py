@@ -21,7 +21,8 @@ from public.utils import (
     has_feature,
     doi_lookup,
     get_clean_params,
-    get_first_param
+    get_first_param,
+    switchboard_url,
 )
 from wagtailcache.cache import cache_page
 from django.shortcuts import redirect
@@ -59,20 +60,42 @@ def switchboard(request):
     resolver if it's a DOI, and otherwise forwards the query to its
     normal destination
 
-    note: this assumes that the first parameter issued forth by the
-    relevant search box is the search term, an assumption which holds
-    for now but may not always hold
+    note: this assumes that the first parameter posted by the search
+    box is the search term, an assumption which holds for now but may
+    not always hold in the future
 
     """
     search_term = get_first_param(request)
-    doi = doi_lookup(search_term)
-    if doi:
-        return redirect(doi)
+    params = get_clean_params(request)
+    doi_url = doi_lookup(search_term)
+
+    if doi_url:
+        # case where user entered a DOI
+        return redirect(doi_url)
     else:
-        url_prefix = 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
-        query_string = parse.urlencode(get_clean_params(request))
-        vufind_url = f'{url_prefix}?{query_string}'
-        return redirect(vufind_url)
+        # otherwise: pass query string along to wherever it was going
+        query_string = parse.urlencode(params)
+        url = f'{switchboard_url(params)}?{query_string}'
+        return redirect(url)
+
+    # # TODO: make this work
+    # elif 'ebscohostsearchtext' in params.keys():
+    #     return HttpResponse(
+    #         '<script>'
+    #         'ebscoHostSearchGo(this)'
+    #         '</script>'
+    #     )
+    # elif 'param_pattern_value' in params.keys():
+    #     return sboard_redir(request, ejournals)
+
+    # elif 'q' in params.keys():
+    #     return sboard_redir(request, databases)
+
+    # elif 'query' in params.keys():
+    #     return sboard_redir(request, website)
+
+    # else:
+    #     return sboard_redir(request, catalog)
 
 
 @cache_page

@@ -196,3 +196,30 @@ def get_first_param(request):
         return first_value
     else:
         return None
+
+
+def switchboard_url(params):
+    '''
+    determine which URL to route to based on which parameters were
+    posted from the form
+
+    '''
+
+    # change these constants accordingly if the query string
+    # parameters change in the template
+    # TODO: fix is_articles
+    is_articles = False
+    is_ejournals = 'param_pattern_value' in params.keys()
+    is_databases = 'q' in params.keys()
+    is_website = 'query' in params.keys()
+
+    if is_articles:
+        pass
+    elif is_ejournals:
+        return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
+    elif is_databases:
+        return 'https://www.lib.uchicago.edu/dbfinder'
+    elif is_website:
+        return'/results/'
+    else:
+        return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
