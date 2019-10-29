@@ -198,33 +198,24 @@ def get_first_param(request):
         return None
 
 
-def switchboard_url(params):
+def switchboard_url(str):
     '''
-    determine which URL to route to based on which parameters were
-    posted from the form
+    map the name of each search form to the base URL used for the
+    relevant search
 
     '''
-
-    # change these constants accordingly if the query string
-    # parameters change in the template
-    # TODO: fix is_articles
-    is_articles = False
-    is_ejournals = 'param_pattern_value' in params.keys()
-    is_databases = 'q' in params.keys()
-    is_website = ('query' in params.keys()
-                  and 'news-search' not in params.keys())
-    is_news = 'news-search' in params.keys()
-
-    if is_articles:
+    if str == 'catalog':
+        return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
+    elif str == 'articles':
         # TODO: fix this
-        pass
-    elif is_ejournals:
+        return 'https://archlinux.org'
+    elif str == 'journals':
         return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
-    elif is_databases:
+    elif str == 'databases':
         return 'https://www.lib.uchicago.edu/dbfinder'
-    elif is_website:
+    elif str == 'website':
         return '/results/'
-    elif is_news:
+    elif str == 'news':
         return '/search/'
     else:
-        return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
+        assert(False)

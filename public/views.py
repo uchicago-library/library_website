@@ -55,16 +55,15 @@ def navigation(request):
 
 
 def switchboard(request):
-    """
+    '''
     route that intercepts a search query, forwards it to the DOI
     resolver if it's a DOI, and otherwise forwards the query to its
     normal destination
 
-    note: this assumes that the first parameter posted by the search
-    box is the search term, an assumption which holds for now but may
-    not always hold in the future
+    note: this code assumes that the first parameter posted by the
+    search box is the search term
 
-    """
+    '''
     search_term = get_first_param(request)
     params = get_clean_params(request)
     doi_url = doi_lookup(search_term)
@@ -75,7 +74,8 @@ def switchboard(request):
     else:
         # otherwise: pass query string along to wherever it was going
         query_string = parse.urlencode(params)
-        url = f'{switchboard_url(params)}?{query_string}'
+        form = params['which-form']
+        url = f'{switchboard_url(form)}?{query_string}'
         return redirect(url)
 
 
