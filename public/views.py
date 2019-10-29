@@ -73,8 +73,14 @@ def switchboard(request):
         return redirect(doi_url)
     else:
         # otherwise: pass query string along to wherever it was going
-        query_string = parse.urlencode(params)
         form = params['which-form']
+        if form == 'articles':
+            # add a 'bquery' parameter to make the ebscohost API happy
+            params['bquery'] = search_term
+            query_string = parse.urlencode(params)
+        else:
+            # all other searches are happy with the original query string
+            query_string = parse.urlencode(params)
         url = f'{switchboard_url(form)}?{query_string}'
         return redirect(url)
 

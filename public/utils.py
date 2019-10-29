@@ -207,8 +207,14 @@ def switchboard_url(str):
     if str == 'catalog':
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
     elif str == 'articles':
-        # TODO: fix this
-        return 'https://archlinux.org'
+        url = ('http://proxy.uchicago.edu/login'
+               '?url=http://search.ebscohost.com/login.aspx'
+               '?direct=true&site=eds-live'
+               '&scope=site'
+               '&type=0'
+               '&mode=and'
+               '&cli0=FT1&clv0=Y')
+        return url
     elif str == 'journals':
         return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
     elif str == 'databases':
