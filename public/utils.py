@@ -198,15 +198,15 @@ def get_first_param(request):
         return None
 
 
-def switchboard_url(str):
+def switchboard_url(form_name):
     '''
     map the name of each search form to the base URL used for the
     relevant search
 
     '''
-    if str == 'catalog':
+    if form_name == 'catalog':
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
-    elif str == 'articles':
+    elif form_name == 'articles':
         url = ('http://proxy.uchicago.edu/login'
                '?url=http://search.ebscohost.com/login.aspx'
                '?direct=true&site=eds-live'
@@ -215,13 +215,13 @@ def switchboard_url(str):
                '&mode=and'
                '&cli0=FT1&clv0=Y')
         return url
-    elif str == 'journals':
+    elif form_name == 'journals':
         return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
-    elif str == 'databases':
+    elif form_name == 'databases':
         return 'https://www.lib.uchicago.edu/dbfinder'
-    elif str == 'website':
+    elif form_name == 'website':
         return '/results/'
-    elif str == 'news':
+    elif form_name == 'news':
         return '/search/'
     else:
         assert(False)
