@@ -20,6 +20,7 @@ from staff.views import staff, staff_api
 from units.views import units as unit_view
 
 from .api import api_router
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     url(r'^django-admin/', admin.site.urls),
