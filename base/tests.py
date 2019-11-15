@@ -494,10 +494,10 @@ class TestPageOwnerReports(TestCase):
         ).get_descendants().live().count() + 1
         get_loop_pages_count = sum(
             1 for p in self.c._get_pages(None, 'Loop', None)
-        )
+        ) - 1
         get_public_pages_count = sum(
             1 for p in self.c._get_pages(None, 'Public', None)
-        )
+        ) - 1
         self.assertEqual(get_loop_pages_count, num_pages_loop)
         self.assertEqual(get_public_pages_count, num_pages_public)
 
@@ -511,7 +511,7 @@ class TestPageOwnerReports(TestCase):
         """
         get_locutus_pages_count = sum(
             1 for p in self.c._get_pages('locutus', None, None)
-        )
+        ) - 1
         self.assertEqual(get_locutus_pages_count, 6)
 
     def test_get_pages_with_cnetid_and_role(self):
@@ -527,13 +527,13 @@ class TestPageOwnerReports(TestCase):
         """
         page_maintainer_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'page_maintainer')
-        )
+        ) - 1
         editor_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'editor')
-        )
+        ) - 1
         content_specialist_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'content_specialist')
-        )
+        ) - 1
         self.assertEqual(page_maintainer_in_scope, 3)
         self.assertEqual(editor_in_scope, 1)
         self.assertEqual(content_specialist_in_scope, 2)
@@ -542,7 +542,7 @@ class TestPageOwnerReports(TestCase):
         self
     ):
         all_pages_count = self.all_live_pages.count()
-        num_pages = sum(1 for p in self.c._get_pages(None, None, None))
+        num_pages = sum(1 for p in self.c._get_pages(None, None, None)) - 1
         self.assertEqual(num_pages, all_pages_count)
 
     def test_main_command_when_no_pages_are_returned(self):
