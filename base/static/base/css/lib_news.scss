@@ -29,8 +29,13 @@ body.libnewsindexpage {
 	    a {
 	    	color: #800000;
 	    }
-	    li a {
-	    	text-transform: uppercase;
+	    li {
+	    	@include respond-to(mobileonly) {
+				float: none!important;
+	    	}
+	    	a {
+		    	text-transform: uppercase;
+		    }
 	    }
 	    li > ul li a {
     		text-transform: none;
