@@ -136,7 +136,7 @@
             <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row --> 
 
         {% if has_left_sidebar %}
-            <nav role="navigation">
+            <nav role="navigation" aria-label="Secondary menu">
                 <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
                     {% if sidebartitle %}
                         <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
@@ -174,7 +174,7 @@
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
-                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true"></i></button></p>
+                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
                 </div>
                 <!-- // End Off-Canvas Toggle Button -->
             {% endif %}

@@ -23,7 +23,7 @@ Navigation Drop Downs
 
 .mobile-topnav {
   text-align: center;
-  border-bottom: 1px solid $darkgray;
+  border-bottom: 1px solid $mid-dark;
   background-color: rgba(67, 67, 67, 0.7);
   padding: 0.5em 0;
       a {
@@ -107,7 +107,7 @@ i.ask-icon {
   margin-bottom:0px;
   background-image: url("../images/warm_grey_reddish.jpg");
   background-repeat: repeat;
-  background-color: $darkgray; //back-up
+  background-color: $mid-dark; //back-up
   z-index: 10;
   border-radius: 0;
   .navbar-nav {
@@ -139,7 +139,7 @@ i.ask-icon {
 }
 
 #global-navbar {
-  background-color: rgba(67, 67, 67, 0.4);
+  background-color: $mid-dark;
   font-size: $font-small;
   padding-left:0.5em;
   &.navbar-nav>li>a:focus {
@@ -149,7 +149,7 @@ i.ask-icon {
     background-color: $maroon;
   }
   @include respond-to(small)  {
-    box-shadow: 0 1px 7px #462b28;
+    box-shadow: 0 1px 7px #414141;
     margin-top: 70px;
     .navbar-nav>li>a {
       padding-top: 7px;
