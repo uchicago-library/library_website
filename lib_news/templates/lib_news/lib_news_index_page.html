@@ -62,7 +62,12 @@
 
     {# News Feed #}
     {% if self.category %}
-        <h1>{{ self.category }}</h1>
+            <h1>
+		{{ self.category }}
+		<a href="rss">
+		    RSS feed
+		</a>
+	    </h1>
         <br/>
     {% elif self.search_query %}
         <h1>Search results for: {{ self.search_query }}</h1>

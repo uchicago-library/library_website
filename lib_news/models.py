@@ -1,6 +1,9 @@
 import json
 from urllib.request import URLError, urlopen
 
+from django.contrib.syndication.views import Feed
+from django.http import HttpResponse
+
 import bleach
 from django.core.cache import cache, caches
 from django.db import models
@@ -201,6 +204,24 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         return True
 
+
+    # @route('binky')
+    # def binky_view2(self, request, *args, **kwargs):
+    #     """
+    #     Route to templete for browsing stories by
+    #     category.
+    #     """
+    #     return HttpResponse("Francis Ford Coppola")
+    
+    # @route('binky')
+    # def binky_view(self, request, *args, **kwargs):
+    #     """
+    #     Route to templete for browsing stories by
+    #     category.
+    #     """
+    #     return HttpResponse("Binky")
+
+       
     @route(r'^category/(?P<slug>[-\w]+)/$')
     def category(self, request, *args, **kwargs):
         """
@@ -216,6 +237,15 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
+
+    # @route(r'^category/(?P<slug>[-\w]+)/rss/$')
+    # def category_rss(self, request, *args, **kwargs):
+    #     """
+    #     Route to rss feed for a category.
+    #     """
+    #     # output = lib_news.views.RSSFeeds()
+    #     category = kwargs['slug']
+    #     return HttpResponse(category)
 
     @route(r'^search/$')
     def search(self, request, *args, **kwargs):
@@ -560,7 +590,6 @@ def build_news_feed(sender, instance, **kwargs):
     except(URLError):
         # We are running unit tests
         return None
-
-
+    
 page_published.connect(build_news_feed, sender=LibNewsPage)
 page_unpublished.connect(build_news_feed, sender=LibNewsPage)
