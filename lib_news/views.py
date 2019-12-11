@@ -1,6 +1,6 @@
 from requests import get
 from django.contrib.syndication.views import Feed
-from lib_news.models import LibNewsPage, LibNewsPageCategories, PublicNewsCategories
+from lib_news.models import LibNewsPage, LibNewsPageCategories, PublicNewsCategories, catid_lookup
 from django.http.response import StreamingHttpResponse
 from wagtailcache.cache import cache_page
 from django.utils.text import slugify
@@ -19,40 +19,44 @@ def ltdrfr(request):
 
 
 class RSSFeeds(Feed):
-    title = 'News Stories RSS Feed'
-    link = 'rss/' 
-    description = 'News Stories, UChicago Library!'
    
     def get_object(self, request, catid):
-        ids = [ str(x.id) for x in list(PublicNewsCategories.objects.all()) ]
-        cats = [ x.text for x in list(PublicNewsCategories.objects.all()) ]
-        lookup_table = dict(zip(ids,cats))
-        cid = lookup_table[catid]
+
+        try:
+            cid = catid_lookup[catid]
+            return PublicNewsCategories.objects.filter(text=cid).first()
+        except KeyError:
+            return PublicNewsCategories.objects.first()
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['giraffe'] = 7
+    #     return context
         
-        return PublicNewsCategories.objects.filter(text=cid).first()
-        # class RContext:
-        #     def __init__(self, cat):
-        #         self.category = cat
-        # return RContext(category)
+    def title(self, obj):
+        return "RSS Feed for the %s News Category" % obj.text
+            
+    link = "/rss/"
+    
+    description = 'News Stories, UChicago Library!'
 
-    def always_true(x):
-        return True
-
-    def correct_category(cat):
-        def _correct_category(page):
-            # return cat in [ slugify(c) for c in page.get_categories() ]
-            return cat in page.get_categories()
-        return _correct_category
     
     def items(self, obj):
-        correct = RSSFeeds.correct_category(obj.text)
-        return filter(correct, LibNewsPage.objects.all())
+        def has_category(cat):
+            def partial_application(page):
+                return cat in page.get_categories()
+            return partial_application
+        c = obj.text
+        return filter(has_category(c), LibNewsPage.objects.order_by('-published_at'))
 
     def item_title(self, item):
         return item.title
 
     def item_description(self, item):
         return item.short_description
+
+    def item_pubdate(self, item):
+        return item.published_at
     
     def item_link(self, item):
         return item.url

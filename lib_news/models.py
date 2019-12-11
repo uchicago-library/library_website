@@ -61,6 +61,22 @@ class PublicNewsCategories(models.Model, index.Indexed):
         verbose_name_plural = "Public News Categories"
 
 
+# list of all public news category ids
+ids = sorted([ str(x.id)
+               for x in
+               PublicNewsCategories.objects.all() ])
+
+# list of all public news categories
+cats = sorted([ x.text
+                for x in
+                PublicNewsCategories.objects.all() ])
+
+# dictionary mapping ids to categories
+catid_lookup = dict(zip(ids, cats))
+
+# dictionary mapping categories to ids
+catname_lookup = dict(zip(cats, ids))
+        
 @register_snippet
 class PublicNewsAuthors(models.Model, index.Indexed):
     author_name = models.CharField(max_length=255, blank=False)
@@ -203,25 +219,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             boolean
         """
         return True
-
-
-    # @route('binky')
-    # def binky_view2(self, request, *args, **kwargs):
-    #     """
-    #     Route to templete for browsing stories by
-    #     category.
-    #     """
-    #     return HttpResponse("Francis Ford Coppola")
-    
-    # @route('binky')
-    # def binky_view(self, request, *args, **kwargs):
-    #     """
-    #     Route to templete for browsing stories by
-    #     category.
-    #     """
-    #     return HttpResponse("Binky")
-
-       
+      
     @route(r'^category/(?P<slug>[-\w]+)/$')
     def category(self, request, *args, **kwargs):
         """
@@ -232,20 +230,12 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         try:
             slug = request.path.split('/')[-2]
             self.category = self.get_cat_from_slug(slug)
+            self.catid = catname_lookup[self.category]
         except (KeyError):
             self.category = ''
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
-
-    # @route(r'^category/(?P<slug>[-\w]+)/rss/$')
-    # def category_rss(self, request, *args, **kwargs):
-    #     """
-    #     Route to rss feed for a category.
-    #     """
-    #     # output = lib_news.views.RSSFeeds()
-    #     category = kwargs['slug']
-    #     return HttpResponse(category)
 
     @route(r'^search/$')
     def search(self, request, *args, **kwargs):
