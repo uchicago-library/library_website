@@ -111,7 +111,7 @@ class LibNewsPageCategories(Orderable, models.Model):
     panels = [
         SnippetChooserPanel('category'),
     ]
-
+    
     def __str__(self):
         return self.category.text
 
