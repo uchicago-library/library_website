@@ -425,6 +425,9 @@ NEWS_CACHE_TTL = 60 * 180
 # University Events Feed
 UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
 
+# Tiny Tiny RSS Feed
+TTRSS_FEED = 'https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
+
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
