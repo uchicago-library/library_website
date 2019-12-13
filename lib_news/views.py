@@ -1,12 +1,12 @@
 from requests import get
 from django.contrib.syndication.views import Feed
-from lib_news.models import LibNewsPage, LibNewsPageCategories, PublicNewsCategories, catid_lookup
+from lib_news.models import LibNewsPage, LibNewsIndexPage, LibNewsPageCategories, PublicNewsCategories
+# , catid_lookup
 from django.http.response import StreamingHttpResponse
 from wagtailcache.cache import cache_page
 from django.utils.text import slugify
 
 from library_website.settings import STATIC_NEWS_FEED
-# from django.views.generic.base import TemplateView
 
 
 @cache_page
@@ -20,18 +20,9 @@ def ltdrfr(request):
 
 class RSSFeeds(Feed):
    
-    def get_object(self, request, catid):
-
-        try:
-            cid = catid_lookup[catid]
-            return PublicNewsCategories.objects.filter(text=cid).first()
-        except KeyError:
-            return PublicNewsCategories.objects.first()
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['giraffe'] = 7
-    #     return context
+    def get_object(self, request, slug):
+        category = LibNewsIndexPage.get_cat_from_slug_static(slug)
+        return PublicNewsCategories.objects.filter(text=category).first()
         
     def title(self, obj):
         return "RSS Feed for the %s News Category" % obj.text
@@ -39,7 +30,6 @@ class RSSFeeds(Feed):
     link = "/rss/"
     
     description = 'News Stories, UChicago Library!'
-
     
     def items(self, obj):
         def has_category(cat):
@@ -47,7 +37,8 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
         c = obj.text
-        return filter(has_category(c), LibNewsPage.objects.order_by('-published_at'))
+        return filter(has_category(c),
+                      LibNewsPage.objects.order_by('-published_at'))
 
     def item_title(self, item):
         return item.title

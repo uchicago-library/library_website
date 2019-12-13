@@ -55,7 +55,7 @@ urlpatterns = [
         RedirectView.as_view(url='/collex/?view=exhibits')
     ),
     url(r'^workflowautomator/', include('workflowautomator.urls')),
-    url(r'rss/(?P<catid>[-\w]+)/$', RSSFeeds()),
+    url(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
     url(r'', include(wagtail_urls)),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
