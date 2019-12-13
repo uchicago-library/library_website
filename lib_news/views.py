@@ -37,9 +37,8 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
         c = obj.text
-        six_months = date.today() - timedelta(days=91)
-        return filter(has_category(c),
-                      LibNewsPage.objects.filter(published_at__lt=six_months).order_by('-published_at'))
+        a_year = date.today() - timedelta(years=1)
+        return filter(has_category(c), LibNewsPage.objects.filter(published_at__gt=a_year).order_by('-published_at'))
 
     def item_title(self, item):
         return item.title
