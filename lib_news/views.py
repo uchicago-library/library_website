@@ -37,7 +37,7 @@ class RSSFeeds(Feed):
             return partial_application
         c = obj.text
         return filter(has_category(c),
-                      LibNewsPage.objects.order_by('-published_at'))
+                      LibNewsPage.objects.order_by('-published_at')[:20])
 
     def item_title(self, item):
         return item.title
