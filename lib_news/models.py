@@ -60,22 +60,6 @@ class PublicNewsCategories(models.Model, index.Indexed):
         verbose_name = "Public News Category"
         verbose_name_plural = "Public News Categories"
 
-
-# list of all public news category ids
-ids = sorted([ str(x.id)
-               for x in
-               PublicNewsCategories.objects.all() ])
-
-# list of all public news categories
-cats = sorted([ x.text
-                for x in
-                PublicNewsCategories.objects.all() ])
-
-# dictionary mapping ids to categories
-catid_lookup = dict(zip(ids, cats))
-
-# dictionary mapping categories to ids
-catname_lookup = dict(zip(cats, ids))
         
 @register_snippet
 class PublicNewsAuthors(models.Model, index.Indexed):

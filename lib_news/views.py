@@ -1,7 +1,6 @@
 from requests import get
 from django.contrib.syndication.views import Feed
 from lib_news.models import LibNewsPage, LibNewsIndexPage, LibNewsPageCategories, PublicNewsCategories
-# , catid_lookup
 from django.http.response import StreamingHttpResponse
 from wagtailcache.cache import cache_page
 from django.utils.text import slugify
