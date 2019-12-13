@@ -36,8 +36,9 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
         c = obj.text
+        three_months = date.today() - timedelta(days=91)
         return filter(has_category(c),
-                      LibNewsPage.objects.order_by('-published_at')[:20])
+                      LibNewsPage.objects.filter(published_at__lt=three_months).order_by('-published_at'))
 
     def item_title(self, item):
         return item.title
