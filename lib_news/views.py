@@ -3,6 +3,7 @@ from django.contrib.syndication.views import Feed
 from lib_news.models import LibNewsPage, LibNewsIndexPage, LibNewsPageCategories, PublicNewsCategories
 from django.http.response import StreamingHttpResponse
 from wagtailcache.cache import cache_page
+from django.utils.decorators import method_decorator
 from datetime import date, timedelta
 from django.utils.text import slugify
 
@@ -18,9 +19,9 @@ def ltdrfr(request):
     return response
 
 
+@method_decorator(cache_page, name='dispatch')
 class RSSFeeds(Feed):
-   
-    def get_object(self, request, slug):
+       def get_object(self, request, slug):
         category = LibNewsIndexPage.get_cat_from_slug_static(slug)
         return PublicNewsCategories.objects.filter(text=category).first()
         
@@ -37,7 +38,7 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
         c = obj.text
-        a_year = date.today() - timedelta(days=365)
+        a_year = date.today() - timedelta(weeks=78)
         return filter(has_category(c), LibNewsPage.objects.filter(published_at__gt=a_year).order_by('-published_at'))
 
     def item_title(self, item):
