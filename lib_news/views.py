@@ -19,7 +19,6 @@ def ltdrfr(request):
     return response
 
 
-@method_decorator(cache_page, name='items')
 class RSSFeeds(Feed):
     def get_object(self, request, slug):
         """Part of the Django syndication API; in this case, returns
