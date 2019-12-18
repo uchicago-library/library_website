@@ -22,10 +22,15 @@ def ltdrfr(request):
 @method_decorator(cache_page, name='dispatch')
 class RSSFeeds(Feed):
        def get_object(self, request, slug):
+           """Part of the Django syndication API; in this case, returns
+           the category of the feed.
+           """
         category = LibNewsIndexPage.get_cat_from_slug_static(slug)
         return PublicNewsCategories.objects.filter(text=category).first()
         
     def title(self, obj):
+        """Title for the whole feed.
+        """
         return "RSS Feed for the %s News Category" % obj.text
             
     link = "/rss/"
@@ -33,22 +38,34 @@ class RSSFeeds(Feed):
     description = 'News Stories, UChicago Library!'
     
     def items(self, obj):
+        """Generates the list of items in the feed."""
         def has_category(cat):
             def partial_application(page):
                 return cat in page.get_categories()
             return partial_application
-        c = obj.text
-        a_year = date.today() - timedelta(weeks=78)
-        return filter(has_category(c), LibNewsPage.objects.filter(published_at__gt=a_year).order_by('-published_at'))
 
+        c = obj.text
+        window = date.today() - timedelta(weeks=78)
+        stories = (LibNewsPage
+                   .objects
+                   .filter(published_at__gt=window)
+                   .order_by('-published_at')
+        )
+        
+        return filter(has_category(c), stories)
+                      
     def item_title(self, item):
+        """Title for each feed story."""
         return item.title
 
     def item_description(self, item):
+        """Content of each story."""
         return item.short_description
 
     def item_pubdate(self, item):
+        """Publication date of each story."""
         return item.published_at
     
     def item_link(self, item):
+        """Link to each story."""
         return item.url

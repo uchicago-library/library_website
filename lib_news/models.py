@@ -270,13 +270,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         else:
             return ''
 
-    def get_cat_from_slug(self, slug):
-        """
-        Creates a lookup table of category names by slug
-        and returns a match for the given slug.
-        """
-        return LibNewsIndexPage.get_cat_from_slug_static(slug)
-
     def get_cat_from_slug_static(slug):
         """
         Creates a lookup table of category names by slug
@@ -289,8 +282,14 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         for cat in categories:
             lookup_table[slugify(cat)] = cat
         return lookup_table[slug]
+        
+    def get_cat_from_slug(self, slug):
+        """
+        Creates a lookup table of category names by slug
+        and returns a match for the given slug.
+        """
+        return LibNewsIndexPage.get_cat_from_slug_static(slug)
 
-    
     @property
     def base_url(self):
         return self.get_url_parts()[-1]
