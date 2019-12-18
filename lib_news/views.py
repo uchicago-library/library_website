@@ -21,18 +21,18 @@ def ltdrfr(request):
 
 @method_decorator(cache_page, name='dispatch')
 class RSSFeeds(Feed):
-       def get_object(self, request, slug):
-           """Part of the Django syndication API; in this case, returns
-           the category of the feed.
-           """
+    def get_object(self, request, slug):
+        """Part of the Django syndication API; in this case, returns
+        the category of the feed.
+        """
         category = LibNewsIndexPage.get_cat_from_slug_static(slug)
         return PublicNewsCategories.objects.filter(text=category).first()
-        
+    
     def title(self, obj):
         """Title for the whole feed.
         """
         return "RSS Feed for the %s News Category" % obj.text
-            
+    
     link = "/rss/"
     
     description = 'News Stories, UChicago Library!'
@@ -53,7 +53,7 @@ class RSSFeeds(Feed):
         )
         
         return filter(has_category(c), stories)
-                      
+    
     def item_title(self, item):
         """Title for each feed story."""
         return item.title
