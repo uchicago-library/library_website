@@ -17,6 +17,7 @@ from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
 from public.utils import get_features, has_feature
+from wagtailcache.cache import cache_page
 
 
 def navigation(request):
@@ -44,6 +45,7 @@ def navigation(request):
     return HttpResponse(data, 'text/javascript')
 
 
+@cache_page
 def spaces(request):
     building = request.GET.get('building', None)
     feature = request.GET.get('feature', None)

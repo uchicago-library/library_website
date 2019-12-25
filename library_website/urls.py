@@ -21,6 +21,7 @@ from units.views import units as unit_view
 
 from .api import api_router
 
+
 urlpatterns = [
     url(r'^django-admin/', admin.site.urls),
     url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
