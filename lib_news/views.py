@@ -24,13 +24,19 @@ class RSSFeeds(Feed):
         """Part of the Django syndication API; in this case, returns
         the category of the feed.
         """
-        category = LibNewsIndexPage.get_cat_from_slug_static(slug)
-        return PublicNewsCategories.objects.filter(text=category).first()
-    
+        try:
+            category = LibNewsIndexPage.get_cat_from_slug_static(slug)
+            return PublicNewsCategories.objects.filter(text=category).first()
+        except KeyError:
+            return None
+            
     def title(self, obj):
         """Title for the whole feed.
         """
-        return "RSS Feed for the %s News Category" % obj.text
+        if obj:
+            return "RSS Feed for the %s News Category" % obj.text
+        else:
+            return "RSS Feed for Library News"
     
     link = "/rss/"
     
@@ -43,15 +49,18 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
 
-        c = obj.text
         window = date.today() - timedelta(weeks=78)
         stories = (LibNewsPage
                    .objects
                    .filter(published_at__gt=window)
                    .order_by('-published_at')
         )
-        
-        return filter(has_category(c), stories)
+
+        if obj:
+            c = obj.text
+            return filter(has_category(c), stories)
+        else:
+            return stories
     
     def item_title(self, item):
         """Title for each feed story."""

@@ -64,9 +64,6 @@
     {% if self.category %}
             <h1>
 		{{ self.category }}
-		<a href="/rss/{{ self.slug }}/">
-		  RSS Feed
-		</a>
 	    </h1>
         <br/>
     {% elif self.search_query %}
@@ -82,9 +79,6 @@
 	
 	{# Right sidebar #}
 	{% block right_sidebar %}
-	{% if display_current_web_exhibits %}
-	{% show_exhibits current_exhibits 'Current Exhibits' %}
-	{% endif %}
 	{% if self.slug %}
         <h3>
 	    Subscribe to {{ self.slug }} <br>
@@ -99,5 +93,8 @@
 	<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
 	    <a href="/rss/">RSS feed</a>
         </div>
+	{% endif %}
+	{% if display_current_web_exhibits %}
+	{% show_exhibits current_exhibits 'Current Exhibits' %}
 	{% endif %}
 	{% endblock %}
