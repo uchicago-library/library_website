@@ -14,7 +14,6 @@ from events.views import events as events_view
 from lib_collections.views import collections as collection_view
 from lib_news.views import ltdrfr
 from lib_news.views import RSSFeeds
-from lib_news import urls as news_urls
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
 from results.views import results as results_view
