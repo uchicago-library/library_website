@@ -49,18 +49,16 @@ class RSSFeeds(Feed):
                 return cat in page.get_categories()
             return partial_application
 
-        window = date.today() - timedelta(weeks=78)
         stories = (LibNewsPage
                    .objects
-                   .filter(published_at__gt=window)
                    .order_by('-published_at')
         )
 
         if obj:
             c = obj.text
-            return filter(has_category(c), stories)
+            return list(filter(has_category(c), stories))[:20]
         else:
-            return stories
+            return stories[:20]
     
     def item_title(self, item):
         """Title for each feed story."""
