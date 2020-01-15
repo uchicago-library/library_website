@@ -449,14 +449,20 @@
 			    Subscribe to {{ self.category }} <br>
 			</h3>
 			<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-			    <a href="/rss/{{ self.slug }}/">RSS feed</a>
+			    <a href="/rss/{{ self.slug }}/">
+				<i class="fa fa-rss-square" aria-hidden="true"></i>
+				RSS feed
+			    </a>
 			</div>
 			{% elif self.news_feed_api %}
 			<h3>
 			    Subscribe to all Library news <br>
 			</h3>
 			<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-			    <a href="/rss/news/">RSS feed</a>
+			    <a href="/rss/news/">
+				<i class="fa fa-rss-square" aria-hidden="true"></i>
+				RSS feed
+			    </a>
 			</div>
 			{% else %}
 			<div style="display: none;">
