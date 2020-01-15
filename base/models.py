@@ -1600,9 +1600,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return empty_qs
 
         # Get the queryset once
-        qs = LibNewsPage.objects.order_by('-published_at').exclude(
-            thumbnail=None
-        )
+        qs = LibNewsPage.objects.live().public(
+        ).order_by('-published_at').exclude(thumbnail=None)
 
         # Filter for selected kiosk pages
         if src == 'library_kiosk':
