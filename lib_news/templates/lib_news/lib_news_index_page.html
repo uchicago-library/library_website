@@ -79,22 +79,10 @@
 	
 	{# Right sidebar #}
 	{% block right_sidebar %}
-	{% if self.category %}
-        <h3>
-	    Subscribe to {{ self.category }} <br>
-	</h3>
-	<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	    <a href="/rss/{{ self.slug }}/">RSS feed</a>
-        </div>
-	{% else %}
-	<h3>
-	    Subscribe to news <br>
-	</h3>
-	<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	    <a href="/rss/news/">RSS feed</a>
-        </div>
-	{% endif %}
+	
+
 	{% if display_current_web_exhibits %}
 	{% show_exhibits current_exhibits 'Current Exhibits' %}
 	{% endif %}
+
 	{% endblock %}
