@@ -1,12 +1,11 @@
 import json
 from urllib.request import URLError, urlopen
 
-from django.contrib.syndication.views import Feed
-from django.http import HttpResponse
-
 import bleach
+from django.contrib.syndication.views import Feed
 from django.core.cache import cache, caches
 from django.db import models
+from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -60,7 +59,7 @@ class PublicNewsCategories(models.Model, index.Indexed):
         verbose_name = "Public News Category"
         verbose_name_plural = "Public News Categories"
 
-        
+
 @register_snippet
 class PublicNewsAuthors(models.Model, index.Indexed):
     author_name = models.CharField(max_length=255, blank=False)
@@ -111,7 +110,7 @@ class LibNewsPageCategories(Orderable, models.Model):
     panels = [
         SnippetChooserPanel('category'),
     ]
-    
+
     def __str__(self):
         return self.category.text
 
@@ -203,7 +202,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             boolean
         """
         return True
-      
+
     @route(r'^category/(?P<slug>[-\w]+)/$')
     def category(self, request, *args, **kwargs):
         """
@@ -256,7 +255,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             list of strings
         """
         return LibNewsIndexPage.get_alpha_cats_static()
-    
+
     def get_first_feature_story_id(self):
         """
         Get id of the first feature story.
@@ -282,7 +281,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         for cat in categories:
             lookup_table[slugify(cat)] = cat
         return lookup_table[slug]
-        
+
     def get_cat_from_slug(self, slug):
         """
         Creates a lookup table of category names by slug
@@ -397,8 +396,8 @@ class LibNewsPage(PublicBasePage):
             return [
                 'Can\'t load categories in PREVIEW',
                 'Check categories on the LIVE page'
-            ]          
-        
+            ]
+
     @property
     def short_description(self):
         if self.excerpt:
@@ -544,14 +543,14 @@ class LibNewsPage(PublicBasePage):
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
-        context['display_current_web_exhibits'
-                ] = parent_context['display_current_web_exhibits']
+        context['display_current_web_exhibits'] = parent_context[
+            'display_current_web_exhibits']
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
-        context['right_sidebar_classes'
-                ] = parent_context['right_sidebar_classes']
+        context['right_sidebar_classes'] = parent_context[
+            'right_sidebar_classes']
         context['nav'] = parent_context['nav']
         context['libra'] = parent_context['libra']
         return context
@@ -580,9 +579,10 @@ def build_news_feed(sender, instance, **kwargs):
         data = json.loads(serialized_data)
         with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=None)
-    except(URLError):
+    except (URLError):
         # We are running unit tests
         return None
-    
+
+
 page_published.connect(build_news_feed, sender=LibNewsPage)
 page_unpublished.connect(build_news_feed, sender=LibNewsPage)
