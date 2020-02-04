@@ -75,14 +75,11 @@
     {# Empty div used by React #}
 	<div id="news-feed" data-default-visible="{{default_visible}}" data-increment-visible="{{increment_by}}" data-api-url="{{ news_feed_api }}" data-category="{{ self.category }}" data-fallback-img='{{ fallback_img.url }}' data-first-feature-id={{feature_id}}></div>
 	{% render_bundle 'NewsFeed' %}
-	{% endblock %}
+{% endblock %}
 	
-	{# Right sidebar #}
-	{% block right_sidebar %}
-	
-
-	{% if display_current_web_exhibits %}
+{# Right sidebar #}
+{% block right_sidebar %}
+    {% if display_current_web_exhibits %}
 	{% show_exhibits current_exhibits 'Current Exhibits' %}
-	{% endif %}
-
-	{% endblock %}
+    {% endif %}
+{% endblock %}
