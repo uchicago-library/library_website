@@ -2,10 +2,8 @@ import json
 from urllib.request import URLError, urlopen
 
 import bleach
-from django.contrib.syndication.views import Feed
 from django.core.cache import cache, caches
 from django.db import models
-from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -236,7 +234,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     def get_alpha_cats_static():
         """
-        Get a list of categories sorted alphabetically, 
+        Get a list of categories sorted alphabetically,
         not dependent on any LibNewsIndexPage object.
 
         Returns:
@@ -543,14 +541,14 @@ class LibNewsPage(PublicBasePage):
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
-        context['display_current_web_exhibits'] = parent_context[
-            'display_current_web_exhibits']
+        context['display_current_web_exhibits'
+                ] = parent_context['display_current_web_exhibits']
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
-        context['right_sidebar_classes'] = parent_context[
-            'right_sidebar_classes']
+        context['right_sidebar_classes'
+                ] = parent_context['right_sidebar_classes']
         context['nav'] = parent_context['nav']
         context['libra'] = parent_context['libra']
         return context

@@ -1,15 +1,8 @@
-from datetime import date, timedelta
-
 from django.contrib.syndication.views import Feed
 from django.http.response import StreamingHttpResponse
-from django.utils.decorators import method_decorator
-from django.utils.text import slugify
-from requests import get
 from wagtailcache.cache import cache_page
 
-from lib_news.models import (
-    LibNewsIndexPage, LibNewsPage, LibNewsPageCategories, PublicNewsCategories
-)
+from lib_news.models import LibNewsIndexPage, LibNewsPage, PublicNewsCategories
 from library_website.settings import STATIC_NEWS_FEED
 
 
