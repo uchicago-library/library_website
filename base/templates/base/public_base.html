@@ -197,7 +197,7 @@
                         {% endif %}
 
                         <div class="carousel-inner" role="listbox">
-                          {% for item in carousel_items %}
+                            {% for item in carousel_items %}
                                 {% image item.image original as nifty %}
                                 {% if nifty %} 
                                     <div class="item {% if forloop.first %}active{% endif %}">
@@ -238,7 +238,7 @@
                 {% endif %}
 
                 {% block content %}
-                   {% for block in self.body %}
+                    {% for block in self.body %}
                         {{ block }}
                     {% endfor %}
                 {% endblock %}
@@ -429,45 +429,44 @@
                                 {% endif %}
                             </ul>
                         </div>
-			{% endif %}
-			
-			{% if libra %}
+		    {% endif %}
+
+		    {% if libra %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                             <h3>Print</h3>
                             <div class="libra-link-wrap">
                                 <p><a href="{% pageurl libra %}">{{libra}}</a></p>
                             </div>
                         </div>
-			{% endif %}
+		    {% endif %}
 
-			{% if contacts %}
+		    {% if contacts %}
                         {% list_contacts_in_sidebar contacts 'Media Contact' %}
-			{% endif %}
-
+		    {% endif %}
 			{% if self.category %}
-			<h3>
-			    Subscribe to {{ self.category }} <br>
-			</h3>
-			<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-			    <a href="/rss/{{ self.slug }}/">
-				<i class="fa fa-rss-square" aria-hidden="true"></i>
-				RSS feed
-			    </a>
-			</div>
+			    <h3>
+				Subscribe to {{ self.category }} <br>
+			    </h3>
+			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+				<a href="/rss/{{ self.slug }}/">
+				    <i class="fa fa-rss-square" aria-hidden="true"></i>
+				    RSS feed
+				</a>
+			    </div>
 			{% elif self.news_feed_api %}
-			<h3>
-			    Subscribe to all Library news <br>
-			</h3>
-			<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-			    <a href="/rss/news/">
-				<i class="fa fa-rss-square" aria-hidden="true"></i>
-				RSS feed
-			    </a>
-			</div>
+			    <h3>
+				Subscribe to all Library news <br>
+			    </h3>
+			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+				<a href="/rss/news/">
+				    <i class="fa fa-rss-square" aria-hidden="true"></i>
+				    RSS feed
+				</a>
+			    </div>
 			{% else %}
-			<div style="display: none;">
-			    noop
-			</div>
+			    <div style="display: none;">
+				noop
+			    </div>
 			{% endif %}
                 </div>
                 <!-- // Right Sidebar Content -->
