@@ -98,13 +98,17 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   color: #E7E5E2;
   left: 0;
   top: 0;
-  h2 {
+  .h2 {
+    color: #fff;
     font-weight: 400;
     font-size: 1.2em;
     margin-top: 0;
     padding: 10px 15px;
     &:hover {
       text-decoration: none;
+    }
+    a & {
+      color: #fff;
     }
   }
   &.crerar {
@@ -126,7 +130,7 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
     position: absolute;
     padding-right: 3em;
     padding-left: 1.7em;
-    h2 {
+    .h2 {
       font-size: 1.6em;
       margin-top: 10px;
       padding: 0;
