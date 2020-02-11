@@ -26,7 +26,7 @@ libsass==0.10.1
 lxml
 networkx
 openpyxl
-Pillow==5.4.1
+Pillow==6.2.0
 -e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 -e git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
 pocli==0.1.10
