@@ -209,8 +209,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         self.is_unrouted = False
         try:
-            slug = request.path.split('/')[-2]
+            slug = kwargs['slug']
             self.category = self.get_cat_from_slug(slug)
+            self.slug = slug
         except (KeyError):
             self.category = ''
         return TemplateResponse(
@@ -231,9 +232,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             request, self.get_template(request), self.get_context(request)
         )
 
-    def get_alpha_cats(self):
+    def get_alpha_cats_static():
         """
-        Get a list of categories sorted alphabetically.
+        Get a list of categories sorted alphabetically,
+        not dependent on any LibNewsIndexPage object.
 
         Returns:
             list of strings
@@ -242,6 +244,15 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             s[0] for s in
             PublicNewsCategories.objects.order_by('text').values_list('text')
         )
+
+    def get_alpha_cats(self):
+        """
+        Get a list of categories sorted alphabetically.
+
+        Returns:
+            list of strings
+        """
+        return LibNewsIndexPage.get_alpha_cats_static()
 
     def get_first_feature_story_id(self):
         """
@@ -256,16 +267,25 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         else:
             return ''
 
+    def get_cat_from_slug_static(slug):
+        """
+        Creates a lookup table of category names by slug
+        and returns a match for the given slug, without
+        reference to a LibNewsPage object.
+
+        """
+        categories = LibNewsIndexPage.get_alpha_cats_static()
+        lookup_table = {}
+        for cat in categories:
+            lookup_table[slugify(cat)] = cat
+        return lookup_table[slug]
+
     def get_cat_from_slug(self, slug):
         """
         Creates a lookup table of category names by slug
         and returns a match for the given slug.
         """
-        categories = self.get_alpha_cats()
-        lookup_table = {}
-        for cat in categories:
-            lookup_table[slugify(cat)] = cat
-        return lookup_table[slug]
+        return LibNewsIndexPage.get_cat_from_slug_static(slug)
 
     @property
     def base_url(self):
@@ -557,7 +577,7 @@ def build_news_feed(sender, instance, **kwargs):
         data = json.loads(serialized_data)
         with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=None)
-    except(URLError):
+    except (URLError):
         # We are running unit tests
         return None
 

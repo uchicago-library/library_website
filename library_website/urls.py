@@ -3,6 +3,7 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import RedirectView
+from django.urls import path
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
@@ -12,6 +13,7 @@ from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
 from lib_collections.views import collections as collection_view
 from lib_news.views import ltdrfr
+from lib_news.views import RSSFeeds
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
 from results.views import results as results_view
@@ -52,6 +54,7 @@ urlpatterns = [
         RedirectView.as_view(url='/collex/?view=exhibits')
     ),
     url(r'^workflowautomator/', include('workflowautomator.urls')),
+    url(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
     url(r'', include(wagtail_urls)),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT

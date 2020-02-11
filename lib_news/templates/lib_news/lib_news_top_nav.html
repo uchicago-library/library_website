@@ -5,7 +5,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" aria-label="Library news navigation">
                 Browse by Category <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                {% for cat in categories %}
+              {% for cat in categories %}
                     <li><a href="{{ category_url_base }}{{ cat|slugify }}/">{{cat}}</a></li>
                 {% endfor %}
             </ul>
