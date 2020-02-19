@@ -217,6 +217,164 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
     )
 
 
+class CFacet(models.Model):
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False, help_text='Include in sidebar?'
+    )
+    search_handler_location = models.CharField(max_length=255, blank=True)
+    includes_ocr = models.BooleanField(
+        default=False, help_text='Does this include OCR?'
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('search_handler_location'),
+                FieldPanel('includes_ocr'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageFacet(Orderable, CFacet):
+    """
+    Class for cluster browses within a Collection Page.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_facet"
+    )
+
+
+class CBrowse(models.Model):
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False, help_text='Include in sidebar?'
+    )
+    iiif_location = models.URLField(max_length=255, blank=True)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('iiif_location'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageClusterBrowse(Orderable, CBrowse):
+    """
+    Class for cluster browses within a Collection Page.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_cbrowse"
+    )
+
+
+class LBrowse(models.Model):
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False, help_text='Include in sidebar?'
+    )
+    iiif_location = models.URLField(max_length=255, blank=True)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('iiif_location'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageListBrowse(Orderable, LBrowse):
+    """
+    Class for list browses within a Collection Page.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_lbrowse"
+    )
+
+
+class CSearch(models.Model):
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False, help_text='Include in sidebar?'
+    )
+    default = models.BooleanField(
+        default=False, help_text='Is this the default search?'
+    )
+    mark_logic_parameter = models.CharField(max_length=255, blank=True)
+    search_handler_location = models.CharField(max_length=255, blank=True)
+    includes_ocr = models.BooleanField(
+        default=False, help_text='Does this include OCR?'
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('default'),
+                FieldPanel('mark_logic_parameter'),
+                FieldPanel('search_handler_location'),
+                FieldPanel('includes_ocr'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageSearch(Orderable, CSearch):
+    """
+    Class for searches within a Collection Page.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_search"
+    )
+
+
+class Metadata(models.Model):
+    documentation = models.CharField(max_length=255, blank=True)
+    location = models.URLField(max_length=255, blank=True)
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('documentation'),
+            FieldPanel('location'),
+        ]),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageMetadata(Orderable, Metadata):
+    """
+    Class for cluster browses within a Collection Page.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_metadata"
+    )
+
+
 # Collection page content type
 class CollectionPage(RoutablePageMixin, PublicBasePage):
     """
@@ -252,6 +410,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         'staff.StaffPage', null=True, blank=True, on_delete=models.SET_NULL
     )
     unit_contact = models.BooleanField(default=False)
+
+    # Collection Panel Fields
+    collection = models.BooleanField(
+        default=False, help_text='Display as Collection'
+    )
+    hex_regex = RegexValidator(
+        regex='^#[a-zA-Z0-9]{6}$',
+        message='Please enter a hex color, e.g. #012043'
+    )
+    branding_color = models.CharField(
+        validators=[hex_regex], max_length=7, blank=True
+    )
+    google_font_link = models.URLField(
+        blank=True, help_text='Google fonts link to embed in the header'
+    )
+    font_family = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
+    )
+    search_bar = models.BooleanField(
+        default=False, help_text='Include a search bar'
+    )
+    highlighted_records = models.BooleanField(
+        default=False, help_text='Display sample or highlighted records'
+    )
 
     @route(r'^viewer/$')
     def viewer(self, request, *args, **kwargs):
@@ -316,6 +500,45 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         index.SearchField('collection_location'),
         index.SearchField('staff_contact'),
     ]
+
+    collection_panels = [
+        FieldPanel('collection'),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('banner_image'),
+                ImageChooserPanel('banner_feature'),
+                FieldPanel('banner_title'),
+                FieldPanel('banner_subtitle'),
+            ],
+            heading='Banner'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('branding_color'),
+                FieldPanel('google_font_link'),
+                FieldPanel('font_family'),
+            ],
+            heading='Branding'
+        ),
+        InlinePanel('col_metadata', label="Metadata"),
+        FieldPanel('search_bar'),
+        FieldPanel('highlighted_records'),
+        InlinePanel('col_search', label='Searches'),
+        InlinePanel('col_lbrowse', label='List Browses'),
+        InlinePanel('col_cbrowse', label='Cluster Browses'),
+        InlinePanel('col_facet', label='Facets'),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(collection_panels, heading='Collection'),
+        ]
+    )
 
     def get_context(self, request):
 
@@ -698,9 +921,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list(
-                'email', flat=True
-            )[0]
+            email = librarian.staff_page_email.values_list('email',
+                                                           flat=True)[0]
         except:
             email = ''
         phone_and_fac = tuple(
@@ -1237,7 +1459,6 @@ class ExhibitPage(PublicBasePage):
         context['unit_link_external'] = unit_link_external
         context['unit_link_page'] = unit_link_page
         context['unit_link_document'] = unit_link_document
-
 
         return context
 
