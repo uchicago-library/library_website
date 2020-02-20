@@ -217,6 +217,97 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
     )
 
 
+# class ObjectMetadata(models.Model):
+#     edm_field_label = models.CharField(max_length=255, blank=True)
+#     hotlinked = models.BooleanField(
+#         default=False, help_text='Is this EDM field hotlinked?'
+#     )
+#     multiple_values = models.BooleanField(
+#         default=False, help_text='Are there multiple values within the field?'
+#     )
+#     MENU_OPTIONS = [
+#         (1, "go to a results page for the selected item"),
+#         (2, "link to a related item in the collection"),
+#     ]
+#     link_target = models.IntegerField(
+#         choices=MENU_OPTIONS, default=1, help_text='Option for link target'
+#     )
+
+#     panels = [
+#         FieldPanel('edm_field_label'),
+#         FieldPanel('hotlinked'),
+#         FieldPanel('multiple_values'),
+#         FieldPanel('link_target'),
+#     ]
+
+#     class Meta:
+#         abstract = True
+
+# class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
+#     """
+#     Class for metadata fields to display in search results.
+#     """
+#     page = ParentalKey(
+#         'lib_collections.CollectionPage', related_name="col_obj_metadata"
+#     )
+
+
+class ObjectMetadata(models.Model):
+    edm_field_label = models.CharField(max_length=255, blank=True)
+    hotlinked = models.BooleanField(
+        default=False, help_text='Is this EDM field hotlinked?'
+    )
+    multiple_values = models.BooleanField(
+        default=False, help_text='Are there multiple values within the field?'
+    )
+    MENU_OPTIONS = [
+        (1, "go to a results page for the selected item"),
+        (2, "link to a related item in the collection"),
+    ]
+    link_target = models.IntegerField(
+        choices=MENU_OPTIONS, default=1, help_text='Option for link target'
+    )
+
+    panels = [
+        FieldPanel('edm_field_label'),
+        FieldPanel('hotlinked'),
+        FieldPanel('multiple_values'),
+        FieldPanel('link_target'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
+    """
+    Class for metadata fields to display in search results.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_obj_metadata"
+    )
+
+
+class CResult(models.Model):
+    label = models.CharField(max_length=255, blank=True)
+
+    panels = [
+        FieldPanel('label'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageResult(Orderable, CResult):
+    """
+    Class for metadata fields to display in search results.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_result"
+    )
+
+
 class CFacet(models.Model):
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
@@ -527,6 +618,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_lbrowse', label='List Browses'),
         InlinePanel('col_cbrowse', label='Cluster Browses'),
         InlinePanel('col_facet', label='Facets'),
+        InlinePanel('col_result', label='Results'),
     ]
 
     edit_handler = TabbedInterface(
