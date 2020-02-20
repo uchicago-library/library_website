@@ -217,39 +217,34 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
     )
 
 
-# class ObjectMetadata(models.Model):
-#     edm_field_label = models.CharField(max_length=255, blank=True)
-#     hotlinked = models.BooleanField(
-#         default=False, help_text='Is this EDM field hotlinked?'
-#     )
-#     multiple_values = models.BooleanField(
-#         default=False, help_text='Are there multiple values within the field?'
-#     )
-#     MENU_OPTIONS = [
-#         (1, "go to a results page for the selected item"),
-#         (2, "link to a related item in the collection"),
-#     ]
-#     link_target = models.IntegerField(
-#         choices=MENU_OPTIONS, default=1, help_text='Option for link target'
-#     )
+class ExternalService(models.Model):
+    MENU_OPTIONS = [
+        (1, "LUNA"),
+        (2, "other service"),
+    ]
+    service = models.IntegerField(
+        choices=MENU_OPTIONS, default=1, help_text='Choose an external service'
+    )
+    identifier = models.CharField(
+        max_length=255, help_text="identifier to retrieve object from service"
+    )
 
-#     panels = [
-#         FieldPanel('edm_field_label'),
-#         FieldPanel('hotlinked'),
-#         FieldPanel('multiple_values'),
-#         FieldPanel('link_target'),
-#     ]
+    panels = [
+        FieldPanel('service'),
+        FieldPanel('identifier'),
+    ]
 
-#     class Meta:
-#         abstract = True
+    class Meta:
+        abstract = True
 
-# class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
-#     """
-#     Class for metadata fields to display in search results.
-#     """
-#     page = ParentalKey(
-#         'lib_collections.CollectionPage', related_name="col_obj_metadata"
-#     )
+
+class CollectionPageExternalService(Orderable, ExternalService):
+    """
+    Class for metadata fields to display in search results.
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_external_service"
+    )
 
 
 class ObjectMetadata(models.Model):
@@ -527,6 +522,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     highlighted_records = models.BooleanField(
         default=False, help_text='Display sample or highlighted records'
     )
+    object_identifier = models.URLField(
+        max_length=255,
+        blank=True,
+        help_text="Use a Bib ID or a record PI to construct a link to the catalog"
+    )
+    display_location = models.BooleanField(
+        default=False, help_text='Display a location field from the EDM?'
+    )
 
     @route(r'^viewer/$')
     def viewer(self, request, *args, **kwargs):
@@ -619,6 +622,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_cbrowse', label='Cluster Browses'),
         InlinePanel('col_facet', label='Facets'),
         InlinePanel('col_result', label='Results'),
+        InlinePanel('col_obj_metadata', label='Object Metadata'),
+        FieldPanel('object_identifier'),
+        FieldPanel('display_location'),
+        InlinePanel('col_external_service', label='Link to External Service'),
     ]
 
     edit_handler = TabbedInterface(
