@@ -557,3 +557,48 @@ class TestPageOwnerReports(TestCase):
         }
         csv = run_report_page_maintainers_and_editors(options)
         self.assertEqual(csv.strip(), ','.join(self.c.HEADER))
+
+
+class TestUpdateSiteDataCommand(TestCase):
+    """
+    Test cases for the update_site_data manage command.
+    """
+    fixtures = ['test.json']
+
+    def test_changing_port_alone(self):
+        """
+        Change the site port to a new one
+        """
+        management.call_command('update_site_data', 'loopdev', '--port=555')
+        site_obj = Site.objects.get(hostname='loopdev')
+        self.assertEqual(555, site_obj.port)
+
+    def test_changing_hostname_alone(self):
+        """
+        Change the site hostname to a new one
+        """
+        management.call_command(
+            'update_site_data', 'loopdev', '--new_host=lcars'
+        )
+        site_obj = Site.objects.get(hostname='lcars')
+        self.assertEqual('lcars', site_obj.hostname)
+
+    def test_changing_all_options_at_once(self):
+        """
+        Pass all paramaters at once
+        """
+        management.call_command(
+            'update_site_data', 'loopdev', '--new_host=lcars', '--port=8912'
+        )
+        site_obj = Site.objects.get(hostname='lcars')
+        self.assertEqual('lcars', site_obj.hostname)
+        self.assertEqual(8912, site_obj.port)
+
+    def test_bad_port_given(self):
+        """
+        Test what happens when a non-numeric port is given
+        """
+        self.assertRaises(
+            ValueError, management.call_command, 'update_site_data', 'loopdev',
+            '--port=borg'
+        )
