@@ -403,7 +403,11 @@ class CSearch(models.Model):
         default=False, help_text='Include in sidebar?'
     )
     default = models.BooleanField(
-        default=False, help_text='Is this the default search?'
+        default=False,
+        help_text=(
+            '''Is this the default search? (If more than one are selected, the
+            first one selected will be the default.)'''
+        )
     )
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
@@ -492,11 +496,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
-    # search_bar = models.BooleanField(
-    #     default=False, help_text='Include search bar in the side panel?'
-    # )
-    highlighted_records = models.BooleanField(
-        default=False, help_text='Display sample or highlighted records'
+    highlighted_records = models.URLField(
+        blank=True,
+        help_text=(
+            '''URL for browse index in IIIF to display
+            results on collection parent page'''
+        )
     )
     object_identifier = models.URLField(
         max_length=255,
@@ -590,8 +595,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             ],
             heading='Branding'
         ),
-        # InlinePanel('col_metadata', label="Metadata"),
-        # FieldPanel('search_bar'),
         FieldPanel('highlighted_records'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
