@@ -437,29 +437,6 @@ class CollectionPageSearch(Orderable, CSearch):
     )
 
 
-# class Metadata(models.Model):
-#     documentation = models.CharField(max_length=255, blank=True)
-#     location = models.URLField(max_length=255, blank=True)
-
-#     panels = [
-#         MultiFieldPanel([
-#             FieldPanel('documentation'),
-#             FieldPanel('location'),
-#         ]),
-#     ]
-
-#     class Meta:
-#         abstract = True
-
-# class CollectionPageMetadata(Orderable, Metadata):
-#     """
-#     Class for cluster browses within a Collection Page.
-#     """
-#     page = ParentalKey(
-#         'lib_collections.CollectionPage', related_name="col_metadata"
-#     )
-
-
 # Collection page content type
 class CollectionPage(RoutablePageMixin, PublicBasePage):
     """
@@ -515,9 +492,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
-    search_bar = models.BooleanField(
-        default=False, help_text='Include a search bar'
-    )
+    # search_bar = models.BooleanField(
+    #     default=False, help_text='Include search bar in the side panel?'
+    # )
     highlighted_records = models.BooleanField(
         default=False, help_text='Display sample or highlighted records'
     )
@@ -614,7 +591,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             heading='Branding'
         ),
         # InlinePanel('col_metadata', label="Metadata"),
-        FieldPanel('search_bar'),
+        # FieldPanel('search_bar'),
         FieldPanel('highlighted_records'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
