@@ -506,8 +506,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     highlighted = models.URLField(
         blank=True,
         help_text=(
-            '''URL for browse index in IIIF to display
-            results on collection parent page'''
+            '''Do you want to show a set of highlights from the collection on the
+            main page?  If so, provide the URL for the browse index in
+            IIIF to display results on the collection parent page.'''
         )
     )
 
