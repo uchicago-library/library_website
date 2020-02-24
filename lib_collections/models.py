@@ -220,7 +220,7 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
 class ExternalService(models.Model):
     MENU_OPTIONS = [
         (1, "LUNA"),
-        (2, "other service"),
+        (2, "BTAA"),
     ]
     service = models.IntegerField(
         choices=MENU_OPTIONS, default=1, help_text='Choose an external service'
@@ -284,10 +284,14 @@ class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
 
 
 class CResult(models.Model):
-    label = models.CharField(max_length=255, blank=True)
+    field_label = models.CharField(max_length=255, blank=True)
+    field_identifier = models.CharField(
+        max_length=255, blank=True, help_text="EDM/IIIF field identifier"
+    )
 
     panels = [
-        FieldPanel('label'),
+        FieldPanel('field_label'),
+        FieldPanel('field_identifier'),
     ]
 
     class Meta:
@@ -305,9 +309,6 @@ class CollectionPageResult(Orderable, CResult):
 
 class CFacet(models.Model):
     label = models.CharField(max_length=255, blank=True)
-    include = models.BooleanField(
-        default=False, help_text='Include in sidebar?'
-    )
     search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
         default=False, help_text='Does this include OCR?'
@@ -317,7 +318,6 @@ class CFacet(models.Model):
         MultiFieldPanel(
             [
                 FieldPanel('label'),
-                FieldPanel('include'),
                 FieldPanel('search_handler_location'),
                 FieldPanel('includes_ocr'),
             ]
@@ -503,14 +503,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             results on collection parent page'''
         )
     )
-    object_identifier = models.URLField(
-        max_length=255,
+    highlighted = models.URLField(
         blank=True,
-        help_text="Use a Bib ID or a record PI to construct a link to the catalog"
+        help_text=(
+            '''URL for browse index in IIIF to display
+            results on collection parent page'''
+        )
     )
-    display_location = models.BooleanField(
-        default=False, help_text='Display a location field from the EDM?'
-    )
+
+    # TODO: eventually this will contain instructions for generating a
+    # link to the library catalog or other kinds of specialized links
+
+    # object_identifier = models.URLField(
+    #     max_length=255,
+    #     blank=True,
+    #     help_text="Use a Bib ID or a record PI to construct a link to the catalog"
+    # )
 
     @route(r'^viewer/$')
     def viewer(self, request, *args, **kwargs):
@@ -600,10 +608,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_lbrowse', label='List Browses'),
         InlinePanel('col_cbrowse', label='Cluster Browses'),
         InlinePanel('col_facet', label='Facets'),
-        InlinePanel('col_result', label='Results'),
+        InlinePanel('col_result', label='Additional Fields in Results'),
         InlinePanel('col_obj_metadata', label='Object Metadata'),
-        FieldPanel('object_identifier'),
-        FieldPanel('display_location'),
         InlinePanel('col_external_service', label='Link to External Service'),
     ]
 
