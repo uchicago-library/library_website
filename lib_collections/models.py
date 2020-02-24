@@ -437,28 +437,27 @@ class CollectionPageSearch(Orderable, CSearch):
     )
 
 
-class Metadata(models.Model):
-    documentation = models.CharField(max_length=255, blank=True)
-    location = models.URLField(max_length=255, blank=True)
+# class Metadata(models.Model):
+#     documentation = models.CharField(max_length=255, blank=True)
+#     location = models.URLField(max_length=255, blank=True)
 
-    panels = [
-        MultiFieldPanel([
-            FieldPanel('documentation'),
-            FieldPanel('location'),
-        ]),
-    ]
+#     panels = [
+#         MultiFieldPanel([
+#             FieldPanel('documentation'),
+#             FieldPanel('location'),
+#         ]),
+#     ]
 
-    class Meta:
-        abstract = True
+#     class Meta:
+#         abstract = True
 
-
-class CollectionPageMetadata(Orderable, Metadata):
-    """
-    Class for cluster browses within a Collection Page.
-    """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_metadata"
-    )
+# class CollectionPageMetadata(Orderable, Metadata):
+#     """
+#     Class for cluster browses within a Collection Page.
+#     """
+#     page = ParentalKey(
+#         'lib_collections.CollectionPage', related_name="col_metadata"
+#     )
 
 
 # Collection page content type
@@ -498,8 +497,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     unit_contact = models.BooleanField(default=False)
 
     # Collection Panel Fields
-    collection = models.BooleanField(
-        default=False, help_text='Display as Collection'
+    digital_collection = models.BooleanField(
+        default=False, help_text='Is this a Digital Collection?'
     )
     hex_regex = RegexValidator(
         regex='^#[a-zA-Z0-9]{6}$',
@@ -596,7 +595,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     ]
 
     collection_panels = [
-        FieldPanel('collection'),
+        FieldPanel('digital_collection'),
         MultiFieldPanel(
             [
                 ImageChooserPanel('banner_image'),
@@ -614,7 +613,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             ],
             heading='Branding'
         ),
-        InlinePanel('col_metadata', label="Metadata"),
+        # InlinePanel('col_metadata', label="Metadata"),
         FieldPanel('search_bar'),
         FieldPanel('highlighted_records'),
         InlinePanel('col_search', label='Searches'),
