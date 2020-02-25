@@ -218,6 +218,9 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
 
 
 class ExternalService(models.Model):
+    """
+    Class for link to an external service in a Collection Page.
+    """
     MENU_OPTIONS = [
         (1, "LUNA"),
         (2, "BTAA"),
@@ -240,7 +243,10 @@ class ExternalService(models.Model):
 
 class CollectionPageExternalService(Orderable, ExternalService):
     """
-    Class for metadata fields to display in search results.
+    Intermediate class for links to external services in a 
+    Collection Page.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_external_service"
@@ -248,6 +254,9 @@ class CollectionPageExternalService(Orderable, ExternalService):
 
 
 class ObjectMetadata(models.Model):
+    """
+    Class for metadata fields to display in search results.
+    """
     edm_field_label = models.CharField(max_length=255, blank=True)
     hotlinked = models.BooleanField(
         default=False, help_text='Is this EDM field hotlinked?'
@@ -276,7 +285,10 @@ class ObjectMetadata(models.Model):
 
 class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
     """
-    Class for metadata fields to display in search results.
+    Intermediate class for metadata fields within a Collection Page
+    result.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_obj_metadata"
@@ -284,6 +296,9 @@ class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
 
 
 class CResult(models.Model):
+    """
+    Class for search results within a Collection Page.
+    """
     field_label = models.CharField(max_length=255, blank=True)
     field_identifier = models.CharField(
         max_length=255, blank=True, help_text="EDM/IIIF field identifier"
@@ -300,7 +315,9 @@ class CResult(models.Model):
 
 class CollectionPageResult(Orderable, CResult):
     """
-    Class for metadata fields to display in search results.
+    Intermediate class for results within a Collection Page.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_result"
@@ -308,6 +325,9 @@ class CollectionPageResult(Orderable, CResult):
 
 
 class CFacet(models.Model):
+    """
+    Class for facets within a Collection Page.
+    """
     label = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
@@ -330,7 +350,9 @@ class CFacet(models.Model):
 
 class CollectionPageFacet(Orderable, CFacet):
     """
-    Class for cluster browses within a Collection Page.
+    Intermediate class for facets within a Collection Page.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_facet"
@@ -338,6 +360,9 @@ class CollectionPageFacet(Orderable, CFacet):
 
 
 class CBrowse(models.Model):
+    """
+    Class for cluster browses within a Collection Page.
+    """
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False, help_text='Include in sidebar?'
@@ -360,7 +385,8 @@ class CBrowse(models.Model):
 
 class CollectionPageClusterBrowse(Orderable, CBrowse):
     """
-    Class for cluster browses within a Collection Page.
+    Intermediate class for cluster browses within a Collection Page.
+    (needed to create an InlinePanel)
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_cbrowse"
@@ -368,6 +394,9 @@ class CollectionPageClusterBrowse(Orderable, CBrowse):
 
 
 class LBrowse(models.Model):
+    """
+    Class for list browses within a Collection Page.
+    """
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False, help_text='Include in sidebar?'
@@ -390,7 +419,9 @@ class LBrowse(models.Model):
 
 class CollectionPageListBrowse(Orderable, LBrowse):
     """
-    Class for list browses within a Collection Page.
+    Intermediate class for list browses within a Collection Page.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_lbrowse"
@@ -398,6 +429,9 @@ class CollectionPageListBrowse(Orderable, LBrowse):
 
 
 class CSearch(models.Model):
+    """
+    Class for searches within a Collection Page.
+    """
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False, help_text='Include in sidebar?'
@@ -434,7 +468,9 @@ class CSearch(models.Model):
 
 class CollectionPageSearch(Orderable, CSearch):
     """
-    Class for searches within a Collection Page.
+    Intermediate class for searches within a Collection Page.  
+    (needed to create an InlinePanel)
+
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_search"
@@ -451,6 +487,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
 
+    # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
@@ -478,6 +515,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     unit_contact = models.BooleanField(default=False)
 
     # Collection Panel Fields
+    # tab in the admin interface is called 'Collection'
     digital_collection = models.BooleanField(
         default=False, help_text='Is this a Digital Collection?'
     )
@@ -585,6 +623,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         index.SearchField('staff_contact'),
     ]
 
+    # panels within the 'Collection' tab in the admin interface
     collection_panels = [
         FieldPanel('digital_collection'),
         MultiFieldPanel(
@@ -614,6 +653,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_external_service', label='Link to External Service'),
     ]
 
+    # this creates the 'Collection' tab in the admin interface
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading='Content'),
