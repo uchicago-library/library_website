@@ -245,7 +245,6 @@ class CollectionPageExternalService(Orderable, ExternalService):
     """
     Intermediate class for links to external services in a Collection
     Page. (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_external_service"
@@ -289,7 +288,6 @@ class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
     """
     Intermediate class for metadata fields within a Collection Page
     result.  (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_obj_metadata"
@@ -318,7 +316,6 @@ class CollectionPageResult(Orderable, CResult):
     """
     Intermediate class for results within a Collection Page.  
     (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_result"
@@ -353,7 +350,6 @@ class CollectionPageFacet(Orderable, CFacet):
     """
     Intermediate class for facets within a Collection Page.  
     (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_facet"
