@@ -255,6 +255,10 @@ class ObjectMetadata(models.Model):
     """
     Class for metadata fields to display in search results.
     """
+    MENU_OPTIONS = [
+        (1, "go to a results page for the selected item"),
+        (2, "link to a related item in the collection"),
+    ]
     edm_field_label = models.CharField(max_length=255, blank=True)
     multiple_values = models.BooleanField(
         default=False, help_text='Are there multiple values within the field?'
@@ -263,10 +267,6 @@ class ObjectMetadata(models.Model):
         default=False,
         help_text='Do you want this label to linked to a unique browse view?'
     )
-    MENU_OPTIONS = [
-        (1, "go to a results page for the selected item"),
-        (2, "link to a related item in the collection"),
-    ]
     link_target = models.IntegerField(
         choices=MENU_OPTIONS,
         default=1,
