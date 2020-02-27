@@ -243,9 +243,8 @@ class ExternalService(models.Model):
 
 class CollectionPageExternalService(Orderable, ExternalService):
     """
-    Intermediate class for links to external services in a 
-    Collection Page.  
-    (needed to create an InlinePanel)
+    Intermediate class for links to external services in a Collection
+    Page. (needed to create an InlinePanel)
 
     """
     page = ParentalKey(
@@ -258,18 +257,21 @@ class ObjectMetadata(models.Model):
     Class for metadata fields to display in search results.
     """
     edm_field_label = models.CharField(max_length=255, blank=True)
-    hotlinked = models.BooleanField(
-        default=False, help_text='Is this EDM field hotlinked?'
-    )
     multiple_values = models.BooleanField(
         default=False, help_text='Are there multiple values within the field?'
+    )
+    hotlinked = models.BooleanField(
+        default=False,
+        help_text='Do you want this label to linked to a unique browse view?'
     )
     MENU_OPTIONS = [
         (1, "go to a results page for the selected item"),
         (2, "link to a related item in the collection"),
     ]
     link_target = models.IntegerField(
-        choices=MENU_OPTIONS, default=1, help_text='Option for link target'
+        choices=MENU_OPTIONS,
+        default=1,
+        help_text='How do you want the link to behave? (Required for hotlinked)'
     )
 
     panels = [
@@ -286,8 +288,7 @@ class ObjectMetadata(models.Model):
 class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
     """
     Intermediate class for metadata fields within a Collection Page
-    result.  
-    (needed to create an InlinePanel)
+    result.  (needed to create an InlinePanel)
 
     """
     page = ParentalKey(
@@ -365,7 +366,8 @@ class CBrowse(models.Model):
     """
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
-        default=False, help_text='Include in sidebar?'
+        default=False,
+        help_text='Include browse term in collection sidebar? (Featured browse)'
     )
     iiif_location = models.URLField(max_length=255, blank=True)
 
@@ -399,7 +401,8 @@ class LBrowse(models.Model):
     """
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
-        default=False, help_text='Include in sidebar?'
+        default=False,
+        help_text='Include browse term in collection sidebar? (Featured browse)'
     )
     iiif_location = models.URLField(max_length=255, blank=True)
 
@@ -446,7 +449,7 @@ class CSearch(models.Model):
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
-        default=False, help_text='Does this include OCR?'
+        default=False, help_text='Do the searchable objects have OCR?'
     )
 
     panels = [
@@ -536,10 +539,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     )
     highlighted_records = models.URLField(
         blank=True,
-        help_text=(
-            '''URL for browse index in IIIF to display
-            results on collection parent page'''
-        )
+        help_text=
+        '''URL for the select objects you would like to show in the collection
+        page'''
     )
 
     # TODO: eventually this will contain instructions for generating a
