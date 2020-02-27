@@ -329,7 +329,7 @@ class CFacet(models.Model):
     label = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
-        default=False, help_text='Does this include OCR?'
+        default=False, help_text='Do the searchable objects have OCR?'
     )
 
     panels = [
