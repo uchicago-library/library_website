@@ -420,7 +420,6 @@ class CollectionPageListBrowse(Orderable, LBrowse):
     """
     Intermediate class for list browses within a Collection Page.  
     (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_lbrowse"
@@ -469,7 +468,6 @@ class CollectionPageSearch(Orderable, CSearch):
     """
     Intermediate class for searches within a Collection Page.  
     (needed to create an InlinePanel)
-
     """
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_search"
