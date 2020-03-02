@@ -447,8 +447,8 @@ class CSearch(models.Model):
     default = models.BooleanField(
         default=False,
         help_text=(
-            '''Is this the default search? (If more than one are selected, the
-            first one selected will be the default.)'''
+            'Is this the default search? (If more than one are selected, the'
+            'first one selected will be the default.)'
         )
     )
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
