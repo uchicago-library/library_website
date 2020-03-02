@@ -192,7 +192,8 @@ class CollectionPageAlternateNames(Orderable, AlternateName):
     )
 
 
-# Interstitial model for linking the collection RelatedPages to the CollectionPage
+# Interstitial model for linking the collection RelatedPages to the
+# CollectionPage
 
 
 class RelatedCollectionPagePlacement(Orderable, models.Model):
@@ -270,7 +271,10 @@ class ObjectMetadata(models.Model):
     link_target = models.IntegerField(
         choices=MENU_OPTIONS,
         default=1,
-        help_text='How do you want the link to behave? (Required for hotlinked)'
+        help_text=(
+            'How do you want the link to behave?'
+            '(Required for hotlinked)'
+        )
     )
 
     panels = [
@@ -314,7 +318,7 @@ class CResult(models.Model):
 
 class CollectionPageResult(Orderable, CResult):
     """
-    Intermediate class for results within a Collection Page.  
+    Intermediate class for results within a Collection Page.
     (needed to create an InlinePanel)
     """
     page = ParentalKey(
@@ -348,7 +352,7 @@ class CFacet(models.Model):
 
 class CollectionPageFacet(Orderable, CFacet):
     """
-    Intermediate class for facets within a Collection Page.  
+    Intermediate class for facets within a Collection Page.
     (needed to create an InlinePanel)
     """
     page = ParentalKey(
@@ -363,7 +367,10 @@ class CBrowse(models.Model):
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
-        help_text='Include browse term in collection sidebar? (Featured browse)'
+        help_text=(
+            'Include browse term in collection sidebar?'
+            '(Featured browse)'
+        )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
 
@@ -398,7 +405,10 @@ class LBrowse(models.Model):
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
-        help_text='Include browse term in collection sidebar? (Featured browse)'
+        help_text=(
+            'Include browse term in collection sidebar?'
+            '(Featured browse)'
+        )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
 
@@ -418,7 +428,7 @@ class LBrowse(models.Model):
 
 class CollectionPageListBrowse(Orderable, LBrowse):
     """
-    Intermediate class for list browses within a Collection Page.  
+    Intermediate class for list browses within a Collection Page.
     (needed to create an InlinePanel)
     """
     page = ParentalKey(
@@ -466,7 +476,7 @@ class CSearch(models.Model):
 
 class CollectionPageSearch(Orderable, CSearch):
     """
-    Intermediate class for searches within a Collection Page.  
+    Intermediate class for searches within a Collection Page.
     (needed to create an InlinePanel)
     """
     page = ParentalKey(
@@ -533,19 +543,23 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     )
     highlighted_records = models.URLField(
         blank=True,
-        help_text=
-        '''URL for the select objects you would like to show in the collection
-        page'''
+        help_text=(
+            'URL for the select objects you would'
+            ' like to show in the collection page'
+        )
     )
 
     # TODO: eventually this will contain instructions for generating a
     # link to the library catalog or other kinds of specialized links
 
-    # object_identifier = models.URLField(
-    #     max_length=255,
-    #     blank=True,
-    #     help_text="Use a Bib ID or a record PI to construct a link to the catalog"
-    # )
+    object_identifier = models.URLField(
+        max_length=255,
+        blank=True,
+        help_text=(
+            'Use a Bib ID or a record PI to construct'
+            ' a link to the catalog'
+        )
+    )
 
     @route(r'^viewer/$')
     def viewer(self, request, *args, **kwargs):
@@ -959,9 +973,11 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         InlinePanel(
             'regional_collections',
             label='Other Local Collections',
-            help_text=
-            'Related collections that are held by other institutions, like BMRC, Newberry, etc.'
-        ),
+            help_text=(
+                'Related collections that are held by other'
+                ' institutions, like BMRC, Newberry, etc.'
+            ),
+        )
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
