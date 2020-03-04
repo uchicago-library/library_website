@@ -96,6 +96,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     Staff profile content type.
     """
 
+    subpage_types = ['base.IntranetPlainPage']
     # editable by HR. 
     cnetid = CharField(
         blank=False,
@@ -392,8 +393,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         ObjectList(human_resources_panels, heading='Human Resources Info'),
     ])
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranetforms.IntranetFormPage', 'intranettocs.TOCPage']
-
     class Meta:
         ordering = ['last_name', 'first_name']
 
@@ -444,6 +443,9 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         return context
 
 class StaffIndexPage(BasePage):
+
+    max_count = 1
+    subpage_types = ['staff.StaffPage']
     """
     Staff index page content type.
     """
@@ -455,8 +457,6 @@ class StaffIndexPage(BasePage):
     search_fields = Page.search_fields + [ # Inherit search_fields from Page
         index.SearchField('intro'),
     ]
-
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'staff.StaffPage']
 
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),

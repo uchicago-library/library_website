@@ -115,6 +115,9 @@ class LibNewsPageCategories(Orderable, models.Model):
 
 class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
+    max_count = 1
+    subpage_types = ['lib_news.LibNewsPage']
+
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
@@ -145,8 +148,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         when no thumbnail is provided',
         related_name='+'
     )
-
-    subpage_types = ['lib_news.LibNewsPage']
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('fallback_image'),

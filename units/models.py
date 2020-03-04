@@ -306,6 +306,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
 
 class UnitIndexPage(BasePage):
+    max_count = 1
+    subpage_types = ['units.UnitPage']
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
@@ -315,8 +317,6 @@ class UnitIndexPage(BasePage):
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
     ]
-
-    subpage_types = ['units.UnitPage']
 
     def get_context(self, request):
         context = super(UnitIndexPage, self).get_context(request)

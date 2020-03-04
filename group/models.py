@@ -201,6 +201,13 @@ class GroupPage(BasePage, Email):
     """
     Content type for group and committee pages.
     """
+    subpage_types = [
+        'base.IntranetPlainPage',
+        'group.GroupMeetingMinutesIndexPage',
+        'group.GroupReportsIndexPage',
+        'intranetforms.IntranetFormPage',
+        'projects.ProjectPage'
+    ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
         auto_now=False,
@@ -236,13 +243,6 @@ class GroupPage(BasePage, Email):
         FieldPanel('is_active'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
-
-    subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage',
-        'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
-        'group.GroupReportsPage', 'intranetforms.IntranetFormPage',
-        'intranettocs.TOCPage', 'projects.ProjectPage'
-    ]
 
     search_fields = BasePage.search_fields + [
         index.SearchField('meeting_location'),
@@ -569,15 +569,13 @@ class GroupIndexPage(BasePage):
     """
     Receptacle page for holding groups.
     """
+    max_count = 1
+    subpage_types = ['group.GroupPage']
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ] + BasePage.content_panels
-
-    subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage'
-    ]
 
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),

@@ -391,6 +391,7 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
 
 
 class IntranetUnitsIndexPage(BasePage):
+    max_count = 1
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
@@ -398,7 +399,6 @@ class IntranetUnitsIndexPage(BasePage):
     ] + BasePage.content_panels
 
     subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage',
         'intranetunits.IntranetUnitsPage'
     ]
 

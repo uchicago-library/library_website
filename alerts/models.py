@@ -48,6 +48,7 @@ class AlertIndexPage(PublicBasePage):
     """
     Container page for holding alert pages.
     """
+    max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
     subpage_types = ['alerts.AlertPage']
     search_fields = PublicBasePage.search_fields

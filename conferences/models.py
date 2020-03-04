@@ -76,6 +76,7 @@ class ConferenceIndexPage(PublicBasePage):
     """
     Receptacle for all conference pages.
     """
+    max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
     subpage_types = ['conferences.ConferencePage']
 
