@@ -272,8 +272,8 @@ class ObjectMetadata(models.Model):
         choices=MENU_OPTIONS,
         default=1,
         help_text=(
-            'How do you want the link to behave?'
-            '(Required for hotlinked)'
+            'How do you want the link to behave? \
+            (Required for hotlinked)'
         )
     )
 
@@ -368,8 +368,8 @@ class CBrowse(models.Model):
     include = models.BooleanField(
         default=False,
         help_text=(
-            'Include browse term in collection sidebar?'
-            '(Featured browse)'
+            'Include browse term in collection sidebar? \
+            (Featured browse)'
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
@@ -406,8 +406,8 @@ class LBrowse(models.Model):
     include = models.BooleanField(
         default=False,
         help_text=(
-            'Include browse term in collection sidebar?'
-            '(Featured browse)'
+            'Include browse term in collection sidebar? \
+            (Featured browse)'
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
@@ -447,8 +447,8 @@ class CSearch(models.Model):
     default = models.BooleanField(
         default=False,
         help_text=(
-            'Is this the default search? (If more than one are selected, the'
-            'first one selected will be the default.)'
+            'Is this the default search? (If more than one are selected, the \
+            first one selected will be the default.)'
         )
     )
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
@@ -544,8 +544,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     highlighted_records = models.URLField(
         blank=True,
         help_text=(
-            'URL for the select objects you would'
-            ' like to show in the collection page'
+            'URL for the select objects you would \
+            like to show in the collection page'
         )
     )
 
@@ -556,8 +556,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         max_length=255,
         blank=True,
         help_text=(
-            'Use a Bib ID or a record PI to construct'
-            ' a link to the catalog'
+            'Use a Bib ID or a record PI to construct \
+            a link to the catalog'
         )
     )
 
@@ -974,8 +974,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             'regional_collections',
             label='Other Local Collections',
             help_text=(
-                'Related collections that are held by other'
-                ' institutions, like BMRC, Newberry, etc.'
+                'Related collections that are held by other \
+                institutions, like BMRC, Newberry, etc.'
             ),
         )
     ] + PublicBasePage.content_panels
