@@ -15,10 +15,8 @@ from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, \
     LinkedText, PhoneNumber
 
 BUILDINGS = (
-    (1, 'The John Crerar Library'),
-    (2, 'The D\'Angelo Law Library'),
-    (3, 'Eckhart Library'),
-    (4, 'The Joe and Rika Mansueto Library'),
+    (1, 'The John Crerar Library'), (2, 'The D\'Angelo Law Library'),
+    (3, 'Eckhart Library'), (4, 'The Joe and Rika Mansueto Library'),
     (5, 'The Joseph Regenstein Library'),
     (6, 'Special Collections Research Center'),
     (7, 'Social Service Administration Library')
@@ -26,6 +24,7 @@ BUILDINGS = (
 
 
 class Tree(object):
+
     def __init__(self, name='root', unit_page=None, children=None):
         self.name = name
         self.unit_page = unit_page
@@ -79,8 +78,14 @@ class UnitPageRolePlacement(Orderable, models.Model):
     """
     Through table for linking Role snippets to UnitPages.
     """
-    page = ParentalKey('units.UnitPage', on_delete=models.CASCADE, related_name='unit_role_placements')
-    role = models.ForeignKey('units.Role', on_delete=models.CASCADE, related_name='+')
+    page = ParentalKey(
+        'units.UnitPage',
+        on_delete=models.CASCADE,
+        related_name='unit_role_placements'
+    )
+    role = models.ForeignKey(
+        'units.Role', on_delete=models.CASCADE, related_name='+'
+    )
 
     class Meta:
         verbose_name = 'Unit Placement'
@@ -154,8 +159,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         related_name='department_head_of'
     )
     department_head_is_interim = models.BooleanField(
-        default=False,
-        help_text='For HR reports.'
+        default=False, help_text='For HR reports.'
     )
     building = models.IntegerField(
         choices=BUILDINGS,
@@ -198,25 +202,16 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         index.FilterField('display_in_library_directory')
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(
-            content_panels,
-            heading='Content'
-        ),
-        ObjectList(
-            Page.promote_panels,
-            heading='Promote'
-        ),
-        ObjectList(
-            Page.settings_panels,
-            classname="settings",
-            heading='Settings'
-        ),
-        ObjectList(
-            human_resources_panels,
-            heading='Human Resources Info'
-        ),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(Page.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, classname="settings", heading='Settings'
+            ),
+            ObjectList(human_resources_panels, heading='Human Resources Info'),
+        ]
+    )
 
     def __str__(self):
         return self.get_full_name()
@@ -231,7 +226,9 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     @staticmethod
     def hierarchical_units():
         records = []
-        for u in UnitPage.objects.live().filter(display_in_library_directory=True):
+        for u in UnitPage.objects.live().filter(
+            display_in_library_directory=True
+        ):
             records.append([u.get_full_name().split(' - '), u])
 
         # sort records by full name.
@@ -265,10 +262,10 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         Compare this method's output with get_campus_directory_full_name().
         """
-        return ' - '.join(self.get_ancestors(True).type(UnitPage).values_list(
-            'title',
-            flat=True
-        ))
+        return ' - '.join(
+            self.get_ancestors(True).type(UnitPage
+                                          ).values_list('title', flat=True)
+        )
 
     def get_campus_directory_full_name(self):
         """
@@ -297,9 +294,11 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         The campus directory full name for Access Services should be "Access
         Services".
         """
-        return ' - '.join(self.get_ancestors(True).type(UnitPage).filter(
-            unitpage__display_in_campus_directory=True
-        ).values_list('title', flat=True))
+        return ' - '.join(
+            self.get_ancestors(True).type(UnitPage).filter(
+                unitpage__display_in_campus_directory=True
+            ).values_list('title', flat=True)
+        )
 
     class Meta:
         ordering = ['title']
@@ -330,8 +329,10 @@ class UnitIndexPage(BasePage):
             else:
                 unit_page_full_name = u.get_full_name()
 
-            context['units_hierarchical'].append({
-                'full_name': unit_page_full_name,
-            })
+            context['units_hierarchical'].append(
+                {
+                    'full_name': unit_page_full_name,
+                }
+            )
 
         return context

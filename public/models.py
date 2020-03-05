@@ -111,17 +111,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     subpage_types = [
-        'alerts.AlertIndexPage',
-        'public.StandardPage',
-        'public.LocationPage',
-        'public.DonorPage',
-        'lib_news.LibNewsIndexPage',
-        'redirects.RedirectPage',
-        'ask_a_librarian.AskPage',
-        'conferences.ConferenceIndexPage',
-        'dirbrowse.DirBrowsePage',
-        'findingaids.FindingAidsPage',
-        'public.PublicRawHTMLPage'
+        'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
+        'public.DonorPage', 'lib_news.LibNewsIndexPage',
+        'redirects.RedirectPage', 'ask_a_librarian.AskPage',
+        'conferences.ConferenceIndexPage', 'dirbrowse.DirBrowsePage',
+        'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage'
     ]
 
     content_panels = Page.content_panels + [
