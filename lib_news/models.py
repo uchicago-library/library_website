@@ -115,6 +115,9 @@ class LibNewsPageCategories(Orderable, models.Model):
 
 class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
+    max_count = 1
+    subpage_types = ['lib_news.LibNewsPage']
+
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
@@ -145,8 +148,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         when no thumbnail is provided',
         related_name='+'
     )
-
-    subpage_types = ['lib_news.LibNewsPage']
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('fallback_image'),
@@ -541,14 +542,14 @@ class LibNewsPage(PublicBasePage):
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
-        context['display_current_web_exhibits'
-                ] = parent_context['display_current_web_exhibits']
+        context['display_current_web_exhibits'] = parent_context[
+            'display_current_web_exhibits']
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
-        context['right_sidebar_classes'
-                ] = parent_context['right_sidebar_classes']
+        context['right_sidebar_classes'] = parent_context[
+            'right_sidebar_classes']
         context['nav'] = parent_context['nav']
         context['libra'] = parent_context['libra']
         return context

@@ -76,6 +76,7 @@ class ConferenceIndexPage(PublicBasePage):
     """
     Receptacle for all conference pages.
     """
+    max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
     subpage_types = ['conferences.ConferencePage']
 
@@ -328,7 +329,7 @@ class ConferenceSubPage(PublicBasePage):
             f.name for f in SocialMediaFields._meta.get_fields()
         ]
         for field in social_media_fields:
-            exec ('self.' + field + ' = ' + 'parent.' + field)
+            exec('self.' + field + ' = ' + 'parent.' + field)
 
         context['primary_branding_color'] = parent.primary_branding_color
         context['secondary_branding_color'] = parent.secondary_branding_color

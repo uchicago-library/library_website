@@ -201,6 +201,11 @@ class GroupPage(BasePage, Email):
     """
     Content type for group and committee pages.
     """
+    subpage_types = [
+        'base.IntranetPlainPage', 'group.GroupMeetingMinutesIndexPage',
+        'group.GroupReportsIndexPage', 'intranetforms.IntranetFormPage',
+        'projects.ProjectPage'
+    ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
         auto_now=False,
@@ -236,13 +241,6 @@ class GroupPage(BasePage, Email):
         FieldPanel('is_active'),
         StreamFieldPanel('body'),
     ] + BasePage.content_panels
-
-    subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage',
-        'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
-        'group.GroupReportsPage', 'intranetforms.IntranetFormPage',
-        'intranettocs.TOCPage', 'projects.ProjectPage'
-    ]
 
     search_fields = BasePage.search_fields + [
         index.SearchField('meeting_location'),
@@ -569,15 +567,13 @@ class GroupIndexPage(BasePage):
     """
     Receptacle page for holding groups.
     """
+    max_count = 1
+    subpage_types = ['group.GroupPage']
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ] + BasePage.content_panels
-
-    subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage'
-    ]
 
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
@@ -607,9 +603,8 @@ class GroupIndexPage(BasePage):
             currentlevel = groups_active
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(ancestor.content_type) in [
-                    'group page', 'group index page'
-                ]:
+                if str(ancestor.content_type
+                       ) in ['group page', 'group index page']:
                     nextlevels = list(
                         filter(
                             lambda g: g['url'] == ancestor.url, currentlevel
@@ -656,7 +651,8 @@ class GroupIndexPage(BasePage):
                     'title': g.title,
                     'url': g.url
                 },
-                GroupPage.objects.live().filter(is_active=False).order_by('title')
+                GroupPage.objects.live().filter(is_active=False
+                                                ).order_by('title')
             )
         )
         return context

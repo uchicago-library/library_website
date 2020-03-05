@@ -112,12 +112,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     subpage_types = [
         'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
-        'public.DonorPage', 'lib_collections.CollectingAreaPage',
-        'lib_collections.CollectionPage', 'lib_collections.ExhibitPage',
-        'lib_news.LibNewsIndexPage', 'redirects.RedirectPage', 'units.UnitPage',
-        'ask_a_librarian.AskPage', 'units.UnitIndexPage',
-        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage',
-        'dirbrowse.DirBrowsePage', 'public.StaffPublicPage',
+        'public.DonorPage', 'lib_news.LibNewsIndexPage',
+        'redirects.RedirectPage', 'ask_a_librarian.AskPage',
+        'conferences.ConferenceIndexPage', 'dirbrowse.DirBrowsePage',
         'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage'
     ]
 
