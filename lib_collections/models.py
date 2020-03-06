@@ -752,6 +752,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return True
 
 
+# Collection Object Page
+class CollectionObjectPage():
+    """
+    Object pages for Collections; Child page to Collection Page.
+    """
+    parent_page_types = [
+        'lib_collections.CollectionPage', 'lib_collections.CollectionObjectPage'
+    ]
+
+    ###### dev note: Need to create an InlinePanel #####
+
+
 # CollectingArea page models
 
 
