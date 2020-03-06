@@ -494,6 +494,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
 
+    template = "lib_collections/collection_object_page.html"
+
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
@@ -572,6 +574,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # Override the page title field
         self.title = get_record(request.GET.get('manifest'))['label']
+
+        return TemplateResponse(
+            request, self.get_template(request), self.get_context(request)
+        )
+
+    @route(r'^object/$')
+    def viewer(self, request, *args, **kwargs):
+        """
+        Individual image view. Template renders the image
+        displayed in the Universal Viewer.
+        """
+        # context = super().get_context(request)
+        self.is_viewer = True
+
+        # Override the page title field
+        self.title = "Object Page"
 
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
