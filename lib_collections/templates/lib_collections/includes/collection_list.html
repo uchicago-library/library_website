@@ -1,0 +1,27 @@
+<div id="accordion" role="tablist" aria-multiselectable="true">
+
+{% for SUBJECT_ITEM %}
+    <div class="card">
+        <div class="card-header" role="tab" id="{{SUBJECT_ITEM_NAME}}">
+          <h3 class="mb-0">
+            <a data-toggle="collapse" data-parent="#accordion" href="#{{SUBJECT_ITEM_NAME}}" aria-expanded="false" aria-controls="{{SUBJECT_ITEM_NAME}}">
+              <i class="fa" aria-hidden="true"></i> {{SUBJECT_ITEM_NAME}}
+            </a>
+          </h3>
+        </div>
+
+        <div id="{{SUBJECT_ITEM_NAME}}" class="collapse" role="tabpanel" aria-labelledby="{{SUBJECT_ITEM_NAME}}">
+          <div class="card-block">
+            {% if COLLECTION_LIST %}
+                <ul>
+                    {% for COLLECTION_OBJECT in SUBJECT_ITEM %}
+                        <li><a href="{{COLLECTION_OBJECT_URL}}">{{COLLECTION_OBJECT_TITLE}}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                {% include "collection_image_list.html" %}
+            {% endif %}
+          </div>
+        </div>
+    </div>
+{% endfor %}
