@@ -1,6 +1,7 @@
 import datetime
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
+from django.utils.text import slugify
 from django.core.validators import RegexValidator
 from django.db import models
 from django.template.response import TemplateResponse
@@ -26,7 +27,8 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection
+from .utils import collection, mk_url, mk_manifest_url
+import lib_collections.marklogic
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -494,8 +496,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
 
-    template = "lib_collections/collection_object_page.html"
-
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
@@ -573,27 +573,33 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         self.is_viewer = True
 
         # Override the page title field
-        self.title = get_record(request.GET.get('manifest'))['label']
+        self.title = marklogic.get_record(request.GET.get('manifest'))['label']
 
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
 
-    @route(r'^object/$')
-    def viewer(self, request, *args, **kwargs):
+    @route(r'^object/(?P<manifid>[-\w]+)/$')
+    def object(self, request, *args, **kwargs):
         """
-        Individual image view. Template renders the image
-        displayed in the Universal Viewer.
+        Route for Digital Collection Object.
         """
-        # context = super().get_context(request)
-        self.is_viewer = True
 
-        # Override the page title field
-        self.title = "Object Page"
+        template = "lib_collections/collection_object_page_matt.html"
 
-        return TemplateResponse(
-            request, self.get_template(request), self.get_context(request)
+        context = super().get_context(request)
+        context["manifid"] = kwargs["manifid"]
+        context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
+        context["slug"] = slugify(self.title)
+        context["manifest_url"] = mk_manifest_url(
+            kwargs["manifid"], slugify(self.title)
         )
+        context["object_title"] = "Thing!"
+        context["marklogic"] = get_record(context["manifest_url"])
+        context["fields"] = list(context["marklogic"].values())
+        # context["parent"] = self.get_parent()
+
+        return TemplateResponse(request, template, context)
 
     subpage_types = ['public.StandardPage']
 

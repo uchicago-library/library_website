@@ -44,7 +44,13 @@
                   </div>
 
 		  <h1>
-		      {{ marklogic }}
+		      {% for giraffe in fields %}
+		      <p>
+			  <br>
+			  {{ giraffe }}
+			  <br>
+		      </p>
+		      {% endfor %}
 		  </h1>
 		  
                   <dl>

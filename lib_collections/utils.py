@@ -5,12 +5,11 @@ from threading import Thread
 from urllib.parse import unquote
 
 import requests
+
 from pyiiif.pres_api.utils import get_thumbnail
 
-from .exceptions import (
-    IncompatibleRecordError, InvalidCollectionRecordError,
-    NoCollectionFoundError, NoCollectionParameterError
-)
+from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
+                         NoCollectionFoundError, NoCollectionParameterError)
 
 config = {
     "VIEWER_URL": "https://iiif-viewer.lib.uchicago.edu/uv/uv.html#",
@@ -185,6 +184,28 @@ def build_pagination_links(total, thumbs_per_page, current_page, rj):
         )
         page += 1
     yield pagination_links
+
+
+IIIF_PATHS = {
+    "social-scientists-map-chicago": ["maps", "chisoc"],
+}
+
+MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
+
+
+def slug_to_iiif_path(slug):
+    return "/".join(IIIF_PATHS[slug])
+
+
+def mk_manifest_url(manifid, slug):
+    return "%s/%s/%s/%s.json" % (
+        MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
+    )
+
+
+def mk_url(manifid, slug):
+    prefix = "https://iiif-viewer.lib.uchicago.edu/uv/./uv.html#?manifest="
+    return prefix + mk_manifest_url(manifid, slug)
 
 
 def collection(request, is_viewer, manifest=''):
