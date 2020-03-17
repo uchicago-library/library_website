@@ -28,7 +28,7 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .utils import collection, mk_url, mk_manifest_url
-import lib_collections.marklogic
+from .marklogic import get_record as get_marklogic
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 

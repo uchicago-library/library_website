@@ -14,12 +14,18 @@
 
 <!-- dev-note: all items that need model information are in caps -->
 
+<!-- MT: Just put the parent page in here -->
+<!-- MT: note: we might want to rethink this for Digital Media Archive
+     collection and the Mayan -->
+
           <!-- {% if CHILD OF COLLECTION %} -->
             <p>Part of: <a href="{{ LINK TO PARENT COLLECTION }}">{{ NAME OF PARENT COLLECTION }}</a><br/></p>
           <!-- {% endif %} -->
 
 <!--  dev-note: Include Universal Viewer iframe -->
 
+<!-- MT: ask John about citation, ask Brad about social media -->
+	    
           <!-- {% if CITATION or SOCIAL SHARE %} -->
             <div class="col-xs-12 coll-dropdown">
               <!-- {% if CITATION %} -->
@@ -56,7 +62,8 @@
             <dl>
               {% for field in OBJECT METADATA %}
                 <dt>{{ FIELD LABEL }}</dt>
-                <dd itemprop="{{ SCHEMA.ORG ITEM PROPERTY }}">
+              <dd itemprop="{{ SCHEMA.ORG ITEM PROPERTY }}">
+		<!-- MT: TODO: add if the object is hyperlinked -->
                   {% if multiple_values %}
                     <span class="multiple_values">
 <!--   to-do: need to add better CSS handling for multiple value fields (multiple lines) -->
