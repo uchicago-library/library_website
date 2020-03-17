@@ -247,6 +247,7 @@ CORS_ORIGIN_WHITELIST = (
     'dldc2.lib.uchicago.edu',
     'dldc3.lib.uchicago.edu',
     'guides.lib.uchicago.edu',
+    'rooms.lib.uchicago.edu',
     'sfx.lib.uchicago.edu',
     'sfx.lib.uchicago.edu:3103',
     'vufindtest.lib.uchicago.edu',
