@@ -4,6 +4,7 @@ from django.shortcuts import render
 from wagtail.core.models import Site
 from wagtail.images.models import Image
 
+from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
 )
@@ -115,7 +116,10 @@ def spaces(request):
     if building:
         # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building.
-        id_list = all_spaces.filter(parent_building__title=building).values_list('pk', flat=True)
+        id_list = all_spaces.filter(parent_building__title=building
+                                    ).values_list(
+                                        'pk', flat=True
+                                    )
         # get a unique, sorted list of the available floors here.
         floors = sorted(
             list(
@@ -153,71 +157,52 @@ def spaces(request):
     location_and_hours = get_hours_and_location(home_page)
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
+    current_site = Site.find_for_request(request)
+    alert_data = get_browse_alerts(current_site)
+    unfriendly_a = True if friendly_name.strip(
+    ) in UNFRIENDLY_ARTICLES else False
 
     # Find banner for given home_page and add to context
-    current_site = Site.find_for_request(request)
     section_info = home_page.get_banner(current_site)
     return render(
         request, 'public/spaces_index_page.html', {
-            'building':
-            building,
-            'buildings':
-            buildings,
-            'breadcrumb_div_css':
-            'col-md-12 breadcrumbs hidden-xs hidden-sm',
+            'building': building,
+            'buildings': buildings,
+            'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
             'content_div_css':
             'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
-            'default_image':
-            default_image,
-            'feature':
-            feature,
-            'feature_label':
-            feature_label,
-            'features':
-            features,
-            'floor':
-            floor,
-            'floors':
-            floors,
+            'default_image': default_image,
+            'feature': feature,
+            'feature_label': feature_label,
+            'features': features,
+            'floor': floor,
+            'floors': floors,
             'self': {
                 'title': 'Library Spaces',
                 'friendly_name': friendly_name
             },
-            'spaces':
-            spaces,
-            'space_type':
-            space_type,
-            'page_unit':
-            str(unit),
-            'page_location':
-            location,
-            'address':
-            location_and_hours['address'],
-            'chat_url':
-            get_unit_chat_link(unit, request),
-            'chat_status':
-            get_chat_status('uofc-ask'),
-            'chat_status_css':
-            get_chat_status_css('uofc-ask'),
-            'hours_page_url':
-            home_page.get_hours_page(request),
-            'unfriendly_a':
-            True if friendly_name.strip() in UNFRIENDLY_ARTICLES else False,
-            'libcalid':
-            llid,
-            'has_banner':
-            section_info[0],
-            'banner':
-            section_info[1],
-            'banner_feature':
-            section_info[2],
-            'banner_title':
-            section_info[3],
-            'banner_subtitle':
-            section_info[4],
-            'banner_url':
-            section_info[5],
-            'branch_lib_css':
-            home_page.get_branch_lib_css_class(),
+            'spaces': spaces,
+            'space_type': space_type,
+            'page_unit': str(unit),
+            'page_location': location,
+            'address': location_and_hours['address'],
+            'chat_url': get_unit_chat_link(unit, request),
+            'chat_status': get_chat_status('uofc-ask'),
+            'chat_status_css': get_chat_status_css('uofc-ask'),
+            'hours_page_url': home_page.get_hours_page(request),
+            'unfriendly_a': unfriendly_a,
+            'libcalid': llid,
+            'has_banner': section_info[0],
+            'banner': section_info[1],
+            'banner_feature': section_info[2],
+            'banner_title': section_info[3],
+            'banner_subtitle': section_info[4],
+            'banner_url': section_info[5],
+            'branch_lib_css': home_page.get_branch_lib_css_class(),
+            'has_alert': alert_data[0],
+            'alert_message': alert_data[1][0],
+            'alert_level': alert_data[1][1],
+            'alert_more_info': alert_data[1][2],
+            'alert_link': alert_data[1][3],
         }
     )
