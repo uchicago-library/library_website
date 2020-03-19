@@ -11,7 +11,7 @@ from library_website.settings import (
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
-from pyiiif.pres_api.utils import get_record
+# from pyiiif.pres_api.utils import get_record
 from staff.models import StaffPage
 from wagtail.admin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
@@ -28,7 +28,7 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .utils import collection, mk_url, mk_manifest_url
-import lib_collections.marklogic
+from .marklogic import get_record
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -573,7 +573,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         self.is_viewer = True
 
         # Override the page title field
-        self.title = marklogic.get_record(request.GET.get('manifest'))['label']
+        # self.title = marklogic.get_record(request.GET.get('manifest'))['label']
 
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
@@ -596,7 +596,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         context["object_title"] = "Thing!"
         context["marklogic"] = get_record(context["manifest_url"])
-        context["fields"] = list(context["marklogic"].values())
+        context["keys"] = context["marklogic"].keys()
+        context["values"] = context["marklogic"].values()
         # context["parent"] = self.get_parent()
 
         return TemplateResponse(request, template, context)
