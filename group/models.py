@@ -8,7 +8,7 @@ from django.db.models.fields import CharField
 from django.utils import timezone
 from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+    FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
@@ -142,10 +142,18 @@ class MeetingMinutes(AbstractReport):
     """
     Meeting minutes content type.
     """
-    panels = AbstractReport.panels
+    date = models.DateField(blank=False)
+    summary = models.TextField(null=False, blank=False)
+
+    panels = [
+        FieldPanel('date'),
+        FieldPanel('summary'),
+        PageChooserPanel('link_page'),
+    ]
 
     class Meta:
         abstract = True
+        ordering = ['-date']
 
 
 class GroupMeetingMinutesPageTable(Orderable, MeetingMinutes):

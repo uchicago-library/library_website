@@ -1,10 +1,10 @@
-              {% for date, items in table.items %}
-                <tr>
-                  <td>{{date}}</td>
-                  <td>
+              <dl>
+                {% for date, items in table.items %}
+                  <dt>{{date}}</dt>
+                  <dd>
                   {% for item in items %}
-                    <a href="{{item.url}}">{{item.summary}}</a><br/>
+                    <a href="{{item.url}}">{{item.summary}}</a>
                   {% endfor %}
-                  </td>
-                </tr>
-              {% endfor %}
+                  </dd>
+                {% endfor %}
+              </dl>
