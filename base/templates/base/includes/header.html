@@ -36,25 +36,38 @@
                 {% else %} 
                     a 
                 {% endif %} {{self.friendly_name}} Librarian</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-ga-category="top-bar-links" data-ga-action="pulldown" data-ga-label="Library Hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-clock-o" aria-hidden="true"></i> 
-                    <span id="current-hours" data-libcalid="{{libcalid}}">
-                        <span id="current-hours-target"><i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i> 
-                            <span>Loading...</span>
-                        </span>
-                    </span> <span class="caret"></span>
-                </a>
-                <ul id="hours-dropdown" class="dropdown-menu">
-                    {% for hours in all_building_hours %}
-                        {% if hours != current_building_hours %}
-                        <li><a href="#">{{hours}}</a></li>
+              {% if settings.site_settings.EmergencyHours.enable %}
+                  <li>
+                    <a href="{{hours_page_url}}" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Library Hours">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        {% if settings.site_settings.EmergencyHours.link_text %}
+                            {{settings.site_settings.EmergencyHours.link_text}}
+                        {% else %}
+                            View Hours
                         {% endif %}
-                    {% endfor %}
-                    <li class="divider"></li>
-                    <li><a href="{{hours_page_url}}">View all hours <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a></li>
-                </ul>
-              </li>
+                    </a>
+                  </li>
+              {% else %}
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-ga-category="top-bar-links" data-ga-action="pulldown" data-ga-label="Library Hours" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i> 
+                        <span id="current-hours" data-libcalid="{{libcalid}}">
+                            <span id="current-hours-target"><i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i> 
+                                <span>Loading...</span>
+                            </span>
+                        </span> <span class="caret"></span>
+                    </a>
+                    <ul id="hours-dropdown" class="dropdown-menu">
+                        {% for hours in all_building_hours %}
+                            {% if hours != current_building_hours %}
+                            <li><a href="#">{{hours}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="divider"></li>
+                        <li><a href="{{hours_page_url}}">View all hours <span class="glyphicon glyphicon-chevron-right" style="font-size:0.8em;"></span></a></li>
+                    </ul>
+                  </li>
+              {% endif %}
               <li><a href="/about/thelibrary/supportus/" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="Support the Library"><i class="fa fa-gift" aria-hidden="true"></i> Support the Library</a></li>
               <li><a href="http://www.lib.uchicago.edu/myaccount" data-ga-category="top-bar-links" data-ga-action="click" data-ga-label="My Library Account"><i class="fa fa-user" aria-hidden="true"></i> My Library Account</a></li>
             </ul> 

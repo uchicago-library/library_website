@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'wagtail.contrib.routable_page',
     'wagtail.contrib.search_promotions',
     'wagtail.contrib.sitemaps',
+    'wagtail.contrib.settings',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
 
@@ -87,6 +88,7 @@ INSTALLED_APPS = [
     'search',
     'searchable_content',
     'shibboleth',
+    'site_settings',
     'staff',
     'subjects',
     'units',
@@ -133,6 +135,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shibboleth.context_processors.login_link',
                 'shibboleth.context_processors.logout_link',
+                'wagtail.contrib.settings.context_processors.settings',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
