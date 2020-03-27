@@ -101,7 +101,6 @@ All you need to do is [download the images from box](https://uchicago.box.com/s/
 ## Pushing to Production
 - ssh to nest or motacilla
 - `cd /data/{{ SERVER NAME }}/ ; source venv3.6/bin/activate ; cd sites/library_website`
-- `cd sites/libarary_website/`
 - `git remote update`
 - `git status`
 - `git pull origin master`
