@@ -335,6 +335,20 @@
 
             {% if self.has_right_sidebar %}
                 <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
+
+                    {% if reusable_content %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
+                            {% for widget in reusable_content %}
+                                <div class="widget-reusable-content-block">
+                                    {% if widget.content.sidebar_heading %}
+                                        <h3>{{widget.content.sidebar_heading}}</h3>
+                                    {% endif %}
+                                    {{widget.content.content|richtext}}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}

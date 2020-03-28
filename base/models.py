@@ -1,6 +1,9 @@
 import logging
 import urllib
 
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
+from base.utils import get_hours_and_location
 from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
@@ -8,12 +11,17 @@ from django.db import models
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
+from library_website.settings.base import (
+    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
+    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
+from units.utils import get_default_unit
 from wagtail.admin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
@@ -31,16 +39,8 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
+from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
-
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
-from base.utils import get_hours_and_location
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
-)
-from units.utils import get_default_unit
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -646,6 +646,17 @@ class AbstractBase(
 
 
 # Global streamfield definitions
+class ReusableContentBlock(StructBlock):
+    """
+    Stream block for adding "reusable content" snippets.
+    """
+    content = SnippetChooserBlock('reusable_content.ReusableContent')
+
+    class Meta:
+        icon = 'folder-inverse'
+        template = 'base/blocks/reusable_content.html'
+
+
 class ImageFormatChoiceBlock(FieldBlock):
     """
     Alignment options to use with the ImageBlock.
@@ -1006,6 +1017,7 @@ class DefaultBodyFields(StreamBlock):
     agenda_item = AgendaItemFields(
         icon='date', template='base/blocks/agenda.html'
     )
+    reusable_content = ReusableContentBlock()
     clear = ClearBlock()
 
     # Begin TableBlock Setup
@@ -1492,6 +1504,20 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         elif self.rich_text_link:
             return self.rich_text_link.url
 
+    def has_reusable_sidebar_content(self):
+        """
+        Test to see if there is a shared reusable content
+        widget in the sidebar.
+
+        Returns:
+            boolean
+        """
+        try:
+            if self.reusable_content:
+                return True
+        except (AttributeError):
+            return False
+
     def base_has_right_sidebar(self):
         """
         Determine if a right sidebar should be displayed in
@@ -1501,8 +1527,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             boolean
         """
         fields = [strip_tags(self.quicklinks), self.events_feed_url]
+        has_social_media = hasattr(
+            self, 'has_social_media'
+        ) and self.has_social_media
         return self.has_field(fields) or self.has_granular_hours(
-        ) or (hasattr(self, 'has_social_media') and self.has_social_media)
+        ) or has_social_media or self.has_reusable_sidebar_content()
 
     def get_banner(self, current_site):
         """
@@ -1707,6 +1736,13 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             carousel = []
         context['carousel_items'] = carousel
         context['carousel_multi'] = len(carousel) > 1
+
+        # Reusable Content Blocks for sidebar
+        try:
+            reusable_content = self.reusable_content.all()
+        except (AttributeError):
+            reusable_content = []
+        context['reusable_content'] = reusable_content
 
         # Data structure for generating a
         # sitemap display of child pages
