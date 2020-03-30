@@ -13,7 +13,7 @@
         <div class="col-sm-12 col-md-12">
         	<article>
                 <form action="." method="GET">
-                    <div class="row bg-directory"><h1 class="dir-header">Library Directory</h1>
+                    <div class="row bg-directory"><h1 class="dir-header">Library Directory</h1><h2>RAT</h2>
                         <div class="btn-group">
                             <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'department' %} active{% endif %}" href=".?view=department">Department View</a>
                             <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'staff' %} active{% endif %}" href=".?view=staff">Staff View</a>
@@ -70,7 +70,7 @@
                       <tr class="etable-header">
                         <td colspan="4">
                           {% if subject and library %}
-                              {{ library }} {{ subject }} Staff
+                              {{ libr ary }} {{ subject }} Staff
                           {% elif subject and not library %}
                               {{ subject }} Staff
                           {% elif not subject and library %}
@@ -78,7 +78,7 @@
                           {% elif department %}
                               {{ department }} Staff
                           {% else %}
-                              All Staff
+                            All Staff
                           {% endif %}
                         </td>
                       </tr>

@@ -1,8 +1,11 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
 from staff.models import StaffPage
+from staff.libcal import lookup_staff_ids, pad_empties
+
 
 register = template.Library()
+
 
 @register.filter
 def ofKey(value, arg):
@@ -10,6 +13,7 @@ def ofKey(value, arg):
         return value.get(arg)
     else:
         return ''
+
 
 @register.inclusion_tag('staff/library_unit_links.html')
 def library_unit_links(library_unit):
@@ -33,11 +37,26 @@ def library_unit_links(library_unit):
         'units': units
     }
 
+
 @register.inclusion_tag('staff/staff_email_addresses.html')
 def staff_email_addresses(staff_page):
     return {
         'emails': list(set(staff_page.staff_page_email.all().values_list('email', flat=True)))
     }
+
+
+@register.inclusion_tag('staff/staff_libcal_schedules.html')
+def staff_libcal_schedules(staff_page):
+    emails = list(
+        set(staff_page.staff_page_email.all().values_list('email', flat=True))
+    )
+    ids = lookup_staff_ids()
+
+    return {
+        'emails': emails,
+        'ids': ids,
+    }
+
 
 @register.inclusion_tag('staff/staff_faculty_exchanges_phone_numbers.html')
 def staff_faculty_exchanges_phone_numbers(staff_page):
@@ -68,31 +87,31 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
             phone = p.phone_number
 
         lib_room_phone.append([lib, room, phone])
-    
+
     return {
         'lib_room_phone': lib_room_phone
     }
-    
+
+
 @register.inclusion_tag('staff/staff_subjects.html')
 def staff_subjects(staff_page):
     subjects = []
     for s in staff_page.staff_subject_placements.all():
         subjects.append(s.subject.name)
-    
+
     return {
         'subjects': sorted(subjects)
     }
 
+
 @register.inclusion_tag('staff/staff_public_page_link.html')
 def staff_public_page_link(staff_page):
-    
     try:
         href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
     except:
         href = ''
-       
+
     return {
         'href': href,
         'title': staff_page.title
     }
-    

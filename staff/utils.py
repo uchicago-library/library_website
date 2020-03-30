@@ -13,9 +13,10 @@ from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
 from xml.etree import ElementTree
 
+from library_website.settings.local import LIBCAL_KEY
+
 import csv
 import io
-import re
 
 # need a list of all individuals.
 # this thing needs to deal with VCards.
@@ -256,6 +257,7 @@ def get_individual_info_from_directory(xml_string):
 
     return info
 
+
 def get_all_library_cnetids_from_wagtail():
     output = []
     for s in StaffPage.objects.live():
@@ -265,6 +267,7 @@ def get_all_library_cnetids_from_wagtail():
         except:
             pass
     return output
+
 
 def get_individual_info_from_wagtail(cnetid):
     staff_page = StaffPage.objects.get(cnetid=cnetid)
@@ -398,7 +401,7 @@ class WagtailStaffReport:
         # staff listings on the library website. In other cases, staff
         # might have phone numbers connected with non-library jobs. If they
         # want those numbers to appear on the library website, they can add
-        # them manually but we won't keep their information in sync. 
+        # them manually but we won't keep their information in sync.
         skip_cnetids = ['judi']
 
         api_staff_info = set()
@@ -407,14 +410,15 @@ class WagtailStaffReport:
                 continue
             api_staff_info.add(cnetid)
             xml_string = get_xml_from_directory_api(
-                'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.format(cnetid)
+                'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.format(
+                    cnetid)
             )
             info = get_individual_info_from_directory(xml_string)
             api_staff_info.add(
                 _format(cnetid, info['officialName'], 'officialName')
             )
             api_staff_info.add(
-                _format(cnetid, info['displayName'], 'displayName') 
+                _format(cnetid, info['displayName'], 'displayName')
             )
             api_staff_info.add(
                 _format(cnetid, info['positionTitle'], 'positionTitle')
@@ -632,10 +636,10 @@ class WagtailStaffReport:
         try:
             if self.options['latest_revision_created_at']:
                 l = '{}-{}-{} 00:00-0600'.format(
-                        self.options['latest_revision_created_at'][0:4],
-                        self.options['latest_revision_created_at'][4:6],
-                        self.options['latest_revision_created_at'][6:8]
-                    )
+                    self.options['latest_revision_created_at'][0:4],
+                    self.options['latest_revision_created_at'][4:6],
+                    self.options['latest_revision_created_at'][6:8]
+                )
                 new_staffpages = set(
                     StaffPage.objects.filter(latest_revision_created_at__gte=l)
                 )
