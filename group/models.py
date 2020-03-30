@@ -142,8 +142,13 @@ class MeetingMinutes(AbstractReport):
     """
     Meeting minutes content type.
     """
-    date = models.DateField(blank=False)
-    summary = models.TextField(null=False, blank=False)
+    link_page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        blank=False,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
 
     panels = [
         FieldPanel('date'),
@@ -153,7 +158,6 @@ class MeetingMinutes(AbstractReport):
 
     class Meta:
         abstract = True
-        ordering = ['-date']
 
 
 class GroupMeetingMinutesPageTable(Orderable, MeetingMinutes):
