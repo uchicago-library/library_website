@@ -86,10 +86,13 @@ Alerts
   background: #f9f9f9;
   & p {
     margin-bottom: 0;
-    display: inline;
   }
   .rich-text {
-    display: inline;
+    display: inline-block;
+  }
+  .alert-link-wrapper {
+    display: inline-block;
+    vertical-align: top;
   }
 }
 
