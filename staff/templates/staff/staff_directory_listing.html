@@ -3,7 +3,7 @@
 {% load wagtailimages_tags %}
 
 
-
+{% cache 86400 staff_directory_listing staff_page.cnetid %}
   <tr>
       <td scope="row">
           {% if staff_page.profile_picture %}
@@ -37,3 +37,4 @@
           {% endif %}
       </td>
   </tr>
+{% endcache %}
