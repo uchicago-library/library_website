@@ -1,16 +1,8 @@
 from datetime import date
 
-from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
-    PublicBasePage, RawHTMLBodyField, SocialMediaFields
-)
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
-from public.utils import get_features
-from staff.models import StaffPage
-from subjects.utils import get_subjects_html
-from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
     PageChooserPanel, StreamFieldPanel, TabbedInterface
@@ -22,6 +14,16 @@ from wagtail.core.models import Orderable, Page, Site
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+
+from base.models import (
+    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
+    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+)
+from public.utils import get_features
+from staff.models import StaffPage
+from subjects.utils import get_subjects_html
+from units.models import BUILDINGS
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
@@ -72,6 +74,31 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     )
 
 
+class StandardPageSidebarReusableContent(Orderable, models.Model):
+    """
+    Repeatable, reusable content widget for sidebar
+    """
+    page = ParentalKey(
+        'public.StandardPage',
+        on_delete=models.CASCADE,
+        related_name='reusable_content'
+    )
+    content = models.ForeignKey(
+        'reusable_content.ReusableContent',
+        default=None,
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    class Meta:
+        verbose_name = "Content"
+        verbose_name_plural = "Content"
+
+    panels = [
+        SnippetChooserPanel('content'),
+    ]
+
+
 class StandardPageCarouselItem(Orderable, CarouselItem):
     """
     Carousel widgets for standard pages
@@ -111,13 +138,22 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     subpage_types = [
-        'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
-        'public.DonorPage', 'lib_collections.CollectingAreaPage',
-        'lib_collections.CollectionPage', 'lib_collections.ExhibitPage',
-        'lib_news.LibNewsIndexPage', 'redirects.RedirectPage', 'units.UnitPage',
-        'ask_a_librarian.AskPage', 'units.UnitIndexPage',
-        'conferences.ConferenceIndexPage', 'base.IntranetPlainPage',
-        'dirbrowse.DirBrowsePage', 'public.StaffPublicPage',
+        'alerts.AlertIndexPage',
+        'public.StandardPage',
+        'public.LocationPage',
+        'public.DonorPage',
+        'lib_collections.CollectingAreaPage',
+        'lib_collections.CollectionPage',
+        'lib_collections.ExhibitPage',
+        'lib_news.LibNewsIndexPage',
+        'redirects.RedirectPage',
+        'units.UnitPage',
+        'ask_a_librarian.AskPage',
+        'units.UnitIndexPage',
+        'conferences.ConferenceIndexPage',
+        'base.IntranetPlainPage',
+        'dirbrowse.DirBrowsePage',
+        'public.StaffPublicPage',
     ]
 
     content_panels = Page.content_panels + [
@@ -196,7 +232,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ],
             heading='Rich Text'
         ),
-        InlinePanel('carousel_items', label="Carousel items"),
+        InlinePanel('carousel_items', label='Carousel items'),
+        InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
     ] + SocialMediaFields.panels
