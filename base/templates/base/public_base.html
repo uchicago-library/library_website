@@ -91,7 +91,7 @@
             <div class="alert {{alert_level}}" role="alert">
                 {{alert_message|richtext}}
                 {% if alert_more_info|striptags %}
-                    | <a id="alert-more" href="{{alert_link}}">More info...</a>
+                   <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}">More info...</a></span>
                 {% endif %}
             </div>
         {% endif %}
