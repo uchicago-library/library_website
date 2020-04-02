@@ -23,7 +23,12 @@ def get_alert(current_site):
     if not high_alert and not low_alert and not info_alert:
         return None
     else:
-        alert = high_alert[0] if high_alert else info_alert[0]
+        if high_alert:
+            alert = high_alert[0]
+        elif low_alert:
+            alert = low_alert[0]
+        else:
+            alert = info_alert[0]
         msg = bleach.clean(
             alert.banner_message, tags=['p', 'b', 'a', 'strong'], strip=True
         )
