@@ -507,6 +507,11 @@ figure.coll-thumb {
  * --------------------------------------------------
  */
 
+.widget-reusable-content-block {
+  & > .rich-text > p:empty {
+    display: none;
+  }
+}
 
 .studymod { //Study Spaces
   p {
