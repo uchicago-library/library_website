@@ -12,9 +12,11 @@ class AlertPage(PublicBasePage):
     Page for displaying alert messages.
     """
     INFO = 'alert-info'
+    LOW = 'alert-low'
     HIGH = 'alert-high'
     ALERT_TYPES = (
         (INFO, 'Informational Alert'),
+        (LOW, 'General Alert'),
         (HIGH, 'Critical Alert'),
     )
 
