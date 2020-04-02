@@ -1,8 +1,10 @@
-from library_website.settings.local import LIBCAL_KEY
+import math
+import requests
+
 
 from json import JSONDecodeError
 
-import requests
+from library_website.settings.local import LIBCAL_KEY
 
 
 def lookup_staff_ids():
