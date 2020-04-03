@@ -5,12 +5,11 @@ from threading import Thread
 from urllib.parse import unquote
 
 import requests
-# from pyiiif.pres_api.utils import get_thumbnail
 
-from .exceptions import (
-    IncompatibleRecordError, InvalidCollectionRecordError,
-    NoCollectionFoundError, NoCollectionParameterError
-)
+from pyiiif.pres_api.utils import get_thumbnail
+
+from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
+                         NoCollectionFoundError, NoCollectionParameterError)
 
 config = {
     "VIEWER_URL": "https://iiif-viewer.lib.uchicago.edu/uv/uv.html#",
@@ -30,25 +29,25 @@ COLORS = {
 }
 
 
-# def threaded_thumbnails(identifier, result, index):
-#     """
-#     Wraps get_thumbnail() for multi-threaded solutions
+def threaded_thumbnails(identifier, result, index):
+    """
+    Wraps get_thumbnail() for multi-threaded solutions
 
-#     The array should be "initialized" to the correct size,
-#     and each thread should deposit it's thumbnail into the
-#     appropriate index.
+    The array should be "initialized" to the correct size,
+    and each thread should deposit it's thumbnail into the
+    appropriate index.
 
-#     Args:
-#         identifier: string
+    Args:
+        identifier: string
 
-#         result: list
+        result: list
 
-#         index: int
+        index: int
 
-#     Returns:
-#         None
-#     """
-#     result[index] = get_thumbnail(identifier)
+    Returns:
+        None
+    """
+    result[index] = get_thumbnail(identifier)
 
 
 def build_collection_url(ident, page=1):

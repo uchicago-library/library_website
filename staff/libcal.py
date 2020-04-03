@@ -1,15 +1,15 @@
-import math
-import requests
-
-
 from json import JSONDecodeError
+
+import requests
 
 from library_website.settings.local import LIBCAL_KEY
 
 
 def lookup_staff_ids():
-    url = ("https://rooms.lib.uchicago.edu/1.0/" +
-           "appointments/users?iid=482&key=%s") % LIBCAL_KEY
+    url = (
+        "https://rooms.lib.uchicago.edu/1.0/" +
+        "appointments/users?iid=482&key=%s"
+    ) % LIBCAL_KEY
     req = requests.get(url)
     try:
         json = req.json()

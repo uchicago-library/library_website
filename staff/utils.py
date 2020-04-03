@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import csv
+import io
 # import os
 # os.environ['DJANGO_SETTINGS_MODULE'] = 'library_website.settings'
 import re
+from json import JSONDecodeError
+from xml.etree import ElementTree
+
+import requests
 
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
-from django.db.models import F
+from library_website.settings.local import LIBCAL_KEY
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
-from xml.etree import ElementTree
-
-from library_website.settings.local import LIBCAL_KEY
-
-import csv
-import io
 
 # need a list of all individuals.
 # this thing needs to deal with VCards.
@@ -94,11 +94,8 @@ def get_individual_info_from_directory(xml_string):
 
         chunks = []
         try:
-            department = re.sub(
-                '\s+',
-                ' ',
-                vcard.find('department/name').text
-            ).strip()
+            department = re.sub('\s+', ' ',
+                                vcard.find('department/name').text).strip()
             if department:
                 chunks.append(department)
         except:
@@ -106,8 +103,7 @@ def get_individual_info_from_directory(xml_string):
 
         try:
             subdepartment = re.sub(
-                '\s+',
-                ' ',
+                '\s+', ' ',
                 vcard.find('subDepartment/name').text
             ).strip()
             if subdepartment:
@@ -124,8 +120,7 @@ def get_individual_info_from_directory(xml_string):
 
         try:
             facultyexchange = re.sub(
-                '\s+',
-                ' ',
+                '\s+', ' ',
                 vcard.find('facultyExchange').text
             ).strip()
             if facultyexchange:
@@ -138,8 +133,7 @@ def get_individual_info_from_directory(xml_string):
             phone = re.sub('\s+', ' ', vcard.find('phone').text).strip()
             if phone:
                 chunks = re.search(
-                    '^\(([0-9]{3})\) ([0-9]{3})-([0-9]{4})$',
-                    phone
+                    '^\(([0-9]{3})\) ([0-9]{3})-([0-9]{4})$', phone
                 )
                 phone_number = chunks.group(1) + \
                     "-" + chunks.group(2) + "-" + chunks.group(3)
@@ -180,8 +174,7 @@ def get_individual_info_from_directory(xml_string):
 
         try:
             facultyexchange = re.sub(
-                '\s+',
-                ' ',
+                '\s+', ' ',
                 vcard.find('facultyExchange').text
             ).strip()
             if facultyexchange:
@@ -194,8 +187,7 @@ def get_individual_info_from_directory(xml_string):
             phone = re.sub('\s+', ' ', vcard.find('phone').text).strip()
             if phone:
                 chunks = re.search(
-                    '^\(([0-9]{3})\) ([0-9]{3})-([0-9]{4})$',
-                    phone
+                    '^\(([0-9]{3})\) ([0-9]{3})-([0-9]{4})$', phone
                 )
                 formatted_phone = chunks.group(1) + "-" + chunks.group(2) + \
                     "-" + chunks.group(3)
@@ -235,19 +227,15 @@ def get_individual_info_from_directory(xml_string):
         department_name_pieces = []
         try:
             department_name_pieces.append(
-                re.sub(
-                    '\s+',
-                    ' ',
-                    vcard.find('department/name').text.strip()
-                )
+                re.sub('\s+', ' ',
+                       vcard.find('department/name').text.strip())
             )
         except:
             pass
         try:
             department_name_pieces.append(
                 re.sub(
-                    '\s+',
-                    ' ',
+                    '\s+', ' ',
                     vcard.find('subDepartment/name').text.strip()
                 )
             )
@@ -296,11 +284,8 @@ def get_individual_info_from_wagtail(cnetid):
             output['email'].add(email_str)
 
     if staff_page.position_title:
-        output['positionTitle'] = re.sub(
-            '\s+',
-            ' ',
-            staff_page.position_title
-        ).strip()
+        output['positionTitle'] = re.sub('\s+', ' ',
+                                         staff_page.position_title).strip()
 
     for v in staff_page.staff_page_phone_faculty_exchange.all():
         tmp = []
@@ -331,18 +316,10 @@ class WagtailStaffReport:
         self.staff_report = staff_report
         self.options = {
             k: options[k] for k in (
-                'all',
-                'cnetid',
-                'department',
-                'department_and_subdepartments',
-                'group',
-                'live',
-                'latest_revision_created_at',
-                'position_eliminated',
-                'supervises_students',
-                'supervisor_cnetid',
-                'supervisor_override',
-                'position_title'
+                'all', 'cnetid', 'department', 'department_and_subdepartments',
+                'group', 'live', 'latest_revision_created_at',
+                'position_eliminated', 'supervises_students',
+                'supervisor_cnetid', 'supervisor_override', 'position_title'
             )
         }
 
@@ -392,6 +369,7 @@ class WagtailStaffReport:
 
         Returns: two lists of strings.
         """
+
         def _format(cnetid, value, field):
             value = '' if value is None else str(value)
             return '{} -{}- ({})'.format(cnetid, self._clean(value), field)
@@ -410,8 +388,8 @@ class WagtailStaffReport:
                 continue
             api_staff_info.add(cnetid)
             xml_string = get_xml_from_directory_api(
-                'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.format(
-                    cnetid)
+                'https://directory.uchicago.edu/api/v2/individuals/{}.xml'.
+                format(cnetid)
             )
             info = get_individual_info_from_directory(xml_string)
             api_staff_info.add(
@@ -424,21 +402,16 @@ class WagtailStaffReport:
                 _format(cnetid, info['positionTitle'], 'positionTitle')
             )
             for email in info['email']:
-                api_staff_info.add(
-                    _format(cnetid, email, 'email')
-                )
+                api_staff_info.add(_format(cnetid, email, 'email'))
             for phone_facex in info['phoneFacultyExchanges']:
                 api_staff_info.add(
                     _format(
-                        cnetid,
-                        re.sub(r"\n", " ", phone_facex),
+                        cnetid, re.sub(r"\n", " ", phone_facex),
                         'phoneFacultyExchange'
                     )
                 )
             for department in info['departments']:
-                api_staff_info.add(
-                    _format(cnetid, department, 'department')
-                )
+                api_staff_info.add(_format(cnetid, department, 'department'))
 
         wag_staff_info = set()
         for s in StaffPage.objects.live():
@@ -448,25 +421,18 @@ class WagtailStaffReport:
             wag_staff_info.add(
                 _format(s.cnetid, s.official_name, 'officialName')
             )
-            wag_staff_info.add(
-                _format(s.cnetid, s.display_name, 'displayName')
-            )
+            wag_staff_info.add(_format(s.cnetid, s.display_name, 'displayName'))
             wag_staff_info.add(
                 _format(s.cnetid, s.position_title, 'positionTitle')
             )
             for e in s.staff_page_email.all():
-                wag_staff_info.add(
-                    _format(s.cnetid, e.email, 'email')
-                )
+                wag_staff_info.add(_format(s.cnetid, e.email, 'email'))
             for p in s.staff_page_phone_faculty_exchange.all():
                 wag_staff_info.add(
                     _format(
                         s.cnetid,
-                        '{} {}'.format(
-                            p.faculty_exchange,
-                            p.phone_number
-                        ),
-                        'phoneFacultyExchange'
+                        '{} {}'.format(p.faculty_exchange,
+                                       p.phone_number), 'phoneFacultyExchange'
                     )
                 )
             for d in s.staff_page_units.all():
@@ -492,16 +458,25 @@ class WagtailStaffReport:
         format the final report will be in (e.g. Excel or tab-delimited.)
         """
         output = []
-        missing_in_campus_directory, missing_in_wagtail = self._staff_out_of_sync()
+        missing_in_campus_directory, missing_in_wagtail = self._staff_out_of_sync(
+        )
         if missing_in_campus_directory:
-            output.append(["THE FOLLOWING STAFF DATA APPEARS IN WAGTAIL, " +
-                           "BUT NOT THE UNIVERSITY'S API:"])
+            output.append(
+                [
+                    "THE FOLLOWING STAFF DATA APPEARS IN WAGTAIL, " +
+                    "BUT NOT THE UNIVERSITY'S API:"
+                ]
+            )
             for c in missing_in_campus_directory:
                 output.append([c])
             output.append([""])
         if missing_in_wagtail:
-            output.append(["THE FOLLOWING STAFF DATA APPEARS IN THE " +
-                           "UNIVERSITY'S API, BUT NOT WAGTAIL:"])
+            output.append(
+                [
+                    "THE FOLLOWING STAFF DATA APPEARS IN THE " +
+                    "UNIVERSITY'S API, BUT NOT WAGTAIL:"
+                ]
+            )
             for w in missing_in_wagtail:
                 output.append([w])
             output.append([""])
@@ -529,11 +504,7 @@ class WagtailStaffReport:
             A string. Tab delimited data, separated by newlines.
         """
         stringio = io.StringIO()
-        writer = csv.writer(
-            stringio,
-            delimiter='\t',
-            quoting=csv.QUOTE_MINIMAL
-        )
+        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         for record in self._get_staff_out_of_sync_data():
             writer.writerow(record)
         return stringio.getvalue()
@@ -600,9 +571,8 @@ class WagtailStaffReport:
             if self.options['department_and_subdepartments']:
                 library_units = set()
                 for u in [
-                    u for u in UnitPage.objects.live()
-                    if u.get_full_name() ==
-                        self.options['department_and_subdepartments']
+                    u for u in UnitPage.objects.live() if u.get_full_name() ==
+                    self.options['department_and_subdepartments']
                 ]:
                     library_units = library_units.union(
                         set(u.get_descendants(True).type(UnitPage).specific())
@@ -689,8 +659,7 @@ class WagtailStaffReport:
             pass
 
         return sorted(
-            list(staffpages),
-            key=lambda s: s.last_name if s.last_name else ''
+            list(staffpages), key=lambda s: s.last_name if s.last_name else ''
         )
 
     def _get_staff_report_data(self):
@@ -699,21 +668,16 @@ class WagtailStaffReport:
         format the final report will be in (e.g. Excel or tab-delimited.)
         """
         output = []
-        output.append([
-            'ID',
-            'LATEST REVISION CREATED AT',
-            'NAME AND CNETID',
-            'POSITION TITLE',
-            'EMAILS',
-            'PHONE, FACEX',
-            'UNITS (LIBRARY DIRECTORY FULL NAME)',
-            'UNITS (CAMPUS DIRECTORY FULL NAME)',
-            'GROUPS',
-            'EMPLOYEE TYPE',
-            'SUPERVISES STUDENTS',
-            'POSITION ELIMINATED',
-            'SUPERVISOR NAME AND CNETID'
-        ])
+        output.append(
+            [
+                'ID', 'LATEST REVISION CREATED AT', 'NAME AND CNETID',
+                'POSITION TITLE', 'EMAILS', 'PHONE, FACEX',
+                'UNITS (LIBRARY DIRECTORY FULL NAME)',
+                'UNITS (CAMPUS DIRECTORY FULL NAME)', 'GROUPS', 'EMPLOYEE TYPE',
+                'SUPERVISES STUDENTS', 'POSITION ELIMINATED',
+                'SUPERVISOR NAME AND CNETID'
+            ]
+        )
         staffpages = self._get_staff_wagtail()
         for s in staffpages:
             staffpage_library_units = set(
@@ -749,10 +713,8 @@ class WagtailStaffReport:
             emails = [e.email for e in s.staff_page_email.all()]
 
             phone_facexes = [
-                '%s,%s' % (
-                    p.faculty_exchange,
-                    p.phone_number
-                ) for p in s.staff_page_phone_faculty_exchange.all()
+                '%s,%s' % (p.faculty_exchange, p.phone_number)
+                for p in s.staff_page_phone_faculty_exchange.all()
             ]
 
             employee_type_string = [
@@ -761,21 +723,18 @@ class WagtailStaffReport:
 
             position_eliminated_string = str(s.position_eliminated)
 
-            output.append([
-                str(s.id),
-                latest_revision_created_at,
-                name_and_cnetid,
-                s.position_title or '',
-                '|'.join(emails) or '',
-                '|'.join(phone_facexes) or '',
-                '|'.join([u[0] for u in units]) or '',
-                '|'.join([u[1] for u in units]) or '',
-                '|'.join(groups),
-                employee_type_string,
-                str(s.supervises_students),
-                position_eliminated_string,
-                '|'.join(supervisor_names_and_cnetids)
-            ])
+            output.append(
+                [
+                    str(s.id), latest_revision_created_at, name_and_cnetid,
+                    s.position_title or '', '|'.join(emails) or '',
+                    '|'.join(phone_facexes) or '',
+                    '|'.join([u[0] for u in units]) or '',
+                    '|'.join([u[1] for u in units]) or '', '|'.join(groups),
+                    employee_type_string,
+                    str(s.supervises_students), position_eliminated_string,
+                    '|'.join(supervisor_names_and_cnetids)
+                ]
+            )
         return output
 
     def _add_staff_report_worksheet(self):
@@ -799,19 +758,17 @@ class WagtailStaffReport:
             A string. Tab delimited data, separated by newlines.
         """
         stringio = io.StringIO()
-        writer = csv.writer(
-            stringio,
-            delimiter='\t',
-            quoting=csv.QUOTE_MINIMAL
-        )
+        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         for record in self._get_staff_report_data():
             writer.writerow(record)
         return stringio.getvalue()
 
 
 def lookup_staff_ids():
-    url = ("https://rooms.lib.uchicago.edu/1.0/" +
-           "appointments/users?iid=482&key=%s") % LIBCAL_KEY
+    url = (
+        "https://rooms.lib.uchicago.edu/1.0/" +
+        "appointments/users?iid=482&key=%s"
+    ) % LIBCAL_KEY
     req = requests.get(url)
     try:
         json = req.json()

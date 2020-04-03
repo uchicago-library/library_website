@@ -1,8 +1,7 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
 from staff.models import StaffPage
-from staff.libcal import lookup_staff_ids, pad_empties
-
+from staff.units import lookup_staff_ids, pad_empties
 
 register = template.Library()
 
@@ -20,33 +19,44 @@ def library_unit_links(library_unit):
     try:
         library_unit_pieces = library_unit.get_full_name().split(' - ')
     except AttributeError:
-        return {
-            'units': []
-        }
+        return {'units': []}
     units = []
     i = 0
     while i < len(library_unit_pieces):
-        link_param = ' - '.join(library_unit_pieces[:i+1])
+        link_param = ' - '.join(library_unit_pieces[:i + 1])
         link_text = library_unit_pieces[i]
-        units.append([
-            link_param,
-            link_text
-        ])
+        units.append([link_param, link_text])
         i = i + 1
-    return {
-        'units': units
-    }
+    return {'units': units}
 
 
 @register.inclusion_tag('staff/staff_email_addresses.html')
 def staff_email_addresses(staff_page):
     return {
-        'emails': list(set(staff_page.staff_page_email.all().values_list('email', flat=True)))
+        'emails':
+        list(
+            set(
+                staff_page.staff_page_email.all().values_list(
+                    'email', flat=True
+                )
+            )
+        )
     }
 
 
 @register.inclusion_tag('staff/staff_libcal_schedules.html')
 def staff_libcal_schedules(staff_page):
+    """
+    Passes staff libal information into the context for the Staff Page
+    index view.
+
+    Input: Wagtail page
+
+    Output: Dictionary containing a list of all
+    staff email addresses and a lookup table mapping email addresses
+    to LibCal ids
+
+    """
     emails = list(
         set(staff_page.staff_page_email.all().values_list('email', flat=True))
     )
@@ -61,12 +71,18 @@ def staff_libcal_schedules(staff_page):
 @register.inclusion_tag('staff/staff_faculty_exchanges_phone_numbers.html')
 def staff_faculty_exchanges_phone_numbers(staff_page):
     libraries = {
-        'JCL': LocationPage.objects.get(title='The John Crerar Library'),
-        'JRL': LocationPage.objects.get(title='The Joseph Regenstein Library'),
-        'LBQ': LocationPage.objects.get(title='The D\'Angelo Law Library'),
-        'Mansueto': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'MAN': LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'SSA': LocationPage.objects.get(title='Social Service Administration Library')
+        'JCL':
+        LocationPage.objects.get(title='The John Crerar Library'),
+        'JRL':
+        LocationPage.objects.get(title='The Joseph Regenstein Library'),
+        'LBQ':
+        LocationPage.objects.get(title='The D\'Angelo Law Library'),
+        'Mansueto':
+        LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
+        'MAN':
+        LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
+        'SSA':
+        LocationPage.objects.get(title='Social Service Administration Library')
     }
 
     lib_room_phone = []
@@ -88,9 +104,7 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
 
         lib_room_phone.append([lib, room, phone])
 
-    return {
-        'lib_room_phone': lib_room_phone
-    }
+    return {'lib_room_phone': lib_room_phone}
 
 
 @register.inclusion_tag('staff/staff_subjects.html')
@@ -99,9 +113,7 @@ def staff_subjects(staff_page):
     for s in staff_page.staff_subject_placements.all():
         subjects.append(s.subject.name)
 
-    return {
-        'subjects': sorted(subjects)
-    }
+    return {'subjects': sorted(subjects)}
 
 
 @register.inclusion_tag('staff/staff_public_page_link.html')
@@ -111,7 +123,4 @@ def staff_public_page_link(staff_page):
     except:
         href = ''
 
-    return {
-        'href': href,
-        'title': staff_page.title
-    }
+    return {'href': href, 'title': staff_page.title}
