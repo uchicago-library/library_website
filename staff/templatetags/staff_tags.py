@@ -1,6 +1,6 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
-from staff.utils import lookup_staff_ids, pad_empties
+from staff.utils import lookup_staff_ids
 
 register = template.Library()
 
@@ -59,7 +59,7 @@ def staff_libcal_schedules(staff_page):
     emails = list(
         set(staff_page.staff_page_email.all().values_list('email', flat=True))
     )
-    ids = pad_empties(lookup_staff_ids())
+    ids = lookup_staff_ids()
 
     return {
         'emails': emails,

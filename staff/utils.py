@@ -421,7 +421,8 @@ class WagtailStaffReport:
             wag_staff_info.add(
                 _format(s.cnetid, s.official_name, 'officialName')
             )
-            wag_staff_info.add(_format(s.cnetid, s.display_name, 'displayName'))
+            wag_staff_info.add(
+                _format(s.cnetid, s.display_name, 'displayName'))
             wag_staff_info.add(
                 _format(s.cnetid, s.position_title, 'positionTitle')
             )
@@ -504,7 +505,8 @@ class WagtailStaffReport:
             A string. Tab delimited data, separated by newlines.
         """
         stringio = io.StringIO()
-        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(stringio, delimiter='\t',
+                            quoting=csv.QUOTE_MINIMAL)
         for record in self._get_staff_out_of_sync_data():
             writer.writerow(record)
         return stringio.getvalue()
@@ -758,7 +760,8 @@ class WagtailStaffReport:
             A string. Tab delimited data, separated by newlines.
         """
         stringio = io.StringIO()
-        writer = csv.writer(stringio, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(stringio, delimiter='\t',
+                            quoting=csv.QUOTE_MINIMAL)
         for record in self._get_staff_report_data():
             writer.writerow(record)
         return stringio.getvalue()
@@ -785,23 +788,3 @@ def lookup_staff_ids():
     # the wrong URL will not return JSON
     except JSONDecodeError:
         return None
-
-
-def pad_empties(emails, ids):
-    """
-    This is sort of an 'outer join' that takes the LibCal ID lookup
-    table and expands it to include an entry for every single staff
-    member.  If they don't have their LibCal account enabled, the
-    value stored under their email address is None.
-
-    Input: Email-ID lookup table
-
-    Output: Email-ID lookup table
-
-    """
-    for email in emails:
-        if email in ids.keys:
-            pass
-        else:
-            ids[email] = None
-            return ids
