@@ -23,6 +23,9 @@ class ReusableContent(models.Model, index.Indexed):
         help_text='Reusable content that can be displayed in the right \
         sidebar or a page body'
     )
+    make_page_alert = models.BooleanField(
+        default=False, help_text='Display as in-page alert'
+    )
 
     panels = [
         MultiFieldPanel(
@@ -30,6 +33,7 @@ class ReusableContent(models.Model, index.Indexed):
                 FieldPanel('title'),
                 FieldPanel('sidebar_heading'),
                 FieldPanel('content'),
+                FieldPanel('make_page_alert'),
             ],
             heading='Reusable Content'
         )
