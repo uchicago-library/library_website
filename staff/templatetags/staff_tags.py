@@ -1,7 +1,7 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
 from staff.models import StaffPage
-from staff.units import lookup_staff_ids, pad_empties
+from staff.utils import lookup_staff_ids, pad_empties
 
 register = template.Library()
 
