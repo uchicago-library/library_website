@@ -1,6 +1,5 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
-from staff.models import StaffPage
 from staff.utils import lookup_staff_ids, pad_empties
 
 register = template.Library()
@@ -60,7 +59,7 @@ def staff_libcal_schedules(staff_page):
     emails = list(
         set(staff_page.staff_page_email.all().values_list('email', flat=True))
     )
-    ids = lookup_staff_ids()
+    ids = pad_empties(lookup_staff_ids())
 
     return {
         'emails': emails,
@@ -120,7 +119,7 @@ def staff_subjects(staff_page):
 def staff_public_page_link(staff_page):
     try:
         href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
-    except:
+    except AttributeError:
         href = ''
 
     return {'href': href, 'title': staff_page.title}

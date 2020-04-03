@@ -765,6 +765,15 @@ class WagtailStaffReport:
 
 
 def lookup_staff_ids():
+    """
+    This function queries the LibCal API and returns a dictionary with
+    email addresses as keys and LibCal IDs as values.
+
+    Input: None
+
+    Output: Email-to-LibCal ID lookup table
+
+    """
     url = (
         "https://rooms.lib.uchicago.edu/1.0/" +
         "appointments/users?iid=482&key=%s"
@@ -779,6 +788,17 @@ def lookup_staff_ids():
 
 
 def pad_empties(emails, ids):
+    """
+    This is sort of an 'outer join' that takes the LibCal ID lookup
+    table and expands it to include an entry for every single staff
+    member.  If they don't have their LibCal account enabled, the
+    value stored under their email address is None.
+
+    Input: Email-ID lookup table
+
+    Output: Email-ID lookup table
+
+    """
     for email in emails:
         if email in ids.keys:
             pass
