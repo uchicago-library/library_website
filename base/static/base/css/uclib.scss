@@ -1729,6 +1729,22 @@ a.coll-access {
  * --------------------------------------------------
  */
 
+button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
+  color: $maroon;
+  background: transparent;
+  margin-top: 0.5em;
+  border: 1px solid $maroon;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  &:hover {
+    color: #fff;
+    background: #8a4a20;
+  }
+}
+
+
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {
     padding: 0 3em 1.2em 3em;
