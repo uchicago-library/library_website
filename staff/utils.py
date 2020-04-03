@@ -13,7 +13,7 @@ import requests
 
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
-from library_website.settings.local import LIBCAL_KEY
+from library_website.settings.local import LIBCAL_IID, LIBCAL_KEY
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
@@ -776,8 +776,8 @@ def lookup_staff_ids():
     """
     url = (
         "https://rooms.lib.uchicago.edu/1.0/" +
-        "appointments/users?iid=482&key=%s"
-    ) % LIBCAL_KEY
+        "appointments/users?iid=%s&key=%s"
+    ) % (LIBCAL_IID, LIBCAL_KEY)
     req = requests.get(url)
     try:
         json = req.json()
