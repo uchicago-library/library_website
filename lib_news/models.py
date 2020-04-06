@@ -59,7 +59,7 @@ class PublicNewsCategories(models.Model, index.Indexed):
 
 
 @register_snippet
-class PublicNewsAuthors(models.Model, index.Indexed):
+class PublicNewsAuthors(models.Model):
     author_name = models.CharField(max_length=255, blank=False)
     link_page = models.ForeignKey(
         'wagtailcore.Page',
