@@ -186,7 +186,7 @@ def units(request):
             'org_chart_image': org_chart_image,
             'query': query,
             'staff_pages': staff_pages,
-            'subjects': subjects,
+            'subjects': subjects[0],
             'subject': subject,
             'view': view,
             'self': {
