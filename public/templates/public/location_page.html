@@ -35,6 +35,7 @@
 
         {% if has_right_sidebar %}
             {% block right_sidebar %}
+                {% if self.has_features or self.reservation_url or has_floorplans %}
                 <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                     {% if self.has_features %}
                         <h3>Features</h3>
@@ -62,6 +63,7 @@
                         </p>
                     {% endif %}
                 </div><!--/.rightside-mod-->
+                {% endif %}
             {% endblock %}
         {% endif %}
     </article>
