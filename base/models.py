@@ -1,9 +1,6 @@
 import logging
 import urllib
 
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
-from base.utils import get_hours_and_location
 from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
@@ -11,17 +8,12 @@ from django.db import models
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
-)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
-from units.utils import get_default_unit
 from wagtail.admin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
@@ -41,6 +33,15 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
+
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
+from base.utils import get_hours_and_location
+from library_website.settings.base import (
+    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
+    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+)
+from units.utils import get_default_unit
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -1441,13 +1442,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             Boolean
         """
-        try:
-            is_building = self.is_building
-        except (AttributeError):
-            is_building = False
-        return True if is_building or self.has_field(
-            [self.display_hours_in_right_sidebar]
-        ) else False
+        return self.has_field([self.display_hours_in_right_sidebar])
 
     def has_field(self, field_list):
         """
