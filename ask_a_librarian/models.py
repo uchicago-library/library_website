@@ -1,3 +1,4 @@
+from wagtail.core.blocks import RichTextBlock
 from django.core.validators import RegexValidator
 from django.db import models
 from wagtail.admin.edit_handlers import (
@@ -7,7 +8,7 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.search import index
 
-from base.models import ContactFields, DefaultBodyFields, PublicBasePage
+from base.models import ContactFields, DefaultBodyFields, PublicBasePage, RawHTMLBlock, ReusableContentBlock
 from library_website.settings import PHONE_ERROR_MSG, PHONE_FORMAT
 
 
@@ -16,6 +17,15 @@ class AskPage(PublicBasePage, ContactFields):
     Page type for Ask A Librarian pages.
     """
 
+    intro = StreamField(
+        [
+            ('paragraph', RichTextBlock()),
+            ('reusable_content_block', ReusableContentBlock()),
+            ('html', RawHTMLBlock()),
+        ],
+        null=True,
+        blank=True,
+    )
     ask_widget_name = models.CharField(max_length=100, blank=True)
     reference_resources = RichTextField(blank=True)
     body = StreamField(DefaultBodyFields())
@@ -43,6 +53,7 @@ class AskPage(PublicBasePage, ContactFields):
     subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
 
     content_panels = Page.content_panels + [
+        StreamFieldPanel('intro'),
         FieldPanel('ask_widget_name'),
         FieldPanel('reference_resources'),
         MultiFieldPanel(
