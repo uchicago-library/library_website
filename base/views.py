@@ -160,6 +160,8 @@ def external_include(request):
             img['src'] = absolute_url(img['src'])
         for link in soup.find_all('link'):
             link['href'] = absolute_url(link['href'])
+        for sc in soup.find_all('script'):
+            sc['src'] = absolute_url(sc['src'])
         response.content = str(soup)
         if callback:
             return HttpResponse(

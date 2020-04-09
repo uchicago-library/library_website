@@ -250,6 +250,7 @@ CORS_ORIGIN_WHITELIST = (
     'dldc1.lib.uchicago.edu',
     'dldc2.lib.uchicago.edu',
     'dldc3.lib.uchicago.edu',
+    'forms2.lib.uchicago.edu',
     'guides.lib.uchicago.edu',
     'rooms.lib.uchicago.edu',
     'sfx.lib.uchicago.edu',
