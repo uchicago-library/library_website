@@ -13,7 +13,7 @@ import requests
 
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
-from library_website.settings.local import LIBCAL_IID, LIBCAL_KEY
+from library_website.settings.local import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
@@ -767,6 +767,14 @@ class WagtailStaffReport:
         return stringio.getvalue()
 
 
+def get_token(url, data):
+    resp = requests.post(url, data)
+    try:
+        return resp.json()['access_token']
+    except KeyError:
+        return None
+
+
 def lookup_staff_ids():
     """
     This function queries the LibCal API and returns a dictionary with
@@ -777,14 +785,13 @@ def lookup_staff_ids():
     Output: Email-to-LibCal ID lookup table
 
     """
-    url = (
-        "https://rooms.lib.uchicago.edu/1.0/" +
-        "appointments/users?iid=%s&key=%s"
-    ) % (LIBCAL_IID, LIBCAL_KEY)
-    req = requests.get(url)
+    url = LIBCAL_ENDPOINT
+    tok = get_token(LIBCAL_TOKEN_ENDPOINT, LIBCAL_CREDENTIALS)
+    hdrs = {"Authorization": ("Bearer " + tok)}
+    resp = requests.get(url, headers=hdrs)
     try:
-        json = req.json()
+        # the wrong URL will not return JSON
+        json = resp.json()
         return {person['email']: person['id'] for person in json}
-    # the wrong URL will not return JSON
     except JSONDecodeError:
         return None
