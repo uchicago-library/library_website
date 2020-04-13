@@ -2,8 +2,7 @@ from wagtail.core.blocks import RichTextBlock
 from django.core.validators import RegexValidator
 from django.db import models
 from wagtail.admin.edit_handlers import (
-    FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel,
-    StreamFieldPanel
+    FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
 )
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
@@ -31,8 +30,8 @@ class AskPage(PublicBasePage, ContactFields):
     body = StreamField(DefaultBodyFields())
     reference_resources = RichTextField(
         blank=True,
-        help_text=
-        'Links to guide links and other Ask pages. Make new sections with Header 3'
+        help_text='Links to guide links and other \
+        Ask pages. Make new sections with Header 3'
     )
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     secondary_phone_number = models.CharField(
