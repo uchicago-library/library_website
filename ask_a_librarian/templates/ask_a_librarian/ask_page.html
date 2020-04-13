@@ -21,27 +21,30 @@
 {% block right_sidebar_classes %}ask-rightside{% endblock %}
 {% block right_sidebar %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-        <h3>Other Ways to Ask</h3>
-        <ul>
-          {% if self.contact_link %}
-            <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
-          {% endif %}
-          {% if self.phone_number %}
-            <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
-          {% endif %}
-          {% if self.secondary_phone_number %}
-            <li><i class="fa fa-phone-square fa-2x"></i> {{self.secondary_phone_number}}</li>
-          {% endif %}
-          {% if self.schedule_appointment_page %}
-            <li><a href="{{self.schedule_appointment_page.url}}"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
-          {% endif %}
-          {% if self.visit_page %}
-            <li><a href="{{self.visit_page.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit</a></li>
-          {% endif %}
-        </ul>
-        {% if self.reference_resources %}
-            <hr/>
-            {% autoescape off %}{{self.reference_resources|richtext}}{% endautoescape %}
+      <h3>Other Ways to Ask</h3>
+      <ul>
+        {% if self.contact_link %}
+          <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
         {% endif %}
+        {% if self.phone_number %}
+          <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
+        {% endif %}
+        {% if self.secondary_phone_number %}
+          <li><i class="fa fa-phone-square fa-2x"></i> {{self.secondary_phone_number}}</li>
+        {% endif %}
+        {% if self.schedule_appointment_page %}
+          <li><a href="{{self.schedule_appointment_page.url}}"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
+        {% endif %}
+        {% if self.visit_page %}
+          <li><a href="{{self.visit_page.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit</a></li>
+        {% endif %}
+      </ul>
     </div><!--/.rightside-mod-->
+
+    {% if self.reference_resources %}
+      <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+        {% autoescape off %}{{self.reference_resources|richtext}}{% endautoescape %}
+      </div><!--/.rightside-mod-->
+    {% endif %}
+    
 {% endblock %}
