@@ -1,3 +1,4 @@
+from wagtail.core.blocks import RichTextBlock
 from django.core.validators import RegexValidator
 from django.db import models
 from wagtail.admin.edit_handlers import (
@@ -7,7 +8,7 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Page
 from wagtail.search import index
 
-from base.models import ContactFields, DefaultBodyFields, PublicBasePage
+from base.models import ContactFields, DefaultBodyFields, PublicBasePage, RawHTMLBlock, ReusableContentBlock
 from library_website.settings import PHONE_ERROR_MSG, PHONE_FORMAT
 
 
@@ -16,9 +17,22 @@ class AskPage(PublicBasePage, ContactFields):
     Page type for Ask A Librarian pages.
     """
 
+    intro = StreamField(
+        [
+            ('paragraph', RichTextBlock()),
+            ('reusable_content_block', ReusableContentBlock()),
+            ('html', RawHTMLBlock()),
+        ],
+        null=True,
+        blank=True,
+    )
     ask_widget_name = models.CharField(max_length=100, blank=True)
-    reference_resources = RichTextField(blank=True)
     body = StreamField(DefaultBodyFields())
+    reference_resources = RichTextField(
+        blank=True,
+        help_text='Links to guide links and other \
+        Ask pages. Make new sections with Header 3'
+    )
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     secondary_phone_number = models.CharField(
         validators=[phone_regex], max_length=12, blank=True
@@ -29,7 +43,7 @@ class AskPage(PublicBasePage, ContactFields):
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL,
-        help_text='Link to a contact form'
+        help_text='Shows up as Schedule icon link. Link to a contact form'
     )
     visit_page = models.ForeignKey(
         'wagtailcore.Page',
@@ -43,26 +57,28 @@ class AskPage(PublicBasePage, ContactFields):
     subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
 
     content_panels = Page.content_panels + [
+        StreamFieldPanel('intro'),
         FieldPanel('ask_widget_name'),
-        FieldPanel('reference_resources'),
+        StreamFieldPanel('body'),
         MultiFieldPanel(
             [
-                PageChooserPanel('link_page'),
-                FieldPanel('link_external'),
-            ],
-            heading='Contact Form'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('email'),
                 FieldPanel('phone_number'),
                 FieldPanel('secondary_phone_number'),
                 PageChooserPanel('visit_page'),
                 PageChooserPanel('schedule_appointment_page'),
             ],
-            heading='General Contact'
+            heading='Other Ways to Ask: General Contact'
         ),
-        StreamFieldPanel('body'),
+        MultiFieldPanel(
+            [
+                PageChooserPanel('link_page'),
+                FieldPanel('link_external'),
+                FieldPanel('email'),
+            ],
+            heading='Other Ways to Ask: Email Icon Link',
+            help_text='Shows up as Email icon link. Can only have one.'
+        ),
+        FieldPanel('reference_resources'),
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
