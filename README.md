@@ -14,6 +14,7 @@
 ### Vagrant Troubleshooting
 If you have issues loading your local instance, try:
 ```
+vagrant halt
 vagrant destroy
 vagrant up
 pip install -r requirements.txt
@@ -122,8 +123,8 @@ All you need to do is [download the images from box](https://uchicago.box.com/s/
 ### Caching Issues
 If your changes aren't loading into production, try:
 - Compress, collectstatic, and restart apache again
-- Clear the cache in Wagtail settings
-- Clear the apache cache
+- Clear the Wagtail cache in Wagtail settings
+- Clear the Django cache manually
 ```
 ./manage.py shell
 from django.core.cache import cache
