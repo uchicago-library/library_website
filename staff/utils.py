@@ -768,6 +768,15 @@ class WagtailStaffReport:
 
 
 def get_token(url, data):
+    """
+    This function queries the LibCal API for an OAuth 2.0 token, as a
+    first step to be used in lookup_staff_ids().
+
+    Input: url string, dictionary representing POST headers
+
+    Output: access token string
+
+    """
     resp = requests.post(url, data)
     try:
         return resp.json()['access_token']
@@ -783,7 +792,6 @@ def lookup_staff_ids():
     Input: None
 
     Output: Email-to-LibCal ID lookup table
-
     """
     url = LIBCAL_ENDPOINT
     tok = get_token(LIBCAL_TOKEN_ENDPOINT, LIBCAL_CREDENTIALS)

@@ -834,8 +834,10 @@ class StaffPublicPage(PublicBasePage):
         except AttributeError:
             building_str = None
 
+        # dictionary with email addresses as keys and LibCal ids as values
         libcal_ids = lookup_staff_ids()
 
+        # get user's LibCal id if they are set up for LibCal appointments
         try:
             libcal_id = libcal_ids[email]
         except KeyError:
