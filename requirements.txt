@@ -42,7 +42,7 @@ six==1.12.0
 sqlparse==0.3.0
 Unidecode==1.0.23
 urllib3==1.24.3
-wagtail==2.5.1
+wagtail==2.7.2
 wagtailmedia==0.3.0
 wagtail-cache==0.5.2
 wheel==0.24.0
