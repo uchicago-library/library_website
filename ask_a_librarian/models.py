@@ -27,7 +27,10 @@ class AskPage(PublicBasePage, ContactFields):
         blank=True,
     )
     ask_widget_name = models.CharField(max_length=100, blank=True)
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(DefaultBodyFields(
+        null=True,
+        blank=True,
+    ))
     reference_resources = RichTextField(
         blank=True,
         help_text='Links to guide links and other \
