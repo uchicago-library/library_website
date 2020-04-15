@@ -5,17 +5,17 @@ from diablo_utils import lazy_dotchain
 from django.core.validators import RegexValidator
 from django.db import models
 from django.template.response import TemplateResponse
-from library_website.settings import (CRERAR_BUILDING_ID,
-                                      CRERAR_EXHIBIT_FOOTER_IMG,
-                                      SCRC_BUILDING_ID,
-                                      SCRC_EXHIBIT_FOOTER_IMG)
+from library_website.settings import (
+    CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
+    SCRC_EXHIBIT_FOOTER_IMG
+)
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
 from staff.models import StaffPage
-from wagtail.admin.edit_handlers import (FieldPanel, InlinePanel,
-                                         MultiFieldPanel, ObjectList,
-                                         PageChooserPanel, StreamFieldPanel,
-                                         TabbedInterface)
+from wagtail.admin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    StreamFieldPanel, TabbedInterface
+)
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, Site
