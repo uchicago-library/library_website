@@ -49,11 +49,12 @@ def staff_libcal_schedules(staff_page):
     Passes staff libal information into the context for the Staff Page
     index view.
 
-    Input: Wagtail page
+    Args:
+        Wagtail page
 
-    Output: Dictionary containing a list of all
-    staff email addresses and a lookup table mapping email addresses
-    to LibCal ids
+    Output:
+        Dictionary containing a list of all staff email addresses and
+        a lookup table mapping email addresses to LibCalids
 
     """
     emails = list(
