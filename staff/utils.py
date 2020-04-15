@@ -772,10 +772,11 @@ def get_token(url, data):
     This function queries the LibCal API for an OAuth 2.0 token, as a
     first step to be used in lookup_staff_ids().
 
-    Input: url string, dictionary representing POST headers
+    Args:
+        url string, dictionary representing POST headers
 
-    Output: access token string
-
+    Returns:
+        access token string
     """
     resp = requests.post(url, data)
     try:
@@ -789,9 +790,11 @@ def lookup_staff_ids():
     This function queries the LibCal API and returns a dictionary with
     email addresses as keys and LibCal IDs as values.
 
-    Input: None
+    Args:
+        None
 
-    Output: Email-to-LibCal ID lookup table
+    Output:
+        Email-to-LibCal ID lookup table
     """
     url = LIBCAL_ENDPOINT
     tok = get_token(LIBCAL_TOKEN_ENDPOINT, LIBCAL_CREDENTIALS)
