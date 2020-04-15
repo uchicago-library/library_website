@@ -1,20 +1,22 @@
 import json
 
-from base.models import (BasePage, BasePageWithoutStaffPageForeignKeys,
-                         DefaultBodyFields)
+from base.models import (
+    BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
+)
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.fields import BooleanField, CharField, IntegerField
-from library_website.settings.base import (ORCID_ERROR_MSG, ORCID_FORMAT,
-                                           PHONE_ERROR_MSG, PHONE_FORMAT)
+from library_website.settings.base import (
+    ORCID_ERROR_MSG, ORCID_FORMAT, PHONE_ERROR_MSG, PHONE_FORMAT
+)
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from subjects.models import Subject
 from units.models import BUILDINGS
-from wagtail.admin.edit_handlers import (FieldPanel, InlinePanel,
-                                         MultiFieldPanel, ObjectList,
-                                         PageChooserPanel, StreamFieldPanel,
-                                         TabbedInterface)
+from wagtail.admin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    StreamFieldPanel, TabbedInterface
+)
 from wagtail.api import APIField
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, PageManager
