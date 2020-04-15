@@ -8,8 +8,10 @@ import requests
 
 from pyiiif.pres_api.utils import get_thumbnail
 
-from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
-                         NoCollectionFoundError, NoCollectionParameterError)
+from .exceptions import (
+    IncompatibleRecordError, InvalidCollectionRecordError,
+    NoCollectionFoundError, NoCollectionParameterError
+)
 
 config = {
     "VIEWER_URL": "https://iiif-viewer.lib.uchicago.edu/uv/uv.html#",
