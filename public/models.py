@@ -23,6 +23,7 @@ from wagtail.core.models import Orderable, Page, Site
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
