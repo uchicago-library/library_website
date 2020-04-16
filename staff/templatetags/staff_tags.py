@@ -120,7 +120,7 @@ def staff_subjects(staff_page):
 def staff_public_page_link(staff_page):
     try:
         href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
-    except AttributeError:
+    except(AttributeError, StaffPublicPage.DoesNotExist):
         href = ''
 
     return {'href': href, 'title': staff_page.title}
