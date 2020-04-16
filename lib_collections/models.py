@@ -1,4 +1,5 @@
 import datetime
+
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.validators import RegexValidator
@@ -604,7 +605,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement', label='Related Collection'),
+        InlinePanel('related_collection_placement',
+                    label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -861,7 +863,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(
+        max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
