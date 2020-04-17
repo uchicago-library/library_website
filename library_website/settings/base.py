@@ -434,6 +434,15 @@ UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4
 # Tiny Tiny RSS Feed
 TTRSS_FEED = 'https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
 
+# Authorization key for LibCal admin interface
+LIBCAL_TOKEN_ENDPOINT = ''
+LIBCAL_ENDPOINT = ''
+LIBCAL_CREDENTIALS = {
+    'grant_type': '',
+    'client_id': '',
+    'client_secret': '',
+}
+
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
