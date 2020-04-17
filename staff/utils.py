@@ -13,7 +13,7 @@ import requests
 
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
-from library_website.settings.local import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS
+from library_website.settings import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
