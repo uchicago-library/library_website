@@ -778,11 +778,11 @@ def get_token(url, data):
     Returns:
         access token string
     """
-    resp = requests.post(url, data)
     try:
+        resp = requests.post(url, data)
         return resp.json()['access_token']
-    except KeyError:
-        return None
+    except(KeyError, requests.exceptions.MissingSchema):
+        return ''
 
 
 def lookup_staff_ids():
@@ -799,10 +799,10 @@ def lookup_staff_ids():
     url = LIBCAL_ENDPOINT
     tok = get_token(LIBCAL_TOKEN_ENDPOINT, LIBCAL_CREDENTIALS)
     hdrs = {"Authorization": ("Bearer " + tok)}
-    resp = requests.get(url, headers=hdrs)
     try:
+        resp = requests.get(url, headers=hdrs)
         # the wrong URL will not return JSON
         json = resp.json()
         return {person['email']: person['id'] for person in json}
-    except JSONDecodeError:
-        return None
+    except(JSONDecodeError, requests.exceptions.MissingSchema):
+        return ''
