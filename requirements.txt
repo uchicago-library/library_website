@@ -1,11 +1,11 @@
 beautifulsoup4==4.6.0
-bleach==3.1.1
+bleach==3.1.4
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
 Django==2.2.12
 django-appconf==1.0.2
-django-bleach==0.3.0
+django-bleach==0.6.1
 django-compressor==2.1
 django-cors-headers==2.2.0
 django-libsass==0.6
@@ -26,7 +26,7 @@ libsass==0.10.1
 lxml
 networkx
 openpyxl
-Pillow==5.4.1
+Pillow==6.2.2
 -e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 -e git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
 pocli==0.1.10
