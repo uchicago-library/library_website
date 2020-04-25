@@ -190,6 +190,8 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+WAGTAILEMBEDS_RESPONSIVE_HTML = True
+
 # Phone number format
 PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
 PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
