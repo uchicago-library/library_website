@@ -247,17 +247,17 @@ WAGTAILSEARCH_BACKENDS = {
 # https://github.com/OttoYiu/django-cors-headers
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'catalog.lib.uchicago.edu',
-    'catalogtest.lib.uchicago.edu',
-    'dldc1.lib.uchicago.edu',
-    'dldc2.lib.uchicago.edu',
-    'dldc3.lib.uchicago.edu',
-    'forms2.lib.uchicago.edu',
-    'guides.lib.uchicago.edu',
-    'rooms.lib.uchicago.edu',
-    'sfx.lib.uchicago.edu',
-    'sfx.lib.uchicago.edu:3103',
-    'vufindtest.lib.uchicago.edu',
+    'https://catalog.lib.uchicago.edu',
+    'https://catalogtest.lib.uchicago.edu',
+    'https://dldc1.lib.uchicago.edu',
+    'https://dldc2.lib.uchicago.edu',
+    'https://dldc3.lib.uchicago.edu',
+    'http://forms2.lib.uchicago.edu',
+    'http://guides.lib.uchicago.edu',
+    'https://guides.lib.uchicago.edu',
+    'https://rooms.lib.uchicago.edu',
+    'https://sfx.lib.uchicago.edu',
+    'https://sfx.lib.uchicago.edu:3103',
 )
 CORS_ALLOW_METHODS = (
     'GET',
