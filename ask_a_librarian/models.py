@@ -38,7 +38,10 @@ class AskPage(PublicBasePage, ContactFields):
     )
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     secondary_phone_number = models.CharField(
-        validators=[phone_regex], max_length=12, blank=True
+        validators=[phone_regex],
+        max_length=12,
+        blank=True,
+        verbose_name="SMS Number"
     )
     schedule_appointment_page = models.ForeignKey(
         'wagtailcore.Page',
