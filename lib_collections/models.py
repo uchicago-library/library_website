@@ -602,6 +602,29 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
+    # @route(r'^object/(?P<manifid>[-\w]+)/$')
+    # def object(self, request, *args, **kwargs):
+    #     """
+    #     Route for Digital Collection Object.
+    #     """
+
+    #     template = "lib_collections/collection_object_page_matt.html"
+
+    #     context = super().get_context(request)
+    #     context["manifid"] = kwargs["manifid"]
+    #     # context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
+    #     # context["slug"] = slugify(self.title)
+    #     # context["manifest_url"] = mk_manifest_url(
+    #     #     kwargs["manifid"], slugify(self.title)
+    #     # )
+    #     # context["object_title"] = "Thing!"
+    #     # context["marklogic"] = get_record(context["manifest_url"])
+    #     # context["keys"] = context["marklogic"].keys()
+    #     # context["values"] = context["marklogic"].values()
+    #     # context["parent"] = self.get_parent()
+
+    #     return TemplateResponse(request, template, context)
+
     subpage_types = ['public.StandardPage']
 
     content_panels = Page.content_panels + [
@@ -629,7 +652,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement', label='Related Collection'),
+        InlinePanel('related_collection_placement',
+                    label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -898,7 +922,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(
+        max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',

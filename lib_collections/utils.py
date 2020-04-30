@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 import requests
 
-from pyiiif.pres_api.utils import get_thumbnail
+# from pyiiif.pres_api.utils import get_thumbnail
 
 from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
                          NoCollectionFoundError, NoCollectionParameterError)
