@@ -615,8 +615,9 @@ class GroupIndexPage(BasePage):
             currentlevel = groups_active
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(ancestor.content_type
-                       ) in ['group page', 'group index page']:
+                if str(ancestor.content_type) in [
+                    'group | group page', 'group | group index page'
+                ]:
                     nextlevels = list(
                         filter(
                             lambda g: g['url'] == ancestor.url, currentlevel

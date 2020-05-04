@@ -398,9 +398,7 @@ class IntranetUnitsIndexPage(BasePage):
         FieldPanel('intro')
     ] + BasePage.content_panels
 
-    subpage_types = [
-        'intranetunits.IntranetUnitsPage'
-    ]
+    subpage_types = ['intranetunits.IntranetUnitsPage']
 
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
@@ -431,7 +429,8 @@ class IntranetUnitsIndexPage(BasePage):
             while ancestors:
                 ancestor = ancestors.pop(0)
                 if str(ancestor.content_type) in [
-                    'intranet units page', 'intranet units index page'
+                    'intranetunits | intranet units page',
+                    'intranetunits | intranet units index page'
                 ]:
                     nextlevels = list(
                         filter(
