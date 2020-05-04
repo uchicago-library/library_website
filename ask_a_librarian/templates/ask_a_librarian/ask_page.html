@@ -27,16 +27,16 @@
           <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
         {% endif %}
         {% if self.phone_number %}
-          <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
+          <li><span class="material-icons" style="font-size: 2rem; vertical-align: middle;" aria-hidden="true">phone</span> {{self.phone_number}}</li>
         {% endif %}
         {% if self.secondary_phone_number %}
-          <li><i class="fa fa-phone-square fa-2x"></i> {{self.secondary_phone_number}}</li>
+          <li><span class="material-icons" style="font-size: 2rem; vertical-align: middle;">textsms</span>  {{self.secondary_phone_number}}</li>
         {% endif %}
         {% if self.schedule_appointment_page %}
-          <li><a href="{{self.schedule_appointment_page.url}}"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
+          <li><a href="{{self.schedule_appointment_page.url}}"><span class="material-icons" style="font-size: 2rem; vertical-align: middle;" aria-hidden="true">event_available</span> Schedule an Appointment</a></li>
         {% endif %}
         {% if self.visit_page %}
-          <li><a href="{{self.visit_page.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit</a></li>
+          <li><a href="{{self.visit_page.url}}"><span class="material-icons" style="font-size: 2rem; vertical-align: middle;" aria-hidden="true">location_on</span> Visit</a></li>
         {% endif %}
       </ul>
     </div><!--/.rightside-mod-->
