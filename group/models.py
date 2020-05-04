@@ -20,6 +20,8 @@ from base.models import (
 )
 from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 
+GROUP_PAGE_CONTENT_TYPES = ['group | group page', 'group | group index page']
+
 
 def default_end_time():
     """
@@ -615,9 +617,7 @@ class GroupIndexPage(BasePage):
             currentlevel = groups_active
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(ancestor.content_type) in [
-                    'group | group page', 'group | group index page'
-                ]:
+                if str(ancestor.content_type) in GROUP_PAGE_CONTENT_TYPES:
                     nextlevels = list(
                         filter(
                             lambda g: g['url'] == ancestor.url, currentlevel

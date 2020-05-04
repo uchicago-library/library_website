@@ -15,6 +15,11 @@ from group.models import (
 )
 from staff.models import StaffPage
 
+INTRANET_UNIT_PAGE_CONTENT_TYPES = [
+    'intranetunits | intranet units page',
+    'intranetunits | intranet units index page'
+]
+
 
 class IntranetUnitsReportsPageTable(Orderable, Report):
     """
@@ -428,10 +433,9 @@ class IntranetUnitsIndexPage(BasePage):
             currentlevel = units
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(ancestor.content_type) in [
-                    'intranetunits | intranet units page',
-                    'intranetunits | intranet units index page'
-                ]:
+                if str(
+                    ancestor.content_type
+                ) in INTRANET_UNIT_PAGE_CONTENT_TYPES:
                     nextlevels = list(
                         filter(
                             lambda g: g['url'] == ancestor.url, currentlevel
