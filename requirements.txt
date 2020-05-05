@@ -1,9 +1,9 @@
-beautifulsoup4==4.6.0
+beautifulsoup4==4.8.2
 bleach==3.1.4
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
-Django==3.0.5
+Django==3.0.6
 django-appconf==1.0.4
 django-bleach==0.6.1
 django-compressor==2.4
@@ -42,7 +42,7 @@ six==1.14.0
 sqlparse==0.3.1
 Unidecode==1.1.1
 urllib3==1.25.9
-wagtail==2.8.1
+wagtail==2.9
 wagtailmedia==0.5.0
 wagtail-cache==1.0.0
 wheel==0.24.0

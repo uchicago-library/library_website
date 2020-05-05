@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from wagtail.core import models
+from wagtail.core import models, Site
 from wagtail.search.models import Query
 
 
@@ -38,7 +38,8 @@ def search(
 
     # Search
     if query_string != '':
-        pages = models.Page.objects.filter(path__startswith=(path or request.site.root_page.path))
+        site = Site.find_for_request(request)
+        pages = models.Page.objects.filter(path__startswith=(path or site.root_page.path))
 
         if not show_unpublished:
             pages = pages.live()
