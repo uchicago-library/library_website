@@ -781,6 +781,18 @@ class ButtonBlock(StructBlock):
         template = 'base/blocks/button.html'
 
 
+class AnchorTargetBlock(StructBlock):
+    """
+    Allows authors to add an ID target for Wagtail's anchor link.
+    """
+    anchor_id_name = CharBlock(max_length=50)
+
+    class Meta:
+        icon = 'tag'
+        template = 'base/blocks/anchor_target.html'
+        label = 'Anchor link target'
+
+
 class ClearBlock(StructBlock):
     """
     Allows authors to add a clear between floated elements.
@@ -1019,6 +1031,10 @@ class DefaultBodyFields(StreamBlock):
         icon='date', template='base/blocks/agenda.html'
     )
     reusable_content = ReusableContentBlock()
+    anchor_target = AnchorTargetBlock(
+        help_text=
+        'Where you want an anchor link to jump to. Must exactly match the "#" label supplied in anchor link (found in Paragraph streamfield).'
+    )
     clear = ClearBlock()
 
     # Begin TableBlock Setup
