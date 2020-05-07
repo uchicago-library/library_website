@@ -17,21 +17,6 @@ def manifest_url_to_cho(u):
     return '/digital_collections/IIIF_Files{}'.format(path)
 
 
-# def manifest_url_to_dc_xml(u):
-#     # /digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2N3E51-1908-S2/G4104-C6-2N3E51-1908-S2.dc.xml
-#     return '{}.dc.xml'.format(manifest_url_to_cho(u))
-
-
-# def manifest_url_to_agg(u):
-#     # /aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2N3E51-1908-S2/G4104-C6-2N3E51-1908-S2.dc.xml
-#     return '/aggregation{}'.format(manifest_url_to_cho(u))
-
-
-# def manifest_url_to_rem(u):
-#     # /rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2N3E51-1908-S2/G4104-C6-2N3E51-1908-S2
-#     return '/rem{}'.format(manifest_url_to_cho(u))
-
-
 def sp_query(s):
     return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
               FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
@@ -56,22 +41,43 @@ def collections_query(manifest_url):
 
 test_url = 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-2N3E51-1908-S2/G4104-C6-2N3E51-1908-S2.json'
 
-def triples_to_dict(dct):
+
+def align_field_names(dct, wagtail_field_names):
+    filtered_names = [item
+                      for item in wagtail_field_names
+                      if item in dct.keys()]
+    updated_dict = {key: dct[key] for key in filtered_names}
+    return updated_dict
+
+
+def triples_to_dict(dct, wagtail_field_names):
     try:
         results = dct['results']['bindings'][0]
-        return { key: results[key]['value'] for key in results.keys() }
+        field_dict = {
+            key.capitalize(): results[key]['value'] for key in results.keys()
+        }
+        if wagtail_field_names:
+            return align_field_names(field_dict, wagtail_field_names)
+        else:
+            return field_dict
     except KeyError:
         raise Exception("Mark Logic result not formatted as expected")
 
-def get_record(manifest_url):
+
+def get_raw_record(manifest_url, wagtail_field_names):
     r = requests.get(
         auth=HTTPBasicAuth(
             MARKLOGIC_LDR_USER,
             MARKLOGIC_LDR_PASSWORD,
-        ),  
-        headers={'Content-type': 'text/turtle'},  
+        ),
+        headers={'Content-type': 'text/turtle'},
         params={'query': sp_query(manifest_url)},
         url='http://marklogic.lib.uchicago.edu:8008/v1/graphs/sparql'
     )
     j = json.loads(r.content.decode('utf-8'))
-    return triples_to_dict(j)
+    return j
+
+
+def get_record(manifest_url, wagtail_field_names):
+    raw_record = get_raw_record(manifest_url, wagtail_field_names)
+    return triples_to_dict(raw_record, wagtail_field_names)

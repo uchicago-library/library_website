@@ -485,8 +485,9 @@ class CollectionPageSearch(Orderable, CSearch):
         'lib_collections.CollectionPage', related_name="col_search"
     )
 
-
 # Collection page content type
+
+
 class CollectionPage(RoutablePageMixin, PublicBasePage):
     """
     Pages for individual collections.
@@ -495,6 +496,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
+
+    def metadata_fields(self):
+        return CollectionPageObjectMetadata.objects.filter(page_id=self.id)
+
+    def metadata_field_names(self):
+        query_set = self.metadata_fields().values_list('edm_field_label')
+        return [field[0] for field in query_set]
 
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
@@ -563,22 +571,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
-    @route(r'^viewer/$')
-    def viewer(self, request, *args, **kwargs):
-        """
-        Individual image view. Template renders the image
-        displayed in the Universal Viewer.
-        """
-        # context = super().get_context(request)
-        self.is_viewer = True
-
-        # Override the page title field
-        # self.title = marklogic.get_record(request.GET.get('manifest'))['label']
-
-        return TemplateResponse(
-            request, self.get_template(request), self.get_context(request)
-        )
-
     @route(r'^object/(?P<manifid>[-\w]+)/$')
     def object(self, request, *args, **kwargs):
         """
@@ -587,6 +579,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_object_page_matt.html"
 
+        field_names = self.metadata_field_names()
+
         context = super().get_context(request)
         context["manifid"] = kwargs["manifid"]
         context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
@@ -594,36 +588,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["manifest_url"] = mk_manifest_url(
             kwargs["manifid"], slugify(self.title)
         )
-        context["object_title"] = "Thing!"
-        context["marklogic"] = get_record(context["manifest_url"])
+        context["marklogic"] = get_record(
+            context["manifest_url"], field_names
+        )
         context["keys"] = context["marklogic"].keys()
         context["values"] = context["marklogic"].values()
-        # context["parent"] = self.get_parent()
 
         return TemplateResponse(request, template, context)
-
-    # @route(r'^object/(?P<manifid>[-\w]+)/$')
-    # def object(self, request, *args, **kwargs):
-    #     """
-    #     Route for Digital Collection Object.
-    #     """
-
-    #     template = "lib_collections/collection_object_page_matt.html"
-
-    #     context = super().get_context(request)
-    #     context["manifid"] = kwargs["manifid"]
-    #     # context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
-    #     # context["slug"] = slugify(self.title)
-    #     # context["manifest_url"] = mk_manifest_url(
-    #     #     kwargs["manifid"], slugify(self.title)
-    #     # )
-    #     # context["object_title"] = "Thing!"
-    #     # context["marklogic"] = get_record(context["manifest_url"])
-    #     # context["keys"] = context["marklogic"].keys()
-    #     # context["values"] = context["marklogic"].values()
-    #     # context["parent"] = self.get_parent()
-
-    #     return TemplateResponse(request, template, context)
 
     subpage_types = ['public.StandardPage']
 
