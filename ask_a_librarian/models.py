@@ -113,7 +113,7 @@ class AskPage(PublicBasePage, ContactFields):
         Return an html link for contacting
         a librarian by email.
         """
-        text = '<i class="fa fa-envelope-o fa-2x"></i> Email'
+        text = '<span class="material-icons ask-icons" aria-hidden="true">mail_outline</span> Email'
         if self.link_page:
             return '<a href="%s">%s</a>' % (self.link_page.url, text)
         elif self.email:

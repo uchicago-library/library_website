@@ -1053,6 +1053,11 @@ table.etable>tbody>tr {
   }
 }
 
+.ask-icons {
+  font-size: 2rem;
+  vertical-align: sub;
+}
+
 .ask-rightside {
   @extend .distinct-rightside;
   background-color: #fff;
