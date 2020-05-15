@@ -46,6 +46,8 @@ $accent-font: 'Cormorant Garamond', serif;
  * --------------------------------------------------
  */
 
+$default-link: #2A5DB0;
+
 // Unv Color Palette
 
 $darkgray: #767676;
@@ -112,6 +114,7 @@ $divider: 1px solid $darkgray;
   border-radius: 0;
   padding: 6px 12px;
   margin-bottom: 10px;
+  text-decoration: none;
   &:after {
     content: "\0020\f101";
     font-family: FontAwesome;

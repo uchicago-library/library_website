@@ -74,6 +74,12 @@ Right Sidebar: Widget Items
     padding-left: 1em;
     padding-top: 35px;
   }
+  a { // ADA
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   // Library specific colors
   &.crerar>ul>li>a {
@@ -165,6 +171,10 @@ Right Sidebar: Widget Items
   }
   a {
     color:  $active-hover;
+    &:hover {
+      color: $default-link;
+      text-decoration: none;
+    }
   }
   h2, h3 {
     font-weight: 400;
@@ -246,6 +256,7 @@ Right Sidebar: Widget Items
   a {
     color: $darkgray;
     display: inline;
+    text-decoration: none;
     &.viewall {
         &:before {
         content: "\0020|\0020";

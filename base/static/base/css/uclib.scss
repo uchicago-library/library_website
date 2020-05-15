@@ -98,18 +98,19 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   color: #E7E5E2;
   left: 0;
   top: 0;
+  a {
+    color: #fff;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
   .h2 {
     color: #fff;
     font-weight: 400;
     font-size: 1.2em;
     margin-top: 0;
     padding: 10px 15px;
-    &:hover {
-      text-decoration: none;
-    }
-    a & {
-      color: #fff;
-    }
   }
   &.crerar {
     background-color: $trans-blue;
@@ -722,6 +723,12 @@ figure.embed {
   @extend .btn-morelink;
 }
 
+.spaces-toggle {
+  a {
+    text-decoration: none;
+  }
+}
+
 .btn-list-toggle {  //Behavior togglers with maroon lines
   color: $darkgray;
   background-color: #fff;
@@ -808,6 +815,10 @@ figure.embed {
  .distinct-list { //table base
   a {
     color: #8a4a20;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
   }
   .material-icons, .fa {
     padding-right: 10px;
