@@ -31,6 +31,7 @@ html, body {  /* The html and body elements cannot have any padding or margin. *
 }
 
 body {
+  color: #000000;
   margin-bottom: 0;
   font-family: 'ProximaNova-Regular', "Arial", sans-serif;
 }
@@ -52,10 +53,13 @@ html, body {
 
 /* Links */
 a {
-  text-decoration: none;
+  color: $default-link;
   outline: 0;
+  text-decoration: underline;
     &:hover, &:focus {
-      color: #5B8FA8;
+      color: #487286;
+      outline-offset: 1px;
+      text-decoration: none;
     }
   &.social {
     color: #767676;
