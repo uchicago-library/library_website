@@ -269,7 +269,7 @@ Right Sidebar: Widget Items
   }
 }
 
- .rightside ul, .home-modwrapper ul {
+.home-modwrapper ul {
   list-style: none;
   margin-left: 0;
   padding-left: 0;
@@ -277,8 +277,14 @@ Right Sidebar: Widget Items
 
 .rightside-mod { //Wrapper for individual modules
   padding: 0 0 2em 0;
+  ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1em;
+    text-indent: -1em;
+  }
   li {
-    margin-bottom: 0.25em;
+    margin-bottom: 0.5em;
   }
   .collectionpage & {
     padding-bottom: 1em;
