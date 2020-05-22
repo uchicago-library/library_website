@@ -1005,37 +1005,72 @@ class DefaultBodyFields(StreamBlock):
     Standard default streamfield options to be shared
     across content types.
     """
+    paragraph = ParagraphBlock(group="Format and Text")
     h2 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h2.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h2.html',
+        group="Format and Text"
     )
     h3 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h3.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h3.html',
+        group="Format and Text"
     )
     h4 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h4.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h4.html',
+        group="Format and Text"
     )
     h5 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h5.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h5.html',
+        group="Format and Text"
     )
-    h6 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h6.html'
+    blockquote = BlockQuoteBlock(group="Format and Text")
+    pullquote = PullQuoteBlock(group="Format and Text")
+    reusable_content = ReusableContentBlock(group="Format and Text")
+    image = ImageBlock(label='Image', group="Images and Media")
+    solo_image = SoloImage(
+        help_text='Single image with caption on the right',
+        group="Images and Media"
     )
-    paragraph = ParagraphBlock()
-    image = ImageBlock(label='Image')
-    blockquote = BlockQuoteBlock()
-    pullquote = PullQuoteBlock()
-    button = ButtonBlock()
-    video = EmbedBlock(icon='media')
-    code = CodeBlock()
-    agenda_item = AgendaItemFields(
-        icon='date', template='base/blocks/agenda.html'
+    duo_image = DuoImage(
+        help_text='Two images side by side with captions below',
+        group="Images and Media"
     )
-    reusable_content = ReusableContentBlock()
+    local_media = LocalMediaBlock(
+        label="Video or Audio",
+        help_text='Audio or video files that have been uploaded into Wagtail',
+        group="Images and Media"
+    )
+    video = EmbedBlock(
+        icon='media',
+        label='External Video Embed',
+        help_text='Embed video that is hosted on YouTube or Vimeo',
+        group="Images and Media"
+    )
+    button = ButtonBlock(group="Links")
+    image_link = ImageLink(
+        label="Linked Image",
+        help_text='A fancy link made out of a thumbnail and simple text',
+        group="Links"
+    )
+    staff_listing = StaffListingFields(
+        icon='group',
+        template='base/blocks/staff_listing.html',
+        help_text=
+        'Automatically displays selected staff with title, contact, and link to staff profile page',
+        group="Links"
+    )
     anchor_target = AnchorTargetBlock(
         help_text=
-        'Where you want an anchor link to jump to. Must exactly match the "#" label supplied in anchor link (found in Paragraph streamfield).'
+        'Where you want an anchor link to jump to. Must exactly match the "#" label supplied in anchor link (found in Paragraph streamfield).',
+        group="Links"
     )
-    clear = ClearBlock()
 
     # Begin TableBlock Setup
     language = translation.get_language()
@@ -1062,19 +1097,23 @@ class DefaultBodyFields(StreamBlock):
         help_text='Right + click in a table cell for more options. \
 Use <em>text</em> for italics, <strong>text</strong> for bold, and \
 <a href="https://duckduckgo.com">text</a> for links.',
+        group="Layout and Data"
     )
-    staff_listing = StaffListingFields(
-        icon='group', template='base/blocks/staff_listing.html'
+    agenda_item = AgendaItemFields(
+        icon='date',
+        template='base/blocks/agenda.html',
+        group="Layout and Data"
     )
-    solo_image = SoloImage(help_text='Single image with caption on the right')
-    duo_image = DuoImage(help_text='Two images stacked side by side')
-    image_link = ImageLink(
-        help_text='A fancy link made out of a thumbnail and simple text'
+    clear = ClearBlock(
+        lable="Clear Formatting",
+        help_text='Resets layout before or after floated images.',
+        group="Layout and Data"
     )
-    local_media = LocalMediaBlock(
-        help_text='Audio or video files that are locally hosted'
+    code = CodeBlock(group="Layout and Data")
+    html = RawHTMLBlock(
+        help_text='Display code as text for tutorial or documentation purposes',
+        group="Layout and Data"
     )
-    html = RawHTMLBlock()
 
     class Meta:
         required = False
