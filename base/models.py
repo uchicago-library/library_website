@@ -1338,6 +1338,18 @@ elements and bulleted lists'
     # Searchable fields
     search_fields = Page.search_fields + BasePage.search_fields
 
+    # CGIMail Form
+    cgi_mail_form = models.TextField(
+        blank=True,
+        help_text='JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this'
+    )
+
+    cgi_mail_form_thank_you_text = RichTextField(
+        blank=True,
+        help_text='Text to display after the form has been submitted'
+    )
+
     content_panels = [
         MultiFieldPanel(
             [

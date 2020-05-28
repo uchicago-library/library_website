@@ -1,3 +1,4 @@
+{% load render_bundle from webpack_loader %}
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
@@ -246,6 +247,11 @@
                 {% autoescape off %}
                     {{index_pages_html}}
                 {% endautoescape %}
+
+                {% if self.cgi_mail_form %}
+                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}"></div>
+                    {% render_bundle 'CGIMailForm' %}
+                {% endif %}
 
                 {% if self.has_richtext_widget %}
                     <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
