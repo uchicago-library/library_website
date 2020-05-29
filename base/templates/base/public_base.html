@@ -272,13 +272,13 @@
                                 </div>
                                 <div class="col-xs-8">
                                     {% if featured_lib_expert_profile %}
-                                        <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
+                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
                                     {% else %}
-                                        <h3>Ask {{featured_lib_expert_name}} about:</h3>
+                                    <h3>Ask {{featured_lib_expert_name}} about:</h3>
                                     {% endif %} 
                                     <ul>
                                         {% for link in featured_lib_expert_links %}
-                                            <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
+                                        <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
                                         {% endfor %}
                                     </ul>
                                     <h3>Not sure where to start?</h3>
@@ -288,7 +288,18 @@
                                 </div>
                                 <div class="col-xs-4 home-profile">
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+
                                 </div>
+				{% if libcal_id %}
+				<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+				<script>
+				 jQuery.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
+				     var id_num = "{{ libcal_id }}";
+				     jQuery("#mysched_{{ libcal_id }}").LibCalMySched({iid: 482, lid: 0, gid: 0, uid: id_num, width: 560, height: 680, title: 'Make an Appointment', domain: 'https://api3.libcal.com'});
+				 });
+				</script>
+				<button id="mysched_{{ libcal_id }}" href="#">Schedule Appointment</button>
+				{% endif %}
                             </div>
                         {% endif %}
                     </div> <!-- // row -->

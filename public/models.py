@@ -9,7 +9,7 @@ from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
 from public.utils import get_features
 from staff.models import StaffPage
-from staff.utils import lookup_staff_ids
+from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
@@ -372,6 +372,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         person = block.value.get('library_expert')
         libguides = block.value.get('libguides')
         image = person.specific.profile_picture
+        email = person.specific.staff_page_email.first().email
         try:
             public_person = StaffPublicPage.objects.get(title=str(person))
         except:
@@ -392,7 +393,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             'person': person,
             'image': image,
             'profile': profile,
-            'links': links
+            'links': links,
+            'email': email
         }
 
     @property
@@ -432,6 +434,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         context = super(StandardPage, self).get_context(request)
         current_site = Site.find_for_request(request)
         has_featured_lib_expert = self.get_featured_lib_expert()[0]
+        # email = expert.staff_page_email.first().email
+        # libcal_dict = lookup_staff_ids()
 
         if has_featured_lib_expert:
             lib_expert_block = self.unpack_lib_expert_block(
@@ -443,6 +447,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             context['featured_lib_expert_image'] = lib_expert_block['image']
             context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
+            # context['libcal_dict'] = libcal_dict
+            context['libcal_id'] = libcal_id_by_email(
+                lib_expert_block['email'])
 
         context['has_search_widget'] = self.enable_search_widget
 
