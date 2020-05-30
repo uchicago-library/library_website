@@ -7,11 +7,15 @@ import {
   Input, TextArea, Select, Label, Legend,
 } from './index';
 
+import schema from './CGIMailFormSchema';
+
 const DOM_ELEMENT = document.getElementById('cgi-mail-form');
-const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json')); // TODO - error handling
+const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json'));
 const THANK_YOU_TXT = DOM_ELEMENT.getAttribute('data-thank-you') || '';
 const QUERYSTRING = window.location.search;
 const URLPARAMS = new URLSearchParams(QUERYSTRING);
+
+const validator = require('is-my-json-valid');
 
 function getType(e) {
   if (e.type === 'text' || e.type === 'email' || e.type === 'hidden') {
@@ -66,6 +70,27 @@ function defaultFieldMappings(e, state) {
   }
   return '';
 }
+
+const ErrorMessage = (props) => {
+  const { field, msg } = props;
+  return (
+    <p>
+      {field}
+      {' '}
+      {msg}
+    </p>
+  );
+};
+
+const InvalidJSON = (props) => {
+  const { errors } = props;
+  return (
+    <div className="alert alert-danger" role="alert">
+      <h2>There is a problem with the form JSON</h2>
+      {errors.map(e => <ErrorMessage field={e.field} msg={e.message} />)}
+    </div>
+  );
+};
 
 const buildField = (elm, state, handleChange) => {
   const id = elm.name || null;
@@ -281,9 +306,15 @@ class FormContainer extends React.Component {
   }
 
   render() {
+    const validate = validator(schema);
+    validate(FORM_JSON);
+    if (validate.errors) {
+      return <InvalidJSON errors={validate.errors} />;
+    }
     const { submitted, response } = this.state;
     const { form } = FORM_JSON;
     const formId = form.id || null;
+
     if (submitted && response) {
       return (
         <div className="form-container">
