@@ -4,6 +4,7 @@
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
 {% load public_tags %}
+{% load staff_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,16 +291,7 @@
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
 
                                 </div>
-				{% if libcal_id %}
-				<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-				<script>
-				 jQuery.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
-				     var id_num = "{{ libcal_id }}";
-				     jQuery("#mysched_{{ libcal_id }}").LibCalMySched({iid: 482, lid: 0, gid: 0, uid: id_num, width: 560, height: 680, title: 'Make an Appointment', domain: 'https://api3.libcal.com'});
-				 });
-				</script>
-				<button id="mysched_{{ libcal_id }}" href="#">Schedule Appointment</button>
-				{% endif %}
+				{% libcal_button staff_page email %}
                             </div>
                         {% endif %}
                     </div> <!-- // row -->

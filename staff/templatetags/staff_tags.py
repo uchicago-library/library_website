@@ -1,6 +1,6 @@
 from django import template
 from public.models import LocationPage, StaffPublicPage
-from staff.utils import lookup_staff_ids
+from staff.utils import libcal_id_by_email
 
 register = template.Library()
 
@@ -60,11 +60,30 @@ def staff_libcal_schedules(staff_page):
     emails = list(
         set(staff_page.staff_page_email.all().values_list('email', flat=True))
     )
-    ids = lookup_staff_ids()
 
     return {
         'emails': emails,
-        'ids': ids,
+    }
+
+
+@register.inclusion_tag('staff/libcal_button.html')
+def libcal_button(staff_page, email):
+    """
+    Passes staff libal information into the context for the Staff Page
+    index view.
+
+    Args:
+        Wagtail page
+
+    Output:
+        Dictionary containing a list of all staff email addresses and
+        a lookup table mapping email addresses to LibCalids
+
+    """
+    libcal_id = libcal_id_by_email(email)
+
+    return {
+        'libcal_id': libcal_id,
     }
 
 

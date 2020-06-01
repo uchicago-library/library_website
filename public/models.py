@@ -448,8 +448,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
             # context['libcal_dict'] = libcal_dict
-            context['libcal_id'] = libcal_id_by_email(
-                lib_expert_block['email'])
+            context['email'] = lib_expert_block['email']
 
         context['has_search_widget'] = self.enable_search_widget
 
@@ -878,13 +877,9 @@ class StaffPublicPage(PublicBasePage):
             building_str = None
 
         # dictionary with email addresses as keys and LibCal ids as values
-        libcal_ids = lookup_staff_ids()
+        # libcal_ids = lookup_staff_ids()
 
         # get user's LibCal id if they are set up for LibCal appointments
-        try:
-            libcal_id = libcal_ids[email]
-        except KeyError:
-            libcal_id = None
 
         context.update(
             {
@@ -898,7 +893,7 @@ class StaffPublicPage(PublicBasePage):
                 'department_name': department_name,
                 'department_full_name': department_full_name,
                 'email': email,
-                'libcal_id': libcal_id,
+                # 'libcal_id': libcal_id,
                 'expertises': expertises,
                 'libguide_url': libguide_url,
                 'library': building_str,
