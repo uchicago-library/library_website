@@ -21,6 +21,26 @@ const Input = (props) => {
   );
 };
 
+Input.defaultProps = {
+  id: null,
+  value: null,
+  onChange: null,
+  type: null,
+  name: null,
+  placeholder: null,
+  required: null,
+};
+
+Input.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  type: PropTypes.string,
+  name: PropTypes.string,
+  placeholder: PropTypes.string,
+  required: PropTypes.string,
+};
+
 const TextArea = (props) => {
   const {
     id, type, name, required, value, onChange,
@@ -38,6 +58,24 @@ const TextArea = (props) => {
   );
 };
 
+TextArea.defaultProps = {
+  id: null,
+  value: null,
+  onChange: null,
+  type: null,
+  name: null,
+  required: null,
+};
+
+TextArea.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  type: PropTypes.string,
+  name: PropTypes.string,
+  required: PropTypes.string,
+};
+
 const Option = (props) => {
   const {
     disabled, selected, value, text,
@@ -47,6 +85,20 @@ const Option = (props) => {
       {text}
     </option>
   );
+};
+
+Option.defaultProps = {
+  disabled: null,
+  selected: null,
+  value: null,
+  text: null,
+};
+
+Option.propTypes = {
+  disabled: PropTypes.bool,
+  selected: PropTypes.bool,
+  value: PropTypes.string,
+  text: PropTypes.string,
 };
 
 const makeOption = (elm) => {
@@ -77,6 +129,25 @@ const Select = (props) => {
   );
 };
 
+Select.defaultProps = {
+  id: null,
+  value: null,
+  onChange: null,
+  type: null,
+  name: null,
+  required: null,
+};
+
+Select.propTypes = {
+  id: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  type: PropTypes.string,
+  name: PropTypes.string,
+  required: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 const Label = (props) => {
   const { htmlFor, text, required } = props;
   if (required) {
@@ -91,9 +162,23 @@ const Label = (props) => {
   return <label htmlFor={htmlFor}>{text}</label>;
 };
 
+Label.defaultProps = {
+  required: null,
+};
+
+Label.propTypes = {
+  htmlFor: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  required: PropTypes.bool,
+};
+
 const Legend = (props) => {
   const { text } = props;
   return <legend>{text}</legend>;
+};
+
+Legend.propTypes = {
+  text: PropTypes.string.isRequired,
 };
 
 export {

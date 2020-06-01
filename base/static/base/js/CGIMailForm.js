@@ -82,14 +82,25 @@ const ErrorMessage = (props) => {
   );
 };
 
+ErrorMessage.propTypes = {
+  field: PropTypes.string.isRequired,
+  msg: PropTypes.string.isRequired,
+};
+
 const InvalidJSON = (props) => {
   const { errors } = props;
   return (
     <div className="alert alert-danger" role="alert">
       <h2>There is a problem with the form JSON</h2>
-      {errors.map(e => <ErrorMessage field={e.field} msg={e.message} />)}
+      {errors.map(e => (
+        <ErrorMessage field={e.field} msg={e.message} />
+      ))}
     </div>
   );
+};
+
+InvalidJSON.propTypes = {
+  errors: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const buildField = (elm, state, handleChange) => {
@@ -221,6 +232,19 @@ const Section = (props) => {
   );
 };
 
+Section.defaultProps = {
+  title: null,
+  hidden: null,
+};
+
+Section.propTypes = {
+  title: PropTypes.string,
+  elements: PropTypes.arrayOf(PropTypes.object).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  hidden: PropTypes.bool,
+};
+
 const Sections = (props) => {
   const { data, handleChange, state } = props;
   return data.map(d => (
@@ -234,6 +258,14 @@ const Sections = (props) => {
   ));
 };
 
+const LoadingItemInfo = (props) => {
+  const { loading } = props;
+  if (loading === true) {
+    return <p className="text-success">Retrieving item information...</p>;
+  }
+  return '';
+};
+
 class FormContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -241,9 +273,42 @@ class FormContainer extends React.Component {
     this.state = {
       submitted: false,
       response: false,
-      itemInfo: false,
-      isLoadingItemInfo: true,
+      itemInfo: false, // eslint-disable-line react/no-unused-state
+      isLoadingItemInfo: false,
     };
+  }
+
+  componentDidMount() {
+    let itemServlet = 'http://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'; // TODO - make configurable
+    const bib = URLPARAMS.get('bib') || null;
+    const barcode = URLPARAMS.get('barcode') || null;
+    let itemInfo = false;
+    if (bib || barcode) {
+      itemInfo = true;
+      this.setState({
+        isLoadingItemInfo: true,
+      });
+      if (bib) {
+        itemServlet = `${itemServlet}&bib=${bib}`;
+      }
+      if (barcode) {
+        itemServlet = `${itemServlet}&barcode=${barcode}`;
+      }
+    }
+    if (itemInfo) {
+      return fetch(`${itemServlet}`)
+        .then(res => res.json())
+        .then((res) => {
+          this.setState({
+            itemInfo: res, // eslint-disable-line react/no-unused-state
+            isLoadingItemInfo: false,
+          });
+        })
+        .catch((error) => {
+          console.error(error); // eslint-disable-line no-console
+        });
+    }
+    return null;
   }
 
   handleRedirect = (res) => {
@@ -256,34 +321,6 @@ class FormContainer extends React.Component {
       });
     } else {
       // TODO - Failure message
-    }
-  }
-
-  componentDidMount() {
-    let itemServlet = 'http://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'; // TODO - make configurable
-    const bib = URLPARAMS.get('bib') || null;
-    const barcode = URLPARAMS.get('barcode') || null;
-    let itemInfo = false;
-    if (bib) {
-      itemInfo = true;
-      itemServlet = `${itemServlet}&bib=${bib}`;
-    }
-    if (barcode) {
-      itemInfo = true;
-      itemServlet = `${itemServlet}&barcode=${barcode}`;
-    }
-    if (itemInfo) {
-      return fetch(`${itemServlet}`)
-        .then(res => res.json())
-        .then((res) => {
-          this.setState({
-            itemInfo: res,
-            isLoadingItemInfo: false,
-          });
-        })
-        .catch((error) => {
-          console.error(error); // eslint-disable-line no-console
-        });
     }
   }
 
@@ -311,7 +348,7 @@ class FormContainer extends React.Component {
     if (validate.errors) {
       return <InvalidJSON errors={validate.errors} />;
     }
-    const { submitted, response } = this.state;
+    const { submitted, response, isLoadingItemInfo } = this.state;
     const { form } = FORM_JSON;
     const formId = form.id || null;
 
@@ -325,6 +362,7 @@ class FormContainer extends React.Component {
     }
     return (
       <div className="form-container">
+        <LoadingItemInfo loading={isLoadingItemInfo} />
         <form id={formId} onSubmit={this.handleSubmit}>
           <Sections
             data={form.sections}
