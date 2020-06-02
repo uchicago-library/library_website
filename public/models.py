@@ -1,8 +1,16 @@
 from datetime import date
 
+from base.models import (
+    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
+    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+)
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
+from public.utils import get_features
+from staff.models import StaffPage
+from subjects.utils import get_subjects_html
+from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
     PageChooserPanel, StreamFieldPanel, TabbedInterface
@@ -15,15 +23,6 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
-
-from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
-    PublicBasePage, RawHTMLBodyField, SocialMediaFields
-)
-from public.utils import get_features
-from staff.models import StaffPage
-from subjects.utils import get_subjects_html
-from units.models import BUILDINGS
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
@@ -59,6 +58,7 @@ class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
     person = FeaturedLibraryExpertBaseBlock(
         icon='view',
         required=False,
+        template='public/blocks/featured_library_expert.html'
     )
 
 
@@ -69,6 +69,7 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     person = FeaturedLibraryExpertBlock(
         icon='view',
         required=False,
+        template='public/blocks/featured_library_expert.html'
     )
 
 
