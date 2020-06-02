@@ -9,7 +9,6 @@ from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
 from public.utils import get_features
 from staff.models import StaffPage
-from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
@@ -434,8 +433,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         context = super(StandardPage, self).get_context(request)
         current_site = Site.find_for_request(request)
         has_featured_lib_expert = self.get_featured_lib_expert()[0]
-        # email = expert.staff_page_email.first().email
-        # libcal_dict = lookup_staff_ids()
 
         if has_featured_lib_expert:
             lib_expert_block = self.unpack_lib_expert_block(
@@ -447,7 +444,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             context['featured_lib_expert_image'] = lib_expert_block['image']
             context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
-            # context['libcal_dict'] = libcal_dict
             context['email'] = lib_expert_block['email']
 
         context['has_search_widget'] = self.enable_search_widget
@@ -876,11 +872,6 @@ class StaffPublicPage(PublicBasePage):
         except AttributeError:
             building_str = None
 
-        # dictionary with email addresses as keys and LibCal ids as values
-        # libcal_ids = lookup_staff_ids()
-
-        # get user's LibCal id if they are set up for LibCal appointments
-
         context.update(
             {
                 'bio': self.get_bio(),
@@ -893,7 +884,6 @@ class StaffPublicPage(PublicBasePage):
                 'department_name': department_name,
                 'department_full_name': department_full_name,
                 'email': email,
-                # 'libcal_id': libcal_id,
                 'expertises': expertises,
                 'libguide_url': libguide_url,
                 'library': building_str,

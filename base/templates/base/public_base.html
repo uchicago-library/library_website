@@ -273,13 +273,13 @@
                                 </div>
                                 <div class="col-xs-8">
                                     {% if featured_lib_expert_profile %}
-                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
+				        <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
                                     {% else %}
-                                    <h3>Ask {{featured_lib_expert_name}} about:</h3>
+					<h3>Ask {{featured_lib_expert_name}} about:</h3>
                                     {% endif %} 
                                     <ul>
                                         {% for link in featured_lib_expert_links %}
-                                        <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
+                                            <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
                                         {% endfor %}
                                     </ul>
                                     <h3>Not sure where to start?</h3>
@@ -292,7 +292,7 @@
 				    {% libcal_button staff_page email %}
                                 </div>
                             </div>
-                            {% endif %}
+                        {% endif %}
                    </div> <!-- // row -->
                 {% endif %}
 

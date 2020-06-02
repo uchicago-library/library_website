@@ -451,11 +451,6 @@ LIBCAL_CREDENTIALS = {
     'client_secret': '',
 }
 
-# Globally-accessible template tags
-OPTIONS = {
-    'libraries': {'libcal_templates': 'staff.templates'},
-}
-
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
