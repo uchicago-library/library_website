@@ -58,7 +58,6 @@ class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
     person = FeaturedLibraryExpertBaseBlock(
         icon='view',
         required=False,
-        template='public/blocks/featured_library_expert.html'
     )
 
 
@@ -69,7 +68,6 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     person = FeaturedLibraryExpertBlock(
         icon='view',
         required=False,
-        template='public/blocks/featured_library_expert.html'
     )
 
 
