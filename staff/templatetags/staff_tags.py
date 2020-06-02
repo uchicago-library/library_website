@@ -46,8 +46,8 @@ def staff_email_addresses(staff_page):
 @register.inclusion_tag('staff/staff_libcal_schedules.html')
 def staff_libcal_schedules(staff_page):
     """
-    Passes staff libal information into the context for the Staff Page
-    index view.
+    Passes staff libcal information into the context for the Staff Page index
+    view.
 
     Args:
         Wagtail page
@@ -69,15 +69,14 @@ def staff_libcal_schedules(staff_page):
 @register.inclusion_tag('staff/libcal_button.html')
 def libcal_button(staff_page, email):
     """
-    Passes staff libal information into the context for the Staff Page
-    index view.
+    Given a staff page and an email address, inserts a libcal scheduler button
+    for the staff member whose email address that is into a template.
 
     Args:
-        Wagtail page
+        Staff page, Email address (string)
 
     Output:
-        Dictionary containing a list of all staff email addresses and
-        a lookup table mapping email addresses to LibCalids
+        Staff member's libcal id
 
     """
     libcal_id = libcal_id_by_email(email)
