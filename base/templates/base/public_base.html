@@ -289,12 +289,11 @@
                                 </div>
                                 <div class="col-xs-4 home-profile">
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-
+				    {% libcal_button staff_page email %}
                                 </div>
-				{% libcal_button staff_page email %}
                             </div>
-                        {% endif %}
-                    </div> <!-- // row -->
+                            {% endif %}
+                   </div> <!-- // row -->
                 {% endif %}
 
                 {% if self.news_feed_source %}
