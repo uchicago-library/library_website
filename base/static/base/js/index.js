@@ -117,6 +117,7 @@ const Select = (props) => {
   } = props;
   return (
     <select
+      className="form-control"
       id={id}
       type={type}
       onChange={onChange}

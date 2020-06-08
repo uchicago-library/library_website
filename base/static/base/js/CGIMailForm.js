@@ -361,8 +361,13 @@ class FormContainer extends React.Component {
     if (submitted && response) {
       return (
         <div className="form-container">
-          {renderHTML(THANK_YOU_TXT)}
-          {renderHTML(response)}
+          <div className="ty-message">
+            {renderHTML(THANK_YOU_TXT)}
+          </div>
+
+          <div className="cgi-message">
+            {renderHTML(response)}
+          </div>
         </div>
       );
     }
