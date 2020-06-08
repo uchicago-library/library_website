@@ -168,9 +168,15 @@ const buildField = (elm, state, handleChange) => {
   }
   if (getType(elm) === 'checkbox') {
     return (
-      <div className="form-group">
+      <div className="form-check">
         {getLabel(elm)}
-        <input id={id} type={type} name={name} required={required} />
+        <input
+          id={id}
+          type={type}
+          name={name}
+          required={required}
+          value={value}
+        />
       </div>
     );
   }
