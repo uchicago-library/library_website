@@ -811,5 +811,5 @@ def lookup_staff_ids():
 def libcal_id_by_email(emailaddr):
     try:
         return lookup_staff_ids()[emailaddr]
-    except KeyError:
+    except (KeyError, TypeError):
         return ''
