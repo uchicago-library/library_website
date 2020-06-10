@@ -9,6 +9,7 @@ from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
 from public.utils import get_features
 from staff.models import StaffPage
+from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
@@ -438,7 +439,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             lib_expert_block = self.unpack_lib_expert_block(
                 self.get_featured_lib_expert()[1], current_site
             )
+            has_libcal_schedule = libcal_id_by_email(lib_expert_block['email']) != ''
             context['has_featured_lib_expert'] = has_featured_lib_expert
+            context['has_libcal_schedule'] = has_libcal_schedule
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
             context['featured_lib_expert_name'] = lib_expert_block['person']
             context['featured_lib_expert_image'] = lib_expert_block['image']

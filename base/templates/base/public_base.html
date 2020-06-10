@@ -290,11 +290,11 @@
                                 <div class="home-profile">
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
                                 </div>
-                                <!-- MATT - please add if statement here -->
-                                    <div class="home-sched">
-                                        {% libcal_button staff_page email %}
-                                    </div>
-                                <!--  endif   -->
+				    {% if has_libcal_schedule %}
+				    <div class="home-sched">
+					{% libcal_button staff_page email %}
+				    </div>
+				    {% endif %}
                             </div>
                         {% endif %}
                    </div> <!-- // row -->
