@@ -565,27 +565,13 @@ figure.coll-thumb {
   }
 }
 
-#widget-explore-research-guides {
-  padding-left: 0;
-}
-
-// featured expert homepage module
-div#widget-featured-library-expert {
-  display: grid;
-  grid-template-columns: 65% 35%;
-  .home-module {
-    grid-column: span 2;
-  }
-}
-
-.home-profile {
+.home-profile { // featured profile on specialist module
   padding: 0;
   max-width: 110px;
 }
 
-.home-sched {
-  grid-column: span 2;
-  margin-left: auto;
+#widget-explore-research-guides {
+  padding-left: 0;
 }
 
 

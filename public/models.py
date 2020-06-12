@@ -9,7 +9,7 @@ from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
 from public.utils import get_features
 from staff.models import StaffPage
-from staff.utils import libcal_id_by_email
+from staff.utils import lookup_staff_ids
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
@@ -372,7 +372,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         person = block.value.get('library_expert')
         libguides = block.value.get('libguides')
         image = person.specific.profile_picture
-        email = person.specific.staff_page_email.first().email
         try:
             public_person = StaffPublicPage.objects.get(title=str(person))
         except:
@@ -393,8 +392,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             'person': person,
             'image': image,
             'profile': profile,
-            'links': links,
-            'email': email
+            'links': links
         }
 
     @property
@@ -439,15 +437,12 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             lib_expert_block = self.unpack_lib_expert_block(
                 self.get_featured_lib_expert()[1], current_site
             )
-            has_libcal_schedule = libcal_id_by_email(lib_expert_block['email']) != ''
             context['has_featured_lib_expert'] = has_featured_lib_expert
-            context['has_libcal_schedule'] = has_libcal_schedule
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
             context['featured_lib_expert_name'] = lib_expert_block['person']
             context['featured_lib_expert_image'] = lib_expert_block['image']
             context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
-            context['email'] = lib_expert_block['email']
 
         context['has_search_widget'] = self.enable_search_widget
 
@@ -875,6 +870,15 @@ class StaffPublicPage(PublicBasePage):
         except AttributeError:
             building_str = None
 
+        # dictionary with email addresses as keys and LibCal ids as values
+        libcal_ids = lookup_staff_ids()
+
+        # get user's LibCal id if they are set up for LibCal appointments
+        try:
+            libcal_id = libcal_ids[email]
+        except KeyError:
+            libcal_id = None
+
         context.update(
             {
                 'bio': self.get_bio(),
@@ -887,6 +891,7 @@ class StaffPublicPage(PublicBasePage):
                 'department_name': department_name,
                 'department_full_name': department_full_name,
                 'email': email,
+                'libcal_id': libcal_id,
                 'expertises': expertises,
                 'libguide_url': libguide_url,
                 'library': building_str,
