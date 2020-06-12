@@ -1,20 +1,7 @@
 {% load staff_tags %}
 
 {% for email in emails %}
-{% if ids|ofKey:email %}
 
+{% libcal_button staff_page email %}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>
- jQuery.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
-     var libcal_id = "{{ ids|ofKey:email }}";
-     jQuery("#mysched_{{ ids|ofKey:email }}").LibCalMySched({iid: 482, lid: 0, gid: 0, uid: libcal_id, width: 560, height: 680, title: 'Make an Appointment', domain: 'https://api3.libcal.com'});
- });
-</script>
-
-<!-- Place the following link anywhere in your page. Make sure the id "mysched_24751" matches with the above code: jQuery("#mysched_24751")  //-->
-<button id="mysched_{{ ids|ofKey:email }}" href="#">Schedule Appointment</button>
-
-{% else %}
-{% endif %}
 {% endfor %}

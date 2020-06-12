@@ -4,6 +4,7 @@
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
 {% load public_tags %}
+{% load staff_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -270,11 +271,11 @@
                                 <div class="home-module">
                                     <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
                                 </div>
-                                <div class="col-xs-8">
+                                <div class="home-expert-info">
                                     {% if featured_lib_expert_profile %}
-                                        <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
+                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
                                     {% else %}
-                                        <h3>Ask {{featured_lib_expert_name}} about:</h3>
+                					<h3>Ask {{featured_lib_expert_name}} about:</h3>
                                     {% endif %} 
                                     <ul>
                                         {% for link in featured_lib_expert_links %}
@@ -286,12 +287,17 @@
                                         <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
                                     </ul>
                                 </div>
-                                <div class="col-xs-4 home-profile">
+                                <div class="home-profile">
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
                                 </div>
+				    {% if has_libcal_schedule %}
+				    <div class="home-sched">
+					{% libcal_button staff_page email %}
+				    </div>
+				    {% endif %}
                             </div>
                         {% endif %}
-                    </div> <!-- // row -->
+                   </div> <!-- // row -->
                 {% endif %}
 
                 {% if self.news_feed_source %}

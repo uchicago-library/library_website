@@ -806,3 +806,10 @@ def lookup_staff_ids():
         return {person['email']: person['id'] for person in json}
     except(JSONDecodeError, requests.exceptions.MissingSchema):
         return ''
+
+
+def libcal_id_by_email(emailaddr):
+    try:
+        return lookup_staff_ids()[emailaddr]
+    except (KeyError, TypeError):
+        return ''
