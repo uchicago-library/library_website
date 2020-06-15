@@ -572,7 +572,7 @@ figure.coll-thumb {
 // featured expert homepage module
 div#widget-featured-library-expert {
   display: grid;
-  grid-template-columns: 65% 35%;
+  grid-template-columns: 1fr 1fr;
   .home-module {
     grid-column: span 2;
   }
@@ -580,12 +580,13 @@ div#widget-featured-library-expert {
 
 .home-profile {
   padding: 0;
-  max-width: 110px;
-}
-
-.home-sched {
-  grid-column: span 2;
   margin-left: auto;
+  margin-right: auto;
+  img {
+    max-width: 110px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 
