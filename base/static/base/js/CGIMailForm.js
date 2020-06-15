@@ -10,6 +10,8 @@ import {
 import schema from './CGIMailFormSchema';
 
 const DOM_ELEMENT = document.getElementById('cgi-mail-form');
+const CGI_MAIL_SERVICE = DOM_ELEMENT.getAttribute('data-cgi-mail') || '';
+const ITEM_SERVLET = DOM_ELEMENT.getAttribute('data-item-servlet') || '';
 const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json'));
 const THANK_YOU_TXT = DOM_ELEMENT.getAttribute('data-thank-you') || '';
 const QUERYSTRING = window.location.search;
@@ -285,7 +287,7 @@ class FormContainer extends React.Component {
   }
 
   componentDidMount() {
-    let itemServlet = 'http://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'; // TODO - make configurable
+    let itemServlet = ITEM_SERVLET;
     const bib = URLPARAMS.get('bib') || null;
     const barcode = URLPARAMS.get('barcode') || null;
     let itemInfo = false;
@@ -334,8 +336,7 @@ class FormContainer extends React.Component {
     e.preventDefault();
     const form = document.forms[0];
     const data = new FormData(form);
-    fetch('https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail', {
-      // TODO - make url configurable
+    fetch(CGI_MAIL_SERVICE, {
       method: 'POST',
       body: data,
     }).then(this.handleRedirect);
