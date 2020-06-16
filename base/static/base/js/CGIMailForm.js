@@ -37,6 +37,9 @@ function getType(e) {
   if (e.type === 'checkbox') {
     return 'checkbox';
   }
+  if (e.type === 'radio') {
+    return 'radio';
+  }
   return 'unknown';
 }
 
@@ -176,6 +179,20 @@ const buildField = (elm, state, handleChange) => {
   if (getType(elm) === 'checkbox') {
     return (
       <div className="form-check">
+        {getLabel(elm)}
+        <input
+          id={id}
+          type={type}
+          name={name}
+          required={required}
+          value={value}
+        />
+      </div>
+    );
+  }
+  if (getType(elm) === 'radio') {
+    return (
+      <div className="form-check radio">
         {getLabel(elm)}
         <input
           id={id}
