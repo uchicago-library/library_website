@@ -192,7 +192,7 @@ const buildField = (elm, state, handleChange) => {
   }
   if (getType(elm) === 'radio') {
     return (
-      <div className="form-check radio">
+      <div className="form-check">
         {getLabel(elm)}
         <input
           id={id}

@@ -183,12 +183,10 @@ Legend.propTypes = {
 };
 
 const RequiredFieldsText = () => (
-  <p>
+  <p class="required-intro">
     Required fields are followed by
     {' '}
-    <strong>
-      <abbr title="required">*</abbr>
-    </strong>
+    <abbr title="required">*</abbr>
   </p>
 );
 

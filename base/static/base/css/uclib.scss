@@ -1829,6 +1829,7 @@ body.staffpublicpage {
   abbr[title] {
     color: #FF3399;
     font-size: 1.3em;
+    font-weight: 900;
     margin-left: 0.25em;
   }
   section {
@@ -1843,11 +1844,16 @@ body.staffpublicpage {
   label {
     padding-bottom: 0;
   }
-  fieldset legend {
-    font-size: 1.1em;
-    color: #000;
-    font-weight: 600;
-    line-height: 1.4em;
+  fieldset {
+    & + & {
+      margin-top: 1em;
+    }
+    & legend {
+      font-size: 1.1em;
+      color: #000;
+      font-weight: 600;
+      line-height: 1.4em;
+    }
   }
   .form-check {
     display: flex;
