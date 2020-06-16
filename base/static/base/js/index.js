@@ -182,6 +182,16 @@ Legend.propTypes = {
   text: PropTypes.string.isRequired,
 };
 
+const RequiredFieldsText = () => (
+  <p>
+    Required fields are followed by
+    {' '}
+    <strong>
+      <abbr title="required">*</abbr>
+    </strong>
+  </p>
+);
+
 export {
-  Input, TextArea, Select, Label, Legend,
+  Input, TextArea, Select, Label, Legend, RequiredFieldsText,
 };

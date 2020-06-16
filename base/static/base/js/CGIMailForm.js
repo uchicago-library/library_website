@@ -4,7 +4,12 @@ import renderHTML from 'react-render-html';
 import PropTypes from 'prop-types';
 
 import {
-  Input, TextArea, Select, Label, Legend,
+  Input,
+  TextArea,
+  Select,
+  Label,
+  Legend,
+  RequiredFieldsText,
 } from './index';
 
 import schema from './CGIMailFormSchema';
@@ -358,22 +363,20 @@ class FormContainer extends React.Component {
     const { submitted, response, isLoadingItemInfo } = this.state;
     const { form } = FORM_JSON;
     const formId = form.id || null;
+    const hasRequiredFields = form.hasRequiredFields || null;
 
     if (submitted && response) {
       return (
         <div className="form-container">
-          <div className="ty-message">
-            {renderHTML(THANK_YOU_TXT)}
-          </div>
+          <div className="ty-message">{renderHTML(THANK_YOU_TXT)}</div>
 
-          <div className="cgi-message">
-            {renderHTML(response)}
-          </div>
+          <div className="cgi-message">{renderHTML(response)}</div>
         </div>
       );
     }
     return (
       <div className="form-container">
+        {hasRequiredFields ? <RequiredFieldsText /> : ''}
         <LoadingItemInfo loading={isLoadingItemInfo} />
         <form id={formId} onSubmit={this.handleSubmit}>
           <Sections
