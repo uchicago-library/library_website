@@ -65,6 +65,10 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   @include visually-hidden;
 }
 
+#p-1754 button[id^='mysched'] { // Hides schedule button from Law Homepage (visually + for screen readers)
+  display: none;
+}
+
 
 /*
  * Fancy Splash Image (Jumbotron)
