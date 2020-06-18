@@ -287,14 +287,12 @@
                                         <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
                                     </ul>
                                 </div>
-                                <div class="home-profile">
-                                    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-                                </div>
+			        <div class="home-profile">
+				    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
 				    {% if has_libcal_schedule %}
-				    <div class="home-sched">
-					{% libcal_button staff_page email %}
-				    </div>
+				    {% libcal_button staff_page email %}
 				    {% endif %}
+				</div>
                             </div>
                         {% endif %}
                    </div> <!-- // row -->
