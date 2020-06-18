@@ -288,6 +288,9 @@
                                 </div>
                                 <div class="col-xs-4 home-profile">
                                     <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+                                    {% if has_libcal_schedule %}
+                                        {% libcal_button staff_page email %}
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endif %}
