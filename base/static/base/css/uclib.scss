@@ -65,6 +65,10 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   @include visually-hidden;
 }
 
+#p-1754 button[id^='mysched'] { // Hides schedule button from Law Homepage (visually + for screen readers)
+  display: none;
+}
+
 
 /*
  * Fancy Splash Image (Jumbotron)
@@ -565,13 +569,28 @@ figure.coll-thumb {
   }
 }
 
-.home-profile { // featured profile on specialist module
-  padding: 0;
-  max-width: 110px;
-}
-
 #widget-explore-research-guides {
   padding-left: 0;
+}
+
+// featured expert homepage module
+div#widget-featured-library-expert {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  .home-module {
+    grid-column: span 2;
+  }
+}
+
+.home-profile {
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  img {
+    max-width: 110px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 
