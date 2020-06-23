@@ -37,9 +37,9 @@ from wagtailmedia.blocks import AbstractMediaChooserBlock
 from alerts.utils import get_alert
 from ask_a_librarian.utils import get_unit_chat_link
 from base.utils import get_hours_and_location
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+from library_website.settings import (
+    CGI_MAIL_SERVICE, HOURS_PAGE, ITEM_SERVLET, LIBCAL_IID, PHONE_ERROR_MSG,
+    PHONE_FORMAT, POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
 )
 from units.utils import get_default_unit
 
@@ -1338,6 +1338,18 @@ elements and bulleted lists'
     # Searchable fields
     search_fields = Page.search_fields + BasePage.search_fields
 
+    # CGIMail Form
+    cgi_mail_form = models.TextField(
+        blank=True,
+        help_text='JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this'
+    )
+
+    cgi_mail_form_thank_you_text = RichTextField(
+        blank=True,
+        help_text='Text to display after the form has been submitted'
+    )
+
     content_panels = [
         MultiFieldPanel(
             [
@@ -1826,6 +1838,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             )
         index_pages_html = get_index_html(index_pages[0]['children'])
         context['index_pages_html'] = index_pages_html
+        context['cgi_mail'] = CGI_MAIL_SERVICE
+        context['item_servlet'] = ITEM_SERVLET
 
         return context
 

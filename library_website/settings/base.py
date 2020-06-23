@@ -445,6 +445,10 @@ LIBCAL_CREDENTIALS = {
     'client_secret': '',
 }
 
+# CGIMail Forms
+CGI_MAIL_SERVICE = 'https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail'
+ITEM_SERVLET = 'http://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
+
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!

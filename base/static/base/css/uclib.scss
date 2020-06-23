@@ -24,6 +24,7 @@ Spaces
 Collections & Exhibits Listing
 Directory Listing
 Staff Profile Page
+Forms (CGI)
 
 -------------------------------------------------------------------*/
 
@@ -1827,6 +1828,81 @@ body.staffpublicpage {
       margin-top: 0px;
       padding-bottom: 5px;
       font-weight: 400;
+    }
+  }
+}
+
+
+/*
+ * Forms (CGI)
+ * --------------------------------------------------
+ */
+
+
+.form-container {
+  form {
+    border: none;
+    background: #f3f4ed;
+    border-radius: 8px;
+  }
+  abbr[title] {
+    color: #FF3399;
+    font-size: 1.3em;
+    font-weight: 900;
+    margin-left: 0.25em;
+  }
+  section {
+    border-bottom: 2px white solid;
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+  h2 {
+    color: $darkred;
+    margin-top: 0;
+  }
+  label {
+    padding-bottom: 0;
+  }
+  fieldset {
+    & + & {
+      margin-top: 1em;
+    }
+    & legend {
+      font-size: 1.1em;
+      color: #000;
+      font-weight: 600;
+      line-height: 1.4em;
+    }
+  }
+  .form-check {
+    display: flex;
+    flex-direction: row;
+    label {
+      display: inline;
+      padding-bottom: 0.5em;
+      order: 2;
+    }
+  }
+  input[type="submit"] {
+    padding: 0.5em 1em;
+    margin: 1em;
+    color: #fff;
+    background: #800000;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.42857143;
+    border-radius: 4px;
+  }
+  .ty-message {
+    padding: 1em 0;
+    border-bottom: 1px $lightgray solid;
+    margin-bottom: 1em;
+  }
+  .cgi-message {
+    h1 {
+      display: none;
     }
   }
 }

@@ -236,6 +236,13 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + [
