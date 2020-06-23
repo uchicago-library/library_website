@@ -2,7 +2,9 @@ import json
 from urllib.parse import urlparse
 
 import requests
+import re
 from requests.auth import HTTPBasicAuth
+from .utils import mk_url, mk_manifest_url
 
 from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
                                             MARKLOGIC_LDR_USER)
@@ -78,6 +80,43 @@ def get_raw_record(manifest_url, wagtail_field_names):
     return j
 
 
-def get_record(manifest_url, wagtail_field_names):
+def get_record_no_parsing(manifid, slug, wagtail_field_names):
+    manifest_url = mk_manifest_url(manifid, slug)
     raw_record = get_raw_record(manifest_url, wagtail_field_names)
     return triples_to_dict(raw_record, wagtail_field_names)
+
+
+def parse_field(value):
+    extract_from_brackets = (re.compile("^\[((\w|\s|.|,)*)\]"))
+    contents = re.match(extract_from_brackets, value)
+    if contents is not None:
+        return {'contents': contents[1],
+                'externally_derived': True}
+    else:
+        return {'contents': value,
+                'externally_derived': False}
+
+
+def get_record_parsed(manifid, slug, wagtail_field_names):
+    dct = get_record_no_parsing(manifid, slug, wagtail_field_names)
+    return {k: parse_field(v) for k, v in dct.items()}
+
+
+def render_field(parsed_field):
+    try:
+        if parsed_field['externally_derived']:
+            return "[%s]" % parsed_field['contents']
+        else:
+            return parsed_field['contents']
+    except KeyError:
+        return parsed_field
+
+
+def get_record_for_display(manifid, slug, wagtail_field_names):
+    dct = get_record_parsed(manifid, slug, wagtail_field_names)
+    return {k: render_field(v) for k, v in dct.items()}
+
+
+# def get_record(manifest_url, wagtail_field_names):
+#     raw_record = get_raw_record(manifest_url, wagtail_field_names)
+#     return triples_to_dict(raw_record, wagtail_field_names)

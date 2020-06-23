@@ -27,8 +27,9 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection, mk_url, mk_manifest_url
-from .marklogic import get_record
+from .utils import collection
+# , mk_url, mk_manifest_url
+from .marklogic import get_record_for_display
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -583,13 +584,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super().get_context(request)
         context["manifid"] = kwargs["manifid"]
-        context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
+        # context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
         context["slug"] = slugify(self.title)
-        context["manifest_url"] = mk_manifest_url(
-            kwargs["manifid"], slugify(self.title)
-        )
-        context["marklogic"] = get_record(
-            context["manifest_url"], field_names
+        # context["manifest_url"] = mk_manifest_url(
+        #     kwargs["manifid"], slugify(self.title)
+        # )
+        context["marklogic"] = get_record_for_display(
+            context["manifid"],
+            context["slug"],
+            field_names,
         )
         context["keys"] = context["marklogic"].keys()
         context["values"] = context["marklogic"].values()
