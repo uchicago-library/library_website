@@ -81,24 +81,23 @@
 
                         <!-- Search Dropdown -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Search" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span role="heading" aria-level="2" id="navigation_search">Search</span><span class="caret"></span></a>
-                            <ul class="dropdown-menu twocol-drop" role="region" aria-labelledby="navigation_search">
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Search" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Search <span class="caret"></span></a>
+                            <ul class="dropdown-menu twocol-drop">
                                 <!-- Search > Catalog column -->
-                                <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="3" id="search_catalogs">Catalogs</span>
+                                <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="search_catalogs">Catalogs</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="search_catalogs">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/h/3" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; Library Catalog">Library Catalog</a></li>
                                         <li><a href="/h/ub" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; UBorrow">UBorrow</a></li>
                                         <li><a href="/h/borrowdirect" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; BorrowDirect">BorrowDirect</a></li>
                                         <li><a href="http://proxy.uchicago.edu/login?qurl={{'http://lib.uchicago.edu/h/worldcat'|urlencode:''}}" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; WorldCat">WorldCat</a></li>
-                                        <li><a href="/search/catalogs/other" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; Other Catalogs">Other Catalogs</a>&nbsp;<br/>&nbsp;</li>
+                                        <li><a href="/search/catalogs/other" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; Other Catalogs">Other Catalogs</a> <!-- Padding for lengthening column divider --> <p class="hidden-xs" style="padding-bottom:1em"></p></li>
                                     </ul>
                                 </li>
                                 <!-- // Search > Catalog column -->
 
                                 <!-- Search > Other Tools column -->
-                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="3" id="search_other_tools">Other Search Tools</span>
+                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="2" id="search_other_tools">Other Search Tools</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="search_other_tools">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="http://proxy.uchicago.edu/login?qurl={{'http://lib.uchicago.edu/h/articlesplus'|urlencode:''}}" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Search &gt; Articles Plus">Articles Plus</a></li>
@@ -116,11 +115,10 @@
 
                         <!-- Borrow/Request Dropdown -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Borrow &amp; Request" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span role="heading" aria-level="2" id="navigation_request">Borrow<span class="hidden-sm"> &amp; Request</span></span> <span class="caret"></span></a>
-                            <ul class="dropdown-menu twocol-drop" role="region" aria-labelledby="navigation_request">
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Borrow &amp; Request" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Borrow<span class="hidden-sm"> &amp; Request</span> <span class="caret"></span></a>
+                            <ul class="dropdown-menu twocol-drop">
                                 <!-- Borrow/Request > Borrow column -->
-                                <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="3" id="request_borrow">Borrow</span>
+                                <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="request_borrow">Borrow</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="request_borrow">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/borrow/borrowing/due-dates-and-loan-periods/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Due Dates &amp; Loan Periods">Due Dates &amp; Loan Periods</a></li>
@@ -128,14 +126,13 @@
                                         <li><a href="/borrow/borrowing/fines-and-lost-items/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Fines &amp; Lost Items">Fines &amp; Lost Items</a></li>
                                         <li><a href="/borrow/borrowing/course-reserves" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Course Reserves">Course Reserves</a></li>
                                         <li><a href="/borrow/borrowing/checkout" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Checkout UChicago">Checkout UChicago</a></li>
-                                        <li><a href="http://www.lib.uchicago.edu/myaccount" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; My Library Account">My Library Account</a> <!-- Padding below = quick fix to even out different sized columns -->
-                                        <p class="hidden-xs" style="padding-bottom:8em"></p></li>
+                                        <li><a href="http://www.lib.uchicago.edu/myaccount" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; My Library Account">My Library Account</a> <!-- Padding for lengthening column divider --> <p class="hidden-xs" style="padding-bottom:8em"></p></li>
                                     </ul>
                                 </li>
                                 <!-- // Borrow/Request > Borrow column -->
 
                                 <!-- Borrow/Request > Request column -->
-                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="3" id="request_request">Request</span>
+                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="2" id="request_request">Request</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="request_request">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/borrow/requesting/interlibrary-loan/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Interlibrary Loan">Interlibrary Loan</a></li>
@@ -158,53 +155,58 @@
 
                         <!-- Research Dropdown -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Research &amp; Teaching" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span role="heading" aria-level="2" id="navigation_research">Research <span class="hidden-sm">&amp; Teaching </span></span><span class="caret"></span></a>
-                            <ul class="dropdown-menu twocol-drop" role="region" aria-labelledby="navigation_research">
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Research &amp; Teaching" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Research <span class="hidden-sm">&amp; Teaching</span> <span class="caret"></span></a>
+                            <ul class="dropdown-menu twocol-drop">
                             <!-- Research > Help Tools column -->
-                                <li class="col-sm-5 ul-left"><span class="twocol-head" role="heading" aria-level="3" id="research_tools">Research Help &amp; Tools</span>
+                                <li class="col-sm-5 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="research_tools">Research Help &amp; Tools</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="research_tools">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/research/help/ask-librarian/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Ask a Librarian">Ask a Librarian</a></li>
                                         <li><a href="/about/directory/?view=staff&subject=All+Subject+Specialists" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Subject Specialists">Subject Specialists</a></li>
                                         <li><a href="http://guides.lib.uchicago.edu/citation_management" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Citation Management">Citation Management</a></li>
                                         <li><a href="http://guides.lib.uchicago.edu/subjectguides/helpguides" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Help Guides">Help Guides</a></li>
-                                        <li><a href="http://guides.lib.uchicago.edu/subjectguides" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Subject Guides">Subject Guides</a> <!-- Padding below = quick fix to even out different sized columns -->
-                                        <p class="hidden-xs" style="padding-bottom:8em"></p></li>
+                                        <li><a href="http://guides.lib.uchicago.edu/subjectguides" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Subject Guides">Subject Guides</a> <!-- Padding for lengthening column divider --> <p class="hidden-xs" style="padding-bottom:8em"></p></li>
                                     </ul>
                                 </li>
                                 <!-- // Research > Help Tools column -->
+                                
+                                <div class="col-sm-7">
+                                    <!-- Research > Support sub-column -->
+                                    <li><span class="twocol-head" role="heading" aria-level="2" id="research_support">Teaching Support</span>
+                                        <ul class="list-unstyled" role="region" aria-labelledby="research_support">
+                                            <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                            <li><a href="/research/teaching/course-reserves-setup/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Course Reserves Setup">Course Reserves Setup</a></li>
+                                            <li><a href="/research/teaching/research-instruction-courses/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Instruction for Courses">Instruction for Courses</a></li>
+                                            <li><a href="/research/teaching/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Teaching &amp; Learning Services">Teaching &amp; Learning Services</a></li>
+                                            <li role="separator" class="divider hidden-xs" role="presentation"></li>
+                                        </ul>
+                                    </li>
+                                    <!-- // Research > Support sub-column -->
 
-                                <!-- Research > Support column -->
-                                <li class="col-sm-7"><span class="twocol-head" role="heading" aria-level="3" id="research_support">Teaching Support
-                                    <ul class="list-unstyled" role="region" aria-labelledby="research_support">
-                                        <li role="separator" class="divider visible-xs" role="presentation"></li>
-                                        <li><a href="/research/teaching/course-reserves-setup/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Course Reserves Setup">Course Reserves Setup</a></li>
-                                        <li><a href="/research/teaching/research-instruction-courses/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Instruction for Courses">Instruction for Courses</a></li>
-                                        <li><a href="/research/teaching/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Teaching &amp; Learning Services">Teaching &amp; Learning Services</a></li>
-                                        <li role="separator" class="divider hidden-xs" role="presentation"></li>
-                                        <li class="twocol-head">Digital Scholarship</li>
-                                        <li role="separator" class="divider visible-xs" role="presentation"></li>
-                                        <li><a href="/research/scholar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Digital Scholarship">Center for Digital Scholarship</a></li>
-                                        <li><a href="/research/scholar/phd" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Dissertation Office">Dissertation Office</a></li>
-                                        <li><a href="https://knowledge.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="KnowledgeUChicago">Knowledge&#64;UChicago</a></li>
-                                        <li><a href="https://www.lib.uchicago.edu/copyrightinfo/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Copyright Info">Copyright Info</a></li>
-                                    </ul>
-                                </li>
-                                <!-- // Research > Support column -->
+                                    <!-- Research > Digital Scholarship sub-column -->
+                                    <li><span class="twocol-head" role="heading" aria-level="2" id="research_digital">Digital Scholarship</span>
+                                        <ul class="list-unstyled" role="region" aria-labelledby="research_support">
+                                            <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                            <li><a href="/research/scholar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Digital Scholarship">Center for Digital Scholarship</a></li>
+                                            <li><a href="/research/scholar/phd" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Dissertation Office">Dissertation Office</a></li>
+                                            <li><a href="https://knowledge.uchicago.edu/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="KnowledgeUChicago">Knowledge&#64;UChicago</a></li>
+                                            <li><a href="https://www.lib.uchicago.edu/copyrightinfo/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Research &amp; Teaching &gt; Copyright Info">Copyright Info</a></li>
+                                        </ul>
+                                    </li>
+                                    <!-- // Research > Digital Scholarship sub-column -->
+                                </div>
                             </ul>
                         </li>
                         <!-- // Research Dropdown -->
 
                         <!-- Collection/Exhibits Dropdown -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Collections &amp; Exhibits" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span role="heading" aria-level="2" id="navigation_collex">Collections <span class="hidden-sm">&amp; Exhibits</span></span> <span class="caret"></span></a>
-                            <ul class="dropdown-menu twocol-drop" role="region" aria-labelledby="navigation_collex">
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Collections &amp; Exhibits" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm">&amp; Exhibits</span> <span class="caret"></span></a>
+                            <ul class="dropdown-menu twocol-drop">
 
                                 <div class="col-sm-6 ul-left">
                                     <!-- Collection/Exhibits > Collections sub-column -->
-                                    <li><span class="twocol-head" role="heading" aria-level="3" id="collex_collections">Collections</span>
+                                    <li><span class="twocol-head" role="heading" aria-level="2" id="collex_collections">Collections</span>
                                         <ul class="list-unstyled" role="region" aria-labelledby="collex_collections">
                                             <li role="separator" class="divider visible-xs" role="presentation"></li>
                                             <li><a href="/collex/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Notable Collections">Notable Collections</a></li>
@@ -217,7 +219,7 @@
                                     <!-- // Collection/Exhibits > Collections sub-column -->
 
                                     <!-- // Collection/Exhibits > Exhibits sub-column -->
-                                    <li><span class="twocol-head" role="heading" aria-level="3" id="collex_exhibits">Exhibits</span>
+                                    <li><span class="twocol-head" role="heading" aria-level="2" id="collex_exhibits">Exhibits</span>
                                         <ul class="list-unstyled" role="region" aria-labelledby="collex_exhibits">
                                             <li role="separator" class="divider visible-xs" role="presentation"></li>
                                             <li><a href="/collex/?view=exhibits" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; All Exhibits">All Exhibits</a></li>
@@ -228,7 +230,7 @@
                                 </div>
 
                                 <!-- Collection/Exhibits > Research Centers column -->
-                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="3" id="collex_centers">Research Centers</span>
+                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="2" id="collex_centers">Research Centers</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="collex_centers">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/about/directory/departments/eastasia/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; East Asian Collections">East Asian Collection</a></li>
@@ -242,13 +244,12 @@
                         </li>
                         <!-- // Collection/Exhibits Dropdown -->
 
-                        <!-- LEFT OFF HERE - NEED TO VERIFY DIV WORKED FOR KEEPING 2 SECTIONS IN ONE COLUMN -->
 
                         <!-- Spaces  Dropdown  -->
                         <li class="dropdown">
-                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Spaces &amp; Services" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Spaces <span class="hidden-sm">&amp; Services</span> <span class="caret"></span></a>
+                            <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Spaces &amp; Services" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Spaces <span class="hidden-sm hidden-md">&amp; Services</span> <span class="caret"></span></a>
                             <ul class="dropdown-menu onecol-drop">
-                                <li class="twocol-head">Using Our Spaces</li>
+                                <li class="twocol-head" role="heading" aria-level="2">Using Our Spaces</li>
                                 <li role="separator" class="divider visible-xs" role="presentation"></li>
                                 <li><a href="https://rooms.lib.uchicago.edu/allspaces" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Spaces &amp; Services &gt; Book a Room">Book a Room</a></li>
                                 <li><a href="/spaces/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Spaces &amp; Services &gt; Places to Study">Places to Study</a></li>
@@ -260,11 +261,11 @@
                         </li>
                         <!-- // Spaces Dropdown -->
 
-                         <!-- Libraries  Dropdown  -->
+                        <!-- Libraries  Dropdown  -->
                         <li class="dropdown">
                             <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Libraries" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Libraries <span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-right onecol-drop">
-                                <li class="twocol-head">Our Locations</li>
+                                <li class="twocol-head" role="heading" aria-level="2">Our Locations</li>
                                 <li role="separator" class="divider visible-xs" role="presentation"></li>
                                 <li><a href="/crerar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; Crerar">Crerar</a></li>
                                 <li><a href="/law/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; D'Angelo Law">D'Angelo Law</a></li>
@@ -273,7 +274,7 @@
                                 <li><a href="/spaces/joseph-regenstein-library/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; Regenstein">Regenstein</a></li>
                                 <li><a href="/scrc/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; Special Collections">Special Collections</a></li>
                                 <li><a href="/ssa/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; SSA">SSA</a></li>
-                                <li><a href="/libraries/libraries-hours/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; Hours">Hours</a></li>
+                                <li><a href="/libraries/libraries-hours/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Libraries &gt; Hours" aria-label="View all Library hours">Hours</a></li>
                             </ul>
                         </li>
                         <!-- // Libraries Dropdown -->
@@ -284,9 +285,10 @@
                         <li class="dropdown">
                             <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="About" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About <span class="caret"></span></a>
                             <ul class="dropdown-menu dropdown-menu-right twocol-drop">
-                                <li>
-                                    <ul class="list-unstyled col-sm-6 ul-left">
-                                        <li class="twocol-head">The Library</li>
+
+                                <!-- About > Library column -->
+                                <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="about_library">The Library</span>
+                                    <ul class="list-unstyled" role="region" aria-labelledby="about_library">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/about/thelibrary/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Facts">About the Library</a></li>
                                         <li><a href="/research/help/infofor/information-visitors/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Visiting the Library">Visiting the Library</a></li>
@@ -298,9 +300,12 @@
                                         <li><a href="/about/thelibrary/committees/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Library Boards &amp; Committees">Library Boards &amp; Committees</a></li>
                                         <li><a href="/about/thelibrary/supportus/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Support the Library">Support the Library</a></li>
                                     </ul>
+                                </li>
+                                <!-- // About > Library column -->
 
-                                    <ul class="list-unstyled col-sm-6">
-                                        <li class="twocol-head">News &amp; Events</li>
+                                <!-- About > News column -->
+                                <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="2" id="about_news">News &amp; Events</span>
+                                    <ul class="list-unstyled" role="region" aria-labelledby="about_news">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
                                         <li><a href="/about/news/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; News">News</a></li>
                                         <li><a href="/about/news-events/events/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Workshops &amp; Events">Workshops &amp; Events</a></li>
@@ -309,6 +314,7 @@
                                         <li><a href="/about/news-events/social-media/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Social Media Directory">Social Media Directory</a></li>
                                     </ul>
                                 </li>
+                                <!-- // About > News column -->
                             </ul>
                         </li>
                         <!-- // About Dropdown -->
