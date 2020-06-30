@@ -51,10 +51,13 @@ Pleeb Footer Code
   background-repeat: repeat;
   padding-top: 20px;
   padding-bottom: 20px;
+  ul {
+    list-style:none;
+  }
   &>hr {
     border-top: 1px solid $mid-dark;
   }
-  p, small {
+  p, li, small {
     color: $neutral;
   }
   & a {

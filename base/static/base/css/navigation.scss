@@ -227,19 +227,17 @@ i.ask-icon {
 .twocol-drop {
   background-color: $transparent;
   @include respond-to(small) {
-      min-width: 500px;
-      padding: 10px 0 10px 0;
+    min-width: 500px;
+    padding: 10px 0 10px 0;
   }
-  >li>ul>li {
-    margin-bottom: 10px;
-    a {
-      color: #fff;
-      font-size: $font-small;
-      text-decoration: none;
-      &:hover {
-        color: #EDD4C1;
-        text-decoration: underline;
-      }
+  a {
+    color: #fff;
+    font-size: $font-small;
+    text-decoration: none;
+    line-height: 2em;
+    &:hover {
+      color: #EDD4C1;
+      text-decoration: underline;
     }
   }
 }

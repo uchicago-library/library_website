@@ -164,7 +164,7 @@
         {% endif %}
         <!-- // Left Sidebar -->
 
-        <div class="{{breadcrumb_div_css}}">
+        <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
         {% block above_main_content %}{% endblock %}
@@ -379,11 +379,11 @@
                             <h3>Find Spaces</h3>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
-                                    <span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
+                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i></a><br/>
+                                    <span class="hidden-xs hidden-sm hidden-md" aria-role="presentation">Quiet </span>Study</p>
                                 </div>
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true">people</i></a><br/>Collaboration</p>
+                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i></a><br/>Collaboration</p>
                                 </div>
                                 {% if self.book_a_room_link %}
                                     <div class="col-xs-4 nopadding">
