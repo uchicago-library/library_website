@@ -252,7 +252,7 @@ CORS_ORIGIN_WHITELIST = (
     'https://dldc1.lib.uchicago.edu',
     'https://dldc2.lib.uchicago.edu',
     'https://dldc3.lib.uchicago.edu',
-    'http://forms2.lib.uchicago.edu',
+    'https://forms2.lib.uchicago.edu',
     'http://guides.lib.uchicago.edu',
     'https://guides.lib.uchicago.edu',
     'https://rooms.lib.uchicago.edu',
@@ -447,7 +447,7 @@ LIBCAL_CREDENTIALS = {
 
 # CGIMail Forms
 CGI_MAIL_SERVICE = 'https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail'
-ITEM_SERVLET = 'http://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
+ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
 
 # Override settings in test
 # -------------------------------
