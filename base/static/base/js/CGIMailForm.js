@@ -17,6 +17,7 @@ import schema from './CGIMailFormSchema';
 const DOM_ELEMENT = document.getElementById('cgi-mail-form');
 const CGI_MAIL_SERVICE = DOM_ELEMENT.getAttribute('data-cgi-mail') || '';
 const ITEM_SERVLET = DOM_ELEMENT.getAttribute('data-item-servlet') || '';
+const SPRINGSHARE_PP = DOM_ELEMENT.getAttribute('data-springshare-pp') || '';
 const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json'));
 const THANK_YOU_TXT = DOM_ELEMENT.getAttribute('data-thank-you') || '';
 const QUERYSTRING = window.location.search;
@@ -80,6 +81,15 @@ function defaultFieldMappings(e, state) {
   }
   return '';
 }
+
+const SpringsharePPText = () => (
+  <p className="springshare-pp">
+    This form is powered by Springshare and complies with its
+    {' '}
+    <a href={SPRINGSHARE_PP}>privacy policy</a>
+    .
+  </p>
+);
 
 const ErrorMessage = (props) => {
   const { field, msg } = props;
@@ -241,6 +251,10 @@ const SectionTitle = (props) => {
   return <h2>{title}</h2> || '';
 };
 
+SectionTitle.propTypes = {
+  title: PropTypes.string.isRequired,
+};
+
 const Section = (props) => {
   const {
     title, elements, handleChange, state, hidden,
@@ -381,6 +395,7 @@ class FormContainer extends React.Component {
     const { form } = FORM_JSON;
     const formId = form.id || null;
     const hasRequiredFields = form.hasRequiredFields || null;
+    const hasSpringsharePP = form.hasSpringsharePP || null;
 
     if (submitted && response) {
       return (
@@ -403,6 +418,7 @@ class FormContainer extends React.Component {
           />
           <input type="submit" value="Submit" />
         </form>
+        {hasSpringsharePP ? <SpringsharePPText /> : ''}
       </div>
     );
   }
