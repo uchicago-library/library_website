@@ -250,7 +250,7 @@
                 {% endautoescape %}
 
                 {% if self.cgi_mail_form %}
-                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}"></div>
+                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
                     {% render_bundle 'CGIMailForm' %}
                 {% endif %}
 
