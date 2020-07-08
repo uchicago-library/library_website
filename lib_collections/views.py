@@ -256,15 +256,15 @@ def collections(request):
 
     # for the subject pulldown, find subjects that are first generation children- their parents should have no parent.
     # still need these:
-    # Area and Cultural Studies
+    # Area Studies
     # Social Sciences
     # Biological Sciences
     # Physical Sciences
 
     subjects_pulldown = [
-        'Area & Cultural Studies', 'Arts', 'Biological Sciences', 'Business',
-        'Humanities', 'Law', 'Literature', 'Medicine', 'Physical Sciences',
-        'Social Sciences', 'Social Services', 'Special Collections'
+        'Area Studies', 'Arts', 'Biological Sciences', 'Business', 'Humanities',
+        'Law', 'Literature', 'Medicine', 'Physical Sciences', 'Social Sciences',
+        'Social Services', 'Special Collections'
     ]
 
     default_image = None
