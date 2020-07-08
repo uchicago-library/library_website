@@ -216,9 +216,9 @@ class GroupPage(BasePage, Email):
     Content type for group and committee pages.
     """
     subpage_types = [
-        'base.IntranetPlainPage', 'group.GroupMeetingMinutesIndexPage',
-        'group.GroupReportsIndexPage', 'intranetforms.IntranetFormPage',
-        'projects.ProjectPage'
+        'base.IntranetIndexPage', 'base.IntranetPlainPage',
+        'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
+        'intranetforms.IntranetFormPage', 'projects.ProjectPage'
     ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
