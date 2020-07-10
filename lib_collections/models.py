@@ -11,7 +11,6 @@ from library_website.settings import (
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
-# from pyiiif.pres_api.utils import get_record
 from staff.models import StaffPage
 from wagtail.admin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
@@ -28,7 +27,6 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .utils import collection
-# , mk_url, mk_manifest_url
 from .marklogic import get_record_for_display
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'

@@ -41,9 +41,6 @@ def collections_query(manifest_url):
     raise NotImplementedError
 
 
-test_url = 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-2N3E51-1908-S2/G4104-C6-2N3E51-1908-S2.json'
-
-
 def align_field_names(dct, wagtail_field_names):
     filtered_names = [item
                       for item in wagtail_field_names
@@ -60,7 +57,7 @@ def triples_to_dict(dct, wagtail_field_names):
         }
         if wagtail_field_names:
             return align_field_names(field_dict, wagtail_field_names)
-        else:
+       else:
             return field_dict
     except KeyError:
         raise Exception("Mark Logic result not formatted as expected")
@@ -86,26 +83,52 @@ def get_record_no_parsing(manifid, slug, wagtail_field_names):
     return triples_to_dict(raw_record, wagtail_field_names)
 
 
-def parse_field(value):
-    extract_from_brackets = (re.compile("^\[((\w|\s|.|,)*)\]"))
-    contents = re.match(extract_from_brackets, value)
+def brackets_parse(value):
+    def question_mark(qm):
+        if qm is None:
+            return False
+        else:
+            return qm == '?'
+
+    prepped = remove_trailing_comma(value)
+    extract_from_brackets = re.compile("^\[([\w\s\d,.]*)(\\?)?\]")
+    contents = re.match(extract_from_brackets, prepped)
+
     if contents is not None:
         return {'contents': contents[1],
-                'externally_derived': True}
+                'externally_derived': True,
+                'uncertain': question_mark(contents[2])}
     else:
-        return {'contents': value,
-                'externally_derived': False}
+        return {'contents': prepped,
+                'externally_derived': False,
+                'uncertain': False}
+
+
+def remove_trailing_comma(string):
+    stripped = string.strip()
+    rev = stripped[::-1]
+    if len(rev) > 0 and rev[0] == ',':
+        return rev[1:][::-1]
+    else:
+        return rev[::-1]
 
 
 def get_record_parsed(manifid, slug, wagtail_field_names):
     dct = get_record_no_parsing(manifid, slug, wagtail_field_names)
-    return {k: parse_field(v) for k, v in dct.items()}
+    return {k: brackets_parse(v) for k, v in dct.items()}
 
 
 def render_field(parsed_field):
+    def question_mark(yes_qm):
+        if yes_qm:
+            return '?'
+        else:
+            return ''
     try:
         if parsed_field['externally_derived']:
-            return "[%s]" % parsed_field['contents']
+            return "[%s%s]" % (parsed_field['contents'],
+                               question_mark(parsed_field['uncertain']),
+                               )
         else:
             return parsed_field['contents']
     except KeyError:
@@ -115,8 +138,3 @@ def render_field(parsed_field):
 def get_record_for_display(manifid, slug, wagtail_field_names):
     dct = get_record_parsed(manifid, slug, wagtail_field_names)
     return {k: render_field(v) for k, v in dct.items()}
-
-
-# def get_record(manifest_url, wagtail_field_names):
-#     raw_record = get_raw_record(manifest_url, wagtail_field_names)
-#     return triples_to_dict(raw_record, wagtail_field_names)
