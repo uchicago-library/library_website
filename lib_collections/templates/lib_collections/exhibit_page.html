@@ -606,7 +606,7 @@
                         <div class="hidden-xs nopadding col-xs-12 col-sm-4 col-md-3">
                             {% if footer_img %}
                                 {% image footer_img max-760x465 as gallery %}
-                                <img class="img-responsive" src="{{gallery.url}}">
+                                <img class="img-responsive" src="{{gallery.url}}" alt="{{ value.image }}">
                             {% endif %}
                         </div>
                         <div class="col-xs-12 col-sm-8 col-md-9">

@@ -72,13 +72,38 @@ class Command(BaseCommand):
         # role matches the given cnetid
         if cnetid:
             if role:
-                return self._get_pages_with_role_for_cnet(pages, cnetid, role)
-            return self._get_pages_with_any_role_for_cnet(pages, cnetid)
+                return self._get_pages_with_role_for_cnet(
+                    pages, cnetid, site_name, role
+                )
+            return self._get_pages_with_any_role_for_cnet(
+                pages, cnetid, site_name, role
+            )
 
         # If we made it this far, return all pages
-        return pages
+        return self._parse_pages(pages, cnetid, site_name, role)
 
-    def _get_pages_with_role_for_cnet(self, pages, cnetid, role):
+    def _parse_pages(self, pages, cnetid, site_name, role):
+        """
+        Filter a generator of pages and return a new generator
+        of pages with information parsed out for each page.
+
+        Args:
+            pages: generator of page objects
+
+            cnetid: string
+
+            site_name: string
+
+            role: string, 'page_maintainer', 'editor' or 'content_specialist'
+
+        Returns:
+            generator of page objects
+        """
+        yield self.HEADER
+        for page in pages:
+            yield self.get_row(page, cnetid, site_name, role)
+
+    def _get_pages_with_role_for_cnet(self, pages, cnetid, site_name, role):
         """
         Filter a generator of pages and return a new generator
         of pages where a given role is set to a user with a
@@ -89,18 +114,21 @@ class Command(BaseCommand):
 
             cnetid: string
 
+            site_name: string
+
             role: string, 'page_maintainer', 'editor' or 'content_specialist'
 
         Returns:
             generator of page objects
         """
+        yield self.HEADER
         for page in pages:
             user = self._get_attr(page, role)
             user_cnetid = self._get_attr(user, 'cnetid')
             if user_cnetid == cnetid:
-                yield page
+                yield self.get_row(page, cnetid, site_name, role)
 
-    def _get_pages_with_any_role_for_cnet(self, pages, cnetid):
+    def _get_pages_with_any_role_for_cnet(self, pages, cnetid, site_name, role):
         """
         Filter a generator to return any page that has any role
         assigned to a user with a given cnetid.
@@ -110,9 +138,14 @@ class Command(BaseCommand):
 
             cnetid: string
 
+            site_name: string
+
+            role: string
+
         Returns:
             generator of page objects
         """
+        yield self.HEADER
         for page in pages:
             page_maintainer = self._get_attr(page, 'page_maintainer')
             editor = self._get_attr(page, 'editor')
@@ -123,7 +156,53 @@ class Command(BaseCommand):
                 content_specialist, 'cnetid'
             )
             if page_maintainer_cnetid == cnetid or editor_cnetid == cnetid or content_specialist_cnetid == cnetid:
-                yield page
+                yield self.get_row(page, cnetid, site_name, role)
+
+    def get_row(self, p, cnetid, site_name, role):
+        """
+        Args:
+            p: page object
+
+            cnetid: string
+
+            site_name: string
+
+            role: string
+
+        Returns:
+            list of tuples containing data about pages to be converted
+            into a csv. The first tuple in the list represents the column
+            names (header) that will be used on the spreadsheet.
+        """
+        row = []
+        # row.append(self.HEADER)
+        page_maintainer = self._get_attr(p, 'page_maintainer')
+        page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
+        page_maintainer_title = self._get_attr(page_maintainer, 'title')
+        editor = self._get_attr(p, 'editor')
+        editor_cnetid = self._get_attr(editor, 'cnetid')
+        editor_title = self._get_attr(editor, 'title')
+        content_specialist = self._get_attr(p, 'content_specialist')
+        content_specialist_cnetid = self._get_attr(content_specialist, 'cnetid')
+        content_specialist_title = self._get_attr(content_specialist, 'title')
+        full_url = self._get_attr(p, 'full_url')
+        latest_revision_created_at = self._get_date_string(
+            self._get_attr(p, 'latest_revision_created_at')
+        )
+        last_reviewed = self._get_date_string(
+            self._get_attr(p, 'last_reviewed')
+        )
+
+        # Append to output.
+        row.append(
+            (
+                full_url, p.title, latest_revision_created_at, last_reviewed,
+                page_maintainer_cnetid, page_maintainer_title, editor_cnetid,
+                editor_title, content_specialist_cnetid,
+                content_specialist_title
+            )
+        )
+        return row[0]
 
     def _get_attr(self, obj, attr):
         """
@@ -162,55 +241,6 @@ class Command(BaseCommand):
             return date.strftime('%Y-%m-%d %H:%M:%S')
         return ''
 
-    def get_records(self, cnetid, site_name, role):
-        """
-        Args:
-            cnetid: string
-
-            site_name: string
-
-            role: string
-
-        Returns:
-            list of tuples containing data about pages to be converted
-            into a csv. The first tuple in the list represents the column
-            names (header) that will be used on the spreadsheet.
-        """
-        records = []
-        records.append(self.HEADER)
-        for p in self._get_pages(cnetid, site_name, role):
-            page_maintainer = self._get_attr(p, 'page_maintainer')
-            page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
-            page_maintainer_title = self._get_attr(page_maintainer, 'title')
-            editor = self._get_attr(p, 'editor')
-            editor_cnetid = self._get_attr(editor, 'cnetid')
-            editor_title = self._get_attr(editor, 'title')
-            content_specialist = self._get_attr(p, 'content_specialist')
-            content_specialist_cnetid = self._get_attr(
-                content_specialist, 'cnetid'
-            )
-            content_specialist_title = self._get_attr(
-                content_specialist, 'title'
-            )
-            full_url = self._get_attr(p, 'full_url')
-            latest_revision_created_at = self._get_date_string(
-                self._get_attr(p, 'latest_revision_created_at')
-            )
-            last_reviewed = self._get_date_string(
-                self._get_attr(p, 'last_reviewed')
-            )
-
-            # Append to output.
-            records.append(
-                (
-                    full_url, p.title, latest_revision_created_at,
-                    last_reviewed, page_maintainer_cnetid,
-                    page_maintainer_title, editor_cnetid, editor_title,
-                    content_specialist_cnetid, content_specialist_title
-                )
-            )
-        return records
-
     def handle(self, *args, **options):
         """
         The actual logic of the command. Subclasses must implement this
@@ -224,7 +254,7 @@ class Command(BaseCommand):
         role = options['role']
 
         writer = csv.writer(sys.stdout)
-        for record in self.get_records(cnetid, site_name, role):
+        for record in self._get_pages(cnetid, site_name, role):
             try:
                 writer.writerow(record)
             except UnicodeEncodeError:

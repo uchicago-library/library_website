@@ -1,4 +1,5 @@
 import datetime
+
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.validators import RegexValidator
@@ -192,7 +193,8 @@ class CollectionPageAlternateNames(Orderable, AlternateName):
     )
 
 
-# Interstitial model for linking the collection RelatedPages to the CollectionPage
+# Interstitial model for linking the collection RelatedPages to the
+# CollectionPage
 
 
 class RelatedCollectionPagePlacement(Orderable, models.Model):
@@ -217,6 +219,272 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
     )
 
 
+class ExternalService(models.Model):
+    """
+    Class for link to an external service in a Collection Page.
+    """
+    MENU_OPTIONS = [
+        (1, "LUNA"),
+        (2, "BTAA"),
+    ]
+    service = models.IntegerField(
+        choices=MENU_OPTIONS, default=1, help_text='Choose an external service'
+    )
+    identifier = models.CharField(
+        max_length=255, help_text="identifier to retrieve object from service"
+    )
+
+    panels = [
+        FieldPanel('service'),
+        FieldPanel('identifier'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageExternalService(Orderable, ExternalService):
+    """
+    Intermediate class for links to external services in a Collection
+    Page. (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_external_service"
+    )
+
+
+class ObjectMetadata(models.Model):
+    """
+    Class for metadata fields to display in search results.
+    """
+    MENU_OPTIONS = [
+        (1, "go to a results page for the selected item"),
+        (2, "link to a related item in the collection"),
+    ]
+    edm_field_label = models.CharField(max_length=255, blank=True)
+    multiple_values = models.BooleanField(
+        default=False, help_text='Are there multiple values within the field?'
+    )
+    hotlinked = models.BooleanField(
+        default=False,
+        help_text='Do you want this label to linked to a unique browse view?'
+    )
+    link_target = models.IntegerField(
+        choices=MENU_OPTIONS,
+        default=1,
+        help_text=(
+            'How do you want the link to behave? \
+            (Required for hotlinked)'
+        )
+    )
+
+    panels = [
+        FieldPanel('edm_field_label'),
+        FieldPanel('hotlinked'),
+        FieldPanel('multiple_values'),
+        FieldPanel('link_target'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
+    """
+    Intermediate class for metadata fields within a Collection Page
+    result.  (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_obj_metadata"
+    )
+
+
+class CResult(models.Model):
+    """
+    Class for search results within a Collection Page.
+    """
+    field_label = models.CharField(max_length=255, blank=True)
+    field_identifier = models.CharField(
+        max_length=255, blank=True, help_text="EDM/IIIF field identifier"
+    )
+
+    panels = [
+        FieldPanel('field_label'),
+        FieldPanel('field_identifier'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageResult(Orderable, CResult):
+    """
+    Intermediate class for results within a Collection Page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_result"
+    )
+
+
+class CFacet(models.Model):
+    """
+    Class for facets within a Collection Page.
+    """
+    label = models.CharField(max_length=255, blank=True)
+    search_handler_location = models.CharField(max_length=255, blank=True)
+    includes_ocr = models.BooleanField(
+        default=False, help_text='Do the searchable objects have OCR?'
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('search_handler_location'),
+                FieldPanel('includes_ocr'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageFacet(Orderable, CFacet):
+    """
+    Intermediate class for facets within a Collection Page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_facet"
+    )
+
+
+class CBrowse(models.Model):
+    """
+    Class for cluster browses within a Collection Page.
+    """
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False,
+        help_text=(
+            'Include browse term in collection sidebar? \
+            (Featured browse)'
+        )
+    )
+    iiif_location = models.URLField(max_length=255, blank=True)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('iiif_location'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageClusterBrowse(Orderable, CBrowse):
+    """
+    Intermediate class for cluster browses within a Collection Page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_cbrowse"
+    )
+
+
+class LBrowse(models.Model):
+    """
+    Class for list browses within a Collection Page.
+    """
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False,
+        help_text=(
+            'Include browse term in collection sidebar? \
+            (Featured browse)'
+        )
+    )
+    iiif_location = models.URLField(max_length=255, blank=True)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('iiif_location'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageListBrowse(Orderable, LBrowse):
+    """
+    Intermediate class for list browses within a Collection Page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_lbrowse"
+    )
+
+
+class CSearch(models.Model):
+    """
+    Class for searches within a Collection Page.
+    """
+    label = models.CharField(max_length=255, blank=True)
+    include = models.BooleanField(
+        default=False, help_text='Include in sidebar?'
+    )
+    default = models.BooleanField(
+        default=False,
+        help_text=(
+            'Is this the default search? (If more than one are selected, the \
+            first one selected will be the default.)'
+        )
+    )
+    mark_logic_parameter = models.CharField(max_length=255, blank=True)
+    search_handler_location = models.CharField(max_length=255, blank=True)
+    includes_ocr = models.BooleanField(
+        default=False, help_text='Do the searchable objects have OCR?'
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('label'),
+                FieldPanel('include'),
+                FieldPanel('default'),
+                FieldPanel('mark_logic_parameter'),
+                FieldPanel('search_handler_location'),
+                FieldPanel('includes_ocr'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageSearch(Orderable, CSearch):
+    """
+    Intermediate class for searches within a Collection Page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_search"
+    )
+
+
 # Collection page content type
 class CollectionPage(RoutablePageMixin, PublicBasePage):
     """
@@ -227,6 +495,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
 
+    # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
@@ -252,6 +521,46 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         'staff.StaffPage', null=True, blank=True, on_delete=models.SET_NULL
     )
     unit_contact = models.BooleanField(default=False)
+
+    # Collection Panel Fields
+    # tab in the admin interface is called 'Collection'
+    digital_collection = models.BooleanField(
+        default=False, help_text='Is this a Digital Collection?'
+    )
+    hex_regex = RegexValidator(
+        regex='^#[a-zA-Z0-9]{6}$',
+        message='Please enter a hex color, e.g. #012043'
+    )
+    branding_color = models.CharField(
+        validators=[hex_regex], max_length=7, blank=True
+    )
+    google_font_link = models.URLField(
+        blank=True, help_text='Google fonts link to embed in the header'
+    )
+    font_family = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
+    )
+    highlighted_records = models.URLField(
+        blank=True,
+        help_text=(
+            'URL for the select objects you would \
+            like to show in the collection page'
+        )
+    )
+
+    # TODO: eventually this will contain instructions for generating a
+    # link to the library catalog or other kinds of specialized links
+
+    object_identifier = models.URLField(
+        max_length=255,
+        blank=True,
+        help_text=(
+            'Use a Bib ID or a record PI to construct \
+            a link to the catalog'
+        )
+    )
 
     @route(r'^viewer/$')
     def viewer(self, request, *args, **kwargs):
@@ -296,7 +605,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement', label='Related Collection'),
+        InlinePanel('related_collection_placement',
+                    label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -316,6 +626,48 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         index.SearchField('collection_location'),
         index.SearchField('staff_contact'),
     ]
+
+    # panels within the 'Collection' tab in the admin interface
+    collection_panels = [
+        FieldPanel('digital_collection'),
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('banner_image'),
+                ImageChooserPanel('banner_feature'),
+                FieldPanel('banner_title'),
+                FieldPanel('banner_subtitle'),
+            ],
+            heading='Banner'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('branding_color'),
+                FieldPanel('google_font_link'),
+                FieldPanel('font_family'),
+            ],
+            heading='Branding'
+        ),
+        FieldPanel('highlighted_records'),
+        InlinePanel('col_search', label='Searches'),
+        InlinePanel('col_lbrowse', label='List Browses'),
+        InlinePanel('col_cbrowse', label='Cluster Browses'),
+        InlinePanel('col_facet', label='Facets'),
+        InlinePanel('col_result', label='Additional Fields in Results'),
+        InlinePanel('col_obj_metadata', label='Object Metadata'),
+        InlinePanel('col_external_service', label='Link to External Service'),
+    ]
+
+    # this creates the 'Collection' tab in the admin interface
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(collection_panels, heading='Collection'),
+        ]
+    )
 
     def get_context(self, request):
 
@@ -511,7 +863,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(
+        max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
@@ -623,9 +976,11 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         InlinePanel(
             'regional_collections',
             label='Other Local Collections',
-            help_text=
-            'Related collections that are held by other institutions, like BMRC, Newberry, etc.'
-        ),
+            help_text=(
+                'Related collections that are held by other \
+                institutions, like BMRC, Newberry, etc.'
+            ),
+        )
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -698,9 +1053,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list(
-                'email', flat=True
-            )[0]
+            email = librarian.staff_page_email.values_list('email',
+                                                           flat=True)[0]
         except:
             email = ''
         phone_and_fac = tuple(
@@ -1237,7 +1591,6 @@ class ExhibitPage(PublicBasePage):
         context['unit_link_external'] = unit_link_external
         context['unit_link_page'] = unit_link_page
         context['unit_link_document'] = unit_link_document
-
 
         return context
 

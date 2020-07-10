@@ -14,7 +14,7 @@ class PageOwnersForm(forms.Form):
 
     cnetid_choices = [
         (s.cnetid, s.title)
-        for s in StaffPage.objects.live().order_by('last_name', 'first_name')
+        for s in StaffPage.objects.all().order_by('last_name', 'first_name')
     ]
     label = 'Limit by staff member'
     cnetid = forms.ChoiceField(

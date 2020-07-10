@@ -1,22 +1,30 @@
-import sys
-import pandas
-from io import StringIO
+import csv
 
 from django.conf import settings
 from django.conf.urls import url
-from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.core import management
-from django.http import HttpResponse
+from django.templatetags.static import static
+from django.http import StreamingHttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.html import format_html
 from wagtail.admin.menu import MenuItem
 from wagtail.core import hooks
-from base.management.commands.report_page_maintainers_and_editors import Command
 
+from base.management.commands.report_page_maintainers_and_editors import \
+    Command
 from library_website.settings.base import (
     NO_PERMISSIONS_REDIRECT_URL, PERMISSIONS_MAPPING
 )
+
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
 
 
 def get_required_groups(page):
@@ -105,17 +113,17 @@ def admin_view(request):
         }
 
         if form.is_valid():
-            records = c.get_records(**options)
-
-            head = records.pop(0)
-            df = pandas.DataFrame(records, columns=head)
-
-            response = HttpResponse(content_type='text/csv')
+            rows = c._get_pages(**options)
+            pseudo_buffer = Echo()
+            writer = csv.writer(pseudo_buffer)
+            response = StreamingHttpResponse(
+                (writer.writerow(row) for row in rows), content_type="text/csv"
+            )
             response['Content-Disposition'
-                     ] = 'attachment; filename="page-owner-report.csv"'
+                     ] = 'attachment; filename="somefilename.csv"'
 
-            df.to_csv(response, encoding='utf-8', index=False)
             return response
+
     else:
         form = PageOwnersForm()
         return render(request, 'base/page_owners_form.html', {'form': form})

@@ -5,6 +5,7 @@ from threading import Thread
 from urllib.parse import unquote
 
 import requests
+
 from pyiiif.pres_api.utils import get_thumbnail
 
 from .exceptions import (

@@ -1,9 +1,11 @@
+{% load render_bundle from webpack_loader %}
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
 {% load public_tags %}
+{% load staff_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +93,7 @@
             <div class="alert {{alert_level}}" role="alert">
                 {{alert_message|richtext}}
                 {% if alert_more_info|striptags %}
-                    | <a id="alert-more" href="{{alert_link}}">More info...</a>
+                   <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
                 {% endif %}
             </div>
         {% endif %}
@@ -109,7 +111,7 @@
                 {% endif %}
                 <div class="overlaywrap {{branch_lib_css}}">
                     <a href="{{banner_url}}">
-                    <h2>{{banner_title}}</h2>
+                    <p class="h2">{{banner_title}}</p>
                     {% if banner_subtitle %}
                         <p class="banner-subtitle">{{banner_subtitle}}</p>
                     {% endif %}
@@ -136,7 +138,7 @@
             <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row --> 
 
         {% if has_left_sidebar %}
-            <nav role="navigation">
+            <nav role="navigation" aria-label="Secondary menu">
                 <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
                     {% if sidebartitle %}
                         <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
@@ -162,7 +164,7 @@
         {% endif %}
         <!-- // Left Sidebar -->
 
-        <div class="{{breadcrumb_div_css}}">
+        <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
         {% block above_main_content %}{% endblock %}
@@ -174,7 +176,7 @@
             {% if has_left_sidebar %}
                 <!-- Off-Canvas Toggle Button -->
                 <div class="row visible-xs visible-sm toggle-side">
-                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true"></i></button></p>
+                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
                 </div>
                 <!-- // End Off-Canvas Toggle Button -->
             {% endif %}
@@ -247,6 +249,11 @@
                     {{index_pages_html}}
                 {% endautoescape %}
 
+                {% if self.cgi_mail_form %}
+                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
+                    {% render_bundle 'CGIMailForm' %}
+                {% endif %}
+
                 {% if self.has_richtext_widget %}
                     <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
                         <div class="home-module">
@@ -268,13 +275,13 @@
                             {#featured_lib_expert.block.library_expert #}
                             <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert">
                                 <div class="home-module">
-                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
+                                    <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
                                 </div>
-                                <div class="col-xs-8">
+                                <div class="home-expert-info">
                                     {% if featured_lib_expert_profile %}
-                                        <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
+                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
                                     {% else %}
-                                        <h3>Consult {{featured_lib_expert_name}} on:</h3>
+                					<h3>Ask {{featured_lib_expert_name}} about:</h3>
                                     {% endif %} 
                                     <ul>
                                         {% for link in featured_lib_expert_links %}
@@ -286,12 +293,15 @@
                                         <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
                                     </ul>
                                 </div>
-                                <div class="col-xs-4 home-profile">
-                                    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-                                </div>
+			        <div class="home-profile">
+				    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+				    {% if has_libcal_schedule %}
+				    {% libcal_button staff_page email %}
+				    {% endif %}
+				</div>
                             </div>
                         {% endif %}
-                    </div> <!-- // row -->
+                   </div> <!-- // row -->
                 {% endif %}
 
                 {% if self.news_feed_source %}
@@ -335,6 +345,20 @@
 
             {% if self.has_right_sidebar %}
                 <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
+
+                    {% if reusable_content %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
+                            {% for widget in reusable_content %}
+                                <div class="widget-reusable-content-block {% if widget.content.make_page_alert %}page-alert{%endif%}">
+                                    {% if widget.content.sidebar_heading %}
+                                        <h3>{{widget.content.sidebar_heading}}</h3>
+                                    {% endif %}
+                                    {{widget.content.content|richtext}}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}
@@ -355,11 +379,11 @@
                             <h3>Find Spaces</h3>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
-                                    <span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
+                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i></a><br/>
+                                    <span class="hidden-xs hidden-sm hidden-md" aria-role="presentation">Quiet </span>Study</p>
                                 </div>
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true">people</i></a><br/>Collaboration</p>
+                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i></a><br/>Collaboration</p>
                                 </div>
                                 {% if self.book_a_room_link %}
                                     <div class="col-xs-4 nopadding">
@@ -429,20 +453,45 @@
                                 {% endif %}
                             </ul>
                         </div>
-                    {% endif %}
+		    {% endif %}
 
-                    {% if libra %}
+		    {% if libra %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                             <h3>Print</h3>
                             <div class="libra-link-wrap">
                                 <p><a href="{% pageurl libra %}">{{libra}}</a></p>
                             </div>
                         </div>
-                    {% endif %}
+		    {% endif %}
 
-                    {% if contacts %}
+		    {% if contacts %}
                         {% list_contacts_in_sidebar contacts 'Media Contact' %}
-                    {% endif %}
+		    {% endif %}
+			{% if self.category %}
+			    <h3>
+				Subscribe to {{ self.category }} <br>
+			    </h3>
+			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+				<a href="/rss/{{ self.slug }}/">
+				    <i class="fa fa-rss-square" aria-hidden="true"></i>
+				    RSS feed
+				</a>
+			    </div>
+			{% elif self.news_feed_api %}
+			    <h3>
+				Subscribe to all Library news <br>
+			    </h3>
+			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+				<a href="/rss/news/">
+				    <i class="fa fa-rss-square" aria-hidden="true"></i>
+				    RSS feed
+				</a>
+			    </div>
+			{% else %}
+			    <div style="display: none;">
+				noop
+			    </div>
+			{% endif %}
                 </div>
                 <!-- // Right Sidebar Content -->
 

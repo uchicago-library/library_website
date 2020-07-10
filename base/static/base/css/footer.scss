@@ -46,19 +46,23 @@ Pleeb Footer Code
 
 .footer {
   width: 100%;
-  background: $darkgray; // fallback
+  background: $mid-dark; // fallback
   background-image: url("../images/warm_grey_reddish.jpg");
   background-repeat: repeat;
   padding-top: 20px;
   padding-bottom: 20px;
-  &>hr {
-    border-top: 1px solid $darkgray;
+  ul {
+    list-style:none;
+    padding-left: 0;
   }
-  p, small {
+  &>hr {
+    border-top: 1px solid $mid-dark;
+  }
+  p, li, small {
     color: $neutral;
   }
   & a {
-  color: #eee;
+  color: #fff;
   line-height: 1.7em;
   text-decoration: none;
     &:hover {

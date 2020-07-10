@@ -15,6 +15,11 @@ from group.models import (
 )
 from staff.models import StaffPage
 
+INTRANET_UNIT_PAGE_CONTENT_TYPES = [
+    'intranetunits | intranet units page',
+    'intranetunits | intranet units index page'
+]
+
 
 class IntranetUnitsReportsPageTable(Orderable, Report):
     """
@@ -391,16 +396,14 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
 
 
 class IntranetUnitsIndexPage(BasePage):
+    max_count = 1
     intro = RichTextField()
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')
     ] + BasePage.content_panels
 
-    subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage',
-        'intranetunits.IntranetUnitsPage'
-    ]
+    subpage_types = ['intranetunits.IntranetUnitsPage']
 
     search_fields = BasePage.search_fields + [
         index.SearchField('intro'),
@@ -430,9 +433,9 @@ class IntranetUnitsIndexPage(BasePage):
             currentlevel = units
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(ancestor.content_type) in [
-                    'intranet units page', 'intranet units index page'
-                ]:
+                if str(
+                    ancestor.content_type
+                ) in INTRANET_UNIT_PAGE_CONTENT_TYPES:
                     nextlevels = list(
                         filter(
                             lambda g: g['url'] == ancestor.url, currentlevel

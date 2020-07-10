@@ -38,8 +38,9 @@
     <p>
       {% if email %}
         <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
-      {% endif %}
-      {% staff_faculty_exchanges_phone_numbers staff_page %}
+	{% endif %}
+	{% staff_faculty_exchanges_phone_numbers staff_page %}
+	{% libcal_button staff_page email %}
     </p>
   </div>
 

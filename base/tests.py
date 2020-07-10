@@ -494,10 +494,10 @@ class TestPageOwnerReports(TestCase):
         ).get_descendants().live().count() + 1
         get_loop_pages_count = sum(
             1 for p in self.c._get_pages(None, 'Loop', None)
-        )
+        ) - 1
         get_public_pages_count = sum(
             1 for p in self.c._get_pages(None, 'Public', None)
-        )
+        ) - 1
         self.assertEqual(get_loop_pages_count, num_pages_loop)
         self.assertEqual(get_public_pages_count, num_pages_public)
 
@@ -511,7 +511,7 @@ class TestPageOwnerReports(TestCase):
         """
         get_locutus_pages_count = sum(
             1 for p in self.c._get_pages('locutus', None, None)
-        )
+        ) - 1
         self.assertEqual(get_locutus_pages_count, 6)
 
     def test_get_pages_with_cnetid_and_role(self):
@@ -527,13 +527,13 @@ class TestPageOwnerReports(TestCase):
         """
         page_maintainer_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'page_maintainer')
-        )
+        ) - 1
         editor_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'editor')
-        )
+        ) - 1
         content_specialist_in_scope = sum(
             1 for p in self.c._get_pages('locutus', None, 'content_specialist')
-        )
+        ) - 1
         self.assertEqual(page_maintainer_in_scope, 3)
         self.assertEqual(editor_in_scope, 1)
         self.assertEqual(content_specialist_in_scope, 2)
@@ -542,7 +542,7 @@ class TestPageOwnerReports(TestCase):
         self
     ):
         all_pages_count = self.all_live_pages.count()
-        num_pages = sum(1 for p in self.c._get_pages(None, None, None))
+        num_pages = sum(1 for p in self.c._get_pages(None, None, None)) - 1
         self.assertEqual(num_pages, all_pages_count)
 
     def test_main_command_when_no_pages_are_returned(self):
@@ -557,3 +557,48 @@ class TestPageOwnerReports(TestCase):
         }
         csv = run_report_page_maintainers_and_editors(options)
         self.assertEqual(csv.strip(), ','.join(self.c.HEADER))
+
+
+class TestUpdateSiteDataCommand(TestCase):
+    """
+    Test cases for the update_site_data manage command.
+    """
+    fixtures = ['test.json']
+
+    def test_changing_port_alone(self):
+        """
+        Change the site port to a new one
+        """
+        management.call_command('update_site_data', 'loopdev', '--port=555')
+        site_obj = Site.objects.get(hostname='loopdev')
+        self.assertEqual(555, site_obj.port)
+
+    def test_changing_hostname_alone(self):
+        """
+        Change the site hostname to a new one
+        """
+        management.call_command(
+            'update_site_data', 'loopdev', '--new_host=lcars'
+        )
+        site_obj = Site.objects.get(hostname='lcars')
+        self.assertEqual('lcars', site_obj.hostname)
+
+    def test_changing_all_options_at_once(self):
+        """
+        Pass all paramaters at once
+        """
+        management.call_command(
+            'update_site_data', 'loopdev', '--new_host=lcars', '--port=8912'
+        )
+        site_obj = Site.objects.get(hostname='lcars')
+        self.assertEqual('lcars', site_obj.hostname)
+        self.assertEqual(8912, site_obj.port)
+
+    def test_bad_port_given(self):
+        """
+        Test what happens when a non-numeric port is given
+        """
+        self.assertRaises(
+            ValueError, management.call_command, 'update_site_data', 'loopdev',
+            '--port=borg'
+        )

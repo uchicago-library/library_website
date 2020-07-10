@@ -107,6 +107,8 @@ class NewsIndexPage(BasePage):
     """
     Index page for intranet news stories.
     """
+    max_count = 1
+    subpage_types = ['news.NewsPage']
     intro = RichTextField()
 
     content_panels = Page.content_panels + [

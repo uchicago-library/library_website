@@ -46,6 +46,8 @@ $accent-font: 'Cormorant Garamond', serif;
  * --------------------------------------------------
  */
 
+$default-link: #2A5DB0;
+
 // Unv Color Palette
 
 $darkgray: #767676;
@@ -71,7 +73,7 @@ $hoveraccent: #D49464;
 $hovercalm: #eeefe5; //#e0e5e2
 $hovercalmlight: #f6f7f2;
 $active: #8A9045;
-$active-hover: #725663;
+$active-hover: #664d59; //#725663
 
 
 // Opacity Fun Times
@@ -87,7 +89,7 @@ $trans-orange: rgba(154, 83, 46, 0.8);
 // Table Color Scheme
 
 $table-main: #ADB17D;
-$table-accent: ;
+//$table-accent: ;
 
 
 /*
@@ -112,6 +114,7 @@ $divider: 1px solid $darkgray;
   border-radius: 0;
   padding: 6px 12px;
   margin-bottom: 10px;
+  text-decoration: none;
   &:after {
     content: "\0020\f101";
     font-family: FontAwesome;
@@ -199,10 +202,11 @@ $divider: 1px solid $darkgray;
     background: $darkred;
   }
   &.library-in-the-news {
-    background: #C68220; // dark yellow
+    background: #9E6819; // dark yellow
+    font-weight: 600;
   }
   &.people {
-    background: $ssaorange;
+    background: #7b421c;
   }
   &.research {
     background: $crerarblue;
@@ -214,13 +218,15 @@ $divider: 1px solid $darkgray;
     background: $crerarblue;
   }
   &.spaces {
-    background: $active;
+    background: #606430;
+    font-weight: 600;
   }
   &.special-collections {
     background: $eckhartpurple;
   }
   &.spotlight {
-    background: #C68220; // dark yellow
+    background: #9E6819; // dark yellow
+    font-weight: 600;
   }
   &.teaching {
     background: #155F83; // light blue

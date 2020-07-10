@@ -20,25 +20,6 @@ from public.models import StandardPage
 from units.utils import get_default_unit
 
 
-def breadcrumbs(request):
-    breadcrumbs = [{"href": "/", "text": "Home"}]
-
-    path_components = [
-        component for component in request.path.split('/') if component
-    ]
-    page, args, kwargs = request.site.root_page.specific.route(
-        request, path_components
-    )
-    while page:
-        breadcrumbs.append({"href": page.url, "text": page.title})
-        if hasattr(page, 'parent'):
-            page = page.parent
-        else:
-            break
-
-    return breadcrumbs
-
-
 def json_hours(request):
     """
     View for rendering hours as json.
@@ -160,6 +141,8 @@ def external_include(request):
             img['src'] = absolute_url(img['src'])
         for link in soup.find_all('link'):
             link['href'] = absolute_url(link['href'])
+        for sc in soup.find_all('script'):
+            sc['src'] = absolute_url(sc['src'])
         response.content = str(soup)
         if callback:
             return HttpResponse(

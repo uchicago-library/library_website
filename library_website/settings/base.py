@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'wagtail.contrib.routable_page',
     'wagtail.contrib.search_promotions',
     'wagtail.contrib.sitemaps',
+    'wagtail.contrib.settings',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
 
@@ -84,9 +85,11 @@ INSTALLED_APPS = [
     'projects',
     'redirects',
     'results',
+    'reusable_content',
     'search',
     'searchable_content',
     'shibboleth',
+    'site_settings',
     'staff',
     'subjects',
     'units',
@@ -133,6 +136,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'shibboleth.context_processors.login_link',
                 'shibboleth.context_processors.logout_link',
+                'wagtail.contrib.settings.context_processors.settings',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
@@ -185,6 +189,8 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+WAGTAILEMBEDS_RESPONSIVE_HTML = True
 
 # Phone number format
 PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
@@ -241,15 +247,17 @@ WAGTAILSEARCH_BACKENDS = {
 # https://github.com/OttoYiu/django-cors-headers
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'catalog.lib.uchicago.edu',
-    'catalogtest.lib.uchicago.edu',
-    'dldc1.lib.uchicago.edu',
-    'dldc2.lib.uchicago.edu',
-    'dldc3.lib.uchicago.edu',
-    'guides.lib.uchicago.edu',
-    'sfx.lib.uchicago.edu',
-    'sfx.lib.uchicago.edu:3103',
-    'vufindtest.lib.uchicago.edu',
+    'https://catalog.lib.uchicago.edu',
+    'https://catalogtest.lib.uchicago.edu',
+    'https://dldc1.lib.uchicago.edu',
+    'https://dldc2.lib.uchicago.edu',
+    'https://dldc3.lib.uchicago.edu',
+    'https://forms2.lib.uchicago.edu',
+    'http://guides.lib.uchicago.edu',
+    'https://guides.lib.uchicago.edu',
+    'https://rooms.lib.uchicago.edu',
+    'https://sfx.lib.uchicago.edu',
+    'https://sfx.lib.uchicago.edu:3103',
 )
 CORS_ALLOW_METHODS = (
     'GET',
@@ -424,6 +432,23 @@ NEWS_CACHE_TTL = 60 * 180
 
 # University Events Feed
 UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
+
+# Tiny Tiny RSS Feed
+TTRSS_FEED = 'https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
+
+# Authorization key for LibCal admin interface
+LIBCAL_TOKEN_ENDPOINT = ''
+LIBCAL_ENDPOINT = ''
+LIBCAL_CREDENTIALS = {
+    'grant_type': '',
+    'client_id': '',
+    'client_secret': '',
+}
+
+# CGIMail Forms
+CGI_MAIL_SERVICE = 'https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail'
+ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
+SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
 # Override settings in test
 # -------------------------------

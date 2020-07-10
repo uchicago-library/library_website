@@ -74,6 +74,12 @@ Right Sidebar: Widget Items
     padding-left: 1em;
     padding-top: 35px;
   }
+  a { // ADA
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   // Library specific colors
   &.crerar>ul>li>a {
@@ -165,6 +171,10 @@ Right Sidebar: Widget Items
   }
   a {
     color:  $active-hover;
+    &:hover {
+      color: $default-link;
+      text-decoration: none;
+    }
   }
   h2, h3 {
     font-weight: 400;
@@ -246,6 +256,7 @@ Right Sidebar: Widget Items
   a {
     color: $darkgray;
     display: inline;
+    text-decoration: none;
     &.viewall {
         &:before {
         content: "\0020|\0020";
@@ -258,7 +269,7 @@ Right Sidebar: Widget Items
   }
 }
 
- .rightside ul, .home-modwrapper ul {
+.home-modwrapper ul {
   list-style: none;
   margin-left: 0;
   padding-left: 0;
@@ -266,8 +277,14 @@ Right Sidebar: Widget Items
 
 .rightside-mod { //Wrapper for individual modules
   padding: 0 0 2em 0;
+  ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1em;
+    text-indent: -1em;
+  }
   li {
-    margin-bottom: 0.25em;
+    margin-bottom: 0.5em;
   }
   .collectionpage & {
     padding-bottom: 1em;

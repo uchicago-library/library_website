@@ -12,9 +12,11 @@ class AlertPage(PublicBasePage):
     Page for displaying alert messages.
     """
     INFO = 'alert-info'
+    LOW = 'alert-low'
     HIGH = 'alert-high'
     ALERT_TYPES = (
         (INFO, 'Informational Alert'),
+        (LOW, 'General Alert'),
         (HIGH, 'Critical Alert'),
     )
 
@@ -48,6 +50,7 @@ class AlertIndexPage(PublicBasePage):
     """
     Container page for holding alert pages.
     """
+    max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
     subpage_types = ['alerts.AlertPage']
     search_fields = PublicBasePage.search_fields

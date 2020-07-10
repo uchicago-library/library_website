@@ -1,6 +1,8 @@
 # The University of Chicago Library Website
 
-[2017-2018 Dev Priorities spreadsheet](https://docs.google.com/a/uchicago.edu/spreadsheets/d/1qn6ZDGs08tRcGPFchq75yyU04cNfdmhZ2BM3VvmqmH8/edit?usp=sharing)   *Viewable only to UChicago Staff*
+## Workflows and Documentation
+- [Developer workflows](https://github.com/uchicago-library/uchicago-library.github.io/blob/master/docs/README.md#developer) (for pull requests and creating branches)
+- [ADA Documentation and code](https://github.com/uchicago-library/uchicago-library.github.io/blob/master/docs/code-resources.md#documentation)
 
 ## Running an Instance of the Site
 *If you haven't run Vagrant yet, see the 'Setting up for Development' section below.*
@@ -8,6 +10,15 @@
 5. ssh to the guest machine: `vagrant ssh`
 6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
 7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+
+### Vagrant Troubleshooting
+If you have issues loading your local instance, try:
+```
+vagrant halt
+vagrant destroy
+vagrant up
+pip install -r requirements.txt
+```
 
 ## Setting up for Development
 
@@ -97,3 +108,25 @@ These are the images used on pages in the test database on the dev version of th
 is fine, however, you will have broken image links if you don't get them.
 
 All you need to do is [download the images from box](https://uchicago.box.com/s/kuib7g0hqhcf18wq51dq10sodfl2mhq0) and put them in `/media/original_images/`.
+
+## Pushing to Production
+- ssh to nest or motacilla
+- `cd /data/{{ SERVER NAME }}/ ; source venv3.7/bin/activate ; cd sites/library_website`
+- `git remote update`
+- `git status`
+- `git pull origin master`
+- `./manage.py migrate` _only needed if made migrations_
+- `./manage.py compress`
+- `./manage.py collectstatic`
+- `sudo service apache24 restart`
+
+### Caching Issues
+If your changes aren't loading into production, try:
+- Compress, collectstatic, and restart apache again
+- Clear the Wagtail cache in Wagtail settings
+- Clear the Django cache manually
+```
+./manage.py shell
+from django.core.cache import cache
+cache.clear()
+```

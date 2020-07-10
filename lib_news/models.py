@@ -2,7 +2,7 @@ import json
 from urllib.request import URLError, urlopen
 
 import bleach
-from django.core.cache import caches
+from django.core.cache import cache, caches
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
@@ -59,7 +59,7 @@ class PublicNewsCategories(models.Model, index.Indexed):
 
 
 @register_snippet
-class PublicNewsAuthors(models.Model, index.Indexed):
+class PublicNewsAuthors(models.Model):
     author_name = models.CharField(max_length=255, blank=False)
     link_page = models.ForeignKey(
         'wagtailcore.Page',
@@ -115,6 +115,9 @@ class LibNewsPageCategories(Orderable, models.Model):
 
 class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
+    max_count = 1
+    subpage_types = ['lib_news.LibNewsPage']
+
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
@@ -145,8 +148,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         when no thumbnail is provided',
         related_name='+'
     )
-
-    subpage_types = ['lib_news.LibNewsPage']
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('fallback_image'),
@@ -209,8 +210,9 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         self.is_unrouted = False
         try:
-            slug = request.path.split('/')[-2]
+            slug = kwargs['slug']
             self.category = self.get_cat_from_slug(slug)
+            self.slug = slug
         except (KeyError):
             self.category = ''
         return TemplateResponse(
@@ -231,9 +233,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             request, self.get_template(request), self.get_context(request)
         )
 
-    def get_alpha_cats(self):
+    def get_alpha_cats_static():
         """
-        Get a list of categories sorted alphabetically.
+        Get a list of categories sorted alphabetically,
+        not dependent on any LibNewsIndexPage object.
 
         Returns:
             list of strings
@@ -242,6 +245,15 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             s[0] for s in
             PublicNewsCategories.objects.order_by('text').values_list('text')
         )
+
+    def get_alpha_cats(self):
+        """
+        Get a list of categories sorted alphabetically.
+
+        Returns:
+            list of strings
+        """
+        return LibNewsIndexPage.get_alpha_cats_static()
 
     def get_first_feature_story_id(self):
         """
@@ -256,16 +268,25 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         else:
             return ''
 
+    def get_cat_from_slug_static(slug):
+        """
+        Creates a lookup table of category names by slug
+        and returns a match for the given slug, without
+        reference to a LibNewsPage object.
+
+        """
+        categories = LibNewsIndexPage.get_alpha_cats_static()
+        lookup_table = {}
+        for cat in categories:
+            lookup_table[slugify(cat)] = cat
+        return lookup_table[slug]
+
     def get_cat_from_slug(self, slug):
         """
         Creates a lookup table of category names by slug
         and returns a match for the given slug.
         """
-        categories = self.get_alpha_cats()
-        lookup_table = {}
-        for cat in categories:
-            lookup_table[slugify(cat)] = cat
-        return lookup_table[slug]
+        return LibNewsIndexPage.get_cat_from_slug_static(slug)
 
     @property
     def base_url(self):
@@ -521,14 +542,14 @@ class LibNewsPage(PublicBasePage):
         context['category_url_base'] = parent_context['category_url_base']
         context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
-        context['display_current_web_exhibits'
-                ] = parent_context['display_current_web_exhibits']
+        context['display_current_web_exhibits'] = parent_context[
+            'display_current_web_exhibits']
         context['current_exhibits'] = parent_context['current_exhibits']
         context['events_feed'] = parent_context['events_feed']
         context['recent_stories'] = self.get_recent_stories(3, '-published_at')
         context['content_div_css'] = parent_context['content_div_css']
-        context['right_sidebar_classes'
-                ] = parent_context['right_sidebar_classes']
+        context['right_sidebar_classes'] = parent_context[
+            'right_sidebar_classes']
         context['nav'] = parent_context['nav']
         context['libra'] = parent_context['libra']
         return context
@@ -550,13 +571,14 @@ def build_news_feed(sender, instance, **kwargs):
         None but writes a file to the static directory
     """
     clear_cache()
+    cache.delete('news_cats')
     drf_url = instance.get_site().root_url + DRF_NEWS_FEED
     try:
         serialized_data = urlopen(drf_url).read()
         data = json.loads(serialized_data)
         with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=None)
-    except(URLError):
+    except (URLError):
         # We are running unit tests
         return None
 
