@@ -13,10 +13,11 @@
     <form action="/switchboard/" id="search_widget_catalog_search" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Catalogs &gt; Search">
       <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field --> 
         <div class="input-group"> <!-- Input Group -->
-          <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="..." class="form-control"/>
+	  <label for="lookfor" class="visually-hidden">Search for </label>
+          <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search for" class="form-control"/>
 	  <input type="hidden" name="which-form" value="catalog">
 	  {% csrf_token %}
-          <select class="selectpicker btn-searchtype" name="type">
+          <select class="selectpicker btn-searchtype" aria-label="Limit search to" name="type">
             <option value="AllFields">All Fields</option>
             <option value="Title">Title</option>
             <option value="Subject">Subject</option>
@@ -32,7 +33,7 @@
       </div> <!-- // Search Button -->
 
       <!-- Filter Search -->
-      <div class="col-xs-12 col-sm-9 eoptions">
+      <div class="col-xs-12 col-sm-9 eoptions" style="font-size: 1.5rem;">
         <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks" aria-label="Limit to Ebooks" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Catalogs &gt; Limit to Ebooks &amp; Ejournals"/> 
         Limit to Ebooks &amp; Ejournals<p></p>
       </div> <!-- // eoptions -->
@@ -41,7 +42,7 @@
     <div class="col-xs-12 col-sm-3 eoptions advanced">
       <p><a href="https://catalog.lib.uchicago.edu/vufind/Search/Advanced" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; Advanced Search">Advanced Search</a></p>
     </div>
-    <div class="col-xs-12 searchoptions">
+    <!--<div class="col-xs-12 searchoptions">
       <p>
         <i aria-hidden="true" class="fa fa-info-circle"></i> 
         <span class="hidden-xs">Get materials from other libraries:</span> &nbsp; 
@@ -50,11 +51,9 @@
         <a href="http://proxy.uchicago.edu/login?url=http://newfirstsearch.oclc.org/dbname=WorldCat;done=referer;FSIP" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; WorldCat">WorldCat</a>
       </p>
     </div>
-    <!-- // Filter Search -->
+     // Filter Search -->
   </div> <!-- // TAB 1 Catalog Search -->
-
-
-  
+          
   <!-- TAB 2 - Article Search -->
   <div class="col-xs-12" id="tab-2">
     <form method="post" action="/switchboard/" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
@@ -69,6 +68,7 @@
           <input type="hidden" value="db" name="ebscohostsearchsrc" id="ebscohostsearchsrc">
           <input type="hidden" value="+AND+" name="ebscohostsearchmode" id="ebscohostsearchmode">
           <input type="hidden" value="" name="ebscohostkeywords" id="ebscohostkeywords">
+          <input type="text" name="ebscohostsearchtext" id="ebscohostsearchtext" placeholder="evolutionary biology" aria-label="..." class="form-control">
         </div>
                              
         <div class="col-xs-3 col-sm-2 search-btn-wrapper">
