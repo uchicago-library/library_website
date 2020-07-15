@@ -7,8 +7,6 @@ from library_website.settings import (
     DEFAULT_UNIT, LIBCHAT_IDS, LIBCHAT_STATUS_URL, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
 )
 
-from json.decoder import JSONDecodeError
-
 
 def get_chat_status(name):
     """
@@ -26,7 +24,7 @@ def get_chat_status(name):
         libid = LIBCHAT_IDS[name]
         response = requests.get(LIBCHAT_STATUS_URL + libid, timeout=12)
         data = json.loads(response.content)
-    except (JSONDECodeError, requests.exceptions.Timeout) as error:
+    except requests.exceptions.Timeout:
         data = json.loads('{"online":false,"who":{}}')
 
     return data['online']
