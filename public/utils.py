@@ -138,7 +138,7 @@ def full_mk_url(bare_url, doi):
         '&function=idresolve'
         '&callback=redundant'
         f'&id={doi}'
-        )
+    )
     return output
 
 
@@ -148,7 +148,7 @@ def mk_url(doi):
 
     '''
     # this is for local testing; for production, change bare_url to
-    # https://lib.uchicago.edu/cgi-bin/idresolve
+    # bare_url = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
     bare_url = "http://sequent.lib.uchicago.edu:8081"
     return full_mk_url(bare_url, doi)
 
@@ -160,7 +160,11 @@ def doi_lookup(doi):
 
     '''
     url = mk_url(doi)
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    # if the idresolve service is down, doi_lookup should fail silently
+    except OSError:
+        return None
     if response.status_code % 400 < 100:
         return None
     else:
