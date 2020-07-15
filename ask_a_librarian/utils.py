@@ -26,7 +26,7 @@ def get_chat_status(name):
         libid = LIBCHAT_IDS[name]
         response = requests.get(LIBCHAT_STATUS_URL + libid, timeout=12)
         data = json.loads(response.content)
-    except (JSONDECodeError, requests.exceptions.Timeout) as error:
+    except (JSONDecodeError, requests.exceptions.Timeout) as error:
         data = json.loads('{"online":false,"who":{}}')
 
     return data['online']
