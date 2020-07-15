@@ -147,9 +147,9 @@ def mk_url(doi):
     given just DOI, output query url for SFX
 
     '''
-    # this is for local testing; for production, change bare_url to
-    # bare_url = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
-    bare_url = "http://sequent.lib.uchicago.edu:8081"
+    # change to the alternative for local testing
+    bare_url = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
+    # bare_url = "your_local_domain:8081"
     return full_mk_url(bare_url, doi)
 
 
