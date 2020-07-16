@@ -921,6 +921,27 @@ class PublicRawHTMLPage(PublicBasePage):
         StreamFieldPanel('html')
     ] + PublicBasePage.content_panels
 
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
+
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('html', partial_match=True),
     ]
