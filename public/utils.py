@@ -1,6 +1,5 @@
 import requests
 
-
 FEATURES_LIST = [
     (
         'is_quiet_zone', 'Quiet Zone',
@@ -125,6 +124,7 @@ def has_feature(feature):
 
 # helper functions for /switchboard route
 
+
 def full_mk_url(bare_url, doi):
     """
     Given DOI and URL for idresolve service, output query url for SFX
@@ -198,10 +198,7 @@ def get_clean_params(request):
     """
     params = request.POST
     clean_params = dict(
-        filter(
-            lambda x: x[0] != 'csrfmiddlewaretoken',
-            params.items()
-        )
+        filter(lambda x: x[0] != 'csrfmiddlewaretoken', params.items())
     )
     return clean_params
 
@@ -240,13 +237,15 @@ def switchboard_url(form_name):
     if form_name == 'catalog':
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
     elif form_name == 'articles':
-        url = ('http://proxy.uchicago.edu/login'
-               '?url=http://search.ebscohost.com/login.aspx'
-               '?direct=true&site=eds-live'
-               '&scope=site'
-               '&type=0'
-               '&mode=and'
-               '&cli0=FT1&clv0=Y')
+        url = (
+            'http://proxy.uchicago.edu/login'
+            '?url=http://search.ebscohost.com/login.aspx'
+            '?direct=true&site=eds-live'
+            '&scope=site'
+            '&type=0'
+            '&mode=and'
+            '&cli0=FT1&clv0=Y'
+        )
         return url
     elif form_name == 'journals':
         return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
@@ -257,4 +256,4 @@ def switchboard_url(form_name):
     elif form_name == 'news':
         return '/search/'
     else:
-        assert(False)
+        assert (False)
