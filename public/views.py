@@ -1,9 +1,9 @@
-import simplejson
-from django.http import HttpResponse
-from django.shortcuts import render
-from wagtail.core.models import Site
-from wagtail.images.models import Image
+from urllib import parse
 
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+import simplejson
 from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
@@ -18,16 +18,12 @@ from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
 from public.utils import (
-    get_features,
-    has_feature,
-    doi_lookup,
-    get_clean_params,
-    get_first_param,
-    switchboard_url,
+    doi_lookup, get_clean_params, get_features, get_first_param, has_feature,
+    switchboard_url
 )
+from wagtail.core.models import Site
+from wagtail.images.models import Image
 from wagtailcache.cache import cache_page
-from django.shortcuts import redirect
-from urllib import parse
 
 
 def navigation(request):
@@ -101,9 +97,8 @@ def spaces(request):
     possible_features = get_features()
 
     # validate form input.
-    loc_pages = LocationPage.objects.filter(is_building=True).values_list(
-        'title', flat=True
-    )
+    loc_pages = LocationPage.objects.filter(is_building=True
+                                            ).values_list('title', flat=True)
     if building not in loc_pages:
         building = None
     if not has_feature(feature):
@@ -134,9 +129,7 @@ def spaces(request):
     if floor:
         location_ids = LocationPageFloorPlacement.objects.filter(
             floor__title=floor
-        ).values_list(
-            'parent', flat=True
-        )
+        ).values_list('parent', flat=True)
         spaces = spaces.filter(id__in=location_ids)
     if space_type:
         spaces = spaces.filter(**{space_type: True})
@@ -164,9 +157,7 @@ def spaces(request):
         # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building.
         id_list = all_spaces.filter(parent_building__title=building
-                                    ).values_list(
-                                        'pk', flat=True
-        )
+                                    ).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here.
         floors = sorted(
             list(
