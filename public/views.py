@@ -56,7 +56,7 @@ def navigation(request):
 
 
 def switchboard(request):
-    '''
+    """
     route that intercepts a search query, forwards it to the DOI
     resolver if it's a DOI, and otherwise forwards the query to its
     normal destination
@@ -64,7 +64,12 @@ def switchboard(request):
     note: this code assumes that the first parameter posted by the
     search box is the search term
 
-    '''
+    Args: 
+        a POST request
+
+    Returns:
+        a redirect either to Find It! or to the /switchboard route
+    """
     search_term = get_first_param(request)
     params = get_clean_params(request)
     doi_url = doi_lookup(search_term)
@@ -161,7 +166,7 @@ def spaces(request):
         id_list = all_spaces.filter(parent_building__title=building
                                     ).values_list(
                                         'pk', flat=True
-                                    )
+        )
         # get a unique, sorted list of the available floors here.
         floors = sorted(
             list(

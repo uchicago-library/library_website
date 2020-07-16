@@ -93,9 +93,6 @@ FEATURES_LIST = [
 ]
 
 
-# helper functions for /switchboard route
-
-
 def get_features():
     """
     Boolean fields we use as "features" in the
@@ -126,12 +123,19 @@ def has_feature(feature):
     return False
 
 
+# helper functions for /switchboard route
+
 def full_mk_url(bare_url, doi):
-    '''
-    given DOI and URL for idresolve service, output query url for SFX
+    """
+    Given DOI and URL for idresolve service, output query url for SFX
     callback is called 'redundant' because this code isn't using it
 
-    '''
+    Args:
+        string URL for idresolve, DOI string
+
+    Returns:
+        full URL for the idresolve API
+    """
     output = (
         f'{bare_url}'
         '?code=9344'
@@ -143,10 +147,15 @@ def full_mk_url(bare_url, doi):
 
 
 def mk_url(doi):
-    '''
-    given just DOI, output query url for SFX
+    """
+    Given just DOI, output query url for SFX
 
-    '''
+    Args:
+        string DOI
+
+    Returns:
+        full URL for idresolve API
+    """
     # change to the alternative for local testing
     bare_url = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
     # bare_url = "your_local_domain:8081"
@@ -154,11 +163,16 @@ def mk_url(doi):
 
 
 def doi_lookup(doi):
-    '''
-    query the DOI resolver service, return SFX URL if DOI is valid,
+    """
+    Query the DOI resolver service, return SFX URL if DOI is valid,
     otherwise return None
 
-    '''
+    Args:
+        non-validated, imperfect string DOI
+
+    Returns:
+        JSON response from idresolve, in string form
+    """
     url = mk_url(doi)
     try:
         response = requests.get(url)
@@ -172,11 +186,16 @@ def doi_lookup(doi):
 
 
 def get_clean_params(request):
-    '''
-    return parameters that have been passed to a POST request,
+    """
+    Return parameters that have been passed to a POST request,
     omitting the CSRF token
 
-    '''
+    Args:
+        a POST request
+
+    Returns:
+        POST parameters, in the form of a dictionary
+    """
     params = request.POST
     clean_params = dict(
         filter(
@@ -188,11 +207,16 @@ def get_clean_params(request):
 
 
 def get_first_param(request):
-    '''
-    given a request, return the value of the first query string
+    """
+    Given a request, return the value of the first query string
     parameter, whatever the key happens to be called
 
-    '''
+    Args: 
+        a POST request
+
+    Returns:
+        string: the value of the first post parameter
+    """
     params = get_clean_params(request)
     if params:
         first_key = list(params.keys())[0]
@@ -203,11 +227,16 @@ def get_first_param(request):
 
 
 def switchboard_url(form_name):
-    '''
-    map the name of each search form to the base URL used for the
+    """
+    Map the name of each search form to the base URL used for the
     relevant search
 
-    '''
+    Args: 
+        a string key indicating the type of form on the main page
+
+    Returns:
+        the URL to post to for the relevant search box
+    """
     if form_name == 'catalog':
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
     elif form_name == 'articles':

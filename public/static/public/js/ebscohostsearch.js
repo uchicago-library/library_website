@@ -197,8 +197,6 @@ function ebscoHostSearchGo(form) {
 
 
 
-
-
 function getSelectedDatabases(ob,src) {
  var databases = getMultiple(ob);
  if(databases == "") 
