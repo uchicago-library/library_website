@@ -303,7 +303,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
-        context['search_url_base'] = self.base_url + 'search/'
         context['news_feed_api'] = self.news_feed_api
         context['feature'] = get_first_feature_story()
         context['feature_id'] = self.get_first_feature_story_id()
