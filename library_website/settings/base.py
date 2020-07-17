@@ -305,7 +305,8 @@ ADDRESS_TEMPLATE = '%s, %s, %s %s'
 HOURS_PAGE = 4084
 
 # Library news categories
-NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People', 'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'])
+NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits',
+                       'People', 'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'])
 
 # SCRC special situations
 SCRC_MAIN_UNIT = 2456
@@ -335,23 +336,28 @@ PUBLIC_SITE = 3
 QUICK_NUMS = {
     'the-university-of-chicago-library':
         [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
+         {'label': 'Privileges',
+             'number': '773-702-8782', 'link': None},
          {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
     'the-joseph-regenstein-library':
         [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
+         {'label': 'Privileges',
+             'number': '773-702-8782', 'link': None},
          {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
     'the-john-crerar-library':
         [{'label': 'Crerar Circulation',           'number': '773-702-7409', 'link': None},
          {'label': 'Crerar Reference',             'number': '773-702-7715', 'link': None}],
     'the-dangelo-law-library':
         [{'label': 'D\'Angelo Law Main Telephone', 'number': '773-702-9615', 'link': None},
-         {'label': 'D\'Angelo Law Circulation',    'number': '773-702-0213', 'link': None},
+         {'label': 'D\'Angelo Law Circulation',
+             'number': '773-702-0213', 'link': None},
          {'label': 'D\'Angelo Law Reference',      'number': '773-702-9631', 'link': None}],
     'eckhart-library':
-        [{'label': 'Eckhart Library',              'number': '773-702-8778', 'link': None}],
+        [{'label': 'Eckhart Library',
+            'number': '773-702-8778', 'link': None}],
     'the-joe-and-rika-mansueto-library':
-        [{'label': 'Mansueto Circulation Desk',    'number': '773-702-0901', 'link': None}],
+        [{'label': 'Mansueto Circulation Desk',
+            'number': '773-702-0901', 'link': None}],
     'special-collections-research-center':
         [{'label': 'SCRC Front Desk',              'number': '773-702-8705', 'link': None},
          {'label': 'SCRC Contact Form',            'number': '', 'link': SCRC_ASK_PAGE}],
@@ -457,3 +463,7 @@ SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
 if 'test' in sys.argv:
     HOURS_PAGE = 1
+
+# DOI resolution service
+
+IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"

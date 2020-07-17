@@ -1,3 +1,4 @@
+from library_website.settings import IDRESOLVE_URL
 import requests
 
 FEATURES_LIST = [
@@ -156,10 +157,9 @@ def mk_url(doi):
     Returns:
         full URL for idresolve API
     """
-    # change to the alternative for local testing
-    bare_url = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
-    # bare_url = "your_local_domain:8081"
-    return full_mk_url(bare_url, doi)
+    # change IDRESOLVE_URL to the alternative for local testing
+    # e.g. "your_local_domain:8081"
+    return full_mk_url(IDRESOLVE_URL, doi)
 
 
 def doi_lookup(doi):
