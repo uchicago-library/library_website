@@ -9,7 +9,7 @@ example_doi1 = "10.1007/s11050-007-9022-y"
 example_doi2 = "10.1017/S0960129518000324"
 
 
-class IdresolveTest(SimpleTestCase):
+class IdresolveTest(TestCase):
 
     fixtures = ['test.json']
 
