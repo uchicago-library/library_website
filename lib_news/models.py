@@ -539,7 +539,6 @@ class LibNewsPage(PublicBasePage):
         context['categories'] = parent.get_alpha_cats()
         context['tagged'] = self.get_categories()
         context['category_url_base'] = parent_context['category_url_base']
-        context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
         context['display_current_web_exhibits'] = parent_context[
             'display_current_web_exhibits']
