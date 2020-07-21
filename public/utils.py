@@ -126,7 +126,7 @@ def has_feature(feature):
 # helper functions for /switchboard route
 
 
-def full_mk_url(bare_url, doi):
+def mk_url(doi, bare_url):
     """
     Given DOI and URL for idresolve service, output query url for SFX
     callback is called 'redundant' because this code isn't using it
@@ -147,19 +147,27 @@ def full_mk_url(bare_url, doi):
     return output
 
 
-def mk_url(doi):
+def doi_lookup_base_url(doi, base_url):
     """
-    Given just DOI, output query url for SFX
+    Query the DOI resolver service, return SFX URL if DOI is valid,
+    otherwise return None
 
     Args:
-        string DOI
+        non-validated string DOI, url for the idresolve service
 
     Returns:
-        full URL for idresolve API
+        JSON response from idresolve, in string form
     """
-    # change IDRESOLVE_URL to the alternative for local testing
-    # e.g. "your_local_domain:8081"
-    return full_mk_url(IDRESOLVE_URL, doi)
+    url = mk_url(doi, base_url)
+    try:
+        response = requests.get(url)
+    # if the idresolve service is down, doi_lookup should fail silently
+    except OSError:
+        return None
+    if response.status_code % 400 < 100:
+        return None
+    else:
+        return response.text
 
 
 def doi_lookup(doi):
@@ -173,16 +181,7 @@ def doi_lookup(doi):
     Returns:
         JSON response from idresolve, in string form
     """
-    url = mk_url(doi)
-    try:
-        response = requests.get(url)
-    # if the idresolve service is down, doi_lookup should fail silently
-    except OSError:
-        return None
-    if response.status_code % 400 < 100:
-        return None
-    else:
-        return response.text
+    return doi_lookup_base_url(doi, IDRESOLVE_URL)
 
 
 def get_clean_params(request):
@@ -208,7 +207,7 @@ def get_first_param(request):
     Given a request, return the value of the first query string
     parameter, whatever the key happens to be called
 
-    Args: 
+    Args:
         a POST request
 
     Returns:
@@ -228,7 +227,7 @@ def switchboard_url(form_name):
     Map the name of each search form to the base URL used for the
     relevant search
 
-    Args: 
+    Args:
         a string key indicating the type of form on the main page
 
     Returns:
