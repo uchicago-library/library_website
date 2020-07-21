@@ -303,7 +303,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
-        context['search_url_base'] = self.base_url + 'search/'
         context['news_feed_api'] = self.news_feed_api
         context['feature'] = get_first_feature_story()
         context['feature_id'] = self.get_first_feature_story_id()
@@ -540,7 +539,6 @@ class LibNewsPage(PublicBasePage):
         context['categories'] = parent.get_alpha_cats()
         context['tagged'] = self.get_categories()
         context['category_url_base'] = parent_context['category_url_base']
-        context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
         context['display_current_web_exhibits'] = parent_context[
             'display_current_web_exhibits']

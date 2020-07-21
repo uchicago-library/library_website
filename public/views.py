@@ -1,9 +1,9 @@
-import simplejson
-from django.http import HttpResponse
-from django.shortcuts import render
-from wagtail.core.models import Site
-from wagtail.images.models import Image
+from urllib import parse
 
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+import simplejson
 from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
@@ -17,7 +17,13 @@ from library_website.settings import (
 from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
-from public.utils import get_features, has_feature
+from public.utils import (
+    doi_lookup, get_clean_params, get_features, get_first_param, has_feature,
+    switchboard_url
+)
+from wagtail.core.models import Site
+from wagtail.images.models import Image
+from wagtailcache.cache import cache_page
 
 
 def navigation(request):
@@ -45,6 +51,43 @@ def navigation(request):
     return HttpResponse(data, 'text/javascript')
 
 
+def switchboard(request):
+    """
+    route that intercepts a search query, forwards it to the DOI
+    resolver if it's a DOI, and otherwise forwards the query to its
+    normal destination
+
+    note: this code assumes that the first parameter posted by the
+    search box is the search term
+
+    Args: 
+        a POST request
+
+    Returns:
+        a redirect either to Find It! or to the /switchboard route
+    """
+    search_term = get_first_param(request)
+    params = get_clean_params(request)
+    doi_url = doi_lookup(search_term)
+
+    if doi_url:
+        # case where user entered a DOI
+        return redirect(doi_url)
+    else:
+        # otherwise: pass query string along to wherever it was going
+        form = params['which-form']
+        if form == 'articles':
+            # add a 'bquery' parameter to make the ebscohost API happy
+            params['bquery'] = search_term
+            query_string = parse.urlencode(params)
+        else:
+            # all other searches are happy with the original query string
+            query_string = parse.urlencode(params)
+        url = f'{switchboard_url(form)}?{query_string}'
+        return redirect(url)
+
+
+@cache_page
 def spaces(request):
     building = request.GET.get('building', None)
     feature = request.GET.get('feature', None)
@@ -54,9 +97,8 @@ def spaces(request):
     possible_features = get_features()
 
     # validate form input.
-    loc_pages = LocationPage.objects.filter(is_building=True).values_list(
-        'title', flat=True
-    )
+    loc_pages = LocationPage.objects.filter(is_building=True
+                                            ).values_list('title', flat=True)
     if building not in loc_pages:
         building = None
     if not has_feature(feature):
@@ -87,9 +129,7 @@ def spaces(request):
     if floor:
         location_ids = LocationPageFloorPlacement.objects.filter(
             floor__title=floor
-        ).values_list(
-            'parent', flat=True
-        )
+        ).values_list('parent', flat=True)
         spaces = spaces.filter(id__in=location_ids)
     if space_type:
         spaces = spaces.filter(**{space_type: True})
@@ -117,9 +157,7 @@ def spaces(request):
         # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building.
         id_list = all_spaces.filter(parent_building__title=building
-                                    ).values_list(
-                                        'pk', flat=True
-                                    )
+                                    ).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here.
         floors = sorted(
             list(

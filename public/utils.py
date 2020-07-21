@@ -1,3 +1,6 @@
+from library_website.settings import IDRESOLVE_URL
+import requests
+
 FEATURES_LIST = [
     (
         'is_quiet_zone', 'Quiet Zone',
@@ -118,3 +121,138 @@ def has_feature(feature):
         if item[0] == feature:
             return True
     return False
+
+
+# helper functions for /switchboard route
+
+
+def mk_url(doi, bare_url):
+    """
+    Given DOI and URL for idresolve service, output query url for SFX
+    callback is called 'redundant' because this code isn't using it
+
+    Args:
+        string URL for idresolve, DOI string
+
+    Returns:
+        full URL for the idresolve API
+    """
+    output = (
+        f'{bare_url}'
+        '?code=9344'
+        '&function=idresolve'
+        '&callback=redundant'
+        f'&id={doi}'
+    )
+    return output
+
+
+def doi_lookup_base_url(doi, base_url):
+    """
+    Query the DOI resolver service, return SFX URL if DOI is valid,
+    otherwise return None
+
+    Args:
+        non-validated string DOI, url for the idresolve service
+
+    Returns:
+        JSON response from idresolve, in string form
+    """
+    url = mk_url(doi, base_url)
+    try:
+        response = requests.get(url)
+    # if the idresolve service is down, doi_lookup should fail silently
+    except OSError:
+        return None
+    if response.status_code % 400 < 100:
+        return None
+    else:
+        return response.text
+
+
+def doi_lookup(doi):
+    """
+    Query the DOI resolver service, return SFX URL if DOI is valid,
+    otherwise return None
+
+    Args:
+        non-validated, imperfect string DOI
+
+    Returns:
+        JSON response from idresolve, in string form
+    """
+    return doi_lookup_base_url(doi, IDRESOLVE_URL)
+
+
+def get_clean_params(request):
+    """
+    Return parameters that have been passed to a POST request,
+    omitting the CSRF token
+
+    Args:
+        a POST request
+
+    Returns:
+        POST parameters, in the form of a dictionary
+    """
+    params = request.POST
+    clean_params = dict(
+        filter(lambda x: x[0] != 'csrfmiddlewaretoken', params.items())
+    )
+    return clean_params
+
+
+def get_first_param(request):
+    """
+    Given a request, return the value of the first query string
+    parameter, whatever the key happens to be called
+
+    Args:
+        a POST request
+
+    Returns:
+        string: the value of the first post parameter
+    """
+    params = get_clean_params(request)
+    if params:
+        first_key = list(params.keys())[0]
+        first_value = params[first_key]
+        return first_value
+    else:
+        return None
+
+
+def switchboard_url(form_name):
+    """
+    Map the name of each search form to the base URL used for the
+    relevant search
+
+    Args:
+        a string key indicating the type of form on the main page
+
+    Returns:
+        the URL to post to for the relevant search box
+    """
+    if form_name == 'catalog':
+        return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
+    elif form_name == 'articles':
+        url = (
+            'http://proxy.uchicago.edu/login'
+            '?url=http://search.ebscohost.com/login.aspx'
+            '?direct=true&site=eds-live'
+            '&scope=site'
+            '&type=0'
+            '&mode=and'
+            '&cli0=FT1&clv0=Y'
+        )
+        return url
+    elif form_name == 'journals':
+        return 'https://sfx.lib.uchicago.edu/sfx_local/journalsearch'
+    elif form_name == 'databases':
+        return 'https://www.lib.uchicago.edu/dbfinder'
+    elif form_name == 'website':
+        return '/results/'
+    elif form_name == 'news':
+        return '/search/'
+    else:
+        assert (False)

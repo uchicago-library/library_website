@@ -33,11 +33,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bleach',
-
     'taggit',
     'compressor',
     'modelcluster',
-
     'wagtailcache',
     'wagtail.core',
     'wagtail.admin',
@@ -58,7 +56,6 @@ INSTALLED_APPS = [
     'wagtail.contrib.settings',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
-
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -110,11 +107,9 @@ MIDDLEWARE = [
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
-
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'wagtailcache.cache.FetchFromCacheMiddleware',
@@ -139,10 +134,12 @@ TEMPLATES = [
                 'wagtail.contrib.settings.context_processors.settings',
             ],
             'loaders': [
-                ('django.template.loaders.cached.Loader', [
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ]),
+                (
+                    'django.template.loaders.cached.Loader', [
+                        'django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                    ]
+                ),
             ],
         },
     },
@@ -150,11 +147,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'library_website.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 # Don't put database information here!!!
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -169,7 +164,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -180,9 +174,7 @@ STATICFILES_FINDERS = (
     'static_precompiler.finders.StaticPrecompilerFinder',
 )
 
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_DIR, 'static'),
-)
+STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
@@ -205,16 +197,16 @@ ORCID_FORMAT = '^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$'
 ORCID_ERROR_MSG = 'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444'
 
 # django-compressor settings
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'django_libsass.SassCompiler'),
-)
+COMPRESS_PRECOMPILERS = (('text/x-scss', 'django_libsass.SassCompiler'),)
 
 # django-static-precompilers
 STATIC_PRECOMPILER_COMPILERS = (
-    ('static_precompiler.compilers.libsass.SCSS', {
-        'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
-        'output_style': 'compressed'
-    }),
+    (
+        'static_precompiler.compilers.libsass.SCSS', {
+            'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
+            'output_style': 'compressed'
+        }
+    ),
 )
 
 # Wagtail settings
@@ -305,7 +297,12 @@ ADDRESS_TEMPLATE = '%s, %s, %s %s'
 HOURS_PAGE = 4084
 
 # Library news categories
-NEWS_CATEGORIES = set(['Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People', 'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'])
+NEWS_CATEGORIES = set(
+    [
+        'Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People',
+        'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'
+    ]
+)
 
 # SCRC special situations
 SCRC_MAIN_UNIT = 2456
@@ -333,30 +330,92 @@ PUBLIC_SITE = 3
 # If a link is present, the phone number
 # will not be used
 QUICK_NUMS = {
-    'the-university-of-chicago-library':
-        [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
-         {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
-    'the-joseph-regenstein-library':
-        [{'label': 'Main Telephone',               'number': '773-702-8740', 'link': None},
-         {'label': 'Privileges',                   'number': '773-702-8782', 'link': None},
-         {'label': 'General Reference',            'number': '773-702-4685', 'link': None}],
-    'the-john-crerar-library':
-        [{'label': 'Crerar Circulation',           'number': '773-702-7409', 'link': None},
-         {'label': 'Crerar Reference',             'number': '773-702-7715', 'link': None}],
-    'the-dangelo-law-library':
-        [{'label': 'D\'Angelo Law Main Telephone', 'number': '773-702-9615', 'link': None},
-         {'label': 'D\'Angelo Law Circulation',    'number': '773-702-0213', 'link': None},
-         {'label': 'D\'Angelo Law Reference',      'number': '773-702-9631', 'link': None}],
+    'the-university-of-chicago-library': [
+        {
+            'label': 'Main Telephone',
+            'number': '773-702-8740',
+            'link': None
+        }, {
+            'label': 'Privileges',
+            'number': '773-702-8782',
+            'link': None
+        }, {
+            'label': 'General Reference',
+            'number': '773-702-4685',
+            'link': None
+        }
+    ],
+    'the-joseph-regenstein-library': [
+        {
+            'label': 'Main Telephone',
+            'number': '773-702-8740',
+            'link': None
+        }, {
+            'label': 'Privileges',
+            'number': '773-702-8782',
+            'link': None
+        }, {
+            'label': 'General Reference',
+            'number': '773-702-4685',
+            'link': None
+        }
+    ],
+    'the-john-crerar-library': [
+        {
+            'label': 'Crerar Circulation',
+            'number': '773-702-7409',
+            'link': None
+        }, {
+            'label': 'Crerar Reference',
+            'number': '773-702-7715',
+            'link': None
+        }
+    ],
+    'the-dangelo-law-library': [
+        {
+            'label': 'D\'Angelo Law Main Telephone',
+            'number': '773-702-9615',
+            'link': None
+        }, {
+            'label': 'D\'Angelo Law Circulation',
+            'number': '773-702-0213',
+            'link': None
+        }, {
+            'label': 'D\'Angelo Law Reference',
+            'number': '773-702-9631',
+            'link': None
+        }
+    ],
     'eckhart-library':
-        [{'label': 'Eckhart Library',              'number': '773-702-8778', 'link': None}],
-    'the-joe-and-rika-mansueto-library':
-        [{'label': 'Mansueto Circulation Desk',    'number': '773-702-0901', 'link': None}],
-    'special-collections-research-center':
-        [{'label': 'SCRC Front Desk',              'number': '773-702-8705', 'link': None},
-         {'label': 'SCRC Contact Form',            'number': '', 'link': SCRC_ASK_PAGE}],
+    [{
+        'label': 'Eckhart Library',
+        'number': '773-702-8778',
+        'link': None
+    }],
+    'the-joe-and-rika-mansueto-library': [
+        {
+            'label': 'Mansueto Circulation Desk',
+            'number': '773-702-0901',
+            'link': None
+        }
+    ],
+    'special-collections-research-center': [
+        {
+            'label': 'SCRC Front Desk',
+            'number': '773-702-8705',
+            'link': None
+        }, {
+            'label': 'SCRC Contact Form',
+            'number': '',
+            'link': SCRC_ASK_PAGE
+        }
+    ],
     'social-service-administration-library':
-        [{'label': 'SSA Library',                  'number': '773-702-1199', 'link': None}],
+    [{
+        'label': 'SSA Library',
+        'number': '773-702-1199',
+        'link': None
+    }],
 }
 
 # Location pages
@@ -393,11 +452,13 @@ LIBCHAT_STATUS_URL = 'https://uchicago.libanswers.com/1.0/chat/widgets/status/'
 # Implemented to avoid changing function signatures and
 # page models when we migrated to LibChat. Preferable
 # since it documents this for us.
-LIBCHAT_IDS = {'uofc-ask': '9650',
-               'dissertation-office': '11495',
-               'law': '11496',
-               'crerar': '9650',
-               'ssa': '9650'}
+LIBCHAT_IDS = {
+    'uofc-ask': '9650',
+    'dissertation-office': '11495',
+    'law': '11496',
+    'crerar': '9650',
+    'ssa': '9650'
+}
 
 # API configuration
 WAGTAILAPI_LIMIT_MAX = None
@@ -457,3 +518,7 @@ SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
 if 'test' in sys.argv:
     HOURS_PAGE = 1
+
+# DOI resolution service
+
+IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
