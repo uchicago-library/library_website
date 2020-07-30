@@ -49,7 +49,7 @@ function getLabel(e) {
   const required = e.required || null;
   const labelText = e.label || null;
   if (labelText) {
-    return <Label htmlFor={id} text={labelText} required={required} />;
+    return <Label htmlFor={id} text={renderHTML(labelText)} required={required} />;
   }
   return '';
 }
