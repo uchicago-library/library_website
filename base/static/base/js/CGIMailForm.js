@@ -10,6 +10,7 @@ import {
   Label,
   Legend,
   RequiredFieldsText,
+  FormFieldHelpText,
 } from './index';
 
 import schema from './CGIMailFormSchema';
@@ -52,6 +53,18 @@ function getLabel(e) {
     return <Label htmlFor={id} text={renderHTML(labelText)} required={required} />;
   }
   return '';
+}
+
+function getHelpText(e) {
+  const helpText = e.helpText || null;
+  if (helpText) {
+    const id = e.helpText.id || null;
+    const text = e.helpText.text || null;
+    if (id && text) {
+      return [id, <FormFieldHelpText id={id} text={text} />];
+    }
+  }
+  return [null, null];
 }
 
 function getLegend(e) {
@@ -131,6 +144,9 @@ const buildField = (elm, state, handleChange) => {
   const placeholder = elm.placeholder || null;
   const required = elm.required || null;
   const options = elm.options || null;
+  const htl = getHelpText(elm);
+  const ariaDescribedBy = htl[0];
+  const helpText = htl[1];
 
   if (getType(elm) === 'input') {
     return (
@@ -143,10 +159,12 @@ const buildField = (elm, state, handleChange) => {
           name={name}
           placeholder={placeholder}
           required={required}
+          ariaDescribedBy={ariaDescribedBy}
           onChange={(e) => {
             handleChange(e);
           }}
         />
+        {helpText}
       </div>
     );
   }
@@ -161,11 +179,13 @@ const buildField = (elm, state, handleChange) => {
           name={name}
           placeholder={placeholder}
           required={required}
+          ariaDescribedBy={ariaDescribedBy}
           onChange={(e) => {
             handleChange(e);
           }}
           options={options}
         />
+        {helpText}
       </div>
     );
   }
@@ -179,10 +199,12 @@ const buildField = (elm, state, handleChange) => {
           name={name}
           required={required}
           value={value}
+          ariaDescribedBy={ariaDescribedBy}
           onChange={(e) => {
             handleChange(e);
           }}
         />
+        {helpText}
       </div>
     );
   }

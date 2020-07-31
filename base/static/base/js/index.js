@@ -5,7 +5,14 @@ import PropTypes from 'prop-types';
 
 const Input = (props) => {
   const {
-    id, value, onChange, type, name, placeholder, required,
+    id,
+    value,
+    onChange,
+    type,
+    name,
+    placeholder,
+    ariaDescribedBy,
+    required,
   } = props;
   return (
     <input
@@ -16,6 +23,7 @@ const Input = (props) => {
       placeholder={placeholder}
       value={value}
       required={required}
+      aria-describedby={ariaDescribedBy}
       className="form-control"
     />
   );
@@ -28,6 +36,7 @@ Input.defaultProps = {
   type: null,
   name: null,
   placeholder: null,
+  ariaDescribedBy: null,
   required: null,
 };
 
@@ -38,12 +47,13 @@ Input.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
 };
 
 const TextArea = (props) => {
   const {
-    id, type, name, required, value, onChange,
+    id, type, name, required, value, onChange, ariaDescribedBy,
   } = props;
   return (
     <textarea
@@ -52,6 +62,7 @@ const TextArea = (props) => {
       type={type}
       onChange={onChange}
       name={name}
+      aria-describedby={ariaDescribedBy}
       required={required}
       value={value}
     />
@@ -64,6 +75,7 @@ TextArea.defaultProps = {
   onChange: null,
   type: null,
   name: null,
+  ariaDescribedBy: null,
   required: null,
 };
 
@@ -73,6 +85,7 @@ TextArea.propTypes = {
   onChange: PropTypes.func,
   type: PropTypes.string,
   name: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
 };
 
@@ -113,7 +126,14 @@ const makeOption = (elm) => {
 
 const Select = (props) => {
   const {
-    id, value, onChange, type, name, required, options,
+    id,
+    value,
+    onChange,
+    type,
+    name,
+    required,
+    options,
+    ariaDescribedBy,
   } = props;
   return (
     <select
@@ -123,6 +143,7 @@ const Select = (props) => {
       onChange={onChange}
       name={name}
       value={value}
+      aria-describedby={ariaDescribedBy}
       required={required}
     >
       {options.map(e => makeOption(e))}
@@ -136,6 +157,7 @@ Select.defaultProps = {
   onChange: null,
   type: null,
   name: null,
+  ariaDescribedBy: null,
   required: null,
 };
 
@@ -145,6 +167,7 @@ Select.propTypes = {
   onChange: PropTypes.func,
   type: PropTypes.string,
   name: PropTypes.string,
+  ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
@@ -183,13 +206,33 @@ Legend.propTypes = {
 };
 
 const RequiredFieldsText = () => (
-  <p class="required-intro">
+  <p className="required-intro">
     Required fields are followed by
     {' '}
     <abbr title="required">*</abbr>
   </p>
 );
 
+const FormFieldHelpText = (props) => {
+  const { id, text } = props;
+  return (
+    <small id={id} className="form-text">
+      {text}
+    </small>
+  );
+};
+
+FormFieldHelpText.propTypes = {
+  id: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+};
+
 export {
-  Input, TextArea, Select, Label, Legend, RequiredFieldsText,
+  Input,
+  TextArea,
+  Select,
+  Label,
+  Legend,
+  RequiredFieldsText,
+  FormFieldHelpText,
 };
