@@ -50,7 +50,9 @@ function getLabel(e) {
   const required = e.required || null;
   const labelText = e.label || null;
   if (labelText) {
-    return <Label htmlFor={id} text={renderHTML(labelText)} required={required} />;
+    return (
+      <Label htmlFor={id} text={renderHTML(labelText)} required={required} />
+    );
   }
   return '';
 }
@@ -279,7 +281,7 @@ SectionTitle.propTypes = {
 
 const Section = (props) => {
   const {
-    title, elements, handleChange, state, hidden,
+    title, description, elements, handleChange, state, hidden,
   } = props;
   if (hidden) {
     return (
@@ -289,6 +291,7 @@ const Section = (props) => {
   return (
     <section>
       <SectionTitle title={title} />
+      {description ? <p>{description}</p> : ''}
       <FormElements
         elements={elements}
         handleChange={handleChange}
@@ -300,11 +303,13 @@ const Section = (props) => {
 
 Section.defaultProps = {
   title: null,
+  description: null,
   hidden: null,
 };
 
 Section.propTypes = {
   title: PropTypes.string,
+  description: PropTypes.string,
   elements: PropTypes.arrayOf(PropTypes.object).isRequired,
   handleChange: PropTypes.func.isRequired,
   state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -316,6 +321,7 @@ const Sections = (props) => {
   return data.map(d => (
     <Section
       title={d.title}
+      description={d.description}
       elements={d.elements}
       handleChange={handleChange}
       state={state}
