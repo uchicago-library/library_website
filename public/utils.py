@@ -253,6 +253,6 @@ def switchboard_url(form_name):
     elif form_name == 'website':
         return '/results/'
     elif form_name == 'news':
-        return '/search/'
+        return '/about/news/search/'
     else:
         assert (False)
