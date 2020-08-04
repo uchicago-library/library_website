@@ -576,7 +576,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Route for Digital Collection Object.
         """
 
-        template = "lib_collections/collection_object_page_matt.html"
+        template = "lib_collections/collection_object_page.html"
 
         field_names = self.metadata_field_names()
 

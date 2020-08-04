@@ -57,7 +57,7 @@ def triples_to_dict(dct, wagtail_field_names):
         }
         if wagtail_field_names:
             return align_field_names(field_dict, wagtail_field_names)
-       else:
+        else:
             return field_dict
     except KeyError:
         raise Exception("Mark Logic result not formatted as expected")
