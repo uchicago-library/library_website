@@ -26,7 +26,7 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection
+from .utils import collection, mk_url
 from .marklogic import get_record_for_display
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -582,20 +582,40 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super().get_context(request)
         context["manifid"] = kwargs["manifid"]
-        # context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
+        context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
         context["slug"] = slugify(self.title)
-        # context["manifest_url"] = mk_manifest_url(
-        #     kwargs["manifid"], slugify(self.title)
-        # )
         context["marklogic"] = get_record_for_display(
             context["manifid"],
             context["slug"],
             field_names,
         )
-        context["keys"] = context["marklogic"].keys()
-        context["values"] = context["marklogic"].values()
+        # context["keys"] = context["marklogic"].keys()
+        # context["values"] = context["marklogic"].values()
 
         return TemplateResponse(request, template, context)
+
+    # @route(r'^cluster-browse/(?P<browse_name>[-\w]+)/$')
+    # def cluster_browse(self, request, *args, **kwargs):
+    #     """
+    #     Route for Digital Collection Object.
+    #     """
+
+    #     template = "lib_collections/collection_browse.html"
+
+    #     field_names = self.metadata_field_names()
+
+    #     context = super().get_context(request)
+    #     context["manifid"] = kwargs["manifid"]
+    #     context["slug"] = slugify(self.title)
+    #     context["marklogic"] = get_record_for_display(
+    #         context["manifid"],
+    #         context["slug"],
+    #         field_names,
+    #     )
+    #     context["keys"] = context["marklogic"].keys()
+    #     context["values"] = context["marklogic"].values()
+
+    #     return TemplateResponse(request, template, context)
 
     subpage_types = ['public.StandardPage']
 
