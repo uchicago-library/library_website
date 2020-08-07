@@ -224,6 +224,15 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   margin-left: 1em;
 }
 
+.columns {
+  display: flex;
+  padding: 0;
+  gap: 2em;
+  & .column {
+    flex: 1;
+  }
+}
+
 blockquote {
   margin: 0 50px;
   padding: 0;

@@ -742,6 +742,19 @@ class DuoImage(StructBlock):
         template = 'base/blocks/duo_img.html'
 
 
+class ColumnsBlock(StreamBlock):
+    """
+    Panel to add columns of rich text. Uses Flex box.
+    """
+    new_column = RichTextBlock(label="New Column", icon="arrow-right")
+
+    class Meta:
+        template = "base/blocks/columns_block.html"
+        icon = "form"
+        label = "Text Columns"
+        help_text = "Recommend 2-3 columns max"
+
+
 class BlockQuoteBlock(StructBlock):
     """
     Blockquote streamfield block.
@@ -1031,6 +1044,7 @@ class DefaultBodyFields(StreamBlock):
         template='base/blocks/h5.html',
         group="Format and Text"
     )
+    columns_block = ColumnsBlock(group="Format and Text")
     blockquote = BlockQuoteBlock(group="Format and Text")
     pullquote = PullQuoteBlock(group="Format and Text")
     reusable_content = ReusableContentBlock(group="Format and Text")
