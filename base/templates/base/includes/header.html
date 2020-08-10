@@ -121,11 +121,12 @@
                                 <li class="col-sm-6 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="request_borrow">Borrow</span>
                                     <ul class="list-unstyled" role="region" aria-labelledby="request_borrow">
                                         <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                        <li><a href="/borrow/requesting/paging/">Paging and Pickup</a></li>
                                         <li><a href="/borrow/borrowing/due-dates-and-loan-periods/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Due Dates &amp; Loan Periods">Due Dates &amp; Loan Periods</a></li>
                                         <li><a href="/borrow/borrowing/renewing-and-returning-items/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Renewing &amp; Returning Items">Renewing &amp; Returning Items</a></li>
                                         <li><a href="/borrow/borrowing/fines-and-lost-items/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Fines &amp; Lost Items">Fines &amp; Lost Items</a></li>
                                         <li><a href="/borrow/borrowing/course-reserves" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Course Reserves">Course Reserves</a></li>
-                                        <li><a href="/borrow/borrowing/checkout" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Checkout UChicago">Checkout UChicago</a></li>
+                                        <!-- <li><a href="/borrow/borrowing/checkout" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; Checkout UChicago">Checkout UChicago</a></li> -->
                                         <li><a href="http://www.lib.uchicago.edu/myaccount" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Borrow &amp; Request &gt; My Library Account">My Library Account</a> <!-- Padding for lengthening column divider --> <p class="hidden-xs" style="padding-bottom:8em"></p></li>
                                     </ul>
                                 </li>
@@ -239,7 +240,7 @@
                         <!-- // Collection/Exhibits Dropdown -->
 
 
-                        <!-- Spaces  Dropdown  -->
+                        <!-- Spaces  Dropdown  
                         <li class="dropdown">
                             <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Spaces &amp; Services" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">Spaces <span class="hidden-sm hidden-md">&amp; Services</span> <span class="caret"></span></a>
                             <ul class="dropdown-menu onecol-drop">
@@ -253,7 +254,54 @@
                                 <li><a href="/thelibrary/techbar/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Spaces &amp; Services &gt; TechBar">TechBar</a></li>
                             </ul>
                         </li>
-                        <!-- // Spaces Dropdown -->
+                        <!- // Spaces Dropdown -->
+
+                        <!-- Remote and Onsite Dropdown -->
+                        <li class="dropdown">
+                            <a href="#" data-ga-category="main-nav-links" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Remote <span class="hidden-sm">&amp; Onsite </span>Services <span class="caret"></span></a>
+                            <ul class="dropdown-menu twocol-drop">
+                                <!-- Remote > Onsite column -->
+                                <li class="col-sm-5 ul-left"><span class="twocol-head" role="heading" aria-level="2" id="onsite_services">Onsite Services</span>
+                                    <ul class="list-unstyled" role="region" aria-labelledby="onsite_services">
+                                        <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                        <li><a href="/borrow/requesting/paging/">Paging and Pickup</a></li>
+                                        <li><a href="https://rooms.lib.uchicago.edu/calendar/returns/?cid=13002&t=d&d=0000-00-00&cal=13002&inc=0">Returns</a></li>
+                                        <li><a href="https://rooms.lib.uchicago.edu/reserve/carding">UChicago Card services</a></li>
+                                        <li><a href="#">COVID policy for visitors</a></li>
+                                         <!-- Padding for lengthening column divider --> <p class="hidden-xs" style="padding-bottom:8em"></p></li>
+                                    </ul>
+                                </li>
+                                <!-- // Research > Onsite column -->
+                                
+                                <!-- Remote > Remote sub-column -->
+                                <li class="col-sm-7"><span class="twocol-head" role="heading" aria-level="2" id="remote_services">Remote Services</span>
+                                    <ul class="list-unstyled" role="region" aria-labelledby="remote_services">
+                                        <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                        <li><a href="/borrow/requesting/scan-deliver/">Scan &amp; Deliver</a></li>
+                                        <li><a href="/research/teaching/course-reserves-setup/">Reserves for Faculty</a></li>
+                                        <li><a href="/borrow/borrowing/course-reserves/">Reserves for Students</a></li>
+                                        <li><a href="/research/help/ask-librarian/">Ask a Librarian</a></li>
+                                        <li><a href="https://www.lib.uchicago.edu/about/directory/?view=staff&subject=All+Subject+Specialists">Consult Your Subject Librarian</a></li>
+                                        <li><a href="/research/teaching/research-instruction-courses/">Instruction Support</a></li>
+                                        <li role="separator" class="divider hidden-xs" role="presentation"></li>
+                                    </ul>
+                                </li>
+                                <!-- // Remote > Remote sub-column -->
+
+                                <!-- Remote > Online sub-column -->
+                                <li class="col-sm-7"><span class="twocol-head" role="heading" aria-level="2" id="remote_online">Online Resources</span>
+                                    <ul class="list-unstyled" role="region" aria-labelledby="remote_online">
+                                        <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                        <li><a href="/borrow/access-privileges/offcampus">Suggest a Purchase</a></li>
+                                        <li><a href="/borrow/requesting/suggest-purchase/">Proxy &amp; Off-Campus Access</a></li>
+                                        <li><a href="/collex/?digital=on&view=collections">Digital Collections</a></li>
+                                        <li><a href="/collex/?digital=on&view=exhibits">Web Exhibits</a></li>
+                                    </ul>
+                                </li>
+                                <!-- // Research > Digital Scholarship sub-column -->
+                            </ul>
+                        </li>
+                        <!-- // Research Dropdown -->
 
                         <!-- Libraries  Dropdown  -->
                         <li class="dropdown">
