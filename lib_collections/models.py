@@ -1,4 +1,5 @@
 import datetime
+import requests
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.utils.text import slugify
@@ -26,7 +27,7 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection, mk_url
+from .utils import collection, mk_viewer_url, mk_subjects_url,  get_iiif_labels
 from .marklogic import get_record_for_display
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -580,10 +581,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         field_names = self.metadata_field_names()
 
+        slug = self.slug
+
         context = super().get_context(request)
         context["manifid"] = kwargs["manifid"]
-        context["iiif_url"] = mk_url(kwargs["manifid"], slugify(self.title))
-        context["slug"] = slugify(self.title)
+        context["iiif_url"] = mk_viewer_url(
+            kwargs["manifid"], slug)
+        context["slug"] = slug
         context["marklogic"] = get_record_for_display(
             context["manifid"],
             context["slug"],
@@ -591,6 +595,25 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         # context["keys"] = context["marklogic"].keys()
         # context["values"] = context["marklogic"].values()
+
+        return TemplateResponse(request, template, context)
+
+    @route(r'^cluster-browse/$')
+    def cluster_browse_list(self, request, *args, **kwargs):
+        """
+        Route for Digital Collection Object.
+        """
+
+        template = "lib_collections/collection_browse_list.html"
+
+        # TODO: un-hardcode the name of the collection
+        slug = self.slug
+        # all_browses = get_iiif_d(slug)
+
+        context = super().get_context(request)
+        context["slug"] = slug
+        context["subjects"] = get_iiif_labels(mk_subjects_url(slug), slug)
+        context["test_url"] = mk_subjects_url(slug)
 
         return TemplateResponse(request, template, context)
 
@@ -605,15 +628,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     #     field_names = self.metadata_field_names()
 
     #     context = super().get_context(request)
-    #     context["manifid"] = kwargs["manifid"]
+    #     context["browse_name"] = kwargs["browse_name"]
     #     context["slug"] = slugify(self.title)
-    #     context["marklogic"] = get_record_for_display(
-    #         context["manifid"],
-    #         context["slug"],
-    #         field_names,
-    #     )
-    #     context["keys"] = context["marklogic"].keys()
-    #     context["values"] = context["marklogic"].values()
 
     #     return TemplateResponse(request, template, context)
 

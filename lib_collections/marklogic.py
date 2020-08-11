@@ -1,10 +1,11 @@
 import json
 from urllib.parse import urlparse
 
+from django.http import Http404
 import requests
 import re
 from requests.auth import HTTPBasicAuth
-from .utils import mk_url, mk_manifest_url
+from .utils import mk_manifest_url
 
 from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
                                             MARKLOGIC_LDR_USER)
@@ -61,6 +62,8 @@ def triples_to_dict(dct, wagtail_field_names):
             return field_dict
     except KeyError:
         raise Exception("Mark Logic result not formatted as expected")
+    except IndexError:
+        raise Http404
 
 
 def get_raw_record(manifest_url, wagtail_field_names):

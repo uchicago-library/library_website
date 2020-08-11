@@ -3,6 +3,8 @@ iiifcollectionbrowse
 """
 from threading import Thread
 from urllib.parse import unquote
+from django.utils.text import slugify
+from functools import reduce
 
 import requests
 
@@ -188,13 +190,66 @@ def build_pagination_links(total, thumbs_per_page, current_page, rj):
 
 IIIF_PATHS = {
     "social-scientists-map-chicago": ["maps", "chisoc"],
+    # TODO: eliminiate this silly test example
+    "century-progress-international-exposition-publications": ["maps", "chisoc"],
 }
+
+IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 
 MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
 
 
+def dot(f, g):
+    return lambda x: f(g(x))
+
+
+def compose(*args):
+    return reduce(dot, args)
+
+
+def lists_to_dict(lst1, lst2):
+    return dict(zip(lst1, lst2))
+
+
 def slug_to_iiif_path(slug):
-    return "/".join(IIIF_PATHS[slug])
+    try:
+        return '/'.join(IIIF_PATHS[slug])
+    except KeyError:
+        return ''
+
+
+def mk_subjects_url(slug):
+    return "%s/%s/%s-subjects.json" % (
+        IIIF_PREFIX, slug_to_iiif_path(slug), IIIF_PATHS[slug][-1]
+    )
+
+
+def mk_subject_iiif_url(subj, slug):
+    return "%s/%s/%s-subjects-%s.json" % (
+        IIIF_PREFIX,
+        slug_to_iiif_path(slug),
+        IIIF_PATHS[slug][-1],
+        slugify(subj),
+    )
+
+
+# def mk_subject_wagtail_url(subj, slug):
+#     return "%s/%s" % (slugify(subj), slug)
+
+
+def get_iiif_labels_language(url, lang):
+    r = requests.get(url)
+    j = r.json()
+    d = j['items']
+    # return d
+    return [x['label'][lang][0] for x in d]
+
+
+def get_iiif_labels(url, slug):
+    labels = get_iiif_labels_language(url, 'en')
+    return lists_to_dict(
+        labels, [slugify(x) for x in labels]
+    )
 
 
 def mk_manifest_url(manifid, slug):
@@ -203,7 +258,7 @@ def mk_manifest_url(manifid, slug):
     )
 
 
-def mk_url(manifid, slug):
+def mk_viewer_url(manifid, slug):
     prefix = "https://iiif-viewer.lib.uchicago.edu/uv/./uv.html#?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
