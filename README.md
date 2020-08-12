@@ -20,6 +20,9 @@ vagrant up
 pip install -r requirements.txt
 ```
 
+## Loop style changes
+Loop Sass file compression is separate from the public site compression. If you want to compress new Sass code into an updated CSS file, in a terminal that is not running Vagrant, run 'gulp' in the root directory. This command should start a watch on all Loop Sass files and compress anytime a Sass file is saved.
+
 ## Setting up for Development
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
@@ -130,3 +133,16 @@ If your changes aren't loading into production, try:
 from django.core.cache import cache
 cache.clear()
 ```
+
+## Pushing a branch to Nest
+For testing purposes, you may want to push a branch that is not master to Nest.
+- ssh to nest
+- `cd /data/nest/ ; source venv3.7/bin/activate ; cd sites/library_website`
+- `git remote update`
+- `git status`
+- `git checkout {{ branch-name }}`
+- `git pull origin {{ branch-name }}`
+- `./manage.py migrate` _only needed if made migrations_
+- `./manage.py compress`
+- `./manage.py collectstatic`
+- `sudo service apache24 restart`
