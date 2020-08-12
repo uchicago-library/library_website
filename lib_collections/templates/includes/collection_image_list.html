@@ -2,27 +2,14 @@
 {% image value.image width-350 as tmp_img %}
 
 <!-- dev-note: section needs to be placed in templates; I am leaving this here as a to-do for KZ
-<section class="thumbnails" id="content" role="main"> -->
-	{% for COLLECTION OBJECT in RESULT VIEW %}
-	    <figure>
-	        <a href="{{ COLLECTION OBJECT URL }}">
-		        <img src="{{ COLLECTION OBJECT IMAGE }}">
-		        <figcaption>
-	                <h3>{{ COLLECTION OBJECT TITLE }}</h3>
-	                {% for field in OBJECT METADATA %}
-			            <p>
-				            {% if FIELD LABEL %}
-					            {{ FIELD LABEL }}: <!-- dev-note: to display field label as "location: " -->
-				            {% endif %}
-				            {% if FIELD CONTENT URL %}
-					            <a href="{{ FIELD CONTENT URL }}">{{ FIELD CONTENT }}</a> <!-- dev-note: for subjects etc that need browse view links  -->
-					        {% else %}
-						        {{ FIELD CONTENT }}
-					        {% endif %}
-				        </p>
-			        {% endfor %}
-		        </figcaption>
-		    </a>
-	    </figure>
-    {% endfor %}
-<!-- </section> -->
+     <section class="thumbnails" id="content" role="main"> -->
+       <figure>
+	 <a href="https://archlinux.org">
+	   <figcaption>
+	     <h3>Title of Object</h3>
+	     <p>
+	     </p>
+	   </figcaption>
+	 </a>
+       </figure>
+       <!-- </section> -->

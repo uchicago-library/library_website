@@ -1,5 +1,7 @@
 import datetime
 import requests
+# TODO: remove datetime import
+from datetime import date
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.utils.text import slugify
@@ -27,7 +29,15 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection, mk_viewer_url, mk_subjects_url,  get_iiif_labels
+from .utils import (collection,
+                    mk_viewer_url,
+                    mk_subjects_url,
+                    mk_subject_iiif_url,
+                    get_iiif_labels,
+                    get_iiif_labels_language,
+                    get_iiif_listing,
+                    simplify_iiif_listing,
+                    )
 from .marklogic import get_record_for_display
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -606,7 +616,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse_list.html"
 
-        # TODO: un-hardcode the name of the collection
         slug = self.slug
         # all_browses = get_iiif_d(slug)
 
@@ -617,21 +626,49 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    # @route(r'^cluster-browse/(?P<browse_name>[-\w]+)/$')
-    # def cluster_browse(self, request, *args, **kwargs):
-    #     """
-    #     Route for Digital Collection Object.
-    #     """
+    @route(r'^cluster-browse/(?P<browse_name>[-\w]+)/$')
+    def cluster_browse(self, request, *args, **kwargs):
+        """
+        Route for Digital Collection Object.
+        """
 
-    #     template = "lib_collections/collection_browse.html"
+        template = "lib_collections/collection_browse.html"
 
-    #     field_names = self.metadata_field_names()
+        test = [
+            {'title': 'Map of Chicago, showing original subdivisions, 1830 to 1843 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
+             'creator': 'University of Chicago. Social Science Research Committee.',
+             'date': date(1980, 5, 12),
+             'publisher': 'University of Chicago.',
+             'language': 'English',
+             'image_link': 'https://mathshistory.st-andrews.ac.uk/Biographies/Hopper/thumbnail.jpg',
+             'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-a/G4104-C6-1933-U5-a.json',
+             'id': 'object1',
+             },
+            {'title': 'Map of Chicago, showing original subdivisions, 1844 to 1862 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
+             'creator': 'University of Chicago. Social Science Research Committee.',
+             'date': date(1980, 5, 23),
+             'publisher': 'University of Chicago.',
+             'language': 'English',
+             'image_link': 'https://www.cs.cornell.edu/sweirich/images/steph2.jpg',
+             'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-b/G4104-C6-1933-U5-b.json',
+             'id': 'object2',
+             },
+        ]
 
-    #     context = super().get_context(request)
-    #     context["browse_name"] = kwargs["browse_name"]
-    #     context["slug"] = slugify(self.title)
+        slug = self.slug
+        browse_name = kwargs["browse_name"]
+        full_listings = get_iiif_listing(
+            mk_subject_iiif_url(browse_name, slug),
+        )
+        simplified_listings = [simplify_iiif_listing(x) for x in full_listings]
 
-    #     return TemplateResponse(request, template, context)
+        context = super().get_context(request)
+        context["browse_name"] = browse_name
+        context["slug"] = slug
+        context["objects"] = test
+        # = simplified_listings
+
+        return TemplateResponse(request, template, context)
 
     subpage_types = ['public.StandardPage']
 
@@ -1525,7 +1562,7 @@ class ExhibitPage(PublicBasePage):
         ]
     )
 
-    @property
+    @ property
     def is_current_exhibit(self):
         """
         Determines if the exhibit is current.

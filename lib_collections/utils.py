@@ -245,11 +245,22 @@ def get_iiif_labels_language(url, lang):
     return [x['label'][lang][0] for x in d]
 
 
+def get_iiif_listing(url):
+    r = requests.get(url)
+    j = r.json()
+    d = j['items']
+    return d
+
+
 def get_iiif_labels(url, slug):
     labels = get_iiif_labels_language(url, 'en')
     return lists_to_dict(
         labels, [slugify(x) for x in labels]
     )
+
+
+def simplify_iiif_listing(l):
+    return {'id': l['id'], 'label': l['label']['en'][0]}
 
 
 def mk_manifest_url(manifid, slug):
