@@ -47,7 +47,7 @@
     "react-dom": "^16.8.6",
     "react-render-html": "^0.6.0",
     "react-slugify": "^1.2.0",
-    "serialize-javascript": "^3.0.0",
+    "serialize-javascript": "^3.1.0",
     "set-value": "^3.0.1",
     "styled-components": "^4.3.2"
   }
