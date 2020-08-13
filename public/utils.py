@@ -166,6 +166,8 @@ def doi_lookup_base_url(doi, base_url):
         return None
     if response.status_code % 400 < 100:
         return None
+    elif response.status_code % 500 < 100:
+        return None
     else:
         return response.text
 
