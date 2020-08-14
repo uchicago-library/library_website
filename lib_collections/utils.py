@@ -4,6 +4,7 @@ iiifcollectionbrowse
 from threading import Thread
 from urllib.parse import unquote
 from django.utils.text import slugify
+from django.http.response import Http404
 from functools import reduce
 
 import requests
@@ -237,19 +238,31 @@ def mk_subject_iiif_url(subj, slug):
 #     return "%s/%s" % (slugify(subj), slug)
 
 
+def unslugify_browse(slug):
+    slug_list = slug.split('-')
+    spaces = ' '.join(slug_list)
+    return spaces[0].upper() + spaces[1:]
+
+
 def get_iiif_labels_language(url, lang):
     r = requests.get(url)
-    j = r.json()
-    d = j['items']
-    # return d
-    return [x['label'][lang][0] for x in d]
+    if r.status_code == 404:
+        raise Http404
+    else:
+        j = r.json()
+        d = j['items']
+        # return d
+        return [x['label'][lang][0] for x in d]
 
 
 def get_iiif_listing(url):
     r = requests.get(url)
-    j = r.json()
-    d = j['items']
-    return d
+    if r.status_code == 404:
+        raise Http404
+    else:
+        j = r.json()
+        d = j['items']
+        return d
 
 
 def get_iiif_labels(url, slug):
@@ -267,6 +280,12 @@ def mk_manifest_url(manifid, slug):
     return "%s/%s/%s/%s.json" % (
         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
     )
+
+
+def mk_wagtail_object_url(collection_slug, manifid):
+    return ("/collex/collections/%s/object/%s"
+            % (collection_slug, manifid)
+            )
 
 
 def mk_viewer_url(manifid, slug):

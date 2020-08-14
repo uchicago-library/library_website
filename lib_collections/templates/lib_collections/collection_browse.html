@@ -2,7 +2,6 @@
 {% load wagtailcore_tags %}
 {% load wagtailroutablepage_tags %}
 {% load wagtailimages_tags %}
-{% load lib_collections_tags %}
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 <!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
@@ -10,28 +9,16 @@
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
+<h1> {{ browse_name }}: </h1>
+
+<p />
+<br>
+<p />
 
 {% for object in objects %}
+{% include "includes/collection_list.html" %}
 <hr>
-<div class="card">
-    <img class="card-img-top" src="{{ object.image_link }}" alt="Card image cap">
-    <div class="card-body">
-	<section class="thumbnails" id="content" role="main">
-	    <figure class="figure">
-		<br>
-		<figcaption>
-		    <h3 class="card-title">{{ object.title }}</h3>
-		    <p class="card-text">{{ object.creator }}</p>
-		    <p class="card-text">{{ object.publisher }}</p>
-		    <p class="card-text">{{ object.date }}</p>
-			<p class="card-text">{{ object.language }}</p>
-		</figcaption>
-	    </figure>
-	</section>
-    </div>
-</div>
 {% endfor %}
-<hr>
 
 {% endblock %}
 

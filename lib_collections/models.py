@@ -33,10 +33,12 @@ from .utils import (collection,
                     mk_viewer_url,
                     mk_subjects_url,
                     mk_subject_iiif_url,
+                    mk_wagtail_object_url,
                     get_iiif_labels,
                     get_iiif_labels_language,
                     get_iiif_listing,
                     simplify_iiif_listing,
+                    unslugify_browse,
                     )
 from .marklogic import get_record_for_display
 
@@ -638,25 +640,25 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             {'title': 'Map of Chicago, showing original subdivisions, 1830 to 1843 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
              'creator': 'University of Chicago. Social Science Research Committee.',
              'date': date(1980, 5, 12),
-             'publisher': 'University of Chicago.',
+             'publisher': 'Chicago Title and Trust Company.',
              'language': 'English',
-             'image_link': 'https://mathshistory.st-andrews.ac.uk/Biographies/Hopper/thumbnail.jpg',
+             'image_link': 'https://home.uchicago.edu/~teichman/test1.jpg',
              'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-a/G4104-C6-1933-U5-a.json',
-             'id': 'object1',
+             'wagtail_link': mk_wagtail_object_url('social-scientists-map-chicago', 'G4104-C6-1933-U5-a'),
              },
             {'title': 'Map of Chicago, showing original subdivisions, 1844 to 1862 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
              'creator': 'University of Chicago. Social Science Research Committee.',
              'date': date(1980, 5, 23),
-             'publisher': 'University of Chicago.',
+             'publisher': 'Chicago Title and Trust Company.',
              'language': 'English',
-             'image_link': 'https://www.cs.cornell.edu/sweirich/images/steph2.jpg',
+             'image_link': 'https://home.uchicago.edu/~teichman/test2.jpg',
              'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-b/G4104-C6-1933-U5-b.json',
-             'id': 'object2',
+             'wagtail_link': mk_wagtail_object_url('social-scientists-map-chicago', 'G4104-C6-1933-U5-b'),
              },
         ]
 
         slug = self.slug
-        browse_name = kwargs["browse_name"]
+        browse_name = unslugify_browse(kwargs["browse_name"])
         full_listings = get_iiif_listing(
             mk_subject_iiif_url(browse_name, slug),
         )
@@ -666,7 +668,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["browse_name"] = browse_name
         context["slug"] = slug
         context["objects"] = test
-        # = simplified_listings
 
         return TemplateResponse(request, template, context)
 

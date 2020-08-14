@@ -1,17 +1,19 @@
-<div id="accordion" role="tablist" aria-multiselectable="true">
-
-    {% for subject, link in subjects.items %}
-    <div class="card">
-        <div class="card-header" role="tab" id="{{ subject }}">
-            <h3 class="mb-0">
-		<a href="{{ link }}"
-		   aria-expanded="false"
-		   aria-controls="{{ subject }}">
-		    <i class="fa" aria-hidden="true"></i> {{ subject }}
-		</a>
-            </h3>
-        </div>
-
+<div class="card">
+    <img class="card-img-top" src="{{ object.image_link }}" alt="Card image cap" width="200" height="250">
+    <div class="card-body">
+	<section class="thumbnails" id="content" role="main">
+	    <figure class="figure">
+		<br>
+		<figcaption>
+		    <a href="{{ object.wagtail_link }}">
+			<h3 class="card-title">{{ object.title }}</h3>
+		    </a>
+		    <p class="card-text">{{ object.creator }}</p>
+		    <p class="card-text">{{ object.publisher }}</p>
+		    <p class="card-text">{{ object.date }}</p>
+		    <p class="card-text">{{ object.language }}</p>
+		</figcaption>
+	    </figure>
+	</section>
     </div>
-    {% endfor %}
 </div>
