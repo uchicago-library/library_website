@@ -37,8 +37,9 @@ from .utils import (collection,
                     get_iiif_labels,
                     get_iiif_labels_language,
                     get_iiif_listing,
-                    simplify_iiif_listing,
+                    # simplify_iiif_listing,
                     unslugify_browse,
+                    prepare_browse_json,
                     )
 from .marklogic import get_record_for_display
 
@@ -658,16 +659,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         ]
 
         slug = self.slug
+        iiif_url = mk_subject_iiif_url(kwargs["browse_name"], slug)
         browse_name = unslugify_browse(kwargs["browse_name"])
+
         full_listings = get_iiif_listing(
             mk_subject_iiif_url(browse_name, slug),
         )
-        simplified_listings = [simplify_iiif_listing(x) for x in full_listings]
+        # simplified_listings = [simplify_iiif_listing(x) for x in full_listings]
+
+        r = requests.get(iiif_url)
+        j = r.json()
+        objects = [prepare_browse_json(x) for x in j['items']]
 
         context = super().get_context(request)
         context["browse_name"] = browse_name
         context["slug"] = slug
-        context["objects"] = test
+        context["objects"] = objects
 
         return TemplateResponse(request, template, context)
 

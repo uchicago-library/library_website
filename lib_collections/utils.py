@@ -6,8 +6,11 @@ from urllib.parse import unquote
 from django.utils.text import slugify
 from django.http.response import Http404
 from functools import reduce
+from datetime import date
 
 import requests
+import re
+
 
 # from pyiiif.pres_api.utils import get_thumbnail
 
@@ -272,14 +275,42 @@ def get_iiif_labels(url, slug):
     )
 
 
-def simplify_iiif_listing(l):
-    return {'id': l['id'], 'label': l['label']['en'][0]}
+# def simplify_iiif_listing(l):
+#     return {'id': l['id'], 'label': l['label']['en'][0]}
 
 
 def mk_manifest_url(manifid, slug):
     return "%s/%s/%s/%s.json" % (
         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
     )
+
+
+def extract_manifid(url):
+    rexp = re.search(r".*\/(.*)\.json", url)
+    if rexp[1] is not None:
+        return rexp[1]
+    else:
+        return ''
+
+
+# TODO: replace the dummy data: creator, date, publisher, language,
+# 'social-scientists-maps-chicago'
+
+
+def prepare_browse_json(j):
+    manifid = extract_manifid(j['id'])
+    output = {'title': j['label']['en'][0],
+              'creator': 'University of Chicago',
+              'date': date(1980, 5, 12),
+              'publisher': 'Chicago Title and Trust Company.',
+              'language': 'English',
+              'image_link': j['thumbnail'][0]['id'],
+              'manifest': j['id'],
+              'manifid': manifid,
+              'wagtail_link': mk_wagtail_object_url(
+                  'social-scientists-map-chicago', manifid)
+              }
+    return output
 
 
 def mk_wagtail_object_url(collection_slug, manifid):
