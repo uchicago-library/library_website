@@ -606,12 +606,28 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             context["slug"],
             field_names,
         )
-        # context["keys"] = context["marklogic"].keys()
-        # context["values"] = context["marklogic"].values()
 
         return TemplateResponse(request, template, context)
 
     @route(r'^cluster-browse/$')
+    def cluster_browse_all(self, request, *args, **kwargs):
+        """
+        Route for Digital Collection Object.
+        """
+
+        template = "lib_collections/collection_browse_list.html"
+
+        all_browses = {
+            x.label: (slugify(x.label))
+            for x in CollectionPageClusterBrowse.objects.all()
+        }
+
+        context = super().get_context(request)
+        context["browses"] = all_browses
+
+        return TemplateResponse(request, template, context)
+
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -624,13 +640,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super().get_context(request)
         context["slug"] = slug
+        context["browse_type"] = unslugify_browse(kwargs["browse_type"])
         context["subjects"] = get_iiif_labels(mk_subjects_url(slug), slug)
         context["test_url"] = mk_subjects_url(slug)
 
         return TemplateResponse(request, template, context)
 
-    # @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$'))
-    @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
+    # @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -660,12 +677,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         ]
 
         slug = self.slug
-        iiif_url = mk_subject_iiif_url(kwargs["browse"], slug)
+        iiif_url = mk_subject_iiif_url(
+            kwargs["browse"], kwargs["browse_type"], slug)
         browse = unslugify_browse(kwargs["browse"])
+        browse_type = unslugify_browse(kwargs["browse"])
 
-        full_listings = get_iiif_listing(
-            mk_subject_iiif_url(browse, slug),
-        )
+        # full_listings = get_iiif_listing(iiif_url)
         # simplified_listings = [simplify_iiif_listing(x) for x in full_listings]
 
         r = requests.get(iiif_url)
@@ -674,6 +691,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super().get_context(request)
         context["browse"] = browse
+        context["browse_type"] = browse_type
         context["slug"] = slug
         context["objects"] = objects
 

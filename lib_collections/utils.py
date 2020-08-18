@@ -228,11 +228,12 @@ def mk_subjects_url(slug):
     )
 
 
-def mk_subject_iiif_url(subj, slug):
-    return "%s/%s/%s-subjects-%s.json" % (
+def mk_subject_iiif_url(subj, browse_type, slug):
+    return "%s/%s/%s-%ss-%s.json" % (
         IIIF_PREFIX,
         slug_to_iiif_path(slug),
         IIIF_PATHS[slug][-1],
+        browse_type,
         slugify(subj),
     )
 

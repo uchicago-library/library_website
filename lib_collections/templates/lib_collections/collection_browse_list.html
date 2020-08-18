@@ -4,12 +4,32 @@
 {% load wagtailimages_tags %}
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
- <!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
+<!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
 
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
-<h1> Browse by Subject </h1>
+{% if browses %}
+<h1> Browse by: </h1>
+<div id="accordion" role="tablist" aria-multiselectable="true">
+
+    {% for browse_type, link in browses.items %}
+    <div class="card">
+        <div class="card-header" role="tab" id="{{ browse_type }}">
+            <h3 class="mb-0">
+		<a href="{{ link }}"
+		   aria-expanded="false"
+		   aria-controls="{{ subject }}">
+		    <i class="fa" aria-hidden="true"></i> {{ browse_type }}
+		</a>
+            </h3>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<h1> Browse by {{ browse_type }} </h1>
 <div id="accordion" role="tablist" aria-multiselectable="true">
 
     {% for subject, link in subjects.items %}
@@ -27,6 +47,8 @@
     </div>
     {% endfor %}
 </div>
+{% endif %}
+
 {% endblock %}
       
 
