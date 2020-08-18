@@ -143,12 +143,13 @@ p {
   padding-left: 1em;
   margin-left: 1em; }
 
-.columns {
-  display: flex;
-  padding: 0;
-  gap: 2em; }
-  .columns .column {
-    flex: 1; }
+@media (min-width: 48em) {
+  .columns {
+    display: flex;
+    padding: 0;
+    gap: 2em; }
+    .columns .column {
+      flex: 1; } }
 
 /* Blockquote */
 blockquote {
