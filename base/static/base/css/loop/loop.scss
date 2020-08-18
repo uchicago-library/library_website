@@ -164,12 +164,14 @@ p {
   margin-left: 1em;
 }
 
-.columns {
-  display: flex;
-  padding: 0;
-  gap: 2em;
-  & .column {
-    flex: 1;
+@include respond-to(small) {
+  .columns {
+    display: flex;
+    padding: 0;
+    gap: 2em;
+    & .column {
+      flex: 1;
+    }
   }
 }
 

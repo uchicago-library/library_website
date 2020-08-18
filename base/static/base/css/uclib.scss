@@ -224,12 +224,16 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   margin-left: 1em;
 }
 
-.columns {
-  display: flex;
-  padding: 0;
-  gap: 2em;
-  & .column {
-    flex: 1;
+@include respond-to(small) {
+  .columns {
+    display: flex;
+    padding: 0;
+    .column {
+      flex: 1;
+    }
+  }
+  .column+.column {
+    margin-left: 1.5em; // workaround because gap is not supported in Safari
   }
 }
 
