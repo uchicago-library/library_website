@@ -300,7 +300,7 @@ def prepare_browse_json(j):
               'manifest': j['id'],
               'manifid': manifid,
               'wagtail_link': mk_wagtail_object_url(
-                  'social-scientists-map-chicago', manifid)
+                  'social-scientists-map-chicago', manifid),
               }
     return output
 
