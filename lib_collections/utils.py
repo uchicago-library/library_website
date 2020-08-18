@@ -237,10 +237,6 @@ def mk_subject_iiif_url(subj, slug):
     )
 
 
-# def mk_subject_wagtail_url(subj, slug):
-#     return "%s/%s" % (slugify(subj), slug)
-
-
 def unslugify_browse(slug):
     slug_list = slug.split('-')
     spaces = ' '.join(slug_list)
@@ -275,10 +271,6 @@ def get_iiif_labels(url, slug):
     )
 
 
-# def simplify_iiif_listing(l):
-#     return {'id': l['id'], 'label': l['label']['en'][0]}
-
-
 def mk_manifest_url(manifid, slug):
     return "%s/%s/%s/%s.json" % (
         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
@@ -300,10 +292,10 @@ def extract_manifid(url):
 def prepare_browse_json(j):
     manifid = extract_manifid(j['id'])
     output = {'title': j['label']['en'][0],
-              'creator': 'University of Chicago',
-              'date': date(1980, 5, 12),
-              'publisher': 'Chicago Title and Trust Company.',
-              'language': 'English',
+              'creator': '[ IIIF Creator info coming soon! ]',
+              'date': '[ IIIF Date info coming soon! ]',
+              'publisher': '[ IIIF Publisher info coming soon! ]',
+              'language': '[ IIIF Language coming soon! ]',
               'image_link': j['thumbnail'][0]['id'],
               'manifest': j['id'],
               'manifid': manifid,
