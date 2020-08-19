@@ -1,0 +1,16 @@
+<div id="accordion" role="tablist" aria-multiselectable="true">
+    {% for item_name, item_link in browses.items %}
+    <div class="card">
+        <div class="card-header" role="tab" id="{{ item_name }}">
+            <h3 class="mb-0">
+		<a href="{{ item_link }}"
+		   aria-expanded="false"
+		   aria-controls="{{ subject }}">
+		    <i class="fa" aria-hidden="true"></i> {{ item_name }}
+		</a>
+            </h3>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>

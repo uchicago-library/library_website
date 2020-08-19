@@ -9,46 +9,12 @@
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
-{% if browses %}
-<h1> Browse by: </h1>
-<div id="accordion" role="tablist" aria-multiselectable="true">
-
-    {% for browse_type, link in browses.items %}
-    <div class="card">
-        <div class="card-header" role="tab" id="{{ browse_type }}">
-            <h3 class="mb-0">
-		<a href="{{ link }}"
-		   aria-expanded="false"
-		   aria-controls="{{ subject }}">
-		    <i class="fa" aria-hidden="true"></i> {{ browse_type }}
-		</a>
-            </h3>
-        </div>
-
-    </div>
-    {% endfor %}
-</div>
+{% if browse_type %}
+    <h1> Browse by {{ browse_type }}: </h1>
 {% else %}
-<h1> Browse by {{ browse_type }} </h1>
-<div id="accordion" role="tablist" aria-multiselectable="true">
-
-    {% for subject, link in subjects.items %}
-    <div class="card">
-        <div class="card-header" role="tab" id="{{ subject }}">
-            <h3 class="mb-0">
-		<a href="{{ link }}"
-		   aria-expanded="false"
-		   aria-controls="{{ subject }}">
-		    <i class="fa" aria-hidden="true"></i> {{ subject }}
-		</a>
-            </h3>
-        </div>
-
-    </div>
-    {% endfor %}
-</div>
+    <h1> Browse by: </h1>
 {% endif %}
-
+    {% include "includes/general_listing.html" %}
 {% endblock %}
       
 

@@ -627,7 +627,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -641,13 +641,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context = super().get_context(request)
         context["slug"] = slug
         context["browse_type"] = unslugify_browse(kwargs["browse_type"])
-        context["subjects"] = get_iiif_labels(mk_subjects_url(slug), slug)
+        context["browses"] = get_iiif_labels(mk_subjects_url(slug), slug)
         context["test_url"] = mk_subjects_url(slug)
 
         return TemplateResponse(request, template, context)
 
     # @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
