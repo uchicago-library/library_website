@@ -1836,13 +1836,25 @@ button[id^='mysched'] { // Springshare MyScheduler button styling for staff brow
 body.staffpublicpage {
   h1 {
     border-bottom: none;
-    &~h2 {
-      border-bottom: 1px solid #D6D6CE;
-      margin-top: 0px;
-      padding-bottom: 5px;
-      font-weight: 400;
-    }
+    display: inline-block;
   }
+  .pronouns {
+    color: $mid-dark;
+    font-size: 0.95em;
+    padding-bottom: 0.25em;
+    padding-left: 0.25em;
+  }
+  h2.position-title {
+    border-bottom: 1px solid #D6D6CE;
+    margin-top: 0px;
+    padding-bottom: 5px;
+    font-weight: 400;
+  }
+}
+
+.pronouns-listing {
+  color: $mid-dark;
+  display: block;
 }
 
 

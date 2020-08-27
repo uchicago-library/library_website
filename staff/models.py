@@ -118,7 +118,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     # editable by HR.
     cnetid = CharField(
         blank=False,
-        help_text='Campus-wide unique identifier which links this record to the campus directory.',
+        help_text=
+        'Campus-wide unique identifier which links this record to the campus directory.',
         max_length=255
     )
     chicago_id = CharField(
@@ -168,7 +169,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     supervisor_override = models.ForeignKey(
         'staff.StaffPage',
         blank=True,
-        help_text='If supervisor cannot be determined by the staff person\'s unit, specify supervisor here.',
+        help_text=
+        'If supervisor cannot be determined by the staff person\'s unit, specify supervisor here.',
         null=True,
         on_delete=models.SET_NULL,
         related_name='supervisor_override_for'
@@ -179,10 +181,17 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     profile_picture = models.ForeignKey(
         'wagtailimages.Image',
         blank=True,
-        help_text='Profile pictures should be frontal headshots, preferrably on a gray background.',
+        help_text=
+        'Profile pictures should be frontal headshots, preferrably on a gray background.',
         null=True,
         on_delete=models.SET_NULL,
         related_name='+'
+    )
+    pronouns = CharField(
+        blank=True,
+        help_text='Your pronouns, example: (they/them/theirs)',
+        max_length=255,
+        null=True
     )
     libguide_url = models.URLField(
         blank=True,
@@ -380,6 +389,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),
+        FieldPanel('pronouns'),
         StreamFieldPanel('bio'),
         DocumentChooserPanel('cv'),
         FieldPanel('libguide_url'),
@@ -412,13 +422,15 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                 FieldPanel('supervises_students'),
                 PageChooserPanel('supervisor_override'),
             ],
-            heading='Human-resources editable fields. These fields will push to the campus directory (where appropriate).'
+            heading=
+            'Human-resources editable fields. These fields will push to the campus directory (where appropriate).'
         ),
         MultiFieldPanel(
             [
                 FieldPanel('chicago_id'),
             ],
-            heading='Read-only fields. These values are pulled from the campus directory.'
+            heading=
+            'Read-only fields. These values are pulled from the campus directory.'
         )
     ]
 

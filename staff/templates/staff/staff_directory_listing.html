@@ -13,7 +13,9 @@
       </td>
       <td>
           <strong>{% staff_public_page_link staff_page %}</strong>
-          <br/>
+          {% if staff_page.pronouns %}
+            <span class="pronouns-listing">{{ staff_page.pronouns }}</span>
+          {% endif %}
           <p>
             {{ staff_page.position_title }}<br/>
             <a href=".?view=staff&amp;department={{ staff_page.staff_page_units.first.library_unit.get_full_name|urlencode }}">{{ staff_page.staff_page_units.first.library_unit.title }}</a><br/>
