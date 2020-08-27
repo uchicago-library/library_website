@@ -7,8 +7,11 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <div class="col-xs-12">
+  <div class="col-xs-12 staff-headers">
     <h1>{{ self.title }}</h1>
+    {% if self.pronouns %}
+      <span class="pronouns">{{ self.pronouns }}</span>
+    {% endif %}
     <h2 class="staffpage-title">{{ position_title }}</h2>
     {% for unit in units %}
           <span class="staffpage-department">
@@ -36,7 +39,6 @@
 
       <div class="col-xs-12 col-sm-9">      
       {% if self.bio %}
-        <h2>Bio</h2>
         {% for block in self.bio %}
           {{ block }}
         {% endfor %}

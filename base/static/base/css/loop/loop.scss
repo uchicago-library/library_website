@@ -460,6 +460,24 @@ figure {
  * --------------------------------------------------
  */
 
+.staff-headers {
+  h1 {
+    display: inline-block;
+  }
+  .pronouns {
+    color: #575757;
+    font-size: 0.95em;
+    padding-left: 0.25em;
+  }
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.pronouns-listing {
+  color: $mid-dark;
+}
+
 .bg-directory {
   padding: 15px 0 15px 0;
   border-bottom: 1px solid #eeeeee;
