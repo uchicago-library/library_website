@@ -1,4 +1,6 @@
 {% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailroutablepage_tags %}
 {% load wagtailimages_tags %}
@@ -6,15 +8,25 @@
 
  <!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
 
+{% block styles %}
+  {% compress css %}
+      <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+  {% endcompress %}
+{% endblock %}
+
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
-      <div class="row">
-          <div class="col-xs-12">
 
 	      <!-- dev-note: all items that need model information are in caps -->
 	      
 	      <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-                  <iframe src="{{ iiif_url }}" width="800" height="600" allowfullscreen frameborder="0"></iframe>
+
+          <!-- @todo Figure out responsive iFrame. Oddness happening with UV iFrame when rendered in browser.
+            Ideal code:
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="{{ iiif_url }}" allowfullscreen></iframe>
+          </div> -->
+                  <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
 
                   <div class="col-xs-12 coll-dropdown">
                       <div class="btn-group">
@@ -58,8 +70,7 @@
                       </dl>
 		  </span> <!-- / schema.org wrapper -->
     	      </div> <!-- // Center Content -->
-          </div> <!-- / col-xs-12 -->
-      </div> <!-- / row -->
+
 {% endblock %}
       
 

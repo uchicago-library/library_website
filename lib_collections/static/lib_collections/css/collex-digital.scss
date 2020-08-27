@@ -1,5 +1,3 @@
-// to-do: need to clean-up and reorganize
-
 /*
  * Digital / iiif Exhibits
  * --------------------------------------------------
@@ -143,8 +141,13 @@ dl {
  * Thumbnail Grid
  * --------------------------------------------------
  */
+
+section#content {
+    background-color: red;
+}
+
 section.thumbnails {
-	figure {
+	& figure {
 		@include respond-to(medium) {
 		  display: grid;
 		  grid-template-columns: 25% 75%;

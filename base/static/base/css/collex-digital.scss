@@ -1,0 +1,183 @@
+/*------------------------------------------------------------------
+[Table of contents]
+
+Digital Collection Parent Page
+Collection Search and Browse
+Digital Collection Object Page
+
+-------------------------------------------------------------------*/
+
+@import "variables.scss";
+@import "media.scss";
+
+/*
+ * Digital Collection Parent Page
+ * --------------------------------------------------
+ *
+ */
+
+body.collectionpage {
+	div.home-module {
+		padding-top: 1.5em;
+		padding-right: 15px;
+	}
+
+	h2.browse {
+		color: $reggreen;
+	    padding-bottom: 5px;
+	    display: inline;
+	    //border-bottom: 1px solid #a0a282;
+	}
+
+	span.browse-links {
+		a {
+			display: block;
+		}
+		@include respond-to(medium) {
+			float: right;
+			display: inline-flex;
+			a + a {
+				&:before {
+					content: "\00a0\00a0\007C\00a0\00a0";
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Collection Search and Browse 
+ * --------------------------------------------------
+ *
+ */
+
+body.collectionpage {
+	.results {
+		h2 {
+			color: $reggreen;
+			font-size: 1.3em;
+			margin: -15px 0 0 0;
+		}
+	}
+	.filter ul {
+		padding-left: 0!important;
+	    text-indent: 0!important;
+	}
+	li.list-group-item.header {
+		color: black;
+		font-weight: 600;
+		background-color: #eee;
+		padding: 0.5em;
+
+	}
+	.collections.search form.searchbox {
+		margin-top:0;
+		margin-bottom: 1.5em;
+	}
+	#accordion {
+		margin-left: 2em;
+	}
+	[data-toggle="collapse"] .fa:before {  
+	  content: "\f139";
+	  font-size: 1.35rem;
+	  margin-right: 0.75em;
+	}
+	[data-toggle="collapse"].collapsed .fa:before {
+	  content: "\f13a";
+	}
+	section.browse-list { /* List or Thumbnail Grid */
+		figure {
+			@include respond-to(medium) {
+			  display: flex;
+			}
+			  &+figure {
+			  	margin-top: 1em;
+			  	border-top: 1px solid #D2CDCC;
+			  }
+			  h3 {
+			  	font-size: 1.5rem;
+				font-family: $base-font;
+			  	margin-top: 0.75em;
+			  	a & {
+					color: #525252;
+					text-decoration: underline;
+				}
+			  }
+			  img {
+			    height: 200px;
+			    width: auto;
+			    padding-top: 1.5em;
+			    margin-right: 1.5em;
+			    object-fit: contain;
+			    object-position: 50% 0;
+			  }
+			  figcaption {
+			    margin-top: 0.5em;
+			    margin-bottom: 1em;
+			    text-align: left;
+			    line-height: 1.25em;
+				ul {
+					list-style: none;
+					padding-left: 0;
+					li {
+						margin-bottom: 0.75rem;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Digital Collection Object Page
+ * --------------------------------------------------
+ *
+ */
+
+.collectionpage {
+	dl {
+		@include respond-to(medium) {
+			padding-left: 1em;
+			display: flex;
+		    flex-flow: row wrap;
+		}
+		dt {
+			font-weight: 600;
+			padding-top: 0.5em;
+			flex-basis: 15%;
+			@include respond-to(medium) {
+		    	padding-top: 0.5em;
+			    border-bottom: 1px dashed #ddd;
+			    padding-bottom: 0.5em;
+		    }
+		}
+	    dd {
+		    flex-basis: 75%;
+		    flex-grow: 1;
+		    border-bottom: 1px dashed #ddd;
+		    padding-left: 0.5em;
+		    padding-bottom: 0.5em;
+		    @include respond-to(medium) {
+		    	padding-top: 0.5em;
+			    border-bottom: 1px dashed #ddd;
+			    padding-bottom: 0.5em;
+		    }
+		}
+	}
+	.rightside.coll-rightside {
+		.source-description {
+			color: $mid-dark;
+			font-size: 90%;
+			font-style: italic;
+			display: block;
+		}
+		.rightside-mod {
+			padding-bottom: 1em;
+		}
+		a {
+			text-decoration: underline;
+		}
+	}
+}

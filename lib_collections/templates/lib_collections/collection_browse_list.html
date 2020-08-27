@@ -10,9 +10,9 @@
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
 {% if browse_type %}
-    <h1> Browse by {{ browse_type }}: </h1>
+    <h2>Browse by {{ browse_type }}</h2>
 {% else %}
-    <h1> Browse by: </h1>
+    <h2>Browse by</h2>
 {% endif %}
     {% include "includes/general_listing.html" %}
 {% endblock %}

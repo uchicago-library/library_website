@@ -1,24 +1,32 @@
 {% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
 {% load wagtailcore_tags %}
 {% load wagtailroutablepage_tags %}
 {% load wagtailimages_tags %}
+
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block styles %}
+  {% compress css %}
+      <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+  {% endcompress %}
+{% endblock %}
 
 <!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
 
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
-<h1> {{ browse }}: </h1>
+<div class="results">
+  <h2>{{ browse }}</h2>
+</div>
 
-<p />
-<br>
-<p />
-
-{% for object in objects %}
-{% include "includes/browse_listing.html" %}
-<hr>
-{% endfor %}
+  <section class="browse-list" id="content" role="main">
+    {% for object in objects %}
+      {% include "includes/browse_listing.html" %}
+    {% endfor %}
+  </section>
 
 {% endblock %}
 
@@ -93,13 +101,25 @@
     </div>
   {% endif %}
 
-<!-- dev-note: Luna and BTAA link section -->
+  {% if browse_type %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Browse Collection</h2>
+      <ul class="no-indent">
+        <!-- @to-do: ADD for loop for BROWSE TYPE -->
+          <li><a href="<!-- link -->"><!-- link label --></a></li>
+        <!-- endfor  -->
+      </ul>
+    </div>
+  {% endif %}
+
+
+<!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
   {% if col_external_service %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Other Ways to View</h2>
       <ul class="no-indent">
-          <!-- for item in EXTERNAL SERVICE ITEM -->
-          <li><a href="EXTERNAL LINK">EXTERNAL SERVICE NAME</a></li>
+          <!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
+          <li><a href="<!-- link -->"><!-- link label --></a></li>
           <!-- endfor  -->
       </ul>
     </div>
