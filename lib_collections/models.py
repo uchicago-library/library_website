@@ -40,6 +40,7 @@ from .utils import (collection,
                     # simplify_iiif_listing,
                     unslugify_browse,
                     prepare_browse_json,
+                    mk_wagtail_browse_type_route
                     )
 from .marklogic import get_record_for_display
 
@@ -609,97 +610,83 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/$')
-    def cluster_browse_all(self, request, *args, **kwargs):
-        """
-        Route for Digital Collection Object.
-        """
+    # @route(r'^cluster-browse/$')
+    # def cluster_browse_all(self, request, *args, **kwargs):
+    #     """
+    #     Route for Digital Collection Object.
+    #     """
 
-        template = "lib_collections/collection_browse_list.html"
+    #     template = "lib_collections/collection_browse_list.html"
 
-        all_browses = {
-            x.label: (slugify(x.label))
-            for x in CollectionPageClusterBrowse.objects.all()
-        }
+    #     context = super().get_context(request)
 
-        context = super().get_context(request)
-        context["browses"] = all_browses
+    #     return TemplateResponse(request, template, context)
 
-        return TemplateResponse(request, template, context)
-
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
-        """
-        Route for Digital Collection Object.
-        """
-
-        template = "lib_collections/collection_browse_list.html"
-
-        slug = self.slug
-        # all_browses = get_iiif_d(slug)
-
-        context = super().get_context(request)
-        context["slug"] = slug
-        context["browse_type"] = unslugify_browse(kwargs["browse_type"])
-        context["browses"] = get_iiif_labels(mk_subjects_url(slug), slug)
-        context["test_url"] = mk_subjects_url(slug)
-
-        return TemplateResponse(request, template, context)
-
-    # @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
-    def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
         """
 
         template = "lib_collections/collection_browse.html"
 
-        test = [
-            {'title': 'Map of Chicago, showing original subdivisions, 1830 to 1843 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
-             'creator': 'University of Chicago. Social Science Research Committee.',
-             'date': date(1980, 5, 12),
-             'publisher': 'Chicago Title and Trust Company.',
-             'language': 'English',
-             'image_link': 'https://home.uchicago.edu/~teichman/test1.jpg',
-             'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-a/G4104-C6-1933-U5-a.json',
-             'wagtail_link': mk_wagtail_object_url('social-scientists-map-chicago', 'G4104-C6-1933-U5-a'),
-             },
-            {'title': 'Map of Chicago, showing original subdivisions, 1844 to 1862 / prepared by Homer Hoyt from ante-fire plats of the Chicago Title and Trust Company.',
-             'creator': 'University of Chicago. Social Science Research Committee.',
-             'date': date(1980, 5, 23),
-             'publisher': 'Chicago Title and Trust Company.',
-             'language': 'English',
-             'image_link': 'https://home.uchicago.edu/~teichman/test2.jpg',
-             'manifest': 'https://iiif-manifest.lib.uchicago.edu/maps/chisoc/G4104-C6-1933-U5-b/G4104-C6-1933-U5-b.json',
-             'wagtail_link': mk_wagtail_object_url('social-scientists-map-chicago', 'G4104-C6-1933-U5-b'),
-             },
-        ]
-
         slug = self.slug
-        iiif_url = mk_subject_iiif_url(
-            kwargs["browse"], kwargs["browse_type"], slug)
-        browse = unslugify_browse(kwargs["browse"])
-        browse_type = unslugify_browse(kwargs["browse"])
 
-        # full_listings = get_iiif_listing(iiif_url)
-        # simplified_listings = [simplify_iiif_listing(x) for x in full_listings]
+        all_browse_types = {
+            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+            for x in CollectionPageClusterBrowse.objects.all()
+        }
 
-        r = requests.get(iiif_url)
-        j = r.json()
-        objects = [prepare_browse_json(x) for x in j['items']]
+        if kwargs["browse_type"] is None:
+            browse_type = "subject"
+        else:
+            browse_type = kwargs["browse_type"][:-1]
 
         context = super().get_context(request)
-        context["browse"] = browse
-        context["browse_type"] = browse_type
-        context["slug"] = slug
-        context["objects"] = objects
+        context["browse_type"] = unslugify_browse(browse_type)
+        context["all_browse_types"] = all_browse_types
+        context["browses"] = get_iiif_labels(
+            mk_subjects_url(slug), browse_type, slug)
+        # context["test_url"] = mk_subjects_url(slug)
 
         return TemplateResponse(request, template, context)
 
-    subpage_types = ['public.StandardPage']
+    # @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    def cluster_browse(self, request, *args, **kwargs):
+        """
+        Route for Digital Collection Object.
+        """
 
-    content_panels = Page.content_panels + [
+        template="lib_collections/collection_browse.html"
+
+        all_browse_types={
+            x.label: (slugify(x.label))
+            for x in CollectionPageClusterBrowse.objects.all()
+        }
+
+        slug=self.slug
+        iiif_url=mk_subject_iiif_url(
+            kwargs["browse"], kwargs["browse_type"], slug)
+        browse=unslugify_browse(kwargs["browse"])
+        browse_type=unslugify_browse(kwargs["browse"])
+
+        r=requests.get(iiif_url)
+        j=r.json()
+        objects=[prepare_browse_json(x) for x in j['items']]
+
+        context=super().get_context(request)
+        context["browse"]=browse
+        context["browse_type"]=browse_type
+        context["all_browse_types"]=all_browse_types
+        context["slug"]=slug
+        context["objects"]=objects
+
+        return TemplateResponse(request, template, context)
+
+    subpage_types=['public.StandardPage']
+
+    content_panels=Page.content_panels + [
         FieldPanel('acknowledgments'),
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
@@ -735,7 +722,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + [
+    search_fields=PublicBasePage.search_fields + [
         index.FilterField('title'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
@@ -747,7 +734,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     ]
 
     # panels within the 'Collection' tab in the admin interface
-    collection_panels = [
+    collection_panels=[
         FieldPanel('digital_collection'),
         MultiFieldPanel(
             [
@@ -777,7 +764,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     ]
 
     # this creates the 'Collection' tab in the admin interface
-    edit_handler = TabbedInterface(
+    edit_handler=TabbedInterface(
         [
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
@@ -792,79 +779,79 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # TODO - temporary, this will come from the page object
         # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
-        manifest = ''
+        manifest=''
 
-        staff_title = ''
-        staff_position_title = ''
-        staff_email = ''
-        staff_phone_number = ''
-        staff_faculty_exchange = ''
+        staff_title=''
+        staff_position_title=''
+        staff_email=''
+        staff_phone_number=''
+        staff_faculty_exchange=''
         try:
-            staff_title = self.staff_contact.title
-            staff_position_title = self.staff_contact.position_title
-            staff_email = self.staff_contact.staff_page_email.first().email
-            staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first(
+            staff_title=self.staff_contact.title
+            staff_position_title=self.staff_contact.position_title
+            staff_email=self.staff_contact.staff_page_email.first().email
+            staff_phone_number=self.staff_contact.staff_page_phone_faculty_exchange.first(
             ).phone_number
-            staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first(
+            staff_faculty_exchange=self.staff_contact.staff_page_phone_faculty_exchange.first(
             ).faculty_exchange
         except:
             pass
 
-        staff_url = ''
+        staff_url=''
         try:
-            staff_url = StaffPublicPage.objects.get(
+            staff_url=StaffPublicPage.objects.get(
                 cnetid=self.staff_contact.cnetid
             ).url
         except:
             pass
 
-        unit_title = lazy_dotchain(lambda: self.unit.title, '')
-        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
-        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
-        unit_email = lazy_dotchain(lambda: self.unit.email, '')
-        unit_phone_label = lazy_dotchain(
+        unit_title=lazy_dotchain(lambda: self.unit.title, '')
+        unit_url=lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label=lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email=lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label=lazy_dotchain(
             lambda: self.unit.unit_page_phone_number.first().phone_label, ''
         )
-        unit_phone_number = lazy_dotchain(
+        unit_phone_number=lazy_dotchain(
             lambda: self.unit.unit_page_phone_number.first().phone_number, ''
         )
-        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
-        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
-        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
-        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document = lazy_dotchain(
+        unit_fax_number=lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text=lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external=lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page=lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document=lazy_dotchain(
             lambda: self.unit.link_document.file.url, ''
         )
 
-        default_image = None
-        default_image = Image.objects.get(title="Default Placeholder Photo")
+        default_image=None
+        default_image=Image.objects.get(title="Default Placeholder Photo")
 
-        context = super(CollectionPage, self).get_context(request)
-        context['default_image'] = default_image
-        context['staff_title'] = staff_title
-        context['staff_url'] = staff_url
-        context['staff_position_title'] = staff_position_title
-        context['staff_email'] = staff_email
-        context['staff_phone_number'] = staff_phone_number
-        context['staff_faculty_exchange'] = staff_faculty_exchange
-        context['unit_contact'] = self.unit_contact
-        context['unit_title'] = unit_title
-        context['unit_url'] = unit_url
-        context['unit_email_label'] = unit_email_label
-        context['unit_email'] = unit_email
-        context['unit_phone_label'] = unit_phone_label
-        context['unit_phone_number'] = unit_phone_number
-        context['unit_fax_number'] = unit_fax_number
-        context['unit_link_text'] = unit_link_text
-        context['unit_link_external'] = unit_link_external
-        context['unit_link_page'] = unit_link_page
-        context['unit_link_document'] = unit_link_document
+        context=super(CollectionPage, self).get_context(request)
+        context['default_image']=default_image
+        context['staff_title']=staff_title
+        context['staff_url']=staff_url
+        context['staff_position_title']=staff_position_title
+        context['staff_email']=staff_email
+        context['staff_phone_number']=staff_phone_number
+        context['staff_faculty_exchange']=staff_faculty_exchange
+        context['unit_contact']=self.unit_contact
+        context['unit_title']=unit_title
+        context['unit_url']=unit_url
+        context['unit_email_label']=unit_email_label
+        context['unit_email']=unit_email
+        context['unit_phone_label']=unit_phone_label
+        context['unit_phone_number']=unit_phone_number
+        context['unit_fax_number']=unit_fax_number
+        context['unit_link_text']=unit_link_text
+        context['unit_link_external']=unit_link_external
+        context['unit_link_page']=unit_link_page
+        context['unit_link_document']=unit_link_document
         context['supplementary_access_links'
-                ] = self.supplementary_access_links.get_object_list()
+                ]=self.supplementary_access_links.get_object_list()
 
         # Merge the context dictionary with the results from iiif
         if manifest:
-            context = dict(
+            context=dict(
                 context, **collection(request, self.is_viewer, manifest)
             )
         return context
@@ -878,7 +865,7 @@ class CollectionObjectPage():
     """
     Object pages for Collections; Child page to Collection Page.
     """
-    parent_page_types = [
+    parent_page_types=[
         'lib_collections.CollectionPage', 'lib_collections.CollectionObjectPage'
     ]
 
@@ -892,27 +879,27 @@ class RegionalCollection(models.Model):
     """
     Abstract model for regional collections.
     """
-    regional_collection_name = models.CharField(max_length=254, blank=True)
-    regional_collection_url = models.URLField(
+    regional_collection_name=models.CharField(max_length=254, blank=True)
+    regional_collection_url=models.URLField(
         "Regional Collection URL", blank=True, null=True
     )
-    regional_collection_description = models.TextField(blank=True)
+    regional_collection_description=models.TextField(blank=True)
 
-    panels = [
+    panels=[
         FieldPanel('regional_collection_name'),
         FieldPanel('regional_collection_url'),
         FieldPanel('regional_collection_description'),
     ]
 
     class Meta:
-        abstract = True
+        abstract=True
 
 
 class RegionalCollectionPlacements(Orderable, RegionalCollection):
     """
     Through table for repeatable regional collections.
     """
-    page = ParentalKey(
+    page=ParentalKey(
         'lib_collections.CollectingAreaPage',
         related_name='regional_collections'
     )
@@ -922,7 +909,7 @@ class RelatedCollectingAreas(Orderable, models.Model):
     """
     Through table for repeatable regional collections.
     """
-    parent = ParentalKey(
+    parent=ParentalKey(
         'lib_collections.CollectingAreaPage',
         related_name='related_collecting_areas',
         null=True,
@@ -930,7 +917,7 @@ class RelatedCollectingAreas(Orderable, models.Model):
         on_delete=models.SET_NULL
     )
 
-    related_collecting_area = models.ForeignKey(
+    related_collecting_area=models.ForeignKey(
         'CollectingAreaPage',
         related_name='related_collecting_area',
         null=True,
@@ -943,23 +930,23 @@ class LibGuide(models.Model):
     """
     Abstract model for lib guides.
     """
-    guide_link_text = models.CharField(max_length=255, blank=True, null=True)
-    guide_link_url = models.URLField("Libguide URL", blank=True, null=True)
+    guide_link_text=models.CharField(max_length=255, blank=True, null=True)
+    guide_link_url=models.URLField("Libguide URL", blank=True, null=True)
 
-    panels = [
+    panels=[
         FieldPanel('guide_link_text'),
         FieldPanel('guide_link_url'),
     ]
 
     class Meta:
-        abstract = True
+        abstract=True
 
 
 class CollectingAreaPageLibGuides(Orderable, LibGuide):
     """
     Through table for repeatable guides.
     """
-    page = ParentalKey(
+    page=ParentalKey(
         'lib_collections.CollectingAreaPage', related_name='lib_guides'
     )
 
@@ -969,70 +956,70 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     """
     Content type for collecting area pages.
     """
-    subject = models.ForeignKey(
+    subject=models.ForeignKey(
         'subjects.Subject',
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
         related_name='%(app_label)s_%(class)s_related'
     )
-    collecting_statement = StreamField(
+    collecting_statement=StreamField(
         DefaultBodyFields(), blank=False, null=True
     )
-    policy_link_text = models.CharField(max_length=255, blank=True, null=True)
-    policy_link_url = models.URLField("Policy URL", blank=True, null=True)
-    short_abstract = models.TextField(null=True, blank=True)
-    thumbnail = models.ForeignKey(
+    policy_link_text=models.CharField(max_length=255, blank=True, null=True)
+    policy_link_url=models.URLField("Policy URL", blank=True, null=True)
+    short_abstract=models.TextField(null=True, blank=True)
+    thumbnail=models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    collection_location = models.ForeignKey(
+    collection_location=models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
     )
-    reference_materials = RichTextField(blank=True, null=True)
-    circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(
+    reference_materials=RichTextField(blank=True, null=True)
+    circulating_materials=RichTextField(blank=True, null=True)
+    archival_link_text=models.CharField(
         max_length=255, blank=True, null=True)
-    archival_link_url = models.URLField("Archival URL", blank=True, null=True)
-    first_feature = models.ForeignKey(
+    archival_link_url=models.URLField("Archival URL", blank=True, null=True)
+    first_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    second_feature = models.ForeignKey(
+    second_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    third_feature = models.ForeignKey(
+    third_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    fourth_feature = models.ForeignKey(
+    fourth_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    supplementary_header = models.CharField(
+    supplementary_header=models.CharField(
         max_length=255, blank=True, null=True
     )
-    supplementary_text = RichTextField(blank=True, null=True)
+    supplementary_text=RichTextField(blank=True, null=True)
 
-    subpage_types = []
+    subpage_types=[]
 
-    content_panels = Page.content_panels + [
+    content_panels=Page.content_panels + [
         FieldPanel('subject'),
         StreamFieldPanel('collecting_statement'),
         MultiFieldPanel(
@@ -1114,7 +1101,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + [
+    search_fields=PublicBasePage.search_fields + [
         index.SearchField('subject'),
         index.SearchField('collecting_statement'),
         index.SearchField('guide_link_text'),
@@ -1156,9 +1143,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             is a page title and the second item is a url.
         """
         try:
-            page = Page.objects.get(id=page_id)
-            title = str(page)
-            url = page.relative_url(site)
+            page=Page.objects.get(id=page_id)
+            title=str(page)
+            url=page.relative_url(site)
         except (Page.DoesNotExist):
             return ('', '')
         return (title, url)
@@ -1176,19 +1163,19 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Returns:
             Mixed tuple
         """
-        is_staff_page = librarian.__class__.__name__ == 'StaffPage'
+        is_staff_page=librarian.__class__.__name__ == 'StaffPage'
         if not is_staff_page:
             raise TypeError('The wrong page type was passed')
-        staff_member = str(librarian)
-        title = librarian.position_title
-        url = librarian.public_page.relative_url(site)
-        thumb = librarian.profile_picture
+        staff_member=str(librarian)
+        title=librarian.position_title
+        url=librarian.public_page.relative_url(site)
+        thumb=librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list('email',
+            email=librarian.staff_page_email.values_list('email',
                                                            flat=True)[0]
         except:
-            email = ''
-        phone_and_fac = tuple(
+            email=''
+        phone_and_fac=tuple(
             librarian.staff_page_phone_faculty_exchange.values_list(
                 'phone_number', 'faculty_exchange'
             )
@@ -1214,11 +1201,11 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             contain tuples with a slightly more complicated
             structure.
         """
-        related = {'collections': set([]), 'exhibits': set([])}
-        subjects = self.get_subjects(children)
+        related={'collections': set([]), 'exhibits': set([])}
+        subjects=self.get_subjects(children)
         # Related collections and exhibits
         for subject in subjects:
-            related['collections'] = related['collections'] | set(
+            related['collections']=related['collections'] | set(
                 self._build_related_link(page[0], site)
                 for page in subject.collection_pages.values_list('page_id')
             )

@@ -203,12 +203,12 @@ IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
 
 
-def dot(f, g):
-    return lambda x: f(g(x))
+# def dot(f, g):
+#     return lambda x: f(g(x))
 
 
-def compose(*args):
-    return reduce(dot, args)
+# def compose(*args):
+#     return reduce(dot, args)
 
 
 def lists_to_dict(lst1, lst2):
@@ -265,10 +265,27 @@ def get_iiif_listing(url):
         return d
 
 
-def get_iiif_labels(url, slug):
+def mk_wagtail_browse_route(label, browse_type, collection):
+    return ("/collex/collections/%s/cluster-browse/%s/%s" %
+            (collection,
+             browse_type,
+             slugify(label)
+             )
+            )
+
+
+def mk_wagtail_browse_type_route(browse_type, collection):
+    return ("/collex/collections/%s/cluster-browse/%s" %
+            (collection,
+             browse_type,
+             )
+            )
+
+
+def get_iiif_labels(url, browse_type, slug):
     labels = get_iiif_labels_language(url, 'en')
     return lists_to_dict(
-        labels, [slugify(x) for x in labels]
+        labels, [mk_wagtail_browse_route(x, browse_type, slug) for x in labels]
     )
 
 

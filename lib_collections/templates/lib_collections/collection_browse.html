@@ -22,11 +22,12 @@
   <h2>{{ browse }}</h2>
 </div>
 
-  <section class="browse-list" id="content" role="main">
-    {% for object in objects %}
-      {% include "includes/browse_listing.html" %}
-    {% endfor %}
-  </section>
+<section class="browse-list" id="content" role="main">
+    {% if browses %}
+      {% include "includes/general_listing.html" %}
+    {% else %}
+    {% endif %}
+</section>
 
 {% endblock %}
 
@@ -100,14 +101,14 @@
       {% endif %}
     </div>
   {% endif %}
-
-  {% if browse_type %}
+    
+  {% if all_browse_types %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Browse Collection</h2>
       <ul class="no-indent">
-        <!-- @to-do: ADD for loop for BROWSE TYPE -->
-          <li><a href="<!-- link -->"><!-- link label --></a></li>
-        <!-- endfor  -->
+	  {% for browse_type, link in all_browse_types.items %}
+          <li><a href="{{ link }}">{{ browse_type }}</a></li>
+	  {% endfor %}
       </ul>
     </div>
   {% endif %}

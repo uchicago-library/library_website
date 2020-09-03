@@ -1,18 +1,18 @@
 <figure class="figure">
-	{% if object.image_link %}
-		<a href="{{ object.wagtail_link }}">
-			<img src="{{ object.image_link }}" alt="{{ object.title }}">
-		</a>
-	{% endif %}
-	<figcaption>
-	    <a href="{{ object.wagtail_link }}">
-			<h3>{{ object.title }}</h3>
-	    </a>
-	    <ul>
-	    	<li>{{ object.creator }}</li>
-		    <li>{{ object.publisher }}</li>
-		    <li>{{ object.date }}</li>
-		    <li>{{ object.language }}</li>
-		</ul>
-	</figcaption>
+    {% if object.image_link %}
+    <a href="{{ object.wagtail_link }}">
+	<img src="{{ object.image_link }}" alt="{{ object.title }}">
+    </a>
+    {% endif %}
+    <figcaption>
+	<a href="{{ object.wagtail_link }}">
+	    <h3>{{ object.title }}</h3>
+	</a>
+	<ul>
+	    <li>{{ object.creator }}</li>
+	    <li>{{ object.publisher }}</li>
+	    <li>{{ object.date }}</li>
+	    <li>{{ object.language }}</li>
+	</ul>
+    </figcaption>
 </figure>
