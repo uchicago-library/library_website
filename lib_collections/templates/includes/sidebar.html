@@ -1,123 +1,126 @@
-{% if self.collection_location %}
-<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h2>Access Location</h2>
-    <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
-</div>
+{% if access_location %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<h2>Access Location</h2>
+	<p><a href="{{ access_location.url }}">{{ access_location.title }}</a></p>
+    </div>
 {% endif %}
 
 {% if staff_title %}
-<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h2>Subject Specialist</h2>
-    <p>
-	{% if staff_url %}
-	<a href="{{ staff_url }}">{{ staff_title }}</a>
-	{% else %}
-	{{ staff_title }}
-	{% endif %}
-	<br/><em>{{ staff_position_title }}</em><br/>
-	<a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
-	{{ staff_phone_number }}<br/>
-	{{ staff_faculty_exchange }}
-    </p>
-</div>
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<h2>Subject Specialist</h2>
+	<p>
+	    {% if staff_url %}
+	        <a href="{{ staff_url }}">{{ staff_title }}</a>
+	    {% else %}
+	        {{ staff_title }}
+	    {% endif %}
+	        <br/><em>{{ staff_position_title }}</em><br/>
+	        <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
+	    {{ staff_phone_number }}<br/>
+	    {{ staff_faculty_exchange }}
+	</p>
+    </div>
 {% endif %}
-
 
 {% if unit_contact and unit_url and unit_title %}
-<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <p>
-        {% if unit_url and unit_title%}
-        <h2>Contact</h2>
-        <a href="unit_url">unit_title</a><br/>
-        {% else %}
-        {{ unit_title }}<br/>
-        {% endif %}
-        {% if unit_email %}
-        <a href="mailto:unit_email">{% if unit_email_label %}unit_email_label{% else %}unit_email{% endif %}</a><br/>
-        {% endif %}
-        {% if unit_phone_number %}
-        {% if unit_phone_label %}unit_phone_label: {% endif %}unit_phone_number<br/>
-        {% endif %}
-        {% if unit_fax_number %}
-        Fax: unit_fax_number<br/>
-        {% endif %}
-        {% if unit_link_external %}
-        <a href="unit_link_external">{% if unit_link_text %}unit_link_text{% else %}unit_link_external{% endif %}</a><br/>
-        {% endif %}
-        {% if unit_link_page %}
-        <a href="unit_link_page">{% if unit_link_text %}unit_link_text{% else %}unit_link_page{% endif %}</a><br/>
-        {% endif %}
-        {% if unit_link_document %}
-        <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
-        {% endif %}
-    </p>
-</div>
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<p>
+	    {% if unit_url and unit_title%}
+		<h2>Contact</h2>
+		<a href="unit_url">unit_title</a><br/>
+	    {% else %}
+	        {{ unit_title }}<br/>
+	    {% endif %}
+	    {% if unit_email %}
+	        <a href="mailto:{{ unit_email }}">
+		    {% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}
+		</a><br/>
+	    {% endif %}
+	    {% if unit_phone_number %}
+		{% if unit_phone_label %}{{ unit_phone_label }}:{% endif %}
+		{{ unit_phone_number }}<br/>
+	    {% endif %}
+	    {% if unit_fax_number %}
+		Fax: {{ unit_fax_number }}<br/>
+	    {% endif %}
+	    {% if unit_link_external %}
+		<a href="{{ unit_link_external }}">{% if unit_link_text %}unit_link_text{% else %}{{ unit_link_external }}{% endif %}</a><br/>
+	    {% endif %}
+	    {% if unit_link_page %}
+		<a href="{{ unit_link_page}} ">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
+	    {% endif %}
+	    {% if unit_link_document %}
+		<a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
+	    {% endif %}
+	</p>
+    </div>
 {% endif %}
 
-    
-  {% if all_browse_types %}
+
+{% if all_browse_types %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Browse Collection</h2>
-      <ul class="no-indent">
-	  {% for browse_type, link in all_browse_types.items %}
-          <li><a href="{{ link }}">{{ browse_type }}</a></li>
-	  {% endfor %}
-      </ul>
+	<h2>Browse Collection</h2>
+	<ul class="no-indent">
+	    {% for browse_type, link in all_browse_types.items %}
+	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
+	    {% endfor %}
+	</ul>
     </div>
-  {% endif %}
+{% endif %}
 
 
-    <!-- dev-note: Do we want this info to be inherited from the parent collection page? -->
-    {% if self.related_collection_placement.all or self.exhibit_page_related_collection.all or self.collection_subject_placements.all or self.collection_placements.all %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Explore Related Content</h2>
-	{% if self.related_collection_placement.all %}
-        <strong>Related Collections</strong>
-        <ul>
-            {% for c in self.related_collection_placement.all %}
-            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
-            {% endfor %}
-        </ul>
-	{% endif %}
-	
-	{% if self.exhibit_page_related_collection.all %}
-        <strong>Related Exhibits</strong>
-        <ul>
-            {% for e in self.exhibit_page_related_collection.all %}
-            <li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
-            {% endfor %}
-        </ul>
-	{% endif %}
-	
-	{% if self.collection_subject_placements.all %}
-        <strong>Collections by Subject</strong>
-        <ul>
-            {% for s in self.collection_subject_placements.all %}
-            <li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
-            {% endfor %}
-        </ul>
-	{% endif %}
-	
-	{% if self.collection_placements.all %}
-        <strong>Collections by Format</strong>
-        <ul>
-            {% for f in self.collection_placements.all %}
-            <li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>
-            {% endfor %}
-        </ul>
-	{% endif %}
-    </div>
-    {% endif %}
-    
-    <!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
-    {% if external_links %}
+<!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
+{% if external_links %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
 	<h2>Other Ways to View</h2>
 	<ul class="no-indent">
-	    {% for service, link in external_links.items %}
-            <!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
-            <li><a href="{{ link }}">{{ service }}</a></li>
-            {% endfor %}
+	    {% for item in external_links %}
+		<!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
+	    <li><a href="{{ item.link }}">{{ item.service }}</a><br />{{ item.caption }}</li>
+	    {% endfor %}
 	</ul>
     </div>
-    {% endif %}
+{% endif %}
+
+
+<!-- dev-note: Do we want this info to be inherited from the parent collection page? -->
+{% if related_collections or related_exhibits or collections_by_subject or collections_by_format %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<h2>Explore Related Content</h2>
+	{% if related_collections %}
+	    <strong>Related Collections</strong>
+	    <ul>
+		{% for c in related_collections %}
+		<li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
+		{% endfor %}
+	    </ul>
+	{% endif %}
+
+	{% if related_exhibits %}
+	    <strong>Related Exhibits</strong>
+	    <ul>
+		{% for e in related_exhibits %}
+		<li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
+		{% endfor %}
+	    </ul>
+	{% endif %}
+
+	{% if collections_by_subject %}
+	    <strong>Collections by Subject</strong>
+	    <ul>
+		{% for s in collections_by_subject %}
+		<li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+		{% endfor %}
+	    </ul>
+	{% endif %}
+
+	{% if collections_by_format %}
+	    <strong>Collections by Format</strong>
+	    <ul>
+		{% for f in collections_by_format %}
+		<li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>
+		{% endfor %}
+	    </ul>
+	{% endif %}
+    </div>
+{% endif %}

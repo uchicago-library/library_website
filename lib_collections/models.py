@@ -523,13 +523,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         if self.staff_contact is not None:
             output['staff_title'] = self.staff_contact.title
             output['staff_position_title'] = self.staff_contact.position_title
-            output['staff_email'] = (
-                self
-                .staff_contact
-                .staff_page_email
-                .first()
-                .email
-            )
+            output['staff_email'] = (self
+                                     .staff_contact
+                                     .staff_page_email
+                                     .first()
+                                     .email
+                                     )
             output['staff_phone_number'] = (self
                                             .staff_contact
                                             .staff_page_phone_faculty_exchange
@@ -546,6 +545,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                                    .get(cnetid=self.staff_contact.cnetid)
                                    .url
                                    )
+            output["access_location"] = {
+                "url": self.collection_location.url,
+                "title": self.collection_location.title
+            }
+            output["related_collections"] = self.related_collection_placement.all()
+            output["collections_by_subject"] = self.collection_subject_placements.all()
+            output["related_exhibits"] = self.exhibit_page_related_collection.all()
+            output["collections_by_format"] = self.collection_placements.all()
         else:
             pass
         return output
@@ -633,16 +640,30 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         def linkify(name):
             if name == 'LUNA':
-                return 'https://luna.lib.uchicago.edu/luna/servlet/view/search?q=_luna_media_exif_filename=%s.tif' % manifid
+                return {'service': 'LUNA',
+                        'caption': 'Assemble Slide Decks',
+                        'link': ('https://luna.lib.uchicago.edu/'
+                                 'luna/servlet/view/search'
+                                 '?q=_luna_media_exif_filename='
+                                 '%s.tif') % manifid,
+                        }
             elif name == 'BTAA':
-                return 'https://geo.btaa.org/catalog/'
+                return {'service': 'BTAA Geoportal',
+                        'caption': 'Discover Maps & GIS Data',
+                        'link': 'https://geo.btaa.org/catalog/'
+                        }
             else:
-                return ''
+                return {}
 
-        external_links = {
-            service.get_service_display(): linkify(service.get_service_display())
-            for service in self.col_external_service.all()
+        all_browse_types = {
+            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+            for x in CollectionPageClusterBrowse.objects.all()
         }
+
+        external_links = [
+            linkify(service.get_service_display())
+            for service in self.col_external_service.all()
+        ]
 
         context = super().get_context(request)
         context["manifid"] = manifid
@@ -654,6 +675,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             context["slug"],
             field_names,
         )
+        context["all_browse_types"] = all_browse_types
         context["external_links"] = external_links
 
         context.update(self.staff_context())
@@ -685,8 +707,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["all_browse_types"] = all_browse_types
         context["browses"] = get_iiif_labels(
             mk_subjects_url(slug), browse_type, slug)
-
-        context.update(self.staff_context())
 
         return TemplateResponse(request, template, context)
 
@@ -721,8 +741,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["all_browse_types"] = all_browse_types
         context["slug"] = slug
         context["objects"] = objects
-
-        context.update(self.staff_context())
 
         return TemplateResponse(request, template, context)
 
