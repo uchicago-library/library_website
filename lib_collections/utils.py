@@ -194,21 +194,11 @@ def build_pagination_links(total, thumbs_per_page, current_page, rj):
 
 IIIF_PATHS = {
     "social-scientists-map-chicago": ["maps", "chisoc"],
-    # TODO: eliminiate this silly test example
-    "century-progress-international-exposition-publications": ["maps", "chisoc"],
 }
 
 IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 
 MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
-
-
-# def dot(f, g):
-#     return lambda x: f(g(x))
-
-
-# def compose(*args):
-#     return reduce(dot, args)
 
 
 def lists_to_dict(lst1, lst2):
@@ -255,14 +245,14 @@ def get_iiif_labels_language(url, lang):
         return [x['label'][lang][0] for x in d]
 
 
-def get_iiif_listing(url):
-    r = requests.get(url)
-    if r.status_code == 404:
-        raise Http404
-    else:
-        j = r.json()
-        d = j['items']
-        return d
+# def get_iiif_listing(url):
+#     r = requests.get(url)
+#     if r.status_code == 404:
+#         raise Http404
+#     else:
+#         j = r.json()
+#         d = j['items']
+#         return d
 
 
 def mk_wagtail_browse_route(label, browse_type, collection):
@@ -284,9 +274,10 @@ def mk_wagtail_browse_type_route(browse_type, collection):
 
 def get_iiif_labels(url, browse_type, slug):
     labels = get_iiif_labels_language(url, 'en')
-    return lists_to_dict(
-        labels, [mk_wagtail_browse_route(x, browse_type, slug) for x in labels]
-    )
+    return lists_to_dict(labels,
+                         [mk_wagtail_browse_route(
+                             x, browse_type, slug) for x in labels],
+                         )
 
 
 def mk_manifest_url(manifid, slug):

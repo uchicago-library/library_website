@@ -520,41 +520,107 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def staff_context(self):
         output = {}
-        if self.staff_contact is not None:
-            output['staff_title'] = self.staff_contact.title
-            output['staff_position_title'] = self.staff_contact.position_title
-            output['staff_email'] = (self
-                                     .staff_contact
-                                     .staff_page_email
-                                     .first()
-                                     .email
-                                     )
-            output['staff_phone_number'] = (self
-                                            .staff_contact
-                                            .staff_page_phone_faculty_exchange
-                                            .first().phone_number
-                                            )
-            output['staff_faculty_exchange'] = (self
-                                                .staff_contact
-                                                .staff_page_phone_faculty_exchange
-                                                .first()
-                                                .faculty_exchange
-                                                )
-            output['staff_url'] = (StaffPublicPage
-                                   .objects
-                                   .get(cnetid=self.staff_contact.cnetid)
-                                   .url
-                                   )
-            output["access_location"] = {
+
+        staff_title = lazy_dotchain(
+            lambda: self.staff_contact.title,
+            '')
+        staff_position_title = lazy_dotchain(
+            lambda: self.staff_contact.position_title,
+            '')
+        staff_email = lazy_dotchain(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_email
+                     .first()
+                     .email
+                     ),
+            '')
+        staff_phone_number = lazy_dotchain(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first().phone_number
+                     ),
+            '')
+        staff_faculty_exchange = lazy_dotchain(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first()
+                     .faculty_exchange
+                     ),
+            '')
+        staff_url = lazy_dotchain(
+            lambda: (StaffPublicPage
+                     .objects
+                     .get(cnetid=self.staff_contact.cnetid)
+                     .url
+                     ),
+            '')
+
+        access_location = lazy_dotchain(
+            lambda: {
                 "url": self.collection_location.url,
                 "title": self.collection_location.title
-            }
-            output["related_collections"] = self.related_collection_placement.all()
-            output["collections_by_subject"] = self.collection_subject_placements.all()
-            output["related_exhibits"] = self.exhibit_page_related_collection.all()
-            output["collections_by_format"] = self.collection_placements.all()
-        else:
-            pass
+            },
+            '')
+
+        unit_title = lazy_dotchain(lambda: self.unit.title, '')
+        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email = lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
+        )
+        unit_phone_number = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
+        )
+        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document = lazy_dotchain(
+            lambda: self.unit.link_document.file.url, ''
+        )
+
+        related_collections = lazy_dotchain(
+            lambda: self.related_collection_placement.all(),
+            '')
+        related_exhibits = lazy_dotchain(
+            lambda: self.exhibit_page_related_collection.all(),
+            '')
+        collections_by_subject = lazy_dotchain(
+            lambda: self.collection_subject_placements.all(),
+            '')
+        collections_by_format = lazy_dotchain(
+            lambda: self.collection_placements.all(),
+            '')
+
+        output['staff_title'] = staff_title
+        output['staff_position_title'] = staff_position_title
+        output['staff_email'] = staff_email
+        output['staff_phone_number'] = staff_phone_number
+        output['staff_faculty_exchange'] = staff_faculty_exchange
+        output['staff_url'] = staff_url
+
+        output['unit_title'] = unit_title
+        output['unit_url'] = unit_url
+        output['unit_email_label'] = unit_email_label
+        output['unit_phone_label'] = unit_phone_label
+        output['unit_phone_number'] = unit_phone_number
+        output['unit_fax_number'] = unit_fax_number
+        output['unit_link_text'] = unit_link_text
+        output['unit_link_external'] = unit_link_external
+        output['unit_link_page'] = unit_link_page
+        output['unit_link_document'] = unit_link_document
+
+        output["access_location"] = access_location
+
+        output["related_collections"] = related_collections
+        output["collections_by_subject"] = collections_by_subject
+        output["related_exhibits"] = related_exhibits
+        output["collections_by_format"] = collections_by_format
+
         return output
 
     # Main Admin Panel Fields
@@ -839,26 +905,26 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # # TODO - temporary, this will come from the page object
         # # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
-        # manifest = ''
+        manifest = ''
 
-        staff_title = self.staff_contact.title
-        staff_position_title = self.staff_contact.position_title
-        staff_email = self.staff_contact.staff_page_email.first().email
-        staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
-        staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
+        # staff_title = self.staff_contact.title
+        # staff_position_title = self.staff_contact.position_title
+        # staff_email = self.staff_contact.staff_page_email.first().email
+        # staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
+        # staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
         # staff_email = ''
         # staff_phone_number = ''
         # staff_faculty_exchange = ''
         # try:
         # staff_title = self.staff_contact.title
 
-        staff_url = ''
-        try:
-            staff_url = StaffPublicPage.objects.get(
-                cnetid=self.staff_contact.cnetid
-            ).url
-        except:
-            pass
+        # staff_url = ''
+        # try:
+        #     staff_url = StaffPublicPage.objects.get(
+        #         cnetid=self.staff_contact.cnetid
+        #     ).url
+        # except:
+        #     pass
 
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
@@ -878,39 +944,54 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lambda: self.unit.link_document.file.url, ''
         )
 
+        iiif_url = self.highlighted_records
+
+        r = requests.get(iiif_url)
+        j = r.json()
+        objects = [prepare_browse_json(x) for x in j['items']][:5]
+
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
-        context['staff_title'] = staff_title
-        context['staff_url'] = staff_url
-        context['staff_position_title'] = staff_position_title
-        context['staff_email'] = staff_email
-        context['staff_phone_number'] = staff_phone_number
-        context['staff_faculty_exchange'] = staff_faculty_exchange
-        context['unit_contact'] = self.unit_contact
-        context['unit_title'] = unit_title
-        context['unit_url'] = unit_url
-        context['unit_email_label'] = unit_email_label
-        context['unit_email'] = unit_email
-        context['unit_phone_label'] = unit_phone_label
-        context['unit_phone_number'] = unit_phone_number
-        context['unit_fax_number'] = unit_fax_number
-        context['unit_link_text'] = unit_link_text
-        context['unit_link_external'] = unit_link_external
-        context['unit_link_page'] = unit_link_page
-        context['unit_link_document'] = unit_link_document
-        context['supplementary_access_links'
-                ] = self.supplementary_access_links.get_object_list()
-        context['giraffe'] = "giraffe"
+
+        # context['staff_title'] = staff_title
+        # context['staff_url'] = staff_url
+        # context['staff_position_title'] = staff_position_title
+        # context['staff_email'] = staff_email
+        # context['staff_phone_number'] = staff_phone_number
+        # context['staff_faculty_exchange'] = staff_faculty_exchange
+        # context['unit_contact'] = self.unit_contact
+        # context['unit_title'] = unit_title
+        # context['unit_url'] = unit_url
+        # context['unit_email_label'] = unit_email_label
+        # context['unit_email'] = unit_email
+        # context['unit_phone_label'] = unit_phone_label
+        # context['unit_phone_number'] = unit_phone_number
+        # context['unit_fax_number'] = unit_fax_number
+        # context['unit_link_text'] = unit_link_text
+        # context['unit_link_external'] = unit_link_external
+        # context['unit_link_page'] = unit_link_page
+        # context['unit_link_document'] = unit_link_document
+        # context['supplementary_access_links'
+        #         ] = self.supplementary_access_links.get_object_list()
+
+        context['objects'] = objects
+
+        context.update(self.staff_context())
 
         # Merge the context dictionary with the results from iiif
         if manifest:
             context = dict(
                 context, **collection(request, self.is_viewer, manifest)
             )
+
         return context
+
+    # Comment this out to show old digital collections page
+    def get_template(self, request):
+        return "lib_collections/collection_page_new.html"
 
     def has_right_sidebar(self):
         return True

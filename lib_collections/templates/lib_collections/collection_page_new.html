@@ -1,0 +1,74 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block styles %}
+    {% compress css %}
+	<link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <article>
+	<div class="row">
+	    <div class="col-xs-12">
+
+		<figure class="imgcaption coll-thumb">
+		    {% if self.thumbnail %}
+			{% image self.thumbnail width-200 class="img-responsive" %}
+			{% if self.thumbnail_caption %}
+			    <figcaption>{{ self.thumbnail_caption }}</figcaption>
+			{% endif %}
+		    {% else %}
+			{% if default_image %}
+			    {% image default_image width-200 %}
+			{% endif %}
+		    {% endif %}
+		</figure>
+
+		{% for block in self.full_description %}
+		    {{ block }}
+		{% endfor %}
+
+		<!-- {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
+		     <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
+		     {% endif %}
+
+		     {% if self.access_instructions or supplementary_access_links %}
+		     <h3>Access Information</h3>
+		     {% if supplementary_access_links %}
+		     <p>
+		     {% for l in supplementary_access_links %}
+		     <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
+		     {% endfor %}
+		     </p>
+		     {% endif %}
+
+		     {% if self.access_instructions %}
+		     <p>{{ self.access_instructions }}</p>
+		     {% endif %}
+		     {% endif %} -->
+	    </div>
+	</div><!--/.row-->
+    </article>
+
+    <p /><br />
+
+    <h1> Collection Highlights </h1>
+    
+    <section class="browse-list" id="content" role="main">
+	{% include "includes/general_listing.html" %}
+    </section>
+    
+{% endblock %}
+
+{% block right_sidebar %}
+    {% include "includes/sidebar.html" %}
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+
