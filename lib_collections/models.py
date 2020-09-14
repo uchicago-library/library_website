@@ -36,7 +36,7 @@ from .utils import (collection,
                     mk_wagtail_object_url,
                     get_iiif_labels,
                     get_iiif_labels_language,
-                    get_iiif_listing,
+                    # get_iiif_listing,
                     # simplify_iiif_listing,
                     unslugify_browse,
                     prepare_browse_json,
@@ -751,7 +751,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
-        Route for Digital Collection Object.
+        Route for main cluster browse index.
         """
 
         template = "lib_collections/collection_browse.html"
@@ -776,8 +776,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    # @route(r'^cluster-browse/(?P<browse>[-\w]+)/$')
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^list-browse/$')
+    def list_browse(self, request, *args, **kwargs):
+        """
+        Route for main list browse index.
+        """
+
+        template = "lib_collections/collection_browse.html"
+
+        all_browse_types = {
+            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+            for x in CollectionPageListBrowse.objects.all()
+        }
+
+        if kwargs["browse_type"] is None:
+            browse_type = "date"
+        else:
+            browse_type = kwargs["browse_type"]
+
+        context = super().get_context(request)
+        context["browse_type"] = unslugify_browse(browse_type)
+        context["all_browse_types"] = all_browse_types
+        context["giraffe"] = "Fred Armisen"
+
+        return TemplateResponse(request, template, context)
+
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -907,25 +931,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
         manifest = ''
 
-        # staff_title = self.staff_contact.title
-        # staff_position_title = self.staff_contact.position_title
-        # staff_email = self.staff_contact.staff_page_email.first().email
-        # staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first().phone_number
-        # staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first().faculty_exchange
-        # staff_email = ''
-        # staff_phone_number = ''
-        # staff_faculty_exchange = ''
-        # try:
-        # staff_title = self.staff_contact.title
-
-        # staff_url = ''
-        # try:
-        #     staff_url = StaffPublicPage.objects.get(
-        #         cnetid=self.staff_contact.cnetid
-        #     ).url
-        # except:
-        #     pass
-
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
         unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
@@ -955,28 +960,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
-
-        # context['staff_title'] = staff_title
-        # context['staff_url'] = staff_url
-        # context['staff_position_title'] = staff_position_title
-        # context['staff_email'] = staff_email
-        # context['staff_phone_number'] = staff_phone_number
-        # context['staff_faculty_exchange'] = staff_faculty_exchange
-        # context['unit_contact'] = self.unit_contact
-        # context['unit_title'] = unit_title
-        # context['unit_url'] = unit_url
-        # context['unit_email_label'] = unit_email_label
-        # context['unit_email'] = unit_email
-        # context['unit_phone_label'] = unit_phone_label
-        # context['unit_phone_number'] = unit_phone_number
-        # context['unit_fax_number'] = unit_fax_number
-        # context['unit_link_text'] = unit_link_text
-        # context['unit_link_external'] = unit_link_external
-        # context['unit_link_page'] = unit_link_page
-        # context['unit_link_document'] = unit_link_document
-        # context['supplementary_access_links'
-        #         ] = self.supplementary_access_links.get_object_list()
-
         context['objects'] = objects
 
         context.update(self.staff_context())
