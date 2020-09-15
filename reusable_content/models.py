@@ -7,6 +7,12 @@ from wagtail.snippets.models import register_snippet
 
 @register_snippet
 class ReusableContent(models.Model, index.Indexed):
+    STYLE_TYPE_CHOICES = (
+        ('general-box', 'General'),
+        ('info-box', 'Informative'),
+        ('alert-box', 'Alert'),
+    )
+
     title = models.CharField(
         max_length=155,
         blank=False,
@@ -23,8 +29,13 @@ class ReusableContent(models.Model, index.Indexed):
         help_text='Reusable content that can be displayed in the right \
         sidebar or a page body'
     )
-    make_page_alert = models.BooleanField(
-        default=False, help_text='Display as in-page alert'
+    style_type = models.CharField(
+        max_length=12,
+        choices=STYLE_TYPE_CHOICES,
+        default='general-box',
+        verbose_name='In-Page Styling',
+        help_text=
+        '"Informative" and "Alert" styling only applies when box is placed in-page. Styling will not apply to sidebar placement.',
     )
 
     panels = [
@@ -33,7 +44,7 @@ class ReusableContent(models.Model, index.Indexed):
                 FieldPanel('title'),
                 FieldPanel('sidebar_heading'),
                 FieldPanel('content'),
-                FieldPanel('make_page_alert'),
+                FieldPanel('style_type'),
             ],
             heading='Reusable Content'
         )

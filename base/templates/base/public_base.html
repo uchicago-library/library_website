@@ -349,7 +349,7 @@
                     {% if reusable_content %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
                             {% for widget in reusable_content %}
-                                <div class="widget-reusable-content-block {% if widget.content.make_page_alert %}page-alert{%endif%}">
+                                <div class="widget-reusable-content-block {{widget.content.style_type}}">
                                     {% if widget.content.sidebar_heading %}
                                         <h3>{{widget.content.sidebar_heading}}</h3>
                                     {% endif %}
