@@ -1,11 +1,5 @@
 {% load wagtailcore_tags %}
 
-{% if value.content.make_page_alert %}
-	<div class="row">
-		<div class="page-alert" role="alert">
-			{{value.content.content|richtext}}
-		</div>
-	</div>
-	{% else %}
-		{{value.content.content|richtext}}
-{% endif %}
+<div class="{{value.content.style_type}}">
+	{{value.content.content|richtext}}
+</div>
