@@ -33,9 +33,9 @@ class ReusableContent(models.Model, index.Indexed):
         max_length=12,
         choices=STYLE_TYPE_CHOICES,
         default='general-box',
-        verbose_name='In-Page Styling',
+        verbose_name='Styling',
         help_text=
-        '"Informative" and "Alert" styling only applies when box is placed in-page. Styling will not apply to sidebar placement.',
+        '"Informative" is a light blue background and "Alert" is a light red background',
     )
 
     panels = [
