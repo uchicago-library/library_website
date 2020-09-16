@@ -40,6 +40,52 @@
 {% endfor %}
 {% endif %}
 
-{% if members %}
-{{ giraffe }}
+{% if list_objects %}
+
+{% if list_objects.has_other_pages %}
+<ul class="pagination">
+
+    {% if list_objects.has_previous %}
+    <li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+
+    {% for i in list_objects.paginator.page_range %}
+    {% if list_objects.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+
+    {% if list_objects.has_next %}
+    <li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+</ul>
+{% endif %}
+
+{% for object in list_objects %}
+<figure class="figure">
+    {% if object.image_link %}
+    <a href="{{ object.wagtail_link }}">
+	<img src="{{ object.image_link }}" alt="{{ object.title }}">
+    </a>
+    {% endif %}
+    <figcaption>
+	<a href="{{ object.wagtail_link }}">
+	    <h3>{{ object.title }}</h3>
+	</a>
+	<ul>
+	    <li>{{ object.creator }}</li>
+	    <li>{{ object.publisher }}</li>
+	    <li>{{ object.date }}</li>
+	    <li>{{ object.language }}</li>
+	</ul>
+    </figcaption>
+</figure>
+{% endfor %}
+
 {% endif %}

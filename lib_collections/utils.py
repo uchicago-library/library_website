@@ -227,6 +227,17 @@ def mk_subject_iiif_url(subj, browse_type, slug):
         slugify(subj),
     )
 
+# TODO: mk_lbrowse_iiif_url will be subject to revision when we
+# finalize the list browse routes
+
+
+def mk_lbrowse_iiif_url(slug):
+    return "%s/%s/%s.json" % (
+        IIIF_PREFIX,
+        slug_to_iiif_path(slug),
+        IIIF_PATHS[slug][-1],
+    )
+
 
 def unslugify_browse(slug):
     slug_list = slug.split('-')

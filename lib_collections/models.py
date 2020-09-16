@@ -6,6 +6,7 @@ from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.utils.text import slugify
 from django.core.validators import RegexValidator
+from django.core.paginator import Paginator
 from django.db import models
 from django.template.response import TemplateResponse
 from library_website.settings import (
@@ -40,7 +41,8 @@ from .utils import (collection,
                     # simplify_iiif_listing,
                     unslugify_browse,
                     prepare_browse_json,
-                    mk_wagtail_browse_type_route
+                    mk_wagtail_browse_type_route,
+                    mk_lbrowse_iiif_url
                     )
 from .marklogic import get_record_for_display
 
@@ -770,13 +772,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context = super().get_context(request)
         context["browse_type"] = unslugify_browse(browse_type)
+        # context["browse_title"] = ''
         context["all_browse_types"] = all_browse_types
         context["browses"] = get_iiif_labels(
             mk_subjects_url(slug), browse_type, slug)
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^list-browse/$')
+    @route(r'^list-browse/(?P<browse_type>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
@@ -784,20 +787,33 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse.html"
 
+        collection = self.slug
+
         all_browse_types = {
-            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+            x.label: mk_wagtail_browse_type_route(slugify(x.label), collection)
             for x in CollectionPageListBrowse.objects.all()
         }
 
-        if kwargs["browse_type"] is None:
-            browse_type = "date"
+        browse = "date"
+
+        if kwargs["pageno"] is None:
+            pageno = 1
         else:
-            browse_type = kwargs["browse_type"]
+            pageno = int(kwargs["pageno"][:-1])
+
+        iiif_url = mk_lbrowse_iiif_url(collection)
+
+        r = requests.get(iiif_url)
+        j = r.json()
+        l = [prepare_browse_json(x) for x in j['items']]
+        list_objects = Paginator(l, 10)
 
         context = super().get_context(request)
-        context["browse_type"] = unslugify_browse(browse_type)
+        context["browse_title"] = "Browse by %s:" % unslugify_browse(browse)
         context["all_browse_types"] = all_browse_types
-        context["giraffe"] = "Fred Armisen"
+        context["list_objects"] = list_objects.page(pageno)
+        context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
+            self.slug, kwargs["browse_type"])
 
         return TemplateResponse(request, template, context)
 
@@ -811,10 +827,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
-        all_browse_types = {
-            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-            for x in CollectionPageClusterBrowse.objects.all()
-        }
+        # all_browse_types = {
+        #     x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+        #     for x in CollectionPageClusterBrowse.objects.all()
+        # }
 
         iiif_url = mk_subject_iiif_url(
             kwargs["browse"], kwargs["browse_type"], slug)
@@ -826,9 +842,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         objects = [prepare_browse_json(x) for x in j['items']]
 
         context = super().get_context(request)
-        context["browse"] = browse
+        context["browse_title"] = browse
         context["browse_type"] = browse_type
-        context["all_browse_types"] = all_browse_types
+        # context["all_browse_types"] = all_browse_types
         context["slug"] = slug
         context["objects"] = objects
 
