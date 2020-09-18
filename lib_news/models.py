@@ -6,7 +6,7 @@ from django.core.cache import cache, caches
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
-from django.utils import timezone
+from django.utils import text, timezone
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
@@ -401,7 +401,8 @@ class LibNewsPage(PublicBasePage):
         if self.excerpt:
             retval = self.excerpt
         else:
-            retval = self.body
+            html = str(self.body).replace('</p>', '</p> ')
+            retval = text.Truncator(html).words(100, html=True)
         # return retval
         return bleach.clean(
             retval,
