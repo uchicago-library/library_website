@@ -6,7 +6,7 @@ def get_first_feature_story():
         LibNewsPage object.
     """
     from .models import LibNewsPage
-    feature = LibNewsPage.objects.filter(
+    feature = LibNewsPage.objects.live().filter(
         is_feature_story=True
     ).order_by('-published_at').first()
     return feature
