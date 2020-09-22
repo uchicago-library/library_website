@@ -8,7 +8,12 @@
     <article>
         <div class="row">
             <div class="col-xs-12 centermain">
-                {% image self.image original class="img-responsive" %}
+            	{% if self.intro %}
+	                {{ self.intro|richtext }}
+                {% endif %}
+            	{% if self.image %}
+	                {% image self.image original class="img-responsive" %}
+                {% endif %}
             </div> <!--/.centermain-->
         </div><!--/.row-->
     </article>

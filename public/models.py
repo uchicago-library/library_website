@@ -446,7 +446,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             lib_expert_block = self.unpack_lib_expert_block(
                 self.get_featured_lib_expert()[1], current_site
             )
-            has_libcal_schedule = libcal_id_by_email(lib_expert_block['email']) != ''
+            has_libcal_schedule = libcal_id_by_email(
+                lib_expert_block['email']
+            ) != ''
             context['has_featured_lib_expert'] = has_featured_lib_expert
             context['has_libcal_schedule'] = has_libcal_schedule
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
@@ -792,6 +794,7 @@ class FloorPlanPage(PublicBasePage):
     def __str__(self):
         return '%s, %s' % (self.title, self.unit.location.parent_building)
 
+    intro = RichTextField(null=True, blank=True)
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -803,6 +806,7 @@ class FloorPlanPage(PublicBasePage):
     subpage_types = ['public.StandardPage']
 
     content_panels = Page.content_panels + [
+        FieldPanel('intro'),
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
 
