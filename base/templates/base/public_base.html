@@ -374,6 +374,26 @@
                         </div> 
                     {% endif %}
 
+                    {% if self.icon_link_items %}
+                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                        <h3>Reserve Seats</h3>
+                        <div class="col-xs-12 columns icon-widget">
+                            {% for item in self.icon_link_items.all %}
+                                <div class="column">
+                                    {% if item.link %}
+                                        <a href="{{item.link}}">
+                                    {% endif %}
+                                        <i class="fa {{item.icon}}"></i>
+                                        {{item.link_label}}
+                                    {% if item.link %}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
                             <h3>Find Spaces</h3>
