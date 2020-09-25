@@ -1,8 +1,8 @@
 from datetime import date
 
 from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
-    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+    Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
+    PhoneNumber, PublicBasePage, RawHTMLBodyField, SocialMediaFields
 )
 from django.db import models
 from django.db.models.fields import CharField
@@ -104,6 +104,13 @@ class StandardPageCarouselItem(Orderable, CarouselItem):
     Carousel widgets for standard pages
     """
     page = ParentalKey('public.StandardPage', related_name='carousel_items')
+
+
+class StandardPageIconLinkItem(Orderable, IconLinkItem):
+    """
+    Carousel widgets for standard pages
+    """
+    page = ParentalKey('public.StandardPage', related_name='icon_link_items')
 
 
 class StandardPage(PublicBasePage, SocialMediaFields):
@@ -233,6 +240,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             heading='Rich Text'
         ),
         InlinePanel('carousel_items', label='Carousel items'),
+        InlinePanel('icon_link_items', max_num=3, label='Icon Link items'),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),

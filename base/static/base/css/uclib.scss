@@ -597,6 +597,18 @@ figure.coll-thumb {
   }
 }
 
+.icon-widget {
+  @extend .studymod;
+  text-align: center;
+  a {
+    text-decoration: none;
+  }
+  .fa, a.fa {
+    display: block;
+    font-size: 3rem;
+  }
+}
+
 #widget-explore-research-guides {
   padding-left: 0;
 }
