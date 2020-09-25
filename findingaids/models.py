@@ -1,10 +1,12 @@
 from base.models import PublicBasePage
+from library_website.settings import MARKLOGIC_BASE, MARKLOGIC_FINDINGAIDS_PORT
 from django.db import models
 from wagtail.core.models import Page
 from xml.etree import ElementTree
 
 import re
 import urllib
+
 
 class FindingAidsPage(PublicBasePage):
     content_panels = Page.content_panels + PublicBasePage.content_panels
@@ -14,15 +16,24 @@ class FindingAidsPage(PublicBasePage):
     def get_context(self, request):
         def get_browses():
             browses = []
-    
-            r = urllib.request.urlopen("http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")
+
+            route = ('/admin/gimme.xqy'
+                     '?collection=institution%2FUniversity%20of%20Chicago')
+
+            r = urllib.request.urlopen(
+                "%s:%i%s" % (
+                    MARKLOGIC_BASE,
+                    MARKLOGIC_FINDINGAIDS_PORT,
+                    route,
+                )
+            )
             xml_string = r.read().decode('utf-8')
 
             e = ElementTree.fromstring(xml_string)
             for div in e.find('body').findall('div'):
                 span = div.findall('span')
                 browses.append([span[0].text, span[1].text])
-    
+
             return browses
 
         def get_browse_list(browses, browse):
@@ -34,15 +45,17 @@ class FindingAidsPage(PublicBasePage):
 
         def get_digitized_content():
             digitized = []
-        
-            r = urllib.request.urlopen("http://marklogic:8011/admin/gimmeDigitalEADIDs.xqy")
+
+            r = urllib.request.urlopen(
+                "http://marklogic:8011/admin/gimmeDigitalEADIDs.xqy")
 
             xml_string = r.read().decode('utf-8')
 
             e = ElementTree.fromstring(xml_string)
             for div in e.find('body').findall('div'):
                 span = div.findall('span')
-                digitized.append([span[0].find('eadid').text, span[1].text, span[2].find('abstract').text])
+                digitized.append([span[0].find('eadid').text,
+                                  span[1].text, span[2].find('abstract').text])
 
             return digitized
 
@@ -59,16 +72,18 @@ class FindingAidsPage(PublicBasePage):
 
             if exactphrase:
                 u = "http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
-                urllib.parse.urlencode({'action': 'search', 'collection': 'project/SCRC', 'q': '"' + searchq + '"'})
+                    urllib.parse.urlencode(
+                        {'action': 'search', 'collection': 'project/SCRC', 'q': '"' + searchq + '"'})
             else:
-                u = "http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
-                urllib.parse.urlencode({'action': 'search', 'collection': 'project/SCRC', 'q': searchq})
+                u="http://marklogic.lib.uchicago.edu:8011/request.xqy?" + \
+                    urllib.parse.urlencode(
+                        {'action': 'search', 'collection': 'project/SCRC', 'q': searchq})
 
-            r = urllib.request.urlopen(u)
+            r=urllib.request.urlopen(u)
 
-            xml_string = r.read().decode('utf-8')
+            xml_string=r.read().decode('utf-8')
 
-            e = ElementTree.fromstring(xml_string)
+            e=ElementTree.fromstring(xml_string)
             try:
                 for div in e.find("div[@class='search-results']").findall("div[@class='search-result']"):
                     searchresults.append({
@@ -82,34 +97,37 @@ class FindingAidsPage(PublicBasePage):
             return searchresults
 
         def get_topics():
-            topics = {}
+            topics={}
 
-            r = urllib.request.urlopen("http://marklogic.lib.uchicago.edu:8011/ead/topics.xqy")
-            xml_string = "<body>" + r.read().decode('utf-8') + "</body>"
+            r=urllib.request.urlopen(
+                "http://marklogic.lib.uchicago.edu:8011/ead/topics.xqy")
+            xml_string="<body>" + r.read().decode('utf-8') + "</body>"
 
-            e = ElementTree.fromstring(xml_string)
+            e=ElementTree.fromstring(xml_string)
             for div in e.findall('div'):
-                subject = div.find('subject').text
+                subject=div.find('subject').text
 
                 if not subject:
                     continue
 
                 if not subject in topics:
-                    topics[subject] = []
+                    topics[subject]=[]
 
-                topic_data = {}
+                topic_data={}
                 for f in ['eadid', 'title']:
                     try:
-                        topic_data[f] = div.find(f).text
+                        topic_data[f]=div.find(f).text
                     except:
-                        topic_data[f] = ''
+                        topic_data[f]=''
 
                 try:
-                    topic_data['abstract'] = div.find('abstract').find('abstract').text
+                    topic_data['abstract']=div.find(
+                        'abstract').find('abstract').text
                 except:
-                    topic_data['abstract'] = ''
-                    
-                topics[subject].append([topic_data['eadid'], topic_data['title'], topic_data['abstract']])
+                    topic_data['abstract']=''
+
+                topics[subject].append(
+                    [topic_data['eadid'], topic_data['title'], topic_data['abstract']])
 
             return topics
 

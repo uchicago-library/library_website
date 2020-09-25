@@ -13,6 +13,7 @@ from units.models import UnitPage
 
 import time
 
+
 class test_lib_collections_view(TestCase):
     fixtures = ['test.json']
 
@@ -50,40 +51,47 @@ class test_lib_collections_view(TestCase):
         #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_digital(self):
-        request = self.factory.get('/collection/?view=collections&digital=on')
+        # request = self.factory.get('/collection/?view=collections&digital=on')
+        request = self.factory.get('/collex/?digital=on&view=collections')
         request.user = self.user
         response = collections(request)
 
 #        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
+        self.assertContains(
+            response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
 
         t = time.time() - self.startTime
         #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_format(self):
-        formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals', \
-'Images', 'Maps', 'Microform', 'Music Scores', 'Photographs', 'Reference Works', \
-'Statistics & Datasets', 'Video']
+        formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals',
+                        'Images', 'Maps', 'Microform', 'Music Scores', 'Photographs', 'Reference Works',
+                        'Statistics & Datasets', 'Video']
 
         for f in formats_list:
-            request = self.factory.get('/collection/?view=collections&format=%s' % f)
+            request = self.factory.get(
+                '/collection/?view=collections&format=%s' % f)
 
         t = time.time() - self.startTime
         #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_location(self):
-        locations_list = list(LocationPage.objects.live().values_list('title', flat=True))
+        locations_list = list(
+            LocationPage.objects.live().values_list('title', flat=True))
         for l in locations_list:
-            request = self.factory.get('/collection/?view=collections&location=%s' % l)
+            request = self.factory.get(
+                '/collection/?view=collections&location=%s' % l)
             request.user = self.user
             response = collections(request)
 
             self.assertEqual(response.status_code, 200)
 
     def test_collections_subject(self):
-        subjects_list = list(Subject.objects.all().values_list("name", flat=True))
+        subjects_list = list(
+            Subject.objects.all().values_list("name", flat=True))
         for s in subjects_list:
-            request = self.factory.get('/collection/?view=collections&subject=%s' % s)
+            request = self.factory.get(
+                '/collection/?view=collections&subject=%s' % s)
             request.user = self.user
             response = collections(request)
 
@@ -92,7 +100,7 @@ class test_lib_collections_view(TestCase):
         t = time.time() - self.startTime
         #print("%s: %.3f" % (self.id(), t))
 
-    #def test_collections_unit(self):
+    # def test_collections_unit(self):
     #    unit_list = list(UnitPage.objects.all().values_list("title", flat=True))
     #    for u in unit_list:
     #        request = self.factory.get('/collection/?view=collections&unit=%s' % u)
@@ -113,7 +121,8 @@ class test_lib_collections_view(TestCase):
         #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_location_none(self):
-        request = self.factory.get('/collection/?view=exhibits&location=%s' % None)
+        request = self.factory.get(
+            '/collection/?view=exhibits&location=%s' % None)
         request.user = self.user
         response = collections(request)
 
@@ -123,7 +132,8 @@ class test_lib_collections_view(TestCase):
         #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_subject_none(self):
-        request = self.factory.get('/collection/?view=exhibits&subject=%s' % None)
+        request = self.factory.get(
+            '/collection/?view=exhibits&subject=%s' % None)
         request.user = self.user
         response = collections(request)
 
@@ -132,7 +142,7 @@ class test_lib_collections_view(TestCase):
         t = time.time() - self.startTime
         #print("%s: %.3f" % (self.id(), t))
 
-    #def test_exhibit_unit_none(self):
+    # def test_exhibit_unit_none(self):
     #    request = self.factory.get('/collection/?view=exhibits&unit=%s' % None)
     #    request.user = self.user
     #    response = collections(request)
@@ -141,7 +151,8 @@ class test_lib_collections_view(TestCase):
     #    print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_digital_none(self):
-        request = self.factory.get('/collection/?view=exhibits&digital=%s' % None)
+        request = self.factory.get(
+            '/collection/?view=exhibits&digital=%s' % None)
         request.user = self.user
         response = collections(request)
 
@@ -180,7 +191,7 @@ class test_lib_collections_view(TestCase):
         t = time.time() - self.startTime
         #print("%s: %.3f" % (self.id(), t))
 
-    #def test_sorted(self):
+    # def test_sorted(self):
     #    request = self.factory.get('/collection/')
     #    request.user = self.user
     #    response = collections(request)
@@ -207,11 +218,11 @@ class TestCollectingAreaPages(TestCase):
                 'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
             },
             'tribbles': {
-                'name': 'Tribbles', 
+                'name': 'Tribbles',
                 'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}, {"sort_order": 1, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
 
             },
-            'quadrotriticale': { 
+            'quadrotriticale': {
                 'name': 'Quadrotriticale',
                 'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
             }
@@ -222,7 +233,8 @@ class TestCollectingAreaPages(TestCase):
         Subject.objects.create(name=subjects_json['ds9']['name']).save()
         Subject.objects.create(name=subjects_json['original']['name']).save()
         Subject.objects.create(name=subjects_json['tribbles']['name']).save()
-        Subject.objects.create(name=subjects_json['quadrotriticale']['name']).save()
+        Subject.objects.create(
+            name=subjects_json['quadrotriticale']['name']).save()
 
         # Load the subjects into variables
         subjects = Subject.objects.all()
@@ -230,11 +242,14 @@ class TestCollectingAreaPages(TestCase):
         self.ds9 = subjects.get(name=subjects_json['ds9']['name'])
         self.original = subjects.get(name=subjects_json['original']['name'])
         self.tribbles = subjects.get(name=subjects_json['tribbles']['name'])
-        self.quadrotriticale = subjects.get(name=subjects_json['quadrotriticale']['name'])
+        self.quadrotriticale = subjects.get(
+            name=subjects_json['quadrotriticale']['name'])
 
         # Create parent / child relationships for subjects
-        self.tribbles.from_json(subjects_json['tribbles']['json'] % (self.ds9.pk, self.ds9.pk, self.tribbles.pk, self.original.pk, self.original.pk, self.tribbles.pk, self.tribbles.pk, self.tribbles.name)).save()
-        self.quadrotriticale.from_json(subjects_json['quadrotriticale']['json'] % (self.tribbles.pk, self.tribbles.pk, self.quadrotriticale.pk, self.quadrotriticale.pk, self.quadrotriticale.name)).save()
+        self.tribbles.from_json(subjects_json['tribbles']['json'] % (self.ds9.pk, self.ds9.pk, self.tribbles.pk,
+                                                                     self.original.pk, self.original.pk, self.tribbles.pk, self.tribbles.pk, self.tribbles.name)).save()
+        self.quadrotriticale.from_json(subjects_json['quadrotriticale']['json'] % (
+            self.tribbles.pk, self.tribbles.pk, self.quadrotriticale.pk, self.quadrotriticale.pk, self.quadrotriticale.name)).save()
 
         # Get the default homepage
         try:
@@ -252,11 +267,11 @@ class TestCollectingAreaPages(TestCase):
                 title='Welcome')
             root.add_child(instance=self.space)
 
-        # Create a site 
+        # Create a site
         try:
             self.site = Site.objects.get(is_default_site=True)
         except:
-            self.site = Site.objects.create(    
+            self.site = Site.objects.create(
                 hostname='localhost',
                 is_default_site=True,
                 port=8000,
@@ -316,16 +331,16 @@ class TestCollectingAreaPages(TestCase):
             sort_order='None',
             id=self.captain.id,
             page_id=4,
-            page = self.captain,
+            page=self.captain,
             email='picard@starfleet.io'
         )
         self.captain.staff_page_phone_faculty_exchange.create(
             sort_order='None',
             id=self.captain.id,
             page_id=4,
-            page = self.captain,
+            page=self.captain,
             phone_number='012-345-6789',
-            faculty_exchange = 'Bridge'
+            faculty_exchange='Bridge'
         )
 
         # Collection pages
@@ -406,13 +421,13 @@ class TestCollectingAreaPages(TestCase):
 
         # Link staff pages to subjects
         StaffPageSubjectPlacement(
-            page = self.captain,
-            subject = self.ds9
+            page=self.captain,
+            subject=self.ds9
         ).save()
 
         StaffPageSubjectPlacement(
-            page = self.doctor,
-            subject = self.tribbles
+            page=self.doctor,
+            subject=self.tribbles
         ).save()
 
         # Make a CollectingAreaPage
@@ -424,10 +439,10 @@ class TestCollectingAreaPages(TestCase):
             editor=self.captain,
             content_specialist=self.captain,
             unit=self.ship,
-            first_feature = self.collection_sisko,
-            second_feature = self.collection_darvin,
-            third_feature = self.exhibit_worf,
-            fourth_feature = self.exhibit_koloth
+            first_feature=self.collection_sisko,
+            second_feature=self.collection_darvin,
+            third_feature=self.exhibit_worf,
+            fourth_feature=self.exhibit_koloth
         )
         self.space.add_child(instance=self.collecting_area)
 
@@ -445,7 +460,8 @@ class TestCollectingAreaPages(TestCase):
     def test_get_subjects_children_true_returns_hierarchy(self):
         subjects = self.collecting_area.get_subjects(children=True)
         self.assertEqual(len(subjects), 3)
-        self.assertEqual(subjects.difference(set([self.ds9, self.tribbles, self.quadrotriticale])), set([]))
+        self.assertEqual(subjects.difference(
+            set([self.ds9, self.tribbles, self.quadrotriticale])), set([]))
 
     def test_get_subjects_with_a_different_subject(self):
         self.collecting_area.subject = self.original
@@ -456,7 +472,8 @@ class TestCollectingAreaPages(TestCase):
 
         subjects = self.collecting_area.get_subjects(children=True)
         self.assertEqual(len(subjects), 3)
-        self.assertEqual(subjects.difference(set([self.original, self.tribbles, self.quadrotriticale])), set([]))
+        self.assertEqual(subjects.difference(
+            set([self.original, self.tribbles, self.quadrotriticale])), set([]))
 
         self.collecting_area.subject = self.tribbles
 
@@ -466,13 +483,15 @@ class TestCollectingAreaPages(TestCase):
 
         subjects = self.collecting_area.get_subjects(children=True)
         self.assertEqual(len(subjects), 2)
-        self.assertEqual(subjects.difference(set([self.tribbles, self.quadrotriticale])), set([]))
+        self.assertEqual(subjects.difference(
+            set([self.tribbles, self.quadrotriticale])), set([]))
 
     def test_get_subjects_without_a_subject(self):
         # This should never happen in the wild because
         # subject is a required field. Let's handle
         # for it anyhow
-        void = CollectingAreaPage(title='Nagilum', page_maintainer=self.captain, editor=self.captain, content_specialist=self.captain, unit=self.ship)
+        void = CollectingAreaPage(title='Nagilum', page_maintainer=self.captain,
+                                  editor=self.captain, content_specialist=self.captain, unit=self.ship)
         self.assertEqual(void.get_subjects(children=False), set([]))
         self.assertEqual(void.get_subjects(children=True), set([]))
 
@@ -488,16 +507,20 @@ class TestCollectingAreaPages(TestCase):
 
     def test_build_subject_specialist_normal(self):
         page = self.collecting_area
-        subject_specialist = page._build_subject_specialist(self.captain, self.site)
-        self.assertEqual(subject_specialist, ('Jean-Luc Picard', 'Captain of the USS Enterprise', '/jean-luc-picard-public/', 'picard@starfleet.io', (('012-345-6789', 'Bridge'),), None))
+        subject_specialist = page._build_subject_specialist(
+            self.captain, self.site)
+        self.assertEqual(subject_specialist, ('Jean-Luc Picard', 'Captain of the USS Enterprise',
+                                              '/jean-luc-picard-public/', 'picard@starfleet.io', (('012-345-6789', 'Bridge'),), None))
 
     def test_build_subject_specialist_with_wrong_page_type(self):
         page = self.collecting_area
-        self.assertRaises(TypeError, page._build_subject_specialist, self.ship, self.site)
+        self.assertRaises(
+            TypeError, page._build_subject_specialist, self.ship, self.site)
 
     def test_get_related_no_children(self):
         page = self.collecting_area
-        expected = {'collections': set([('Benjamin Sisko', '/benjamin-sisko/')]), 'subject_specialists': set([('Jean-Luc Picard', 'Captain of the USS Enterprise', '/jean-luc-picard-public/', '', (), None)]), 'exhibits': set([('Lieutenant Commander Worf', '/lieutenant-commander-worf/')])}
+        expected = {'collections': set([('Benjamin Sisko', '/benjamin-sisko/')]), 'subject_specialists': set([('Jean-Luc Picard', 'Captain of the USS Enterprise',
+                                                                                                               '/jean-luc-picard-public/', '', (), None)]), 'exhibits': set([('Lieutenant Commander Worf', '/lieutenant-commander-worf/')])}
         self.assertEqual(page.get_related(self.site), expected)
 
     def test_get_related_with_children(self):
@@ -506,9 +529,12 @@ class TestCollectingAreaPages(TestCase):
         specialists = set(r[0] for r in related['subject_specialists'])
         collections = set(r[0] for r in related['collections'])
         exhibits = set(r[0] for r in related['exhibits'])
-        self.assertTrue('Leonard McCoy' in specialists and 'Jean-Luc Picard' in specialists)
-        self.assertTrue('Arne Darvin' in collections and 'Benjamin Sisko' in collections)
-        self.assertTrue('Lieutenant Commander Worf' in exhibits and 'Captain Koloth' in exhibits)
+        self.assertTrue(
+            'Leonard McCoy' in specialists and 'Jean-Luc Picard' in specialists)
+        self.assertTrue(
+            'Arne Darvin' in collections and 'Benjamin Sisko' in collections)
+        self.assertTrue(
+            'Lieutenant Commander Worf' in exhibits and 'Captain Koloth' in exhibits)
         self.assertEqual(len(specialists), 2)
         self.assertEqual(len(collections), 2)
         self.assertEqual(len(exhibits), 2)
