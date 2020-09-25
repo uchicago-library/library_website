@@ -14,7 +14,7 @@ class FindingAidsPage(PublicBasePage):
 
     def get_context(self, request):
         def marklogic_url(route):
-            return "schmengi%s:%i%s" % (
+            return "%s:%i%s" % (
                 MARKLOGIC_BASE,
                 MARKLOGIC_FINDINGAIDS_PORT,
                 route,
