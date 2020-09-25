@@ -424,6 +424,18 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         return self.has_field([self.enable_find_spaces])
 
     @property
+    def has_icon_link_items(self):
+        """
+        Determine if there is a "Link Items"
+        widget on the page.
+        Returns:
+            Boolean
+        """
+        if self.has_field([self.icon_link_items]):
+            return self.icon_link_items.all().count() > 0
+        return False
+
+    @property
     def has_right_sidebar(self):
         """
         Determine if a right sidebar should
