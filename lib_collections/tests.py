@@ -51,8 +51,7 @@ class test_lib_collections_view(TestCase):
         #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_digital(self):
-        # request = self.factory.get('/collection/?view=collections&digital=on')
-        request = self.factory.get('/collex/?digital=on&view=collections')
+        request = self.factory.get('/collection/?view=collections&digital=on')
         request.user = self.user
         response = collections(request)
 
