@@ -137,15 +137,15 @@ class FindingAidsPage(PublicBasePage):
                 for div in e.findall('div'):
                     subject = div.find('subject').text
 
-                if subject not in topics:
-                    topics[subject] = []
+                    if subject not in topics:
+                        topics[subject] = []
 
-                topic_data = {}
-                for f in ['eadid', 'title']:
-                    try:
-                        topic_data[f] = div.find(f).text
-                    except AttributeError:
-                        topic_data[f] = ''
+                    topic_data = {}
+                    for f in ['eadid', 'title']:
+                        try:
+                            topic_data[f] = div.find(f).text
+                        except AttributeError:
+                            topic_data[f] = ''
 
                     try:
                         topic_data['abstract'] = div.find(
@@ -157,7 +157,7 @@ class FindingAidsPage(PublicBasePage):
                         [topic_data['eadid'],
                          topic_data['title'],
                          topic_data['abstract']])
-            except TypeError:
+            except ElementTree.ParseError:
                 topics = []
 
             return topics
