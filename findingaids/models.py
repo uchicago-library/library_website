@@ -44,7 +44,7 @@ class FindingAidsPage(PublicBasePage):
                     span = div.findall('span')
                     browses.append([span[0].text, span[1].text])
             except ElementTree.ParseError:
-                browses = []
+                pass
 
             return browses
 
@@ -121,7 +121,7 @@ class FindingAidsPage(PublicBasePage):
                         'abstract': div.find("div[@class='abstract']").text
                     })
             except (AttributeError, ElementTree.ParseError):
-                searchresults = []
+                pass
 
             return searchresults
 
@@ -158,7 +158,7 @@ class FindingAidsPage(PublicBasePage):
                          topic_data['title'],
                          topic_data['abstract']])
             except ElementTree.ParseError:
-                topics = []
+                pass
 
             return topics
 
