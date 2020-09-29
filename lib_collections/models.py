@@ -1,6 +1,8 @@
 import datetime
 import requests
 # TODO: remove datetime import
+# TODO: remove HttpResponse import
+from django.http import HttpResponse
 from datetime import date
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
@@ -697,7 +699,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         """
         Route for Digital Collection Object.
         """
-
         template = "lib_collections/collection_object_page.html"
 
         field_names = self.metadata_field_names()
@@ -749,6 +750,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context.update(self.staff_context())
 
         return TemplateResponse(request, template, context)
+        # return HttpResponse('for testing purposes')
 
     @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):

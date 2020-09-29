@@ -196,8 +196,10 @@ IIIF_PATHS = {
     "social-scientists-map-chicago": ["maps", "chisoc"],
 }
 
+# IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 
+# MANIFEST_PREFIX = "https://iiif-manifest-dev.lib.uchicago.edu"
 MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
 
 

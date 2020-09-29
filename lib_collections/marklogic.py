@@ -66,7 +66,7 @@ def triples_to_dict(dct, wagtail_field_names):
         raise Http404
 
 
-def get_raw_record(manifest_url, wagtail_field_names):
+def get_raw_record(manifest_url):
     r = requests.get(
         auth=HTTPBasicAuth(
             MARKLOGIC_LDR_USER,
@@ -82,7 +82,7 @@ def get_raw_record(manifest_url, wagtail_field_names):
 
 def get_record_no_parsing(manifid, slug, wagtail_field_names):
     manifest_url = mk_manifest_url(manifid, slug)
-    raw_record = get_raw_record(manifest_url, wagtail_field_names)
+    raw_record = get_raw_record(manifest_url)
     return triples_to_dict(raw_record, wagtail_field_names)
 
 
