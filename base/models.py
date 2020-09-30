@@ -358,6 +358,33 @@ class CarouselItem(LinkFields):
         abstract = True
 
 
+class IconLinkItem(LinkFields):
+    """
+    Reusable abstract model for a linked icon item.
+    """
+    icon = models.CharField(
+        max_length=55,
+        blank=True,
+        help_text='Add a Font Awesome icon name here'
+    )
+    link_label = models.CharField(max_length=55, blank=True)
+
+    panels = [
+        FieldPanel('icon'),
+        FieldPanel('link_label'),
+        MultiFieldPanel(
+            [
+                FieldPanel('link_external'),
+                PageChooserPanel('link_page'),
+            ],
+            heading='Link'
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
 class ContactPerson(StructBlock):
     """
     Reusable model for a contact. Will be used to

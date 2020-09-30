@@ -34,12 +34,12 @@
     "prettier-eslint": "^9.0.1",
     "webpack": "^4.33.0",
     "webpack-bundle-tracker": "^0.4.2-beta",
-    "webpack-cli": "^3.3.4"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "eslint-utils": "^2.0.0",
     "is-my-json-valid": "^2.20.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mixin-deep": "^2.0.1",
     "oboe": "^2.1.4",
     "prop-types": "^15.7.2",
@@ -47,7 +47,7 @@
     "react-dom": "^16.8.6",
     "react-render-html": "^0.6.0",
     "react-slugify": "^1.2.0",
-    "serialize-javascript": "^3.0.0",
+    "serialize-javascript": "^3.1.0",
     "set-value": "^3.0.1",
     "styled-components": "^4.3.2"
   }

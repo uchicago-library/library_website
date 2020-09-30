@@ -38,7 +38,7 @@ urlpatterns = [
     url(r'^loop-search/$', search_view, name='search'),
     url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
-    url(r'^spaces/$', spaces_view, name='spaces'),
+    # url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^staff_api/$', staff_api, name='staff_api'),
     url(r'^about/directory/$', unit_view, name='unit'),
