@@ -522,3 +522,9 @@ if 'test' in sys.argv:
 # DOI resolution service
 
 IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
+
+MARKLOGIC_BASE = "http://marklogic.lib.uchicago.edu"
+
+MARKLOGIC_FINDINGAIDS_PORT = 8011
+
+# "http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")

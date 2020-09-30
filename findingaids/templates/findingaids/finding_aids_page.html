@@ -83,32 +83,36 @@
   
       {% else %}
 
-        <table class="table table-striped scrc-list">
-          <thead>
-            <tr class="etable-header">
-              <th colspan="1">
-                {% if browse %}
-                  All Finding Aids beginning with "{{ browse }}"
-                {% else %}
-                  All Finding Aids
-                {% endif %}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in browses %}
-              <tr>
-                <td><strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a></strong></td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+	  {% if browses %}
+	    <table class="table table-striped scrc-list">
+	      <thead>
+		<tr class="etable-header">
+		  <th colspan="1">
+		    {% if browse %}
+		      All Finding Aids beginning with "{{ browse }}"
+		    {% else %}
+		      All Finding Aids
+		    {% endif %}
+		  </th>
+		</tr>
+	      </thead>
+	      <tbody>
+		{% for b in browses %}
+		  <tr>
+		    <td><strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a></strong></td>
+		  </tr>
+		{% endfor %}
+	      </tbody>
+	    </table>
+	  {% else %}
+	    {% include "findingaids/marklogic_error.html" %}
+	  {% endif %}
     
       {% endif %}
 
     {% elif view == 'topics' %}
 
-      {% if topic %}
+      {% if topic and thistopiclist %}
 
         <table class="table table-striped scrc-list">
           <thead>
@@ -130,7 +134,7 @@
           </tbody>
         </table>
 
-      {% else %}
+      {% elif topiclist %}
 
         <table class="table table-striped scrc-list">
           <thead>
@@ -149,10 +153,13 @@
           </tbody>
         </table>
 
+      {% else %}
+	{% include "findingaids/marklogic_error.html" %}
       {% endif %}
 
     {% elif view == 'digitized' %}
 
+      {% if digitizedlist %}
       <table class="table table-striped scrc-list">
         <thead>
           <tr class="etable-header">
@@ -172,6 +179,9 @@
           {% endfor %}
         </tbody>
       </table>
+      {% else %}
+        {% include "findingaids/marklogic_error.html" %}
+      {% endif %}
 
     {% else %}
 
