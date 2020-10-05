@@ -44,6 +44,7 @@ from .utils import (collection,
                     unslugify_browse,
                     prepare_browse_json,
                     mk_wagtail_browse_type_route,
+                    mk_wagtail_lbrowse_route,
                     mk_lbrowse_iiif_url
                     )
 from .marklogic import get_record_for_display
@@ -725,8 +726,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 return {}
 
         all_browse_types = {
-            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-            for x in CollectionPageClusterBrowse.objects.all()
+            **{
+                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+                for x in CollectionPageClusterBrowse.objects.all()
+            },
+            **{
+                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+                for x in CollectionPageListBrowse.objects.all()
+            }
         }
 
         external_links = [

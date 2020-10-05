@@ -277,6 +277,14 @@ def mk_wagtail_browse_route(label, browse_type, collection):
             )
 
 
+def mk_wagtail_lbrowse_route(browse_type, collection):
+    return ("/collex/collections/%s/list-browse/%s/" %
+            (collection,
+             browse_type,
+             )
+            )
+
+
 def mk_wagtail_browse_type_route(browse_type, collection):
     return ("/collex/collections/%s/cluster-browse/%s" %
             (collection,
