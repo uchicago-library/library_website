@@ -21,9 +21,12 @@ from search.views import loop_search as search_view
 from staff.views import staff, staff_api
 from units.views import units as unit_view
 
+from lib_collections.views import temporary
+
 from .api import api_router
 
 urlpatterns = [
+    url(r'^teichman/rat:rat/$', temporary, name='temporary'),
     url(r'^django-admin/', admin.site.urls),
     url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
     url(r'^admin/', include(wagtailadmin_urls)),
@@ -71,4 +74,5 @@ if settings.DEBUG:
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

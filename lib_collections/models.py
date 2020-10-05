@@ -694,7 +694,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
-    @route(r'^object/(?P<manifid>[-\w]+)/$')
+    @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -750,7 +750,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context.update(self.staff_context())
 
         return TemplateResponse(request, template, context)
-        # return HttpResponse('for testing purposes')
 
     @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):

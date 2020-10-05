@@ -19,8 +19,10 @@ def manifest_url_to_cho(u):
     path = '/'.join(path_parts)
     return '/digital_collections/IIIF_Files{}'.format(path)
 
+# TODO: remove this
 
-def sp_query(s):
+
+def sp_query_old(s):
     return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
               FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
               WHERE {{
@@ -36,6 +38,24 @@ def sp_query(s):
                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
               }}'''.format(manifest_url_to_cho(s))
+
+
+def sp_query(manifid):
+    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
+              FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
+              WHERE {{
+                  <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/format> ?format . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/publisher> ?publisher . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/rights> ?rights . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
+              }}'''.format(manifid)
 
 
 def collections_query(manifest_url):
@@ -66,14 +86,14 @@ def triples_to_dict(dct, wagtail_field_names):
         raise Http404
 
 
-def get_raw_record(manifest_url):
+def get_raw_record(manifid):
     r = requests.get(
         auth=HTTPBasicAuth(
             MARKLOGIC_LDR_USER,
             MARKLOGIC_LDR_PASSWORD,
         ),
         headers={'Content-type': 'text/turtle'},
-        params={'query': sp_query(manifest_url)},
+        params={'query': sp_query(manifid)},
         url='http://marklogic.lib.uchicago.edu:8008/v1/graphs/sparql'
     )
     j = json.loads(r.content.decode('utf-8'))
@@ -81,8 +101,9 @@ def get_raw_record(manifest_url):
 
 
 def get_record_no_parsing(manifid, slug, wagtail_field_names):
-    manifest_url = mk_manifest_url(manifid, slug)
-    raw_record = get_raw_record(manifest_url)
+    # manifest_url = mk_manifest_url(manifid, slug)
+    raw_record = get_raw_record(manifid)
+    # return raw_record
     return triples_to_dict(raw_record, wagtail_field_names)
 
 

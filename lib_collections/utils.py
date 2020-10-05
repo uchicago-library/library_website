@@ -294,16 +294,36 @@ def get_iiif_labels(url, browse_type, slug):
 
 
 def mk_manifest_url(manifid, slug):
+    return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
+    # TODO: put this back after collection page demo
+    # return "%s/%s/%s/%s.json" % (
+    #     MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
+    # )
+
+
+def mk_manifest_url_old(manifid, slug):
     return "%s/%s/%s/%s.json" % (
         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
     )
 
 
 def extract_manifid(url):
-    rexp = re.search(r".*\/(.*)\.json", url)
-    if rexp[1] is not None:
+    rexp = re.search('.*\/ark:61001\/([\d|\w]+)/$', url)
+    # rexp = re.search(r'.*\/ark:61001\/([\d|\w]+)/$', url)
+    try:
         return rexp[1]
-    else:
+    except TypeError:
+        return ''
+
+# TODO: this is temporary
+
+
+def extract_manifid_thumbnail(url):
+    rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
+    # rexp = re.search(r'.*\/ark:61001\/([\d|\w]+)/$', url)
+    try:
+        return rexp[1]
+    except TypeError:
         return ''
 
 
@@ -312,7 +332,9 @@ def extract_manifid(url):
 
 
 def prepare_browse_json(j):
-    manifid = extract_manifid(j['id'])
+    manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
+    # j['thumbnail'][0]['id']
+
     output = {'title': j['label']['en'][0],
               'creator': '[ IIIF Creator info coming soon! ]',
               'date': '[ IIIF Date info coming soon! ]',
