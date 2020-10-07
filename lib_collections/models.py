@@ -695,6 +695,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    slug = self.slug
+
+    all_browse_types = {
+        **{
+            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+            for x in CollectionPageClusterBrowse.objects.all()
+        },
+        **{
+            x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+            for x in CollectionPageListBrowse.objects.all()
+        }
+    }
+
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
@@ -705,8 +718,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         field_names = self.metadata_field_names()
 
         manifid = kwargs["manifid"]
-
-        slug = self.slug
 
         def linkify(name):
             if name == 'LUNA':
@@ -725,16 +736,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             else:
                 return {}
 
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        # all_browse_types = {
+        #     **{
+        #         x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+        #         for x in CollectionPageClusterBrowse.objects.all()
+        #     },
+        #     **{
+        #         x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+        #         for x in CollectionPageListBrowse.objects.all()
+        #     }
+        # }
 
         external_links = [
             linkify(service.get_service_display())
@@ -766,12 +777,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse.html"
 
-        slug = self.slug
+        # slug = self.slug
 
-        all_browse_types = {
-            x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-            for x in CollectionPageClusterBrowse.objects.all()
-        }
+        # all_browse_types = {
+        #     **{
+        #         x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+        #         for x in CollectionPageClusterBrowse.objects.all()
+        #     },
+        #     **{
+        #         x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+        #         for x in CollectionPageListBrowse.objects.all()
+        #     }
+        # }
 
         if kwargs["browse_type"] is None:
             browse_type = "subject"
@@ -796,11 +813,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         template = "lib_collections/collection_browse.html"
 
         collection = self.slug
-
-        all_browse_types = {
-            x.label: mk_wagtail_browse_type_route(slugify(x.label), collection)
-            for x in CollectionPageListBrowse.objects.all()
-        }
 
         browse = "date"
 
