@@ -32,6 +32,7 @@
     "webpack-cli": "^3.3.4"
   },
   "dependencies": {
+    "core-js": "^3.6.5",
     "eslint-utils": "^2.0.0",
     "lodash": "^4.17.15",
     "mixin-deep": "^2.0.1",
@@ -42,6 +43,7 @@
     "react-slugify": "^1.2.0",
     "serialize-javascript": "^3.0.0",
     "set-value": "^3.0.1",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "universalviewer": "^4.0.0-pre.49"
   }
 }
