@@ -364,7 +364,7 @@ def mk_wagtail_object_url(collection_slug, manifid):
 
 
 def mk_viewer_url(manifid, slug):
-    prefix = "https://iiif-viewer.lib.uchicago.edu/uv/./uv.html#?manifest="
+    prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
 
