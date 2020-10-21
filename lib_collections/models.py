@@ -812,6 +812,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         iiif_url = mk_lbrowse_iiif_url(collection)
 
+        slug = self.slug
+
+        all_browse_types = {
+            **{
+                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+                for x in CollectionPageClusterBrowse.objects.all()
+            },
+            **{
+                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+                for x in CollectionPageListBrowse.objects.all()
+            }
+        }
+
         r = requests.get(iiif_url)
         j = r.json()
         l = [prepare_browse_json(x) for x in j['items']]
