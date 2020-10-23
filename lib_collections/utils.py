@@ -335,6 +335,68 @@ def extract_manifid_thumbnail(url):
         return ''
 
 
+def pure_append(elmnt):
+    output = []
+    output.append(elmnt)
+    return output
+
+
+def iiif_field_update(dct, field, val):
+    if field in dct.keys():
+        new_value = dct[field] + [val]
+        dct.update({field: new_value})
+    else:
+        dct[field] = [val]
+
+
+def pull_metadata_labels(j):
+    output = {}
+    for x in j['metadata']:
+        iiif_field_update(output,
+                          x['label']['en'][0].lower(),
+                          x['value']['en'][0],
+                          )
+    return output
+    # alist = [(x['label']['en'][0].lower(), x['value']['en'][0])
+    #          for x in j]
+    # return dict(alist)
+
+# TODO: eliminate this
+
+
+LANGUAGE_ABBREVS = {'en': 'English'}
+
+
+def prepare_browse_json_lbrowse_temp(j, joiner):
+    manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
+    metadata = pull_metadata_labels(j)
+
+    def create_field(name, dct):
+        if name in dct.keys():
+            return dct[name]
+        else:
+            return []
+
+    title = create_field('title', metadata)
+    publisher = create_field('publisher', metadata)
+    creator = create_field('creator', metadata)
+    date = create_field('date', metadata)
+    language = create_field('language', metadata)
+
+    output = {'title': joiner(title),
+              'creator': joiner(creator),
+              'date': joiner(date),
+              'publisher': joiner(publisher),
+              'language': joiner([LANGUAGE_ABBREVS[x] for x in language]),
+              'image_link': j['thumbnail'][0]['id'],
+              'manifest': j['id'],
+              'manifid': manifid,
+              'wagtail_link': mk_wagtail_object_url(
+                  'social-scientists-map-chicago', manifid),
+              }
+    return output
+
+
 # TODO: replace the dummy data: creator, date, publisher, language,
 # 'social-scientists-maps-chicago'
 
