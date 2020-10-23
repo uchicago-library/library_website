@@ -2,14 +2,30 @@ from base.wagtail_hooks import (
     get_required_groups, has_permission, redirect_users_without_permissions
 )
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from library_website.settings import EBOOKS_SEARCH
 from units.models import UnitIndexPage
 from wagtail.contrib.search_promotions.models import SearchPromotion
 from wagtail.core.models import Page, Site
 from wagtail.search.models import Query
 
 
+def ebooks_search(request):
+    """
+    View for processing a form submission and forwarding
+    a request to an ebooks search in the catalog.
+    """
+    if request.method == 'GET':
+        query = request.GET.get('q')
+        if not query:
+            query = '*'
+        return redirect(EBOOKS_SEARCH + query)
+
+
 def loop_search(request):
+    """
+    Loop search results.
+    """
     loop_homepage = Site.objects.get(site_name='Loop').root_page
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(
