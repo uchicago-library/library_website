@@ -13,7 +13,7 @@ from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
 from public.views import switchboard
 from results.views import results as results_view
-from search.views import loop_search as search_view
+from search.views import loop_search as search_view, ebooks_search
 from staff.views import staff, staff_api
 from units.views import units as unit_view
 from wagtail.admin import urls as wagtailadmin_urls
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^results/$', results_view, name='results'),
     url(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
     url(r'^loop-search/$', search_view, name='search'),
+    url(r'^ebooks-search/$', ebooks_search, name='ebooks'),
     url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
     # url(r'^spaces/$', spaces_view, name='spaces'),
