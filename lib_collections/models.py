@@ -43,7 +43,7 @@ from .utils import (collection,
                     # simplify_iiif_listing,
                     unslugify_browse,
                     prepare_browse_json,
-                    prepare_browse_json_lbrowse_temp,
+                    # prepare_browse_json_lbrowse_temp,
                     mk_wagtail_browse_type_route,
                     mk_wagtail_lbrowse_route,
                     mk_lbrowse_iiif_url
@@ -834,9 +834,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         r = requests.get(iiif_url)
         j = r.json()
-        l = [prepare_browse_json_lbrowse_temp(
-            x, comma_join
-        ) for x in j['items']]
+        l = [prepare_browse_json(x, comma_join)
+             for x in j['items']]
         list_objects = Paginator(l, 10)
 
         context = super().get_context(request)
@@ -874,9 +873,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse = unslugify_browse(kwargs["browse"])
         browse_type = unslugify_browse(kwargs["browse"])
 
+        def comma_join(lst):
+            return ", ".join(lst)
+
         r = requests.get(iiif_url)
         j = r.json()
-        objects = [prepare_browse_json(x) for x in j['items']]
+        objects = [prepare_browse_json(x, comma_join)
+                   for x in j['items']]
 
         context = super().get_context(request)
         context["browse_title"] = browse

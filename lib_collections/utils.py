@@ -367,7 +367,7 @@ def pull_metadata_labels(j):
 LANGUAGE_ABBREVS = {'en': 'English'}
 
 
-def prepare_browse_json_lbrowse_temp(j, joiner):
+def prepare_browse_json(j, joiner):
     manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
     metadata = pull_metadata_labels(j)
 
@@ -401,22 +401,22 @@ def prepare_browse_json_lbrowse_temp(j, joiner):
 # 'social-scientists-maps-chicago'
 
 
-def prepare_browse_json(j):
-    manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
-    # j['thumbnail'][0]['id']
+# def prepare_browse_json(j):
+#     manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
+#     # j['thumbnail'][0]['id']
 
-    output = {'title': j['label']['en'][0],
-              'creator': '[ IIIF Creator info coming soon! ]',
-              'date': '[ IIIF Date info coming soon! ]',
-              'publisher': '[ IIIF Publisher info coming soon! ]',
-              'language': '[ IIIF Language coming soon! ]',
-              'image_link': j['thumbnail'][0]['id'],
-              'manifest': j['id'],
-              'manifid': manifid,
-              'wagtail_link': mk_wagtail_object_url(
-                  'social-scientists-map-chicago', manifid),
-              }
-    return output
+#     output = {'title': j['label']['en'][0],
+#               'creator': '[ IIIF Creator info coming soon! ]',
+#               'date': '[ IIIF Date info coming soon! ]',
+#               'publisher': '[ IIIF Publisher info coming soon! ]',
+#               'language': '[ IIIF Language coming soon! ]',
+#               'image_link': j['thumbnail'][0]['id'],
+#               'manifest': j['id'],
+#               'manifid': manifid,
+#               'wagtail_link': mk_wagtail_object_url(
+#                   'social-scientists-map-chicago', manifid),
+#               }
+#     return output
 
 
 def mk_wagtail_object_url(collection_slug, manifid):
