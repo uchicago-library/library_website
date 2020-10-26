@@ -30,10 +30,10 @@
 	    <h3>{{ object.title }}</h3>
 	</a>
 	<ul>
-	    <li>{{ object.creator }}</li>
-	    <li>{{ object.publisher }}</li>
-	    <li>{{ object.date }}</li>
-	    <li>{{ object.language }}</li>
+	    <li>Creator: {{ object.creator }}</li>
+	    <li>Publisher: {{ object.publisher }}</li>
+	    <li>Date: {{ object.date }}</li>
+	    <li>Language: {{ object.language }}</li>
 	</ul>
     </figcaption>
 </figure>
@@ -67,6 +67,8 @@
 </ul>
 {% endif %}
 
+
+<!-- TODO: eliminate this duplication -->
 {% for object in list_objects %}
 <figure class="figure">
     {% if object.image_link %}
@@ -79,10 +81,10 @@
 	    <h3>{{ object.title }}</h3>
 	</a>
 	<ul>
-	    <li>{{ object.creator }}</li>
-	    <li>{{ object.publisher }}</li>
-	    <li>{{ object.date }}</li>
-	    <li>{{ object.language }}</li>
+	    <li>Creator: {{ object.creator }}</li>
+	    <li>Publisher: {{ object.publisher }}</li>
+	    <li>Date: {{ object.date }}</li>
+	    <li>Language: {{ object.language }}</li>
 	</ul>
     </figcaption>
 </figure>
