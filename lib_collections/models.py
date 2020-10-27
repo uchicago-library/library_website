@@ -1007,15 +1007,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         iiif_url = self.highlighted_records
 
+        def comma_join(lst):
+            return ", ".join(lst)
+
         r = requests.get(iiif_url)
         j = r.json()
-        objects = [prepare_browse_json(x) for x in j['items']][:5]
+        objects = [prepare_browse_json(x, comma_join) for x in j['items']][:5]
+
+        slug = self.slug
+
+        all_browse_types = {
+            **{
+                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+                for x in CollectionPageClusterBrowse.objects.all()
+            },
+            **{
+                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+                for x in CollectionPageListBrowse.objects.all()
+            }
+        }
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
+        context['all_browse_types'] = all_browse_types
         context['objects'] = objects
 
         context.update(self.staff_context())

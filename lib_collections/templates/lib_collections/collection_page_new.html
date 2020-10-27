@@ -59,6 +59,13 @@
     <p /><br />
 
     <h1> Collection Highlights </h1>
+    <span>
+	{% for type, link in all_browse_types.items %}
+	<a href="{{ link }}">
+	    Browse by {{ type }}
+	</a>
+	{% endfor %}
+    </span>
     
     <section class="browse-list" id="content" role="main">
 	{% include "includes/general_listing.html" %}
