@@ -22,22 +22,22 @@ def manifest_url_to_cho(u):
 # TODO: remove this
 
 
-def sp_query_old(s):
-    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
-              FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
-              WHERE {{
-                  <{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/format> ?format . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/publisher> ?publisher . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/rights> ?rights . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
-                  OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
-              }}'''.format(manifest_url_to_cho(s))
+# def sp_query_old(s):
+#     return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
+#               FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
+#               WHERE {{
+#                   <{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/format> ?format . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/publisher> ?publisher . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/rights> ?rights . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
+#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
+#               }}'''.format(manifest_url_to_cho(s))
 
 
 def sp_query(manifid):

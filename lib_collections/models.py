@@ -754,6 +754,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         context["all_browse_types"] = all_browse_types
         context["external_links"] = external_links
+        context['collection_breadcrumb'] = request.path
 
         context.update(self.staff_context())
 
@@ -791,6 +792,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["all_browse_types"] = all_browse_types
         context["browses"] = get_iiif_labels(
             mk_subjects_url(slug), browse_type, slug)
+        context['collection_breadcrumb'] = request.path
 
         return TemplateResponse(request, template, context)
 
@@ -838,16 +840,25 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
              for x in j['items']]
         list_objects = Paginator(l, 10)
 
+        breadcrumbs = list(
+            filter(lambda x: x is not "", request.path.split('/'))
+        )
+
+        def path_up_to(idx, lst):
+            return [(lst[i-1], ("/" + "/".join(lst[:i]))) for i in range(1, idx+1)]
+
         context = super().get_context(request)
         context["browse_title"] = "Browse by %s:" % unslugify_browse(browse)
         context["all_browse_types"] = all_browse_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             self.slug, kwargs["browse_type"])
+        context['collection_breadcrumb'] = path_up_to(
+            len(breadcrumbs), breadcrumbs)
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -887,6 +898,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # context["all_browse_types"] = all_browse_types
         context["slug"] = slug
         context["objects"] = objects
+        context['collection_breadcrumb'] = request.path
 
         return TemplateResponse(request, template, context)
 
@@ -1034,6 +1046,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['default_image'] = default_image
         context['all_browse_types'] = all_browse_types
         context['objects'] = objects
+        context['collection_breadcrumb'] = request.path
 
         context.update(self.staff_context())
 
