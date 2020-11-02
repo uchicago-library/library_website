@@ -629,6 +629,40 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return output
 
+    def build_breadcrumbs(request):
+        breadcrumbs = list(
+            filter(lambda x: x is not "", request.path.split('/'))
+        )
+
+        trimmed_crumbs = breadcrumbs[2:-1]
+        final_crumb = breadcrumbs[-1]
+
+        def path_up_to(idx, lst):
+            return {unslugify_browse(lst[i-1]): ("/collex/collections/"
+                                                 + "/".join(lst[:i]))
+                    for i in range(1, idx+1)
+                    if lst[i-1] not in ['list-browse',
+                                        'object',
+                                        'cluster-browse',
+                                        ]
+                    }
+
+        breads = path_up_to(len(trimmed_crumbs), trimmed_crumbs)
+        return (breads, final_crumb)
+
+    def build_browse_types(self):
+        slug = self.slug
+        return {
+            **{
+                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+                for x in CollectionPageClusterBrowse.objects.all()
+            },
+            **{
+                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+                for x in CollectionPageListBrowse.objects.all()
+            }
+        }
+
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
@@ -725,22 +759,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 return {}
 
         slug = self.slug
-
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        all_browse_types = self.build_browse_types()
 
         external_links = [
             linkify(service.get_service_display())
             for service in self.col_external_service.all()
         ]
+
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
         context = super().get_context(request)
         context["manifid"] = manifid
@@ -754,7 +780,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         context["all_browse_types"] = all_browse_types
         context["external_links"] = external_links
-        context['collection_breadcrumb'] = request.path
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         context.update(self.staff_context())
 
@@ -769,30 +796,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         template = "lib_collections/collection_browse.html"
 
         slug = self.slug
-
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        all_browse_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
             browse_type = "subject"
         else:
             browse_type = kwargs["browse_type"][:-1]
 
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
         context = super().get_context(request)
         context["browse_type"] = unslugify_browse(browse_type)
-        # context["browse_title"] = ''
         context["all_browse_types"] = all_browse_types
         context["browses"] = get_iiif_labels(
             mk_subjects_url(slug), browse_type, slug)
-        context['collection_breadcrumb'] = request.path
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
@@ -816,17 +835,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         iiif_url = mk_lbrowse_iiif_url(collection)
 
         slug = self.slug
-
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        all_browse_types = self.build_browse_types()
 
         def string_rep(lst):
             return lst.__str__()
@@ -840,12 +849,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
              for x in j['items']]
         list_objects = Paginator(l, 10)
 
-        breadcrumbs = list(
-            filter(lambda x: x is not "", request.path.split('/'))
-        )
-
-        def path_up_to(idx, lst):
-            return [(lst[i-1], ("/" + "/".join(lst[:i]))) for i in range(1, idx+1)]
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
         context = super().get_context(request)
         context["browse_title"] = "Browse by %s:" % unslugify_browse(browse)
@@ -853,12 +857,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             self.slug, kwargs["browse_type"])
-        context['collection_breadcrumb'] = path_up_to(
-            len(breadcrumbs), breadcrumbs)
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.
@@ -868,16 +872,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        all_browse_types = self.build_browse_types()
 
         iiif_url = mk_subject_iiif_url(
             kwargs["browse"], kwargs["browse_type"], slug)
@@ -892,13 +887,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         objects = [prepare_browse_json(x, comma_join)
                    for x in j['items']]
 
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
         context = super().get_context(request)
         context["browse_title"] = browse
         context["browse_type"] = browse_type
-        # context["all_browse_types"] = all_browse_types
+        context["all_browse_types"] = all_browse_types
         context["slug"] = slug
         context["objects"] = objects
-        context['collection_breadcrumb'] = request.path
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
@@ -997,7 +995,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # # TODO - temporary, this will come from the page object
         # # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
-        manifest = ''
+        # manifest = ''
 
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
@@ -1028,16 +1026,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
-        all_browse_types = {
-            **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-                for x in CollectionPageClusterBrowse.objects.all()
-            },
-            **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-                for x in CollectionPageListBrowse.objects.all()
-            }
-        }
+        all_browse_types = self.build_browse_types()
+        # {
+        #     **{
+        #         x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+        #         for x in CollectionPageClusterBrowse.objects.all()
+        #     },
+        #     **{
+        #         x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+        #         for x in CollectionPageListBrowse.objects.all()
+        #     }
+        # }
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
@@ -1046,15 +1045,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['default_image'] = default_image
         context['all_browse_types'] = all_browse_types
         context['objects'] = objects
-        context['collection_breadcrumb'] = request.path
+        # context['collection_breadcrumb'] = request.path
 
         context.update(self.staff_context())
 
         # Merge the context dictionary with the results from iiif
-        if manifest:
-            context = dict(
-                context, **collection(request, self.is_viewer, manifest)
-            )
+        # if manifest:
+        #     context = dict(
+        #         context, **collection(request, self.is_viewer, manifest)
+        #     )
 
         return context
 
