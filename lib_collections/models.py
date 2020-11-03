@@ -766,18 +766,30 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             for service in self.col_external_service.all()
         ]
 
+        def truncate_crumb(crumb):
+            return crumb[:40] + '...'
+
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
+        marklogic = get_record_for_display(
+            manifid,
+            slug,
+            field_names,
+        )
+
+        if 'Title' in marklogic.keys():
+            final_crumb = truncate_crumb(marklogic['Title'])
+        elif 'Description' in marklogic.keys():
+            final_crumb = marklogic['Description']
+        else:
+            final_crumb = 'Object'
 
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
             kwargs["manifid"], slug)
         context["slug"] = slug
-        context["marklogic"] = get_record_for_display(
-            context["manifid"],
-            context["slug"],
-            field_names,
-        )
+        context["marklogic"] = marklogic
         context["all_browse_types"] = all_browse_types
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
