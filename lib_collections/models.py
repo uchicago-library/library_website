@@ -766,8 +766,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             for service in self.col_external_service.all()
         ]
 
-        def truncate_crumb(crumb):
-            return crumb[:40] + '...'
+        def truncate_crumb(crumb, length):
+            if len(crumb) >= length:
+                return crumb[:length].rstrip() + ' ...'
+            else:
+                return crumb
+
+        truncate_at = 25
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
@@ -778,7 +783,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
 
         if 'Title' in marklogic.keys():
-            final_crumb = truncate_crumb(marklogic['Title'])
+            final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
         elif 'Description' in marklogic.keys():
             final_crumb = marklogic['Description']
         else:
