@@ -868,6 +868,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
+        try:
+            int(final_crumb)
+            final_crumb = 'Page ' + final_crumb
+        except ValueError:
+            pass
+
         context = super().get_context(request)
         context["browse_title"] = "Browse by %s:" % unslugify_browse(browse)
         context["all_browse_types"] = all_browse_types
