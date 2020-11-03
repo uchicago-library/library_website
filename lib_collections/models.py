@@ -785,7 +785,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         if 'Title' in marklogic.keys():
             final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
         elif 'Description' in marklogic.keys():
-            final_crumb = marklogic['Description']
+            final_crumb = truncate_crumb(marklogic['Description'], truncate_at)
         else:
             final_crumb = 'Object'
 
