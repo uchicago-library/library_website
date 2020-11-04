@@ -137,6 +137,9 @@ class FindingAidsPage(PublicBasePage):
                 for div in e.findall('div'):
                     subject = div.find('subject').text
 
+                    if subject is None:
+                        continue
+
                     if subject not in topics:
                         topics[subject] = []
 
