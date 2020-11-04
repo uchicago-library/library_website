@@ -76,7 +76,8 @@
 	<ul class="no-indent">
 	    {% for item in external_links %}
 		<!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
-	    <li><a href="{{ item.link }}">{{ item.service }}</a><br />{{ item.caption }}</li>
+	    <li><a href="{{ item.link }}">{{ item.service }}</a>
+	    	<span class="source-description">{{ item.caption }}</span></li>
 	    {% endfor %}
 	</ul>
     </div>

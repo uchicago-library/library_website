@@ -89,7 +89,9 @@ body.collectionpage {
 	section.browse-list { /* List or Thumbnail Grid */
 		figure {
 			@include respond-to(medium) {
-			  display: flex;
+			  display: grid;
+			  grid-template-columns: 25% 75%;
+			  grid-gap: 1.5em;
 			}
 			  &+figure {
 			  	margin-top: 1em;
@@ -106,7 +108,7 @@ body.collectionpage {
 			  }
 			  img {
 			    height: 200px;
-			    width: auto;
+			    width: 100%;
 			    padding-top: 1.5em;
 			    margin-right: 1.5em;
 			    object-fit: contain;
@@ -166,7 +168,7 @@ body.collectionpage {
 		    }
 		}
 	}
-	.rightside.coll-rightside {
+	.rightside {
 		.source-description {
 			color: $mid-dark;
 			font-size: 90%;
