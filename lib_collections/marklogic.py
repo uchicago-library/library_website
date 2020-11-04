@@ -11,33 +11,13 @@ from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
                                             MARKLOGIC_LDR_USER)
 
 
-def manifest_url_to_cho(u):
-    # convert a manifest url to a cho:
-    # /digital_collections/IIIF_Files/maps/chisoc/G4104-C6-1933-U5-a
-    path_parts = urlparse(u).path.replace('.json', '').split('/')
-    path_parts.pop()
-    path = '/'.join(path_parts)
-    return '/digital_collections/IIIF_Files{}'.format(path)
-
-# TODO: remove this
-
-
-# def sp_query_old(s):
-#     return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
-#               FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
-#               WHERE {{
-#                   <{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/format> ?format . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/publisher> ?publisher . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/rights> ?rights . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
-#                   OPTIONAL {{ <{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
-#               }}'''.format(manifest_url_to_cho(s))
+# def manifest_url_to_cho(u):
+#     # convert a manifest url to a cho:
+#     # /digital_collections/IIIF_Files/maps/chisoc/G4104-C6-1933-U5-a
+#     path_parts = urlparse(u).path.replace('.json', '').split('/')
+#     path_parts.pop()
+#     path = '/'.join(path_parts)
+#     return '/digital_collections/IIIF_Files{}'.format(path)
 
 
 def sp_query(manifid):
@@ -56,6 +36,20 @@ def sp_query(manifid):
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
               }}'''.format(manifid)
+
+
+def get_raw_record(manifid):
+    r = requests.get(
+        auth=HTTPBasicAuth(
+            MARKLOGIC_LDR_USER,
+            MARKLOGIC_LDR_PASSWORD,
+        ),
+        headers={'Content-type': 'text/turtle'},
+        params={'query': sp_query(manifid)},
+        url='http://marklogic.lib.uchicago.edu:8008/v1/graphs/sparql'
+    )
+    j = json.loads(r.content.decode('utf-8'))
+    return j
 
 
 def collections_query(manifest_url):
@@ -84,20 +78,6 @@ def triples_to_dict(dct, wagtail_field_names):
         raise Exception("Mark Logic result not formatted as expected")
     except IndexError:
         raise Http404
-
-
-def get_raw_record(manifid):
-    r = requests.get(
-        auth=HTTPBasicAuth(
-            MARKLOGIC_LDR_USER,
-            MARKLOGIC_LDR_PASSWORD,
-        ),
-        headers={'Content-type': 'text/turtle'},
-        params={'query': sp_query(manifid)},
-        url='http://marklogic.lib.uchicago.edu:8008/v1/graphs/sparql'
-    )
-    j = json.loads(r.content.decode('utf-8'))
-    return j
 
 
 def get_record_no_parsing(manifid, slug, wagtail_field_names):
