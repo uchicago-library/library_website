@@ -21,7 +21,7 @@ from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
 
 
 def sp_query(manifid):
-    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type
+    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?ClassificationLcc ?Local
               FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
               WHERE {{
                   <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
@@ -35,6 +35,8 @@ def sp_query(manifid):
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/ClassificationLcc> ?ClassificationLcc . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/Local> ?Local . }}
               }}'''.format(manifid)
 
 

@@ -48,7 +48,7 @@ from .utils import (collection,
                     mk_wagtail_lbrowse_route,
                     mk_lbrowse_iiif_url
                     )
-from .marklogic import get_record_for_display
+from .marklogic import get_record_for_display, get_record_no_parsing
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -741,30 +741,25 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         manifid = kwargs["manifid"]
 
-        def linkify(name):
-            if name == 'LUNA':
+        def linkify(service, pi):
+            if service.get_service_display() == 'LUNA':
                 return {'service': 'LUNA',
                         'caption': 'Assemble Slide Decks',
                         'link': ('https://luna.lib.uchicago.edu/'
                                  'luna/servlet/view/search'
                                  '?q=_luna_media_exif_filename='
-                                 '%s.tif') % manifid,
+                                 '%s.tif') % pi,
                         }
-            elif name == 'BTAA':
+            elif service.get_service_display() == 'BTAA':
                 return {'service': 'BTAA Geoportal',
                         'caption': 'Discover Maps & GIS Data',
-                        'link': 'https://geo.btaa.org/catalog/'
+                        'link': service.identifier,
                         }
             else:
                 return {}
 
         slug = self.slug
         all_browse_types = self.build_browse_types()
-
-        external_links = [
-            linkify(service.get_service_display())
-            for service in self.col_external_service.all()
-        ]
 
         def truncate_crumb(crumb, length):
             if len(crumb) >= length:
@@ -781,6 +776,30 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             slug,
             field_names,
         )
+
+        def default(expr, val):
+            try:
+                return expr
+            except KeyError:
+                return val
+
+        def callno_to_pi(callno):
+            return '-'.join(callno.replace(':', ' ').replace('.', ' ').upper().split())
+
+        physical_object = default(
+            get_record_no_parsing(manifid, slug, '')['Local'],
+            ''
+        )
+
+        callno = default(
+            get_record_no_parsing(manifid, slug, '')['Classificationlcc'],
+            ''
+        )
+
+        external_links = [
+            linkify(service, callno_to_pi(callno))
+            for service in self.col_external_service.all()
+        ]
 
         if 'Title' in marklogic.keys():
             final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
@@ -799,12 +818,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
+        context['physical_object'] = physical_object
+        context['callno'] = callno
 
         context.update(self.staff_context())
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
         Route for main cluster browse index.
@@ -832,7 +853,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^list-browse/(?P<browse_type>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    @ route(r'^list-browse/(?P<browse_type>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
@@ -885,7 +906,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for Digital Collection Object.

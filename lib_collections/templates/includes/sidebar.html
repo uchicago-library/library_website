@@ -2,6 +2,11 @@
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
 	<h2>Access Location</h2>
 	<p><a href="{{ access_location.url }}">{{ access_location.title }}</a></p>
+	{% if physical_object and callno %}
+	Call Number: {{ callno }}
+	<p><a href="{{ physical_object }}">UChicago Catalog Record</a></p>
+	{% endif %}
+	
     </div>
 {% endif %}
 

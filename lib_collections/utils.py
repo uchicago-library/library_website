@@ -309,10 +309,10 @@ def mk_manifest_url(manifid, slug):
     # )
 
 
-def mk_manifest_url_old(manifid, slug):
-    return "%s/%s/%s/%s.json" % (
-        MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
-    )
+# def mk_manifest_url_old(manifid, slug):
+#     return "%s/%s/%s/%s.json" % (
+#         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
+#     )
 
 
 def extract_manifid(url):
@@ -334,11 +334,10 @@ def extract_manifid_thumbnail(url):
     except TypeError:
         return ''
 
-
-def pure_append(elmnt):
-    output = []
-    output.append(elmnt)
-    return output
+# def pure_append(elmnt):
+#     output = []
+#     output.append(elmnt)
+#     return output
 
 
 def iiif_field_update(dct, field, val):
