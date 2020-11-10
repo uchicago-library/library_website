@@ -885,7 +885,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         j = r.json()
         l = [prepare_browse_json(x, comma_join)
              for x in j['items']]
-        list_objects = Paginator(l, 10)
+        list_objects = Paginator(l, 25)
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
