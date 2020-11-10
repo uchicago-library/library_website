@@ -478,17 +478,27 @@ figure.coll-thumb {
   }
   .hero-image {
     img {
+      max-height: 250px;
+      object-fit: cover;
+      @include respond-to(small) {
+        max-height: unset;
         max-width: 100%;
+        object-fit: unset;
+      }
     }
   }
   .hero-image::after {
     display: block;
     position: relative;
     background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
-    margin-top: -175px;
-    height: 175px;
+    margin-top: -250px;
+    height: 250px;
     width: 100%;
     content: '';
+    @include respond-to(small) {
+      margin-top: -175px;
+      height: 175px;
+    }
   }
 }
 
