@@ -11,18 +11,10 @@ from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
                                             MARKLOGIC_LDR_USER)
 
 
-# def manifest_url_to_cho(u):
-#     # convert a manifest url to a cho:
-#     # /digital_collections/IIIF_Files/maps/chisoc/G4104-C6-1933-U5-a
-#     path_parts = urlparse(u).path.replace('.json', '').split('/')
-#     path_parts.pop()
-#     path = '/'.join(path_parts)
-#     return '/digital_collections/IIIF_Files{}'.format(path)
-
-
 def sp_query(manifid):
+    MARKLOGIC_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
     return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?ClassificationLcc ?Local
-              FROM <http://lib.uchicago.edu/digital_collections/maps/chisoc>
+              FROM <{1}>
               WHERE {{
                   <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
@@ -37,7 +29,7 @@ def sp_query(manifid):
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/ClassificationLcc> ?ClassificationLcc . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/Local> ?Local . }}
-              }}'''.format(manifid)
+              }}'''.format(manifid, MARKLOGIC_ROOT)
 
 
 def get_raw_record(manifid):
@@ -54,8 +46,8 @@ def get_raw_record(manifid):
     return j
 
 
-def collections_query(manifest_url):
-    raise NotImplementedError
+# def collections_query(manifest_url):
+#     raise NotImplementedError
 
 
 def align_field_names(dct, wagtail_field_names):
