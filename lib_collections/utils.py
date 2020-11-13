@@ -344,12 +344,6 @@ def get_iiif_labels(url, browse_type, slug):
                          )
 
 
-def mk_manifest_url(manifid, slug):
-    return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
-    # return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
-    # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
-
-
 def extract_manifid(url):
     rexp = re.search('.*\/ark:61001\/([\d|\w]+)/$', url)
     # rexp = re.search(r'.*\/ark:61001\/([\d|\w]+)/$', url)
@@ -429,8 +423,15 @@ def mk_wagtail_object_url(collection_slug, manifid):
             )
 
 
+def mk_manifest_url(manifid, slug):
+    return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
+    # return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
+    # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
+
+
 def mk_viewer_url(manifid, slug):
-    prefix = "/viewer?manifest="
+    prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
+    # prefix = "https://www.lib.uchicago.edu/viewer?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
 
