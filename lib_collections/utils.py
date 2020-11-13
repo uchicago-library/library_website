@@ -35,161 +35,161 @@ COLORS = {
 }
 
 
-def threaded_thumbnails(identifier, result, index):
-    """
-    Wraps get_thumbnail() for multi-threaded solutions
+# def threaded_thumbnails(identifier, result, index):
+#     """
+#     Wraps get_thumbnail() for multi-threaded solutions
 
-    The array should be "initialized" to the correct size,
-    and each thread should deposit it's thumbnail into the
-    appropriate index.
+#     The array should be "initialized" to the correct size,
+#     and each thread should deposit it's thumbnail into the
+#     appropriate index.
 
-    Args:
-        identifier: string
+#     Args:
+#         identifier: string
 
-        result: list
+#         result: list
 
-        index: int
+#         index: int
 
-    Returns:
-        None
-    """
-    result[index] = get_thumbnail(identifier)
-
-
-def build_collection_url(ident, page=1):
-    """
-    Builds the URL to render a collection record
-    in this interface.
-
-    Args:
-        ident: string, the record identifier (url)
-
-        page: string, the page number to render, if using
-        the thumbnail view.
-
-    Returns:
-        string, the url which will render the collection record at
-        the provided url.
-    """
-    return "?record={}&page={}".format(ident, str(page))
+#     Returns:
+#         None
+#     """
+#     result[index] = get_thumbnail(identifier)
 
 
-def record_compatible(rec):
-    """
-    Determines if a collection record is compatible with the interface.
+# def build_collection_url(ident, page=1):
+#     """
+#     Builds the URL to render a collection record
+#     in this interface.
 
-    Returns:
-        bool, True if record is compatible, otherwise False.
-    """
-    # TODO
-    # NOTE: This is primarily meant to be a method to provide
-    # for graceful failure. What we do in this case is up in the air.
-    # Link the user to the JSON?
-    # Display a sad-face emoji?
-    # Let the provider register a callback to run?
-    return True
+#     Args:
+#         ident: string, the record identifier (url)
 
+#         page: string, the page number to render, if using
+#         the thumbnail view.
 
-def get_clist_html(members, manifests, collections, viewer_url):
-    """
-    Get the display html for the collections list navigation.
-
-    Args:
-        members: list
-
-        manifests: list
-
-        collections: list
-
-        viewer_url: string
-
-    Returns:
-        string, html
-    """
-    retval = ''
-    combined = members + manifests + collections
-    if len(combined) > 0:
-        retval += '<ul>'
-        for m in combined:
-            if m['@type'] == 'sc:Collection':
-                retval += '<li><a href="%s">%s</a></li>' % (
-                    m['t_url'], m['label']
-                )
-            else:
-                retval += '<li><a href="%s?manifest=%s">%s</a></li>' % (
-                    viewer_url, m['@id'], m['label']
-                )
-        retval += '</ul>'
-    return retval
+#     Returns:
+#         string, the url which will render the collection record at
+#         the provided url.
+#     """
+#     return "?record={}&page={}".format(ident, str(page))
 
 
-def get_cthumb_html(members, manifests, collections, viewer_url):
-    """
-    Get the display html for collection thumbnails.
+# def record_compatible(rec):
+#     """
+#     Determines if a collection record is compatible with the interface.
 
-    Args:
-        members: list
-
-        manifests: list
-
-        collections: list
-
-        viewer_url: string
-
-    Returns:
-        string, html
-    """
-    retval = ''
-    combined = members + manifests + collections
-    if len(combined) > 0:
-        retval += '<section class="thumbnails">'
-        retval += '<figure>'
-        for m in combined:
-            if m['@type'] == 'sc:Collection':
-                retval += '<a href="%s">' % (m['t_url'])
-            else:
-                retval += '<a href="%s?manifest=%s">' % (viewer_url, m['@id'])
-
-            if 'thumb_url' in m:
-                retval += '<img src="%s">' % (m['thumb_url'])
-            retval += '<figcaption><h3><a href="%s?manifest=%s">%s</a></h3></figcaption>' % (
-                viewer_url, m['@id'], m['label']
-            )
-            retval += '</a>'
-        retval += '</figure>'
-        retval += '</section>'
-    return retval
+#     Returns:
+#         bool, True if record is compatible, otherwise False.
+#     """
+#     # TODO
+#     # NOTE: This is primarily meant to be a method to provide
+#     # for graceful failure. What we do in this case is up in the air.
+#     # Link the user to the JSON?
+#     # Display a sad-face emoji?
+#     # Let the provider register a callback to run?
+#     return True
 
 
-def build_pagination_links(total, thumbs_per_page, current_page, rj):
-    """
-    Generate a navigation menu of all pages.
+# def get_clist_html(members, manifests, collections, viewer_url):
+#     """
+#     Get the display html for the collections list navigation.
 
-    Args:
-        total: int, number of thumbnails being paginated.
+#     Args:
+#         members: list
 
-        thumbs_per_page: number of thumbnails to display
-        per page.
+#         manifests: list
 
-        current_page: int, the current page being viewed.
+#         collections: list
 
-        rj: json response with thumbnail data.
+#         viewer_url: string
 
-    Returns:
-        Generator, html menu of links.
-    """
-    page = 1
-    pagination_links = ''
-    while page <= (total / thumbs_per_page):
-        active = page == current_page
-        active_css = ''
-        if active:
-            active_css = 'disabled aria-disabled="true"'
-        pagination_links += '<a href="%s" %s>[%s]</a> ' % (
-            build_collection_url(rj['@id'], page=page), active_css, str(page)
-        )
-        page += 1
-    yield pagination_links
+#     Returns:
+#         string, html
+#     """
+#     retval = ''
+#     combined = members + manifests + collections
+#     if len(combined) > 0:
+#         retval += '<ul>'
+#         for m in combined:
+#             if m['@type'] == 'sc:Collection':
+#                 retval += '<li><a href="%s">%s</a></li>' % (
+#                     m['t_url'], m['label']
+#                 )
+#             else:
+#                 retval += '<li><a href="%s?manifest=%s">%s</a></li>' % (
+#                     viewer_url, m['@id'], m['label']
+#                 )
+#         retval += '</ul>'
+#     return retval
+
+
+# def get_cthumb_html(members, manifests, collections, viewer_url):
+#     """
+#     Get the display html for collection thumbnails.
+
+#     Args:
+#         members: list
+
+#         manifests: list
+
+#         collections: list
+
+#         viewer_url: string
+
+#     Returns:
+#         string, html
+#     """
+#     retval = ''
+#     combined = members + manifests + collections
+#     if len(combined) > 0:
+#         retval += '<section class="thumbnails">'
+#         retval += '<figure>'
+#         for m in combined:
+#             if m['@type'] == 'sc:Collection':
+#                 retval += '<a href="%s">' % (m['t_url'])
+#             else:
+#                 retval += '<a href="%s?manifest=%s">' % (viewer_url, m['@id'])
+
+#             if 'thumb_url' in m:
+#                 retval += '<img src="%s">' % (m['thumb_url'])
+#             retval += '<figcaption><h3><a href="%s?manifest=%s">%s</a></h3></figcaption>' % (
+#                 viewer_url, m['@id'], m['label']
+#             )
+#             retval += '</a>'
+#         retval += '</figure>'
+#         retval += '</section>'
+#     return retval
+
+
+# def build_pagination_links(total, thumbs_per_page, current_page, rj):
+#     """
+#     Generate a navigation menu of all pages.
+
+#     Args:
+#         total: int, number of thumbnails being paginated.
+
+#         thumbs_per_page: number of thumbnails to display
+#         per page.
+
+#         current_page: int, the current page being viewed.
+
+#         rj: json response with thumbnail data.
+
+#     Returns:
+#         Generator, html menu of links.
+#     """
+#     page = 1
+#     pagination_links = ''
+#     while page <= (total / thumbs_per_page):
+#         active = page == current_page
+#         active_css = ''
+#         if active:
+#             active_css = 'disabled aria-disabled="true"'
+#         pagination_links += '<a href="%s" %s>[%s]</a> ' % (
+#             build_collection_url(rj['@id'], page=page), active_css, str(page)
+#         )
+#         page += 1
+#     yield pagination_links
 
 
 IIIF_PATHS = {
@@ -197,21 +197,23 @@ IIIF_PATHS = {
 }
 
 # IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
-IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
 
 # MANIFEST_PREFIX = "https://iiif-manifest-dev.lib.uchicago.edu"
 MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
+
+WAGTAIL_PREFIX = "/collex/collections"
 
 
 def lists_to_dict(lst1, lst2):
     return dict(zip(lst1, lst2))
 
 
-def slug_to_iiif_path(slug):
-    try:
-        return '/'.join(IIIF_PATHS[slug])
-    except KeyError:
-        return ''
+# def slug_to_iiif_path(slug):
+#     try:
+#         return '/'.join(IIIF_PATHS[slug])
+#     except KeyError:
+#         return ''
 
 
 def mk_subjects_url(slug):
@@ -229,16 +231,70 @@ def mk_subject_iiif_url(subj, browse_type, slug):
         slugify(subj),
     )
 
-# TODO: mk_lbrowse_iiif_url will be subject to revision when we
-# finalize the list browse routes
 
-
-def mk_lbrowse_iiif_url(slug):
-    return "%s/%s/%s.json" % (
-        IIIF_PREFIX,
-        slug_to_iiif_path(slug),
-        IIIF_PATHS[slug][-1],
+def mk_lbrowse_url(prefix, slug, browse_name, extension):
+    return "%s/%s/list-browse/%s%s" % (
+        prefix,
+        slug,
+        browse_name,
+        extension
     )
+
+
+def mk_lbrowse_url_iiif(slug, browse_name):
+    return mk_lbrowse_url(IIIF_PREFIX, slug, browse_name, ".json")
+
+
+def mk_lbrowse_url_wagtail(slug, browse_name):
+    return mk_lbrowse_url(WAGTAIL_PREFIX, slug, browse_name, "")
+
+
+def mk_cbrowse_url(prefix, slug, browse_type, browse_name, extension):
+    return "%s/%s/cluster-browse/%s/%s%s" % (
+        prefix,
+        slug,
+        browse_type,
+        browse_name,
+        extension
+    )
+
+
+def mk_cbrowse_url_iiif(slug, browse_name, browse_type):
+    return mk_cbrowse_url(IIIF_PREFIX, slug, browse_type, browse_name, ".json")
+
+
+def mk_cbrowse_url_wagtail(slug, browse_name):
+    return mk_cbrowse_url(WAGTAIL_PREFIX, slug, browse_type, browse_name, "")
+
+
+def mk_cbrowse_type_url(prefix, slug, browse_type, extension):
+    return "%s/%s/cluster-browse/%s%s" % (
+        prefix,
+        slug,
+        browse_type,
+        extension
+    )
+
+
+def mk_cbrowse_type_url_iiif(slug, browse_type):
+    return mk_cbrowse_type_url(IIIF_PREFIX, slug, browse_type, ".json")
+
+
+def mk_cbrowse_type_url_wagtail(slug, browse_type):
+    return mk_cbrowse_type_url(WAGTAIL_PREFIX, slug, browse_type, "")
+
+
+# def mk_lbrowse_url(slug, browse_name, iiif=""):
+#     return "%s/%s/list-browse/%s%s" % (
+#         IIIF_PREFIX,
+#         slug,
+#         browse_name,
+#         iiif
+#     )
+
+
+# def mk_lbrowse_url_iiif(slug, browse_name):
+#     return mk_lbrowse_url_iiif(slug, browse_name, iiif=".json")
 
 
 def unslugify_browse(slug):
@@ -256,16 +312,6 @@ def get_iiif_labels_language(url, lang):
         d = j['items']
         # return d
         return [x['label'][lang][0] for x in d]
-
-
-# def get_iiif_listing(url):
-#     r = requests.get(url)
-#     if r.status_code == 404:
-#         raise Http404
-#     else:
-#         j = r.json()
-#         d = j['items']
-#         return d
 
 
 def mk_wagtail_browse_route(label, browse_type, collection):
@@ -302,17 +348,8 @@ def get_iiif_labels(url, browse_type, slug):
 
 
 def mk_manifest_url(manifid, slug):
+    return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
     return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
-    # TODO: put this back after collection page demo
-    # return "%s/%s/%s/%s.json" % (
-    #     MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
-    # )
-
-
-# def mk_manifest_url_old(manifid, slug):
-#     return "%s/%s/%s/%s.json" % (
-#         MANIFEST_PREFIX, slug_to_iiif_path(slug), manifid, manifid
-#     )
 
 
 def extract_manifid(url):
@@ -366,15 +403,20 @@ def pull_metadata_labels(j):
 LANGUAGE_ABBREVS = {'en': 'English'}
 
 
+def create_field(name, dct):
+    if name in dct.keys():
+        return dct[name]
+    else:
+        return []
+
+
+def comma_join(lst):
+    return ", ".join(lst)
+
+
 def prepare_browse_json(j, joiner):
     manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
     metadata = pull_metadata_labels(j)
-
-    def create_field(name, dct):
-        if name in dct.keys():
-            return dct[name]
-        else:
-            return []
 
     title = create_field('title', metadata)
     publisher = create_field('publisher', metadata)

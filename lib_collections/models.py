@@ -43,10 +43,15 @@ from .utils import (collection,
                     # simplify_iiif_listing,
                     unslugify_browse,
                     prepare_browse_json,
+                    mk_cbrowse_url_iiif,
+                    mk_cbrowse_url_wagtail,
+                    mk_cbrowse_type_url_wagtail,
+                    mk_lbrowse_url_wagtail,
+                    mk_lbrowse_url_iiif,
                     # prepare_browse_json_lbrowse_temp,
-                    mk_wagtail_browse_type_route,
-                    mk_wagtail_lbrowse_route,
-                    mk_lbrowse_iiif_url
+                    # mk_wagtail_browse_type_route,
+                    # mk_wagtail_lbrowse_route,
+                    # mk_lbrowse_iiif_url
                     )
 from .marklogic import get_record_for_display, get_record_no_parsing
 
@@ -654,11 +659,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
         return {
             **{
-                x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
+                x.label: mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
                 for x in CollectionPageClusterBrowse.objects.all()
             },
             **{
-                x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
+                x.label: mk_lbrowse_url_wagtail(slug, slugify(x.label))
                 for x in CollectionPageListBrowse.objects.all()
             }
         }
@@ -853,59 +858,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^list-browse/(?P<browse_type>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
-    def list_browse(self, request, *args, **kwargs):
-        """
-        Route for main list browse index.
-        """
-
-        template = "lib_collections/collection_browse.html"
-
-        collection = self.slug
-
-        browse = "date"
-
-        if kwargs["pageno"] is None:
-            pageno = 1
-        else:
-            pageno = int(kwargs["pageno"][:-1])
-
-        iiif_url = mk_lbrowse_iiif_url(collection)
-
-        slug = self.slug
-        all_browse_types = self.build_browse_types()
-
-        def string_rep(lst):
-            return lst.__str__()
-
-        def comma_join(lst):
-            return ", ".join(lst)
-
-        r = requests.get(iiif_url)
-        j = r.json()
-        l = [prepare_browse_json(x, comma_join)
-             for x in j['items']]
-        list_objects = Paginator(l, 25)
-
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
-
-        try:
-            int(final_crumb)
-            final_crumb = 'Page ' + final_crumb
-        except ValueError:
-            pass
-
-        context = super().get_context(request)
-        context["browse_title"] = "Browse by %s:" % unslugify_browse(browse)
-        context["all_browse_types"] = all_browse_types
-        context["list_objects"] = list_objects.page(pageno)
-        context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
-            self.slug, kwargs["browse_type"])
-        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
-        context['collection_breadcrumb'] = breads
-
-        return TemplateResponse(request, template, context)
-
     @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
@@ -939,6 +891,64 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["all_browse_types"] = all_browse_types
         context["slug"] = slug
         context["objects"] = objects
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+
+        return TemplateResponse(request, template, context)
+
+    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    def list_browse(self, request, *args, **kwargs):
+        """
+        Route for main list browse index.
+        """
+
+        template = "lib_collections/collection_browse.html"
+
+        collection = self.slug
+
+        paginate_name = kwargs['browse_name']
+
+        browse_name = paginate_name[:-1]
+
+        if kwargs["pageno"] is None:
+            pageno = 1
+        else:
+            pageno = int(kwargs["pageno"][:-1])
+
+        iiif_url = mk_lbrowse_url_iiif(collection, browse_name)
+        # raise Exception(browse)
+        # iiif_url = 'https://iiif-collection-dev.lib.uchicago.edu/social-scientists-map-chicago/list-browse/date.json'
+
+        # slug = self.slug
+        all_browse_types = self.build_browse_types()
+
+        def string_rep(lst):
+            return lst.__str__()
+
+        def comma_join(lst):
+            return ", ".join(lst)
+
+        r = requests.get(iiif_url)
+        j = r.json()
+        l = [prepare_browse_json(x, comma_join)
+             for x in j['items']]
+        list_objects = Paginator(l, 25)
+
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
+        try:
+            int(final_crumb)
+            final_crumb = 'Page ' + final_crumb
+        except ValueError:
+            pass
+
+        context = super().get_context(request)
+        context["browse_title"] = "Browse by %s:" % unslugify_browse(
+            browse_name)
+        context["all_browse_types"] = all_browse_types
+        context["list_objects"] = list_objects.page(pageno)
+        context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
+            collection, paginate_name)
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
