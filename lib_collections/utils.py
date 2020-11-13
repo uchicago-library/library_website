@@ -1,8 +1,8 @@
 """
 iiifcollectionbrowse
 """
-from threading import Thread
-from urllib.parse import unquote
+# from threading import Thread
+# from urllib.parse import unquote
 from django.utils.text import slugify
 from django.http.response import Http404
 from functools import reduce
@@ -17,22 +17,33 @@ import re
 from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
                          NoCollectionFoundError, NoCollectionParameterError)
 
-config = {
-    "VIEWER_URL": "https://iiif-viewer.lib.uchicago.edu/uv/uv.html#",
-    "REQUESTS_TIMEOUT": 1,
-    "NO_THUMB_IMG_URL": '',
-    "CONTRAST_COLOR": "#800000",
-    "THUMBNAIL_BACKDROP": "#D6D6CE"
-}
+LANGUAGE_ABBREVS = {'en': 'English'}
 
-VIEWER_URL = config['VIEWER_URL']
-REQUESTS_TIMEOUT = float(config['REQUESTS_TIMEOUT'])
-NO_THUMB_IMG_URL = config['NO_THUMB_IMG_URL']
-THUMBS_PER_PAGE = 10
-COLORS = {
-    "contrast_color": config['CONTRAST_COLOR'],
-    "thumbnail_backdrop": config['THUMBNAIL_BACKDROP']
-}
+# IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
+
+# MANIFEST_PREFIX = "https://iiif-manifest-dev.lib.uchicago.edu"
+MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
+
+WAGTAIL_PREFIX = "/collex/collections"
+
+
+# config = {
+#     "VIEWER_URL": "https://iiif-viewer.lib.uchicago.edu/uv/uv.html#",
+#     "REQUESTS_TIMEOUT": 1,
+#     "NO_THUMB_IMG_URL": '',
+#     "CONTRAST_COLOR": "#800000",
+#     "THUMBNAIL_BACKDROP": "#D6D6CE"
+# }
+
+# VIEWER_URL = config['VIEWER_URL']
+# REQUESTS_TIMEOUT = float(config['REQUESTS_TIMEOUT'])
+# NO_THUMB_IMG_URL = config['NO_THUMB_IMG_URL']
+
+# COLORS = {
+#     "contrast_color": config['CONTRAST_COLOR'],
+#     "thumbnail_backdrop": config['THUMBNAIL_BACKDROP']
+# }
 
 
 # def threaded_thumbnails(identifier, result, index):
@@ -192,21 +203,9 @@ COLORS = {
 #     yield pagination_links
 
 
-IIIF_PATHS = {
-    "social-scientists-map-chicago": ["maps", "chisoc"],
-}
-
-# IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
-IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
-
-# MANIFEST_PREFIX = "https://iiif-manifest-dev.lib.uchicago.edu"
-MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
-
-WAGTAIL_PREFIX = "/collex/collections"
-
-
-def lists_to_dict(lst1, lst2):
-    return dict(zip(lst1, lst2))
+# IIIF_PATHS = {
+#     "social-scientists-map-chicago": ["maps", "chisoc"],
+# }
 
 
 # def slug_to_iiif_path(slug):
@@ -216,20 +215,20 @@ def lists_to_dict(lst1, lst2):
 #         return ''
 
 
-def mk_subjects_url(slug):
-    return "%s/%s/%s-subjects.json" % (
-        IIIF_PREFIX, slug_to_iiif_path(slug), IIIF_PATHS[slug][-1]
-    )
+# def mk_subjects_url(slug):
+#     return "%s/%s/%s-subjects.json" % (
+#         IIIF_PREFIX, slug_to_iiif_path(slug), IIIF_PATHS[slug][-1]
+#     )
 
 
-def mk_subject_iiif_url(subj, browse_type, slug):
-    return "%s/%s/%s-%ss-%s.json" % (
-        IIIF_PREFIX,
-        slug_to_iiif_path(slug),
-        IIIF_PATHS[slug][-1],
-        browse_type,
-        slugify(subj),
-    )
+# def mk_subject_iiif_url(subj, browse_type, slug):
+#     return "%s/%s/%s-%ss-%s.json" % (
+#         IIIF_PREFIX,
+#         slug_to_iiif_path(slug),
+#         IIIF_PATHS[slug][-1],
+#         browse_type,
+#         slugify(subj),
+#     )
 
 
 def mk_lbrowse_url(prefix, slug, browse_name, extension):
@@ -263,8 +262,12 @@ def mk_cbrowse_url_iiif(slug, browse_name, browse_type):
     return mk_cbrowse_url(IIIF_PREFIX, slug, browse_type, browse_name, ".json")
 
 
-def mk_cbrowse_url_wagtail(slug, browse_name):
-    return mk_cbrowse_url(WAGTAIL_PREFIX, slug, browse_type, browse_name, "")
+def mk_cbrowse_url_wagtail(slug, browse_type, browse_name, full=False):
+    url = mk_cbrowse_url(WAGTAIL_PREFIX, slug, browse_type, browse_name, "")
+    if full:
+        return "http://www.lib.uchicago.edu" + url
+    else:
+        return url
 
 
 def mk_cbrowse_type_url(prefix, slug, browse_type, extension):
@@ -280,21 +283,12 @@ def mk_cbrowse_type_url_iiif(slug, browse_type):
     return mk_cbrowse_type_url(IIIF_PREFIX, slug, browse_type, ".json")
 
 
-def mk_cbrowse_type_url_wagtail(slug, browse_type):
-    return mk_cbrowse_type_url(WAGTAIL_PREFIX, slug, browse_type, "")
-
-
-# def mk_lbrowse_url(slug, browse_name, iiif=""):
-#     return "%s/%s/list-browse/%s%s" % (
-#         IIIF_PREFIX,
-#         slug,
-#         browse_name,
-#         iiif
-#     )
-
-
-# def mk_lbrowse_url_iiif(slug, browse_name):
-#     return mk_lbrowse_url_iiif(slug, browse_name, iiif=".json")
+def mk_cbrowse_type_url_wagtail(slug, browse_type, full=False):
+    url = mk_cbrowse_type_url(WAGTAIL_PREFIX, slug, browse_type, "")
+    if full:
+        return "http://www.lib.uchicago.edu" + url
+    else:
+        return url
 
 
 def unslugify_browse(slug):
@@ -310,7 +304,6 @@ def get_iiif_labels_language(url, lang):
     else:
         j = r.json()
         d = j['items']
-        # return d
         return [x['label'][lang][0] for x in d]
 
 
@@ -340,16 +333,21 @@ def mk_wagtail_browse_type_route(browse_type, collection):
 
 
 def get_iiif_labels(url, browse_type, slug):
+
+    def lists_to_dict(lst1, lst2):
+        return dict(zip(lst1, lst2))
+
     labels = get_iiif_labels_language(url, 'en')
     return lists_to_dict(labels,
-                         [mk_wagtail_browse_route(
-                             x, browse_type, slug) for x in labels],
+                         [mk_cbrowse_url_wagtail(slug, browse_type, slugify(label))
+                          for label in labels],
                          )
 
 
 def mk_manifest_url(manifid, slug):
-    return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
-    return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
+    return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
+    # return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
+    # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
 
 
 def extract_manifid(url):
@@ -371,11 +369,6 @@ def extract_manifid_thumbnail(url):
     except TypeError:
         return ''
 
-# def pure_append(elmnt):
-#     output = []
-#     output.append(elmnt)
-#     return output
-
 
 def iiif_field_update(dct, field, val):
     if field in dct.keys():
@@ -393,14 +386,6 @@ def pull_metadata_labels(j):
                           x['value']['en'][0],
                           )
     return output
-    # alist = [(x['label']['en'][0].lower(), x['value']['en'][0])
-    #          for x in j]
-    # return dict(alist)
-
-# TODO: eliminate this
-
-
-LANGUAGE_ABBREVS = {'en': 'English'}
 
 
 def create_field(name, dct):
@@ -438,28 +423,6 @@ def prepare_browse_json(j, joiner):
     return output
 
 
-# TODO: replace the dummy data: creator, date, publisher, language,
-# 'social-scientists-maps-chicago'
-
-
-# def prepare_browse_json(j):
-#     manifid = extract_manifid_thumbnail(j['thumbnail'][0]['id'])
-#     # j['thumbnail'][0]['id']
-
-#     output = {'title': j['label']['en'][0],
-#               'creator': '[ IIIF Creator info coming soon! ]',
-#               'date': '[ IIIF Date info coming soon! ]',
-#               'publisher': '[ IIIF Publisher info coming soon! ]',
-#               'language': '[ IIIF Language coming soon! ]',
-#               'image_link': j['thumbnail'][0]['id'],
-#               'manifest': j['id'],
-#               'manifid': manifid,
-#               'wagtail_link': mk_wagtail_object_url(
-#                   'social-scientists-map-chicago', manifid),
-#               }
-#     return output
-
-
 def mk_wagtail_object_url(collection_slug, manifid):
     return ("/collex/collections/%s/object/%s"
             % (collection_slug, manifid)
@@ -467,194 +430,194 @@ def mk_wagtail_object_url(collection_slug, manifid):
 
 
 def mk_viewer_url(manifid, slug):
-    prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
+    prefix = "/viewer?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
 
-def collection(request, is_viewer, manifest=''):
-    """
-    Get iiif manifest and collection data to append to a Wagtail
-    context for rendering in templates.
+# def collection(request, is_viewer, manifest=''):
+#     """
+#     Get iiif manifest and collection data to append to a Wagtail
+#     context for rendering in templates.
 
-    Args:
-        request: object
+#     Args:
+#         request: object
 
-        manifest: string, url
+#         manifest: string, url
 
-        is_viewer: boolean, is it a view of the universal viewer
+#         is_viewer: boolean, is it a view of the universal viewer
 
-    Returns:
-        dictionary
-    """
+#     Returns:
+#         dictionary
+#     """
 
-    viewer_url = request.path + 'viewer/'
+#     viewer_url = request.path + 'viewer/'
 
-    # Try to pull the collection record, else a default, else error
-    if not request.GET.get('record'):
-        if manifest:
-            c_url = manifest
-        else:
-            raise NoCollectionParameterError()
-    else:
-        c_url = request.GET.get('record')
+#     # Try to pull the collection record, else a default, else error
+#     if not request.GET.get('record'):
+#         if manifest:
+#             c_url = manifest
+#         else:
+#             raise NoCollectionParameterError()
+#     else:
+#         c_url = request.GET.get('record')
 
-    try:
-        resp = requests.get(c_url, timeout=REQUESTS_TIMEOUT)
-        resp.raise_for_status()
-        rj = resp.json()
-    except Exception:
-        raise NoCollectionFoundError(
-            "Could not find a collection JSON record at {}".format(c_url)
-        )
-    for x in ('@id', 'label'):
-        if not rj.get(x):
-            raise InvalidCollectionRecordError(
-                "Could not find '@id' and 'label' keys in the JSON at {}".
-                format(c_url)
-            )
+#     try:
+#         resp = requests.get(c_url, timeout=REQUESTS_TIMEOUT)
+#         resp.raise_for_status()
+#         rj = resp.json()
+#     except Exception:
+#         raise NoCollectionFoundError(
+#             "Could not find a collection JSON record at {}".format(c_url)
+#         )
+#     for x in ('@id', 'label'):
+#         if not rj.get(x):
+#             raise InvalidCollectionRecordError(
+#                 "Could not find '@id' and 'label' keys in the JSON at {}".
+#                 format(c_url)
+#             )
 
-    # Be sure the interface can render this record,
-    # as some valid records may be unrenderable due
-    # to technical constraints.
-    if not record_compatible(rj):
-        raise IncompatibleRecordError()
+#     # Be sure the interface can render this record,
+#     # as some valid records may be unrenderable due
+#     # to technical constraints.
+#     if not record_compatible(rj):
+#         raise IncompatibleRecordError()
 
-    # Parse the record
-    members = []
-    collections = []
-    manifests = []
-    if rj.get("members"):
-        members = rj['members']
-    if rj.get('collections'):
-        collections = rj['collections']
-    if rj.get('manifests'):
-        manifests = rj['manifests']
+#     # Parse the record
+#     members = []
+#     collections = []
+#     manifests = []
+#     if rj.get("members"):
+#         members = rj['members']
+#     if rj.get('collections'):
+#         collections = rj['collections']
+#     if rj.get('manifests'):
+#         manifests = rj['manifests']
 
-    # Build template urls
-    for x in collections:
-        x['t_url'] = build_collection_url(x['@id'])
-    for x in members:
-        if x['@type'] == "sc:Collection":
-            x['t_url'] = build_collection_url(x['@id'])
+#     # Build template urls
+#     for x in collections:
+#         x['t_url'] = build_collection_url(x['@id'])
+#     for x in members:
+#         if x['@type'] == "sc:Collection":
+#             x['t_url'] = build_collection_url(x['@id'])
 
-    # Get if the current request is paginated or not
-    page = request.GET.get("page", 1)
-    try:
-        page = int(page)
-    except Exception:
-        page = 1
+#     # Get if the current request is paginated or not
+#     page = request.GET.get("page", 1)
+#     try:
+#         page = int(page)
+#     except Exception:
+#         page = 1
 
-    # Thumbnail view - paginated
-    if rj.get('viewingHint') == "individuals" and page > 0:
-        # 30 results per page max, to not block too long on
-        # dynamically generating thumbnails even in bad cases
-        total = max(len(members), len(collections), len(manifests))
-        start = (page - 1) * THUMBS_PER_PAGE
-        end = page * THUMBS_PER_PAGE
+#     # Thumbnail view - paginated
+#     if rj.get('viewingHint') == "individuals" and page > 0:
+#         # 30 results per page max, to not block too long on
+#         # dynamically generating thumbnails even in bad cases
+#         total = max(len(members), len(collections), len(manifests))
+#         start = (page - 1) * THUMBS_PER_PAGE
+#         end = page * THUMBS_PER_PAGE
 
-        # Generate sublists of just the stuff for this page
-        members = members[start:end]
-        collections = collections[start:end]
-        manifests = manifests[start:end]
+#         # Generate sublists of just the stuff for this page
+#         members = members[start:end]
+#         collections = collections[start:end]
+#         manifests = manifests[start:end]
 
-        # Assemble page links and stuff
-        list_view = build_collection_url(rj['@id'], page=-1)
-        if end > total:
-            next_page = None
-        else:
-            next_page = build_collection_url(rj['@id'], page=page + 1)
-        prev_page = None
-        if page > 1:
-            prev_page = build_collection_url(rj['@id'], page=page - 1)
+#         # Assemble page links and stuff
+#         list_view = build_collection_url(rj['@id'], page=-1)
+#         if end > total:
+#             next_page = None
+#         else:
+#             next_page = build_collection_url(rj['@id'], page=page + 1)
+#         prev_page = None
+#         if page > 1:
+#             prev_page = build_collection_url(rj['@id'], page=page - 1)
 
-        # Handle thumbnail finding for viewingHint == individuals
-        # https://stackoverflow.com/questions/6893968/
-        # how-to-get-the-return-value-from-a-thread-in-python
-        # Note: This makes the order in which the lists are
-        # concatonated important - otherwise thumbnails won't match.
-        results = [None] * len(members + collections + manifests)
-        for i, x in enumerate(members + collections + manifests):
-            x['thumb_thread'] = Thread(
-                target=threaded_thumbnails, args=(x['@id'], results, i)
-            )
-            x['thumb_thread'].start()
-        for i, x in enumerate(members + collections + manifests):
-            x['thumb_thread'].join(timeout=10)
-            if results[i] is not None:
-                # This call to unquote is a hack to get the thumbnails
-                # to work against a Loris server until we figure out
-                # why our apache setup isn't passing escaped URLs through
-                # to the server
-                x['thumb_url'] = unquote(results[i])
-            else:
-                x['thumb_url'] = NO_THUMB_IMG_URL
-        return {
-            'template':
-            'lib_collections/collection_thumbnails.html',
-            'pagination_menu':
-            build_pagination_links(total, THUMBS_PER_PAGE, page, rj),
-            'is_browse':
-            True,
-            'viewer_url':
-            viewer_url,
-            'cname':
-            rj['label'],
-            'cdesc':
-            rj.get('description'),
-            'list_view':
-            list_view,
-            'next_page':
-            next_page,
-            'prev_page':
-            prev_page,
-            'members':
-            members,
-            'collections':
-            collections,
-            'manifests':
-            manifests,
-            'collection_list_html':
-            get_clist_html(members, manifests, collections, viewer_url),
-            'collection_thumbs_html':
-            get_cthumb_html(members, manifests, collections, viewer_url),
-            'colors':
-            COLORS
-        }
-    # Embedded universal viewer
-    elif is_viewer:
-        return {
-            'template': 'lib_collections/collection_item_viewer.html',
-            'viewer_url': viewer_url,
-            'image_manifest': request.GET.get('manifest'),
-        }
-    # List view - no pagination
-    else:
-        thumbnail_view = None
-        if rj.get('viewingHint') == 'individuals':
-            thumbnail_view = build_collection_url(rj['@id'], page=1)
-        return {
-            'template':
-            'lib_collections/collection_list.html',
-            'is_browse':
-            True,
-            'viewer_url':
-            viewer_url,
-            'cname':
-            rj['label'],
-            'cdesc':
-            rj.get('description'),
-            'members':
-            members,
-            'collections':
-            collections,
-            'manifests':
-            manifests,
-            'collection_list_html':
-            get_clist_html(members, manifests, collections, viewer_url),
-            'collection_thumbs_html':
-            get_cthumb_html(members, manifests, collections, viewer_url),
-            'colors':
-            COLORS,
-            'thumbnail_view':
-            thumbnail_view
-        }
+#         # Handle thumbnail finding for viewingHint == individuals
+#         # https://stackoverflow.com/questions/6893968/
+#         # how-to-get-the-return-value-from-a-thread-in-python
+#         # Note: This makes the order in which the lists are
+#         # concatonated important - otherwise thumbnails won't match.
+#         results = [None] * len(members + collections + manifests)
+#         for i, x in enumerate(members + collections + manifests):
+#             x['thumb_thread'] = Thread(
+#                 target=threaded_thumbnails, args=(x['@id'], results, i)
+#             )
+#             x['thumb_thread'].start()
+#         for i, x in enumerate(members + collections + manifests):
+#             x['thumb_thread'].join(timeout=10)
+#             if results[i] is not None:
+#                 # This call to unquote is a hack to get the thumbnails
+#                 # to work against a Loris server until we figure out
+#                 # why our apache setup isn't passing escaped URLs through
+#                 # to the server
+#                 x['thumb_url'] = unquote(results[i])
+#             else:
+#                 x['thumb_url'] = NO_THUMB_IMG_URL
+#         return {
+#             'template':
+#             'lib_collections/collection_thumbnails.html',
+#             'pagination_menu':
+#             build_pagination_links(total, THUMBS_PER_PAGE, page, rj),
+#             'is_browse':
+#             True,
+#             'viewer_url':
+#             viewer_url,
+#             'cname':
+#             rj['label'],
+#             'cdesc':
+#             rj.get('description'),
+#             'list_view':
+#             list_view,
+#             'next_page':
+#             next_page,
+#             'prev_page':
+#             prev_page,
+#             'members':
+#             members,
+#             'collections':
+#             collections,
+#             'manifests':
+#             manifests,
+#             'collection_list_html':
+#             get_clist_html(members, manifests, collections, viewer_url),
+#             'collection_thumbs_html':
+#             get_cthumb_html(members, manifests, collections, viewer_url),
+#             'colors':
+#             COLORS
+#         }
+#     # Embedded universal viewer
+#     elif is_viewer:
+#         return {
+#             'template': 'lib_collections/collection_item_viewer.html',
+#             'viewer_url': viewer_url,
+#             'image_manifest': request.GET.get('manifest'),
+#         }
+#     # List view - no pagination
+#     else:
+#         thumbnail_view = None
+#         if rj.get('viewingHint') == 'individuals':
+#             thumbnail_view = build_collection_url(rj['@id'], page=1)
+#         return {
+#             'template':
+#             'lib_collections/collection_list.html',
+#             'is_browse':
+#             True,
+#             'viewer_url':
+#             viewer_url,
+#             'cname':
+#             rj['label'],
+#             'cdesc':
+#             rj.get('description'),
+#             'members':
+#             members,
+#             'collections':
+#             collections,
+#             'manifests':
+#             manifests,
+#             'collection_list_html':
+#             get_clist_html(members, manifests, collections, viewer_url),
+#             'collection_thumbs_html':
+#             get_cthumb_html(members, manifests, collections, viewer_url),
+#             'colors':
+#             COLORS,
+#             'thumbnail_view':
+#             thumbnail_view
+#         }

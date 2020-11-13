@@ -32,27 +32,29 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import (collection,
-                    mk_viewer_url,
-                    mk_subjects_url,
-                    mk_subject_iiif_url,
-                    mk_wagtail_object_url,
-                    get_iiif_labels,
-                    get_iiif_labels_language,
-                    # get_iiif_listing,
-                    # simplify_iiif_listing,
-                    unslugify_browse,
-                    prepare_browse_json,
-                    mk_cbrowse_url_iiif,
-                    mk_cbrowse_url_wagtail,
-                    mk_cbrowse_type_url_wagtail,
-                    mk_lbrowse_url_wagtail,
-                    mk_lbrowse_url_iiif,
-                    # prepare_browse_json_lbrowse_temp,
-                    # mk_wagtail_browse_type_route,
-                    # mk_wagtail_lbrowse_route,
-                    # mk_lbrowse_iiif_url
-                    )
+from .utils import (
+    # collection,
+    mk_viewer_url,
+    # mk_subjects_url,
+    # mk_subject_iiif_url,
+    mk_wagtail_object_url,
+    get_iiif_labels,
+    get_iiif_labels_language,
+    # get_iiif_listing,
+    # simplify_iiif_listing,
+    unslugify_browse,
+    prepare_browse_json,
+    mk_cbrowse_url_iiif,
+    mk_cbrowse_url_wagtail,
+    mk_cbrowse_type_url_wagtail,
+    mk_cbrowse_type_url_iiif,
+    mk_lbrowse_url_wagtail,
+    mk_lbrowse_url_iiif,
+    # prepare_browse_json_lbrowse_temp,
+    # mk_wagtail_browse_type_route,
+    # mk_wagtail_lbrowse_route,
+    # mk_lbrowse_iiif_url
+)
 from .marklogic import get_record_for_display, get_record_no_parsing
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -842,17 +844,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         all_browse_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
-            browse_type = "subject"
+            default_browse = CollectionPageClusterBrowse.objects.first()
+            default = default_browse.label.lower()
+            browse_type = default
         else:
             browse_type = kwargs["browse_type"][:-1]
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
         context = super().get_context(request)
-        context["browse_type"] = unslugify_browse(browse_type)
         context["all_browse_types"] = all_browse_types
+        context["browse_type"] = unslugify_browse(browse_type)
         context["browses"] = get_iiif_labels(
-            mk_subjects_url(slug), browse_type, slug)
+            mk_cbrowse_type_url_iiif(slug, browse_type),
+            browse_type,
+            slug,
+        )
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
@@ -868,10 +875,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
+        browse = kwargs['browse']
+        browse_type = kwargs['browse_type']
+
         all_browse_types = self.build_browse_types()
 
-        iiif_url = mk_subject_iiif_url(
-            kwargs["browse"], kwargs["browse_type"], slug)
+        iiif_url = mk_cbrowse_url_iiif(
+            slug,
+            browse,
+            browse_type,
+        )
+
         browse = unslugify_browse(kwargs["browse"])
         browse_type = unslugify_browse(kwargs["browse"])
 
@@ -901,6 +915,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         """
         Route for main list browse index.
         """
+
+        THUMBS_PER_PAGE = 25
 
         template = "lib_collections/collection_browse.html"
 
@@ -932,7 +948,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         j = r.json()
         l = [prepare_browse_json(x, comma_join)
              for x in j['items']]
-        list_objects = Paginator(l, 25)
+        list_objects = Paginator(l, THUMBS_PER_PAGE)
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
@@ -1225,53 +1241,53 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     collecting_statement = StreamField(
         DefaultBodyFields(), blank=False, null=True
     )
-    policy_link_text = models.CharField(max_length=255, blank=True, null=True)
-    policy_link_url = models.URLField("Policy URL", blank=True, null=True)
-    short_abstract = models.TextField(null=True, blank=True)
-    thumbnail = models.ForeignKey(
+    policy_link_text=models.CharField(max_length=255, blank=True, null=True)
+    policy_link_url=models.URLField("Policy URL", blank=True, null=True)
+    short_abstract=models.TextField(null=True, blank=True)
+    thumbnail=models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    collection_location = models.ForeignKey(
+    collection_location=models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
     )
-    reference_materials = RichTextField(blank=True, null=True)
-    circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(
+    reference_materials=RichTextField(blank=True, null=True)
+    circulating_materials=RichTextField(blank=True, null=True)
+    archival_link_text=models.CharField(
         max_length=255, blank=True, null=True)
-    archival_link_url = models.URLField("Archival URL", blank=True, null=True)
-    first_feature = models.ForeignKey(
+    archival_link_url=models.URLField("Archival URL", blank=True, null=True)
+    first_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    second_feature = models.ForeignKey(
+    second_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    third_feature = models.ForeignKey(
+    third_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    fourth_feature = models.ForeignKey(
+    fourth_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    supplementary_header = models.CharField(
+    supplementary_header=models.CharField(
         max_length=255, blank=True, null=True
     )
     supplementary_text = RichTextField(blank=True, null=True)
