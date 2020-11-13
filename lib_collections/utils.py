@@ -424,8 +424,8 @@ def mk_wagtail_object_url(collection_slug, manifid):
 
 
 def mk_manifest_url(manifid, slug):
-    return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
-    # return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
+    # return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
+    return "%s/ark:61001/%s" % (IIIF_PREFIX, manifid)
     # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
 
 
