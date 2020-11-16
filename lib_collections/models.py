@@ -657,15 +657,21 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         breads = path_up_to(len(trimmed_crumbs), trimmed_crumbs)
         return (breads, final_crumb)
 
+    def lbrowse_override(str):
+        return "Browse Entire Collection"
+
     def build_browse_types(self):
         slug = self.slug
+
         return {
             **{
                 x.label: mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
                 for x in CollectionPageClusterBrowse.objects.all()
             },
             **{
-                x.label: mk_lbrowse_url_wagtail(slug, slugify(x.label))
+                CollectionPage.lbrowse_override(
+                    x.label
+                ): mk_lbrowse_url_wagtail(slug, slugify(x.label))
                 for x in CollectionPageListBrowse.objects.all()
             }
         }
@@ -959,13 +965,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             pass
 
         context = super().get_context(request)
-        context["browse_title"] = "Browse by %s:" % unslugify_browse(
-            browse_name)
+        context["browse_title"] = CollectionPage.lbrowse_override(
+            "Browse by %s:" % unslugify_browse(browse_name)
+        ) + ":"
         context["all_browse_types"] = all_browse_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name)
-        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_final_breadcrumb'] = CollectionPage.lbrowse_override(
+            unslugify_browse(final_crumb)
+        )
         context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
@@ -1241,53 +1250,53 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     collecting_statement = StreamField(
         DefaultBodyFields(), blank=False, null=True
     )
-    policy_link_text=models.CharField(max_length=255, blank=True, null=True)
-    policy_link_url=models.URLField("Policy URL", blank=True, null=True)
-    short_abstract=models.TextField(null=True, blank=True)
-    thumbnail=models.ForeignKey(
+    policy_link_text = models.CharField(max_length=255, blank=True, null=True)
+    policy_link_url = models.URLField("Policy URL", blank=True, null=True)
+    short_abstract = models.TextField(null=True, blank=True)
+    thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    collection_location=models.ForeignKey(
+    collection_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
     )
-    reference_materials=RichTextField(blank=True, null=True)
-    circulating_materials=RichTextField(blank=True, null=True)
-    archival_link_text=models.CharField(
+    reference_materials = RichTextField(blank=True, null=True)
+    circulating_materials = RichTextField(blank=True, null=True)
+    archival_link_text = models.CharField(
         max_length=255, blank=True, null=True)
-    archival_link_url=models.URLField("Archival URL", blank=True, null=True)
-    first_feature=models.ForeignKey(
+    archival_link_url = models.URLField("Archival URL", blank=True, null=True)
+    first_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    second_feature=models.ForeignKey(
+    second_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    third_feature=models.ForeignKey(
+    third_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    fourth_feature=models.ForeignKey(
+    fourth_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    supplementary_header=models.CharField(
+    supplementary_header = models.CharField(
         max_length=255, blank=True, null=True
     )
     supplementary_text = RichTextField(blank=True, null=True)
