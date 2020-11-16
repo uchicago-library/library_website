@@ -430,7 +430,7 @@ def mk_manifest_url(manifid, slug):
 
 
 def mk_viewer_url(manifid, slug):
-    # prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
+    prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
     # prefix = "https://www.lib.uchicago.edu/viewer?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
