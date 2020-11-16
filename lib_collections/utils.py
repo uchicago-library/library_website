@@ -424,13 +424,13 @@ def mk_wagtail_object_url(collection_slug, manifid):
 
 
 def mk_manifest_url(manifid, slug):
-    # return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
-    return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
+    return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
+    # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
     # return "https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/%s" % manifid
 
 
 def mk_viewer_url(manifid, slug):
-    prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
+    # prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
     # prefix = "https://www.lib.uchicago.edu/viewer?manifest="
     return prefix + mk_manifest_url(manifid, slug)
 
