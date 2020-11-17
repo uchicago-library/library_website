@@ -5,7 +5,7 @@ from django.http import Http404
 import requests
 import re
 from requests.auth import HTTPBasicAuth
-from .utils import mk_manifest_url
+# from .utils import DisplayBrowse
 
 from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
                                             MARKLOGIC_LDR_USER)

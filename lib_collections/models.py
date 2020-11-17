@@ -32,29 +32,7 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import (
-    # collection,
-    mk_viewer_url,
-    # mk_subjects_url,
-    # mk_subject_iiif_url,
-    mk_wagtail_object_url,
-    get_iiif_labels,
-    get_iiif_labels_language,
-    # get_iiif_listing,
-    # simplify_iiif_listing,
-    unslugify_browse,
-    prepare_browse_json,
-    mk_cbrowse_url_iiif,
-    mk_cbrowse_url_wagtail,
-    mk_cbrowse_type_url_wagtail,
-    mk_cbrowse_type_url_iiif,
-    mk_lbrowse_url_wagtail,
-    mk_lbrowse_url_iiif,
-    # prepare_browse_json_lbrowse_temp,
-    # mk_wagtail_browse_type_route,
-    # mk_wagtail_lbrowse_route,
-    # mk_lbrowse_iiif_url
-)
+from .utils import CBrowseURL, LBrowseURL, DisplayBrowse
 from .marklogic import get_record_for_display, get_record_no_parsing
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -644,6 +622,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         trimmed_crumbs = breadcrumbs[2:-1]
         final_crumb = breadcrumbs[-1]
 
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
         def path_up_to(idx, lst):
             return {unslugify_browse(lst[i-1]): ("/collex/collections/"
                                                  + "/".join(lst[:i]))
@@ -662,6 +642,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def build_browse_types(self):
         slug = self.slug
+
+        mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
+        mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
         return {
             **{
@@ -821,6 +804,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         else:
             final_crumb = 'Object'
 
+        mk_viewer_url = DisplayBrowse.mk_viewer_url
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
@@ -858,6 +844,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
+        mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
+
+        get_iiif_labels = DisplayBrowse.get_iiif_labels
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
         context = super().get_context(request)
         context["all_browse_types"] = all_browse_types
         context["browse_type"] = unslugify_browse(browse_type)
@@ -886,6 +877,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         all_browse_types = self.build_browse_types()
 
+        mk_cbrowse_url_iiif = CBrowseURL.mk_cbrowse_url_iiif
+        unslugify_browse = DisplayBrowse.unslugify_browse
+        prepare_browse_json = DisplayBrowse.prepare_browse_json
+
         iiif_url = mk_cbrowse_url_iiif(
             slug,
             browse,
@@ -904,6 +899,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                    for x in j['items']]
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
+        unslugify_browse = DisplayBrowse.unslugify_browse
 
         context = super().get_context(request)
         context["browse_title"] = browse
@@ -937,11 +934,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         else:
             pageno = int(kwargs["pageno"][:-1])
 
-        iiif_url = mk_lbrowse_url_iiif(collection, browse_name)
-        # raise Exception(browse)
-        # iiif_url = 'https://iiif-collection-dev.lib.uchicago.edu/social-scientists-map-chicago/list-browse/date.json'
+        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
+            collection,
+            browse_name
+        )
 
-        # slug = self.slug
         all_browse_types = self.build_browse_types()
 
         def string_rep(lst):
@@ -952,7 +949,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         r = requests.get(iiif_url)
         j = r.json()
-        l = [prepare_browse_json(x, comma_join)
+        l = [DisplayBrowse.prepare_browse_json(x, comma_join)
              for x in j['items']]
         list_objects = Paginator(l, THUMBS_PER_PAGE)
 
@@ -1072,10 +1069,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def get_context(self, request):
 
-        # # TODO - temporary, this will come from the page object
-        # # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
-        # manifest = ''
-
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
         unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
@@ -1101,21 +1094,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         r = requests.get(iiif_url)
         j = r.json()
-        objects = [prepare_browse_json(x, comma_join) for x in j['items']][:5]
+        objects = [DisplayBrowse.prepare_browse_json(x, comma_join)
+                   for x in j['items']
+                   ][:5]
 
         slug = self.slug
 
         all_browse_types = self.build_browse_types()
-        # {
-        #     **{
-        #         x.label: mk_wagtail_browse_type_route(slugify(x.label), slug)
-        #         for x in CollectionPageClusterBrowse.objects.all()
-        #     },
-        #     **{
-        #         x.label: mk_wagtail_lbrowse_route(slugify(x.label), slug)
-        #         for x in CollectionPageListBrowse.objects.all()
-        #     }
-        # }
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
@@ -1124,15 +1109,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['default_image'] = default_image
         context['all_browse_types'] = all_browse_types
         context['objects'] = objects
-        # context['collection_breadcrumb'] = request.path
 
         context.update(self.staff_context())
-
-        # Merge the context dictionary with the results from iiif
-        # if manifest:
-        #     context = dict(
-        #         context, **collection(request, self.is_viewer, manifest)
-        #     )
 
         return context
 
