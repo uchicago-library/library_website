@@ -90,4 +90,30 @@
 </figure>
 {% endfor %}
 
+{% if list_objects.has_other_pages %}
+<ul class="pagination">
+
+    {% if list_objects.has_previous %}
+    <li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+
+    {% for i in list_objects.paginator.page_range %}
+    {% if list_objects.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+
+    {% if list_objects.has_next %}
+    <li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+</ul>
+{% endif %}
+
+
 {% endif %}

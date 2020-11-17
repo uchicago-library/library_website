@@ -61,7 +61,10 @@ class CBrowseURL():
             ".json"
         )
 
-    def mk_cbrowse_url_wagtail(slug, browse_type, browse_name, full=False):
+    def mk_cbrowse_url_wagtail(slug: str,
+                               browse_type: str,
+                               browse_name: str,
+                               full: bool = False) -> str:
         url = CBrowseURL.mk_cbrowse_url(
             WAGTAIL_PREFIX,
             slug,
@@ -74,7 +77,10 @@ class CBrowseURL():
         else:
             return url
 
-    def mk_cbrowse_type_url(prefix, slug, browse_type, extension):
+    def mk_cbrowse_type_url(prefix: str,
+                            slug: str,
+                            browse_type: str,
+                            extension: str) -> str:
         return "%s/%s/cluster-browse/%s%s" % (
             prefix,
             slug,
@@ -82,7 +88,8 @@ class CBrowseURL():
             extension
         )
 
-    def mk_cbrowse_type_url_iiif(slug, browse_type):
+    def mk_cbrowse_type_url_iiif(slug: str,
+                                 browse_type: str) -> str:
         return CBrowseURL.mk_cbrowse_type_url(
             IIIF_PREFIX,
             slug,
@@ -90,7 +97,9 @@ class CBrowseURL():
             ".json"
         )
 
-    def mk_cbrowse_type_url_wagtail(slug, browse_type, full=False):
+    def mk_cbrowse_type_url_wagtail(slug: str,
+                                    browse_type: str,
+                                    full: bool = False) -> str:
         url = CBrowseURL.mk_cbrowse_type_url(
             WAGTAIL_PREFIX,
             slug,
@@ -109,7 +118,10 @@ class LBrowseURL():
     browse URLs for both Wagtail and IIIF
 
     """
-    def mk_lbrowse_url(prefix, slug, browse_name, extension):
+    def mk_lbrowse_url(prefix: str,
+                       slug: str,
+                       browse_name: str,
+                       extension: str) -> str:
         return "%s/%s/list-browse/%s%s" % (
             prefix,
             slug,
@@ -117,7 +129,8 @@ class LBrowseURL():
             extension
         )
 
-    def mk_lbrowse_url_iiif(slug, browse_name):
+    def mk_lbrowse_url_iiif(slug: str,
+                            browse_name: str) -> str:
         return LBrowseURL.mk_lbrowse_url(
             IIIF_PREFIX,
             slug,
@@ -125,7 +138,8 @@ class LBrowseURL():
             ".json"
         )
 
-    def mk_lbrowse_url_wagtail(slug, browse_name):
+    def mk_lbrowse_url_wagtail(slug: str,
+                               browse_name: str) -> str:
         return LBrowseURL.mk_lbrowse_url(
             WAGTAIL_PREFIX,
             slug,
@@ -141,12 +155,13 @@ class DisplayBrowse():
     links Wagtail
 
     """
-    def unslugify_browse(slug):
+    def unslugify_browse(slug: str) -> str:
         slug_list = slug.split('-')
         spaces = ' '.join([x.capitalize() for x in slug_list])
         return spaces
 
-    def get_iiif_labels_language(url, lang):
+    def get_iiif_labels_language(url: str,
+                                 lang: str) -> list:
         r = requests.get(url)
         if r.status_code == 404:
             raise Http404
@@ -157,14 +172,17 @@ class DisplayBrowse():
                      x['metadata'][0]['value'][lang][0])
                     for x in d]
 
-    def get_iiif_labels(url, browse_type, slug):
+    def get_iiif_labels(url: str,
+                        browse_type: str,
+                        slug: str) -> str:
 
-        def lists_to_dict(lst1, lst2):
+        def lists_to_dict(lst1: list,
+                          lst2: list) -> dict:
             return dict(zip(lst1, lst2))
 
         pairs = DisplayBrowse.get_iiif_labels_language(url, 'en')
 
-        def render_count(pairs):
+        def render_count(pairs: list) -> list:
             return ["%s (%s)" % (x, y) for (x, y) in pairs]
 
         labels = [x[0] for x in pairs]
