@@ -955,6 +955,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
         try:
             int(final_crumb)
             final_crumb = 'Page ' + final_crumb
