@@ -24,7 +24,10 @@ WAGTAIL_PREFIX = "/collex/collections"
 
 
 class CBrowseURL():
-
+    """
+    Namespace class containing utility functions for creating cluster
+    browse URLs for both Wagtail and IIIF
+    """
     def mk_cbrowse_url(prefix, slug, browse_type, browse_name, extension):
         return "%s/%s/cluster-browse/%s/%s%s" % (
             prefix,
@@ -52,7 +55,7 @@ class CBrowseURL():
             ""
         )
         if full:
-            return "http://www.lib.uchicago.edu" + url
+            return "https://www.lib.uchicago.edu" + url
         else:
             return url
 
@@ -80,13 +83,17 @@ class CBrowseURL():
             ""
         )
         if full:
-            return "http://www.lib.uchicago.edu" + url
+            return "https://www.lib.uchicago.edu" + url
         else:
             return url
 
 
 class LBrowseURL():
+    """
+    Namespace class containing utility functions for creating list
+    browse URLs for both Wagtail and IIIF
 
+    """
     def mk_lbrowse_url(prefix, slug, browse_name, extension):
         return "%s/%s/list-browse/%s%s" % (
             prefix,
@@ -113,12 +120,16 @@ class LBrowseURL():
 
 
 class DisplayBrowse():
+    """
+    Namespace class containing code for generating digital collection
+    object listings, intermediate cluster browses, and object page
+    links Wagtail
 
+    """
     def unslugify_browse(slug):
         slug_list = slug.split('-')
         spaces = ' '.join([x.capitalize() for x in slug_list])
         return spaces
-    # [0].upper() + spaces[1:]
 
     def get_iiif_labels_language(url, lang):
         r = requests.get(url)
@@ -182,8 +193,8 @@ class DisplayBrowse():
     def prepare_browse_json(j, joiner):
         manifid = DisplayBrowse.extract_manifid_thumbnail(
             j['thumbnail'][0]['id'])
-        metadata = DisplayBrowse.pull_metadata_labels(j)
 
+        metadata = DisplayBrowse.pull_metadata_labels(j)
         create_field = DisplayBrowse.create_field
 
         title = create_field('title', metadata)
