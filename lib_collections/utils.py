@@ -28,7 +28,20 @@ class CBrowseURL():
     Namespace class containing utility functions for creating cluster
     browse URLs for both Wagtail and IIIF
     """
-    def mk_cbrowse_url(prefix, slug, browse_type, browse_name, extension):
+    def mk_cbrowse_url(prefix: str,
+                       slug: str,
+                       browse_type: str,
+                       browse_name: str,
+                       extension: str) -> str:
+        """Create a local route to a digital collections browse.
+
+        Args:
+            root url, name of collection slug, browse type string, browse
+            name string, filename extension
+
+        Returns:
+            URL string
+        """
         return "%s/%s/cluster-browse/%s/%s%s" % (
             prefix,
             slug,
@@ -37,7 +50,9 @@ class CBrowseURL():
             extension
         )
 
-    def mk_cbrowse_url_iiif(slug, browse_name, browse_type):
+    def mk_cbrowse_url_iiif(slug: str,
+                            browse_name: str,
+                            browse_type: str) -> str:
         return CBrowseURL.mk_cbrowse_url(
             IIIF_PREFIX,
             slug,
@@ -138,15 +153,23 @@ class DisplayBrowse():
         else:
             j = r.json()
             d = j['items']
-            return [x['label'][lang][0] for x in d]
+            return [(x['label'][lang][0],
+                     x['metadata'][0]['value'][lang][0])
+                    for x in d]
 
     def get_iiif_labels(url, browse_type, slug):
 
         def lists_to_dict(lst1, lst2):
             return dict(zip(lst1, lst2))
 
-        labels = DisplayBrowse.get_iiif_labels_language(url, 'en')
-        return lists_to_dict(labels,
+        pairs = DisplayBrowse.get_iiif_labels_language(url, 'en')
+
+        def render_count(pairs):
+            return ["%s (%s)" % (x, y) for (x, y) in pairs]
+
+        labels = [x[0] for x in pairs]
+
+        return lists_to_dict(render_count(pairs),
                              [CBrowseURL.mk_cbrowse_url_wagtail(
                                  slug,
                                  browse_type,

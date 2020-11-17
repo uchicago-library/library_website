@@ -638,7 +638,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return (breads, final_crumb)
 
     def lbrowse_override(str):
-        return "Browse Entire Collection"
+        return "All Maps"
 
     def build_browse_types(self):
         slug = self.slug
