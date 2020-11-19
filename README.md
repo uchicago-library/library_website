@@ -113,8 +113,8 @@ is fine, however, you will have broken image links if you don't get them.
 All you need to do is [download the images from box](https://uchicago.box.com/s/kuib7g0hqhcf18wq51dq10sodfl2mhq0) and put them in `/media/original_images/`.
 
 ## Pushing to Production
-- ssh to nest or motacilla
-- `cd /data/{{ SERVER NAME }}/ ; source venv3.7/bin/activate ; cd sites/library_website`
+- ssh to motacilla
+- `cd /data/motacilla/ ; source venv3.7/bin/activate ; cd sites/library_website`
 - `git remote update`
 - `git status`
 - `git pull origin master`
