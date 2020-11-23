@@ -21,9 +21,9 @@
  
       <div class="col-xs-12">
         <div class="btn-group spaces-toggle">
-          <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
-          <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
-          <a class="btn btn-list-toggle{% if view == 'org' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=org">Org Chart</a>
+          <a {% if view == 'staff' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
+          <a {% if view == 'department' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
+          <a {% if view == 'org' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'org' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=org">Org Chart</a>
         </div><!-- /btn-group-->
       </div>
 
