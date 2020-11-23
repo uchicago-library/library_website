@@ -796,9 +796,10 @@ figure.embed {
   padding: 5px 15px;
   border-radius: 0;
   &.active {
+    color: white;
+    background-color: $darkred;
     border-top: 2px solid $maroon;
     border-bottom: 2px solid $maroon;
-    color: $maroon;
     -webkit-box-shadow: none;
     box-shadow: none;   
     &:after {
@@ -806,11 +807,15 @@ figure.embed {
     }
   }
   &:hover {
-    border-top: 2px solid #d8b9b7;
-    border-bottom: 2px solid #d8b9b7;
-    color: $maroon;
+    border-top: 2px solid $maroon;
+    border-bottom: 2px solid $maroon;
     -webkit-box-shadow: none;
     box-shadow: none; 
+  }
+  &:focus {
+    box-shadow: 2px 2px 10px $crerarblue;
+    border-top: 2px solid $maroon;
+    border-bottom: 2px solid $maroon;
   }
 }
 
@@ -1041,40 +1046,52 @@ table.etable>tbody>tr {
 }
 
 .searchbox-input{
-    top:0;
-    right:0;
-    border:0;
-    outline:0;
-    background:#dcddd8;
-    width:100%;
-    height:30px;
-    margin:0;
-    padding:0px 55px 0px 20px;
-    font-size:1em;
-    color:$maroon;
+  top:0;
+  right:0;
+  border:0;
+  outline:0;
+  background:#dcddd8;
+  width:100%;
+  height:30px;
+  margin:0;
+  padding:0px 55px 0px 20px;
+  font-size:1em;
+  color:$maroon;
+  &:focus {
+    box-shadow: 2px 2px 10px $crerarblue;
+  }
 }
 
 .searchbox-icon,
 .searchbox-submit,
 .searchbox > input[type="submit"] {
-    content: "\f002";
-    width:30px;
-    height:30px;
-    display:block;
-    position:absolute;
-    top:0;
-    font-family:verdana;
-    font-size:1em;
-    right:0;
-    padding:0;
-    margin:0;
-    border:0;
-    outline:0;
-    line-height:30px;
-    text-align:center;
-    cursor:pointer;
-    color:#ddd;
-    background:$maroon;
+  content: "\f002";
+  width:30px;
+  height:30px;
+  display:block;
+  position:absolute;
+  top:0;
+  font-family:verdana;
+  font-size:1em;
+  right:0;
+  padding:0;
+  margin:0;
+  border:0;
+  outline:0;
+  line-height:30px;
+  text-align:center;
+  cursor:pointer;
+  color:#ddd;
+  background:$maroon;
+  &:hover {
+    color: black;
+    background-color: $hovercalmlight;
+  }
+  &:focus {
+    box-shadow: 0px 1px 5px $crerarblue;
+    color: black;
+    background-color: $hovercalmlight;
+  }
 }
 
 .byline{
@@ -1632,6 +1649,16 @@ td.time, td.event-nav {
  * --------------------------------------------------
  */
 
+ .btn-obvious {
+  &:hover {
+    background-color: $hovercalmlight;
+  }
+  &:focus {
+    box-shadow: 0px 1px 5px $crerarblue;
+    background-color: $hovercalmlight;
+  }
+ }
+
 .listings-dropdown {
   margin-top: 0;
   background-color: $hovercalm;
@@ -1766,34 +1793,11 @@ a.coll-access {
   }
 }
 
-.sdir-wrap {
-  @extend .news-wrap;
-  padding: 0;
-  h3 {
-    font-size: 1.1em;
-    margin-bottom: 0;
-  }
-  a, a:active, a:focus, a:hover {
-    color: $crerarblue;
-    text-decoration: underline;
-  }
-  .col-xs-12 {
-    padding-bottom: 1em;
-    margin-top: 1em;
-    @include respond-to(medium) {
-      &:nth-child(3n+2) {
-        border-right: 1px solid #eee;
-        border-left: 1px solid #eee;
-      }
-    }
-  }
-}
-
 .sdir {
   margin: 2em 0 0.25em 0;
   padding-left: 0;
   h2 {
-    font-family: "Cormorant Garamond", serif;
+    font-family: $accent-font;
     color: $reggreen;
     font-size: 1.3em;
     padding-left: 15px;
@@ -1805,8 +1809,44 @@ a.coll-access {
       text-decoration: none;
     }
   }
-  span {
-    padding-left: 15px;
+  article {
+    @extend .distinct-list;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 1em;
+    @include respond-to(small) {
+      grid-template-columns: 100px 2fr 1fr 1fr;
+      grid-gap: 1.5em;
+    }
+    &:nth-child(odd) {
+      background: #f6f6f6;
+    }
+    &+article {
+      border-top: 1px solid #D2CDCC;
+    }
+    h3 {
+      font-family: $base-font;
+      font-size: 1.05em;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    span[role=heading] {
+      font-weight: 600;
+      display: block;
+    }
+    .profile-image {
+      grid-row-start: 1;
+      grid-column-start: 1;
+      @include respond-to(small) {
+        padding-left: 0.55em;
+      }
+    }
+    ul {
+      padding-left: 0px;
+      list-style: none;
+    }
   }
 }
 

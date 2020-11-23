@@ -3,39 +3,40 @@
 {% load wagtailimages_tags %}
 
 {% cache 86400 staff_directory_listing staff_page.cnetid %}
-  <tr>
-      <td scope="row">
-          {% if staff_page.profile_picture %}
-              {% image staff_page.profile_picture fill-100x100 %}
-          {% else %}
-              {% image default_image fill-100x100 %}
-          {% endif %}
-      </td>
-      <td>
-          <strong>{% staff_public_page_link staff_page %}</strong>
-          {% if staff_page.pronouns %}
-            <span class="pronouns-listing">{{ staff_page.pronouns }}</span>
-          {% endif %}
-          <p>
-            {{ staff_page.position_title }}<br/>
-            <a href=".?view=staff&amp;department={{ staff_page.staff_page_units.first.library_unit.get_full_name|urlencode }}">{{ staff_page.staff_page_units.first.library_unit.title }}</a><br/>
-          </p>
-      </td>
-      <td>
-          <strong>Contact</strong>
-          <br/>
-          {% staff_email_addresses staff_page %}
-          {% staff_faculty_exchanges_phone_numbers staff_page %}
-          {% staff_libcal_schedules staff_page %}
-      </td>
-      <td>
-          {% if staff_page.staff_subject_placements.all %}
-	      <strong>Subject Specialties</strong><br/>
-              {% staff_subjects staff_page %}
-          {% endif %}
-          {% if staff_page.libguide_url %}
-              <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
-          {% endif %}
-      </td>
-  </tr>
+  <article>
+    <div>
+      <h3>{% staff_public_page_link staff_page %}</h3>
+      {% if staff_page.pronouns %}
+        <span class="pronouns-listing">{{ staff_page.pronouns }}</span>
+      {% endif %}
+      <p>
+        {{ staff_page.position_title }}<br/>
+        <a href=".?view=staff&amp;department={{ staff_page.staff_page_units.first.library_unit.get_full_name|urlencode }}">{{ staff_page.staff_page_units.first.library_unit.title }}</a><br/>
+      </p>
+    </div>
+    <div>
+      <span role="heading">Contact<span class="visually-hidden"> {{ staff_page.first_name }}</span></span>
+      {% staff_email_addresses staff_page %}
+      {% staff_faculty_exchanges_phone_numbers staff_page %}
+      {% staff_libcal_schedules staff_page %}
+    </div>
+    <div>
+      {% if staff_page.staff_subject_placements.all %}
+      <span role="heading"><span class="visually-hidden">{{ staff_page.first_name }}'s</span> Subject Specialties</span>
+      <ul>
+        {% staff_subjects staff_page %}
+      </ul>
+      {% endif %}
+      {% if staff_page.libguide_url %}
+          <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>
+      {% endif %}
+    </div>
+    <div class="profile-image">
+      {% if staff_page.profile_picture %}
+          {% image staff_page.profile_picture fill-100x100 %}
+      {% else %}
+          {% image default_image fill-100x100 %}
+      {% endif %}
+    </div>
+  </article>
 {% endcache %}

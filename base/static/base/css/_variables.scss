@@ -165,7 +165,7 @@ $divider: 1px solid $darkgray;
   position: absolute;
   width: 0;
   height: 0;
-  border-color: #642822 transparent transparent;
+  border-color: $darkred transparent transparent;
   border-style: solid;
   border-width: 11px;
   left: 50%;
