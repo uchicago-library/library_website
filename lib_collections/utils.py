@@ -200,7 +200,7 @@ class DisplayBrowse():
                 )
 
     def mk_manifest_url(manifid):
-        return "%s/object/%s.json" % (IIIF_PREFIX, manifid)
+        return "%s/object/ark:/61001/%s.json" % (IIIF_PREFIX, manifid)
 
     def mk_viewer_url(manifid):
         # toggle this comment with the other to switch from dev to production
