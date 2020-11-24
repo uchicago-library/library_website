@@ -199,14 +199,14 @@ class DisplayBrowse():
                 % (collection_slug, manifid)
                 )
 
-    def mk_manifest_url(manifid, slug):
-        return "%s/%s/object/%s.json" % (IIIF_PREFIX, slug, manifid)
+    def mk_manifest_url(manifid):
+        return "%s/object/%s.json" % (IIIF_PREFIX, manifid)
 
-    def mk_viewer_url(manifid, slug):
+    def mk_viewer_url(manifid):
         # toggle this comment with the other to switch from dev to production
         prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
         # prefix = "https://www.lib.uchicago.edu/viewer?manifest="
-        return prefix + DisplayBrowse.mk_manifest_url(manifid, slug)
+        return prefix + DisplayBrowse.mk_manifest_url(manifid)
 
     def create_field(name, dct):
         if name in dct.keys():

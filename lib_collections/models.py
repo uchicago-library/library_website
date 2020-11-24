@@ -810,7 +810,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
-            kwargs["manifid"], slug)
+            kwargs["manifid"])
         context["slug"] = slug
         context["marklogic"] = marklogic
         context["all_browse_types"] = all_browse_types
