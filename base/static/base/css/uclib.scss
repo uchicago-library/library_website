@@ -1811,13 +1811,17 @@ a.coll-access {
   }
   article {
     @extend .distinct-list;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    padding: 1em;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-row-gap: 1em;
+    margin-right: -15px;
+    margin-left: -15px;
     @include respond-to(small) {
-      grid-template-columns: 100px 2fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+      grid-row-gap: 1em;
+      grid-gap: 1.5em;
+    }
+    @include respond-to(medium) {
+      grid-template-columns: 100px 3fr 2fr 2fr;
       grid-gap: 1.5em;
     }
     &:nth-child(odd) {
@@ -1835,12 +1839,17 @@ a.coll-access {
     span[role=heading] {
       font-weight: 600;
       display: block;
+      padding-top: 1em;
+      @include respond-to(small) {
+        padding-top: 0;
+      }
     }
     .profile-image {
+      padding-bottom: 1em;
       grid-row-start: 1;
       grid-column-start: 1;
       @include respond-to(small) {
-        padding-left: 0.55em;
+        padding-bottom: 0;
       }
     }
     ul {

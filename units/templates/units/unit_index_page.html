@@ -35,7 +35,7 @@
 
     <section>
       {% if query %}
-        <div class="col-xs-12 sdir" style="padding-top: 0; margin-top: 0">
+        <div class="row sdir" style="padding-top: 0; margin-top: 0">
           <h2>Matching Departments</h2>
             {% for department in departments %}
               {% include "units/unit_directory_listing.html" %}
@@ -45,7 +45,7 @@
             {% endfor %}
         </div>
 
-        <div class="col-xs-12 sdir">
+        <div class="row sdir">
           <h2>Matching Staff</h2>
             {% for staff_page in staff_pages %}
               {% include "staff/staff_directory_listing.html" %}
@@ -57,7 +57,7 @@
         </div>
 
       {% elif view == 'staff' %} 
-        <div class="col-xs-12 sdir">
+        <div class="row sdir">
           <h2>
             {% if subject and library %}
                 {{ library }} {{ subject }} Staff
