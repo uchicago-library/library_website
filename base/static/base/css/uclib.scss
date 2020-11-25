@@ -1813,16 +1813,15 @@ a.coll-access {
     @extend .distinct-list;
     padding: 1em;
     display: grid;
+    grid-gap: 1vw; //width of screen unit
     margin-right: -15px;
     margin-left: -15px;
     @include respond-to(small) {
       grid-template-columns: 1fr 1fr;
       grid-row-gap: 1em;
-      grid-gap: 1.5em;
     }
     @include respond-to(medium) {
       grid-template-columns: 100px 3fr 2fr 2fr;
-      grid-gap: 1.5em;
     }
     &:nth-child(odd) {
       background: #f6f6f6;
@@ -1835,6 +1834,12 @@ a.coll-access {
       font-size: 1.05em;
       margin-top: 0;
       margin-bottom: 0;
+    }
+    & p {
+      max-width: 200px;
+      @include respond-to(large) {
+        max-width: unset;
+      }
     }
     span[role=heading] {
       font-weight: 600;
