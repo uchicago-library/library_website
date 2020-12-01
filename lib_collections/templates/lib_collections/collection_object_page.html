@@ -28,12 +28,13 @@
                <div class="embed-responsive embed-responsive-16by9">
                <iframe class="embed-responsive-item" src="{{ iiif_url }}" allowfullscreen></iframe>
                </div> -->
+
           <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
 	  <!-- <iframe src="https://liblet.lib.uchicago.edu/viewer?manifest=https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/b2nd42r7xp0q" width="750" height="600" allowfullscreen frameborder="0"></iframe> -->
 
 	  <script type="text/javascript">
 	    const toggle = (elementID) => {
-		let contentId = document.getElementById(elementID);
+		const contentId = document.getElementById(elementID);
 		if (contentId.style.display == "block") {
 		    contentId.style.display = "none";
 		}
@@ -42,15 +43,15 @@
 		}
 	    }
 	    const updateCitation = (elemValue) => {
-		const chiContent = "“Woodlawn community /”. n.d.. “Woodlawn community /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. Dept. of Sociology.";
-		const apaContent = "<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. (n.d.). <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. University of Chicago Press.<br><i>Woodlawn Community /</i> [1 map]. (n.d.). <i>Woodlawn Community /</i> [1 map]. Dept. of Sociology.<br>";
-		const mlaContent = "<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. University of Chicago Press.<br><i>Woodlawn community /</i>. <i>Woodlawn community /</i>. Dept. of Sociology.<br>";
+		const c = "{{ chicago|safe }}";1
+		const a = "{{ apa|safe }}";
+		const m = "{{ mla|safe }}";
 		if (elemValue == "chicago") {
-		    document.getElementById("citationDisplay").innerHTML = chiContent;
+		    document.getElementById("citationDisplay").innerHTML = c;
 		} else if (elemValue == "apa") {
-		    document.getElementById("citationDisplay").innerHTML = apaContent;
+		    document.getElementById("citationDisplay").innerHTML = a;
 		} else if (elemValue == "mla") {
-		    document.getElementById("citationDisplay").innerHTML = mlaContent;
+		    document.getElementById("citationDisplay").innerHTML = m;
 		} else {
 		    () => {};
 		}
@@ -83,16 +84,14 @@
 		      <input type="radio" id="mla" name="styleButton" value="mla" onchange="updateCitation(this.value)">
 		      <label for="mlastyle">MLA</label>
 		      </form>
-		      <ul>
 			<!--  dev-note: UnsUre if we want these hardwired into the html or to do a for loop and put the logic elsewhere -->
 
-			<div id="citationDisplay">
-			  “Woodlawn community /”. n.d.. “Woodlawn community /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. Dept. of Sociology.
-			</div>
+		      <div id="citationDisplay">
+			{{ mla|safe }}
+		      </div>
 			
-                        <li><a href="#">Save to BibTeX</a></li>
-			<li><a href="*">Save to Endnote</a></li>
-                      </ul>
+                      <a href="{{ bibtex_link }}">Save to BibTeX</a>
+		      <a href="#">Save to Endnote</a>
 		  </div>
 		  
 		  <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  

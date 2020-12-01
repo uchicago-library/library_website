@@ -2,6 +2,7 @@ import datetime
 import requests
 # TODO: remove datetime import
 # TODO: remove HttpResponse import
+from django.utils.html import escape
 from django.http import HttpResponse
 from datetime import date
 from base.models import DefaultBodyFields, PublicBasePage
@@ -737,6 +738,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         manifid = kwargs["manifid"]
 
+        chicago = '“Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. University of Chicago Press, n.d..'
+        apa = '<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i>. (n.d.). <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. University of Chicago Press.'
+        mla = '<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. University of Chicago Press.'
+
+        bibtex_link = "https://home.uchicago.edu/~teichman/sample.bib"
+
         def linkify(service, pi):
             if service.get_service_display() == 'LUNA':
                 return {'service': 'LUNA',
@@ -819,6 +826,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['collection_breadcrumb'] = breads
         context['physical_object'] = physical_object
         context['callno'] = callno
+        context['chicago'] = chicago
+        context['mla'] = mla
+        context['apa'] = apa
+        context['bibtex_link'] = bibtex_link
 
         context.update(self.staff_context())
 
