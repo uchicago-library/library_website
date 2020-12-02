@@ -656,13 +656,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return {
             **{
                 x.label: mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
-                for x in CollectionPageClusterBrowse.objects.all()
+                for x in CollectionPageClusterBrowse.objects.filter(page=self)
             },
             **{
                 CollectionPage.lbrowse_override(
                     x.label
                 ): mk_lbrowse_url_wagtail(slug, slugify(x.label))
-                for x in CollectionPageListBrowse.objects.all()
+                for x in CollectionPageListBrowse.objects.filter(page=self)
             }
         }
 
