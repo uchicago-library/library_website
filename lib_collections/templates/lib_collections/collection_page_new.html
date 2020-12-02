@@ -56,20 +56,25 @@
 	</div><!--/.row-->
     </article>
 
-	<div class="home-module">
-	    <h2 class="browse"> Collection Highlights </h2>
-	    <span class="browse-links">
-		{% for type, link in all_browse_types.items %}
-		<a href="{{ link }}">
-		    Browse by {{ type }}
-		</a>
-		{% endfor %}
-	    </span>
-	</div>
-    
+{% if objects %}
+    <div class="home-module">
+      <h2 class="browse"> Collection Highlights </h2>
+      <span class="browse-links">
+	{% for type, link in all_browse_types.items %}
+	<a href="{{ link }}">
+	  Browse by {{ type }}
+	</a>
+	{% endfor %}
+      </span>
+    </div>
+
     <section class="browse-list" id="content" role="main">
-	{% include "includes/general_listing.html" %}
+      {% include "includes/general_listing.html" %}
     </section>
+{% else %}
+    <!-- don't display collection highlights if the collection has no -->
+    <!-- highlighted records URL -->
+{% endif %}
     
 {% endblock %}
 

@@ -513,6 +513,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     def staff_context(self):
         output = {}
 
+        def default(val, defval):
+            try:
+                return val
+            except (AttributeError, DoesNotExist):
+                return default
+
         staff_title = lazy_dotchain(
             lambda: self.staff_contact.title,
             '')
@@ -1105,11 +1111,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         def comma_join(lst):
             return ", ".join(lst)
 
-        r = requests.get(iiif_url)
-        j = r.json()
-        objects = [DisplayBrowse.prepare_browse_json(x, comma_join)
-                   for x in j['items']
-                   ][:5]
+        if iiif_url:
+            r = requests.get(iiif_url)
+            j = r.json()
+            objects = [DisplayBrowse.prepare_browse_json(x, comma_join)
+                       for x in j['items']
+                       ][:5]
+        else:
+            objects = []
 
         slug = self.slug
 
