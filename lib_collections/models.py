@@ -519,49 +519,28 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             except (AttributeError, DoesNotExist):
                 return default
 
-        staff_title = lazy_dotchain(
-            lambda: self.staff_contact.title,
-            '')
-        staff_position_title = lazy_dotchain(
-            lambda: self.staff_contact.position_title,
-            '')
-        staff_email = lazy_dotchain(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_email
-                     .first()
-                     .email
-                     ),
-            '')
-        staff_phone_number = lazy_dotchain(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first().phone_number
-                     ),
-            '')
-        staff_faculty_exchange = lazy_dotchain(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first()
-                     .faculty_exchange
-                     ),
-            '')
-        staff_url = lazy_dotchain(
-            lambda: (StaffPublicPage
-                     .objects
-                     .get(cnetid=self.staff_contact.cnetid)
-                     .url
-                     ),
-            '')
-
-        access_location = lazy_dotchain(
-            lambda: {
-                "url": self.collection_location.url,
-                "title": self.collection_location.title
-            },
-            '')
+        staff_title = default(self.staff_contact.title, '')
+        staff_position_title = default(self.staff_contact.position_title, '')
+        staff_email = default(
+            self.staff_contact.staff_page_email.first().email, '')
+        staff_phone_number = default(self
+                                     .staff_contact
+                                     .staff_page_phone_faculty_exchange
+                                     .first()
+                                     .phone_number, '')
+        staff_faculty_exchange = default(self
+                                         .staff_contact
+                                         .staff_page_phone_faculty_exchange
+                                         .first()
+                                         .faculty_exchange, '')
+        staff_url = default((StaffPublicPage
+                             .objects
+                             .get(cnetid=self.staff_contact.cnetid)
+                             .url), '')
+        access_location = default({
+            "url": self.collection_location.url,
+            "title": self.collection_location.title
+        }, '')
 
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
