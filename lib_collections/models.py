@@ -10,6 +10,7 @@ from diablo_utils import lazy_dotchain
 from django.utils.text import slugify
 from django.core.validators import RegexValidator
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.response import TemplateResponse
 from library_website.settings import (
@@ -511,33 +512,34 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return [field[0] for field in query_set]
 
     def staff_context(self):
-        output = {}
 
-        def default(val, defval):
+        def default(thunk, defval):
             try:
-                return val
-            except (AttributeError, DoesNotExist):
+                return thunk()
+            except (AttributeError, ObjectDoesNotExist):
                 return default
 
-        staff_title = default(self.staff_contact.title, '')
-        staff_position_title = default(self.staff_contact.position_title, '')
+        output = {}
+
+        staff_title = default(lambda: self.staff_contact.title, '')
+        staff_position_title = default(
+            lambda: self.staff_contact.position_title, '')
         staff_email = default(
-            self.staff_contact.staff_page_email.first().email, '')
-        staff_phone_number = default(self
+            lambda: self.staff_contact.staff_page_email.first().email, '')
+        staff_phone_number = default(lambda: self
                                      .staff_contact
                                      .staff_page_phone_faculty_exchange
                                      .first()
                                      .phone_number, '')
-        staff_faculty_exchange = default(self
+        staff_faculty_exchange = default(lambda: self
                                          .staff_contact
                                          .staff_page_phone_faculty_exchange
                                          .first()
                                          .faculty_exchange, '')
-        staff_url = default((StaffPublicPage
-                             .objects
-                             .get(cnetid=self.staff_contact.cnetid)
-                             .url), '')
-        access_location = default({
+        staff_url = default(lambda: (StaffPublicPage.objects.get(
+            cnetid=self.staff_contact.cnetid).url), '')
+
+        access_location = default(lambda: {
             "url": self.collection_location.url,
             "title": self.collection_location.title
         }, '')
