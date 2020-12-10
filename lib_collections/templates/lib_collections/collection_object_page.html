@@ -58,54 +58,62 @@
 	    }
 	  </script>
 
-                  <div class="col-xs-12 coll-dropdown">
-                      <div class="btn-group">
-			<a class="btn btn-textonly dropdown-toggle" href="javascript:toggle('hiddenCitation')">Cite this<span class="caret"></span></a>
-                      </div>
+      <div class="col-xs-12 coll-dropdown">
 
-                      <div class="btn-group">
-                          <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
-                              <i class="fa fa-share-alt" aria-hidden="true"></i> Share this <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu listings-dropdown">
-                              <li><a href="#" class="dropdown-item">Facebook</a></li>
-                              <li><a href="#" class="dropdown-item">Twitter</a></li>
-                              <li><a href="#" class="dropdown-item">Instagram</a></li>
-                          </ul>
-                      </div>
-                  </div>
-
-		  <div class="row citation-drop" id="hiddenCitation" style="display: none;">
-		  	<div class="col-sm-4">
-			      <form>
-			      	<div class="form-check">
-					    <input class="form-check-input" type="radio" id="chicago" name="styleButton" value="chicago" onchange="updateCitation(this.value)">
-					     <label class="form-check-label" for="chistyle">Chicago Style</label>
-					</div>
-					<div class="form-check">
-					     <input class="form-check-input" type="radio" id="apa" name="styleButton" value="apa" onchange="updateCitation(this.value)">
-					     <label class="form-check-label" for="apastyle">APA</label>
-					</div>
-					<div class="form-check">
-					    <input class="form-check-input" type="radio" id="mla" name="styleButton" value="mla" onchange="updateCitation(this.value)">
-					    <label class="form-check-label" for="mlastyle">MLA</label>
-					</div>
-			      </form>
-			  </div>
+        <div class="btn-group">
+        	<div class="dropdown">
+				<button class="btn btn-textonly dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				    Cite this<span class="caret"></span>
+				</button>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				  	<div class="row" id="hiddenCitation" style="display: none;">
+					  	<div class="col-sm-4">
+							<form>
+								<div class="form-check">
+								    <input class="form-check-input" type="radio" id="chicago" name="styleButton" value="chicago" onchange="updateCitation(this.value)">
+								     <label class="form-check-label" for="chistyle">Chicago Style</label>
+								</div>
+								<div class="form-check">
+								     <input class="form-check-input" type="radio" id="apa" name="styleButton" value="apa" onchange="updateCitation(this.value)">
+								     <label class="form-check-label" for="apastyle">APA</label>
+								</div>
+								<div class="form-check">
+								    <input class="form-check-input" type="radio" id="mla" name="styleButton" value="mla" onchange="updateCitation(this.value)">
+								    <label class="form-check-label" for="mlastyle">MLA</label>
+								</div>
+							</form>
+						</div>
 			<!--  dev-note: UnsUre if we want these hardwired into the html or to do a for loop and put the logic elsewhere -->
 
-		     <div class="col-sm-8">
-		     	<div id="citationDisplay">
-					{{ mla|safe }}
-				</div>
-				<div>
-					<span class="save-to-link">
-			            <a href="{{ bibtex_link }}">Save to BibTeX</a>
-					     | <a href="#">Save to Endnote</a>
-					 </span>
-				</div>
-		    </div>
-		  </div>
+					    <div class="col-sm-8">
+					     	<div id="citationDisplay">
+								{{ mla|safe }}
+							</div>
+							<div>
+								<span class="save-to-link">
+						            <a href="{{ bibtex_link }}">Save to BibTeX</a>
+								     | <a href="#">Save to Endnote</a>
+								 </span>
+							</div>
+					    </div>
+			    
+					</div> <!-- // END citation-drop -->
+				</div> <!-- // END dropdown-menu -->
+			</div>  <!-- // END dropdown -->
+		</div>  <!-- // END button group -->
+
+        <div class="btn-group">
+            <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+                <i class="fa fa-share-alt" aria-hidden="true"></i> Share this <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu listings-dropdown">
+                <li><a href="#" class="dropdown-item">Facebook</a></li>
+                <li><a href="#" class="dropdown-item">Twitter</a></li>
+                <li><a href="#" class="dropdown-item">Instagram</a></li>
+            </ul>
+		</div>
+    </div>
+  
 		  
 		  <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  
                       <dl>
