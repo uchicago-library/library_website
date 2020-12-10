@@ -183,3 +183,23 @@ body.collectionpage {
 		}
 	}
 }
+
+.citation-drop {
+	background-color: $hovercalm;
+	padding: 15px;
+}
+
+.save-to-link {
+	display: block;
+	padding-top: 15px;
+}
+
+.form-check {
+	input[type="radio"] {
+	    display:inline-block;
+	}
+
+	label {
+	    display:inline-block;
+	}
+}
