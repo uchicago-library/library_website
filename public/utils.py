@@ -224,7 +224,7 @@ def get_first_param(request):
         return None
 
 
-def switchboard_url(form_name):
+def switchboard_url(form_name, form_option=''):
     """
     Map the name of each search form to the base URL used for the
     relevant search
@@ -235,7 +235,12 @@ def switchboard_url(form_name):
     Returns:
         the URL to post to for the relevant search box
     """
-    if form_name == 'catalog':
+
+    browse_options = ['browse_title', 'browse_journal', 'browse_lcc']
+
+    if form_name == 'catalog' and form_option in browse_options:
+        return "https://catalog.lib.uchicago.edu/vufind/Alphabrowse/Home"
+    elif form_name == 'catalog':
         return 'https://catalog.lib.uchicago.edu/vufind/Search/Results'
     elif form_name == 'articles':
         url = (

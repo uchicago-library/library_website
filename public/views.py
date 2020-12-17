@@ -1,5 +1,7 @@
 from urllib import parse
 
+import re
+
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
@@ -60,7 +62,7 @@ def switchboard(request):
     note: this code assumes that the first parameter posted by the
     search box is the search term
 
-    Args: 
+    Args:
         a POST request
 
     Returns:
@@ -70,20 +72,41 @@ def switchboard(request):
     params = get_clean_params(request)
     doi_url = doi_lookup(search_term)
 
+    browse_options = ['browse_title', 'browse_journal', 'browse_lcc']
+
+    def trim(str):
+        if re.match(r'browse_(.*)', str) is not None:
+            return re.match(r'browse_(.*)', str)[1]
+        else:
+            return str
+
     if doi_url:
         # case where user entered a DOI
         return redirect(doi_url)
     else:
         # otherwise: pass query string along to wherever it was going
         form = params['which-form']
+
+        try:
+            formtype = params['type']
+        except KeyError:
+            formtype = ''
+
         if form == 'articles':
             # add a 'bquery' parameter to make the ebscohost API happy
             params['bquery'] = search_term
-            query_string = parse.urlencode(params)
+        elif form == 'catalog' and formtype in browse_options:
+            params['from'] = params['lookfor']
+            del params['lookfor']
+            params['source'] = trim(formtype)
+            del params['type']
         else:
-            # all other searches are happy with the original query string
-            query_string = parse.urlencode(params)
-        url = f'{switchboard_url(form)}?{query_string}'
+            pass
+
+        url_prefix = switchboard_url(form, form_option=formtype)
+        del params['which-form']
+        query_string = parse.urlencode(params)
+        url = f'{url_prefix}?{query_string}'
         return redirect(url)
 
 
