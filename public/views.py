@@ -1,5 +1,7 @@
 from urllib import parse
 
+import re
+
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
@@ -70,6 +72,14 @@ def switchboard(request):
     params = get_clean_params(request)
     doi_url = doi_lookup(search_term)
 
+    browse_options = ['browse_title', 'browse_journal', 'browse_lcc']
+
+    def trim(str):
+        if re.match(r'browse_(.*)', str) is not None:
+            return re.match(r'browse_(.*)', str)[1]
+        else:
+            return str
+
     if doi_url:
         # case where user entered a DOI
         return redirect(doi_url)
@@ -80,10 +90,19 @@ def switchboard(request):
             # add a 'bquery' parameter to make the ebscohost API happy
             params['bquery'] = search_term
             query_string = parse.urlencode(params)
-        else:
-            # all other searches are happy with the original query string
+        elif form == 'catalog' and params['type'] in browse_options:
+            params['from'] = params['lookfor']
+            del params['lookfor']
+            params['source'] = trim(params['type'])
             query_string = parse.urlencode(params)
-        url = f'{switchboard_url(form)}?{query_string}'
+        else:
+            pass
+
+        url_prefix = switchboard_url(form, form_option=params['type'])
+        del params['type']
+        del params['which-form']
+        query_string = parse.urlencode(params)
+        url = f'{url_prefix}?{query_string}'
         return redirect(url)
 
 
