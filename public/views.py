@@ -89,17 +89,14 @@ def switchboard(request):
         if form == 'articles':
             # add a 'bquery' parameter to make the ebscohost API happy
             params['bquery'] = search_term
-            query_string = parse.urlencode(params)
         elif form == 'catalog' and params['type'] in browse_options:
             params['from'] = params['lookfor']
             del params['lookfor']
             params['source'] = trim(params['type'])
-            query_string = parse.urlencode(params)
         else:
             pass
 
         url_prefix = switchboard_url(form, form_option=params['type'])
-        del params['type']
         del params['which-form']
         query_string = parse.urlencode(params)
         url = f'{url_prefix}?{query_string}'
