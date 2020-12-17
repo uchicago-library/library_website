@@ -86,18 +86,20 @@ def switchboard(request):
     else:
         # otherwise: pass query string along to wherever it was going
         form = params['which-form']
+        p_type = params['type']
         if form == 'articles':
             # add a 'bquery' parameter to make the ebscohost API happy
             params['bquery'] = search_term
-        elif form == 'catalog' and params['type'] in browse_options:
+        elif form == 'catalog' and p_type in browse_options:
             params['from'] = params['lookfor']
             del params['lookfor']
-            params['source'] = trim(params['type'])
+            params['source'] = trim(p_type)
+            del params['type']
         else:
             pass
 
         try:
-            formtype = params["type"]
+            formtype = p_type
         except KeyError:
             formtype = ''
 
