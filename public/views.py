@@ -62,7 +62,7 @@ def switchboard(request):
     note: this code assumes that the first parameter posted by the
     search box is the search term
 
-    Args: 
+    Args:
         a POST request
 
     Returns:
@@ -86,22 +86,22 @@ def switchboard(request):
     else:
         # otherwise: pass query string along to wherever it was going
         form = params['which-form']
-        p_type = params['type']
+
+        try:
+            formtype = params['type']
+        except KeyError:
+            formtype = ''
+
         if form == 'articles':
             # add a 'bquery' parameter to make the ebscohost API happy
             params['bquery'] = search_term
-        elif form == 'catalog' and p_type in browse_options:
+        elif form == 'catalog' and formtype in browse_options:
             params['from'] = params['lookfor']
             del params['lookfor']
-            params['source'] = trim(p_type)
+            params['source'] = trim(formtype)
             del params['type']
         else:
             pass
-
-        try:
-            formtype = p_type
-        except KeyError:
-            formtype = ''
 
         url_prefix = switchboard_url(form, form_option=formtype)
         del params['which-form']
