@@ -96,7 +96,12 @@ def switchboard(request):
         else:
             pass
 
-        url_prefix = switchboard_url(form, form_option=params['type'])
+        try:
+            formtype = params["type"]
+        except KeyError:
+            formtype = ''
+
+        url_prefix = switchboard_url(form, form_option=formtype)
         del params['which-form']
         query_string = parse.urlencode(params)
         url = f'{url_prefix}?{query_string}'
