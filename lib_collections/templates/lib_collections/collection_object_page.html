@@ -66,7 +66,7 @@
 				    Cite this<span class="caret"></span>
 				</button>
 				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				  	<div class="row" id="hiddenCitation" style="display: none;">
+				  	<div class="row" id="hiddenCitation">
 					  	<div class="col-sm-4">
 							<form>
 								<div class="form-check">
@@ -107,9 +107,25 @@
                 <i class="fa fa-share-alt" aria-hidden="true"></i> Share this <span class="caret"></span>
             </button>
             <ul class="dropdown-menu listings-dropdown">
-                <li><a href="#" class="dropdown-item">Facebook</a></li>
-                <li><a href="#" class="dropdown-item">Twitter</a></li>
-                <li><a href="#" class="dropdown-item">Instagram</a></li>
+              <li>
+		  <a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook <i aria-hidden="true" class="fa fa-facebook-f"></i></a>
+	      </li>
+              <li>
+		  <!-- TODO: this is missing data beyond the share URL -->
+		  <a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.excerpt|striptags|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter <i aria-hidden="true" class="fa fa-twitter"></i></a>
+	      </li>
+	      <li>
+		  <!-- TODO: this link doesn't work yet -->
+		  <a href="" class="btn-floating" type="button" role="button" aria-label="Share story on Instagram">Instagram <i aria-hidden="true" class="fa fa-instagram"></i></a>
+	      </li>
+	      <li>
+		  <!-- TODO: neither does this -->
+		  <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest <i aria-hidden="true" class="fa fa-pinterest"></i></a>
+	      </li>
+	      <li>
+		  <!-- TODO: not sure whether this works yet -->
+		  <a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit <i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
+	      </li>
             </ul>
 		</div>
     </div>
