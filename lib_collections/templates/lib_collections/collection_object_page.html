@@ -77,7 +77,10 @@
 						</div>
 			<!--  dev-note: UnsUre if we want these hardwired into the html or to do a for loop and put the logic elsewhere -->
 
-					    <div class="col-sm-9" id="citationDisplay">								{{ mla|safe }}
+					    <div class="col-sm-9">
+							<div id="citationDisplay">
+						    	{{ mla|safe }}
+						    </div>
 							<div class="save-to-link">
 					            <a href="{{ bibtex_link }}">Save to BibTeX</a>
 							    <a href="#">Save to Endnote</a>
