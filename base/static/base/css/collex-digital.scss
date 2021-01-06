@@ -138,7 +138,7 @@ body.collectionpage {
  *
  */
 
-.collectionpage {
+body.collectionpage {
 	dl {
 		@include respond-to(medium) {
 			padding-left: 1em;
@@ -182,24 +182,31 @@ body.collectionpage {
 			text-decoration: underline;
 		}
 	}
-}
 
-.citation-drop {
-	background-color: $hovercalm;
-	padding: 15px;
-}
-
-.save-to-link {
-	display: block;
-	padding-top: 15px;
-}
-
-.form-check {
-	input[type="radio"] {
-	    display:inline-block;
+	#hiddenCitation {
+		width: 80vw;
+		@include respond-to(medium) {
+			width: 50vw;
+		}
+		.citationradios {
+			padding-left:0;
+		}
 	}
 
-	label {
-	    display:inline-block;
+	.save-to-link {
+		padding-top: 15px;
+		a {
+			display: block;
+		}
+	}
+
+	.form-check {
+		input[type="radio"] {
+		    display:inline-block;
+		}
+
+		label {
+		    display:inline-block;
+		}
 	}
 }

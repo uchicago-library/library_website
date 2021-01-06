@@ -17,12 +17,6 @@
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
-	      <!-- dev-note: all items that need model information are in caps -->
-
-
-      
-      <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-
           <!-- @todo Figure out responsive iFrame. Oddness happening with UV iFrame when rendered in browser.
                Ideal code:
                <div class="embed-responsive embed-responsive-16by9">
@@ -58,16 +52,14 @@
 	    }
 	  </script>
 
-      <div class="col-xs-12 coll-dropdown">
-
-        <div class="btn-group">
-        	<div class="dropdown">
-				<button class="btn btn-textonly dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	 <div class="col-xs-12 coll-dropdown">
+		<div class="btn-group">
+				<button type="button" class="btn btn-textonly dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" id="dropdownMenuButton">
 				    Cite this<span class="caret"></span>
 				</button>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				  	<div class="row" id="hiddenCitation">
-					  	<div class="col-sm-4">
+				<div class="dropdown-menu listings-dropdown" aria-labelledby="dropdownMenuButton">
+				  	<div class="col-xs-12" id="hiddenCitation">
+					  	<div class="col-sm-3 citationradios">
 							<form>
 								<div class="form-check">
 								    <input class="form-check-input" type="radio" id="chicago" name="styleButton" value="chicago" onchange="updateCitation(this.value)">
@@ -85,21 +77,15 @@
 						</div>
 			<!--  dev-note: UnsUre if we want these hardwired into the html or to do a for loop and put the logic elsewhere -->
 
-					    <div class="col-sm-8">
-					     	<div id="citationDisplay">
-								{{ mla|safe }}
-							</div>
-							<div>
-								<span class="save-to-link">
-						            <a href="{{ bibtex_link }}">Save to BibTeX</a>
-								     | <a href="#">Save to Endnote</a>
-								 </span>
+					    <div class="col-sm-9" id="citationDisplay">								{{ mla|safe }}
+							<div class="save-to-link">
+					            <a href="{{ bibtex_link }}">Save to BibTeX</a>
+							    <a href="#">Save to Endnote</a>
 							</div>
 					    </div>
 			    
 					</div> <!-- // END citation-drop -->
 				</div> <!-- // END dropdown-menu -->
-			</div>  <!-- // END dropdown -->
 		</div>  <!-- // END button group -->
 
         <div class="btn-group">
@@ -107,28 +93,28 @@
                 <i class="fa fa-share-alt" aria-hidden="true"></i> Share this <span class="caret"></span>
             </button>
             <ul class="dropdown-menu listings-dropdown">
-              <li>
-		  <a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook <i aria-hidden="true" class="fa fa-facebook-f"></i></a>
-	      </li>
-              <li>
-		  <!-- TODO: this is missing data beyond the share URL -->
-		  <a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.excerpt|striptags|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter <i aria-hidden="true" class="fa fa-twitter"></i></a>
-	      </li>
-	      <li>
-		  <!-- TODO: this link doesn't work yet -->
-		  <a href="" class="btn-floating" type="button" role="button" aria-label="Share story on Instagram">Instagram <i aria-hidden="true" class="fa fa-instagram"></i></a>
-	      </li>
-	      <li>
-		  <!-- TODO: neither does this -->
-		  <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest <i aria-hidden="true" class="fa fa-pinterest"></i></a>
-	      </li>
-	      <li>
-		  <!-- TODO: not sure whether this works yet -->
-		  <a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit <i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
-	      </li>
-            </ul>
+	            <li>
+					<a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook <i aria-hidden="true" class="fa fa-facebook-f"></i></a>
+				</li>
+				<li>
+				<!-- TODO: this is missing data beyond the share URL -->
+					<a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.excerpt|striptags|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter <i aria-hidden="true" class="fa fa-twitter"></i></a>
+				</li>
+				<li>
+				<!-- TODO: this link doesn't work yet -->
+					<a href="" class="btn-floating" type="button" role="button" aria-label="Share story on Instagram">Instagram <i aria-hidden="true" class="fa fa-instagram"></i></a>
+				</li>
+				<li>
+				<!-- TODO: neither does this -->
+					<a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.excerpt|striptags|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest <i aria-hidden="true" class="fa fa-pinterest"></i></a>
+				</li>
+				<li>
+				<!-- TODO: not sure whether this works yet -->
+					<a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit <i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
+				</li>
+			</ul>
 		</div>
-    </div>
+	</div>
   
 		  
 		  <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  
@@ -146,7 +132,6 @@
 			  {% endfor %}
                       </dl>
 		  </span> <!-- / schema.org wrapper -->
-    	      </div> <!-- // Center Content -->
 
 {% endblock %}
       
