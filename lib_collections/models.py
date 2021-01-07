@@ -3,7 +3,7 @@ import requests
 # TODO: remove datetime import
 # TODO: remove HttpResponse import
 from django.utils.html import escape
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from datetime import date
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
@@ -761,11 +761,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
-        marklogic = get_record_for_display(
-            manifid,
-            slug,
-            field_names,
-        )
+        def injection_safe(id):
+            length_ok = len(id) >= 1 and len(id) <= 30
+            alphanum = id.isalnum()
+            return length_ok and alphanum
+
+        if injection_safe(manifid):
+            marklogic = get_record_for_display(
+                manifid,
+                slug,
+                field_names,
+            )
+        else:
+            marklogic = ''
+            raise Http404
 
         def default(expr, val):
             try:
@@ -801,10 +810,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_viewer_url = DisplayBrowse.mk_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        share_url = "%s/object/%s" % (self.url, manifid)
+
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
             kwargs["manifid"])
+        context["share_url"] = share_url
         context["slug"] = slug
         context["marklogic"] = marklogic
         context["all_browse_types"] = all_browse_types
