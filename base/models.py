@@ -15,7 +15,8 @@ from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
 from wagtail.admin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel,
+    TabbedInterface
 )
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core.blocks import (
@@ -1982,10 +1983,42 @@ class IntranetPlainPage(BasePage):
         index.SearchField('body'),
     ]
 
+    # CGIMail Form
+    cgi_mail_form = models.TextField(
+        blank=True,
+        help_text='JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this'
+    )
 
-IntranetPlainPage.content_panels = Page.content_panels + [
-    StreamFieldPanel('body')
-] + BasePage.content_panels
+    cgi_mail_form_thank_you_text = RichTextField(
+        blank=True,
+        help_text='Text to display after the form has been submitted'
+    )
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('body')
+    ] + BasePage.content_panels
+
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
 
 
 class IntranetIndexPage(BasePage):
