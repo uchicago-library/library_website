@@ -398,7 +398,7 @@ class FormContainer extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const form = document.forms[0];
+    const form = document.forms.cgimail;
     const data = new FormData(form);
     fetch(CGI_MAIL_SERVICE, {
       method: 'POST',
@@ -438,7 +438,7 @@ class FormContainer extends React.Component {
       <div className="form-container">
         {hasRequiredFields ? <RequiredFieldsText /> : ''}
         <LoadingItemInfo loading={isLoadingItemInfo} />
-        <form id={formId} onSubmit={this.handleSubmit}>
+        <form id={formId} name="cgimail" onSubmit={this.handleSubmit}>
           <Sections
             data={form.sections}
             handleChange={this.handleChange}
