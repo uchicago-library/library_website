@@ -2020,6 +2020,14 @@ follow a strict schema. Contact DLDC for help with this'
         ]
     )
 
+    def get_context(self, request):
+        context = super(IntranetPlainPage, self).get_context(request)
+
+        context['cgi_mail'] = CGI_MAIL_SERVICE
+        context['item_servlet'] = ITEM_SERVLET
+
+        return context
+
 
 class IntranetIndexPage(BasePage):
     intro = StreamField(DefaultBodyFields())
