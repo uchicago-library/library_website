@@ -1,7 +1,20 @@
 {% extends "base/intranet_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load compress static %}
+{% load compile_static %}
 {% load wagtailcore_tags %}
 
+{% block styles %}
+    {% compress css %}
+        <link href="{% static "public/css/webforms.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
 {% block content %}
-      <h1>{{ self.title }}</h1>
-      {{ self.body }}
+    <h1>{{ self.title }}</h1>
+    {{ self.body }}
+    {% if self.cgi_mail_form %}
+        <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}"></div>
+        {% render_bundle 'CGIMailForm' %}
+    {% endif %}
 {% endblock %}
