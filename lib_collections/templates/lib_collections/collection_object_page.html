@@ -8,12 +8,28 @@
 
  <!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
 
+
+
 {% block styles %}
   {% compress css %}
       <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
   {% endcompress %}
 {% endblock %}
 
+
+{% block meta %}
+  <meta name="DC:Type" content="Map"/>
+  <meta name="DC:Id" content="http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5"/>
+  <meta name="DC:Tanguage" content="English"/>
+  <meta name="DC:Medium" content="1 map"/>
+  <meta name="DC:Publisher" content="Dept. of Sociology"/>
+  <meta name="DC:Title" content="Woodlawn Community /"/>
+  <meta name="DC:Collection-title" content="<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>"/>
+  <meta name="DC:call-number" content="G4104.C6:2W9 1920z .U5"/>
+  <meta name="DC:scale" content="Scale [ca. 1:8,000]"/>       
+{% endblock %}
+
+      
 {% block content %}
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
@@ -53,7 +69,7 @@
 					  	<div class="col-sm-3 citationradios">
 							<form>
 								<div class="form-check">
-								    <input class="form-check-input" type="radio" id="chicago" name="styleButton" value="chicago" onchange="updateCitation(this.value)">
+								    <input class="form-check-input" type="radio" id="chicago" name="styleButton" checked="true" value="chicago" onchange="updateCitation(this.value)">
 								     <label class="form-check-label" for="chistyle">Chicago Style</label>
 								</div>
 								<div class="form-check">
@@ -73,8 +89,14 @@
 						{{ mla|safe }}
 					      </div>
 					      <div class="save-to-link">
-					        <a href="{{ bibtex_link }}">Save to BibTeX</a>
-						<a href="#">Save to Endnote</a>
+						  {% if bibtex_link %}
+					              <a href="{{ bibtex_link }}">Save to BibTeX</a>
+						  {% else %}
+						  {% endif %}
+						  {% if endnote_link %}
+						      <a href="{{ endnote_link }}">Save to Endnote</a>
+						  {% else %}
+						  {% endif %}    
 					      </div>
 					    </div>
 			    
@@ -88,21 +110,21 @@
             </button>
             <ul class="dropdown-menu listings-dropdown">
 	            <li>
-		      <a href="https://www.facebook.com/sharer/sharer.php?u={{self.url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook &nbsp;<i aria-hidden="true" class="fa fa-facebook-f"></i></a>
+		      <a href="https://www.facebook.com/sharer/sharer.php?u={{share_url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook &nbsp;<i aria-hidden="true" class="fa fa-facebook-f"></i></a>
 		    </li>
 		    <li>
-		      <a href="https://twitter.com/intent/tweet?url={{self.url|urlencode}}&text={{self.title|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter &nbsp;<i aria-hidden="true" class="fa fa-twitter"></i></a>
+		      <a href="https://twitter.com/intent/tweet?url={{share_url|urlencode}}&text={{self.title|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter &nbsp;<i aria-hidden="true" class="fa fa-twitter"></i></a>
 		    </li>
 		    <li>
-		      <a href="https://www.linkedin.com/shareArticle?mini=true&url={{self.url|urlencode}}&title={{self.title|urlencode}}&summary={{self.short_abstract|urlencode|truncatechars:50}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button" aria-label="Share story on Linkedin">LinkedIn &nbsp;<i aria-hidden="true" class="fa fa-linkedin"></i></a>
+		      <a href="https://www.linkedin.com/shareArticle?mini=true&url={{share_url|urlencode}}&title={{self.title|urlencode}}&summary={{self.short_abstract|urlencode|truncatechars:50}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button" aria-label="Share story on Linkedin">LinkedIn &nbsp;<i aria-hidden="true" class="fa fa-linkedin"></i></a>
 		    </li>
 		    <li>
 		      <!-- TODO: neither does this -->
-		      <a href="https://pinterest.com/pin/create/button/?url={{self.url|urlencode}}&description={{self.short_abstract|urlencode|truncatechars:250}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest &nbsp;<i aria-hidden="true" class="fa fa-pinterest"></i></a>
+		      <a href="https://pinterest.com/pin/create/button/?url={{share_url|urlencode}}&description={{self.short_abstract|urlencode|truncatechars:250}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest &nbsp;<i aria-hidden="true" class="fa fa-pinterest"></i></a>
 		    </li>
 		    <li>
 		      <!-- TODO: not sure whether this works yet -->
-		      <a href="https://www.reddit.com/submit?url={{self.url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit &nbsp;<i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
+		      <a href="https://www.reddit.com/submit?url={{share_url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit &nbsp;<i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
 		    </li>
 	    </ul>
 	</div>

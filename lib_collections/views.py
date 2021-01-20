@@ -1,3 +1,4 @@
+
 from django.core.management import call_command
 from django.shortcuts import render
 from lib_collections.models import CollectionPage, CollectionPageFormatPlacement, CollectionPageSubjectPlacement, CollectingAreaPage, ExhibitPage, ExhibitPageSubjectPlacement, Format
@@ -24,8 +25,9 @@ from django.conf import settings
 from django.http import HttpResponse
 
 
-def temporary(request):
-    return HttpResponse("hello")
+def citation_display(request):
+    junk = request.GET.get('content')
+    return HttpResponse(junk, content_type='text/plain')
 
 
 def collections(request):

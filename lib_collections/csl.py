@@ -12,8 +12,6 @@ from citeproc import Citation, CitationItem
 from citeproc import formatter
 from citeproc.source.json import CiteProcJSON
 
-example =
-
 
 def csl_json_to_html(csl_json, style):
     if not os.path.isfile(style):

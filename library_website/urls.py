@@ -12,6 +12,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
 from lib_collections.views import collections as collection_view
+from lib_collections.views import citation_display as citation_display
 from lib_news.views import ltdrfr
 from lib_news.views import RSSFeeds
 from public.views import navigation as navigation_view
@@ -21,12 +22,9 @@ from search.views import loop_search as search_view
 from staff.views import staff, staff_api
 from units.views import units as unit_view
 
-from lib_collections.views import temporary
-
 from .api import api_router
 
 urlpatterns = [
-    url(r'^teichman/rat:rat/$', temporary, name='temporary'),
     url(r'^django-admin/', admin.site.urls),
     url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
     url(r'^admin/', include(wagtailadmin_urls)),
@@ -51,6 +49,7 @@ urlpatterns = [
     ),
     url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collex/$', collection_view, name='collection'),
+    url(r'^citation_display$', citation_display, name='citation_display'),
     url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
     url(
         r'^collex/exhibits/$',
