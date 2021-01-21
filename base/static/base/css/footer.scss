@@ -64,9 +64,9 @@ Pleeb Footer Code
   & a {
   color: #fff;
   line-height: 1.7em;
-  text-decoration: none;
-    &:hover {
+    &:hover, &:focus {
     	color: $hoveraccent;
+      text-decoration: none;
     }
 	}
   h5 {
