@@ -18,15 +18,7 @@
 
 
 {% block meta %}
-  <meta name="DC:Type" content="Map"/>
-  <meta name="DC:Id" content="http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5"/>
-  <meta name="DC:Tanguage" content="English"/>
-  <meta name="DC:Medium" content="1 map"/>
-  <meta name="DC:Publisher" content="Dept. of Sociology"/>
-  <meta name="DC:Title" content="Woodlawn Community /"/>
-  <meta name="DC:Collection-title" content="<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>"/>
-  <meta name="DC:call-number" content="G4104.C6:2W9 1920z .U5"/>
-  <meta name="DC:scale" content="Scale [ca. 1:8,000]"/>       
+  {{ zotero|safe }}
 {% endblock %}
 
       
@@ -58,7 +50,7 @@
 		}
 	    }
 	  </script>
-
+	  
 	 <div class="col-xs-12 coll-dropdown">
 		<div class="btn-group">
 				<button type="button" class="btn btn-textonly dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" id="dropdownMenuButton">

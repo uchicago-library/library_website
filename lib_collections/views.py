@@ -26,8 +26,8 @@ from django.http import HttpResponse
 
 
 def citation_display(request):
-    junk = request.GET.get('content')
-    return HttpResponse(junk, content_type='text/plain')
+    citation = request.GET.get('content')
+    return HttpResponse(citation, content_type='text/plain')
 
 
 def collections(request):

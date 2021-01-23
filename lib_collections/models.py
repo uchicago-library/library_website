@@ -726,9 +726,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         manifid = kwargs["manifid"]
 
-        chicago = '“Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. University of Chicago Press, n.d..'
-        apa = '(n.d.). <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. University of Chicago Press.'
-        mla = '<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. University of Chicago Press.'
+        # chicago = '“Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. University of Chicago Press, n.d..'
+        # apa = '(n.d.). <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. University of Chicago Press.'
+        # mla = '<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. University of Chicago Press.'
 
         bibtex_link = "https://home.uchicago.edu/~teichman/sample.bib"
 
@@ -818,39 +818,48 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         get_csl = CitationInfo.get_citation
         get_bibtex = CitationInfo.get_bibtex
         get_ris = CitationInfo.get_ris
+        get_zotero = CitationInfo.get_zotero
         csl_json_to_html = CitationInfo.csl_json_to_html
         APA_PATH = CitationInfo.APA_PATH
         MLA_PATH = CitationInfo.MLA_PATH
         CHICAGO_PATH = CitationInfo.CHICAGO_PATH
+        config = CitationInfo.default_config
 
         turtle_data = get_turtle_data(manifid)
-        csl = json.loads(get_citation("csl", turtle_data))
+
+        try:
+            csl = json.loads(get_citation("csl", turtle_data, config))
+        except JSONDecodeError:
+            csl = ''
+
         f = open(CHICAGO_PATH, "r")
         chicago = csl_json_to_html(csl, CHICAGO_PATH)
         mla = csl_json_to_html(csl, MLA_PATH)
         apa = csl_json_to_html(csl, APA_PATH)
 
-        bibtex_link = get_bibtex(turtle_data)
-        endnote_link = get_ris(turtle_data)
+        bibtex_link = get_bibtex(turtle_data, config)
+        endnote_link = get_ris(turtle_data, config)
+        zotero = str(get_zotero(turtle_data, config))
 
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
             kwargs["manifid"])
-        context["share_url"]=share_url
-        context["slug"]=slug
-        context["marklogic"]=marklogic
-        context["all_browse_types"]=all_browse_types
-        context["external_links"]=external_links
-        context['collection_final_breadcrumb']=unslugify_browse(final_crumb)
-        context['collection_breadcrumb']=breads
-        context['physical_object']=physical_object
-        context['callno']=callno
-        context['chicago']=chicago
-        context['mla']=mla
-        context['apa']=apa
-        context['bibtex_link']=bibtex_link
-        context['endnote_link']=endnote_link
+        context["share_url"] = share_url
+        context["slug"] = slug
+        context["marklogic"] = marklogic
+        context["all_browse_types"] = all_browse_types
+        context["external_links"] = external_links
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+        context['physical_object'] = physical_object
+        context['callno'] = callno
+        context['chicago'] = chicago
+        context['mla'] = mla
+        context['apa'] = apa
+        context['bibtex_link'] = bibtex_link
+        context['endnote_link'] = endnote_link
+        context['zotero'] = zotero
 
         context.update(self.staff_context())
 
@@ -862,35 +871,35 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Route for main cluster browse index.
         """
 
-        template="lib_collections/collection_browse.html"
+        template = "lib_collections/collection_browse.html"
 
-        slug=self.slug
-        all_browse_types=self.build_browse_types()
+        slug = self.slug
+        all_browse_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
-            default_browse=CollectionPageClusterBrowse.objects.first()
-            default=default_browse.label.lower()
-            browse_type=default
+            default_browse = CollectionPageClusterBrowse.objects.first()
+            default = default_browse.label.lower()
+            browse_type = default
         else:
-            browse_type=kwargs["browse_type"][:-1]
+            browse_type = kwargs["browse_type"][:-1]
 
-        (breads, final_crumb)=CollectionPage.build_breadcrumbs(request)
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
-        mk_cbrowse_type_url_iiif=CBrowseURL.mk_cbrowse_type_url_iiif
+        mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
 
-        get_iiif_labels=DisplayBrowse.get_iiif_labels
-        unslugify_browse=DisplayBrowse.unslugify_browse
+        get_iiif_labels = DisplayBrowse.get_iiif_labels
+        unslugify_browse = DisplayBrowse.unslugify_browse
 
-        context=super().get_context(request)
-        context["all_browse_types"]=all_browse_types
-        context["browse_type"]=unslugify_browse(browse_type)
-        context["browses"]=get_iiif_labels(
+        context = super().get_context(request)
+        context["all_browse_types"] = all_browse_types
+        context["browse_type"] = unslugify_browse(browse_type)
+        context["browses"] = get_iiif_labels(
             mk_cbrowse_type_url_iiif(slug, browse_type),
             browse_type,
             slug,
         )
-        context['collection_final_breadcrumb']=unslugify_browse(final_crumb)
-        context['collection_breadcrumb']=breads
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
@@ -900,48 +909,48 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Route for Digital Collection Object.
         """
 
-        template="lib_collections/collection_browse.html"
+        template = "lib_collections/collection_browse.html"
 
-        slug=self.slug
+        slug = self.slug
 
-        browse=kwargs['browse']
-        browse_type=kwargs['browse_type']
+        browse = kwargs['browse']
+        browse_type = kwargs['browse_type']
 
-        all_browse_types=self.build_browse_types()
+        all_browse_types = self.build_browse_types()
 
-        mk_cbrowse_url_iiif=CBrowseURL.mk_cbrowse_url_iiif
-        unslugify_browse=DisplayBrowse.unslugify_browse
-        prepare_browse_json=DisplayBrowse.prepare_browse_json
+        mk_cbrowse_url_iiif = CBrowseURL.mk_cbrowse_url_iiif
+        unslugify_browse = DisplayBrowse.unslugify_browse
+        prepare_browse_json = DisplayBrowse.prepare_browse_json
 
-        iiif_url=mk_cbrowse_url_iiif(
+        iiif_url = mk_cbrowse_url_iiif(
             slug,
             browse,
             browse_type,
         )
 
-        browse=unslugify_browse(kwargs["browse"])
-        browse_type=unslugify_browse(kwargs["browse"])
+        browse = unslugify_browse(kwargs["browse"])
+        browse_type = unslugify_browse(kwargs["browse"])
 
         def comma_join(lst):
             return ", ".join(lst)
 
-        r=requests.get(iiif_url)
-        j=r.json()
-        objects=[prepare_browse_json(x, comma_join)
+        r = requests.get(iiif_url)
+        j = r.json()
+        objects = [prepare_browse_json(x, comma_join)
                    for x in j['items']]
 
-        (breads, final_crumb)=CollectionPage.build_breadcrumbs(request)
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
-        unslugify_browse=DisplayBrowse.unslugify_browse
+        unslugify_browse = DisplayBrowse.unslugify_browse
 
-        context=super().get_context(request)
-        context["browse_title"]=browse
-        context["browse_type"]=browse_type
-        context["all_browse_types"]=all_browse_types
-        context["slug"]=slug
-        context["objects"]=objects
-        context['collection_final_breadcrumb']=unslugify_browse(final_crumb)
-        context['collection_breadcrumb']=breads
+        context = super().get_context(request)
+        context["browse_title"] = browse
+        context["browse_type"] = browse_type
+        context["all_browse_types"] = all_browse_types
+        context["slug"] = slug
+        context["objects"] = objects
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
@@ -951,27 +960,27 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Route for main list browse index.
         """
 
-        THUMBS_PER_PAGE=25
+        THUMBS_PER_PAGE = 25
 
-        template="lib_collections/collection_browse.html"
+        template = "lib_collections/collection_browse.html"
 
-        collection=self.slug
+        collection = self.slug
 
-        paginate_name=kwargs['browse_name']
+        paginate_name = kwargs['browse_name']
 
-        browse_name=paginate_name[:-1]
+        browse_name = paginate_name[:-1]
 
         if kwargs["pageno"] is None:
-            pageno=1
+            pageno = 1
         else:
-            pageno=int(kwargs["pageno"][:-1])
+            pageno = int(kwargs["pageno"][:-1])
 
-        iiif_url=LBrowseURL.mk_lbrowse_url_iiif(
+        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
             collection,
             browse_name
         )
 
-        all_browse_types=self.build_browse_types()
+        all_browse_types = self.build_browse_types()
 
         def string_rep(lst):
             return lst.__str__()
@@ -979,40 +988,40 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         def comma_join(lst):
             return ", ".join(lst)
 
-        r=requests.get(iiif_url)
-        j=r.json()
-        l=[DisplayBrowse.prepare_browse_json(x, comma_join)
+        r = requests.get(iiif_url)
+        j = r.json()
+        l = [DisplayBrowse.prepare_browse_json(x, comma_join)
              for x in j['items']]
-        list_objects=Paginator(l, THUMBS_PER_PAGE)
+        list_objects = Paginator(l, THUMBS_PER_PAGE)
 
-        (breads, final_crumb)=CollectionPage.build_breadcrumbs(request)
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
-        unslugify_browse=DisplayBrowse.unslugify_browse
+        unslugify_browse = DisplayBrowse.unslugify_browse
 
         try:
             int(final_crumb)
-            final_crumb='Page ' + final_crumb
+            final_crumb = 'Page ' + final_crumb
         except ValueError:
             pass
 
-        context=super().get_context(request)
-        context["browse_title"]=CollectionPage.lbrowse_override(
+        context = super().get_context(request)
+        context["browse_title"] = CollectionPage.lbrowse_override(
             "Browse by %s:" % unslugify_browse(browse_name)
         ) + ":"
-        context["all_browse_types"]=all_browse_types
-        context["list_objects"]=list_objects.page(pageno)
-        context["root_link"]="/collex/collections/%s/list-browse/%s" % (
+        context["all_browse_types"] = all_browse_types
+        context["list_objects"] = list_objects.page(pageno)
+        context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name)
-        context['collection_final_breadcrumb']=CollectionPage.lbrowse_override(
+        context['collection_final_breadcrumb'] = CollectionPage.lbrowse_override(
             unslugify_browse(final_crumb)
         )
-        context['collection_breadcrumb']=breads
+        context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
-    subpage_types=['public.StandardPage']
+    subpage_types = ['public.StandardPage']
 
-    content_panels=Page.content_panels + [
+    content_panels = Page.content_panels + [
         FieldPanel('acknowledgments'),
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
@@ -1048,7 +1057,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields=PublicBasePage.search_fields + [
+    search_fields = PublicBasePage.search_fields + [
         index.FilterField('title'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
@@ -1060,7 +1069,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     ]
 
     # panels within the 'Collection' tab in the admin interface
-    collection_panels=[
+    collection_panels = [
         FieldPanel('digital_collection'),
         MultiFieldPanel(
             [
@@ -1090,7 +1099,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     ]
 
     # this creates the 'Collection' tab in the admin interface
-    edit_handler=TabbedInterface(
+    edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
@@ -1103,49 +1112,49 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def get_context(self, request):
 
-        unit_title=lazy_dotchain(lambda: self.unit.title, '')
-        unit_url=lazy_dotchain(lambda: self.unit.public_web_page.url, '')
-        unit_email_label=lazy_dotchain(lambda: self.unit.email_label, '')
-        unit_email=lazy_dotchain(lambda: self.unit.email, '')
-        unit_phone_label=lazy_dotchain(
+        unit_title = lazy_dotchain(lambda: self.unit.title, '')
+        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email = lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label = lazy_dotchain(
             lambda: self.unit.unit_page_phone_number.first().phone_label, ''
         )
-        unit_phone_number=lazy_dotchain(
+        unit_phone_number = lazy_dotchain(
             lambda: self.unit.unit_page_phone_number.first().phone_number, ''
         )
-        unit_fax_number=lazy_dotchain(lambda: self.unit.fax_number, '')
-        unit_link_text=lazy_dotchain(lambda: self.unit.link_text, '')
-        unit_link_external=lazy_dotchain(lambda: self.unit.link_external, '')
-        unit_link_page=lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document=lazy_dotchain(
+        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document = lazy_dotchain(
             lambda: self.unit.link_document.file.url, ''
         )
 
-        iiif_url=self.highlighted_records
+        iiif_url = self.highlighted_records
 
         def comma_join(lst):
             return ", ".join(lst)
 
         if iiif_url:
-            r=requests.get(iiif_url)
-            j=r.json()
-            objects=[DisplayBrowse.prepare_browse_json(x, comma_join)
+            r = requests.get(iiif_url)
+            j = r.json()
+            objects = [DisplayBrowse.prepare_browse_json(x, comma_join)
                        for x in j['items']
                        ][:5]
         else:
-            objects=[]
+            objects = []
 
-        slug=self.slug
+        slug = self.slug
 
-        all_browse_types=self.build_browse_types()
+        all_browse_types = self.build_browse_types()
 
-        default_image=None
-        default_image=Image.objects.get(title="Default Placeholder Photo")
+        default_image = None
+        default_image = Image.objects.get(title="Default Placeholder Photo")
 
-        context=super(CollectionPage, self).get_context(request)
-        context['default_image']=default_image
-        context['all_browse_types']=all_browse_types
-        context['objects']=objects
+        context = super(CollectionPage, self).get_context(request)
+        context['default_image'] = default_image
+        context['all_browse_types'] = all_browse_types
+        context['objects'] = objects
 
         context.update(self.staff_context())
 
@@ -1164,7 +1173,7 @@ class CollectionObjectPage():
     """
     Object pages for Collections; Child page to Collection Page.
     """
-    parent_page_types=[
+    parent_page_types = [
         'lib_collections.CollectionPage', 'lib_collections.CollectionObjectPage'
     ]
 
@@ -1178,20 +1187,20 @@ class RegionalCollection(models.Model):
     """
     Abstract model for regional collections.
     """
-    regional_collection_name=models.CharField(max_length=254, blank=True)
-    regional_collection_url=models.URLField(
+    regional_collection_name = models.CharField(max_length=254, blank=True)
+    regional_collection_url = models.URLField(
         "Regional Collection URL", blank=True, null=True
     )
-    regional_collection_description=models.TextField(blank=True)
+    regional_collection_description = models.TextField(blank=True)
 
-    panels=[
+    panels = [
         FieldPanel('regional_collection_name'),
         FieldPanel('regional_collection_url'),
         FieldPanel('regional_collection_description'),
     ]
 
     class Meta:
-        abstract=True
+        abstract = True
 
 
 class RegionalCollectionPlacements(Orderable, RegionalCollection):
