@@ -4,12 +4,14 @@
 
         <!-- Contact -->
         <div class="col-xs-12 col-sm-2 col-footer">
-            <ul>
-                <li role="heading">Contact</li>
+            <span class="footer-heading" id="contact_label">Contact</span>
+            <ul aria-labelledby="contact_label">
                 <li><a href="/research/help/ask-librarian/ask-contact/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Contact Us">Contact Us</a></li>
                 <li><a href="/about/directory/?view=department" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Library Departments">Library Departments</a></li>
                 <li><a href="/about/directory/?view=staff" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Staff Directory">Staff Directory</a></li>
-                <li role="heading"><br/>Policies</li>
+            </ul>
+            <span class="footer-heading" id="policies_label">Policies</span>
+            <ul aria-labelledby="policies_label">
                 <li><a href="/about/thelibrary/policies/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Policies &gt; Library Policies">Library Policies</a></li>
             </ul>
         </div>
@@ -18,8 +20,8 @@
 
         <!-- Information -->
         <div class="col-xs-12 col-sm-2 col-footer divider-vertical">
-            <ul>
-                <li role="heading">Information for</li>
+            <span class="footer-heading" id="information_for_label">Information for</span>
+            <ul aria-labelledby="information_for_label">
             {% if is_law %}
                 <li><a href="http://guides.lib.uchicago.edu/lawfacultyservices" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Law Faculty</a></li>
                 <li><a href="http://guides.lib.uchicago.edu/lawstudents" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Law Students</a></li>
@@ -41,8 +43,8 @@
 
         <!-- Libraries -->
         <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4 divider-vertical">
-            <ul>
-                <li role="heading">Libraries</li>
+            <span class="footer-heading" id="library_list_label">Libraries</span>
+            <ul aria-labelledby="library_list_label">
                 <li><a href="/crerar/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Crerar">Crerar</a></li>
                 <li><a href="/law/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; D'Angelo Law">D’Angelo Law</a></li>
                 <li><a href="/eck/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Libraries &gt; Eckhart">Eckhart</a></li>
@@ -56,8 +58,8 @@
 
         <!-- Social -->
         <div class="col-xs-12 col-sm-2 col-footer col-sm-push-4">
-            <ul>
-                <li role="heading">Library Social Media</li>
+            <span class="footer-heading" id="social_media_label">Library Social Media</span>
+            <ul aria-labelledby="social_media_label">
             {% if is_law %}
                 <li><a href="https://www.facebook.com/dangelolawlib" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i> &nbsp; Law Library Facebook</a></li>
                 <li><a href="https://twitter.com/dangelolawlib" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Library Social Media &gt; Twitter"><i class="fa fa-twitter" aria-hidden="true"></i> &nbsp; Law Twitter</a></li>
