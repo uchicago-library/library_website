@@ -15,7 +15,9 @@
       {% if self.exhibit.exhibit_open_date and self.exhibit.exhibit_close_date %}
         —
       {% endif %}
-      {{self.exhibit.exhibit_close_date}}
+      {% if self.exhibit.exhibit_close_date %}
+        {{self.exhibit.exhibit_close_date}}
+      {% endif %}
     {% endif %}
     {% if self.exhibit.exhibit_location %}
       <br/>{{self.exhibit.exhibit_location}}
