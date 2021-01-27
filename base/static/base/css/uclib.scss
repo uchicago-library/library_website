@@ -24,6 +24,7 @@ Spaces
 Collections & Exhibits Listing
 Directory Listing
 Staff Profile Page
+Forms (CGI)
 
 -------------------------------------------------------------------*/
 
@@ -65,6 +66,10 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   @include visually-hidden;
 }
 
+#p-1754 button[id^='mysched'] { // Hides schedule button from Law Homepage
+  display: none; // hides from screen readers too
+}
+
 
 /*
  * Fancy Splash Image (Jumbotron)
@@ -98,18 +103,19 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   color: #E7E5E2;
   left: 0;
   top: 0;
+  a {
+    color: #fff;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
   .h2 {
     color: #fff;
     font-weight: 400;
     font-size: 1.2em;
     margin-top: 0;
     padding: 10px 15px;
-    &:hover {
-      text-decoration: none;
-    }
-    a & {
-      color: #fff;
-    }
   }
   &.crerar {
     background-color: $trans-blue;
@@ -216,6 +222,19 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
   border-left: 5px solid #c8c8c8;
   padding-left: 1em;
   margin-left: 1em;
+}
+
+@include respond-to(small) {
+  .columns {
+    display: flex;
+    padding: 0;
+    .column {
+      flex: 1;
+    }
+  }
+  .column+.column {
+    margin-left: 1.5em; // workaround because gap is not supported in Safari
+  }
 }
 
 blockquote {
@@ -459,17 +478,27 @@ figure.coll-thumb {
   }
   .hero-image {
     img {
+      max-height: 250px;
+      object-fit: cover;
+      @include respond-to(small) {
+        max-height: unset;
         max-width: 100%;
+        object-fit: unset;
+      }
     }
   }
   .hero-image::after {
     display: block;
     position: relative;
     background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
-    margin-top: -175px;
-    height: 175px;
+    margin-top: -250px;
+    height: 250px;
     width: 100%;
     content: '';
+    @include respond-to(small) {
+      margin-top: -175px;
+      height: 175px;
+    }
   }
 }
 
@@ -507,6 +536,53 @@ figure.coll-thumb {
  * --------------------------------------------------
  */
 
+.widget-reusable-content-block { // sidebar widget styling
+  & > .rich-text > p:empty {
+    display: none;
+  }
+  &.alert-box {
+    color: $maroon;
+    background-color: #f7ebeb;
+    padding: 1em;
+    h2, h3 {
+      color:darken($maroon, 10%)!important;
+      border-color: darken($maroon, 5%)!important;
+    }
+  }
+  &.info-box {
+    color: darken($crerarblue, 15%);
+    background-color: #eef6fc;
+    padding: 1em;
+    h2, h3 {
+      color: darken($crerarblue, 15%)!important;
+      border-color: darken($crerarblue, 15%)!important
+    }
+  }
+}
+
+.block-reusable_content { // in-page content styling
+  margin-bottom: 0.5em;
+  h2 {
+    margin-top: 0;
+  }
+  a {
+    color: $crerarblue;
+    text-decoration: underline;
+    &:hover {
+      color: $eckhartpurple;
+    }
+  }
+  .alert-box {
+    color: $maroon;
+    background-color: #f7ebeb;
+    padding: 1em;
+  }
+  .info-box {
+    color: darken($crerarblue, 15%);
+    background-color: #eef6fc;
+    padding: 1em;
+  }
+}
 
 .studymod { //Study Spaces
   p {
@@ -531,13 +607,40 @@ figure.coll-thumb {
   }
 }
 
-.home-profile { // featured profile on specialist module
-  padding: 0;
-  max-width: 110px;
+.icon-widget {
+  @extend .studymod;
+  text-align: center;
+  a {
+    text-decoration: none;
+  }
+  .fa, a.fa {
+    display: block;
+    font-size: 3rem;
+  }
 }
 
 #widget-explore-research-guides {
   padding-left: 0;
+}
+
+// featured expert homepage module
+div#widget-featured-library-expert {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  .home-module {
+    grid-column: span 2;
+  }
+}
+
+.home-profile {
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  img {
+    max-width: 110px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 
@@ -689,6 +792,12 @@ figure.embed {
   @extend .btn-morelink;
 }
 
+.spaces-toggle {
+  a {
+    text-decoration: none;
+  }
+}
+
 .btn-list-toggle {  //Behavior togglers with maroon lines
   color: $darkgray;
   background-color: #fff;
@@ -697,9 +806,10 @@ figure.embed {
   padding: 5px 15px;
   border-radius: 0;
   &.active {
+    color: white;
+    background-color: $darkred;
     border-top: 2px solid $maroon;
     border-bottom: 2px solid $maroon;
-    color: $maroon;
     -webkit-box-shadow: none;
     box-shadow: none;   
     &:after {
@@ -707,11 +817,15 @@ figure.embed {
     }
   }
   &:hover {
-    border-top: 2px solid #d8b9b7;
-    border-bottom: 2px solid #d8b9b7;
-    color: $maroon;
+    border-top: 2px solid $maroon;
+    border-bottom: 2px solid $maroon;
     -webkit-box-shadow: none;
     box-shadow: none; 
+  }
+  &:focus {
+    box-shadow: 2px 2px 10px $crerarblue;
+    border-top: 2px solid $maroon;
+    border-bottom: 2px solid $maroon;
   }
 }
 
@@ -775,6 +889,10 @@ figure.embed {
  .distinct-list { //table base
   a {
     color: #8a4a20;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
   }
   .material-icons, .fa {
     padding-right: 10px;
@@ -938,40 +1056,52 @@ table.etable>tbody>tr {
 }
 
 .searchbox-input{
-    top:0;
-    right:0;
-    border:0;
-    outline:0;
-    background:#dcddd8;
-    width:100%;
-    height:30px;
-    margin:0;
-    padding:0px 55px 0px 20px;
-    font-size:1em;
-    color:$maroon;
+  top:0;
+  right:0;
+  border:0;
+  outline:0;
+  background:#dcddd8;
+  width:100%;
+  height:30px;
+  margin:0;
+  padding:0px 55px 0px 20px;
+  font-size:1em;
+  color:$maroon;
+  &:focus {
+    box-shadow: 2px 2px 10px $crerarblue;
+  }
 }
 
 .searchbox-icon,
 .searchbox-submit,
 .searchbox > input[type="submit"] {
-    content: "\f002";
-    width:30px;
-    height:30px;
-    display:block;
-    position:absolute;
-    top:0;
-    font-family:verdana;
-    font-size:1em;
-    right:0;
-    padding:0;
-    margin:0;
-    border:0;
-    outline:0;
-    line-height:30px;
-    text-align:center;
-    cursor:pointer;
-    color:#ddd;
-    background:$maroon;
+  content: "\f002";
+  width:30px;
+  height:30px;
+  display:block;
+  position:absolute;
+  top:0;
+  font-family:verdana;
+  font-size:1em;
+  right:0;
+  padding:0;
+  margin:0;
+  border:0;
+  outline:0;
+  line-height:30px;
+  text-align:center;
+  cursor:pointer;
+  color:#ddd;
+  background:$maroon;
+  &:hover {
+    color: black;
+    background-color: $hovercalmlight;
+  }
+  &:focus {
+    box-shadow: 0px 1px 5px $crerarblue;
+    color: black;
+    background-color: $hovercalmlight;
+  }
 }
 
 .byline{
@@ -1009,15 +1139,21 @@ table.etable>tbody>tr {
 
  //Ask a Librarian menu item from global nave is in "navigation.scss"
 
-.libraryh3lp {
-  iframe {
-    width: 100%;
-    height: 400px;
-    border: 0px;
-    @include respond-to(small) {
-      width: 80%;
-    }
+.s-la-widget .btn-chat {
+  background-color: #6e7337;
+  border-color: #6e7337;
+  padding: 0.5em;
+  border-radius: 4px;
+  &:hover {
+    color: #6e7337;
+    background-color: $hovercalm;
   }
+}
+
+.ask-icons {
+  font-size: 2rem;
+  vertical-align: sub;
+  padding-left: 1em;
 }
 
 .ask-rightside {
@@ -1523,6 +1659,16 @@ td.time, td.event-nav {
  * --------------------------------------------------
  */
 
+ .btn-obvious {
+  &:hover {
+    background-color: $hovercalmlight;
+  }
+  &:focus {
+    box-shadow: 0px 1px 5px $crerarblue;
+    background-color: $hovercalmlight;
+  }
+ }
+
 .listings-dropdown {
   margin-top: 0;
   background-color: $hovercalm;
@@ -1657,34 +1803,11 @@ a.coll-access {
   }
 }
 
-.sdir-wrap {
-  @extend .news-wrap;
-  padding: 0;
-  h3 {
-    font-size: 1.1em;
-    margin-bottom: 0;
-  }
-  a, a:active, a:focus, a:hover {
-    color: $crerarblue;
-    text-decoration: underline;
-  }
-  .col-xs-12 {
-    padding-bottom: 1em;
-    margin-top: 1em;
-    @include respond-to(medium) {
-      &:nth-child(3n+2) {
-        border-right: 1px solid #eee;
-        border-left: 1px solid #eee;
-      }
-    }
-  }
-}
-
 .sdir {
   margin: 2em 0 0.25em 0;
   padding-left: 0;
   h2 {
-    font-family: "Cormorant Garamond", serif;
+    font-family: $accent-font;
     color: $reggreen;
     font-size: 1.3em;
     padding-left: 15px;
@@ -1696,8 +1819,58 @@ a.coll-access {
       text-decoration: none;
     }
   }
-  span {
-    padding-left: 15px;
+  article {
+    @extend .distinct-list;
+    padding: 1em;
+    display: grid;
+    grid-gap: 1vw; //width of screen unit
+    margin-right: -15px;
+    margin-left: -15px;
+    @include respond-to(small) {
+      grid-template-columns: 1fr 1fr;
+      grid-row-gap: 1em;
+    }
+    @include respond-to(medium) {
+      grid-template-columns: 100px 3fr 2fr 2fr;
+    }
+    &:nth-child(odd) {
+      background: #f6f6f6;
+    }
+    &+article {
+      border-top: 1px solid #D2CDCC;
+    }
+    h3 {
+      font-family: $base-font;
+      font-size: 1.05em;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    & p {
+      max-width: 200px;
+      @include respond-to(large) {
+        max-width: unset;
+      }
+    }
+    span[role=heading] {
+      font-weight: 600;
+      display: block;
+      padding-top: 1em;
+      @include respond-to(small) {
+        padding-top: 0;
+      }
+    }
+    .profile-image {
+      padding-bottom: 1em;
+      grid-row-start: 1;
+      grid-column-start: 1;
+      @include respond-to(small) {
+        padding-bottom: 0;
+      }
+    }
+    ul {
+      padding-left: 0px;
+      list-style: none;
+    }
   }
 }
 
@@ -1729,6 +1902,22 @@ a.coll-access {
  * --------------------------------------------------
  */
 
+button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
+  color: #ffffff;
+  background: #6e7337;
+  margin-top: 0.5em;
+  border: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  &:hover {
+    color: #fff;
+    background: #8a4a20;
+  }
+}
+
+
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {
     padding: 0 3em 1.2em 3em;
@@ -1738,11 +1927,98 @@ a.coll-access {
 body.staffpublicpage {
   h1 {
     border-bottom: none;
-    &~h2 {
-      border-bottom: 1px solid #D6D6CE;
-      margin-top: 0px;
-      padding-bottom: 5px;
-      font-weight: 400;
+    display: inline-block;
+  }
+  .pronouns {
+    color: $mid-dark;
+    font-size: 0.95em;
+    padding-bottom: 0.25em;
+    padding-left: 0.25em;
+  }
+  h2.position-title {
+    border-bottom: 1px solid #D6D6CE;
+    margin-top: 0px;
+    padding-bottom: 5px;
+    font-weight: 400;
+  }
+}
+
+.pronouns-listing {
+  color: $mid-dark;
+  display: block;
+}
+
+
+/*
+ * Forms (CGI)
+ * --------------------------------------------------
+ */
+
+
+.form-container {
+  form {
+    border: none;
+    background: #f3f4ed;
+    border-radius: 8px;
+  }
+  abbr[title] {
+    color: #FF3399;
+    font-size: 1.3em;
+    font-weight: 900;
+    margin-left: 0.25em;
+  }
+  section {
+    border-bottom: 2px white solid;
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+  h2 {
+    color: $darkred;
+    margin-top: 0;
+  }
+  label {
+    padding-bottom: 0;
+  }
+  fieldset {
+    & + & {
+      margin-top: 1em;
+    }
+    & legend {
+      font-size: 1.1em;
+      color: #000;
+      font-weight: 600;
+      line-height: 1.4em;
+    }
+  }
+  .form-check {
+    display: flex;
+    flex-direction: row;
+    label {
+      display: inline;
+      padding-bottom: 0.5em;
+      order: 2;
+    }
+  }
+  input[type="submit"] {
+    padding: 0.5em 1em;
+    margin: 1em;
+    color: #fff;
+    background: #800000;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.42857143;
+    border-radius: 4px;
+  }
+  .ty-message {
+    padding: 1em 0;
+    border-bottom: 1px $lightgray solid;
+    margin-bottom: 1em;
+  }
+  .cgi-message {
+    h1 {
+      display: none;
     }
   }
 }

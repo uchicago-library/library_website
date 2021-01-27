@@ -1,9 +1,12 @@
-import simplejson
-from django.http import HttpResponse
-from django.shortcuts import render
-from wagtail.core.models import Site
-from wagtail.images.models import Image
+from urllib import parse
 
+import re
+
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+import simplejson
+from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
 )
@@ -16,7 +19,13 @@ from library_website.settings import (
 from public.models import (
     LocationPage, LocationPageFloorPlacement, StandardPage
 )
-from public.utils import get_features, has_feature
+from public.utils import (
+    doi_lookup, get_clean_params, get_features, get_first_param, has_feature,
+    switchboard_url
+)
+from wagtail.core.models import Site
+from wagtail.images.models import Image
+from wagtailcache.cache import cache_page
 
 
 def navigation(request):
@@ -44,6 +53,64 @@ def navigation(request):
     return HttpResponse(data, 'text/javascript')
 
 
+def switchboard(request):
+    """
+    route that intercepts a search query, forwards it to the DOI
+    resolver if it's a DOI, and otherwise forwards the query to its
+    normal destination
+
+    note: this code assumes that the first parameter posted by the
+    search box is the search term
+
+    Args:
+        a POST request
+
+    Returns:
+        a redirect either to Find It! or to the /switchboard route
+    """
+    search_term = get_first_param(request)
+    params = get_clean_params(request)
+    doi_url = doi_lookup(search_term)
+
+    browse_options = ['browse_title', 'browse_journal', 'browse_lcc']
+
+    def trim(str):
+        if re.match(r'browse_(.*)', str) is not None:
+            return re.match(r'browse_(.*)', str)[1]
+        else:
+            return str
+
+    if doi_url:
+        # case where user entered a DOI
+        return redirect(doi_url)
+    else:
+        # otherwise: pass query string along to wherever it was going
+        form = params['which-form']
+
+        try:
+            formtype = params['type']
+        except KeyError:
+            formtype = ''
+
+        if form == 'articles':
+            # add a 'bquery' parameter to make the ebscohost API happy
+            params['bquery'] = search_term
+        elif form == 'catalog' and formtype in browse_options:
+            params['from'] = params['lookfor']
+            del params['lookfor']
+            params['source'] = trim(formtype)
+            del params['type']
+        else:
+            pass
+
+        url_prefix = switchboard_url(form, form_option=formtype)
+        del params['which-form']
+        query_string = parse.urlencode(params)
+        url = f'{url_prefix}?{query_string}'
+        return redirect(url)
+
+
+@cache_page
 def spaces(request):
     building = request.GET.get('building', None)
     feature = request.GET.get('feature', None)
@@ -53,9 +120,8 @@ def spaces(request):
     possible_features = get_features()
 
     # validate form input.
-    loc_pages = LocationPage.objects.filter(is_building=True).values_list(
-        'title', flat=True
-    )
+    loc_pages = LocationPage.objects.filter(is_building=True
+                                            ).values_list('title', flat=True)
     if building not in loc_pages:
         building = None
     if not has_feature(feature):
@@ -86,9 +152,7 @@ def spaces(request):
     if floor:
         location_ids = LocationPageFloorPlacement.objects.filter(
             floor__title=floor
-        ).values_list(
-            'parent', flat=True
-        )
+        ).values_list('parent', flat=True)
         spaces = spaces.filter(id__in=location_ids)
     if space_type:
         spaces = spaces.filter(**{space_type: True})
@@ -115,7 +179,8 @@ def spaces(request):
     if building:
         # Changed spaces to all_spaces in id_list to bypass filtering in spaces.
         # get all locations that are descendants of this building.
-        id_list = all_spaces.filter(parent_building__title=building).values_list('pk', flat=True)
+        id_list = all_spaces.filter(parent_building__title=building
+                                    ).values_list('pk', flat=True)
         # get a unique, sorted list of the available floors here.
         floors = sorted(
             list(
@@ -153,71 +218,52 @@ def spaces(request):
     location_and_hours = get_hours_and_location(home_page)
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
+    current_site = Site.find_for_request(request)
+    alert_data = get_browse_alerts(current_site)
+    unfriendly_a = True if friendly_name.strip(
+    ) in UNFRIENDLY_ARTICLES else False
 
     # Find banner for given home_page and add to context
-    current_site = Site.find_for_request(request)
     section_info = home_page.get_banner(current_site)
     return render(
         request, 'public/spaces_index_page.html', {
-            'building':
-            building,
-            'buildings':
-            buildings,
-            'breadcrumb_div_css':
-            'col-md-12 breadcrumbs hidden-xs hidden-sm',
+            'building': building,
+            'buildings': buildings,
+            'breadcrumb_div_css': 'col-md-12 breadcrumbs hidden-xs hidden-sm',
             'content_div_css':
             'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
-            'default_image':
-            default_image,
-            'feature':
-            feature,
-            'feature_label':
-            feature_label,
-            'features':
-            features,
-            'floor':
-            floor,
-            'floors':
-            floors,
+            'default_image': default_image,
+            'feature': feature,
+            'feature_label': feature_label,
+            'features': features,
+            'floor': floor,
+            'floors': floors,
             'self': {
                 'title': 'Library Spaces',
                 'friendly_name': friendly_name
             },
-            'spaces':
-            spaces,
-            'space_type':
-            space_type,
-            'page_unit':
-            str(unit),
-            'page_location':
-            location,
-            'address':
-            location_and_hours['address'],
-            'chat_url':
-            get_unit_chat_link(unit, request),
-            'chat_status':
-            get_chat_status('uofc-ask'),
-            'chat_status_css':
-            get_chat_status_css('uofc-ask'),
-            'hours_page_url':
-            home_page.get_hours_page(request),
-            'unfriendly_a':
-            True if friendly_name.strip() in UNFRIENDLY_ARTICLES else False,
-            'libcalid':
-            llid,
-            'has_banner':
-            section_info[0],
-            'banner':
-            section_info[1],
-            'banner_feature':
-            section_info[2],
-            'banner_title':
-            section_info[3],
-            'banner_subtitle':
-            section_info[4],
-            'banner_url':
-            section_info[5],
-            'branch_lib_css':
-            home_page.get_branch_lib_css_class(),
+            'spaces': spaces,
+            'space_type': space_type,
+            'page_unit': str(unit),
+            'page_location': location,
+            'address': location_and_hours['address'],
+            'chat_url': get_unit_chat_link(unit, request),
+            'chat_status': get_chat_status('uofc-ask'),
+            'chat_status_css': get_chat_status_css('uofc-ask'),
+            'hours_page_url': home_page.get_hours_page(request),
+            'unfriendly_a': unfriendly_a,
+            'libcalid': llid,
+            'has_banner': section_info[0],
+            'banner': section_info[1],
+            'banner_feature': section_info[2],
+            'banner_title': section_info[3],
+            'banner_subtitle': section_info[4],
+            'banner_url': section_info[5],
+            'branch_lib_css': home_page.get_branch_lib_css_class(),
+            'has_alert': alert_data[0],
+            'alert_message': alert_data[1][0],
+            'alert_level': alert_data[1][1],
+            'alert_more_info': alert_data[1][2],
+            'alert_link': alert_data[1][3],
         }
     )

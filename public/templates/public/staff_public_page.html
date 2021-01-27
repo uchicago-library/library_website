@@ -7,7 +7,10 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block under_h1 %}
-    <h2>{{ positiontitle }}</h2>
+    {% if staff_page.pronouns %}
+      <span class="pronouns">{{ staff_page.pronouns }}</span>
+    {% endif %}
+    <h2 class="position-title">{{ positiontitle }}</h2>
 {% endblock %}
 
 {% block content %}
@@ -38,8 +41,9 @@
     <p>
       {% if email %}
         <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
-      {% endif %}
-      {% staff_faculty_exchanges_phone_numbers staff_page %}
+	{% endif %}
+	{% staff_faculty_exchanges_phone_numbers staff_page %}
+	{% libcal_button staff_page email %}
     </p>
   </div>
 

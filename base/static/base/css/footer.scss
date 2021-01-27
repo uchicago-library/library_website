@@ -45,28 +45,36 @@ Pleeb Footer Code
  */
 
 .footer {
+  color: #e2ddd7;
   width: 100%;
   background: $mid-dark; // fallback
   background-image: url("../images/warm_grey_reddish.jpg");
   background-repeat: repeat;
   padding-top: 20px;
   padding-bottom: 20px;
+  ul {
+    list-style:none;
+    padding-left: 0;
+  }
   &>hr {
     border-top: 1px solid $mid-dark;
   }
-  p, small {
+  p, li, small {
     color: $neutral;
   }
   & a {
   color: #fff;
   line-height: 1.7em;
-  text-decoration: none;
-    &:hover {
+    &:hover, &:focus {
     	color: $hoveraccent;
+      text-decoration: none;
     }
 	}
   h5 {
     margin-bottom: 0px;
+  }
+  .footer-heading {
+    font-weight: 600;
   }
   .col-footer {
       border-top: 1px solid #5e5e5e;
@@ -75,7 +83,6 @@ Pleeb Footer Code
         border-top: none;
       }
     @include respond-to(small) {
-      @include flex;
       border-top: none;
       padding-top: 0;
     }

@@ -1,42 +1,40 @@
 import datetime
 import json
 
-from bs4 import BeautifulSoup
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from wagtail.core.models import Site
-
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_and_css, get_chat_status_css,
     get_unit_chat_link
 )
-from base.utils import (
-    get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id
-)
+from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from events.utils import flatten_events, get_events
 from library_website.settings import PUBLIC_HOMEPAGE, UC_EVENTS_FEED
 from public.models import StandardPage
 from units.utils import get_default_unit
+from wagtail.core.models import Site
+
+from base.utils import (
+    get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id
+)
 
 
-def breadcrumbs(request):
-    breadcrumbs = [{"href": "/", "text": "Home"}]
+def get_libcalid(request):
+    """
+    Helper method for parsing libcal id from a request.
 
-    path_components = [
-        component for component in request.path.split('/') if component
-    ]
-    page, args, kwargs = request.site.root_page.specific.route(
-        request, path_components
-    )
-    while page:
-        breadcrumbs.append({"href": page.url, "text": page.title})
-        if hasattr(page, 'parent'):
-            page = page.parent
-        else:
-            break
+    Args:
+        request, object
 
-    return breadcrumbs
+    Returns:
+        string representing a libcal id or None
+    """
+    try:
+        return request.GET['libcalid']
+    except (KeyError):
+        pass
+    return None
 
 
 def json_hours(request):
@@ -44,6 +42,7 @@ def json_hours(request):
     View for rendering hours as json.
     """
     current_site = Site.find_for_request(request)
+    libcalid = get_libcalid(request)
     if request.method == 'GET':
         if request.GET.get('fallback'):
             return JsonResponse(
@@ -51,8 +50,7 @@ def json_hours(request):
                     'llid': get_default_unit().location.libcal_library_id,
                 }
             )
-        else:
-            libcalid = request.GET['libcalid']
+        elif libcalid != 'undefined':
             all_building_hours = json.dumps(
                 get_building_hours_and_lid(current_site)
             )
@@ -68,6 +66,7 @@ def json_hours(request):
                     get_default_unit().location.libcal_library_id,
                 }
             )
+        return JsonResponse({})
 
 
 def json_events(request):
@@ -160,6 +159,8 @@ def external_include(request):
             img['src'] = absolute_url(img['src'])
         for link in soup.find_all('link'):
             link['href'] = absolute_url(link['href'])
+        for sc in soup.find_all('script'):
+            sc['src'] = absolute_url(sc['src'])
         response.content = str(soup)
         if callback:
             return HttpResponse(

@@ -1,24 +1,30 @@
+import json
+
+from base.models import (
+    BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
+)
+from django.core.validators import RegexValidator
 from django.db import models
-from django.core.validators import EmailValidator, RegexValidator
-from django.db.models.fields import BooleanField, CharField, IntegerField, TextField
-from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
-from library_website.settings.base import ORCID_FORMAT, ORCID_ERROR_MSG, PHONE_FORMAT, PHONE_ERROR_MSG
+from django.db.models.fields import BooleanField, CharField, IntegerField
+from library_website.settings.base import (
+    ORCID_ERROR_MSG, ORCID_FORMAT, PHONE_ERROR_MSG, PHONE_FORMAT
+)
+from modelcluster.fields import ParentalKey
+from rest_framework import serializers
+from subjects.models import Subject
 from units.models import BUILDINGS
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
+from wagtail.admin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    StreamFieldPanel, TabbedInterface
+)
+from wagtail.api import APIField
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, PageManager
-from wagtail.documents.models import Document
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
-from wagtail.api import APIField
-from rest_framework import serializers
-from modelcluster.fields import ParentalKey
-from subjects.models import Subject
-from base.models import PhoneNumber, Email
-import json, re
 
 EMPLOYEE_TYPES = (
     (1, 'Clerical'), (2, 'Exempt'), (3, 'IT'), (4, 'Librarian'),
@@ -181,6 +187,12 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         on_delete=models.SET_NULL,
         related_name='+'
     )
+    pronouns = CharField(
+        blank=True,
+        help_text='Your pronouns, example: (they/them/theirs)',
+        max_length=255,
+        null=True
+    )
     libguide_url = models.URLField(
         blank=True,
         help_text='Your profile page on guides.lib.uchicago.edu.',
@@ -260,10 +272,12 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     @property
     def get_staff_subjects(self):
         """
-        Get the subjects beloning to the 
-        staff member - UNTESTED 
+        Get the subjects beloning to the staff member - UNTESTED
         """
-        return get_public_profile('elong')
+        # MT note: get_public_profile is an undefined value; this
+        # should be fixed
+        pass
+        # return get_public_profile('elong')
 
     @property
     def is_subject_specialist(self):
@@ -305,7 +319,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     def get_subjects(self):
         """
-        Get all the subjects for a staff member. 
+        Get all the subjects for a staff member.
         Must return a string for elasticsearch.
 
         Returns:
@@ -333,11 +347,12 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     def get_staff(self):
         """
-        Get a queryset of the staff members this 
+        Get a queryset of the staff members this
         person supervises.
 
-        TO DO: include a parameter that controls whether this is recursive or not. If it's recursive it should look into the heirarchy of UnitPages to 
-        get sub-staff. 
+        TO DO: include a parameter that controls whether this is
+        recursive or not. If it's recursive it should look into the
+        heirarchy of UnitPages to get sub-staff.
 
         Returns:
             a queryset of StaffPage objects.
@@ -374,6 +389,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
 
     content_panels = Page.content_panels + [
         ImageChooserPanel('profile_picture'),
+        FieldPanel('pronouns'),
         StreamFieldPanel('bio'),
         DocumentChooserPanel('cv'),
         FieldPanel('libguide_url'),
@@ -496,7 +512,7 @@ class StaffIndexPage(BasePage):
         FieldPanel('intro')
     ] + BasePage.content_panels
 
-    search_fields = Page.search_fields + [ # Inherit search_fields from Page
+    search_fields = Page.search_fields + [  # Inherit search_fields from Page
         index.SearchField('intro'),
     ]
 

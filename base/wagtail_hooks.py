@@ -2,7 +2,7 @@ import csv
 
 from django.conf import settings
 from django.conf.urls import url
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.http import StreamingHttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse

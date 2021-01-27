@@ -17,8 +17,9 @@ from lib_news.views import ltdrfr
 from lib_news.views import RSSFeeds
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
+from public.views import switchboard
 from results.views import results as results_view
-from search.views import loop_search as search_view
+from search.views import loop_search as search_view, ebooks_search
 from staff.views import staff, staff_api
 from units.views import units as unit_view
 
@@ -37,12 +38,14 @@ urlpatterns = [
     url(r'^results/$', results_view, name='results'),
     url(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
     url(r'^loop-search/$', search_view, name='search'),
+    url(r'^ebooks-search/$', ebooks_search, name='ebooks'),
     url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
-    url(r'^spaces/$', spaces_view, name='spaces'),
+    # url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^staff_api/$', staff_api, name='staff_api'),
     url(r'^about/directory/$', unit_view, name='unit'),
+    url(r'^switchboard/$', switchboard, name='switchboard'),
     url(
         r'^about/directory/staff/$',
         RedirectView.as_view(url='/about/directory/?view=staff')

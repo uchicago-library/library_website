@@ -37,12 +37,16 @@ Navigation Drop Downs
   padding-right: 1.5em;
   &>li>a {
       color: #f9f9f9;
+      text-decoration: none;
       &:hover {
       	color:#E4E4E4;
         background-color: $transparent;
+        text-decoration: underline;
       }
       &:focus {
         background-color: $transparent;
+        outline-offset: 1px;
+        text-decoration: underline;
       }
     }
   &>li>.dropdown-menu {
@@ -113,12 +117,17 @@ i.ask-icon {
   .navbar-nav {
     &>li>a {
       color: #eee;
+      text-decoration: none;
       &:hover {
         color: #fff;
         background-color: $transparent;
+        text-decoration: underline;
       }
       &:focus {
         color: #fff;
+        background-color: $transparent;
+        outline-offset: 1px;
+        text-decoration: underline;
       }
     }
     & .open .dropdown-menu {
@@ -129,7 +138,7 @@ i.ask-icon {
       color: #fff;
     }
     &>.open>a, &>.open>a:hover {
-      color: #E4E4E4;
+      color: #EDD4C1;
       background-color: $transparent;
     }
   }
@@ -144,6 +153,8 @@ i.ask-icon {
   padding-left:0.5em;
   &.navbar-nav>li>a:focus {
     color: #fff;
+    outline-offset: 1px;
+    text-decoration: underline;
   }
   &.navbar-nav>.open>a:focus {
     background-color: $maroon;
@@ -170,14 +181,33 @@ i.ask-icon {
       color: #fff;
       font-size: 1.05em;
       margin-bottom: 5px;
+      text-decoration: none;
     &:hover { //For top right nav
-        color: $hoveraccent;
-        text-decoration: none;
+        color: #EDD4C1;
+        text-decoration: underline;
         background-color: transparent;
+    }
+    &:focus { //For top right nav
+      color: #fff;
+      background-color: transparent;
+      outline-offset: 1px;
+      text-decoration: underline;
     }
   }
 }
 
+.dropdown-menu>li>a { // ADA
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus {
+    color: #fff;
+    background-color: transparent;
+    outline-offset: 1px;
+    text-decoration: underline;
+  }
+}
 
 /* Not currently using, but saved for when nav changes */
 // .dropdown-menu-right {
@@ -197,18 +227,17 @@ i.ask-icon {
 .twocol-drop {
   background-color: $transparent;
   @include respond-to(small) {
-      min-width: 500px;
-      padding: 10px 0 10px 0;
+    min-width: 500px;
+    padding: 10px 0 10px 0;
   }
-  >li>ul>li {
-    margin-bottom: 10px;
-    a {
-      color: #fff;
-      font-size: $font-small;
-      text-decoration: none;
-      &:hover {
-        color: $hoveraccent;
-      }
+  a {
+    color: #fff;
+    font-size: $font-small;
+    text-decoration: none;
+    line-height: 2em;
+    &:hover {
+      color: #EDD4C1;
+      text-decoration: underline;
     }
   }
 }
@@ -229,7 +258,7 @@ i.ask-icon {
       font-size: $font-small;
       margin-bottom: 12px;
       &:hover {
-        color: $hoveraccent!important;
+        color: #EDD4C1!important;
         background-color: transparent!important;
       }
     }

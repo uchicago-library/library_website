@@ -13,9 +13,10 @@ class IntranetHomePage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
 
     subpage_types = [
-        'base.IntranetPlainPage', 'intranetunits.IntranetUnitsIndexPage',
-        'group.GroupIndexPage', 'news.NewsIndexPage', 'staff.StaffIndexPage',
-        'units.UnitIndexPage', 'intranettocs.TOCPage'
+        'base.IntranetIndexPage', 'base.IntranetPlainPage',
+        'intranetunits.IntranetUnitsIndexPage', 'group.GroupIndexPage',
+        'news.NewsIndexPage', 'staff.StaffIndexPage', 'units.UnitIndexPage',
+        'intranettocs.TOCPage'
     ]
 
     def get_context(self, request):

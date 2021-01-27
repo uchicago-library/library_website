@@ -1,9 +1,11 @@
+{% load render_bundle from webpack_loader %}
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 {% image banner original as banner %}
 {% image banner_feature original as banner_feature %}
 {% load public_tags %}
+{% load staff_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +93,7 @@
             <div class="alert {{alert_level}}" role="alert">
                 {{alert_message|richtext}}
                 {% if alert_more_info|striptags %}
-                    | <a id="alert-more" href="{{alert_link}}">More info...</a>
+                   <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
                 {% endif %}
             </div>
         {% endif %}
@@ -162,7 +164,7 @@
         {% endif %}
         <!-- // Left Sidebar -->
 
-        <div class="{{breadcrumb_div_css}}">
+        <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
             {% include "base/includes/public_site_breadcrumbs.html" %}
         </div>
         {% block above_main_content %}{% endblock %}
@@ -205,7 +207,7 @@
                                             <a href="{{item.link}}">
                                         {% endif %}
                                         <div class="hero-image">
-                                        <img src="{{nifty.url}}"/></div>
+                                        <img alt="" src="{{nifty.url}}"/></div>
                                         <div class="carousel-caption">
                                             {% if item.image_title or item.image_subtitle %}
                                                 {% if item.image_title %}
@@ -247,6 +249,11 @@
                     {{index_pages_html}}
                 {% endautoescape %}
 
+                {% if self.cgi_mail_form %}
+                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
+                    {% render_bundle 'CGIMailForm' %}
+                {% endif %}
+
                 {% if self.has_richtext_widget %}
                     <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
                         <div class="home-module">
@@ -268,13 +275,13 @@
                             {#featured_lib_expert.block.library_expert #}
                             <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert">
                                 <div class="home-module">
-                                    <h2>Featured <span class="hidden-xs hidden-sm hidden-md">Library </span>Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
+                                    <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{directory_link}}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
                                 </div>
-                                <div class="col-xs-8">
+                                <div class="home-expert-info">
                                     {% if featured_lib_expert_profile %}
-                                        <h3>Consult <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> on:</h3>
+                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
                                     {% else %}
-                                        <h3>Consult {{featured_lib_expert_name}} on:</h3>
+                					<h3>Ask {{featured_lib_expert_name}} about:</h3>
                                     {% endif %} 
                                     <ul>
                                         {% for link in featured_lib_expert_links %}
@@ -286,12 +293,15 @@
                                         <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
                                     </ul>
                                 </div>
-                                <div class="col-xs-4 home-profile">
-                                    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-                                </div>
+			        <div class="home-profile">
+				    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+				    {% if has_libcal_schedule %}
+				    {% libcal_button staff_page email %}
+				    {% endif %}
+				</div>
                             </div>
                         {% endif %}
-                    </div> <!-- // row -->
+                   </div> <!-- // row -->
                 {% endif %}
 
                 {% if self.news_feed_source %}
@@ -335,6 +345,20 @@
 
             {% if self.has_right_sidebar %}
                 <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
+
+                    {% if reusable_content %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
+                            {% for widget in reusable_content %}
+                                <div class="widget-reusable-content-block {{widget.content.style_type}}">
+                                    {% if widget.content.sidebar_heading %}
+                                        <h3>{{widget.content.sidebar_heading}}</h3>
+                                    {% endif %}
+                                    {{widget.content.content|richtext}}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     {% block right_sidebar %}{% endblock %}
         
                     {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}
@@ -350,16 +374,36 @@
                         </div> 
                     {% endif %}
 
+                    {% if self.has_icon_link_items %}
+                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                            <h3>Reserve Seats</h3>
+                            <div class="col-xs-12 columns icon-widget">
+                                {% for item in self.icon_link_items.all %}
+                                    <div class="column">
+                                        {% if item.link %}
+                                            <a href="{{item.link}}">
+                                        {% endif %}
+                                            <i class="fa {{item.icon}}"></i>
+                                            {{item.link_label}}
+                                        {% if item.link %}
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
                             <h3>Find Spaces</h3>
                             <div class="studymod row">
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true">local_library</i></a><br/>
-                                    <span class="hidden-xs hidden-sm hidden-md">Quiet </span>Study</p>
+                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i></a><br/>
+                                    <span class="hidden-xs hidden-sm hidden-md" aria-role="presentation">Quiet </span>Study</p>
                                 </div>
                                 <div class="col-xs-4 nopadding">
-                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true">people</i></a><br/>Collaboration</p>
+                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i></a><br/>Collaboration</p>
                                 </div>
                                 {% if self.book_a_room_link %}
                                     <div class="col-xs-4 nopadding">

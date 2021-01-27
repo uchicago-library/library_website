@@ -1884,7 +1884,7 @@ class ExhibitPage(PublicBasePage):
         ]
     )
 
-    @ property
+    @property
     def is_current_exhibit(self):
         """
         Determines if the exhibit is current.

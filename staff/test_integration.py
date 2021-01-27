@@ -33,7 +33,7 @@ class UniversityDirectoryTestCase(TestCase):
         <!ELEMENT response        (#PCDATA)>
         <!ELEMENT totalResults    (#PCDATA)>
         <!ELEMENT organizations   (organization+)>
-        <!ELEMENT organization    (name, type, departments, members, resources)>
+        <!ELEMENT organization    (name, type, departments, members)>
         <!ELEMENT name            (#PCDATA)>
         <!ELEMENT type            (#PCDATA)>
         <!ELEMENT departments     (department+)>
@@ -42,7 +42,7 @@ class UniversityDirectoryTestCase(TestCase):
         <!ELEMENT resources       (directoryURL, xmlURL)>
         <!ELEMENT directoryURL    (#PCDATA)>
         <!ELEMENT xmlURL          (#PCDATA)>
-        <!ELEMENT members         (member+)>
+        <!ELEMENT members         (member+, resources)>
         <!ELEMENT member          (name, displayName, cnetid, chicagoid, title, email, phone, facultyExchange, resources)>
         <!--      name (see above) -->
         <!ELEMENT displayName     (#PCDATA)>

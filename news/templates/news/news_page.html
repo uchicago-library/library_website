@@ -17,7 +17,7 @@
             </div>
           {% endif %}
           <div class="media-body">
-            <p><span class="date">{{ self.story_date|date:'F jS' }}</span></p>
+            <p><span class="date">{{ self.story_date|date:'F j, Y' }}</span></p>
             <h1>{{ self.title }}</h1>
             {% news_author self %}
             {% for block in self.body %}

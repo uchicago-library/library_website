@@ -143,6 +143,14 @@ p {
   padding-left: 1em;
   margin-left: 1em; }
 
+@media (min-width: 48em) {
+  .columns {
+    display: flex;
+    padding: 0;
+    gap: 2em; }
+    .columns .column {
+      flex: 1; } }
+
 /* Blockquote */
 blockquote {
   margin: 30px 50px 0 50px;
@@ -371,6 +379,17 @@ input[type=checkbox], input[type=radio] {
  * Directory / Staff Profile
  * --------------------------------------------------
  */
+.staff-headers h1 {
+  display: inline-block; }
+
+.staff-headers .pronouns {
+  color: #575757;
+  font-size: 0.9em;
+  padding-left: 0.25em; }
+
+.staff-headers h2 {
+  margin-top: 0; }
+
 .bg-directory {
   padding: 15px 0 15px 0;
   border-bottom: 1px solid #eeeeee;

@@ -19,28 +19,35 @@
   "homepage": "https://github.com/uchicago-library/library_website#readme",
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.6",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
+    "minimist": "^1.2.5",
+    "prettier-eslint": "^9.0.1",
     "webpack": "^4.33.0",
     "webpack-bundle-tracker": "^0.4.2-beta",
-    "webpack-cli": "^3.3.4"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "eslint-utils": "^2.0.0",
-    "lodash": "^4.17.15",
+    "is-my-json-valid": "^2.20.0",
+    "lodash": "^4.17.19",
     "mixin-deep": "^2.0.1",
     "oboe": "^2.1.4",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-render-html": "^0.6.0",
     "react-slugify": "^1.2.0",
-    "serialize-javascript": "^3.0.0",
+    "serialize-javascript": "^3.1.0",
     "set-value": "^3.0.1",
     "styled-components": "^4.3.2"
   }

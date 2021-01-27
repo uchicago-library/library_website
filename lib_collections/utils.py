@@ -25,8 +25,8 @@ from citeproc import formatter
 from citeproc.source.json import CiteProcJSON
 
 
-from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
-                         NoCollectionFoundError, NoCollectionParameterError)
+# from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
+#                          NoCollectionFoundError, NoCollectionParameterError)
 
 LANGUAGE_ABBREVS = {'en': 'English'}
 
@@ -41,13 +41,6 @@ CITATION_ROOT = "http://localhost:9000"
 # CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
-
-HARVARD_PATH = "./harvard1.csl"
-
-MLA_PATH = "./modern-language-association.csl"
-
-CHICAGO_PATH = "./chicago.csl"
-
 
 class CBrowseURL():
     """

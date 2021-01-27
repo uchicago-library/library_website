@@ -2,7 +2,9 @@ import calendar
 import datetime
 
 from django.shortcuts import render
+from wagtail.core.models import Site
 
+from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
 )
@@ -72,6 +74,8 @@ def events(request):
     location_and_hours = get_hours_and_location(home_page)
     location = str(location_and_hours['page_location'])
     unit = location_and_hours['page_unit']
+    current_site = Site.find_for_request(request)
+    alert_data = get_browse_alerts(current_site)
 
     next_link = next_start.strftime('%Y-%m-%d')
     previous_link = previous_start.strftime('%Y-%m-%d')
@@ -103,5 +107,10 @@ def events(request):
             'self': {
                 'title': 'Library Events'
             },
+            'has_alert': alert_data[0],
+            'alert_message': alert_data[1][0],
+            'alert_level': alert_data[1][1],
+            'alert_more_info': alert_data[1][2],
+            'alert_link': alert_data[1][3],
         }
     )

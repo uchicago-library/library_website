@@ -7,96 +7,78 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
-    <div class="col-xs-12 col-md-9 centermain">
-      <div class="row">
-        <div class="col-xs-12">
-          <form action="." class="searchbox" method="GET">
-  	        <input name="query" placeholder="Search by name or department" required="required" type="search" aria-label="..." class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
-            <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
-              <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
-            </span>
-          </form>
-        </div>
- 
-        <div class="col-xs-12">
-          <div class="btn-group spaces-toggle">
-            <a class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
-            <a class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
-            <a class="btn btn-list-toggle{% if view == 'org' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=org">Org Chart</a>
-          </div><!-- /btn-group-->
-        </div><!-- / col-xs-12 col-sm-6 -->
-        {% if view == 'staff' %} 
-          {% include "units/browse_by_pulldowns.html" %}
-        {% endif %}
-      </div><!-- / row -->
+  <div class="col-xs-12 col-md-9 centermain">
+    <div class="row">
 
+      <div class="col-xs-12">
+        <form action="." class="searchbox" method="GET">
+	        <input name="query" placeholder="Search by name or department" required="required" type="search" aria-label="search by department or staff name" class="searchbox-input" value="{% if query %}{{ query }}{% endif %}"/>
+          <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
+            <input type="submit" class="searchbox-submit" role="button" aria-label="submit search" style="background-color: transparent; color: transparent;">
+          </span>
+        </form>
+      </div>
+ 
+      <div class="col-xs-12">
+        <div class="btn-group spaces-toggle">
+          <a {% if view == 'staff' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'staff' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=staff">Staff</a>
+          <a {% if view == 'department' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'department' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=department">Departments</a>
+          <a {% if view == 'org' %}aria-current="page"{% endif %} class="btn btn-list-toggle{% if view == 'org' %} active{% endif %}" style="padding: 5px 15px;" href=".?view=org">Org Chart</a>
+        </div><!-- /btn-group-->
+      </div>
+
+      {% if view == 'staff' %} 
+        {% include "units/browse_by_pulldowns.html" %}
+      {% endif %}
+
+    </div><!-- / row -->
+
+    <section>
       {% if query %}
-        <div class="col-xs-12 sdir" style="padding-top: 0; margin-top: 0">
-          <h2><a href="#">Matching Departments</a></h2>
-          <div class="col-xs-12 sdir-wrap">
+        <div class="row sdir" style="padding-top: 0; margin-top: 0">
+          <h2>Matching Departments</h2>
             {% for department in departments %}
               {% include "units/unit_directory_listing.html" %}
             {% empty %}
               <p class="empty-state"><span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.</p>
               <span><a class="viewall" href=".?view=department">View all departments</a></span>
             {% endfor %}
-          </div>
         </div>
 
-        <table class="table table-striped directory-list">
-          <thead>
-            <tr class="sdir">
-              <td colspan="4">
-                <h2>Matching Staff</h2>
-              </td>
-            </tr>   
-          </thead>
-          <tbody>
+        <div class="row sdir">
+          <h2>Matching Staff</h2>
             {% for staff_page in staff_pages %}
               {% include "staff/staff_directory_listing.html" %}
             {% empty %}
-              <tr>
-                <td colspan="4">
-                  <p class="empty-state">
-                    <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
-                  </p>
-                </td>
-              </tr>
+            <p class="empty-state">
+              <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+            </p>
             {% endfor %}
-          </tbody>
-        </table>
+        </div>
+
       {% elif view == 'staff' %} 
-        <table class="table table-striped directory-list">
-          <tbody>
-            <tr class="etable-header">
-              <td colspan="4">
-                {% if subject and library %}
-                    {{ library }} {{ subject }} Staff
-                {% elif subject and not library %}
-                    {{ subject }} Staff
-                {% elif not subject and library %}
-                    {{ library }} Staff
-                {% elif department %}
-                    {{ department }} Staff
-                {% else %}
-                    All Staff
-                {% endif %}
-              </td>
-            </tr>
+        <div class="row sdir">
+          <h2>
+            {% if subject and library %}
+                {{ library }} {{ subject }} Staff
+            {% elif subject and not library %}
+                {{ subject }} Staff
+            {% elif not subject and library %}
+                {{ library }} Staff
+            {% elif department %}
+                {{ department }} Staff
+            {% else %}
+                All Staff
+            {% endif %}
+          </h2>
             {% for staff_page in staff_pages %}
               {% include "staff/staff_directory_listing.html" %}
             {% empty %}
-              <tr>
-                <td colspan="4">
-                  <p class="empty-state">
-                    <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
-                  </p>
-                </td>
-              </tr>
+              <p class="empty-state">
+                <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+              </p>
             {% endfor %}
-          </tbody>
-        </table>
+          </div>
       {% elif view == 'department' %}
         {% cache 86400 department_directory_list %}
           {% include "units/unit_division_listing.html" %}
@@ -108,7 +90,8 @@
           {% endif %}
         </div>
       {% endif %}
-    </div><!--/centermain-->
+    </section>
+  </div><!--/centermain-->
 
     <div class="col-xs-12 col-md-3 rightside" role="complementary"><!-- Right Sidebar Content -->
       <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
@@ -123,13 +106,13 @@
       <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
         <h2>Ask A Librarian</h2>
         <ul>
-          <li style="margin-bottom: 0.5em;"><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/"><i class="fa fa-comments-o fa-2x"></i> Chat</a></li>
-          <li style="margin-bottom: 0.5em;"><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/"><i class="fa fa-envelope-o fa-2x"></i> Email</a></li>
-          <li style="margin-bottom: 0.5em;"><i class="fa fa-phone fa-2x"></i> 773-702-4685</li>
-          <li style="margin-bottom: 0.5em;"><a href="https://www.lib.uchicago.edu/libraries/libraries-hours/"><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="margin:0 0.25em;"></i> Visit</a></li>
+          <li><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/"><i class="fa fa-comments-o fa-1x" aria-hidden="true"></i> Chat <span class="visually-hidden">with a Librarian</span></a></li>
+          <li><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/"><span class="material-icons ask-icons" aria-hidden="true">mail_outline</span> Email <span class="visually-hidden">a Librarian for help</span></a></li>
+<!--           <li style="margin-bottom: 0.5em;"><a href="tel:773-702-4685"><span class="material-icons ask-icon" aria-hidden="true">phone</span>773-702-4685</a></li> -->          
+          <li><a href="sms:773-825-6777"><span class="material-icons ask-icon" aria-hidden="true">textsms</span> <span class="visually-hidden">Send a text for Library help to: </span>773-825-6777 (text)</a></li>
+          <li><a href="https://www.lib.uchicago.edu/libraries/libraries-hours/"><span class="material-icons ask-icon" aria-hidden="true">location_on</span> Visit <span class="visually-hidden">our locations</span></a></li>
         </ul>
       </div>
     </div>
-	</article>
 {% endblock %}
 

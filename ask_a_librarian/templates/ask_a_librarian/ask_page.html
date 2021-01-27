@@ -4,7 +4,7 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-    {{ self.body }}
+    {{ self.intro }}
     {% if self.ask_widget_name == 'dissertation-office' %}
         <script src="https://v2.libanswers.com/load_chat.php?hash=946689341a093741c4e12f427047faa2"></script>
         <div id="libchat_946689341a093741c4e12f427047faa2"></div>
@@ -15,68 +15,36 @@
         <script src="https://v2.libanswers.com/load_chat.php?hash=7d40a704e1d39b1c6a20f5c35faf1aaf"></script>
         <div id="libchat_7d40a704e1d39b1c6a20f5c35faf1aaf"></div>
     {% endif %}
+    {{ self.body }}
 {% endblock %}
 
 {% block right_sidebar_classes %}ask-rightside{% endblock %}
 {% block right_sidebar %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-        <h3>Other Ways to Ask</h3>
-        <ul>
-          {% if self.contact_link %}
-            <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
-          {% endif %}
-          {% if self.phone_number %}
-            <li><i class="fa fa-phone fa-2x"></i> {{self.phone_number}}</li>
-          {% endif %}
-          {% if self.secondary_phone_number %}
-            <li><i class="fa fa-phone-square fa-2x"></i> {{self.secondary_phone_number}}</li>
-          {% endif %}
-          {% if self.schedule_appointment_page %}
-            <li><a href="{{self.schedule_appointment_page.url}}"><i class="fa fa-calendar fa-2x"></i> Schedule an Appointment</a></li>
-          {% endif %}
-          {% if self.visit_page %}
-            <li><a href="{{self.visit_page.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit</a></li>
-          {% endif %}
-        </ul>
-        {% if self.reference_resources %}
-            <hr/>
-            {% autoescape off %}{{self.reference_resources|richtext}}{% endautoescape %}
+      <h3>Other Ways to Ask</h3>
+      <ul>
+        {% if self.contact_link %}
+          <li>{% autoescape off %}{{self.contact_link}}{% endautoescape %}</li>
         {% endif %}
+        {% if self.phone_number %}
+          <li><a href="tel:{{self.phone_number}}"><span class="material-icons ask-icons" aria-hidden="true">phone</span> {{self.phone_number}}</a></li>
+        {% endif %}
+        {% if self.secondary_phone_number %}
+          <li><a href="sms:{{self.secondary_phone_number}}"><span class="material-icons ask-icons" aria-hidden="true">textsms</span> {{self.secondary_phone_number}} (Text)</a></li>
+        {% endif %}
+        {% if self.schedule_appointment_page %}
+          <li><a href="{{self.schedule_appointment_page.url}}"><span class="material-icons ask-icons" aria-hidden="true">event_available</span> Schedule an Appointment</a></li>
+        {% endif %}
+        {% if self.visit_page %}
+          <li><a href="{{self.visit_page.url}}"><span class="material-icons ask-icons" aria-hidden="true">location_on</span> Visit</a></li>
+        {% endif %}
+      </ul>
     </div><!--/.rightside-mod-->
-{% endblock %}
 
-{% block btm_content %}
-    <div class="row">
-        <table class="table table-striped ask">
-            <thead>
-                <tr class="etable-header">
-                    <th colspan="3">Consult a Specific Library</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for p in ask_pages %}
-                {{p.href}}
-                <tr>
-                  <td>
-                    {{p.unit.location}}<br/>
-                    {{p.unit.location.address_1}}, {% if p.unit.location.address_2 %}{{p.unit.location.address_2}}, {% endif %}
-                    {{p.unit.location.city}},
-                    {{p.unit.location.state}}
-                    {{p.unit.location.postal_code}}
-                  </td>
-                  <td>
-                    {% autoescape off %}
-                    {{p.reference_resources|richtext}}
-                    {% endautoescape %}
-                  </td>
-                  <td style="text-align:center;">
-                    <strong>Ask a {% if p.friendly_name %} {% if p.friendly_name.strip != 'Science' and  p.friendly_name.strip != 'SSA' %} {{p.friendly_name}} {% endif %}{% endif %} Librarian</strong><br/>
-                    <a class="btn btn-ask" href="{{p.url}}" data-btn-chat-status="{{p.ask_form_name}}"></a><br/>
-                    <a href="{{p.url}}">Other Ways to Ask a{% if p.friendly_name %} {{p.friendly_name}}{% endif %} Librarian</a>
-                  </td> 
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    {% if self.reference_resources %}
+      <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+        {% autoescape off %}{{self.reference_resources|richtext}}{% endautoescape %}
+      </div><!--/.rightside-mod-->
+    {% endif %}
+    
 {% endblock %}

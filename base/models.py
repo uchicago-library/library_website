@@ -15,7 +15,8 @@ from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
 from wagtail.admin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel,
+    TabbedInterface
 )
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.core.blocks import (
@@ -31,14 +32,16 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
+from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
 
 from alerts.utils import get_alert
 from ask_a_librarian.utils import get_unit_chat_link
 from base.utils import get_hours_and_location
-from library_website.settings.base import (
-    HOURS_PAGE, LIBCAL_IID, PHONE_ERROR_MSG, PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT
+from library_website.settings import (
+    CGI_MAIL_SERVICE, HOURS_PAGE, ITEM_SERVLET, LIBCAL_IID, PHONE_ERROR_MSG,
+    PHONE_FORMAT, POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT,
+    SPRINGSHARE_PRIVACY_POLICY
 )
 from units.utils import get_default_unit
 
@@ -356,6 +359,33 @@ class CarouselItem(LinkFields):
         abstract = True
 
 
+class IconLinkItem(LinkFields):
+    """
+    Reusable abstract model for a linked icon item.
+    """
+    icon = models.CharField(
+        max_length=55,
+        blank=True,
+        help_text='Add a Font Awesome icon name here'
+    )
+    link_label = models.CharField(max_length=55, blank=True)
+
+    panels = [
+        FieldPanel('icon'),
+        FieldPanel('link_label'),
+        MultiFieldPanel(
+            [
+                FieldPanel('link_external'),
+                PageChooserPanel('link_page'),
+            ],
+            heading='Link'
+        ),
+    ]
+
+    class Meta:
+        abstract = True
+
+
 class ContactPerson(StructBlock):
     """
     Reusable model for a contact. Will be used to
@@ -646,6 +676,17 @@ class AbstractBase(
 
 
 # Global streamfield definitions
+class ReusableContentBlock(StructBlock):
+    """
+    Stream block for adding "reusable content" snippets.
+    """
+    content = SnippetChooserBlock('reusable_content.ReusableContent')
+
+    class Meta:
+        icon = 'folder-inverse'
+        template = 'base/blocks/reusable_content.html'
+
+
 class ImageFormatChoiceBlock(FieldBlock):
     """
     Alignment options to use with the ImageBlock.
@@ -729,6 +770,19 @@ class DuoImage(StructBlock):
         template = 'base/blocks/duo_img.html'
 
 
+class ColumnsBlock(StreamBlock):
+    """
+    Panel to add columns of rich text. Uses Flex box.
+    """
+    new_column = RichTextBlock(label="New Column", icon="arrow-right")
+
+    class Meta:
+        template = "base/blocks/columns_block.html"
+        icon = "form"
+        label = "Text Columns"
+        help_text = "Recommend 2-3 columns max"
+
+
 class BlockQuoteBlock(StructBlock):
     """
     Blockquote streamfield block.
@@ -767,6 +821,18 @@ class ButtonBlock(StructBlock):
     class Meta:
         icon = 'plus-inverse'
         template = 'base/blocks/button.html'
+
+
+class AnchorTargetBlock(StructBlock):
+    """
+    Allows authors to add an ID target for Wagtail's anchor link.
+    """
+    anchor_id_name = CharBlock(max_length=50)
+
+    class Meta:
+        icon = 'tag'
+        template = 'base/blocks/anchor_target.html'
+        label = 'Anchor link target'
 
 
 class ClearBlock(StructBlock):
@@ -981,32 +1047,73 @@ class DefaultBodyFields(StreamBlock):
     Standard default streamfield options to be shared
     across content types.
     """
+    paragraph = ParagraphBlock(group="Format and Text")
     h2 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h2.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h2.html',
+        group="Format and Text"
     )
     h3 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h3.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h3.html',
+        group="Format and Text"
     )
     h4 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h4.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h4.html',
+        group="Format and Text"
     )
     h5 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h5.html'
+        icon='title',
+        classname='title',
+        template='base/blocks/h5.html',
+        group="Format and Text"
     )
-    h6 = CharBlock(
-        icon='title', classname='title', template='base/blocks/h6.html'
+    columns_block = ColumnsBlock(group="Format and Text")
+    blockquote = BlockQuoteBlock(group="Format and Text")
+    pullquote = PullQuoteBlock(group="Format and Text")
+    reusable_content = ReusableContentBlock(group="Format and Text")
+    image = ImageBlock(label='Image', group="Images and Media")
+    solo_image = SoloImage(
+        help_text='Single image with caption on the right',
+        group="Images and Media"
     )
-    paragraph = ParagraphBlock()
-    image = ImageBlock(label='Image')
-    blockquote = BlockQuoteBlock()
-    pullquote = PullQuoteBlock()
-    button = ButtonBlock()
-    video = EmbedBlock(icon='media')
-    code = CodeBlock()
-    agenda_item = AgendaItemFields(
-        icon='date', template='base/blocks/agenda.html'
+    duo_image = DuoImage(
+        help_text='Two images side by side with captions below',
+        group="Images and Media"
     )
-    clear = ClearBlock()
+    local_media = LocalMediaBlock(
+        label="Video or Audio",
+        help_text='Audio or video files that have been uploaded into Wagtail',
+        group="Images and Media"
+    )
+    video = EmbedBlock(
+        icon='media',
+        label='External Video Embed',
+        help_text='Embed video that is hosted on YouTube or Vimeo',
+        group="Images and Media"
+    )
+    button = ButtonBlock(group="Links")
+    image_link = ImageLink(
+        label="Linked Image",
+        help_text='A fancy link made out of a thumbnail and simple text',
+        group="Links"
+    )
+    staff_listing = StaffListingFields(
+        icon='group',
+        template='base/blocks/staff_listing.html',
+        help_text=
+        'Automatically displays selected staff with title, contact, and link to staff profile page',
+        group="Links"
+    )
+    anchor_target = AnchorTargetBlock(
+        help_text=
+        'Where you want an anchor link to jump to. Must exactly match the "#" label supplied in anchor link (found in Paragraph streamfield).',
+        group="Links"
+    )
 
     # Begin TableBlock Setup
     language = translation.get_language()
@@ -1033,19 +1140,23 @@ class DefaultBodyFields(StreamBlock):
         help_text='Right + click in a table cell for more options. \
 Use <em>text</em> for italics, <strong>text</strong> for bold, and \
 <a href="https://duckduckgo.com">text</a> for links.',
+        group="Layout and Data"
     )
-    staff_listing = StaffListingFields(
-        icon='group', template='base/blocks/staff_listing.html'
+    agenda_item = AgendaItemFields(
+        icon='date',
+        template='base/blocks/agenda.html',
+        group="Layout and Data"
     )
-    solo_image = SoloImage(help_text='Single image with caption on the right')
-    duo_image = DuoImage(help_text='Two images stacked side by side')
-    image_link = ImageLink(
-        help_text='A fancy link made out of a thumbnail and simple text'
+    clear = ClearBlock(
+        lable="Clear Formatting",
+        help_text='Resets layout before or after floated images.',
+        group="Layout and Data"
     )
-    local_media = LocalMediaBlock(
-        help_text='Audio or video files that are locally hosted'
+    code = CodeBlock(group="Layout and Data")
+    html = RawHTMLBlock(
+        help_text='Display code as text for tutorial or documentation purposes',
+        group="Layout and Data"
     )
-    html = RawHTMLBlock()
 
     class Meta:
         required = False
@@ -1270,6 +1381,18 @@ elements and bulleted lists'
     # Searchable fields
     search_fields = Page.search_fields + BasePage.search_fields
 
+    # CGIMail Form
+    cgi_mail_form = models.TextField(
+        blank=True,
+        help_text='JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this'
+    )
+
+    cgi_mail_form_thank_you_text = RichTextField(
+        blank=True,
+        help_text='Text to display after the form has been submitted'
+    )
+
     content_panels = [
         MultiFieldPanel(
             [
@@ -1429,13 +1552,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             Boolean
         """
-        try:
-            is_building = self.is_building
-        except (AttributeError):
-            is_building = False
-        return True if is_building or self.has_field(
-            [self.display_hours_in_right_sidebar]
-        ) else False
+        return self.has_field([self.display_hours_in_right_sidebar])
 
     def has_field(self, field_list):
         """
@@ -1492,6 +1609,20 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         elif self.rich_text_link:
             return self.rich_text_link.url
 
+    def has_reusable_sidebar_content(self):
+        """
+        Test to see if there is a shared reusable content
+        widget in the sidebar.
+
+        Returns:
+            boolean
+        """
+        try:
+            if self.reusable_content:
+                return True
+        except (AttributeError):
+            return False
+
     def base_has_right_sidebar(self):
         """
         Determine if a right sidebar should be displayed in
@@ -1501,8 +1632,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             boolean
         """
         fields = [strip_tags(self.quicklinks), self.events_feed_url]
+        has_social_media = hasattr(
+            self, 'has_social_media'
+        ) and self.has_social_media
         return self.has_field(fields) or self.has_granular_hours(
-        ) or (hasattr(self, 'has_social_media') and self.has_social_media)
+        ) or has_social_media or self.has_reusable_sidebar_content()
 
     def get_banner(self, current_site):
         """
@@ -1708,6 +1842,13 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['carousel_items'] = carousel
         context['carousel_multi'] = len(carousel) > 1
 
+        # Reusable Content Blocks for sidebar
+        try:
+            reusable_content = self.reusable_content.all()
+        except (AttributeError):
+            reusable_content = []
+        context['reusable_content'] = reusable_content
+
         # Data structure for generating a
         # sitemap display of child pages
         index_pages = [
@@ -1740,6 +1881,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             )
         index_pages_html = get_index_html(index_pages[0]['children'])
         context['index_pages_html'] = index_pages_html
+        context['cgi_mail'] = CGI_MAIL_SERVICE
+        context['item_servlet'] = ITEM_SERVLET
+        context['springshare_pp'] = SPRINGSHARE_PRIVACY_POLICY
 
         return context
 
@@ -1839,10 +1983,50 @@ class IntranetPlainPage(BasePage):
         index.SearchField('body'),
     ]
 
+    # CGIMail Form
+    cgi_mail_form = models.TextField(
+        blank=True,
+        help_text='JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this'
+    )
 
-IntranetPlainPage.content_panels = Page.content_panels + [
-    StreamFieldPanel('body')
-] + BasePage.content_panels
+    cgi_mail_form_thank_you_text = RichTextField(
+        blank=True,
+        help_text='Text to display after the form has been submitted'
+    )
+
+    content_panels = Page.content_panels + [
+        StreamFieldPanel('body')
+    ] + BasePage.content_panels
+
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
+
+    def get_context(self, request):
+        context = super(IntranetPlainPage, self).get_context(request)
+
+        context['cgi_mail'] = CGI_MAIL_SERVICE
+        context['item_servlet'] = ITEM_SERVLET
+
+        return context
 
 
 class IntranetIndexPage(BasePage):

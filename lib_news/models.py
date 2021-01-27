@@ -6,7 +6,7 @@ from django.core.cache import cache, caches
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.template.response import TemplateResponse
-from django.utils import timezone
+from django.utils import text, timezone
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.edit_handlers import (
@@ -59,7 +59,7 @@ class PublicNewsCategories(models.Model, index.Indexed):
 
 
 @register_snippet
-class PublicNewsAuthors(models.Model, index.Indexed):
+class PublicNewsAuthors(models.Model):
     author_name = models.CharField(max_length=255, blank=False)
     link_page = models.ForeignKey(
         'wagtailcore.Page',
@@ -303,7 +303,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
-        context['search_url_base'] = self.base_url + 'search/'
         context['news_feed_api'] = self.news_feed_api
         context['feature'] = get_first_feature_story()
         context['feature_id'] = self.get_first_feature_story_id()
@@ -402,7 +401,8 @@ class LibNewsPage(PublicBasePage):
         if self.excerpt:
             retval = self.excerpt
         else:
-            retval = self.body
+            html = str(self.body).replace('</p>', '</p> ')
+            retval = text.Truncator(html).words(100, html=True)
         # return retval
         return bleach.clean(
             retval,
@@ -540,7 +540,6 @@ class LibNewsPage(PublicBasePage):
         context['categories'] = parent.get_alpha_cats()
         context['tagged'] = self.get_categories()
         context['category_url_base'] = parent_context['category_url_base']
-        context['search_url_base'] = parent_context['search_url_base']
         context['contacts'] = parent_context['contacts']
         context['display_current_web_exhibits'] = parent_context[
             'display_current_web_exhibits']

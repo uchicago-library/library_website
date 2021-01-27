@@ -1,14 +1,15 @@
 from datetime import date
 
 from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, LinkBlock, PhoneNumber,
-    PublicBasePage, RawHTMLBodyField, SocialMediaFields
+    Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
+    PhoneNumber, PublicBasePage, RawHTMLBodyField, SocialMediaFields
 )
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
 from public.utils import get_features
 from staff.models import StaffPage
+from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
@@ -22,6 +23,7 @@ from wagtail.core.models import Orderable, Page, Site
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
@@ -72,11 +74,43 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     )
 
 
+class StandardPageSidebarReusableContent(Orderable, models.Model):
+    """
+    Repeatable, reusable content widget for sidebar
+    """
+    page = ParentalKey(
+        'public.StandardPage',
+        on_delete=models.CASCADE,
+        related_name='reusable_content'
+    )
+    content = models.ForeignKey(
+        'reusable_content.ReusableContent',
+        default=None,
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    class Meta:
+        verbose_name = "Content"
+        verbose_name_plural = "Content"
+
+    panels = [
+        SnippetChooserPanel('content'),
+    ]
+
+
 class StandardPageCarouselItem(Orderable, CarouselItem):
     """
     Carousel widgets for standard pages
     """
     page = ParentalKey('public.StandardPage', related_name='carousel_items')
+
+
+class StandardPageIconLinkItem(Orderable, IconLinkItem):
+    """
+    Carousel widgets for standard pages
+    """
+    page = ParentalKey('public.StandardPage', related_name='icon_link_items')
 
 
 class StandardPage(PublicBasePage, SocialMediaFields):
@@ -111,11 +145,22 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     subpage_types = [
-        'alerts.AlertIndexPage', 'public.StandardPage', 'public.LocationPage',
-        'public.DonorPage', 'lib_news.LibNewsIndexPage',
-        'redirects.RedirectPage', 'ask_a_librarian.AskPage',
-        'conferences.ConferenceIndexPage', 'dirbrowse.DirBrowsePage',
-        'findingaids.FindingAidsPage', 'public.PublicRawHTMLPage'
+        'alerts.AlertIndexPage',
+        'public.StandardPage',
+        'public.LocationPage',
+        'public.DonorPage',
+        'lib_collections.CollectingAreaPage',
+        'lib_collections.CollectionPage',
+        'lib_collections.ExhibitPage',
+        'lib_news.LibNewsIndexPage',
+        'redirects.RedirectPage',
+        'units.UnitPage',
+        'ask_a_librarian.AskPage',
+        'units.UnitIndexPage',
+        'conferences.ConferenceIndexPage',
+        'base.IntranetPlainPage',
+        'dirbrowse.DirBrowsePage',
+        'public.StaffPublicPage',
     ]
 
     content_panels = Page.content_panels + [
@@ -194,9 +239,18 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             ],
             heading='Rich Text'
         ),
-        InlinePanel('carousel_items', label="Carousel items"),
+        InlinePanel('carousel_items', label='Carousel items'),
+        InlinePanel('icon_link_items', max_num=3, label='Icon Link items'),
+        InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -333,6 +387,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         person = block.value.get('library_expert')
         libguides = block.value.get('libguides')
         image = person.specific.profile_picture
+        email = person.specific.staff_page_email.first().email
         try:
             public_person = StaffPublicPage.objects.get(title=str(person))
         except:
@@ -353,7 +408,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             'person': person,
             'image': image,
             'profile': profile,
-            'links': links
+            'links': links,
+            'email': email
         }
 
     @property
@@ -366,6 +422,18 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             Boolean
         """
         return self.has_field([self.enable_find_spaces])
+
+    @property
+    def has_icon_link_items(self):
+        """
+        Determine if there is a "Link Items"
+        widget on the page.
+        Returns:
+            Boolean
+        """
+        if self.has_field([self.icon_link_items]):
+            return self.icon_link_items.all().count() > 0
+        return False
 
     @property
     def has_right_sidebar(self):
@@ -398,12 +466,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             lib_expert_block = self.unpack_lib_expert_block(
                 self.get_featured_lib_expert()[1], current_site
             )
+            has_libcal_schedule = libcal_id_by_email(
+                lib_expert_block['email']
+            ) != ''
             context['has_featured_lib_expert'] = has_featured_lib_expert
+            context['has_libcal_schedule'] = has_libcal_schedule
             context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
             context['featured_lib_expert_name'] = lib_expert_block['person']
             context['featured_lib_expert_image'] = lib_expert_block['image']
             context['featured_lib_expert_profile'] = lib_expert_block['profile']
             context['featured_lib_expert_links'] = lib_expert_block['links']
+            context['email'] = lib_expert_block['email']
 
         context['has_search_widget'] = self.enable_search_widget
 
@@ -741,6 +814,7 @@ class FloorPlanPage(PublicBasePage):
     def __str__(self):
         return '%s, %s' % (self.title, self.unit.location.parent_building)
 
+    intro = RichTextField(null=True, blank=True)
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -752,6 +826,7 @@ class FloorPlanPage(PublicBasePage):
     subpage_types = ['public.StandardPage']
 
     content_panels = Page.content_panels + [
+        FieldPanel('intro'),
         ImageChooserPanel('image'),
     ] + PublicBasePage.content_panels
 
@@ -869,6 +944,27 @@ class PublicRawHTMLPage(PublicBasePage):
     content_panels = Page.content_panels + [
         StreamFieldPanel('html')
     ] + PublicBasePage.content_panels
+
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('cgi_mail_form_thank_you_text'),
+                FieldPanel('cgi_mail_form'),
+            ],
+            heading='CGIMail Form'
+        ),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Content'),
+            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(
+                Page.settings_panels, heading='Settings', classname="settings"
+            ),
+            ObjectList(widget_content_panels, heading='Widgets'),
+        ]
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('html', partial_match=True),
