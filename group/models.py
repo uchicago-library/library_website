@@ -216,7 +216,7 @@ class GroupPage(BasePage, Email):
     Content type for group and committee pages.
     """
     subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage',
+        'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage',
         'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
         'intranetforms.IntranetFormPage', 'projects.ProjectPage'
     ]
