@@ -520,11 +520,18 @@
         {% endif %}
 
         {% if self.space_type %}
-          Space Type: {{ self.space_type }}<br/>
+          {{ self.space_type }} Exhibit<br/>
         {% endif %}
       </p>
+
+  	{% if self.extra_info %}
+	    {% autoescape off %}
+	        {{self.extra_exhibit_info|richtext}}
+	    {% endautoescape %}
+	{% endif %}
     </div>
   {% endif %}
+
 
   {% if self.staff_contact or unit_contact%}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">

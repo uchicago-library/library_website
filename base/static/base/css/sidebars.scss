@@ -295,6 +295,11 @@ Right Sidebar: Widget Items
   @include respond-to(medium) {
     padding: 0 0 2em 0;
   }
+  .simple-side-header {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
 }
 
 a.viewall {
