@@ -1529,8 +1529,28 @@ class ExhibitPage(PublicBasePage):
         """
         return self.web_exhibit
 
-    def is_online_exhibit(Self):
+    @property
+    def is_online_exhibit(self):
+        """
+        Determines if the exhibit is online-only.
+
+        Returns:
+            Boolean
+        """
+        space_type = self.space_type
         if space_type == 'Online':
+            return True
+
+    @property
+    def is_physical_exhibit(self):
+        """
+        Determines if the exhibit is a physical exhibit.
+
+        Returns:
+            Boolean
+        """
+        space_type = self.space_type
+        if space_type != 'Online':
             return True
 
     def has_right_sidebar(self):
