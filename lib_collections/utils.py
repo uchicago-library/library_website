@@ -298,7 +298,6 @@ class CitationInfo():
             return str(r.content, "utf-8")
         else:
             return ''
-        # return CitationInfo.example
 
     def get_citation(mode, turtle_data, config):
         r = requests.get(CITATION_ROOT, params={
@@ -306,7 +305,7 @@ class CitationInfo():
             "turtle": turtle_data,
             "config": config,
         })
-        if r.status_code % 200 < 100:
+        if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
             return ''

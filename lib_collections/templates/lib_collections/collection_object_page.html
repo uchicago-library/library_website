@@ -18,7 +18,10 @@
 
 
 {% block meta %}
-  {{ zotero|safe }}
+  {% if zotero %}      
+    {{ zotero|safe }}
+  {% else %}
+  {% endif %}
 {% endblock %}
 
       
@@ -50,8 +53,10 @@
 		}
 	    }
 	  </script>
-	  
-	 <div class="col-xs-12 coll-dropdown">
+
+	 
+	  <div class="col-xs-12 coll-dropdown">
+	      {% if chicago and mla and apa %}
 		<div class="btn-group">
 				<button type="button" class="btn btn-textonly dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" id="dropdownMenuButton">
 				    Cite this<span class="caret"></span>
@@ -95,6 +100,8 @@
 					</div> <!-- // END citation-drop -->
 				</div> <!-- // END dropdown-menu -->
 		</div>  <!-- // END button group -->
+	      {% else %}
+	      {% endif %}
 
         <div class="btn-group">
             <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">

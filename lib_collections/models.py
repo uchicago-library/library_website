@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 import datetime
 import requests
 # TODO: remove datetime import
@@ -823,7 +824,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         try:
             csl = json.loads(get_citation("csl", turtle_data, config))
-        except JSONDecodeError:
+        except (JSONDecodeError, TypeError):
             csl = ''
 
         f = open(CHICAGO_PATH, "r")
@@ -965,9 +966,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_name = paginate_name[:-1]
 
         try:
-            # if kwargs["pageno"] is None:
-            #     pageno = 1
-            # else:
             pageno = int(kwargs["pageno"][:-1])
         except KeyError:
             pageno = 1
