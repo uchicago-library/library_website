@@ -1269,12 +1269,17 @@ class ExhibitPage(PublicBasePage):
     unit_contact = models.BooleanField(default=False)
     student_exhibit = models.BooleanField(default=False)
 
-    exhibit_open_date = models.DateField(blank=True, null=True)
+    exhibit_open_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text=
+        'Controls when an exhibit starts being featured as "current" in browse and widgets.'
+    )
     exhibit_close_date = models.DateField(
         blank=True,
         null=True,
         help_text=
-        'Online only exhibits: Choose a date to stop featuring exhibit as "current" in browse and widgets.'
+        'When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
     )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -1540,6 +1545,7 @@ class ExhibitPage(PublicBasePage):
         space_type = self.space_type
         if space_type == 'Online':
             return True
+        return False
 
     @property
     def is_physical_exhibit(self):
@@ -1549,9 +1555,7 @@ class ExhibitPage(PublicBasePage):
         Returns:
             Boolean
         """
-        space_type = self.space_type
-        if space_type != 'Online':
-            return True
+        return not self.is_online_exhibit
 
     def has_right_sidebar(self):
         """

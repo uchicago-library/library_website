@@ -11,10 +11,11 @@
   {% if self.exhibit %}
     <a href="{% pageurl self.exhibit %}" class="event-header">{{self.exhibit}}</a>
     {% if self.exhibit.exhibit_open_date or self.exhibit.exhibit_close_date %}
+      <br/>
       {% if self.exhibit.is_online_exhibit %}
-         <br/>Online from {{self.exhibit.exhibit_open_date}}
+        Online from {{self.exhibit.exhibit_open_date}}
       {% else %}
-        <br/>{{self.exhibit.exhibit_open_date}}
+        {{self.exhibit.exhibit_open_date}}
         {% if self.exhibit.exhibit_open_date and self.exhibit.exhibit_close_date %}
           —
         {% endif %}

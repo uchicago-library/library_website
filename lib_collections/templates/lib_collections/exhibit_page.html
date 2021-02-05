@@ -505,13 +505,12 @@
 
         {% if self.is_online_exhibit %}
             From {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
-            <br/>
         {% else %}
             {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
             {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
             {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
-            <br/>
         {% endif %}
+	        <br/>
 
         {% if self.exhibit_daily_hours %}
           {{ self.exhibit_daily_hours }}<br/>
@@ -527,9 +526,7 @@
       </p>
 
   	{% if self.extra_exhibit_info %}
-	    {% autoescape off %}
-	        {{self.extra_exhibit_info|richtext}}
-	    {% endautoescape %}
+        {{self.extra_exhibit_info|richtext}}
 	{% endif %}
     </div>
   {% endif %}
