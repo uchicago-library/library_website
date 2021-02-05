@@ -499,13 +499,18 @@
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h2>Exhibit Details</h2>
       <p>
-        {% if self.exhibit_open_date or self.exhibit_close_date %}
-          <strong>
+        {% if self.space_type %}
+          {{ self.space_type }} Exhibit<br/>
+        {% endif %}
+
+        {% if self.is_online_exhibit %}
+            From {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+        {% else %}
             {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
             {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
             {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
-          </strong><br>
         {% endif %}
+	        <br/>
 
         {% if self.exhibit_daily_hours %}
           {{ self.exhibit_daily_hours }}<br/>
@@ -518,13 +523,14 @@
         {% if self.exhibit_cost %}
           {{ self.exhibit_cost }}<br/>
         {% endif %}
-
-        {% if self.space_type %}
-          Space Type: {{ self.space_type }}<br/>
-        {% endif %}
       </p>
+
+  	{% if self.extra_exhibit_info %}
+        {{self.extra_exhibit_info|richtext}}
+	{% endif %}
     </div>
   {% endif %}
+
 
   {% if self.staff_contact or unit_contact%}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">

@@ -6,15 +6,14 @@
     {% for e in exhibits %}
       <p>
         <a class="event-header" href="{% pageurl e %}">{{ e.title }}</a>
-        {% if e.exhibit_open_date or e.exhibit_close_date %}
-          <br/>{{e.exhibit_open_date}}
-          {% if e.exhibit_open_date and e.exhibit_close_date %}
-            — 
+        {% if e.is_physical_exhibit and e.exhibit_close_date %}
+          <br/>Until {{e.exhibit_close_date}}
+          {% if e.exhibit_location %}
+            <br/>{{ e.exhibit_location }}
           {% endif %}
-          {{e.exhibit_close_date}}
         {% endif %}
-        {% if e.exhibit_location %}
-          <br/>{{ e.exhibit_location }}
+        {% if e.is_online_exhibit %}
+          <br/>Online exhibit
         {% endif %}
       </p>
     {% endfor %}

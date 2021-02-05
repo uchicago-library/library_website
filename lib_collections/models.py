@@ -14,8 +14,8 @@ from public.models import StaffPublicPage
 from pyiiif.pres_api.utils import get_record
 from staff.models import StaffPage
 from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
-    StreamFieldPanel, TabbedInterface
+    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
+    PageChooserPanel, StreamFieldPanel, TabbedInterface
 )
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import RichTextField, StreamField
@@ -605,8 +605,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement',
-                    label='Related Collection'),
+        InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -863,8 +862,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(
-        max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
@@ -1239,25 +1237,50 @@ class ExhibitPage(PublicBasePage):
     """
     Pages for individual exhibits.
     """
+    extra_exhibit_info = RichTextField(
+        blank=True,
+        help_text='Additional unique information for accessing exhibit'
+    )
     acknowledgments = models.TextField(null=False, blank=True, default='')
-    short_abstract = models.TextField(null=False, blank=False, default='')
+    short_abstract = models.TextField(
+        null=False,
+        blank=False,
+        default='',
+        help_text='Shown in Exhibit browse view'
+    )
     full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
+        help_text='Shown in browse view and widgets'
     )
-    thumbnail_caption = models.TextField(null=False, blank=True, default='')
+    thumbnail_caption = models.TextField(
+        null=False,
+        blank=True,
+        default='',
+        help_text='Optional. Displays under thumbnail if NOT a web exhibit.'
+    )
     staff_contact = models.ForeignKey(
         'staff.StaffPage', null=True, blank=True, on_delete=models.SET_NULL
     )
     unit_contact = models.BooleanField(default=False)
     student_exhibit = models.BooleanField(default=False)
 
-    exhibit_open_date = models.DateField(blank=True, null=True)
-    exhibit_close_date = models.DateField(blank=True, null=True)
+    exhibit_open_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text=
+        'Controls when an exhibit starts being featured as "current" in browse and widgets.'
+    )
+    exhibit_close_date = models.DateField(
+        blank=True,
+        null=True,
+        help_text=
+        'When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
+    )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
     )
@@ -1270,7 +1293,9 @@ class ExhibitPage(PublicBasePage):
     space_type = models.CharField(
         null=False,
         blank=True,
-        choices=(('Case', 'Case'), ('Gallery', 'Gallery')),
+        choices=(
+            ('Case', 'Case'), ('Gallery', 'Gallery'), ('Online', 'Online')
+        ),
         max_length=255
     )
     web_exhibit_url = models.URLField("Web Exhibit URL", blank=True)
@@ -1321,7 +1346,7 @@ class ExhibitPage(PublicBasePage):
 
     # Web exhibit fields
     web_exhibit = models.BooleanField(
-        default=False, help_text='Display as web exhibit'
+        default=False, help_text='Turns on custom styling'
     )
     hex_regex = RegexValidator(
         regex='^#[a-zA-Z0-9]{6}$',
@@ -1342,15 +1367,15 @@ class ExhibitPage(PublicBasePage):
     subpage_types = ['lib_collections.ExhibitChildPage']
 
     web_exhibit_panels = [
-        FieldPanel('web_exhibit'),
         MultiFieldPanel(
             [
+                FieldPanel('web_exhibit'),
                 ImageChooserPanel('banner_image'),
                 ImageChooserPanel('banner_feature'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
             ],
-            heading='Banner'
+            heading='Theme styling'
         ),
         MultiFieldPanel(
             [
@@ -1358,26 +1383,19 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('google_font_link'),
                 FieldPanel('font_family'),
             ],
-            heading='Branding'
+            heading='Custom color and fonts'
         ),
     ]
 
     content_panels = Page.content_panels + [
-        FieldPanel('acknowledgments'),
-        FieldPanel('short_abstract'),
-        StreamFieldPanel('full_description'),
         MultiFieldPanel(
-            [ImageChooserPanel('thumbnail'),
-             FieldPanel('thumbnail_caption')],
-            heading='Thumbnail'
+            [
+                FieldPanel('short_abstract'),
+                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail_caption')
+            ],
+            heading='Browse View'
         ),
-        InlinePanel('exhibit_subject_placements', label='Subjects'),
-        InlinePanel(
-            'exhibit_page_related_collection_placement',
-            label='Related Collection'
-        ),
-        InlinePanel('exhibit_page_donor_page_list_placement', label='Donor'),
-        FieldPanel('student_exhibit'),
         MultiFieldPanel(
             [
                 FieldPanel('exhibit_open_date'),
@@ -1387,30 +1405,54 @@ class ExhibitPage(PublicBasePage):
         ),
         MultiFieldPanel(
             [
+                FieldPanel('student_exhibit'),
+                FieldPanel('acknowledgments'),
+                InlinePanel(
+                    'exhibit_page_donor_page_list_placement', label='Donor'
+                )
+            ],
+            heading='Acknowledgments and Donors',
+            classname='collapsible collapsed'
+        ),
+        StreamFieldPanel('full_description'),
+        InlinePanel('exhibit_subject_placements', label='Subjects'),
+        InlinePanel(
+            'exhibit_page_related_collection_placement',
+            label='Related Collection'
+        ),
+        MultiFieldPanel(
+            [
                 FieldPanel('exhibit_location'),
-                FieldPanel('exhibit_daily_hours'),
-                FieldPanel('exhibit_cost'),
                 FieldPanel('space_type'),
+                FieldPanel('extra_exhibit_info')
             ],
             heading='Visiting information'
         ),
         MultiFieldPanel(
             [
-                FieldPanel('web_exhibit_url'),
-                FieldPanel('publication_description'),
-                FieldPanel('publication_price'),
-                FieldPanel('publication_url'),
-                FieldPanel('ordering_information'),
+                FieldPanel('exhibit_daily_hours'),
+                FieldPanel('exhibit_cost'),
             ],
-            heading='Publication information'
+            heading='Extra Visiting Information',
+            classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [
-                FieldPanel('exhibit_text_link_external'),
-                PageChooserPanel('exhibit_text_link_page'),
-                DocumentChooserPanel('exhibit_text_document')
+                FieldPanel('publication_description'),
+                FieldPanel('publication_price'),
+                FieldPanel('ordering_information'),
+                FieldPanel(
+                    'publication_url',
+                    help_text=
+                    'If exhibit publication is hosted outside of Library site'
+                ),
+                FieldPanel(
+                    'web_exhibit_url',
+                    help_text='If exhibit is hosted outside of Library site'
+                ),
             ],
-            heading='Exhibit Text (Choose One or None)'
+            heading='Exhibit Publications',
+            classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [
@@ -1418,7 +1460,17 @@ class ExhibitPage(PublicBasePage):
                 PageChooserPanel('exhibit_checklist_link_page'),
                 DocumentChooserPanel('exhibit_checklist_document')
             ],
-            heading='Exhibit Checklist (Choose One or None)'
+            heading='Exhibit Checklist (Choose One or None)',
+            classname='collapsible collapsed'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('exhibit_text_link_external'),
+                PageChooserPanel('exhibit_text_link_page'),
+                DocumentChooserPanel('exhibit_text_document')
+            ],
+            heading='Physical Exhibit Texts (Choose One or None)',
+            classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [FieldPanel('staff_contact'),
@@ -1481,6 +1533,29 @@ class ExhibitPage(PublicBasePage):
         web exhibit.
         """
         return self.web_exhibit
+
+    @property
+    def is_online_exhibit(self):
+        """
+        Determines if the exhibit is online-only.
+
+        Returns:
+            Boolean
+        """
+        space_type = self.space_type
+        if space_type == 'Online':
+            return True
+        return False
+
+    @property
+    def is_physical_exhibit(self):
+        """
+        Determines if the exhibit is a physical exhibit.
+
+        Returns:
+            Boolean
+        """
+        return not self.is_online_exhibit
 
     def has_right_sidebar(self):
         """

@@ -11,16 +11,21 @@
   {% if self.exhibit %}
     <a href="{% pageurl self.exhibit %}" class="event-header">{{self.exhibit}}</a>
     {% if self.exhibit.exhibit_open_date or self.exhibit.exhibit_close_date %}
-      <br/>{{self.exhibit.exhibit_open_date}}
-      {% if self.exhibit.exhibit_open_date and self.exhibit.exhibit_close_date %}
-        —
+      <br/>
+      {% if self.exhibit.is_online_exhibit and self.exhibit.exhibit_open_date %}
+        Online from {{self.exhibit.exhibit_open_date}}
+      {% else %}
+        {{self.exhibit.exhibit_open_date}}
+        {% if self.exhibit.exhibit_open_date and self.exhibit.exhibit_close_date %}
+          —
+        {% endif %}
+        {% if self.exhibit.exhibit_close_date %}
+          {{self.exhibit.exhibit_close_date}}
+        {% endif %}
       {% endif %}
-      {% if self.exhibit.exhibit_close_date %}
-        {{self.exhibit.exhibit_close_date}}
+      {% if self.exhibit.exhibit_location and self.exhibit.is_physical_exhibit %}
+        <br/>{{self.exhibit.exhibit_location}}
       {% endif %}
-    {% endif %}
-    {% if self.exhibit.exhibit_location %}
-      <br/>{{self.exhibit.exhibit_location}}
     {% endif %}
   {% endif %}
 </p>

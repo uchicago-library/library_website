@@ -78,9 +78,10 @@
                 <div class="media-use">
 
                     {% if self.related_exhibits.0.value.exhibit.is_current_exhibit %}
-                        <h2>Visit the Exhibit</h2>
                         {% for ex in self.related_exhibits %}
                             {% with e=ex.value.exhibit %}
+                             {% if e.is_physical_exhibit %}
+                                <h2>Visit the Exhibit</h2>
                                 {% if e.exhibit_open_date or e.exhibit_close_date %}
                                     <strong>
                                         {% if self.related_exhibits|length > 1 %}
@@ -105,6 +106,7 @@
                                     {% elif e.exhibit_location.parent_building.title == 'The Joseph Regenstein Library' %}
                                         Visitors without a UChicago ID can enter to see the exhibit by obtaining a visitor pass from the <a href="http://ipo.uchicago.edu/">ID and Privileges Office</a> in Regenstein Library during its <a href="/libraries/libraries-hours/#the-joseph-regenstein-library">hours</a>.
                                     {% endif %}
+                                {% endif %}
                                 {% endif %}
                             {% endwith %}
                         {% endfor %}
