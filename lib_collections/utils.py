@@ -37,10 +37,11 @@ IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 WAGTAIL_PREFIX = "/collex/collections"
 
 # toggle these root URLs for dev/production
-CITATION_ROOT = "http://localhost:9000"
-# CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
+# CITATION_ROOT = "http://localhost:9000"
+CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
+
 
 class CBrowseURL():
     """

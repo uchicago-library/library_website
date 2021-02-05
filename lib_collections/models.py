@@ -726,12 +726,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         manifid = kwargs["manifid"]
 
-        # chicago = '“Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /”. 1 map. <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>. University of Chicago Press, n.d..'
-        # apa = '(n.d.). <i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the Cook County jail during the year 1920, 17-75 years of age /</i> [1 map]. University of Chicago Press.'
-        # mla = '<i>Map no. VII showing places of residence of 7541 alleged male offenders placed in the cook county jail during the year 1920, 17-75 years of age /</i>. University of Chicago Press.'
-
-        bibtex_link = "https://home.uchicago.edu/~teichman/sample.bib"
-
         def linkify(service, pi):
             if service.get_service_display() == 'LUNA':
                 return {'service': 'LUNA',
@@ -970,10 +964,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_name = paginate_name[:-1]
 
-        if kwargs["pageno"] is None:
-            pageno = 1
-        else:
+        try:
+            # if kwargs["pageno"] is None:
+            #     pageno = 1
+            # else:
             pageno = int(kwargs["pageno"][:-1])
+        except KeyError:
+            pageno = 1
 
         iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
             collection,
