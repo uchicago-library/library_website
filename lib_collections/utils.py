@@ -12,6 +12,7 @@ from django.http.response import Http404
 from functools import reduce
 from datetime import date
 from urllib.parse import urlencode
+from typing import Callable
 
 import requests
 import re
@@ -23,10 +24,6 @@ from citeproc import CitationStylesStyle, CitationStylesBibliography
 from citeproc import Citation, CitationItem
 from citeproc import formatter
 from citeproc.source.json import CiteProcJSON
-
-
-# from .exceptions import (IncompatibleRecordError, InvalidCollectionRecordError,
-#                          NoCollectionFoundError, NoCollectionParameterError)
 
 LANGUAGE_ABBREVS = {'en': 'English'}
 
@@ -53,7 +50,8 @@ class CBrowseURL():
                        browse_type: str,
                        browse_name: str,
                        extension: str) -> str:
-        """Create a local route to a digital collections browse.
+        """
+        Create a local route to a digital collections cluster browse.
 
         Args:
             root url, name of collection slug, browse type string, browse
@@ -73,6 +71,9 @@ class CBrowseURL():
     def mk_cbrowse_url_iiif(slug: str,
                             browse_name: str,
                             browse_type: str) -> str:
+        """
+        mk_cbrowse_url, specialized to the IIIF host
+        """
         return CBrowseURL.mk_cbrowse_url(
             IIIF_PREFIX,
             slug,
@@ -85,6 +86,12 @@ class CBrowseURL():
                                browse_type: str,
                                browse_name: str,
                                full: bool = False) -> str:
+        """
+        mk_cbrowse_url, specialized to the Wagtail host
+
+        full boolean input parameter determines whether it is a local
+        or global URL
+        """
         url = CBrowseURL.mk_cbrowse_url(
             WAGTAIL_PREFIX,
             slug,
@@ -101,6 +108,16 @@ class CBrowseURL():
                             slug: str,
                             browse_type: str,
                             extension: str) -> str:
+        """
+        Create a local route to a digital collections cluster browse type.
+
+        Args: 
+            root url, name of collection slug, browse type string,
+            filename extension
+
+        Returns:
+            URL string
+        """
         return "%s/%s/cluster-browse/%s%s" % (
             prefix,
             slug,
@@ -110,6 +127,9 @@ class CBrowseURL():
 
     def mk_cbrowse_type_url_iiif(slug: str,
                                  browse_type: str) -> str:
+        """
+        mk_cbrowse_type_url, specialized to the IIIF host
+        """
         return CBrowseURL.mk_cbrowse_type_url(
             IIIF_PREFIX,
             slug,
@@ -120,6 +140,12 @@ class CBrowseURL():
     def mk_cbrowse_type_url_wagtail(slug: str,
                                     browse_type: str,
                                     full: bool = False) -> str:
+        """
+        mk_cbrowse_type_url, specialized to the Wagtail host
+
+        full boolean input parameter determines whether it is a local
+        or global URL
+        """
         url = CBrowseURL.mk_cbrowse_type_url(
             WAGTAIL_PREFIX,
             slug,
@@ -136,12 +162,21 @@ class LBrowseURL():
     """
     Namespace class containing utility functions for creating list
     browse URLs for both Wagtail and IIIF
-
     """
     def mk_lbrowse_url(prefix: str,
                        slug: str,
                        browse_name: str,
                        extension: str) -> str:
+        """
+        Create a local route to a digital collections list browse.
+
+        Args:
+            root url, name of collection slug, browse type string, browse
+            name string, filename extension
+
+        Returns:
+            URL string
+        """
         return "%s/%s/list-browse/%s%s" % (
             prefix,
             slug,
@@ -151,6 +186,9 @@ class LBrowseURL():
 
     def mk_lbrowse_url_iiif(slug: str,
                             browse_name: str) -> str:
+        """
+        mk_lbrowse_url, specialized to the IIIF host
+        """
         return LBrowseURL.mk_lbrowse_url(
             IIIF_PREFIX,
             slug,
@@ -160,6 +198,9 @@ class LBrowseURL():
 
     def mk_lbrowse_url_wagtail(slug: str,
                                browse_name: str) -> str:
+        """
+        mk_lbrowse_url, specialized to the Wagtail host
+        """
         return LBrowseURL.mk_lbrowse_url(
             WAGTAIL_PREFIX,
             slug,
@@ -176,12 +217,31 @@ class DisplayBrowse():
 
     """
     def unslugify_browse(slug: str) -> str:
+        """
+        Turn a browse slug back into the capitalized name of a browse for
+        display in the page.
+
+        Args: 
+            browse slug string
+
+        Returns:
+            string representing the name of the browse
+        """
         slug_list = slug.split('-')
         spaces = ' '.join([x.capitalize() for x in slug_list])
         return spaces
 
     def get_iiif_labels_language(url: str,
                                  lang: str) -> list:
+        """Helper function for get_iiif_labels.
+
+        Args: 
+            IIIF browse list URL, language abbreviation string
+
+        Returns: 
+            an association list from browses/browse types to the
+            number of items falling under each browse
+        """
         r = requests.get(url)
         if r.status_code == 404:
             raise Http404
@@ -195,11 +255,25 @@ class DisplayBrowse():
     def get_iiif_labels(url: str,
                         browse_type: str,
                         slug: str) -> str:
+        """
+        Get IIIF data corresponding to a list of browses, package it up in
+        JSON data for display in the Wagtail browse template
+        (templates/collection_browse.html)
 
+        Args: 
+            IIIF browse list URL, browse type string, collection slug string
+
+        Returns:
+            JSON data for the browse list template
+        """
+
+        # turn association list into a dictionary
         def lists_to_dict(lst1: list,
                           lst2: list) -> dict:
             return dict(zip(lst1, lst2))
 
+        # assume English as the default language for now; the language
+        # abbreviation can be parameterized later
         pairs = DisplayBrowse.get_iiif_labels_language(url, 'en')
 
         def render_count(pairs: list) -> list:
@@ -207,6 +281,7 @@ class DisplayBrowse():
 
         labels = [x[0] for x in pairs]
 
+        # output dictionary for display in browse template
         return lists_to_dict(render_count(pairs),
                              [CBrowseURL.mk_cbrowse_url_wagtail(
                                  slug,
@@ -214,34 +289,83 @@ class DisplayBrowse():
                                  slugify(label))
                                  for label in labels])
 
-    def mk_wagtail_object_url(collection_slug, manifid):
+    def mk_wagtail_object_url(collection_slug: str,
+                              manifid: str) -> str:
+        """
+        Create Wagtail URL for collection object.
+
+        Args: 
+            Collection slug string, NOID string
+
+        Returns:
+            Wagtail URL for the object with the relevant NOID
+        """
         return ("/collex/collections/%s/object/%s"
                 % (collection_slug, manifid)
                 )
 
-    def mk_manifest_url(manifid):
+    def mk_manifest_url(manifid: str) -> str:
+        """
+        Create URL for an object's IIIF manifest.
+
+        Args: 
+            NOID string
+
+        Returns:
+            IIIF Manifest URL
+        """
         return "%s/object/ark:/61001/%s.json" % (IIIF_PREFIX, manifid)
 
-    def mk_viewer_url(manifid):
+    def mk_viewer_url(manifid: str) -> str:
+        """
+        Create Universal Viewer URL for a collection object.
+
+        Args: 
+            NOID string
+
+        Returns:
+            Url for Universal Viewer viewing the relevant object
+        """
         # toggle this comment with the other to switch from dev to production
         prefix = "https://liblet.lib.uchicago.edu/viewer?manifest="
         # prefix = "https://www.lib.uchicago.edu/viewer?manifest="
         return prefix + DisplayBrowse.mk_manifest_url(manifid)
 
-    def create_field(name, dct):
+    def create_field(name: str, dct: dict) -> list:
+        """
+        Helper function for prepare_browse_json.
+
+        Args:
+            field name string, IIIF dictionary
+
+        Returns:
+            list of values for that field
+        """
         if name in dct.keys():
             return dct[name]
         else:
             return []
 
-    def iiif_field_update(dct, field, val):
+    def iiif_field_update(dct: dict,
+                          field: str,
+                          val: str):
+        """
+        Helper function for prepare_browse_json.
+
+        Args:
+            IIIF dictionary, field string, value string
+
+        Returns: dictionary with field strings as fields and lists of
+            values as values
+
+        """
         if field in dct.keys():
             new_value = dct[field] + [val]
             dct.update({field: new_value})
         else:
             dct[field] = [val]
 
-    def pull_metadata_labels(j):
+    def pull_metadata_labels(j: dict) -> dict:
         output = {}
         for x in j['metadata']:
             DisplayBrowse.iiif_field_update(
@@ -251,7 +375,8 @@ class DisplayBrowse():
             )
         return output
 
-    def prepare_browse_json(j, joiner):
+    def prepare_browse_json(j: dict,
+                            joiner) -> dict:
         manifid = DisplayBrowse.extract_manifid_thumbnail(
             j['thumbnail'][0]['id'])
 
@@ -277,7 +402,7 @@ class DisplayBrowse():
                   }
         return output
 
-    def extract_manifid_thumbnail(url):
+    def extract_manifid_thumbnail(url: str) -> str:
         rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
         try:
             return rexp[1]
