@@ -696,6 +696,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
+    citation_config = models.TextField(
+        default=CitationInfo.default_config,
+        help_text=('INI-style configuration for Citation service, saying which'
+                   ' metadata fields to pull from the Turtle data on the object; '
+                   'see https://github.com/uchicago-library/uchicago-library.github.io '
+                   'for more info on how to edit/construct one of these'),
+        verbose_name="Citation Configuration",
+    )
     highlighted_records = models.URLField(
         blank=True,
         help_text=(
@@ -818,7 +826,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         APA_PATH = CitationInfo.APA_PATH
         MLA_PATH = CitationInfo.MLA_PATH
         CHICAGO_PATH = CitationInfo.CHICAGO_PATH
-        config = CitationInfo.default_config
+        config = self.citation_config
+        # CitationInfo.default_config
 
         turtle_data = get_turtle_data(manifid)
 
@@ -1084,6 +1093,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             heading='Branding'
         ),
         FieldPanel('highlighted_records'),
+        FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
         InlinePanel('col_cbrowse', label='Cluster Browses'),
