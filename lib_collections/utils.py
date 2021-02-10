@@ -355,9 +355,9 @@ class DisplayBrowse():
         Args:
             IIIF dictionary, field string, value string
 
-        Returns: dictionary with field strings as fields and lists of
-            values as values
-
+        Returns: 
+            n/a; side effect-ful function that mutates the input
+            dictionary so as to contain the input key and value
         """
         if field in dct.keys():
             new_value = dct[field] + [val]
@@ -366,6 +366,16 @@ class DisplayBrowse():
             dct[field] = [val]
 
     def pull_metadata_labels(j: dict) -> dict:
+        """
+        Helper function for prepare_browse_json.
+
+        Args:
+            IIIF dictionary
+
+        Returns: 
+            dictionary with field strings as fields and lists of
+            values as values
+        """
         output = {}
         for x in j['metadata']:
             DisplayBrowse.iiif_field_update(
@@ -375,8 +385,37 @@ class DisplayBrowse():
             )
         return output
 
+    def extract_manifid_thumbnail(url: str) -> str:
+        """
+        Pulls the NOID for a collection object out of the URL for its thumbnail by
+        regular expression matching on the ARK ID.
+
+        Args:
+            Thumbnail URL
+
+        Returns: 
+            Collection object NOID
+        """
+        rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
+        try:
+            return rexp[1]
+        except TypeError:
+            return ''
+
     def prepare_browse_json(j: dict,
                             joiner) -> dict:
+        """
+        Creates a JSON/dictionary representation of the data to be displayed for
+        each item in a browse.
+
+        Args:
+            IIIF dictionary
+
+        Returns: 
+            dictionary with field strings as fields and lists of
+            values as values; supplies the content for each listing of
+            a collection item in each browse
+        """
         manifid = DisplayBrowse.extract_manifid_thumbnail(
             j['thumbnail'][0]['id'])
 
@@ -402,29 +441,128 @@ class DisplayBrowse():
                   }
         return output
 
-    def extract_manifid_thumbnail(url: str) -> str:
-        rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
-        try:
-            return rexp[1]
-        except TypeError:
-            return ''
-
 
 class CitationInfo():
+    """
+    Namespace class containing utility functions/constants for interacting with
+    the citation restful service
+    """
 
-    example = '@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n@prefix dc: <http://purl.org/dc/elements/1.1/> .\n@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n@prefix ore: <http://www.openarchives.org/ore/terms/> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n    dc:format "application/xml" ;\n    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n\n</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n    dcterms:creator <http://library.uchicago.edu> ;\n    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n\n<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n\n</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n    edm:dataProvider "The University of Chicago Library" ;\n    edm:isShownAt "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n    edm:provider "The University of Chicago Library" ;\n    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n\n</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n    bf:ClassificationLcc "G4104.C6:2W9 1920z .U5" ;\n    bf:Local "http://pi.lib.uchicago.edu/1001/cat/bib/3451312" ;\n    bf:scale "Scale [ca. 1:8,000]" ;\n    dc:date "1920/1929" ;\n    dc:description "Blue line print.",\n        "Master and use copy. Digital master created according to Benchmark for Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, December 2002. http://www.diglib.org/standards/bmarkfin.htm",\n        "Shows residential area, vacant area, commercial frontage, railroad property, and transit lines." ;\n    dc:format "1 map",\n        "45 x 62 cm" ;\n    dc:identifier "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n    dc:language "English" ;\n    dc:publisher "Dept. of Sociology" ;\n    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n    dc:title "Woodlawn Community /" ;\n    dc:type "Maps" ;\n    dcterms:hasFormat "Print version" ;\n    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n    erc:what "Woodlawn Community /" ;\n    erc:when "1920/1929" ;\n    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n    erc:who "University of Chicago. Department of Sociology." ;\n    edm:currentLocation "Map Collection Reading Room (Room 370)" ;\n    edm:type "IMAGE" ;\n    edm:year "1920/1929" .\n\n'
+    # sample turtle data for testing only
+    example = ('@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n'
+               '@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n'
+               '@prefix dc: <http://purl.org/dc/elements/1.1/> .\n'
+               '@prefix dcterms: <http://purl.org/dc/terms/> .\n'
+               '@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n'
+               '@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n'
+               '@prefix ore: <http://www.openarchives.org/ore/terms/> .\n'
+               '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
+               '\n'
+               '</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
+               '    dc:format "application/xml" ;\n'
+               '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+               '    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+               '\n'
+               '</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
+               '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+               '    dcterms:creator <http://library.uchicago.edu> ;\n'
+               '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+               '    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+               '\n'
+               '<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>'
+               'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+               '\n'
+               '</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
+               '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+               '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+               '    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+               '    edm:dataProvider "The University of Chicago Library" ;\n'
+               '    edm:isShownAt "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
+               '    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n;'
+               '    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n'
+               '    edm:provider "The University of Chicago Library" ;\n'
+               '    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n'
+               '    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+               '\n'
+               '</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n'
+               '    bf:ClassificationLcc "G4104.C6:2W9 1920z .U5" ;\n'
+               '    bf:Local "http://pi.lib.uchicago.edu/1001/cat/bib/3451312" ;\n'
+               '    bf:scale "Scale [ca. 1:8,000]" ;\n'
+               '    dc:date "1920/1929" ;\n'
+               '    dc:description "Blue line print.",\n'
+               '        "Master and use copy. Digital master created according to Benchmark for '
+               'Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, '
+               'December 2002. http://www.diglib.org/standards/bmarkfin.htm",\n'
+               '        "Shows residential area, vacant area, commercial frontage, railroad property, '
+               'and transit lines." ;\n'
+               '    dc:format "1 map",\n'
+               '        "45 x 62 cm" ;\n'
+               '    dc:identifier "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
+               '    dc:language "English" ;\n'
+               '    dc:publisher "Dept. of Sociology" ;\n'
+               '    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n'
+               '    dc:title "Woodlawn Community /" ;\n'
+               '    dc:type "Maps" ;\n'
+               '    dcterms:hasFormat "Print version" ;\n'
+               '    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n'
+               '    erc:what "Woodlawn Community /" ;\n'
+               '    erc:when "1920/1929" ;\n'
+               '    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+               '    erc:who "University of Chicago. Department of Sociology." ;\n'
+               '    edm:currentLocation "Map Collection Reading Room (Room 370)" ;\n'
+               '    edm:type "IMAGE" ;\n'
+               '    edm:year "1920/1929" .\n'
+               '\n')
 
-    default_config = 'base=http://ark.lib.uchicago.edu/ark:/61001\n\n[dc]\n\turi=http://purl.org/dc/elements/1.1/\n\ttype=type\n\tidentifier=id\n\tlanguage=language\n\tcreator=author\n\tformat=medium\n\tpublisher=publisher\n\ttitle=title\n[dcterms]\n\turi=http://purl.org/dc/terms/\n\tissued=issued\n\tisPartOf=collection-title\n[bf]\n\turi=http://id.loc.gov/ontologies/bibframe/\n\tClassificationLcc=call-number\n\tDoi=DOI\n\tplace=pubisher-place\n\tscale=scale'
+    # citation config that gets autopopulated in the Wagtail admin
+    # panel when you create a new collection
+    default_config = ('base=http://ark.lib.uchicago.edu/ark:/61001\n'
+                      '\n'
+                      '[dc]\n'
+                      '\turi=http://purl.org/dc/elements/1.1/\n'
+                      '\ttype=type\n'
+                      '\tidentifier=id\n'
+                      '\tlanguage=language\n'
+                      '\tcreator=author\n'
+                      '\tformat=medium\n'
+                      '\tpublisher=publisher\n'
+                      '\ttitle=title\n'
+                      '[dcterms]\n'
+                      '\turi=http://purl.org/dc/terms/\n'
+                      '\tissued=issued\n'
+                      '\tisPartOf=collection-title\n'
+                      '[bf]\n'
+                      '\turi=http://id.loc.gov/ontologies/bibframe/\n'
+                      '\tClassificationLcc=call-number\n'
+                      '\tDoi=DOI\n\tplace=pubisher-place\n'
+                      '\tscale=scale')
 
-    def get_turtle_data(manifid):
+    def get_turtle_data(manifid: str) -> str:
+        """
+        Given a collection object NOID, queries the primary ARK resolver to obtain
+        the Turtle data for the object, serialized in the form a string.  This
+        is workaround; theoretically we would like to be able to get this
+        information by directly querying the Mark Logic server, but Mark Logic
+        has not yet added this feature.  (Supposedly it will have that feature
+        in the futrue, however.  Stay tuned.)
+
+        Args:
+            NOID string
+
+        Returns: 
+            Turtle data string
+        """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
         r = requests.get(url)
-        if r.status_code % 200 < 100:
+        if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
             return ''
 
     def get_citation(mode, turtle_data, config):
+        """
+
+        """
         r = requests.get(CITATION_ROOT, params={
             "mode": mode,
             "turtle": turtle_data,
