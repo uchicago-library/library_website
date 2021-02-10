@@ -544,7 +544,7 @@ class CitationInfo():
         is workaround; theoretically we would like to be able to get this
         information by directly querying the Mark Logic server, but Mark Logic
         has not yet added this feature.  (Supposedly it will have that feature
-        in the futrue, however.  Stay tuned.)
+        in the future, however.  Stay tuned.)
 
         Args:
             NOID string
@@ -561,7 +561,7 @@ class CitationInfo():
 
     def get_citation(mode, turtle_data, config):
         """
-
+        
         """
         r = requests.get(CITATION_ROOT, params={
             "mode": mode,
