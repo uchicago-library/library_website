@@ -30,6 +30,16 @@ from django.http import HttpResponse
 
 
 def citation_display(request):
+    """
+    View that displays BibTeX or RIS citations in the browser as
+    plaintext.
+
+    Args:
+        HTTP request
+
+    Returns:
+        HTTP response
+    """
     citation = request.GET.get('content')
     return HttpResponse(citation, content_type='text/plain')
 
@@ -201,7 +211,8 @@ def collections(request):
             if default_cache.has_key('subject_id_%s' % s.id):
                 subjects_list_entry = default_cache.get('subject_id_%s' % s.id)
             else:
-                subject_descendants = default_cache.get('descendants_%s' % s.id)
+                subject_descendants = default_cache.get(
+                    'descendants_%s' % s.id)
 
                 if not subject_descendants:
                     subject_descendants = set(
@@ -214,7 +225,7 @@ def collections(request):
                 parents = qs.filter(child=s
                                     ).order_by('parent__name').values_list(
                                         'parent__name', flat=True
-                                    ).prefetch_related('subject')
+                ).prefetch_related('subject')
                 has_collections = bool(
                     subjects_with_collections.intersection(subject_descendants)
                 )
