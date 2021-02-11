@@ -11,6 +11,7 @@ from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
 
 from library_website.settings.base import SPARQL_ROOT
 
+
 def sp_query(manifid: str) -> str:
     """
     Construct SparQL query from collection object NOID.
@@ -49,7 +50,8 @@ def get_raw_record(manifid: str) -> dict:
     Args:
         NOID string
 
-    Returns: Dictionary representation of the result of the SparQL query
+    Returns:
+        Dictionary representation of the result of the SparQL query
 
     """
     r = requests.get(
@@ -64,7 +66,9 @@ def get_raw_record(manifid: str) -> dict:
     j = json.loads(r.content.decode('utf-8'))
     return j
 
-def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
+
+def align_field_names(dct: dict,
+                      wagtail_field_names: list) -> dict:
     """
     Arranges metadata fields for object page so that they correspond to the order
     in which those fields appear in the Wagtail admin interface.
@@ -72,7 +76,7 @@ def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
     Args: 
         Dictionary representing result of Mark Logic query, list of field
         names (strings) stored in Wagtail database for a given collection
-    
+
     Returns:
         Dictionary representing metadata for display in object page
     """
@@ -82,7 +86,9 @@ def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
     updated_dict = {key: dct[key] for key in filtered_names}
     return updated_dict
 
-def triples_to_dict(dct: dict, wagtail_field_names: list):
+
+def triples_to_dict(dct: dict,
+                    wagtail_field_names: list):
     """
     Capitalizes all metadata field names and sorts them using align_field_names
     if the Wagtail database has information about which fields to display; if
@@ -109,21 +115,22 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
     except IndexError:
         raise Http404
 
+
 def get_record_no_parsing(manifid: str,
-                          slug: str,
                           wagtail_field_names: list) -> dict:
     """
     Queries Mark Logic for collection object metadata fields, leaves the values
     of those metadata fields alone, in their raw form.
 
     Args: 
-        NOID string, collection slug string, list of field names
+        NOID string, list of field names
 
     Returns:
         Dictionary representing metadata
     """
     raw_record = get_raw_record(manifid)
     return triples_to_dict(raw_record, wagtail_field_names)
+
 
 def remove_trailing_comma(string: str) -> str:
     """
@@ -141,6 +148,7 @@ def remove_trailing_comma(string: str) -> str:
         return rev[1:][::-1]
     else:
         return rev[::-1]
+
 
 def brackets_parse(value: str) -> dict:
     """
@@ -174,20 +182,20 @@ def brackets_parse(value: str) -> dict:
                 'externally_derived': False,
                 'uncertain': False}
 
+
 def get_record_parsed(manifid: str,
-                      slug: str,
                       wagtail_field_names: list) -> dict:
     """
     Performs SparQL query, arranges result to mirror metadata fields from Wagail
     database, and parses all of the metadata fields.
 
     Args:
-        NOID string, collection slug string, list of metadata field names
+        NOID string, list of metadata field names
 
     Returns: 
         Dictionary of metadata fields, with parse results in values
     """
-    dct = get_record_no_parsing(manifid, slug, wagtail_field_names)
+    dct = get_record_no_parsing(manifid, wagtail_field_names)
     return {k: brackets_parse(v) for k, v in dct.items()}
 
 
@@ -217,19 +225,19 @@ def render_field(parsed_field: dict) -> str:
     except KeyError:
         return parsed_field
 
+
 def get_record_for_display(manifid: str,
-                           slug: str,
                            wagtail_field_names: list) -> dict:
     """
     Main function for getting metadata fields back from Mark Logic, based on a
     collection object's NOID.
 
     Args:
-        NOID string, collection slug string, list of metadata field names
+        NOID string, list of metadata field names
 
     Returns: 
         Dictionary representing metadata to be displayed on collection
         object page.
     """
-    dct = get_record_parsed(manifid, slug, wagtail_field_names)
+    dct = get_record_parsed(manifid, wagtail_field_names)
     return {k: render_field(v) for k, v in dct.items()}

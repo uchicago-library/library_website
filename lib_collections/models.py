@@ -2,8 +2,6 @@ import json
 from json import JSONDecodeError
 import datetime
 import requests
-# TODO: remove datetime import
-# TODO: remove HttpResponse import
 from django.utils.html import escape
 from django.http import HttpResponse, Http404
 from datetime import date
@@ -506,20 +504,50 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
 
-    def metadata_fields(self):
-        return CollectionPageObjectMetadata.objects.filter(page_id=self.id)
-
     def metadata_field_names(self):
-        query_set = self.metadata_fields().values_list('edm_field_label')
+        """
+        Convert list of metadata objects to a list of field names (strings).
+
+        Args:
+            Collection Page
+
+        Returns:
+            List of field names (strings)
+        """
+        metadata_fields = CollectionPageObjectMetadata.objects.filter(
+            page_id=self.id)
+        query_set = metadata_fields.values_list('edm_field_label')
         return [field[0] for field in query_set]
 
     def staff_context(self):
+        """
+        Create context dictionary containing information about the staff
+        member in charge of the collection; template context then gets
+        updated with this in various places.
+
+        Args:
+            Collection Page
+
+        Returns:
+            Template context dictionary
+        """
 
         def default(thunk, defval):
+            """
+            Abstraction over pattern of catching an AttributeError or
+            ObjectDoesNotExist exception and returning a default
+            value.
+
+            Args:
+               A thunked Python expression
+
+            Returns:
+               Default input value
+            """
             try:
                 return thunk()
             except (AttributeError, ObjectDoesNotExist):
-                return default
+                return defval
 
         output = {}
 
@@ -605,6 +633,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return output
 
     def build_breadcrumbs(request):
+        """
+        Create breadcrumb trail.
+
+        Args:
+            HTTP request
+
+        Returns: 
+            Tuple containing breadcrumb trail, along with the
+            final breadcrumb text (which is different because it isn't
+            a link)
+        """
         breadcrumbs = list(
             filter(lambda x: x is not "", request.path.split('/'))
         )
@@ -628,11 +667,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         return (breads, final_crumb)
 
     def lbrowse_override(str):
+        """
+        Reset name of link text for list browse to be 'All Maps'
+
+        Args:
+            Link text
+
+        Returns:
+            New link text: 'All Maps'
+        """
         return "All Maps"
 
     def build_browse_types(self):
+        """
+        Create dictionary containing information needed to generate
+        sidebar links for all the different browse types.
+
+        Args:
+            Collection page
+
+        Returns: 
+            Dictionary representing information in sidebar browse
+            links
+        """
         slug = self.slug
 
+        # bring CBrowseURL utility functions into local namespace
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
@@ -727,15 +787,114 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
-        Route for Digital Collection Object.
+        Route for digital collection object page.
         """
         template = "lib_collections/collection_object_page.html"
 
+        # list of metadata fields from Mark Logic to display in object page
         field_names = self.metadata_field_names()
 
+        # object NOID
         manifid = kwargs["manifid"]
 
+        slug = self.slug
+
+        # gather information for sidebar browse links
+        all_browse_types = self.build_browse_types()
+
+        def injection_safe(id):
+            """
+            Check that URL route ends in a well-formed NOID.
+
+            Args:
+                Candidate NOID
+
+            Returns:
+                Boolean
+            """
+            length_ok = len(id) >= 1 and len(id) <= 30
+            alphanum = id.isalnum()
+            return length_ok and alphanum
+
+        # query Mark Logic for object metadata
+        if injection_safe(manifid):
+            marklogic = get_record_for_display(
+                manifid,
+                field_names,
+            )
+        else:
+            marklogic = ''
+            raise Http404
+
+        def truncate_crumb(crumb, length):
+            """
+            Truncate breadcrumb trail link text at a given number of
+            characters.
+
+            Args:
+                Link text, Max link text length
+
+            Returns:
+                New link text
+            """
+            if len(crumb) >= length:
+                return crumb[:length].rstrip() + ' ...'
+            else:
+                return crumb
+
+        # truncate breadcrumb trail links at 25 characters
+        truncate_at = 25
+
+        # construct breadcrumb trail
+        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+
+        # adjust value of final breadcrumb to show object title if possible
+        if 'Title' in marklogic.keys():
+            final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
+        elif 'Description' in marklogic.keys():
+            final_crumb = truncate_crumb(marklogic['Description'], truncate_at)
+        else:
+            final_crumb = 'Object'
+
+        def default(thunk, defval):
+            """
+            Abstraction over the repeated pattern of catching a KeyError
+            exception and returning a default value.
+
+            Args:
+                Dictionary lookup
+
+            Returns: 
+                Value corresponding to the key (or the default in
+                case of a key error)
+            """
+            try:
+                return thunk()
+            except KeyError:
+                return defval
+
+        def callno_to_pi(callno):
+            return '-'.join(callno.replace(':', ' ').replace('.', ' ').upper().split())
+
+        # get link to physical object in VuFind
+        physical_object = default(lambda: get_record_no_parsing(manifid, '')['Local'],
+                                  '')
+
+        # get link to catalog call number for collection object
+        callno = default(lambda: get_record_no_parsing(manifid, '')['Classificationlcc'],
+                         '')
+
         def linkify(service, pi):
+            """
+            Build BTAA/LUNA link.
+
+            Args:
+                External Service instance, Permanent Identifier string
+
+            Returns: 
+                Dictionary containing information for BTAA/LUNA
+                links in object template
+            """
             if service.get_service_display() == 'LUNA':
                 return {'service': 'LUNA',
                         'caption': 'Assemble Slide Decks',
@@ -752,70 +911,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             else:
                 return {}
 
-        slug = self.slug
-        all_browse_types = self.build_browse_types()
-
-        def truncate_crumb(crumb, length):
-            if len(crumb) >= length:
-                return crumb[:length].rstrip() + ' ...'
-            else:
-                return crumb
-
-        truncate_at = 25
-
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
-
-        def injection_safe(id):
-            length_ok = len(id) >= 1 and len(id) <= 30
-            alphanum = id.isalnum()
-            return length_ok and alphanum
-
-        if injection_safe(manifid):
-            marklogic = get_record_for_display(
-                manifid,
-                slug,
-                field_names,
-            )
-        else:
-            marklogic = ''
-            raise Http404
-
-        def default(expr, val):
-            try:
-                return expr
-            except KeyError:
-                return val
-
-        def callno_to_pi(callno):
-            return '-'.join(callno.replace(':', ' ').replace('.', ' ').upper().split())
-
-        physical_object = default(
-            get_record_no_parsing(manifid, slug, '')['Local'],
-            ''
-        )
-
-        callno = default(
-            get_record_no_parsing(manifid, slug, '')['Classificationlcc'],
-            ''
-        )
-
+        # build BTAA/LUNA links
         external_links = [
             linkify(service, callno_to_pi(callno))
             for service in self.col_external_service.all()
         ]
 
-        if 'Title' in marklogic.keys():
-            final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
-        elif 'Description' in marklogic.keys():
-            final_crumb = truncate_crumb(marklogic['Description'], truncate_at)
-        else:
-            final_crumb = 'Object'
-
+        # bring utility functions from DisplayBrowse into local namespace
         mk_viewer_url = DisplayBrowse.mk_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        share_url = "%s/object/%s" % (self.url, manifid)
-
+        # bring utility functions from CitationInfo into local namespace
         get_turtle_data = CitationInfo.get_turtle_data
         get_citation = CitationInfo.get_citation
         get_csl = CitationInfo.get_citation
@@ -827,24 +933,30 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         MLA_PATH = CitationInfo.MLA_PATH
         CHICAGO_PATH = CitationInfo.CHICAGO_PATH
         config = self.citation_config
-        # CitationInfo.default_config
 
+        # get Turtle data for collection object
         turtle_data = get_turtle_data(manifid)
 
+        # get CSL-JSON data
         try:
             csl = json.loads(get_citation("csl", turtle_data, config))
         except (JSONDecodeError, TypeError):
             csl = ''
 
-        f = open(CHICAGO_PATH, "r")
+        # get CSL files for Chicago, MLA, and APA styles off disk
         chicago = csl_json_to_html(csl, CHICAGO_PATH)
         mla = csl_json_to_html(csl, MLA_PATH)
         apa = csl_json_to_html(csl, APA_PATH)
 
+        # get Bibtex, RIS, and Zotero harvesting citation info
         bibtex_link = get_bibtex(turtle_data, config)
         endnote_link = get_ris(turtle_data, config)
         zotero = str(get_zotero(turtle_data, config))
 
+        # URL for social media sharing links
+        share_url = "%s/object/%s" % (self.url, manifid)
+
+        # populate context
         context = super().get_context(request)
         context["manifid"] = manifid
         context["iiif_url"] = mk_viewer_url(
@@ -865,35 +977,46 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['endnote_link'] = endnote_link
         context['zotero'] = zotero
 
+        # update context with staff info for sidebar
         context.update(self.staff_context())
 
+        # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
     @ route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
-        Route for main cluster browse index.
+        Route for listing of multiple cluster browses.  For example: the
+        list of all Subject browses.
         """
 
         template = "lib_collections/collection_browse.html"
 
         slug = self.slug
+
+        # construct browse type links for sidebar
         all_browse_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
+            # default to subject browses if no browse type is specified in route
             default_browse = CollectionPageClusterBrowse.objects.first()
             default = default_browse.label.lower()
             browse_type = default
         else:
+            # otherwise, get the browse type from the route
             browse_type = kwargs["browse_type"][:-1]
 
+        # construct breadcrumb trail
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
+        # bring CBrowseURL function into local namespace
         mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
 
+        # bring DisplayBrowse functions into local namespace
         get_iiif_labels = DisplayBrowse.get_iiif_labels
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        # populate context
         context = super().get_context(request)
         context["all_browse_types"] = all_browse_types
         context["browse_type"] = unslugify_browse(browse_type)
@@ -910,43 +1033,65 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
-        Route for Digital Collection Object.
+        Route for listing a particular cluster browse.  For example: the
+        list of objects falling under the Criminals Subject browse.
         """
 
         template = "lib_collections/collection_browse.html"
 
         slug = self.slug
 
+        # pull browse information from URL
         browse = kwargs['browse']
         browse_type = kwargs['browse_type']
 
+        # construct browse type dictionary for sidebar
         all_browse_types = self.build_browse_types()
 
+        # bring utility functions from CBrowseURL and DisplayBrowse into local
+        # namespace
         mk_cbrowse_url_iiif = CBrowseURL.mk_cbrowse_url_iiif
         unslugify_browse = DisplayBrowse.unslugify_browse
         prepare_browse_json = DisplayBrowse.prepare_browse_json
 
+        # generate link to IIIF JSON for cluster browse
         iiif_url = mk_cbrowse_url_iiif(
             slug,
             browse,
             browse_type,
         )
 
+        # convert browse and browse type slugs into something suitable for
+        # display
         browse = unslugify_browse(kwargs["browse"])
         browse_type = unslugify_browse(kwargs["browse"])
 
         def comma_join(lst):
+            """
+            Joins a list of strings by commas.  For use as the second input to
+            prepare_browse_json.
+
+            Args:
+                List of strings
+
+            Returns:
+                Comma-joined string
+            """
             return ", ".join(lst)
 
+        # retrieve browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
         objects = [prepare_browse_json(x, comma_join)
                    for x in j['items']]
 
+        # construct breadcrumb trail
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
+        # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        # construct context
         context = super().get_context(request)
         context["browse_title"] = browse
         context["browse_type"] = browse_type
@@ -964,6 +1109,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Route for main list browse index.
         """
 
+        # display a max of 25 items per page
         THUMBS_PER_PAGE = 25
 
         template = "lib_collections/collection_browse.html"
@@ -979,35 +1125,41 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except KeyError:
             pageno = 1
 
+        # construct IIIF URL to get browse information from
         iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
             collection,
             browse_name
         )
 
+        # list of browse types for sidebar
         all_browse_types = self.build_browse_types()
 
-        def string_rep(lst):
-            return lst.__str__()
-
+        # joiner for prepare_browse_json, as above
         def comma_join(lst):
             return ", ".join(lst)
 
+        # retrieve list browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
         l = [DisplayBrowse.prepare_browse_json(x, comma_join)
              for x in j['items']]
+
+        # create pagination
         list_objects = Paginator(l, THUMBS_PER_PAGE)
 
+        # construct breadcrumb trail
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
 
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        # final breadcrumb just says e.g. Page 2
         try:
             int(final_crumb)
             final_crumb = 'Page ' + final_crumb
         except ValueError:
             pass
 
+        # populate context
         context = super().get_context(request)
         context["browse_title"] = CollectionPage.lbrowse_override(
             "Browse by %s:" % unslugify_browse(browse_name)
@@ -1135,11 +1287,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lambda: self.unit.link_document.file.url, ''
         )
 
+        # get URL for highlighted records listing from Wagtail database
         iiif_url = self.highlighted_records
 
+        # string joining function for prepare_browse_json, see above for more
+        # info
         def comma_join(lst):
             return ", ".join(lst)
 
+        # display first five records in selected listing
         if iiif_url:
             r = requests.get(iiif_url)
             j = r.json()
@@ -1151,29 +1307,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
+        # browse links for sidebar
         all_browse_types = self.build_browse_types()
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
+        # populate context
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
         context['all_browse_types'] = all_browse_types
         context['objects'] = objects
 
+        # update context with information about staff associated with the
+        # relevant collection
         context.update(self.staff_context())
 
         return context
-
-    # Comment this out to show old digital collections page
-    def get_template(self, request):
-        return "lib_collections/collection_page_new.html"
 
     def has_right_sidebar(self):
         return True
 
 
 # Collection Object Page
+#
+#   MT: pretty sure we don't need this anymore, but leaving
+#   it to be cautious
 class CollectionObjectPage():
     """
     Object pages for Collections; Child page to Collection Page.
@@ -1181,8 +1340,6 @@ class CollectionObjectPage():
     parent_page_types = [
         'lib_collections.CollectionPage', 'lib_collections.CollectionObjectPage'
     ]
-
-    ###### dev note: Need to create an InlinePanel #####
 
 
 # CollectingArea page models

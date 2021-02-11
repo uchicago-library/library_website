@@ -539,18 +539,20 @@ class CitationInfo():
 
     def get_turtle_data(manifid: str) -> str:
         """
-        Given a collection object NOID, queries the primary ARK resolver to obtain
-        the Turtle data for the object, serialized in the form a string.  This
-        is workaround; theoretically we would like to be able to get this
-        information by directly querying the Mark Logic server, but Mark Logic
-        has not yet added this feature.  (Supposedly it will have that feature
-        in the future, however.  Stay tuned.)
+        Given a collection object NOID, query the primary ARK resolver to
+        obtain the Turtle data for the object, serialized in the form
+        a string.  This is workaround; theoretically we would like to
+        be able to get this information by directly querying the Mark
+        Logic server, but Mark Logic has not yet added this feature.
+        (Supposedly it will have that feature in the future, however.
+        Stay tuned.)
 
         Args:
             NOID string
 
         Returns: 
             Turtle data string
+
         """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
         r = requests.get(url)
@@ -559,9 +561,25 @@ class CitationInfo():
         else:
             return ''
 
-    def get_citation(mode, turtle_data, config):
+    def get_citation(mode: str,
+                     turtle_data: str,
+                     config: str) -> str:
         """
-        
+        Query the citation restful service for citation info.  Mode can be
+        bibtex, csl, ris, or xml, and the two inputs are the
+        collection object Turtle data and citation config file in INI
+        format (serialized as a string).
+
+        For more info on using/maintaining the citation restful
+        service, see our doc at uchicago-library.github.io.
+
+        Args: 
+            String representing output format, Turtle data string,
+            INI config file string
+
+        Returns: 
+            Dictionary containing CSL/BibTeX/RIS/XML citation
+            info for use in the collection object template
         """
         r = requests.get(CITATION_ROOT, params={
             "mode": mode,
@@ -573,14 +591,54 @@ class CitationInfo():
         else:
             return ''
 
-    def get_csl(turtle_data, config):
+    def get_csl(turtle_data: str,
+                config: str) -> dict:
+        """
+        Main function to query the citation service for CSL-JSON info in
+        models.py.  This is used to live-display the collection object
+        citation in the object page.
+
+        Args:
+            Turtle data string, INI config string
+
+        Returns:
+            CSL-JSON as a Python dictionary
+
+        """
         c = CitationInfo.get_citation("csl", turtle_data, config)
         return json.loads(c)
 
-    def get_zotero(turtle_data, config):
+    def get_zotero(turtle_data: str,
+                   config: str) -> str:
+        """
+        Main function to query the citation service for Zotero harvesting
+        meta tags in models.py.
+
+        Args:
+            Turtle data string, INI config string
+
+        Returns:
+            Zotero harvesting HTML
+
+        """
         return CitationInfo.get_citation("zotero", turtle_data, config)
 
-    def csl_json_to_html(csl_json, style):
+    def csl_json_to_html(csl_json: dict,
+                         style: str) -> str:
+        """
+        Render CSL-JSON in HTML for the collection object template.  Note
+        that this uses code from the citeproc-py library, which,
+        annoyingly, insists on reading the CSL style files off disk.
+        Those style files are located at lib_collections/csl.  See
+        path constants below.
+
+        Args:
+            CSL-JSON dictionary
+
+        Returns:
+            Citation HTML
+
+        """
         if not os.path.isfile(style):
             return ''
         else:
@@ -600,22 +658,56 @@ class CitationInfo():
 
             return html
 
-    def citation_export(mode, turtle_data, config):
+    def citation_export(mode: str,
+                        turtle_data: str,
+                        config: str):
+        """
+        Create link to display BibTeX or RIS citation as plaintext in the
+        browser by forwarding citation information to the
+        /citation_display route.  See citation_display view in
+        views.py for more info.
+
+        Args:
+            Output format string, Turtle data string, INI config string
+
+        Returns:
+            URL to display the relevant citation in plaintext
+        """
         c = CitationInfo.get_citation(mode, turtle_data, config)
         if c:
             query_params = {"content": c}
             query_string = urlencode(query_params)
-            output = "http://sequent.lib.uchicago.edu:8000/citation_display?" + query_string
+            output = "/citation_display?" + query_string
             return output
         else:
             return ''
 
     def get_bibtex(turtle_data, config):
+        """
+        Main function to create link to display BibTeX citation in
+        models.py.  
+
+        Args:
+            Turtle data string, INI config string
+
+        Returns:
+            BibTeX viewing URL
+        """
         return CitationInfo.citation_export("bibtex", turtle_data, config)
 
     def get_ris(turtle_data, config):
+        """
+        Main function to create link to display RIS citation in models.py.
+
+        Args:
+            Turtle data string, INI config string
+
+        Returns:
+            RIS viewing URL
+        """
         return CitationInfo.citation_export("ris", turtle_data, config)
 
+    # CSL file paths
     APA_PATH = "lib_collections/csl/apa.csl"
 
     MLA_PATH = "lib_collections/csl/modern-language-association.csl"

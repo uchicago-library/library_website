@@ -530,3 +530,5 @@ MARKLOGIC_FINDINGAIDS_PORT = 8011
 # "http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")
 
 EBOOKS_SEARCH = 'https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor='
+
+SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"

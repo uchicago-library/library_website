@@ -1,170 +1,67 @@
 {% extends "base/public_base.html" %}
+{% load compress static %}
 {% load wagtailcore_tags %}
 {% load wagtailroutablepage_tags %}
 {% load wagtailimages_tags %}
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
+{% block styles %}
+    {% compress css %}
+	<link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
 {% block content %}
-  {% if not self.is_viewer %}
     <article>
-      <div class="row">
-        <div class="col-xs-12">
+	<div class="row">
+	    <div class="col-xs-12">
 
-        <figure class="imgcaption coll-thumb">
-          {% if self.thumbnail %}
-            {% image self.thumbnail width-200 class="img-responsive" %}
-            {% if self.thumbnail_caption %}
-              <figcaption>{{ self.thumbnail_caption }}</figcaption>
-            {% endif %}
-          {% else %}
-            {% if default_image %}
-              {% image default_image width-200 %}
-            {% endif %}
-          {% endif %}
-        </figure>
+		<figure class="imgcaption coll-thumb">
+		    {% if self.thumbnail %}
+			{% image self.thumbnail width-200 class="img-responsive" %}
+			{% if self.thumbnail_caption %}
+			    <figcaption>{{ self.thumbnail_caption }}</figcaption>
+			{% endif %}
+		    {% else %}
+			{% if default_image %}
+			    {% image default_image width-200 %}
+			{% endif %}
+		    {% endif %}
+		</figure>
 
-          {% for block in self.full_description %}
-            {{ block }}
-          {% endfor %}
+		{% for block in self.full_description %}
+		    {{ block }}
+		{% endfor %}
 
-          {% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
-            <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
-          {% endif %}
-
-          {% if self.access_instructions or supplementary_access_links %}
-          <h3>Access Information</h3>
-
-            {% if supplementary_access_links %}
-              <p>
-                {% for l in supplementary_access_links %}
-                  <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
-                {% endfor %}
-              </p>
-            {% endif %}
-
-            {% if self.access_instructions %}
-              <p>{{ self.access_instructions }}</p>
-            {% endif %}
-          {% endif %}
-        </div>
-      </div><!--/.row-->
+	    </div>
+	</div><!--/.row-->
     </article>
-  {% endif %}
 
-  {% if template %}
-    {% include template %}
-  {% endif %}
+{% if objects %}
+    <div class="home-module">
+      <h2 class="browse"> Collection Highlights </h2>
+      <span class="browse-links">
+	{% for type, link in all_browse_types.items %}
+	<a href="{{ link }}">
+	  Browse by {{ type }}
+	</a>
+	{% endfor %}
+      </span>
+    </div>
+
+    <section class="browse-list" id="content" role="main">
+      {% include "includes/general_listing.html" %}
+    </section>
+{% else %}
+    <!-- don't display collection highlights if the collection has no -->
+    <!-- highlighted records URL -->
+{% endif %}
+    
 {% endblock %}
 
 {% block right_sidebar %}
-{% if self.collection_location %}
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Access Location</h2>
-        <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
-  </div>
-{% endif %}
-
-  {% if staff_title or unit_contact %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      {% if staff_title %}
-        <h2>Subject Specialist</h2>
-        <p>
-          {% if staff_url %}
-            <a href="{{ staff_url }}">{{ staff_title }}</a>
-          {% else %}
-            {{ staff_title }}
-          {% endif %}
-         
-          {% if staff_position_title %} 
-            <br/><em>{{ staff_position_title }}</em><br/>
-          {% endif %}
-
-          {% if staff_email %}
-            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
-          {% endif %}
-
-          {% if staff_phone_number %}
-            {{ staff_phone_number }}<br/>
-          {% endif %}
-      
-          {% if staff_faculty_exchange %}
-            {{ staff_faculty_exchange }}
-          {% endif %}
-        </p>
-      {% endif %}
-
-      {% if unit_contact and unit_url and unit_title %}
-        <p>
-          {% if unit_url and unit_title%}
-            <h2>Contact</h2>
-            <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
-          {% else %}
-            {{ unit_title }}<br/>
-          {% endif %}
-          {% if unit_email %}
-            <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_phone_number %}
-            {% if unit_phone_label %}{{ unit_phone_label }}: {% endif %}{{ unit_phone_number }}<br/>
-          {% endif %}
-          {% if unit_fax_number %}
-            Fax: {{ unit_fax_number }}<br/>
-          {% endif %}
-          {% if unit_link_external %}
-            <a href="{{ unit_link_external }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_external }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_link_page %}
-            <a href="{{ unit_link_page }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_link_document %}
-            <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
-          {% endif %}
-        </p>
-      {% endif %}
-    </div>
-  {% endif %}
-
-  {% if self.related_collection_placement.all or self.exhibit_page_related_collection.all or self.collection_subject_placements.all or self.collection_placements.all %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Explore Related Content</h2>
-      {% if self.related_collection_placement.all %}
-        <strong>Related Collections</strong>
-        <ul>
-          {% for c in self.related_collection_placement.all %}
-            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.exhibit_page_related_collection.all %}
-        <strong>Related Exhibits</strong>
-        <ul>
-        {% for e in self.exhibit_page_related_collection.all %}
-          <li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.collection_subject_placements.all %}
-        <strong>Collections by Subject</strong>
-        <ul>
-          {% for s in self.collection_subject_placements.all %}
-            <li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-  
-      {% if self.collection_placements.all %}
-        <strong>Collections by Format</strong>
-        <ul>
-          {% for f in self.collection_placements.all %}
-            <li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    </div>
-  {% endif %}
+    {% include "includes/sidebar.html" %}
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
