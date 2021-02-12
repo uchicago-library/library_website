@@ -523,7 +523,9 @@ if 'test' in sys.argv:
 
 IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 
-MARKLOGIC_BASE = "http://marklogic.lib.uchicago.edu"
+MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
+
+MARKLOGIC_LDR_ROUTE = "/v1/graphs"
 
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 

@@ -1,5 +1,5 @@
 from base.models import PublicBasePage
-from library_website.settings import MARKLOGIC_BASE, MARKLOGIC_FINDINGAIDS_PORT
+from library_website.settings import MARKLOGIC_LDR_BASE, MARKLOGIC_FINDINGAIDS_PORT
 from wagtail.core.models import Page
 from xml.etree import ElementTree
 
@@ -15,7 +15,7 @@ class FindingAidsPage(PublicBasePage):
     def get_context(self, request):
         def marklogic_url(route):
             return "%s:%i%s" % (
-                MARKLOGIC_BASE,
+                MARKLOGIC_LDR_BASE,
                 MARKLOGIC_FINDINGAIDS_PORT,
                 route,
             )
