@@ -5,19 +5,13 @@ iiifcollectionbrowse
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from citeproc.py2compat import *
-
 from django.utils.text import slugify
 from django.http.response import Http404
-from functools import reduce
-from datetime import date
 from urllib.parse import urlencode
-from typing import Callable
 
 import requests
 import re
 import json
-import sys
 import os
 
 from citeproc import CitationStylesStyle, CitationStylesBibliography
@@ -111,7 +105,7 @@ class CBrowseURL():
         """
         Create a local route to a digital collections cluster browse type.
 
-        Args: 
+        Args:
             root url, name of collection slug, browse type string,
             filename extension
 
@@ -221,7 +215,7 @@ class DisplayBrowse():
         Turn a browse slug back into the capitalized name of a browse for
         display in the page.
 
-        Args: 
+        Args:
             browse slug string
 
         Returns:
@@ -235,10 +229,10 @@ class DisplayBrowse():
                                  lang: str) -> list:
         """Helper function for get_iiif_labels.
 
-        Args: 
+        Args:
             IIIF browse list URL, language abbreviation string
 
-        Returns: 
+        Returns:
             an association list from browses/browse types to the
             number of items falling under each browse
         """
@@ -260,7 +254,7 @@ class DisplayBrowse():
         JSON data for display in the Wagtail browse template
         (templates/collection_browse.html)
 
-        Args: 
+        Args:
             IIIF browse list URL, browse type string, collection slug string
 
         Returns:
@@ -294,7 +288,7 @@ class DisplayBrowse():
         """
         Create Wagtail URL for collection object.
 
-        Args: 
+        Args:
             Collection slug string, NOID string
 
         Returns:
@@ -308,7 +302,7 @@ class DisplayBrowse():
         """
         Create URL for an object's IIIF manifest.
 
-        Args: 
+        Args:
             NOID string
 
         Returns:
@@ -320,7 +314,7 @@ class DisplayBrowse():
         """
         Create Universal Viewer URL for a collection object.
 
-        Args: 
+        Args:
             NOID string
 
         Returns:
@@ -355,7 +349,7 @@ class DisplayBrowse():
         Args:
             IIIF dictionary, field string, value string
 
-        Returns: 
+        Returns:
             n/a; side effect-ful function that mutates the input
             dictionary so as to contain the input key and value
         """
@@ -372,7 +366,7 @@ class DisplayBrowse():
         Args:
             IIIF dictionary
 
-        Returns: 
+        Returns:
             dictionary with field strings as fields and lists of
             values as values
         """
@@ -387,14 +381,15 @@ class DisplayBrowse():
 
     def extract_manifid_thumbnail(url: str) -> str:
         """
-        Pulls the NOID for a collection object out of the URL for its thumbnail by
-        regular expression matching on the ARK ID.
+        Pulls the NOID for a collection object out of the URL for its
+        thumbnail by regular expression matching on the ARK ID.
 
         Args:
             Thumbnail URL
 
-        Returns: 
+        Returns:
             Collection object NOID
+
         """
         rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
         try:
@@ -405,16 +400,17 @@ class DisplayBrowse():
     def prepare_browse_json(j: dict,
                             joiner) -> dict:
         """
-        Creates a JSON/dictionary representation of the data to be displayed for
-        each item in a browse.
+        Creates a JSON/dictionary representation of the data to be
+        displayed for each item in a browse.
 
         Args:
             IIIF dictionary
 
-        Returns: 
+        Returns:
             dictionary with field strings as fields and lists of
             values as values; supplies the content for each listing of
             a collection item in each browse
+
         """
         manifid = DisplayBrowse.extract_manifid_thumbnail(
             j['thumbnail'][0]['id'])
@@ -550,7 +546,7 @@ class CitationInfo():
         Args:
             NOID string
 
-        Returns: 
+        Returns:
             Turtle data string
 
         """
@@ -573,11 +569,11 @@ class CitationInfo():
         For more info on using/maintaining the citation restful
         service, see our doc at uchicago-library.github.io.
 
-        Args: 
+        Args:
             String representing output format, Turtle data string,
             INI config file string
 
-        Returns: 
+        Returns:
             Dictionary containing CSL/BibTeX/RIS/XML citation
             info for use in the collection object template
         """
@@ -685,7 +681,7 @@ class CitationInfo():
     def get_bibtex(turtle_data, config):
         """
         Main function to create link to display BibTeX citation in
-        models.py.  
+        models.py.
 
         Args:
             Turtle data string, INI config string
