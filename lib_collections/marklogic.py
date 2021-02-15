@@ -1,15 +1,13 @@
 import json
-from urllib.parse import urlparse
-
-from django.http import Http404
-import requests
 import re
-from requests.auth import HTTPBasicAuth
 
-from library_website.settings.local import (MARKLOGIC_LDR_PASSWORD,
-                                            MARKLOGIC_LDR_USER)
-
+import requests
+from django.http import Http404
 from library_website.settings.base import SPARQL_ROOT
+from library_website.settings.local import (
+    MARKLOGIC_LDR_PASSWORD, MARKLOGIC_LDR_USER
+)
+from requests.auth import HTTPBasicAuth
 
 
 def sp_query(manifid: str) -> str:
@@ -67,38 +65,37 @@ def get_raw_record(manifid: str) -> dict:
     return j
 
 
-def align_field_names(dct: dict,
-                      wagtail_field_names: list) -> dict:
+def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
     """
-    Arranges metadata fields for object page so that they correspond to the order
-    in which those fields appear in the Wagtail admin interface.
+    Arranges metadata fields for object page so that they correspond to the
+    order in which those fields appear in the Wagtail admin interface.
 
-    Args: 
+    Args:
         Dictionary representing result of Mark Logic query, list of field
         names (strings) stored in Wagtail database for a given collection
 
     Returns:
         Dictionary representing metadata for display in object page
+
     """
-    filtered_names = [item
-                      for item in wagtail_field_names
-                      if item in dct.keys()]
+    filtered_names = [
+        item for item in wagtail_field_names if item in dct.keys()
+    ]
     updated_dict = {key: dct[key] for key in filtered_names}
     return updated_dict
 
 
-def triples_to_dict(dct: dict,
-                    wagtail_field_names: list):
+def triples_to_dict(dct: dict, wagtail_field_names: list):
     """
     Capitalizes all metadata field names and sorts them using align_field_names
     if the Wagtail database has information about which fields to display; if
     not, displays all of them in alphabetical order.
 
-    Args: 
+    Args:
         Dictionary represengint result of Mark Logic query, list of field
         names (strings) stored in Wagtail database for a given collection
 
-    Returns: 
+    Returns:
         Reformatted dictionary representing metadata
     """
     try:
@@ -116,13 +113,12 @@ def triples_to_dict(dct: dict,
         raise Http404
 
 
-def get_record_no_parsing(manifid: str,
-                          wagtail_field_names: list) -> dict:
+def get_record_no_parsing(manifid: str, wagtail_field_names: list) -> dict:
     """
     Queries Mark Logic for collection object metadata fields, leaves the values
     of those metadata fields alone, in their raw form.
 
-    Args: 
+    Args:
         NOID string, list of field names
 
     Returns:
@@ -159,10 +155,11 @@ def brackets_parse(value: str) -> dict:
     Args:
         Metadata string
 
-    Returns: 
+    Returns:
         Dictionary indicating whether author/date attributions are
         externally derived
     """
+
     def question_mark(qm):
         if qm is None:
             return False
@@ -170,30 +167,34 @@ def brackets_parse(value: str) -> dict:
             return qm == '?'
 
     prepped = remove_trailing_comma(value)
-    extract_from_brackets = re.compile("^\[([\w\s\d,.]*)(\\?)?\]")
+    extract_from_brackets = re.compile(r'^\[([\w\s\d,.]*)(\\?)?\]')
     contents = re.match(extract_from_brackets, prepped)
 
     if contents is not None:
-        return {'contents': contents[1],
-                'externally_derived': True,
-                'uncertain': question_mark(contents[2])}
+        return {
+            'contents': contents[1],
+            'externally_derived': True,
+            'uncertain': question_mark(contents[2])
+        }
     else:
-        return {'contents': prepped,
-                'externally_derived': False,
-                'uncertain': False}
+        return {
+            'contents': prepped,
+            'externally_derived': False,
+            'uncertain': False
+        }
 
 
-def get_record_parsed(manifid: str,
-                      wagtail_field_names: list) -> dict:
+def get_record_parsed(manifid: str, wagtail_field_names: list) -> dict:
     """
-    Performs SparQL query, arranges result to mirror metadata fields from Wagail
-    database, and parses all of the metadata fields.
+    Performs SparQL query, arranges result to mirror metadata fields from
+    Wagtail database, and parses all of the metadata fields.
 
     Args:
         NOID string, list of metadata field names
 
-    Returns: 
+    Returns:
         Dictionary of metadata fields, with parse results in values
+
     """
     dct = get_record_no_parsing(manifid, wagtail_field_names)
     return {k: brackets_parse(v) for k, v in dct.items()}
@@ -210,24 +211,26 @@ def render_field(parsed_field: dict) -> str:
     Returns:
         String representing how that field will be displayed in the template
     """
+
     def question_mark(yes_qm):
         if yes_qm:
             return '?'
         else:
             return ''
+
     try:
         if parsed_field['externally_derived']:
-            return "[%s%s]" % (parsed_field['contents'],
-                               question_mark(parsed_field['uncertain']),
-                               )
+            return "[%s%s]" % (
+                parsed_field['contents'],
+                question_mark(parsed_field['uncertain']),
+            )
         else:
             return parsed_field['contents']
     except KeyError:
         return parsed_field
 
 
-def get_record_for_display(manifid: str,
-                           wagtail_field_names: list) -> dict:
+def get_record_for_display(manifid: str, wagtail_field_names: list) -> dict:
     """
     Main function for getting metadata fields back from Mark Logic, based on a
     collection object's NOID.
@@ -235,7 +238,7 @@ def get_record_for_display(manifid: str,
     Args:
         NOID string, list of metadata field names
 
-    Returns: 
+    Returns:
         Dictionary representing metadata to be displayed on collection
         object page.
     """
