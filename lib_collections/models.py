@@ -1,18 +1,18 @@
+import datetime
 import json
 from json import JSONDecodeError
-import datetime
+
 import requests
-from django.utils.html import escape
-from django.http import HttpResponse, Http404
-from datetime import date
 from base.models import DefaultBodyFields, PublicBasePage
+from collections import OrderedDict
 from diablo_utils import lazy_dotchain
-from django.utils.text import slugify
-from django.core.validators import RegexValidator
-from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
+from django.core.validators import RegexValidator
 from django.db import models
+from django.http import Http404
 from django.template.response import TemplateResponse
+from django.utils.text import slugify
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
     SCRC_EXHIBIT_FOOTER_IMG
@@ -34,8 +34,8 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import CBrowseURL, LBrowseURL, DisplayBrowse, CitationInfo
 from .marklogic import get_record_for_display, get_record_no_parsing
+from .utils import CBrowseURL, CitationInfo, DisplayBrowse, LBrowseURL
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -492,6 +492,7 @@ class CollectionPageSearch(Orderable, CSearch):
         'lib_collections.CollectionPage', related_name="col_search"
     )
 
+
 # Collection page content type
 
 
@@ -515,7 +516,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             List of field names (strings)
         """
         metadata_fields = CollectionPageObjectMetadata.objects.filter(
-            page_id=self.id)
+            page_id=self.id
+        )
         query_set = metadata_fields.values_list('edm_field_label')
         return [field[0] for field in query_set]
 
@@ -553,26 +555,39 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         staff_title = default(lambda: self.staff_contact.title, '')
         staff_position_title = default(
-            lambda: self.staff_contact.position_title, '')
+            lambda: self.staff_contact.position_title, ''
+        )
         staff_email = default(
-            lambda: self.staff_contact.staff_page_email.first().email, '')
-        staff_phone_number = default(lambda: self
-                                     .staff_contact
-                                     .staff_page_phone_faculty_exchange
-                                     .first()
-                                     .phone_number, '')
-        staff_faculty_exchange = default(lambda: self
-                                         .staff_contact
-                                         .staff_page_phone_faculty_exchange
-                                         .first()
-                                         .faculty_exchange, '')
-        staff_url = default(lambda: (StaffPublicPage.objects.get(
-            cnetid=self.staff_contact.cnetid).url), '')
+            lambda: self.staff_contact.staff_page_email.first().email, ''
+        )
+        staff_phone_number = default(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first())
+            .phone_number, ''
+        )
+        staff_faculty_exchange = default(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first())
+            .faculty_exchange, ''
+        )
+        staff_url = default(
+            lambda: (StaffPublicPage
+                     .objects
+                     .get(cnetid=self.staff_contact.cnetid)
+                     .url),
+            ''
+        )
 
-        access_location = default(lambda: {
-            "url": self.collection_location.url,
-            "title": self.collection_location.title
-        }, '')
+        access_location = default(
+            lambda: {
+                "url": self.collection_location.url,
+                "title": self.collection_location.title
+            }, ''
+        )
 
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
@@ -593,17 +608,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
 
         related_collections = lazy_dotchain(
-            lambda: self.related_collection_placement.all(),
-            '')
+            lambda: self.related_collection_placement.all(), ''
+        )
         related_exhibits = lazy_dotchain(
-            lambda: self.exhibit_page_related_collection.all(),
-            '')
+            lambda: self.exhibit_page_related_collection.all(), ''
+        )
         collections_by_subject = lazy_dotchain(
-            lambda: self.collection_subject_placements.all(),
-            '')
+            lambda: self.collection_subject_placements.all(), ''
+        )
         collections_by_format = lazy_dotchain(
-            lambda: self.collection_placements.all(),
-            '')
+            lambda: self.collection_placements.all(), ''
+        )
 
         output['staff_title'] = staff_title
         output['staff_position_title'] = staff_position_title
@@ -614,6 +629,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         output['unit_title'] = unit_title
         output['unit_url'] = unit_url
+        output['unit_email'] = unit_email
         output['unit_email_label'] = unit_email_label
         output['unit_phone_label'] = unit_phone_label
         output['unit_phone_number'] = unit_phone_number
@@ -639,13 +655,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Args:
             HTTP request
 
-        Returns: 
+        Returns:
             Tuple containing breadcrumb trail, along with the
             final breadcrumb text (which is different because it isn't
             a link)
         """
         breadcrumbs = list(
-            filter(lambda x: x is not "", request.path.split('/'))
+            filter(lambda x: x != "", request.path.split('/'))
         )
 
         trimmed_crumbs = breadcrumbs[2:-1]
@@ -654,14 +670,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         def path_up_to(idx, lst):
-            return {unslugify_browse(lst[i-1]): ("/collex/collections/"
-                                                 + "/".join(lst[:i]))
-                    for i in range(1, idx+1)
-                    if lst[i-1] not in ['list-browse',
-                                        'object',
-                                        'cluster-browse',
-                                        ]
-                    }
+            return {
+                unslugify_browse(lst[i - 1]):
+                ("/collex/collections/" + "/".join(lst[:i]))
+                for i in range(1, idx + 1)
+                if lst[i - 1] not in [
+                    'list-browse',
+                    'object',
+                    'cluster-browse',
+                ]
+            }
 
         breads = path_up_to(len(trimmed_crumbs), trimmed_crumbs)
         return (breads, final_crumb)
@@ -686,7 +704,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Args:
             Collection page
 
-        Returns: 
+        Returns:
             Dictionary representing information in sidebar browse
             links
         """
@@ -696,18 +714,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
-        return {
-            **{
-                x.label: mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
-                for x in CollectionPageClusterBrowse.objects.filter(page=self)
-            },
-            **{
-                CollectionPage.lbrowse_override(
-                    x.label
-                ): mk_lbrowse_url_wagtail(slug, slugify(x.label))
-                for x in CollectionPageListBrowse.objects.filter(page=self)
-            }
-        }
+        return OrderedDict([
+            (x.label, mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
+            for x in CollectionPageClusterBrowse
+            .objects
+            .filter(page=self)
+        ] + [
+            (CollectionPage.lbrowse_override(x.label),
+             mk_lbrowse_url_wagtail(slug, slugify(x.label)))
+            for x in CollectionPageListBrowse
+            .objects
+            .filter(page=self)
+        ])
 
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
@@ -758,10 +776,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     )
     citation_config = models.TextField(
         default=CitationInfo.default_config,
-        help_text=('INI-style configuration for Citation service, saying which'
-                   ' metadata fields to pull from the Turtle data on the object; '
-                   'see https://github.com/uchicago-library/uchicago-library.github.io '
-                   'for more info on how to edit/construct one of these'),
+        help_text=(
+            'INI-style configuration for Citation service, saying which'
+            ' metadata fields to pull from the Turtle data on the object; '
+            'see https://github.com/uchicago-library/uchicago-library.github.io '
+            'for more info on how to edit/construct one of these'
+        ),
         verbose_name="Citation Configuration",
     )
     highlighted_records = models.URLField(
@@ -874,15 +894,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 return defval
 
         def callno_to_pi(callno):
-            return '-'.join(callno.replace(':', ' ').replace('.', ' ').upper().split())
+            return '-'.join(
+                callno.replace(':', ' ').replace('.', ' ').upper().split()
+            )
 
         # get link to physical object in VuFind
-        physical_object = default(lambda: get_record_no_parsing(manifid, '')['Local'],
-                                  '')
+        physical_object = default(
+            lambda: get_record_no_parsing(manifid, '')['Local'], ''
+        )
 
         # get link to catalog call number for collection object
-        callno = default(lambda: get_record_no_parsing(manifid, '')['Classificationlcc'],
-                         '')
+        callno = default(
+            lambda: get_record_no_parsing(manifid, '')['Classificationlcc'], ''
+        )
 
         def linkify(service, pi):
             """
@@ -896,18 +920,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 links in object template
             """
             if service.get_service_display() == 'LUNA':
-                return {'service': 'LUNA',
-                        'caption': 'Assemble Slide Decks',
-                        'link': ('https://luna.lib.uchicago.edu/'
-                                 'luna/servlet/view/search'
-                                 '?q=_luna_media_exif_filename='
-                                 '%s.tif') % pi,
-                        }
+                return {
+                    'service':
+                    'LUNA',
+                    'caption':
+                    'Assemble Slide Decks',
+                    'link': (
+                        'https://luna.lib.uchicago.edu/'
+                        'luna/servlet/view/search'
+                        '?q=_luna_media_exif_filename='
+                        '%s.tif'
+                    ) % pi,
+                }
             elif service.get_service_display() == 'BTAA':
-                return {'service': 'BTAA Geoportal',
-                        'caption': 'Discover Maps & GIS Data',
-                        'link': service.identifier,
-                        }
+                return {
+                    'service': 'BTAA Geoportal',
+                    'caption': 'Discover Maps & GIS Data',
+                    'link': service.identifier,
+                }
             else:
                 return {}
 
@@ -959,8 +989,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # populate context
         context = super().get_context(request)
         context["manifid"] = manifid
-        context["iiif_url"] = mk_viewer_url(
-            kwargs["manifid"])
+        context["iiif_url"] = mk_viewer_url(kwargs["manifid"])
         context["share_url"] = share_url
         context["slug"] = slug
         context["marklogic"] = marklogic
@@ -983,7 +1012,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
         Route for listing of multiple cluster browses.  For example: the
@@ -1030,7 +1059,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1082,8 +1111,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # retrieve browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
-        objects = [prepare_browse_json(x, comma_join)
-                   for x in j['items']]
+        objects = [prepare_browse_json(x, comma_join) for x in j['items']]
 
         # construct breadcrumb trail
         (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
@@ -1103,7 +1131,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    @route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
@@ -1126,10 +1154,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             pageno = 1
 
         # construct IIIF URL to get browse information from
-        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
-            collection,
-            browse_name
-        )
+        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(collection, browse_name)
 
         # list of browse types for sidebar
         all_browse_types = self.build_browse_types()
@@ -1141,8 +1166,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # retrieve list browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
-        l = [DisplayBrowse.prepare_browse_json(x, comma_join)
-             for x in j['items']]
+        l = [
+            DisplayBrowse.prepare_browse_json(x, comma_join) for x in j['items']
+        ]
 
         # create pagination
         list_objects = Paginator(l, THUMBS_PER_PAGE)
@@ -1167,9 +1193,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["all_browse_types"] = all_browse_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
-            collection, paginate_name)
-        context['collection_final_breadcrumb'] = CollectionPage.lbrowse_override(
-            unslugify_browse(final_crumb)
+            collection, paginate_name
+        )
+        context['collection_final_breadcrumb'
+                ] = CollectionPage.lbrowse_override(
+                    unslugify_browse(final_crumb)
         )
         context['collection_breadcrumb'] = breads
 
@@ -1299,9 +1327,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         if iiif_url:
             r = requests.get(iiif_url)
             j = r.json()
-            objects = [DisplayBrowse.prepare_browse_json(x, comma_join)
-                       for x in j['items']
-                       ][:5]
+            objects = [
+                DisplayBrowse.prepare_browse_json(x, comma_join)
+                for x in j['items']
+            ][:5]
         else:
             objects = []
 
