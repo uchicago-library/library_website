@@ -23,10 +23,8 @@
 			{% if self.thumbnail_caption %}
 			    <figcaption>{{ self.thumbnail_caption }}</figcaption>
 			{% endif %}
-		    {% else %}
-			{% if default_image %}
-			    {% image default_image width-200 %}
-			{% endif %}
+		    {% else if default_image %}
+			{% image default_image width-200 %}
 		    {% endif %}
 		</figure>
 
@@ -54,8 +52,6 @@
       {% include "includes/general_listing.html" %}
     </section>
 {% else %}
-    <!-- don't display collection highlights if the collection has no -->
-    <!-- highlighted records URL -->
 {% endif %}
     
 {% endblock %}
