@@ -15,7 +15,7 @@ from django.template.response import TemplateResponse
 from django.utils.text import slugify
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
-    SCRC_EXHIBIT_FOOTER_IMG
+    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
@@ -958,9 +958,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         get_ris = CitationInfo.get_ris
         get_zotero = CitationInfo.get_zotero
         csl_json_to_html = CitationInfo.csl_json_to_html
-        APA_PATH = CitationInfo.APA_PATH
-        MLA_PATH = CitationInfo.MLA_PATH
-        CHICAGO_PATH = CitationInfo.CHICAGO_PATH
         config = self.citation_config
 
         # get Turtle data for collection object
