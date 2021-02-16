@@ -23,7 +23,7 @@
 			{% if self.thumbnail_caption %}
 			    <figcaption>{{ self.thumbnail_caption }}</figcaption>
 			{% endif %}
-		    {% else if default_image %}
+		    {% elif default_image %}
 			{% image default_image width-200 %}
 		    {% endif %}
 		</figure>
