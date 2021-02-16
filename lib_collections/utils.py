@@ -391,11 +391,24 @@ class DisplayBrowse():
             Collection object NOID
 
         """
-        rexp = re.search('.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
+        rexp = re.search(r'.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
         try:
             return rexp[1]
         except TypeError:
             return ''
+
+    def comma_join(lst):
+        """
+        Joins a list of strings by commas.  For use as the second input to
+        prepare_browse_json.
+
+        Args:
+            List of strings
+
+        Returns:
+            Comma-joined string
+        """
+        return ", ".join(lst)
 
     def prepare_browse_json(j: dict,
                             joiner) -> dict:

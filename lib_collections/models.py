@@ -866,7 +866,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         truncate_at = 25
 
         # construct breadcrumb trail
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         # adjust value of final breadcrumb to show object title if possible
         if 'Title' in marklogic.keys():
@@ -884,7 +884,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             Args:
                 Dictionary lookup
 
-            Returns: 
+            Returns:
                 Value corresponding to the key (or the default in
                 case of a key error)
             """
@@ -915,7 +915,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             Args:
                 External Service instance, Permanent Identifier string
 
-            Returns: 
+            Returns:
                 Dictionary containing information for BTAA/LUNA
                 links in object template
             """
@@ -954,7 +954,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # bring utility functions from CitationInfo into local namespace
         get_turtle_data = CitationInfo.get_turtle_data
         get_citation = CitationInfo.get_citation
-        get_csl = CitationInfo.get_citation
         get_bibtex = CitationInfo.get_bibtex
         get_ris = CitationInfo.get_ris
         get_zotero = CitationInfo.get_zotero
@@ -1027,7 +1026,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         all_browse_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
-            # default to subject browses if no browse type is specified in route
+            # default to subject browses if no browse type is specified in
+            # route
             default_browse = CollectionPageClusterBrowse.objects.first()
             default = default_browse.label.lower()
             browse_type = default
@@ -1036,7 +1036,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             browse_type = kwargs["browse_type"][:-1]
 
         # construct breadcrumb trail
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         # bring CBrowseURL function into local namespace
         mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
@@ -1095,26 +1095,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse = unslugify_browse(kwargs["browse"])
         browse_type = unslugify_browse(kwargs["browse"])
 
-        def comma_join(lst):
-            """
-            Joins a list of strings by commas.  For use as the second input to
-            prepare_browse_json.
-
-            Args:
-                List of strings
-
-            Returns:
-                Comma-joined string
-            """
-            return ", ".join(lst)
-
         # retrieve browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
-        objects = [prepare_browse_json(x, comma_join) for x in j['items']]
+        objects = [prepare_browse_json(
+            x, DisplayBrowse.comma_join) for x in j['items']]
 
         # construct breadcrumb trail
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
@@ -1159,22 +1147,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # list of browse types for sidebar
         all_browse_types = self.build_browse_types()
 
-        # joiner for prepare_browse_json, as above
-        def comma_join(lst):
-            return ", ".join(lst)
-
         # retrieve list browse information from IIIF server
         r = requests.get(iiif_url)
         j = r.json()
-        l = [
-            DisplayBrowse.prepare_browse_json(x, comma_join) for x in j['items']
+        browse_list = [
+            DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
+            for x in j['items']
         ]
 
         # create pagination
-        list_objects = Paginator(l, THUMBS_PER_PAGE)
+        list_objects = Paginator(browse_list, THUMBS_PER_PAGE)
 
         # construct breadcrumb trail
-        (breads, final_crumb) = CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         unslugify_browse = DisplayBrowse.unslugify_browse
 
@@ -1297,44 +1282,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def get_context(self, request):
 
-        unit_title = lazy_dotchain(lambda: self.unit.title, '')
-        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
-        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
-        unit_email = lazy_dotchain(lambda: self.unit.email, '')
-        unit_phone_label = lazy_dotchain(
-            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
-        )
-        unit_phone_number = lazy_dotchain(
-            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
-        )
-        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
-        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
-        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
-        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document = lazy_dotchain(
-            lambda: self.unit.link_document.file.url, ''
-        )
-
         # get URL for highlighted records listing from Wagtail database
         iiif_url = self.highlighted_records
-
-        # string joining function for prepare_browse_json, see above for more
-        # info
-        def comma_join(lst):
-            return ", ".join(lst)
 
         # display first five records in selected listing
         if iiif_url:
             r = requests.get(iiif_url)
             j = r.json()
             objects = [
-                DisplayBrowse.prepare_browse_json(x, comma_join)
+                DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
                 for x in j['items']
             ][:5]
         else:
             objects = []
-
-        slug = self.slug
 
         # browse links for sidebar
         all_browse_types = self.build_browse_types()
@@ -1356,19 +1316,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def has_right_sidebar(self):
         return True
-
-
-# Collection Object Page
-#
-#   MT: pretty sure we don't need this anymore, but leaving
-#   it to be cautious
-class CollectionObjectPage():
-    """
-    Object pages for Collections; Child page to Collection Page.
-    """
-    parent_page_types = [
-        'lib_collections.CollectionPage', 'lib_collections.CollectionObjectPage'
-    ]
 
 
 # CollectingArea page models
