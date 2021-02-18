@@ -561,8 +561,8 @@ CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
 
 # CSL file paths
-APA_PATH = "lib_collections/csl/apa.csl"
+APA_PATH = BASE_DIR + "/lib_collections/csl/apa.csl"
 
-MLA_PATH = "lib_collections/csl/modern-language-association.csl"
+MLA_PATH = BASE_DIR + "/lib_collections/csl/modern-language-association.csl"
 
-CHICAGO_PATH = "lib_collections/csl/chicago-author-date.csl"
+CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
