@@ -27,6 +27,7 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
+from collections import OrderedDict
 
 
 class CBrowseURL():
@@ -634,8 +635,10 @@ class CitationInfo():
                 bibliography.register(citation)
 
             html = ""
-            for item in bibliography.bibliography():
-                html += (str(item) + "<br>")
+            for ms in bibliography.bibliography():
+                lst = list(OrderedDict.fromkeys(ms.split()))
+                s = ' '.join(lst)
+                html += (s + "<br>")
 
             return html
 
