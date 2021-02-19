@@ -382,6 +382,7 @@ class CBrowse(models.Model):
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
+    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
@@ -389,6 +390,7 @@ class CBrowse(models.Model):
                 FieldPanel('label'),
                 FieldPanel('include'),
                 FieldPanel('iiif_location'),
+                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -420,6 +422,7 @@ class LBrowse(models.Model):
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
+    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
@@ -427,6 +430,7 @@ class LBrowse(models.Model):
                 FieldPanel('label'),
                 FieldPanel('include'),
                 FieldPanel('iiif_location'),
+                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -684,6 +688,21 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         breads = path_up_to(len(trimmed_crumbs), trimmed_crumbs)
         return (breads, final_crumb)
 
+    def override(new_string, string):
+        """
+        Reset name of link text for list browse to be 'All Maps'
+
+        Args:
+            Link text
+
+        Returns:
+            New link text: 'All Maps'
+        """
+        if new_string:
+            return new_string
+        else:
+            return string
+
     def lbrowse_override(str):
         """
         Reset name of link text for list browse to be 'All Maps'
@@ -714,18 +733,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
-        return OrderedDict([
-            (x.label, mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
-            for x in CollectionPageClusterBrowse
-            .objects
-            .filter(page=self)
-        ] + [
-            (CollectionPage.lbrowse_override(x.label),
-             mk_lbrowse_url_wagtail(slug, slugify(x.label)))
-            for x in CollectionPageListBrowse
-            .objects
-            .filter(page=self)
-        ])
+        return (
+            OrderedDict([
+                (CollectionPage.override(x.link_text_override, x.label),
+                 mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
+                for x in CollectionPageClusterBrowse
+                .objects
+                .filter(page=self)]),
+            OrderedDict([
+                (CollectionPage.override(x.link_text_override, x.label),
+                 mk_lbrowse_url_wagtail(slug, slugify(x.label)))
+                for x in CollectionPageListBrowse
+                .objects
+                .filter(page=self)])
+        )
 
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
@@ -820,7 +841,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
 
         # gather information for sidebar browse links
-        all_browse_types = self.build_browse_types()
+        cluster_types, list_types = self.build_browse_types()
 
         def injection_safe(id):
             """
@@ -989,7 +1010,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["share_url"] = share_url
         context["slug"] = slug
         context["marklogic"] = marklogic
-        context["all_browse_types"] = all_browse_types
+        context["cluster_types"] = cluster_types
+        context["list_types"] = list_types
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
@@ -1020,7 +1042,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
 
         # construct browse type links for sidebar
-        all_browse_types = self.build_browse_types()
+        cluster_types, list_types = self.build_browse_types()
 
         if kwargs["browse_type"] is None:
             # default to subject browses if no browse type is specified in
@@ -1044,7 +1066,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # populate context
         context = super().get_context(request)
-        context["all_browse_types"] = all_browse_types
+        context["cluster_types"] = cluster_types
+        context["list_types"] = cluster_types
         context["browse_type"] = unslugify_browse(browse_type)
         context["browses"] = get_iiif_labels(
             mk_cbrowse_type_url_iiif(slug, browse_type),
@@ -1072,7 +1095,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_type = kwargs['browse_type']
 
         # construct browse type dictionary for sidebar
-        all_browse_types = self.build_browse_types()
+        cluster_types, list_types = self.build_browse_types()
 
         # bring utility functions from CBrowseURL and DisplayBrowse into local
         # namespace
@@ -1108,7 +1131,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context = super().get_context(request)
         context["browse_title"] = browse
         context["browse_type"] = browse_type
-        context["all_browse_types"] = all_browse_types
+        context["cluster_types"] = cluster_types
+        context["list_types"] = list_types
         context["slug"] = slug
         context["objects"] = objects
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
@@ -1142,7 +1166,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         iiif_url = LBrowseURL.mk_lbrowse_url_iiif(collection, browse_name)
 
         # list of browse types for sidebar
-        all_browse_types = self.build_browse_types()
+        cluster_types, list_types = self.build_browse_types()
 
         # retrieve list browse information from IIIF server
         r = requests.get(iiif_url)
@@ -1172,7 +1196,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["browse_title"] = CollectionPage.lbrowse_override(
             "Browse by %s:" % unslugify_browse(browse_name)
         ) + ":"
-        context["all_browse_types"] = all_browse_types
+        context["cluster_types"] = cluster_types
+        context["list_types"] = list_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name
@@ -1236,24 +1261,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     # panels within the 'Collection' tab in the admin interface
     collection_panels = [
-        FieldPanel('digital_collection'),
-        MultiFieldPanel(
-            [
-                ImageChooserPanel('banner_image'),
-                ImageChooserPanel('banner_feature'),
-                FieldPanel('banner_title'),
-                FieldPanel('banner_subtitle'),
-            ],
-            heading='Banner'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('branding_color'),
-                FieldPanel('google_font_link'),
-                FieldPanel('font_family'),
-            ],
-            heading='Branding'
-        ),
+        # FieldPanel('digital_collection'),
+        # MultiFieldPanel(
+        #     [
+        #         ImageChooserPanel('banner_image'),
+        #         ImageChooserPanel('banner_feature'),
+        #         FieldPanel('banner_title'),
+        #         FieldPanel('banner_subtitle'),
+        #     ],
+        #     heading='Banner'
+        # ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('branding_color'),
+        #         FieldPanel('google_font_link'),
+        #         FieldPanel('font_family'),
+        #     ],
+        #     heading='Branding'
+        # ),
         FieldPanel('highlighted_records'),
         FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
@@ -1294,7 +1319,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             objects = []
 
         # browse links for sidebar
-        all_browse_types = self.build_browse_types()
+        cluster_types, list_types = self.build_browse_types()
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
@@ -1302,7 +1327,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # populate context
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
-        context['all_browse_types'] = all_browse_types
+        context['cluster_types'] = cluster_types
+        context['list_types'] = list_types
         context['objects'] = objects
 
         # update context with information about staff associated with the
