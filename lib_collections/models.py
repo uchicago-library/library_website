@@ -852,7 +852,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 field_names,
             )
         else:
-            marklogic = ''
             raise Http404
 
         def truncate_crumb(crumb, length):
@@ -878,7 +877,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         # adjust value of final breadcrumb to show object title if possible
-        if 'Title' in marklogic.keys():
+        if not marklogic:
+            final_crumb = 'Object'
+        elif 'Title' in marklogic.keys():
             final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
         elif 'Description' in marklogic.keys():
             final_crumb = truncate_crumb(marklogic['Description'], truncate_at)
@@ -899,7 +900,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             """
             try:
                 return thunk()
-            except KeyError:
+            except (KeyError, TypeError):
                 return defval
 
         def callno_to_pi(callno):
@@ -911,11 +912,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         physical_object = default(
             lambda: get_record_no_parsing(manifid, '')['Local'], ''
         )
-
-        # get link to catalog call number for collection object
         callno = default(
             lambda: get_record_no_parsing(manifid, '')['Classificationlcc'], ''
         )
+
+        # get link to catalog call number for collection object
 
         def linkify(service, pi):
             """
@@ -1463,28 +1464,28 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         related_name='+',
         on_delete=models.SET_NULL
     )
-    third_feature=models.ForeignKey(
+    third_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    fourth_feature=models.ForeignKey(
+    fourth_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    supplementary_header=models.CharField(
+    supplementary_header = models.CharField(
         max_length=255, blank=True, null=True
     )
-    supplementary_text=RichTextField(blank=True, null=True)
+    supplementary_text = RichTextField(blank=True, null=True)
 
-    subpage_types=[]
+    subpage_types = []
 
-    content_panels=Page.content_panels + [
+    content_panels = Page.content_panels + [
         FieldPanel('subject'),
         StreamFieldPanel('collecting_statement'),
         MultiFieldPanel(
@@ -1566,7 +1567,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields=PublicBasePage.search_fields + [
+    search_fields = PublicBasePage.search_fields + [
         index.SearchField('subject'),
         index.SearchField('collecting_statement'),
         index.SearchField('guide_link_text'),
@@ -1608,9 +1609,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             is a page title and the second item is a url.
         """
         try:
-            page=Page.objects.get(id=page_id)
-            title=str(page)
-            url=page.relative_url(site)
+            page = Page.objects.get(id=page_id)
+            title = str(page)
+            url = page.relative_url(site)
         except (Page.DoesNotExist):
             return ('', '')
         return (title, url)
@@ -1628,19 +1629,19 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Returns:
             Mixed tuple
         """
-        is_staff_page=librarian.__class__.__name__ == 'StaffPage'
+        is_staff_page = librarian.__class__.__name__ == 'StaffPage'
         if not is_staff_page:
             raise TypeError('The wrong page type was passed')
-        staff_member=str(librarian)
-        title=librarian.position_title
-        url=librarian.public_page.relative_url(site)
-        thumb=librarian.profile_picture
+        staff_member = str(librarian)
+        title = librarian.position_title
+        url = librarian.public_page.relative_url(site)
+        thumb = librarian.profile_picture
         try:
-            email=librarian.staff_page_email.values_list('email',
+            email = librarian.staff_page_email.values_list('email',
                                                            flat=True)[0]
         except:
-            email=''
-        phone_and_fac=tuple(
+            email = ''
+        phone_and_fac = tuple(
             librarian.staff_page_phone_faculty_exchange.values_list(
                 'phone_number', 'faculty_exchange'
             )
@@ -1666,15 +1667,15 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             contain tuples with a slightly more complicated
             structure.
         """
-        related={'collections': set([]), 'exhibits': set([])}
-        subjects=self.get_subjects(children)
+        related = {'collections': set([]), 'exhibits': set([])}
+        subjects = self.get_subjects(children)
         # Related collections and exhibits
         for subject in subjects:
-            related['collections']=related['collections'] | set(
+            related['collections'] = related['collections'] | set(
                 self._build_related_link(page[0], site)
                 for page in subject.collection_pages.values_list('page_id')
             )
-            related['exhibits']=related['exhibits'] | set(
+            related['exhibits'] = related['exhibits'] | set(
                 self._build_related_link(page[0], site)
                 for page in subject.exhibit_pages.values_list('page_id')
             )

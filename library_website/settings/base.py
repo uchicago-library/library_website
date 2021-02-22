@@ -526,7 +526,7 @@ IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 MARKLOGIC_LDR_PORT = 8008
 
 # MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu
-MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
+MARKLOGIC_LDR_BASE = "http://marklogicgiraffe.lib.uchicago.edu"
 
 MARKLOGIC_LDR_ROUTE = "/v1/graphs"
 

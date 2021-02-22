@@ -2,6 +2,7 @@ import json
 import re
 
 import requests
+from requests.exceptions import RequestException
 from django.http import Http404
 from library_website.settings.base import MARKLOGIC_LDR_URL, SPARQL_ROOT
 from library_website.settings.local import (
@@ -64,7 +65,7 @@ def get_raw_record(manifid: str) -> dict:
         )
         j = json.loads(r.content.decode('utf-8'))
         return j
-    except ConnectionError:
+    except RequestException:
         return ''
 
 
@@ -128,7 +129,10 @@ def get_record_no_parsing(manifid: str, wagtail_field_names: list) -> dict:
         Dictionary representing metadata
     """
     raw_record = get_raw_record(manifid)
-    return triples_to_dict(raw_record, wagtail_field_names)
+    if raw_record:
+        return triples_to_dict(raw_record, wagtail_field_names)
+    else:
+        return ''
 
 
 def remove_trailing_comma(string: str) -> str:
@@ -200,7 +204,10 @@ def get_record_parsed(manifid: str, wagtail_field_names: list) -> dict:
 
     """
     dct = get_record_no_parsing(manifid, wagtail_field_names)
-    return {k: brackets_parse(v) for k, v in dct.items()}
+    if dct:
+        return {k: brackets_parse(v) for k, v in dct.items()}
+    else:
+        return ''
 
 
 def render_field(parsed_field: dict) -> str:
@@ -246,4 +253,7 @@ def get_record_for_display(manifid: str, wagtail_field_names: list) -> dict:
         object page.
     """
     dct = get_record_parsed(manifid, wagtail_field_names)
-    return {k: render_field(v) for k, v in dct.items()}
+    if dct:
+        return {k: render_field(v) for k, v in dct.items()}
+    else:
+        return ''
