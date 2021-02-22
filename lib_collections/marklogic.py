@@ -3,7 +3,7 @@ import re
 
 import requests
 from django.http import Http404
-from library_website.settings.base import SPARQL_ROOT
+from library_website.settings.base import MARKLOGIC_LDR_URL, SPARQL_ROOT
 from library_website.settings.local import (
     MARKLOGIC_LDR_PASSWORD, MARKLOGIC_LDR_USER
 )
@@ -52,17 +52,20 @@ def get_raw_record(manifid: str) -> dict:
         Dictionary representation of the result of the SparQL query
 
     """
-    r = requests.get(
-        auth=HTTPBasicAuth(
-            MARKLOGIC_LDR_USER,
-            MARKLOGIC_LDR_PASSWORD,
-        ),
-        headers={'Content-type': 'text/turtle'},
-        params={'query': sp_query(manifid)},
-        url='http://marklogic.lib.uchicago.edu:8008/v1/graphs/sparql'
-    )
-    j = json.loads(r.content.decode('utf-8'))
-    return j
+    try:
+        r = requests.get(
+            auth=HTTPBasicAuth(
+                MARKLOGIC_LDR_USER,
+                MARKLOGIC_LDR_PASSWORD,
+            ),
+            headers={'Content-type': 'text/turtle'},
+            params={'query': sp_query(manifid)},
+            url=MARKLOGIC_LDR_URL + '/sparql',
+        )
+        j = json.loads(r.content.decode('utf-8'))
+        return j
+    except ConnectionError:
+        return ''
 
 
 def align_field_names(dct: dict, wagtail_field_names: list) -> dict:

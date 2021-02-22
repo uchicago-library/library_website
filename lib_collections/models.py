@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.core.validators import RegexValidator
 from django.db import models
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
 from library_website.settings import (
@@ -703,18 +703,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         else:
             return string
 
-    def lbrowse_override(str):
-        """
-        Reset name of link text for list browse to be 'All Maps'
-
-        Args:
-            Link text
-
-        Returns:
-            New link text: 'All Maps'
-        """
-        return "All Maps"
-
     def build_browse_types(self):
         """
         Create dictionary containing information needed to generate
@@ -1184,27 +1172,35 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        current_browse = CollectionPageListBrowse.objects.filter(
+            label=unslugify_browse(browse_name), page=self).first()
+
+        if current_browse:
+            browse_title = CollectionPage.override(
+                current_browse.link_text_override,
+                "Browse by %s" % current_browse.label) + ":"
+        else:
+            return Http404
+
         # final breadcrumb just says e.g. Page 2
         try:
             int(final_crumb)
-            final_crumb = 'Page ' + final_crumb
+            final_crumb = ('Page ' + final_crumb)
         except ValueError:
             pass
 
         # populate context
         context = super().get_context(request)
-        context["browse_title"] = CollectionPage.lbrowse_override(
-            "Browse by %s:" % unslugify_browse(browse_name)
-        ) + ":"
+        context["browse_title"] = browse_title
         context["cluster_types"] = cluster_types
         context["list_types"] = list_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name
         )
-        context['collection_final_breadcrumb'
-                ] = CollectionPage.lbrowse_override(
-                    unslugify_browse(final_crumb)
+        context['collection_final_breadcrumb'] = CollectionPage.override(
+            current_browse.link_text_override,
+            unslugify_browse(final_crumb)
         )
         context['collection_breadcrumb'] = breads
 
@@ -1467,28 +1463,28 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         related_name='+',
         on_delete=models.SET_NULL
     )
-    third_feature = models.ForeignKey(
+    third_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    fourth_feature = models.ForeignKey(
+    fourth_feature=models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
         on_delete=models.SET_NULL
     )
-    supplementary_header = models.CharField(
+    supplementary_header=models.CharField(
         max_length=255, blank=True, null=True
     )
-    supplementary_text = RichTextField(blank=True, null=True)
+    supplementary_text=RichTextField(blank=True, null=True)
 
-    subpage_types = []
+    subpage_types=[]
 
-    content_panels = Page.content_panels + [
+    content_panels=Page.content_panels + [
         FieldPanel('subject'),
         StreamFieldPanel('collecting_statement'),
         MultiFieldPanel(
@@ -1570,7 +1566,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         )
     ] + PublicBasePage.content_panels
 
-    search_fields = PublicBasePage.search_fields + [
+    search_fields=PublicBasePage.search_fields + [
         index.SearchField('subject'),
         index.SearchField('collecting_statement'),
         index.SearchField('guide_link_text'),
@@ -1612,9 +1608,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             is a page title and the second item is a url.
         """
         try:
-            page = Page.objects.get(id=page_id)
-            title = str(page)
-            url = page.relative_url(site)
+            page=Page.objects.get(id=page_id)
+            title=str(page)
+            url=page.relative_url(site)
         except (Page.DoesNotExist):
             return ('', '')
         return (title, url)
@@ -1632,19 +1628,19 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Returns:
             Mixed tuple
         """
-        is_staff_page = librarian.__class__.__name__ == 'StaffPage'
+        is_staff_page=librarian.__class__.__name__ == 'StaffPage'
         if not is_staff_page:
             raise TypeError('The wrong page type was passed')
-        staff_member = str(librarian)
-        title = librarian.position_title
-        url = librarian.public_page.relative_url(site)
-        thumb = librarian.profile_picture
+        staff_member=str(librarian)
+        title=librarian.position_title
+        url=librarian.public_page.relative_url(site)
+        thumb=librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list('email',
+            email=librarian.staff_page_email.values_list('email',
                                                            flat=True)[0]
         except:
-            email = ''
-        phone_and_fac = tuple(
+            email=''
+        phone_and_fac=tuple(
             librarian.staff_page_phone_faculty_exchange.values_list(
                 'phone_number', 'faculty_exchange'
             )
@@ -1670,15 +1666,15 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             contain tuples with a slightly more complicated
             structure.
         """
-        related = {'collections': set([]), 'exhibits': set([])}
-        subjects = self.get_subjects(children)
+        related={'collections': set([]), 'exhibits': set([])}
+        subjects=self.get_subjects(children)
         # Related collections and exhibits
         for subject in subjects:
-            related['collections'] = related['collections'] | set(
+            related['collections']=related['collections'] | set(
                 self._build_related_link(page[0], site)
                 for page in subject.collection_pages.values_list('page_id')
             )
-            related['exhibits'] = related['exhibits'] | set(
+            related['exhibits']=related['exhibits'] | set(
                 self._build_related_link(page[0], site)
                 for page in subject.exhibit_pages.values_list('page_id')
             )
