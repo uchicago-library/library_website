@@ -35,7 +35,7 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import CBrowseURL, CitationInfo, DisplayBrowse, LBrowseURL
+from .utils import CBrowseURL, CitationInfo, DisplayBrowse, LBrowseURL, IIIFDisplay
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -958,7 +958,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         ]
 
         # bring utility functions from DisplayBrowse into local namespace
-        mk_viewer_url = DisplayBrowse.mk_viewer_url
+        get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         # bring utility functions from CitationInfo into local namespace
@@ -992,10 +992,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # URL for social media sharing links
         share_url = "%s/object/%s" % (self.url, manifid)
 
+        iiif_url = get_viewer_url(kwargs["manifid"])
+
         # populate context
         context = super().get_context(request)
         context["manifid"] = manifid
-        context["iiif_url"] = mk_viewer_url(kwargs["manifid"])
+        context["iiif_url"] = iiif_url
         context["share_url"] = share_url
         context["slug"] = slug
         context["marklogic"] = marklogic

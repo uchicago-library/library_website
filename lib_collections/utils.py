@@ -27,7 +27,43 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
+from requests.exceptions import RequestException
 from collections import OrderedDict
+
+
+class GeneralPurpose():
+    """
+    Namespace class containing some general-purpose functions.  In the
+    context of this module, they're here to help with unit testing.
+    See tests.py.
+
+    """
+
+    def identity(x):
+        """
+        The identity function.
+
+        Args:
+            Anything
+
+        Returns: 
+            The same thing.
+        """
+        return x
+
+    def k(x):
+        """
+        Curry's K-combinator.  Returns a constant function to the input.
+
+        Args:
+            Anything
+
+        Returns:
+            A constant function to the input.
+        """
+        def partial(y):
+            return x
+        return partial
 
 
 class CBrowseURL():
@@ -189,7 +225,9 @@ class DisplayBrowse():
         spaces = ' '.join([x.capitalize() for x in slug_list])
         return spaces
 
-    def get_iiif_labels_language(url: str, lang: str) -> list:
+    def get_iiif_labels_language(url: str,
+                                 lang: str,
+                                 func=GeneralPurpose.identity) -> list:
         """
         Helper function for get_iiif_labels.
 
@@ -200,7 +238,8 @@ class DisplayBrowse():
             an association list from browses/browse types to the
             number of items falling under each browse
         """
-        r = requests.get(url)
+        o = requests.get(url)
+        r = func(o)
         if r.status_code == 404:
             raise Http404
         else:
@@ -260,30 +299,6 @@ class DisplayBrowse():
             "/collex/collections/%s/object/%s" %
             (collection_slug, manifid)
         )
-
-    def mk_manifest_url(manifid: str) -> str:
-        """
-        Create URL for an object's IIIF manifest.
-
-        Args:
-            NOID string
-
-        Returns:
-            IIIF Manifest URL
-        """
-        return "%s/object/ark:/61001/%s.json" % (IIIF_PREFIX, manifid)
-
-    def mk_viewer_url(manifid: str) -> str:
-        """
-        Create Universal Viewer URL for a collection object.
-
-        Args:
-            NOID string
-
-        Returns:
-            Url for Universal Viewer viewing the relevant object
-        """
-        return IIIF_VIEWER_PREFIX + DisplayBrowse.mk_manifest_url(manifid)
 
     def create_field(name: str, dct: dict) -> list:
         """
@@ -519,7 +534,8 @@ class CitationInfo():
         '\tscale=scale'
     )
 
-    def get_turtle_data(manifid: str) -> str:
+    def get_turtle_data(manifid: str,
+                        func=GeneralPurpose.identity) -> str:
         """
         Given a collection object NOID, query the primary ARK resolver to
         obtain the Turtle data for the object, serialized in the form
@@ -537,13 +553,17 @@ class CitationInfo():
 
         """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
-        r = requests.get(url)
+        o = requests.get(url)
+        r = func(o)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
             return ''
 
-    def get_citation(mode: str, turtle_data: str, config: str) -> str:
+    def get_citation(mode: str,
+                     turtle_data: str,
+                     config: str,
+                     func=GeneralPurpose.identity) -> str:
         """
         Query the citation restful service for citation info.  Mode can be
         bibtex, csl, ris, or xml, and the two inputs are the
@@ -562,7 +582,7 @@ class CitationInfo():
             Dictionary containing CSL/BibTeX/RIS/XML citation
             info for use in the collection object template
         """
-        r = requests.get(
+        o = requests.get(
             CITATION_ROOT,
             params={
                 "mode": mode,
@@ -570,6 +590,7 @@ class CitationInfo():
                 "config": config,
             }
         )
+        r = func(o)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
@@ -692,3 +713,49 @@ class CitationInfo():
             RIS viewing URL
         """
         return CitationInfo.citation_export("ris", turtle_data, config)
+
+
+class IIIFDisplay:
+
+    def mk_manifest_url(manifid: str) -> str:
+        """
+        Create URL for an object's IIIF manifest.
+
+        Args:
+            NOID string
+
+        Returns:
+            IIIF Manifest URL
+        """
+        return "%s/object/ark:/61001/%s.json" % (IIIF_PREFIX, manifid)
+
+    def mk_viewer_url(manifid: str) -> str:
+        """
+        Create Universal Viewer URL for a collection object.
+
+        Args:
+            NOID string
+
+        Returns:
+            Url for Universal Viewer viewing the relevant object
+        """
+        return IIIF_VIEWER_PREFIX + IIIFDisplay.mk_manifest_url(manifid)
+
+    def test_url(url: str) -> str:
+        try:
+            r = requests.get(url)
+            if r.status_code >= 200 and r.status_code < 300:
+                return url
+            else:
+                return ''
+        except RequestException:
+            return ''
+
+    def get_viewer_url(manifid: str) -> str:
+        test = IIIFDisplay.test_url(IIIFDisplay
+                                    .mk_manifest_url(manifid))
+        if test:
+            url = IIIFDisplay.mk_viewer_url(manifid)
+            return IIIFDisplay.test_url(url)
+        else:
+            return ''

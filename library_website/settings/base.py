@@ -525,8 +525,7 @@ IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 
 MARKLOGIC_LDR_PORT = 8008
 
-# MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu
-MARKLOGIC_LDR_BASE = "http://marklogicgiraffe.lib.uchicago.edu"
+MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
 
 MARKLOGIC_LDR_ROUTE = "/v1/graphs"
 
@@ -534,12 +533,6 @@ MARKLOGIC_LDR_URL = "%s:%i%s" % (MARKLOGIC_LDR_BASE,
                                  MARKLOGIC_LDR_PORT,
                                  MARKLOGIC_LDR_ROUTE
                                  )
-
-MARKLOGIC_LDR_URL = "%s:%i%s" % (MARKLOGIC_LDR_BASE,
-                                 MARKLOGIC_LDR_PORT,
-                                 MARKLOGIC_LDR_ROUTE
-                                 )
-
 
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
@@ -552,8 +545,9 @@ SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
 LANGUAGE_ABBREVS = {'en': 'English'}
 
 # toggle this comment to go between dev and production
-IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
-# IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
+# IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+# IIIF_PREFIX = "https://iiifgiraffe-collection.lib.uchicago.edu"
+IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
 
 # toggle this comment with the other to switch from dev to production
 IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="

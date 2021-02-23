@@ -34,27 +34,26 @@
                <iframe class="embed-responsive-item" src="{{ iiif_url }}" allowfullscreen></iframe>
                </div> -->
 
+      <script type="text/javascript">
+       const updateCitation = (elemValue) => {
+	   const c = "{{ chicago|safe }}";1
+	   const a = "{{ apa|safe }}";
+	   const m = "{{ mla|safe }}";
+	   if (elemValue == "chicago") {
+	       document.getElementById("citationDisplay").innerHTML = c;
+	   } else if (elemValue == "apa") {
+	       document.getElementById("citationDisplay").innerHTML = a;
+	   } else if (elemValue == "mla") {
+	       document.getElementById("citationDisplay").innerHTML = m;
+	   } else {
+	       () => {};
+	   }
+       }
+      </script>
+
+      {% if iiif_url %}
           <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
-	  <!-- <iframe src="https://liblet.lib.uchicago.edu/viewer?manifest=https://iiif-manifest-dev.lib.uchicago.edu/ark:61001/b2nd42r7xp0q" width="750" height="600" allowfullscreen frameborder="0"></iframe> -->
 
-	  <script type="text/javascript">
-	    const updateCitation = (elemValue) => {
-		const c = "{{ chicago|safe }}";1
-		const a = "{{ apa|safe }}";
-		const m = "{{ mla|safe }}";
-		if (elemValue == "chicago") {
-		    document.getElementById("citationDisplay").innerHTML = c;
-		} else if (elemValue == "apa") {
-		    document.getElementById("citationDisplay").innerHTML = a;
-		} else if (elemValue == "mla") {
-		    document.getElementById("citationDisplay").innerHTML = m;
-		} else {
-		    () => {};
-		}
-	    }
-	  </script>
-
-	 
 	  <div class="col-xs-12 coll-dropdown">
 	      {% if chicago and mla and apa %}
 		<div class="btn-group">
@@ -128,6 +127,13 @@
 	    </ul>
 	</div>
 	</div>
+      {% else %}
+	  <h4>
+	      <hr>
+	      <p>We are temporarily unable to display the viewer for this object.</p>
+	      <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+	  </h4>
+      {% endif %}
   
 		  {% if marklogic %}
 		      <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  
