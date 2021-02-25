@@ -27,7 +27,7 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
-from requests.exceptions import RequestException
+import requests
 from collections import OrderedDict
 
 
@@ -46,7 +46,7 @@ class GeneralPurpose():
         Args:
             Anything
 
-        Returns: 
+        Returns:
             The same thing.
         """
         return x
@@ -441,74 +441,6 @@ class CitationInfo():
     the citation restful service
     """
 
-    # sample turtle data for testing only
-    example = (
-        '@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n'
-        '@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n'
-        '@prefix dc: <http://purl.org/dc/elements/1.1/> .\n'
-        '@prefix dcterms: <http://purl.org/dc/terms/> .\n'
-        '@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n'
-        '@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n'
-        '@prefix ore: <http://www.openarchives.org/ore/terms/> .\n'
-        '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
-        '\n'
-        '</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
-        '    dc:format "application/xml" ;\n'
-        '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
-        '    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
-        '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    dcterms:creator <http://library.uchicago.edu> ;\n'
-        '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>'
-        'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
-        '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
-        '    edm:dataProvider "The University of Chicago Library" ;\n'
-        '    edm:isShownAt "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
-        '    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n;'
-        '    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n'
-        '    edm:provider "The University of Chicago Library" ;\n'
-        '    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n'
-        '    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n'
-        '    bf:ClassificationLcc "G4104.C6:2W9 1920z .U5" ;\n'
-        '    bf:Local "http://pi.lib.uchicago.edu/1001/cat/bib/3451312" ;\n'
-        '    bf:scale "Scale [ca. 1:8,000]" ;\n'
-        '    dc:date "1920/1929" ;\n'
-        '    dc:description "Blue line print.",\n'
-        '        "Master and use copy. Digital master created according to Benchmark for '
-        'Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, '
-        'December 2002. http://www.diglib.org/standards/bmarkfin.htm",\n'
-        '        "Shows residential area, vacant area, commercial frontage, railroad property, '
-        'and transit lines." ;\n'
-        '    dc:format "1 map",\n'
-        '        "45 x 62 cm" ;\n'
-        '    dc:identifier "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
-        '    dc:language "English" ;\n'
-        '    dc:publisher "Dept. of Sociology" ;\n'
-        '    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n'
-        '    dc:title "Woodlawn Community /" ;\n'
-        '    dc:type "Maps" ;\n'
-        '    dcterms:hasFormat "Print version" ;\n'
-        '    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n'
-        '    erc:what "Woodlawn Community /" ;\n'
-        '    erc:when "1920/1929" ;\n'
-        '    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
-        '    erc:who "University of Chicago. Department of Sociology." ;\n'
-        '    edm:currentLocation "Map Collection Reading Room (Room 370)" ;\n'
-        '    edm:type "IMAGE" ;\n'
-        '    edm:year "1920/1929" .\n'
-        '\n'
-    )
-
     # citation config that gets autopopulated in the Wagtail admin
     # panel when you create a new collection
     default_config = (
@@ -741,21 +673,118 @@ class IIIFDisplay:
         """
         return IIIF_VIEWER_PREFIX + IIIFDisplay.mk_manifest_url(manifid)
 
-    def test_url(url: str) -> str:
+    def test_url(url: str,
+                 func=GeneralPurpose.identity) -> str:
         try:
-            r = requests.get(url)
+            o = requests.get(url)
+            r = func(o)
             if r.status_code >= 200 and r.status_code < 300:
                 return url
             else:
                 return ''
-        except RequestException:
+        except (requests.exceptions.RequestException, AttributeError):
             return ''
 
-    def get_viewer_url(manifid: str) -> str:
+    def get_viewer_url(manifid: str,
+                       func=GeneralPurpose.identity) -> str:
         test = IIIFDisplay.test_url(IIIFDisplay
-                                    .mk_manifest_url(manifid))
+                                    .mk_manifest_url(manifid),
+                                    func=func)
         if test:
             url = IIIFDisplay.mk_viewer_url(manifid)
             return IIIFDisplay.test_url(url)
         else:
             return ''
+
+
+class Testing():
+    """
+    Namespace class containing helper functions and constants for
+    testing purposes only.
+    """
+
+    # sample turtle data for testing
+    example = (
+        '@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n'
+        '@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n'
+        '@prefix dc: <http://purl.org/dc/elements/1.1/> .\n'
+        '@prefix dcterms: <http://purl.org/dc/terms/> .\n'
+        '@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n'
+        '@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n'
+        '@prefix ore: <http://www.openarchives.org/ore/terms/> .\n'
+        '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
+        '\n'
+        '</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
+        '    dc:format "application/xml" ;\n'
+        '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+        '    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '\n'
+        '</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
+        '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+        '    dcterms:creator <http://library.uchicago.edu> ;\n'
+        '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+        '    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '\n'
+        '<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>'
+        'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '\n'
+        '</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
+        '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+        '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
+        '    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+        '    edm:dataProvider "The University of Chicago Library" ;\n'
+        '    edm:isShownAt "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
+        '    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n;'
+        '    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n'
+        '    edm:provider "The University of Chicago Library" ;\n'
+        '    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n'
+        '    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '\n'
+        '</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n'
+        '    bf:ClassificationLcc "G4104.C6:2W9 1920z .U5" ;\n'
+        '    bf:Local "http://pi.lib.uchicago.edu/1001/cat/bib/3451312" ;\n'
+        '    bf:scale "Scale [ca. 1:8,000]" ;\n'
+        '    dc:date "1920/1929" ;\n'
+        '    dc:description "Blue line print.",\n'
+        '        "Master and use copy. Digital master created according to Benchmark for '
+        'Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, '
+        'December 2002. http://www.diglib.org/standards/bmarkfin.htm",\n'
+        '        "Shows residential area, vacant area, commercial frontage, railroad property, '
+        'and transit lines." ;\n'
+        '    dc:format "1 map",\n'
+        '        "45 x 62 cm" ;\n'
+        '    dc:identifier "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
+        '    dc:language "English" ;\n'
+        '    dc:publisher "Dept. of Sociology" ;\n'
+        '    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n'
+        '    dc:title "Woodlawn Community /" ;\n'
+        '    dc:type "Maps" ;\n'
+        '    dcterms:hasFormat "Print version" ;\n'
+        '    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n'
+        '    erc:what "Woodlawn Community /" ;\n'
+        '    erc:when "1920/1929" ;\n'
+        '    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+        '    erc:who "University of Chicago. Department of Sociology." ;\n'
+        '    edm:currentLocation "Map Collection Reading Room (Room 370)" ;\n'
+        '    edm:type "IMAGE" ;\n'
+        '    edm:year "1920/1929" .\n'
+        '\n'
+    )
+
+    # default config from CitationInfo is also useful for testing
+    default_config = CitationInfo.default_config
+
+    def bring_website_down(response):
+        raise requests.exceptions.ConnectionError
+
+    def change_status_code(code: int):
+        def partial(response):
+            response.status_code = code
+        return partial
+
+    def break_json(response):
+        response._content += b'}'
+
+    def empty_sparql(dct: dict) -> dict:
+        empty_result = {'head': {'vars': []}, 'results': {'bindings': []}}
+        return empty_result

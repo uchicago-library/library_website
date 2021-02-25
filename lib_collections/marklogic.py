@@ -9,6 +9,7 @@ from library_website.settings.local import (
     MARKLOGIC_LDR_PASSWORD, MARKLOGIC_LDR_USER
 )
 from requests.auth import HTTPBasicAuth
+from lib_collections.utils import GeneralPurpose
 
 
 def sp_query(manifid: str) -> str:
@@ -40,11 +41,13 @@ def sp_query(manifid: str) -> str:
               }}'''.format(manifid, SPARQL_ROOT)
 
 
-def get_raw_record(manifid: str) -> dict:
+def get_raw_record(manifid: str,
+                   func=GeneralPurpose.identity) -> dict:
     """
     Query Mark Logic for metadata fields to be displayed in collection object
     page.  Dictionary comes back in not-particularly-usable form that's similar
-    to how the RDF graph is internally represented.
+    to how the RDF graph is internally represented.  Optional func parameter
+    only there to help with unit testing.
 
     Args:
         NOID string
@@ -64,7 +67,7 @@ def get_raw_record(manifid: str) -> dict:
             url=MARKLOGIC_LDR_URL + '/sparql',
         )
         j = json.loads(r.content.decode('utf-8'))
-        return j
+        return func(j)
     except RequestException:
         return ''
 
@@ -117,7 +120,9 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
         raise Http404
 
 
-def get_record_no_parsing(manifid: str, wagtail_field_names: list) -> dict:
+def get_record_no_parsing(manifid: str,
+                          wagtail_field_names: list,
+                          func=GeneralPurpose.identity) -> dict:
     """
     Queries Mark Logic for collection object metadata fields, leaves the values
     of those metadata fields alone, in their raw form.
@@ -128,7 +133,7 @@ def get_record_no_parsing(manifid: str, wagtail_field_names: list) -> dict:
     Returns:
         Dictionary representing metadata
     """
-    raw_record = get_raw_record(manifid)
+    raw_record = get_raw_record(manifid, func=func)
     if raw_record:
         return triples_to_dict(raw_record, wagtail_field_names)
     else:
@@ -191,7 +196,9 @@ def brackets_parse(value: str) -> dict:
         }
 
 
-def get_record_parsed(manifid: str, wagtail_field_names: list) -> dict:
+def get_record_parsed(manifid: str,
+                      wagtail_field_names: list,
+                      func=GeneralPurpose.identity) -> dict:
     """
     Performs SparQL query, arranges result to mirror metadata fields from
     Wagtail database, and parses all of the metadata fields.
@@ -203,7 +210,7 @@ def get_record_parsed(manifid: str, wagtail_field_names: list) -> dict:
         Dictionary of metadata fields, with parse results in values
 
     """
-    dct = get_record_no_parsing(manifid, wagtail_field_names)
+    dct = get_record_no_parsing(manifid, wagtail_field_names, func=func)
     if dct:
         return {k: brackets_parse(v) for k, v in dct.items()}
     else:
@@ -240,7 +247,9 @@ def render_field(parsed_field: dict) -> str:
         return parsed_field
 
 
-def get_record_for_display(manifid: str, wagtail_field_names: list) -> dict:
+def get_record_for_display(manifid: str,
+                           wagtail_field_names: list,
+                           func=GeneralPurpose.identity) -> dict:
     """
     Main function for getting metadata fields back from Mark Logic, based on a
     collection object's NOID.
@@ -252,7 +261,7 @@ def get_record_for_display(manifid: str, wagtail_field_names: list) -> dict:
         Dictionary representing metadata to be displayed on collection
         object page.
     """
-    dct = get_record_parsed(manifid, wagtail_field_names)
+    dct = get_record_parsed(manifid, wagtail_field_names, func=func)
     if dct:
         return {k: render_field(v) for k, v in dct.items()}
     else:
