@@ -198,7 +198,7 @@
                             </ol>
                         {% endif %}
 
-                        <div class="carousel-inner" role="listbox">
+                        <div class="carousel-inner" {% if carousel_multi %}role="listbox" {% endif %}>
                             {% for item in carousel_items %}
                                 {% image item.image original as nifty %}
                                 {% if nifty %} 
