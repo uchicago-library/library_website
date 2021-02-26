@@ -35,7 +35,12 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import CBrowseURL, CitationInfo, DisplayBrowse, LBrowseURL, IIIFDisplay
+from .utils import (CBrowseURL,
+                    CitationInfo,
+                    DisplayBrowse,
+                    LBrowseURL,
+                    IIIFDisplay,
+                    Testing)
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -833,13 +838,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         def injection_safe(id):
             """
-            Check that URL route ends in a well-formed NOID.
+            Check that URL route ends in a well-formed NOID.  This is mostly
+            just a simple safeguard against possible SparQL injection
+            attacks.
 
             Args:
                 Candidate NOID
 
             Returns:
                 Boolean
+
             """
             length_ok = len(id) >= 1 and len(id) <= 30
             alphanum = id.isalnum()
@@ -1035,10 +1043,23 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # construct browse type links for sidebar
         cluster_types, list_types = self.build_browse_types()
 
-        if kwargs["browse_type"] is None:
+        all_browse_types = (
+            CollectionPageClusterBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        browse_type = kwargs["browse_type"]
+
+        if browse_type is None:
             # default to subject browses if no browse type is specified in
             # route
-            default_browse = CollectionPageClusterBrowse.objects.first()
+            default_browse = (
+                CollectionPageClusterBrowse
+                .objects
+                .filter(page=self)
+                .first()
+            )
             default = default_browse.label.lower()
             browse_type = default
         else:
@@ -1055,16 +1076,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         get_iiif_labels = DisplayBrowse.get_iiif_labels
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        names = [x.label.lower() for x in all_browse_types]
+
+        browses = get_iiif_labels(
+            mk_cbrowse_type_url_iiif(slug, browse_type),
+            browse_type,
+            slug,
+            Testing.break_json,
+        )
+
+        browse_is_ready = browse_type in names and browses
+
         # populate context
         context = super().get_context(request)
         context["cluster_types"] = cluster_types
         context["list_types"] = cluster_types
         context["browse_type"] = unslugify_browse(browse_type)
-        context["browses"] = get_iiif_labels(
-            mk_cbrowse_type_url_iiif(slug, browse_type),
-            browse_type,
-            slug,
-        )
+        context["browses"] = browses
+        context["browse_is_ready"] = browse_is_ready
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 

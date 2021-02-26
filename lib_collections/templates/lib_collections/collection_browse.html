@@ -22,9 +22,15 @@
     <h2>{{ browse_title }}</h2>
 </div>
 
-<section class="browse-list" id="content" role="main">
-    {% include "includes/general_listing.html" %}
-</section>
+{% if browse_is_ready %}
+    <section class="browse-list" id="content" role="main">
+	{% include "includes/general_listing.html" %}
+    </section>
+{% else %}
+    <h4>
+      <p>Not found. Are you sure you typed the URL correctly?</p>
+    </h4>
+{% endif %}
 
 {% endblock %}
 

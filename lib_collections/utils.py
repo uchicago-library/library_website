@@ -7,6 +7,7 @@ from __future__ import (
 )
 
 import json
+import simplejson
 import os
 import re
 from urllib.parse import urlencode
@@ -242,18 +243,24 @@ class DisplayBrowse():
             number of items falling under each browse
         """
         r = requests.get(url)
-        func(r)
+        modify(r)
         if r.status_code == 404:
-            raise Http404
+            return []
         else:
-            j = r.json()
-            d = j['items']
-            return [
-                (x['label'][lang][0], x['metadata'][0]['value'][lang][0])
-                for x in d
-            ]
+            try:
+                j = r.json()
+                d = j['items']
+                return [
+                    (x['label'][lang][0], x['metadata'][0]['value'][lang][0])
+                    for x in d
+                ]
+            except simplejson.JSONDecodeError:
+                return ''
 
-    def get_iiif_labels(url: str, browse_type: str, slug: str) -> dict:
+    def get_iiif_labels(url: str,
+                        browse_type: str,
+                        slug: str,
+                        modify=GeneralPurpose.noop) -> dict:
         """
         Get IIIF data corresponding to a list of browses, package it up in
         JSON data for display in the Wagtail browse template
@@ -272,7 +279,11 @@ class DisplayBrowse():
 
         # assume English as the default language for now; the language
         # abbreviation can be parameterized later
-        pairs = DisplayBrowse.get_iiif_labels_language(url, 'en')
+        try:
+            pairs = DisplayBrowse.get_iiif_labels_language(
+                url, 'en', modify=modify)
+        except requests.exceptions.RequestException:
+            pairs = []
 
         def render_count(pairs: list) -> list:
             return ["%s (%s)" % (x, y) for (x, y) in pairs]
@@ -489,7 +500,7 @@ class CitationInfo():
         """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
         r = requests.get(url)
-        func(r)
+        modify(r)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
@@ -525,7 +536,7 @@ class CitationInfo():
                 "config": config,
             }
         )
-        func(r)
+        modify(r)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
@@ -680,7 +691,7 @@ class IIIFDisplay:
                  modify=GeneralPurpose.noop) -> str:
         try:
             r = requests.get(url)
-            func(r)
+            modify(r)
             if r.status_code >= 200 and r.status_code < 300:
                 return url
             else:
@@ -790,6 +801,10 @@ class Testing():
 
     def break_json(response):
         response._content += b'}'
+
+    def unexpected_json(response):
+        new = b'{"random_dictionary": [{"with": 4}, {"stuff": false}]}'
+        response._content = new
 
     empty_sparql = GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
