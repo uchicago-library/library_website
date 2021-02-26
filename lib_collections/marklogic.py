@@ -2,8 +2,6 @@ import json
 import re
 
 import requests
-from requests.exceptions import RequestException
-from django.http import Http404
 from library_website.settings.base import MARKLOGIC_LDR_URL, SPARQL_ROOT
 from library_website.settings.local import (
     MARKLOGIC_LDR_PASSWORD, MARKLOGIC_LDR_USER
@@ -68,7 +66,7 @@ def get_raw_record(manifid: str,
         )
         j = json.loads(r.content.decode('utf-8'))
         return func(j)
-    except RequestException:
+    except requests.exceptions.RequestException:
         return ''
 
 
@@ -114,10 +112,8 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
             return align_field_names(field_dict, wagtail_field_names)
         else:
             return field_dict
-    except KeyError:
-        raise Exception("Mark Logic result not formatted as expected")
-    except IndexError:
-        raise Http404
+    except (KeyError, IndexError):
+        return ''
 
 
 def get_record_no_parsing(manifid: str,

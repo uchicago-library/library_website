@@ -39,6 +39,9 @@ class GeneralPurpose():
 
     """
 
+    def noop(x):
+        pass
+
     def identity(x):
         """
         The identity function.
@@ -227,7 +230,7 @@ class DisplayBrowse():
 
     def get_iiif_labels_language(url: str,
                                  lang: str,
-                                 func=GeneralPurpose.identity) -> list:
+                                 modify=GeneralPurpose.noop) -> list:
         """
         Helper function for get_iiif_labels.
 
@@ -238,8 +241,8 @@ class DisplayBrowse():
             an association list from browses/browse types to the
             number of items falling under each browse
         """
-        o = requests.get(url)
-        r = func(o)
+        r = requests.get(url)
+        func(r)
         if r.status_code == 404:
             raise Http404
         else:
@@ -467,7 +470,7 @@ class CitationInfo():
     )
 
     def get_turtle_data(manifid: str,
-                        func=GeneralPurpose.identity) -> str:
+                        modify=GeneralPurpose.noop) -> str:
         """
         Given a collection object NOID, query the primary ARK resolver to
         obtain the Turtle data for the object, serialized in the form
@@ -485,8 +488,8 @@ class CitationInfo():
 
         """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
-        o = requests.get(url)
-        r = func(o)
+        r = requests.get(url)
+        func(r)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
@@ -495,7 +498,7 @@ class CitationInfo():
     def get_citation(mode: str,
                      turtle_data: str,
                      config: str,
-                     func=GeneralPurpose.identity) -> str:
+                     modify=GeneralPurpose.noop) -> str:
         """
         Query the citation restful service for citation info.  Mode can be
         bibtex, csl, ris, or xml, and the two inputs are the
@@ -514,7 +517,7 @@ class CitationInfo():
             Dictionary containing CSL/BibTeX/RIS/XML citation
             info for use in the collection object template
         """
-        o = requests.get(
+        r = requests.get(
             CITATION_ROOT,
             params={
                 "mode": mode,
@@ -522,7 +525,7 @@ class CitationInfo():
                 "config": config,
             }
         )
-        r = func(o)
+        func(r)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
@@ -674,10 +677,10 @@ class IIIFDisplay:
         return IIIF_VIEWER_PREFIX + IIIFDisplay.mk_manifest_url(manifid)
 
     def test_url(url: str,
-                 func=GeneralPurpose.identity) -> str:
+                 modify=GeneralPurpose.noop) -> str:
         try:
-            o = requests.get(url)
-            r = func(o)
+            r = requests.get(url)
+            func(r)
             if r.status_code >= 200 and r.status_code < 300:
                 return url
             else:
@@ -686,10 +689,10 @@ class IIIFDisplay:
             return ''
 
     def get_viewer_url(manifid: str,
-                       func=GeneralPurpose.identity) -> str:
+                       modify=GeneralPurpose.noop) -> str:
         test = IIIFDisplay.test_url(IIIFDisplay
                                     .mk_manifest_url(manifid),
-                                    func=func)
+                                    modify=modify)
         if test:
             url = IIIFDisplay.mk_viewer_url(manifid)
             return IIIFDisplay.test_url(url)
@@ -700,7 +703,10 @@ class IIIFDisplay:
 class Testing():
     """
     Namespace class containing helper functions and constants for
-    testing purposes only.
+    testing purposes only.  The functions in this class are intended
+    to be the modify/func inputs to the various functions that
+    retrieve data from over the web in utils.py and marklogic.py.
+
     """
 
     # sample turtle data for testing
@@ -785,6 +791,6 @@ class Testing():
     def break_json(response):
         response._content += b'}'
 
-    def empty_sparql(dct: dict) -> dict:
-        empty_result = {'head': {'vars': []}, 'results': {'bindings': []}}
-        return empty_result
+    empty_sparql = GeneralPurpose.k(
+        {'head': {'vars': []}, 'results': {'bindings': []}}
+    )
