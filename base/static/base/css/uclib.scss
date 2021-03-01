@@ -208,6 +208,11 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
  * --------------------------------------------------
  */
 
+
+h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty {
+    display: none; // ADA: Hides empty header tags
+}
+
 #footnotes {
   font-family: 'ProximaNova-Light';
   font-size: 0.8em;
@@ -660,7 +665,7 @@ div#widget-featured-library-expert {
   }
 }
 
-a#event-header {
+a.event-header {
   color: #000;
   font-weight: 100;
   font-size: 0.9em;
