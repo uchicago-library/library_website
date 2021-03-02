@@ -1,3 +1,6 @@
+$base-font: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+$accent-font: 'Cormorant Garamond', serif;
+
 /*
  * Accessibility
  * --------------------------------------------------
@@ -11,12 +14,20 @@
   clip: rect(1px, 1px, 1px, 1px);
 }
 
+.visually-hidden { // For ADA helper text
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
 
 /*
  * Colors
  * --------------------------------------------------
  */
 
+$mid-dark: #525252;
 $darkgray: #767676;
 $darkergray: #434343;
 $darkeraccent: #666A35;

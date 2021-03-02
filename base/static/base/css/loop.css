@@ -17,6 +17,13 @@ Group Home Page
  * Accessibility
  * --------------------------------------------------
  */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px); }
+
 /*
  * Colors
  * --------------------------------------------------
@@ -384,11 +391,14 @@ input[type=checkbox], input[type=radio] {
 
 .staff-headers .pronouns {
   color: #575757;
-  font-size: 0.9em;
+  font-size: 0.95em;
   padding-left: 0.25em; }
 
 .staff-headers h2 {
   margin-top: 0; }
+
+.pronouns-listing {
+  color: #525252; }
 
 .bg-directory {
   padding: 15px 0 15px 0;
@@ -433,6 +443,65 @@ select {
   .btn-directory:hover, .btn-directory.active {
     color: #fff;
     background-color: #ADB17D; }
+
+.sdir {
+  margin: 2em 0 0.25em 0;
+  padding-left: 0; }
+  .sdir h2 {
+    font-family: "Cormorant Garamond", serif;
+    color: #616530;
+    font-size: 1.3em;
+    padding-left: 15px;
+    margin-right: 2em;
+    margin-bottom: 0.25em;
+    border-bottom: 2px solid #ADB17D; }
+    .sdir h2 a, .sdir h2 a:active, .sdir h2 a:focus, .sdir h2 a:hover {
+      color: #525252;
+      text-decoration: none; }
+  .sdir article {
+    padding: 1em;
+    display: grid;
+    grid-gap: 1vw;
+    margin-right: -15px;
+    margin-left: -15px; }
+    @media (min-width: 48em) {
+      .sdir article {
+        grid-template-columns: 1fr 1fr;
+        grid-row-gap: 1em; } }
+    @media (min-width: 62em) {
+      .sdir article {
+        grid-template-columns: 100px 3fr 2fr 2fr; } }
+    .sdir article:nth-child(odd) {
+      background: #f6f6f6; }
+    .sdir article + article {
+      border-top: 1px solid #D2CDCC; }
+    .sdir article h3 {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 1.05em;
+      margin-top: 0;
+      margin-bottom: 0; }
+    .sdir article p {
+      max-width: 200px; }
+      @media (min-width: 75em) {
+        .sdir article p {
+          max-width: unset; } }
+    .sdir article span[role=heading] {
+      font-weight: 600;
+      display: block;
+      padding-top: 1em; }
+      @media (min-width: 48em) {
+        .sdir article span[role=heading] {
+          padding-top: 0; } }
+    .sdir article .profile-image {
+      padding-bottom: 1em;
+      grid-row-start: 1;
+      grid-column-start: 1; }
+      @media (min-width: 48em) {
+        .sdir article .profile-image {
+          padding-bottom: 0; } }
+    .sdir article ul {
+      padding-left: 0px;
+      list-style: none; }
 
 /*
  *  Tables
