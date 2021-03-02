@@ -26,9 +26,14 @@
     <section class="browse-list" id="content" role="main">
 	{% include "includes/general_listing.html" %}
     </section>
+{% elif internal_error %}
+    <h4>
+	<p>We are experiencing an error with this browse listing.</p>
+	<p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+    </h4>
 {% else %}
     <h4>
-      <p>Not found. Are you sure you typed the URL correctly?</p>
+	<p>Not found. Are you sure you typed the URL correctly?</p>
     </h4>
 {% endif %}
 

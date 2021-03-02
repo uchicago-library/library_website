@@ -1,4 +1,4 @@
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, SimpleTestCase
 from django.contrib.auth.models import AnonymousUser
 from lib_collections.views import collections
 from lib_collections.models import CollectingAreaPage, CollectionPage, ExhibitPage
@@ -10,6 +10,9 @@ from public.models import LocationPage, StaffPublicPage
 from wagtail.core.models import Page, Site
 from staff.models import StaffPage, StaffPageEmailAddresses, StaffPageSubjectPlacement
 from units.models import UnitPage
+from lib_collections.utils import Testing, DisplayBrowse, CBrowseURL, LBrowseURL
+import simplejson
+
 
 import time
 
@@ -25,7 +28,6 @@ class test_lib_collections_view(TestCase):
 
     def tearDown(self):
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
         caches['default'].clear()
         # clear cache
@@ -38,7 +40,6 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_collections(self):
         request = self.factory.get('/collection/?view=collections')
@@ -48,19 +49,16 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_digital(self):
         request = self.factory.get('/collection/?view=collections&digital=on')
         request.user = self.user
         response = collections(request)
 
-#        self.assertEqual(response.status_code, 200)
         self.assertContains(
             response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_format(self):
         formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals',
@@ -72,7 +70,6 @@ class test_lib_collections_view(TestCase):
                 '/collection/?view=collections&format=%s' % f)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_collections_location(self):
         locations_list = list(
@@ -97,17 +94,6 @@ class test_lib_collections_view(TestCase):
             self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
-
-    # def test_collections_unit(self):
-    #    unit_list = list(UnitPage.objects.all().values_list("title", flat=True))
-    #    for u in unit_list:
-    #        request = self.factory.get('/collection/?view=collections&unit=%s' % u)
-    #        request.user = self.user
-    #        response = collections(request)
-    #        self.assertEqual(response.status_code, 200)
-    #    t = time.time() - self.startTime
-    #    print("%s: %.3f" % (self.id(), t))
 
     def test_view_exhibit(self):
         request = self.factory.get('/collection/?view=exhibits')
@@ -117,7 +103,6 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_location_none(self):
         request = self.factory.get(
@@ -128,7 +113,6 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_subject_none(self):
         request = self.factory.get(
@@ -139,15 +123,6 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
-
-    # def test_exhibit_unit_none(self):
-    #    request = self.factory.get('/collection/?view=exhibits&unit=%s' % None)
-    #    request.user = self.user
-    #    response = collections(request)
-    #    self.assertEqual(response.status_code, 200)
-    #    t = time.time() - self.startTime
-    #    print("%s: %.3f" % (self.id(), t))
 
     def test_exhibit_digital_none(self):
         request = self.factory.get(
@@ -158,7 +133,6 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
 
     def test_view_subjects(self):
         request = self.factory.get('/collection/?view=subjects')
@@ -544,3 +518,96 @@ class TestCollectingAreaPages(TestCase):
         self.assertEqual(len(features), 4)
         for f in features:
             self.assertEqual(len(f), 4)
+
+
+example_noid1 = "b2tf4wj2mp94"
+example_noid2 = "b2kg6jc3941j"
+example_noid3 = "b2k57z87tt0h"
+browse_type1 = "subject"
+browse_type2 = "decade"
+collection1 = "social-scientists-map-chicago"
+
+
+class CollectionTest(SimpleTestCase):
+
+    fixtures = ['test.json']
+
+    # browse type listing works when everything is working
+    def browse_listing_works(self):
+        assert DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            browse_type1,
+            collection1,
+        )
+        assert DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            browse_type2,
+            collection1,
+        )
+
+    def iiif_is_down_elegant_fail(self):
+        assert not DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            browse_type1,
+            collection1,
+            modify=Testing.bring_website_down,
+        )
+        assert not DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            browse_type2,
+            collection1,
+            modify=Testing.bring_website_down,
+        )
+
+    def browse_type_bad_json(self):
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_iiif_labels,
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            browse_type1,
+            collection1,
+            modify=Testing.break_json,
+        )
+
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_iiif_labels,
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            browse_type2,
+            collection1,
+            modify=Testing.break_json,
+        )
+
+    def browse_type_unexpected_json(self):
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_iiif_labels,
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            browse_type1,
+            collection1,
+            modify=Testing.unexpected_json
+        )
+
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_iiif_labels,
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            browse_type2,
+            collection1,
+            modify=Testing.unexpected_json
+        )
+
+    def browse_type_404(self):
+        assert not DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            browse_type1,
+            collection1,
+            modify=Testing.change_status_code(404)
+        )
+
+        assert not DisplayBrowse.get_iiif_labels(
+            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            browse_type2,
+            collection1,
+            modify=Testing.change_status_code(404)
+        )

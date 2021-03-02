@@ -1,7 +1,7 @@
 import datetime
-import json
-from json import JSONDecodeError
 
+import json
+import simplejson
 import requests
 from base.models import DefaultBodyFields, PublicBasePage
 from collections import OrderedDict
@@ -984,7 +984,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get CSL-JSON data
         try:
             csl = json.loads(get_citation("csl", turtle_data, config))
-        except (JSONDecodeError, TypeError):
+        except (simplejson.JSONDecodeError, TypeError):
             csl = ''
 
         # get CSL files for Chicago, MLA, and APA styles off disk
@@ -1047,6 +1047,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             CollectionPageClusterBrowse
             .objects
             .filter(page=self)
+        ) + (
+            CollectionPageListBrowse
+            .objects
+            .filter(page=self)
         )
 
         browse_type = kwargs["browse_type"]
@@ -1078,12 +1082,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         names = [x.label.lower() for x in all_browse_types]
 
-        browses = get_iiif_labels(
-            mk_cbrowse_type_url_iiif(slug, browse_type),
-            browse_type,
-            slug,
-            Testing.break_json,
-        )
+        try:
+            browses = get_iiif_labels(
+                mk_cbrowse_type_url_iiif(slug, browse_type),
+                browse_type,
+                slug,
+            )
+            internal_error = False
+        except (KeyError, simplejson.JSONDecodeError):
+            browses = ''
+            internal_error = True
 
         browse_is_ready = browse_type in names and browses
 
@@ -1094,6 +1102,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["browse_type"] = unslugify_browse(browse_type)
         context["browses"] = browses
         context["browse_is_ready"] = browse_is_ready
+        context["internal_error"] = internal_error
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
@@ -1147,6 +1156,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
+        browse_is_ready = True
+
         # construct context
         context = super().get_context(request)
         context["browse_title"] = browse
@@ -1155,6 +1166,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["list_types"] = list_types
         context["slug"] = slug
         context["objects"] = objects
+        context["browse_is_ready"] = True
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
@@ -1221,10 +1233,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except ValueError:
             pass
 
+        browse_is_ready = True
+
         # populate context
         context = super().get_context(request)
         context["browse_title"] = browse_title
         context["cluster_types"] = cluster_types
+        context["browse_is_ready"] = browse_is_ready
         context["list_types"] = list_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
@@ -1620,7 +1635,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Return:
             A set of subjects or an empty set
         """
-        if self.subject == None:
+        if self.subject is None:
             return set([])
         elif children:
             return set(self.subject.get_descendants())

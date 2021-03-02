@@ -247,15 +247,12 @@ class DisplayBrowse():
         if r.status_code == 404:
             return []
         else:
-            try:
-                j = r.json()
-                d = j['items']
-                return [
-                    (x['label'][lang][0], x['metadata'][0]['value'][lang][0])
-                    for x in d
-                ]
-            except simplejson.JSONDecodeError:
-                return ''
+            j = r.json()
+            d = j['items']
+            return [
+                (x['label'][lang][0], x['metadata'][0]['value'][lang][0])
+                for x in d
+            ]
 
     def get_iiif_labels(url: str,
                         browse_type: str,
