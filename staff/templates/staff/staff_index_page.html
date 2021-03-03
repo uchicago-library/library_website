@@ -9,48 +9,50 @@
 
 {% block content %}
 	<p><a href="/">Home</a></p>
-    <div class="row">
-        <div class="col-sm-12 col-md-12">
-        	<article>
-                <form action="." method="GET">
-                    <div class="row bg-directory"><h1 class="dir-header">Library Directory</h1>
-                        <div class="btn-group">
-                            <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'department' %} active{% endif %}" href=".?view=department">Department View</a>
-                            <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'staff' %} active{% endif %}" href=".?view=staff">Staff View</a>
-                        </div>
-                    </div><!--/row-->
-                    <div class="row">
-                        <div class="col-xs-12 col-xm-12 col-md-7 bg-filter">
-                            {% if view == 'staff' %} 
-                                <div class="dir-subheader">Browse</div>
-                                <div class="btn-group bg-filter">
-                                    <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if library %}{{ library }}{% else %}Library{% endif %}</button>
-                                    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href=".{% if query %}?query={{ query|urlencode }}{% endif %}">All Libraries</a></li>
-                                        {% for l in libraries %}
-                                            <li><a href=".?library={{ l|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ l }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        </div><!--col-->
-                        <div class="col-xs-12 col-xm-12 col-md-5 bg-filter"> <!-- Directory Search -->
-                            <div class="col-md-2 dir-subheader">Search</div>
-                                <div class="input-group">
-                                    <input name="query" type="text" placeholder="{% if view == 'staff' %}professor snape{% else %}potions department{% endif %}" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
-                                    {% if view == 'department' %}<input name="view" type="hidden" value="department"/>{% endif %}
-                                    {% if library %}<input name="library" type="hidden" value="{{ library }}"/>{% endif %}
-                                    <div class="input-group-btn">
-                                        <input class="btn btn-searchtype btn-default" type="submit" value="Find" />
-                                    </div><!-- /btn-group -->
-                                </div><!-- /input-group -->
-                            </div><!--/col-->
-                        </div><!--/row-->
-                        <hr/>
+        <div class="col-xs-12">
+          <form action="." method="GET">
+
+              <div class="row bg-directory">
+                <h1 class="dir-header">Library Directory</h1>
+                <div class="btn-group">
+                    <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'department' %} active{% endif %}" href=".?view=department">Department View</a>
+                    <a style="padding: 5px 15px;" class="btn btn-directory{% if view == 'staff' %} active{% endif %}" href=".?view=staff">Staff View</a>
+                </div>
+              </div><!--// bg-directory-->
+
+              <div class="row">
+                <div class="col-xs-12 col-md-7 bg-filter">
+                  {% if view == 'staff' %} 
+                    <div class="dir-subheader">Browse</div>
+                    <div class="btn-group bg-filter">
+                        <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if library %}{{ library }}{% else %}Library{% endif %}</button>
+                        <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href=".{% if query %}?query={{ query|urlencode }}{% endif %}">All Libraries</a></li>
+                            {% for l in libraries %}
+                                <li><a href=".?library={{ l|urlencode }}{% if query %}&query={{ query|urlencode }}{% endif %}">{{ l }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                  {% endif %}
+                  </div><!--// bg-filter-->
+
+                  <div class="col-xs-12 col-md-5 bg-filter"> <!-- Directory Search -->
+                      <div class="col-md-2 dir-subheader">Search</div>
+                          <div class="input-group">
+                              <input name="query" type="text" placeholder="{% if view == 'staff' %}professor snape{% else %}potions department{% endif %}" aria-label="..." class="form-control" value="{% if query %}{{ query }}{% endif %}"/>
+                              {% if view == 'department' %}<input name="view" type="hidden" value="department"/>{% endif %}
+                              {% if library %}<input name="library" type="hidden" value="{{ library }}"/>{% endif %}
+                              <div class="input-group-btn">
+                                  <input class="btn btn-searchtype btn-default" type="submit" value="Find" />
+                              </div><!-- /btn-group -->
+                          </div><!-- /input-group -->
+                      </div><!--/col-->
+                  </div><!--/row-->
+                  <hr/>
     
                     {% if view == 'department' and not query %}
                         <div class="row">
@@ -65,66 +67,41 @@
                 </form>
      
                 {% if view == 'staff' %} 
-                  <table class="table table-striped directory-list">
-                    <thead>
-                      <tr class="etable-header">
-                        <td colspan="4">
-                          {% if subject and library %}
-                              {{ library }} {{ subject }} Staff
-                          {% elif subject and not library %}
-                              {{ subject }} Staff
-                          {% elif not subject and library %}
-                              {{ library }} Staff
-                          {% elif department %}
-                              {{ department }} Staff
-                          {% else %}
-                              All Staff
-                          {% endif %}
-                        </td>
-                      </tr>
-                    </thead>
-                      <tbody>
-                        <tr class="visually-hidden">
-                          <th scope="col">Staff Photo</th>
-                          <th scope="col">Staff name and title</th>
-                          <th scope="col">Contact</th>
-                          <th scope="col">Subjects</th>
-                        </tr>
-                      {% for staff_page in staff_pages %}
-                        {% include "staff/staff_directory_listing.html" %}
-                      {% empty %}
-                        <tr>
-                          <td colspan="4">
-                            <p class="empty-state">
-                              <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
-                            </p>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                  <div class="row sdir">
+                    <h2>
+                      {% if subject and library %}
+                          {{ library }} {{ subject }} Staff
+                      {% elif subject and not library %}
+                          {{ subject }} Staff
+                      {% elif not subject and library %}
+                          {{ library }} Staff
+                      {% elif department %}
+                          {{ department }} Staff
+                      {% else %}
+                          All Staff
+                      {% endif %}
+                    </h2>
+                  {% for staff_page in staff_pages %}
+                    {% include "staff/staff_directory_listing.html" %}
+                  {% empty %}
+                    <p class="empty-state">
+                      <span class="nothing">Sorry, no matches found</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+                    </p>
+                  {% endfor %}
+                  </div>
                 {% elif view == 'department' %}
                     {# intranetunits_html|safe #}
                     <table class="table table-striped">
                         {% for i in flat_intranet_units %}
-                            <tr>
-                                <td><a href="{{ i.url }}">{{ i.title }}</a></td>
-                                <td>{{ i.internal_phone_number }}</td>
-                                <td>{% if i.library %}{{ i.library }}<br/>{% endif %}{{ i.internal_location }}</td>
-                            </tr>
+                          <tr>
+                              <td><a href="{{ i.url }}">{{ i.title }}</a></td>
+                              <td>{{ i.internal_phone_number }}</td>
+                              <td>{% if i.library %}{{ i.library }}<br/>{% endif %}{{ i.internal_location }}</td>
+                          </tr>
                         {% endfor %}
                     </table>
                 {% endif %}
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-        	</article>
         </div><!--/col-->
-    </div><!--/row-->
     <script type="text/javascript">
     var subjects = [
         {% for s in subjects %}'{{ s }}',{% endfor %}
