@@ -251,7 +251,7 @@ Right Sidebar: Widget Items
   padding: 0px 0px 10px 15px;
   margin-bottom: 15px;
   a {
-    color: $darkgray;
+    color: $mid-dark;
     display: inline;
     text-decoration: none;
     &.viewall {
@@ -260,8 +260,9 @@ Right Sidebar: Widget Items
         margin: 0 0.5em;
       }
     }
-    &:hover {
-      text-decoration: none;
+    &:hover, &:focus {
+      color: #2A5DB0;
+      text-decoration: underline;
     }
   }
 }
