@@ -726,19 +726,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
-        return (
-            OrderedDict([
-                (CollectionPage.override(x.link_text_override, x.label),
-                 mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
-                for x in CollectionPageClusterBrowse
-                .objects
-                .filter(page=self)]),
-            OrderedDict([
-                (CollectionPage.override(x.link_text_override, x.label),
-                 mk_lbrowse_url_wagtail(slug, slugify(x.label)))
-                for x in CollectionPageListBrowse
-                .objects
-                .filter(page=self)])
+        return OrderedDict(
+            [(CollectionPage.override(x.link_text_override, x.label),
+              mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
+             for x in CollectionPageClusterBrowse
+             .objects
+             .filter(page=self)]
+            +
+            [(CollectionPage.override(x.link_text_override, x.label),
+              mk_lbrowse_url_wagtail(slug, slugify(x.label)))
+             for x in CollectionPageListBrowse
+             .objects
+             .filter(page=self)]
         )
 
     # Main Admin Panel Fields
@@ -834,7 +833,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
 
         # gather information for sidebar browse links
-        cluster_types, list_types = self.build_browse_types()
+        sidebar_browse_types = self.build_browse_types()
 
         def injection_safe(id):
             """
@@ -1009,8 +1008,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["share_url"] = share_url
         context["slug"] = slug
         context["marklogic"] = marklogic
-        context["cluster_types"] = cluster_types
-        context["list_types"] = list_types
+        context["sidebar_browse_types"] = sidebar_browse_types
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
@@ -1041,7 +1039,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
 
         # construct browse type links for sidebar
-        cluster_types, list_types = self.build_browse_types()
+        sidebar_browse_types = self.build_browse_types()
 
         all_browse_types = (
             CollectionPageClusterBrowse
@@ -1088,8 +1086,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # populate context
         context = super().get_context(request)
-        context["cluster_types"] = cluster_types
-        context["list_types"] = cluster_types
+        context["sidebar_browse_types"] = sidebar_browse_types
         context["browse_type"] = unslugify_browse(browse_type)
         context["browses"] = browses
         context["browse_is_ready"] = browse_is_ready
@@ -1115,7 +1112,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_type = kwargs['browse_type']
 
         # construct browse type dictionary for sidebar
-        cluster_types, list_types = self.build_browse_types()
+        sidebar_browse_types = self.build_browse_types()
 
         try:
             objects = DisplayBrowse.get_browse_items(
@@ -1145,8 +1142,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context = super().get_context(request)
         context["browse_title"] = browse
         context["browse_type"] = browse_type
-        context["cluster_types"] = cluster_types
-        context["list_types"] = list_types
+        context["sidebar_browse_types"] = sidebar_browse_types
         context["slug"] = slug
         context["objects"] = objects
         context["internal_error"] = internal_error
@@ -1182,7 +1178,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         iiif_url = LBrowseURL.mk_lbrowse_url_iiif(collection, browse_name)
 
         # list of browse types for sidebar
-        cluster_types, list_types = self.build_browse_types()
+        sidebar_browse_types = self.build_browse_types()
 
         # retrieve list browse information from IIIF server
         r = requests.get(iiif_url)
@@ -1222,7 +1218,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # populate context
         context = super().get_context(request)
         context["browse_title"] = browse_title
-        context["cluster_types"] = cluster_types
+        context["sidebar_browse_types"] = sidebar_browse_types
         context["browse_is_ready"] = browse_is_ready
         context["list_types"] = list_types
         context["list_objects"] = list_objects.page(pageno)
@@ -1346,7 +1342,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             objects = []
 
         # browse links for sidebar
-        cluster_types, list_types = self.build_browse_types()
+        sidebar_browse_types = self.build_browse_types()
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
@@ -1354,8 +1350,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # populate context
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
-        context['cluster_types'] = cluster_types
-        context['list_types'] = list_types
+        context['sidebar_browse_types'] = sidebar_browse_types
         context['objects'] = objects
 
         # update context with information about staff associated with the

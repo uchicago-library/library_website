@@ -61,27 +61,16 @@
 {% endif %}
 
 
-{% if cluster_types %}
+{% if sidebar_browse_types %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Browse Collection By:</h2>
+	<h2>Browse Collection:</h2>
 	<ul class="no-indent">
-	    {% for browse_type, link in cluster_types.items %}
+	    {% for browse_type, link in sidebar_browse_types.items %}
 	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
 	    {% endfor %}
 	</ul>
     </div>
 {% endif %}
-
-{% if list_types %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Browse:</h2>
-	<ul class="no-indent">
-	    {% for browse_type, link in list_types.items %}
-	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
-	    {% endfor %}
-	</ul>
-    </div>
-{% endif %}   
 
 <!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
 {% if external_links %}

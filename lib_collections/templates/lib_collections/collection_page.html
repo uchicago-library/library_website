@@ -40,18 +40,10 @@
     <div class="home-module">
       <h2 class="browse"> Collection Highlights </h2>
       <span class="browse-links">
-	Browse by 
-	{% for type, link in cluster_types.items %}
+	Browse:
+	{% for type, link in sidebar_browse_types.items %}
 	<a href="{{ link }}">
 	  {{ type }}
-	</a>
-	{% endfor %}
-      </span>
-      <span class="browse-links">
-	Browse 
-	{% for type, link in list_types.items %}
-	<a href="{{ link }}">
-	   {{ type }}
 	</a>
 	{% endfor %}
       </span>
