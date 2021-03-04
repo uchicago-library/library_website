@@ -715,9 +715,9 @@ class ImageBlock(StructBlock):
         help_text='Details about or description of image',
     )
     alt_text = CharBlock(
-        required=False,
-        help_text='Invisible text for screen readers',
-    )  # Img title in the system is a fallback.
+        required=True,
+        help_text='Required for ADA compliance',
+    )
     alignment = ImageFormatChoiceBlock()
     source = URLBlock(
         required=False,
@@ -739,11 +739,12 @@ class SoloImage(StructBlock):
     Normal image for web exhibits.
     """
     image = ImageChooserBlock()
-    citation = RichTextBlock(blank=True, null=True)
+    citation = RichTextBlock(blank=True, null=True, required=False)
     caption = RichTextBlock(blank=True, null=True, required=False)
     alt_text = CharBlock(
         required=False,
-        help_text='Invisible text for screen readers',
+        help_text=
+        'Required for ADA compliance if no caption or citation is provided',
     )
 
     class Meta:
@@ -992,7 +993,7 @@ class ImageLink(StructBlock):
     image = ImageChooserBlock(required=False)
     alt_text = CharBlock(
         required=False,
-        help_text='Invisible text for screen readers',
+        help_text='Required if no link text supplied for ADA compliance',
     )
     icon = CharBlock(
         required=False,
