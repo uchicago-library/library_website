@@ -18,7 +18,7 @@ from citeproc import (
     formatter
 )
 from citeproc.source.json import CiteProcJSON
-from django.http.response import Http404
+from django.http.response import Http404, HttpResponse
 from django.utils.text import slugify
 from library_website.settings import (
     IIIF_PREFIX,
@@ -444,6 +444,39 @@ class DisplayBrowse():
             ),
         }
         return output
+
+    def get_browse_items(collection_slug: str,
+                         browse: str,
+                         browse_type: str,
+                         modify=GeneralPurpose.noop,
+                         func=GeneralPurpose.identity) -> list:
+        """
+        Retrieve browse links from IIIF server.
+
+        Args:
+            Collection slug string, browse string, browse type string
+
+        Returns:
+            A list of dictionaries with thumbnail/link content for each
+            item in a given browse.
+        """
+        # generate link to IIIF JSON for cluster browse
+        iiif_url = CBrowseURL.mk_cbrowse_url_iiif(
+            collection_slug,
+            browse,
+            browse_type,
+        )
+
+        print(iiif_url)
+
+        # retrieve browse information from IIIF server
+        r = requests.get(iiif_url)
+        modify(r)
+        j = func(r.json())
+
+        objects = [DisplayBrowse.prepare_browse_json(
+            x, DisplayBrowse.comma_join) for x in j['items']]
+        return objects
 
 
 class CitationInfo():

@@ -1047,10 +1047,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             CollectionPageClusterBrowse
             .objects
             .filter(page=self)
-        ) + (
-            CollectionPageListBrowse
-            .objects
-            .filter(page=self)
         )
 
         browse_type = kwargs["browse_type"]
@@ -1058,12 +1054,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         if browse_type is None:
             # default to subject browses if no browse type is specified in
             # route
-            default_browse = (
-                CollectionPageClusterBrowse
-                .objects
-                .filter(page=self)
-                .first()
-            )
+            default_browse = all_browse_types.first()
             default = default_browse.label.lower()
             browse_type = default
         else:
@@ -1108,7 +1099,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1126,29 +1117,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # construct browse type dictionary for sidebar
         cluster_types, list_types = self.build_browse_types()
 
-        # bring utility functions from CBrowseURL and DisplayBrowse into local
-        # namespace
-        mk_cbrowse_url_iiif = CBrowseURL.mk_cbrowse_url_iiif
-        unslugify_browse = DisplayBrowse.unslugify_browse
-        prepare_browse_json = DisplayBrowse.prepare_browse_json
-
-        # generate link to IIIF JSON for cluster browse
-        iiif_url = mk_cbrowse_url_iiif(
-            slug,
-            browse,
-            browse_type,
-        )
-
-        # convert browse and browse type slugs into something suitable for
-        # display
-        browse = unslugify_browse(kwargs["browse"])
-        browse_type = unslugify_browse(kwargs["browse"])
-
-        # retrieve browse information from IIIF server
-        r = requests.get(iiif_url)
-        j = r.json()
-        objects = [prepare_browse_json(
-            x, DisplayBrowse.comma_join) for x in j['items']]
+        try:
+            objects = DisplayBrowse.get_browse_items(
+                slug,
+                browse,
+                browse_type,
+            )
+            internal_error = False
+        except (KeyError, simplejson.JSONDecodeError):
+            objects = ''
+            internal_error = True
 
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
@@ -1158,6 +1136,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_is_ready = True
 
+        # convert browse and browse type slugs into something suitable for
+        # display
+        browse = unslugify_browse(browse)
+        browse_type = unslugify_browse(browse_type)
+
         # construct context
         context = super().get_context(request)
         context["browse_title"] = browse
@@ -1166,13 +1149,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["list_types"] = list_types
         context["slug"] = slug
         context["objects"] = objects
-        context["browse_is_ready"] = True
+        context["internal_error"] = internal_error
+        context["browse_is_ready"] = browse_is_ready
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
