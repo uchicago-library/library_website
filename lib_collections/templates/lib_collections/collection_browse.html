@@ -19,7 +19,10 @@
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
 <div class="results">
-    <h2>{{ browse_title }}</h2>
+    {% if browse_title %}
+	<h2>{{ browse_title }}</h2>
+    {% else %}
+    {% endif %}
 </div>
 
 {% if browse_is_ready %}

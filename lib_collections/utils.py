@@ -474,9 +474,12 @@ class DisplayBrowse():
         modify(r)
         j = func(r.json())
 
-        objects = [DisplayBrowse.prepare_browse_json(
-            x, DisplayBrowse.comma_join) for x in j['items']]
-        return objects
+        if r.status_code >= 200 and r.status_code < 300:
+            objects = [DisplayBrowse.prepare_browse_json(
+                x, DisplayBrowse.comma_join) for x in j['items']]
+            return objects
+        else:
+            return ''
 
 
 class CitationInfo():

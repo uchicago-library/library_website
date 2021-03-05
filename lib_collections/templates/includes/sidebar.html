@@ -1,3 +1,30 @@
+{% if sidebar_browse_types %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<h2>Browse Collection:</h2>
+	<ul class="no-indent">
+	    {% for browse_type, link in sidebar_browse_types.items %}
+	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
+	    {% endfor %}
+	</ul>
+    </div>
+{% endif %}
+
+
+<!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
+{% if external_links %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+	<h2>Other Ways to View</h2>
+	<ul class="no-indent">
+	    {% for item in external_links %}
+		<!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
+	    <li><a href="{{ item.link }}">{{ item.service }}</a>
+	    	<span class="source-description">{{ item.caption }}</span></li>
+	    {% endfor %}
+	</ul>
+    </div>
+{% endif %}
+
+    
 {% if access_location %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
 	<h2>Access Location</h2>
@@ -57,32 +84,6 @@
 		<a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
 	    {% endif %}
 	</p>
-    </div>
-{% endif %}
-
-
-{% if sidebar_browse_types %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Browse Collection:</h2>
-	<ul class="no-indent">
-	    {% for browse_type, link in sidebar_browse_types.items %}
-	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
-	    {% endfor %}
-	</ul>
-    </div>
-{% endif %}
-
-<!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
-{% if external_links %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Other Ways to View</h2>
-	<ul class="no-indent">
-	    {% for item in external_links %}
-		<!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
-	    <li><a href="{{ item.link }}">{{ item.service }}</a>
-	    	<span class="source-description">{{ item.caption }}</span></li>
-	    {% endfor %}
-	</ul>
     </div>
 {% endif %}
 

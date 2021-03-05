@@ -885,13 +885,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # adjust value of final breadcrumb to show object title if possible
         if not marklogic:
-            final_crumb = 'Object'
+            object_title = 'Object'
+            final_crumb = object_title
         elif 'Title' in marklogic.keys():
-            final_crumb = truncate_crumb(marklogic['Title'], truncate_at)
+            object_title = marklogic['Title'].split(',')[0]
+            final_crumb = truncate_crumb(object_title, truncate_at)
         elif 'Description' in marklogic.keys():
-            final_crumb = truncate_crumb(marklogic['Description'], truncate_at)
+            object_title = marklogic['Description'].split(',')[0]
+            final_crumb = truncate_crumb(object_title, truncate_at)
         else:
-            final_crumb = 'Object'
+            object_title = 'Object'
+            final_crumb = object_title
 
         def default(thunk, defval):
             """
@@ -1012,6 +1016,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
+        context['object_title'] = object_title
         context['physical_object'] = physical_object
         context['callno'] = callno
         context['chicago'] = chicago
@@ -1038,6 +1043,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         slug = self.slug
 
+        # bring DisplayBrowse functions into local namespace
+        get_iiif_labels = DisplayBrowse.get_iiif_labels
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
         # construct browse type links for sidebar
         sidebar_browse_types = self.build_browse_types()
 
@@ -1048,6 +1057,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
 
         browse_type = kwargs["browse_type"]
+        browse_title = unslugify_browse(browse_type[:-1])
 
         if browse_type is None:
             # default to subject browses if no browse type is specified in
@@ -1064,10 +1074,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # bring CBrowseURL function into local namespace
         mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
-
-        # bring DisplayBrowse functions into local namespace
-        get_iiif_labels = DisplayBrowse.get_iiif_labels
-        unslugify_browse = DisplayBrowse.unslugify_browse
 
         names = [x.label.lower() for x in all_browse_types]
 
@@ -1087,8 +1093,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # populate context
         context = super().get_context(request)
         context["sidebar_browse_types"] = sidebar_browse_types
-        context["browse_type"] = unslugify_browse(browse_type)
         context["browses"] = browses
+        context["browse_title"] = browse_title
         context["browse_is_ready"] = browse_is_ready
         context["internal_error"] = internal_error
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
@@ -1108,8 +1114,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         slug = self.slug
 
         # pull browse information from URL
-        browse = kwargs['browse']
-        browse_type = kwargs['browse_type']
+        browse_s = kwargs['browse']
+        browse_type_s = kwargs['browse_type']
+
+        all_browse_types = (
+            CollectionPageClusterBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        names = [x.label.lower() for x in all_browse_types]
 
         # construct browse type dictionary for sidebar
         sidebar_browse_types = self.build_browse_types()
@@ -1117,11 +1131,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         try:
             objects = DisplayBrowse.get_browse_items(
                 slug,
-                browse,
-                browse_type,
+                browse_s,
+                browse_type_s,
             )
             internal_error = False
-        except (KeyError, requests.exceptions.RequestException, simplejson.JSONDecodeError):
+        except (KeyError,
+                requests.exceptions.RequestException,
+                simplejson.JSONDecodeError):
             objects = ''
             internal_error = True
 
@@ -1131,12 +1147,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        browse_is_ready = True
+        browse_is_ready = browse_type_s in names and objects
 
         # convert browse and browse type slugs into something suitable for
         # display
-        browse = unslugify_browse(browse)
-        browse_type = unslugify_browse(browse_type)
+        browse = unslugify_browse(browse_s)
+        browse_type = unslugify_browse(browse_type_s)
 
         # construct context
         context = super().get_context(request)
@@ -1202,7 +1218,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         if current_browse:
             browse_title = CollectionPage.override(
                 current_browse.link_text_override,
-                "Browse by %s" % current_browse.label) + ":"
+                "Browse by %s" % current_browse.label)
         else:
             return Http404
 
@@ -1220,7 +1236,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["browse_title"] = browse_title
         context["sidebar_browse_types"] = sidebar_browse_types
         context["browse_is_ready"] = browse_is_ready
-        context["list_types"] = list_types
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name

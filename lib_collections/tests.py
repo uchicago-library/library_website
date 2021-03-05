@@ -525,6 +525,10 @@ example_noid2 = "b2kg6jc3941j"
 example_noid3 = "b2k57z87tt0h"
 browse_type1 = "subject"
 browse_type2 = "decade"
+browse1_1 = "ethnology"
+browse1_2 = "gangs"
+browse2_1 = "1930s"
+browse2_2 = "1940s"
 collection1 = "social-scientists-map-chicago"
 
 
@@ -533,16 +537,29 @@ class CollectionTest(SimpleTestCase):
     fixtures = ['test.json']
 
     # browse type listing works when everything is working
-    def browse_listing_works(self):
+    def browse_type_listing_works(self):
+
+        iiif_url1 = CBrowseURL.mk_cbrowse_type_url_iiif(
+            collection1, browse_type1)
+        iiif_url2 = CBrowseURL.mk_cbrowse_type_url_iiif(
+            collection1, browse_type2)
+
         assert DisplayBrowse.get_iiif_labels(
-            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
+            iiif_url1,
             browse_type1,
             collection1,
         )
         assert DisplayBrowse.get_iiif_labels(
-            CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
+            iiif_url2,
             browse_type2,
             collection1,
+        )
+
+    def browse_listing_works(self):
+        assert DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_1,
+            browse_type1,
         )
 
     def iiif_is_down_elegant_fail(self):
