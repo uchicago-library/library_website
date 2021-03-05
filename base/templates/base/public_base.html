@@ -169,7 +169,9 @@
         </div>
         {% block above_main_content %}{% endblock %}
         <div class="{{content_div_css}}" id="content" role="main">
-            {% if page_type|slugify != 'libnewspage' %}
+	    {% if object_title %}
+	        <h1>{{object_title}}</h1>
+            {% elif page_type|slugify != 'libnewspage' %}
                 <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
             {% endif %}
             {% block under_h1 %}{% endblock %}
