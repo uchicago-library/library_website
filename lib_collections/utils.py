@@ -445,11 +445,11 @@ class DisplayBrowse():
         }
         return output
 
-    def get_browse_items(collection_slug: str,
-                         browse: str,
-                         browse_type: str,
-                         modify=GeneralPurpose.noop,
-                         func=GeneralPurpose.identity) -> list:
+    def get_cbrowse_items(collection_slug: str,
+                          browse: str,
+                          browse_type: str,
+                          modify=GeneralPurpose.noop,
+                          func=GeneralPurpose.identity) -> list:
         """
         Retrieve browse links from IIIF server.
 
@@ -465,6 +465,29 @@ class DisplayBrowse():
             collection_slug,
             browse,
             browse_type,
+        )
+
+        # retrieve browse information from IIIF server
+        try:
+            r = requests.get(iiif_url)
+            modify(r)
+            if r.status_code >= 200 and r.status_code < 300:
+                j = func(r.json())
+                objects = [DisplayBrowse.prepare_browse_json(
+                    x, DisplayBrowse.comma_join) for x in j['items']]
+                return objects
+            else:
+                return ''
+        except requests.exceptions.RequestException:
+            return ''
+
+    def get_lbrowse_items(collection_slug: str,
+                          browse: str,
+                          modify=GeneralPurpose.noop,
+                          func=GeneralPurpose.identity) -> list:
+        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
+            collection_slug,
+            browse,
         )
 
         # retrieve browse information from IIIF server

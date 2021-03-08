@@ -1129,7 +1129,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         sidebar_browse_types = self.build_browse_types()
 
         try:
-            objects = DisplayBrowse.get_browse_items(
+            objects = DisplayBrowse.get_cbrowse_items(
                 slug,
                 browse_s,
                 browse_type_s,
@@ -1196,15 +1196,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         sidebar_browse_types = self.build_browse_types()
 
         # retrieve list browse information from IIIF server
-        r = requests.get(iiif_url)
-        j = r.json()
-        browse_list = [
-            DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
-            for x in j['items']
-        ]
+
+        try:
+            objects = DisplayBrowse.get_lbrowse_items(
+                collection,
+                browse_name,
+            )
+            internal_error = False
+        except (KeyError,
+                simplejson.JSONDecodeError):
+            objects = ''
+            internal_error = True
 
         # create pagination
-        list_objects = Paginator(browse_list, THUMBS_PER_PAGE)
+        list_objects = Paginator(objects, THUMBS_PER_PAGE)
 
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
@@ -1218,8 +1223,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             browse_title = CollectionPage.override(
                 current_browse.link_text_override,
                 "Browse by %s" % current_browse.label)
+            collection_final_breadcrumb = CollectionPage.override(
+                current_browse.link_text_override,
+                unslugify_browse(final_crumb)
+            )
         else:
-            return Http404
+            browse_title = unslugify_browse(browse_name)
+            collection_final_breadcrumb = unslugify_browse(final_crumb)
 
         # final breadcrumb just says e.g. Page 2
         try:
@@ -1228,21 +1238,23 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except ValueError:
             pass
 
-        browse_is_ready = True
+        browse_is_ready = browse_title and objects
 
         # populate context
         context = super().get_context(request)
         context["browse_title"] = browse_title
         context["sidebar_browse_types"] = sidebar_browse_types
         context["browse_is_ready"] = browse_is_ready
+        context["internal_error"] = internal_error
         context["list_objects"] = list_objects.page(pageno)
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name
         )
-        context['collection_final_breadcrumb'] = CollectionPage.override(
-            current_browse.link_text_override,
-            unslugify_browse(final_crumb)
-        )
+        context['collection_final_breadcrumb'] = collection_final_breadcrumb
+        # CollectionPage.override(
+        #     current_browse.link_text_override,
+        #     unslugify_browse(final_crumb)
+        # )
         context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)
