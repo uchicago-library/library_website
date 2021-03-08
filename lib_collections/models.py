@@ -1136,7 +1136,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             )
             internal_error = False
         except (KeyError,
-                requests.exceptions.RequestException,
                 simplejson.JSONDecodeError):
             objects = ''
             internal_error = True

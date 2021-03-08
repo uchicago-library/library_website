@@ -12,6 +12,7 @@ from staff.models import StaffPage, StaffPageEmailAddresses, StaffPageSubjectPla
 from units.models import UnitPage
 from lib_collections.utils import Testing, DisplayBrowse, CBrowseURL, LBrowseURL
 import simplejson
+import requests
 
 
 import time
@@ -561,8 +562,23 @@ class CollectionTest(SimpleTestCase):
             browse1_1,
             browse_type1,
         )
+        assert DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_2,
+            browse_type1,
+        )
+        assert DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_1,
+            browse_type2,
+        )
+        assert DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_2,
+            browse_type2,
+        )
 
-    def iiif_is_down_elegant_fail(self):
+    def iiif_is_down_browse_type_elegant_fail(self):
         assert not DisplayBrowse.get_iiif_labels(
             CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
             browse_type1,
@@ -574,6 +590,32 @@ class CollectionTest(SimpleTestCase):
             browse_type2,
             collection1,
             modify=Testing.bring_website_down,
+        )
+
+    def iiif_is_down_browse_elegant_fail(self):
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_1,
+            browse_type1,
+            modify=Testing.bring_website_down
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_2,
+            browse_type1,
+            modify=Testing.bring_website_down
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_1,
+            browse_type2,
+            modify=Testing.bring_website_down
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_2,
+            browse_type2,
+            modify=Testing.bring_website_down
         )
 
     def browse_type_bad_json(self):
@@ -595,6 +637,40 @@ class CollectionTest(SimpleTestCase):
             modify=Testing.break_json,
         )
 
+    def browse_bad_json(self):
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse1_1,
+            browse_type1,
+            modify=Testing.break_json
+        )
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse1_2,
+            browse_type1,
+            modify=Testing.break_json
+        )
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse2_1,
+            browse_type2,
+            modify=Testing.break_json
+        )
+        self.assertRaises(
+            simplejson.JSONDecodeError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse2_2,
+            browse_type2,
+            modify=Testing.break_json
+        )
+
     def browse_type_unexpected_json(self):
         self.assertRaises(
             KeyError,
@@ -614,6 +690,40 @@ class CollectionTest(SimpleTestCase):
             modify=Testing.unexpected_json
         )
 
+    def browse_unexpected_json(self):
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse1_1,
+            browse_type1,
+            modify=Testing.unexpected_json
+        )
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse1_2,
+            browse_type1,
+            modify=Testing.unexpected_json
+        )
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse2_1,
+            browse_type2,
+            modify=Testing.unexpected_json
+        )
+        self.assertRaises(
+            KeyError,
+            DisplayBrowse.get_browse_items,
+            collection1,
+            browse2_2,
+            browse_type2,
+            modify=Testing.unexpected_json
+        )
+
     def browse_type_404(self):
         assert not DisplayBrowse.get_iiif_labels(
             CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
@@ -626,5 +736,31 @@ class CollectionTest(SimpleTestCase):
             CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type2),
             browse_type2,
             collection1,
+            modify=Testing.change_status_code(404)
+        )
+
+    def browse_404(self):
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_1,
+            browse_type1,
+            modify=Testing.change_status_code(404)
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse1_2,
+            browse_type1,
+            modify=Testing.change_status_code(404)
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_1,
+            browse_type2,
+            modify=Testing.change_status_code(404)
+        )
+        assert not DisplayBrowse.get_browse_items(
+            collection1,
+            browse2_2,
+            browse_type2,
             modify=Testing.change_status_code(404)
         )

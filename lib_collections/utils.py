@@ -467,18 +467,18 @@ class DisplayBrowse():
             browse_type,
         )
 
-        print(iiif_url)
-
         # retrieve browse information from IIIF server
-        r = requests.get(iiif_url)
-        modify(r)
-        j = func(r.json())
-
-        if r.status_code >= 200 and r.status_code < 300:
-            objects = [DisplayBrowse.prepare_browse_json(
-                x, DisplayBrowse.comma_join) for x in j['items']]
-            return objects
-        else:
+        try:
+            r = requests.get(iiif_url)
+            modify(r)
+            if r.status_code >= 200 and r.status_code < 300:
+                j = func(r.json())
+                objects = [DisplayBrowse.prepare_browse_json(
+                    x, DisplayBrowse.comma_join) for x in j['items']]
+                return objects
+            else:
+                return ''
+        except requests.exceptions.RequestException:
             return ''
 
 
