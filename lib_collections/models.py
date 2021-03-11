@@ -988,7 +988,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         csl = get_csl(
             turtle_data,
             config,
-            modify=Testing.unexpected_json
         )
 
         # get CSL files for Chicago, MLA, and APA styles off disk

@@ -1,4 +1,5 @@
 import json
+import simplejson
 import re
 
 import requests
@@ -20,11 +21,10 @@ def sp_query(manifid: str) -> str:
     Returns:
         SparQL query in the form of a string
     """
-    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?ClassificationLcc ?Local
+    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?spatial ?ClassificationLcc ?Local
               FROM <{1}>
               WHERE {{
                   <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
-                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?coverage .  }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
@@ -34,6 +34,7 @@ def sp_query(manifid: str) -> str:
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/subject> ?subject .  }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/title> ?title . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/type> ?type . }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/terms/spatial> ?spatial . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/ClassificationLcc> ?ClassificationLcc . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/Local> ?Local . }}
               }}'''.format(manifid, SPARQL_ROOT)
@@ -248,6 +249,13 @@ def render_field(parsed_field: dict) -> str:
         return parsed_field
 
 
+def add_extra_fields(manifid: str,
+                     dct: dict) -> dict:
+    ark_base = 'https://www.lib.uchicago.edu/ark:/61001/'
+    dct['Collection'] = 'Social Scientists Map Chicago'
+    dct['Permanent URL'] = ark_base + manifid
+
+
 def get_record_for_display(manifid: str,
                            wagtail_field_names: list,
                            modify=GeneralPurpose.noop,
@@ -267,8 +275,10 @@ def get_record_for_display(manifid: str,
                             modify=modify, func=func)
     try:
         if dct:
-            return {k: render_field(v) for k, v in dct.items()}
+            main_output = {k: render_field(v) for k, v in dct.items()}
+            add_extra_fields(manifid, main_output)
+            return main_output
         else:
             return ''
-    except simplejson.JSONDecodeError:
+    except (json.JSONDecodeError, simplejson.JSONDecodeError):
         return ''
