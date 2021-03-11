@@ -974,7 +974,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # bring utility functions from CitationInfo into local namespace
         get_turtle_data = CitationInfo.get_turtle_data
-        get_citation = CitationInfo.get_citation
+        get_csl = CitationInfo.get_csl
         get_bibtex = CitationInfo.get_bibtex
         get_ris = CitationInfo.get_ris
         get_zotero = CitationInfo.get_zotero
@@ -985,10 +985,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         turtle_data = get_turtle_data(manifid)
 
         # get CSL-JSON data
-        try:
-            csl = json.loads(get_citation("csl", turtle_data, config))
-        except (simplejson.JSONDecodeError, TypeError):
-            csl = ''
+        csl = get_csl(
+            turtle_data,
+            config,
+            modify=Testing.unexpected_json
+        )
 
         # get CSL files for Chicago, MLA, and APA styles off disk
         chicago = csl_json_to_html(csl, CHICAGO_PATH)
@@ -1003,7 +1004,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # URL for social media sharing links
         share_url = "%s/object/%s" % (self.url, manifid)
 
-        iiif_url = get_viewer_url(kwargs["manifid"])
+        iiif_url = get_viewer_url(manifid)
+
+        internal_error = not marklogic and not iiif_url
 
         # populate context
         context = super().get_context(request)
@@ -1011,6 +1014,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["iiif_url"] = iiif_url
         context["share_url"] = share_url
         context["slug"] = slug
+        context["internal_error"] = internal_error
         context["marklogic"] = marklogic
         context["sidebar_browse_types"] = sidebar_browse_types
         context["external_links"] = external_links
@@ -1184,13 +1188,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_name = paginate_name[:-1]
 
+        all_browse_types = (
+            CollectionPageListBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        names = [x.label.lower() for x in all_browse_types]
+
         try:
             pageno = int(kwargs["pageno"][:-1])
         except KeyError:
             pageno = 1
-
-        # construct IIIF URL to get browse information from
-        iiif_url = LBrowseURL.mk_lbrowse_url_iiif(collection, browse_name)
 
         # list of browse types for sidebar
         sidebar_browse_types = self.build_browse_types()
@@ -1238,7 +1247,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except ValueError:
             pass
 
-        browse_is_ready = browse_title and objects
+        browse_is_ready = browse_name in names and objects
+
+        # return HttpResponse(browse_name)
 
         # populate context
         context = super().get_context(request)
@@ -1251,10 +1262,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             collection, paginate_name
         )
         context['collection_final_breadcrumb'] = collection_final_breadcrumb
-        # CollectionPage.override(
-        #     current_browse.link_text_override,
-        #     unslugify_browse(final_crumb)
-        # )
         context['collection_breadcrumb'] = breads
 
         return TemplateResponse(request, template, context)

@@ -40,6 +40,7 @@ def sp_query(manifid: str) -> str:
 
 
 def get_raw_record(manifid: str,
+                   modify=GeneralPurpose.noop,
                    func=GeneralPurpose.identity) -> dict:
     """
     Query Mark Logic for metadata fields to be displayed in collection object
@@ -64,6 +65,7 @@ def get_raw_record(manifid: str,
             params={'query': sp_query(manifid)},
             url=MARKLOGIC_LDR_URL + '/sparql',
         )
+        modify(r)
         j = json.loads(r.content.decode('utf-8'))
         return func(j)
     except requests.exceptions.RequestException:
@@ -118,6 +120,7 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
 
 def get_record_no_parsing(manifid: str,
                           wagtail_field_names: list,
+                          modify=GeneralPurpose.noop,
                           func=GeneralPurpose.identity) -> dict:
     """
     Queries Mark Logic for collection object metadata fields, leaves the values
@@ -129,7 +132,7 @@ def get_record_no_parsing(manifid: str,
     Returns:
         Dictionary representing metadata
     """
-    raw_record = get_raw_record(manifid, func=func)
+    raw_record = get_raw_record(manifid, modify=modify, func=func)
     if raw_record:
         return triples_to_dict(raw_record, wagtail_field_names)
     else:
@@ -194,6 +197,7 @@ def brackets_parse(value: str) -> dict:
 
 def get_record_parsed(manifid: str,
                       wagtail_field_names: list,
+                      modify=GeneralPurpose.noop,
                       func=GeneralPurpose.identity) -> dict:
     """
     Performs SparQL query, arranges result to mirror metadata fields from
@@ -206,7 +210,8 @@ def get_record_parsed(manifid: str,
         Dictionary of metadata fields, with parse results in values
 
     """
-    dct = get_record_no_parsing(manifid, wagtail_field_names, func=func)
+    dct = get_record_no_parsing(
+        manifid, wagtail_field_names, modify=modify, func=func)
     if dct:
         return {k: brackets_parse(v) for k, v in dct.items()}
     else:
@@ -245,6 +250,7 @@ def render_field(parsed_field: dict) -> str:
 
 def get_record_for_display(manifid: str,
                            wagtail_field_names: list,
+                           modify=GeneralPurpose.noop,
                            func=GeneralPurpose.identity) -> dict:
     """
     Main function for getting metadata fields back from Mark Logic, based on a
@@ -257,8 +263,12 @@ def get_record_for_display(manifid: str,
         Dictionary representing metadata to be displayed on collection
         object page.
     """
-    dct = get_record_parsed(manifid, wagtail_field_names, func=func)
-    if dct:
-        return {k: render_field(v) for k, v in dct.items()}
-    else:
+    dct = get_record_parsed(manifid, wagtail_field_names,
+                            modify=modify, func=func)
+    try:
+        if dct:
+            return {k: render_field(v) for k, v in dct.items()}
+        else:
+            return ''
+    except simplejson.JSONDecodeError:
         return ''

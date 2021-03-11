@@ -555,11 +555,14 @@ class CitationInfo():
 
         """
         url = "%s%s/file.ttl" % (TURTLE_ROOT, manifid)
-        r = requests.get(url)
-        modify(r)
-        if r.status_code >= 200 and r.status_code < 300:
-            return str(r.content, "utf-8")
-        else:
+        try:
+            r = requests.get(url)
+            modify(r)
+            if r.status_code >= 200 and r.status_code < 300:
+                return str(r.content, "utf-8")
+            else:
+                return ''
+        except (requests.exceptions.RequestException):
             return ''
 
     def get_citation(mode: str,
@@ -598,7 +601,7 @@ class CitationInfo():
         else:
             return ''
 
-    def get_csl(turtle_data: str, config: str) -> dict:
+    def get_csl(turtle_data: str, config: str, modify=GeneralPurpose.noop) -> dict:
         """
         Main function to query the citation service for CSL-JSON info in
         models.py.  This is used to live-display the collection object
@@ -611,8 +614,11 @@ class CitationInfo():
             CSL-JSON as a Python dictionary
 
         """
-        c = CitationInfo.get_citation("csl", turtle_data, config)
-        return json.loads(c)
+        c = CitationInfo.get_citation("csl", turtle_data, config, modify)
+        try:
+            return json.loads(c)
+        except (json.JSONDecodeError, TypeError):
+            return ''
 
     def get_zotero(turtle_data: str, config: str) -> str:
         """
@@ -646,24 +652,27 @@ class CitationInfo():
         if not os.path.isfile(style):
             return ''
         else:
-            bib_source = CiteProcJSON(csl_json)
-            bib_style = CitationStylesStyle(style, validate=False)
-            bibliography = CitationStylesBibliography(
-                bib_style, bib_source, formatter.html
-            )
+            try:
+                bib_source = CiteProcJSON(csl_json)
+                bib_style = CitationStylesStyle(style, validate=False)
+                bibliography = CitationStylesBibliography(
+                    bib_style, bib_source, formatter.html
+                )
 
-            for obj in csl_json:
-                # Gets the object's id and makes it into citation item.
-                citation = Citation([CitationItem(obj['id'])])
-                bibliography.register(citation)
+                for obj in csl_json:
+                    # Gets the object's id and makes it into citation item.
+                    citation = Citation([CitationItem(obj['id'])])
+                    bibliography.register(citation)
 
-            html = ""
-            for ms in bibliography.bibliography():
-                lst = list(OrderedDict.fromkeys(ms.split()))
-                s = ' '.join(lst)
-                html += (s + "<br>")
+                html = ""
+                for ms in bibliography.bibliography():
+                    lst = list(OrderedDict.fromkeys(ms.split()))
+                    s = ' '.join(lst)
+                    html += (s + "<br>")
 
-            return html
+                return html
+            except AttributeError:
+                return ''
 
     def citation_export(mode: str, turtle_data: str, config: str):
         """
@@ -848,7 +857,9 @@ class Testing():
     default_config = CitationInfo.default_config
 
     def bring_website_down(response):
-        raise requests.exceptions.ConnectionError
+        raise requests.exceptions.ConnectionError(
+            "Testing: pretending the server is down"
+        )
 
     def change_status_code(code: int):
         def partial(response):

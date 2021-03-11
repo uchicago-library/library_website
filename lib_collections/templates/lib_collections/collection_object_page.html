@@ -52,7 +52,11 @@
        }
       </script>
 
-      {% if iiif_url %}
+      {% if internal_error %}
+          <h4>
+	      <p>Not found. Are you sure you typed the URL correctly?</p>
+	  </h4>
+      {% elif iiif_url %}
           <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
 
 	  <div class="col-xs-12 coll-dropdown">
@@ -67,15 +71,15 @@
 							<form>
 								<div class="form-check">
 								    <input class="form-check-input" type="radio" id="chicago" name="styleButton" checked="true" value="chicago" onchange="updateCitation(this.value)">
-								     <label class="form-check-label" for="chistyle">Chicago Style</label>
+								     <label class="form-check-label" for="chi">Chicago Style</label>
 								</div>
 								<div class="form-check">
 								     <input class="form-check-input" type="radio" id="apa" name="styleButton" value="apa" onchange="updateCitation(this.value)">
-								     <label class="form-check-label" for="apastyle">APA</label>
+								     <label class="form-check-label" for="apa">APA</label>
 								</div>
 								<div class="form-check">
 								    <input class="form-check-input" type="radio" id="mla" name="styleButton" value="mla" onchange="updateCitation(this.value)">
-								    <label class="form-check-label" for="mlastyle">MLA</label>
+								    <label class="form-check-label" for="mla">MLA</label>
 								</div>
 							</form>
 						</div>
@@ -130,35 +134,34 @@
 	</div>
       {% else %}
 	  <h4>
-	      <hr>
 	      <p>We are temporarily unable to display the viewer for this object.</p>
 	      <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
 	  </h4>
       {% endif %}
   
-		  {% if marklogic %}
-		      <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  
-			  <dl>
-			      {% for key, value in marklogic.items %}
-			      <dt>
-				  {{ key }}
-			      </dt>
-			      <!-- TODO: add SCHEMA.ORG property as itemprop in dd tag -->
-			      <!-- TODO: add handling for if an item has multiple value fields -->
-			      <!-- to-do: need to add better CSS handling for multiple value fields (multiple lines) -->
-			      <dd>
-				  {{ value }}
-			      </dd>
-			      {% endfor %}
-			  </dl>
-		      </span> <!-- / schema.org wrapper -->
-		  {% else %}
-		      <h4>
-			  <hr>
-			  <p>One of our servers is temporarily down.</p>
-			  <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
-		      </h4>
-		  {% endif %}
+      {% if marklogic %}
+	  <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->  
+	      <dl>
+		  {% for key, value in marklogic.items %}
+		  <dt>
+		      {{ key }}
+		  </dt>
+		  <!-- TODO: add SCHEMA.ORG property as itemprop in dd tag -->
+		  <!-- TODO: add handling for if an item has multiple value fields -->
+		  <!-- to-do: need to add better CSS handling for multiple value fields (multiple lines) -->
+		  <dd>
+		      {{ value }}
+		  </dd>
+		  {% endfor %}
+	      </dl>
+	  </span> <!-- / schema.org wrapper -->
+      {% elif not internal_error %}
+	  <h4>
+	      <p>One of our servers is temporarily down.</p>
+	      <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+	  </h4>
+      {% else %}
+      {% endif %}
 
 {% endblock %}
       
