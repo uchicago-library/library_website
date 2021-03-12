@@ -614,10 +614,12 @@ class CitationInfo():
             CSL-JSON as a Python dictionary
 
         """
-        c = CitationInfo.get_citation("csl", turtle_data, config, modify)
         try:
+            c = CitationInfo.get_citation("csl", turtle_data, config, modify)
             return json.loads(c)
-        except (json.JSONDecodeError, TypeError):
+        except (json.JSONDecodeError,
+                TypeError,
+                requests.exceptions.RequestException):
             return ''
 
     def get_zotero(turtle_data: str, config: str) -> str:

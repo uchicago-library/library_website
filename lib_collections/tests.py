@@ -14,9 +14,12 @@ from wagtail.core.models import Page, Site
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from lib_collections.utils import (
     Testing,
+    CitationInfo,
     DisplayBrowse,
     CBrowseURL,
-    IIIFDisplay)
+    IIIFDisplay
+)
+from lib_collections.marklogic import get_record_for_display
 import simplejson
 
 
@@ -148,7 +151,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
+        # print("%s: %.3f" % (self.id(), t))
 
     def test_view_none(self):
         request = self.factory.get('/collection/?view=%s' % None)
@@ -158,7 +161,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
+        # print("%s: %.3f" % (self.id(), t))
 
     def test_view_invalid(self):
         request = self.factory.get('/collection/?view=gibberish')
@@ -168,7 +171,7 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
         t = time.time() - self.startTime
-        #print("%s: %.3f" % (self.id(), t))
+        # print("%s: %.3f" % (self.id(), t))
 
     # def test_sorted(self):
     #    request = self.factory.get('/collection/')
@@ -541,10 +544,11 @@ collection1 = "social-scientists-map-chicago"
 
 class CollectionTest(SimpleTestCase):
 
-    # fixtures = ['test.json']
-
     # browse type listing works when everything is working
     def browse_type_listing_works(self):
+        """
+        Make sure we can pull the browse type links down from IIIF.
+        """
 
         iiif_url1 = CBrowseURL.mk_cbrowse_type_url_iiif(
             collection1, browse_type1)
@@ -563,6 +567,10 @@ class CollectionTest(SimpleTestCase):
         )
 
     def cluster_browse_listing_works(self):
+        """
+        Make sure we can pull the links for items falling under a
+        particular cluster browse from IIIF.
+        """
         assert DisplayBrowse.get_cbrowse_items(
             collection1,
             browse1_1,
@@ -585,6 +593,10 @@ class CollectionTest(SimpleTestCase):
         )
 
     def list_browse_listing_works(self):
+        """
+        Make sure we can pull the links for items falling under a
+        particular list browse from IIIF.
+        """
         assert DisplayBrowse.get_lbrowse_items(
             collection1,
             list_browse1,
@@ -592,6 +604,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def iiif_is_down_browse_type_elegant_fail(self):
+        """
+        If the IIIF server is down, the code to get the browse type listing
+        links should return an empty string.  This will lead to the
+        "are you sure you typed the right URL" message on the page.
+        """
         assert not DisplayBrowse.get_iiif_labels(
             CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
             browse_type1,
@@ -606,6 +623,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def iiif_is_down_cluster_browse_elegant_fail(self):
+        """
+        If the IIIF server is down, the code to get the links for the
+        cluster browse listing should return an empty string.  This
+        will lead to "are you sure you typed the right URL" in the
+        page.
+        """
         assert not DisplayBrowse.get_cbrowse_items(
             collection1,
             browse1_1,
@@ -632,6 +655,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def iiif_is_down_list_browse_elegant_fail(self):
+        """
+        If the IIIF server is down, the code to get the links for the list
+        browse listing should return an empty string.  This will lead
+        to "are you sure you typed the right URL" in the page.
+        """
         assert not DisplayBrowse.get_lbrowse_items(
             collection1,
             list_browse1,
@@ -639,6 +667,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def browse_type_bad_json(self):
+        """
+        If the browse type JSON from IIIF has a syntax error, the page
+        should display a "internal error; please contact us" message.
+        Currently, the code in models.py catches the JSONDecodeError
+        exception and makes that happen.
+        """
         self.assertRaises(
             simplejson.JSONDecodeError,
             DisplayBrowse.get_iiif_labels,
@@ -647,7 +681,6 @@ class CollectionTest(SimpleTestCase):
             collection1,
             modify=Testing.break_json,
         )
-
         self.assertRaises(
             simplejson.JSONDecodeError,
             DisplayBrowse.get_iiif_labels,
@@ -658,6 +691,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def cluster_browse_bad_json(self):
+        """
+        If the cluster browse JSON from IIIF has a syntax error, the page
+        should display a "internal error; please contact us" message.
+        Currently, the code in models.py catches the JSONDecodeError
+        exception and makes that happen.
+        """
         self.assertRaises(
             simplejson.JSONDecodeError,
             DisplayBrowse.get_cbrowse_items,
@@ -692,6 +731,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def list_browse_bad_json(self):
+        """
+        If the list browse JSON from IIIF has a syntax error, the page
+        should display a "internal error; please contact us" message.
+        Currently, the code in models.py catches the JSONDecodeError
+        exception and makes that happen.
+        """
         self.assertRaises(
             simplejson.JSONDecodeError,
             DisplayBrowse.get_lbrowse_items,
@@ -701,6 +746,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def browse_type_unexpected_json(self):
+        """
+        If IIIF returns syntactically valid browse type JSON not with the
+        expected structure (i.e. with different keys from what we
+        expect), the page should display a "internal error; please
+        contact us" message.
+        """
         self.assertRaises(
             KeyError,
             DisplayBrowse.get_iiif_labels,
@@ -720,6 +771,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def cluster_browse_unexpected_json(self):
+        """
+        If IIIF returns syntactically valid but unexpectedly-structured
+        cluster browse JSON, the page should display a "internal
+        error; please contact us" message.
+        """
         self.assertRaises(
             KeyError,
             DisplayBrowse.get_cbrowse_items,
@@ -754,6 +810,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def list_browse_unexpected_json(self):
+        """
+        If IIIF returns syntactically valid but unexpectedly-structured
+        list browse JSON, the page should display a "internal error;
+        please contact us" message.
+        """
         self.assertRaises(
             KeyError,
             DisplayBrowse.get_lbrowse_items,
@@ -763,6 +824,12 @@ class CollectionTest(SimpleTestCase):
         )
 
     def browse_type_404(self):
+        """
+        If there's a 404 error connecting to IIIF while getting the browse
+        type JSON, the page should display a 'maybe you typed the
+        wrong URL' message.  In this case, that means the
+        get_iiif_labels function should return an empty string.
+        """
         assert not DisplayBrowse.get_iiif_labels(
             CBrowseURL.mk_cbrowse_type_url_iiif(collection1, browse_type1),
             browse_type1,
@@ -778,6 +845,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def cluster_browse_404(self):
+        """
+        If there's a 404 error connecting to IIIF while getting the
+        cluster browse JSON, the page should display a 'maybe you
+        typed the wrong URL' message.
+        """
         assert not DisplayBrowse.get_cbrowse_items(
             collection1,
             browse1_1,
@@ -804,6 +876,11 @@ class CollectionTest(SimpleTestCase):
         )
 
     def list_browse_404(self):
+        """
+        If there's a 404 error connecting to IIIF while getting the list
+        browse JSON, the page should display a 'maybe you typed the
+        wrong URL' message.
+        """
         assert not DisplayBrowse.get_lbrowse_items(
             collection1,
             list_browse1,
@@ -811,6 +888,181 @@ class CollectionTest(SimpleTestCase):
         )
 
     def viewer_works(self):
+        """
+        Check the IIIF manifest exists, for the purpose of assembling the
+        URL for the Universal Viewer iframe.
+        """
         assert IIIFDisplay.get_viewer_url(example_noid1)
         assert IIIFDisplay.get_viewer_url(example_noid2)
         assert IIIFDisplay.get_viewer_url(example_noid3)
+
+    def viewer_down(self):
+        """
+        If IIIF is down, the object page should display a "please contact
+        us" message where the viewer would be.  In this case, that
+        means the get_viewer_url function should return an empty
+        string.
+        """
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid1,
+            modify=Testing.bring_website_down
+        )
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid2,
+            modify=Testing.bring_website_down
+        )
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid3,
+            modify=Testing.bring_website_down
+        )
+
+    def viewer_404(self):
+        """
+        If the IIIF server returns a 404, the object page should display a
+        "please contact us" message.
+        """
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid1,
+            modify=Testing.change_status_code(404)
+        )
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid2,
+            modify=Testing.change_status_code(404)
+        )
+        assert not IIIFDisplay.get_viewer_url(
+            example_noid3,
+            modify=Testing.change_status_code(404)
+        )
+
+    def marklogic_works(self):
+        """
+        Check that we are able to successfully connect to Mark Logic and
+        pull down the metadata fields for the object to be displayed
+        in the object page.
+        """
+        assert get_record_for_display(
+            example_noid1,
+            []
+        )
+        assert get_record_for_display(
+            example_noid2,
+            []
+        )
+        assert get_record_for_display(
+            example_noid3,
+            []
+        )
+
+    def marklogic_down(self):
+        """
+        If the Mark Logic server is down, the object page should display a
+        "contact us" message where the metadata fields would be.  In
+        this case, that means that get_record_for_display should
+        return an empty string.
+        """
+        assert not get_record_for_display(
+            example_noid1,
+            [],
+            modify=Testing.bring_website_down
+        )
+        assert not get_record_for_display(
+            example_noid2,
+            [],
+            modify=Testing.bring_website_down
+        )
+        assert not get_record_for_display(
+            example_noid3,
+            [],
+            modify=Testing.bring_website_down
+        )
+
+    def marklogic_unexpected_json(self):
+        """
+        If Mark Logic returns unexpectedly-structured JSON, the object page
+        should dispaly a "contact us" message where the metadata
+        fields would be.
+        """
+        assert not get_record_for_display(
+            example_noid1,
+            [],
+            modify=Testing.unexpected_json
+        )
+        assert not get_record_for_display(
+            example_noid2,
+            [],
+            modify=Testing.unexpected_json
+        )
+        assert not get_record_for_display(
+            example_noid3,
+            [],
+            modify=Testing.unexpected_json
+        )
+
+    def secondary_ark_resolver_down(self):
+        """
+        If the secondary ARK resolver is down and can't provide Turtle data
+        for the collection object, the "Cite This" menu should not
+        display.  In this case, that means get_turtle_data should
+        return an empty string.
+        """
+        assert not CitationInfo.get_turtle_data(
+            example_noid1,
+            modify=Testing.bring_website_down
+        )
+        assert not CitationInfo.get_turtle_data(
+            example_noid2,
+            modify=Testing.bring_website_down
+        )
+        assert not CitationInfo.get_turtle_data(
+            example_noid3,
+            modify=Testing.bring_website_down
+        )
+
+    def citation_works(self):
+        """
+        Check that the citation service at
+        www.lib.uchicago.edu/cgi-bin/citation is returning CSL-JSON to
+        be displayed in the "Cite This" menu.
+        """
+        assert CitationInfo.get_csl(
+            Testing.example,
+            Testing.default_config
+        )
+
+    def citation_down(self):
+        """
+        If the citation service is down, "Cite This" menu should not be
+        displayed.  In this case, that means get_csl should return an
+        empty string.
+        """
+        assert not CitationInfo.get_csl(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.bring_website_down
+        )
+
+    def citation_400(self):
+        """
+        If the turtle data provided to the citation service is invalid, it
+        will return a 400 response.  In that situation, the "Cite
+        This" menu should not appear in the page.
+        """
+        assert not CitationInfo.get_csl(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.change_status_code(400)
+        )
+
+    def citation_500(self):
+        """
+        The citation service should never return 500 response---if it
+        does, then it failed to handle some variety of input it should
+        expect to get and that is officially considered a bug.  But if
+        it does have such a bug and therefore return a 500 response,
+        the "Cite This" menu should not appear in the object page.
+        """
+        assert not CitationInfo.get_csl(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.change_status_code(500)
+        )
