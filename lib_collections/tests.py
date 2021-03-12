@@ -1,18 +1,23 @@
 from django.test import TestCase, RequestFactory, SimpleTestCase
 from django.contrib.auth.models import AnonymousUser
 from lib_collections.views import collections
-from lib_collections.models import CollectingAreaPage, CollectionPage, ExhibitPage
+from lib_collections.models import (
+    CollectingAreaPage,
+    CollectionPage,
+    ExhibitPage
+)
 from django.core.cache import caches
-from django.urls import reverse
 from subjects.models import Subject
 from units.models import UnitPage
 from public.models import LocationPage, StaffPublicPage
 from wagtail.core.models import Page, Site
-from staff.models import StaffPage, StaffPageEmailAddresses, StaffPageSubjectPlacement
-from units.models import UnitPage
-from lib_collections.utils import Testing, DisplayBrowse, CBrowseURL, LBrowseURL
+from staff.models import StaffPage, StaffPageSubjectPlacement
+from lib_collections.utils import (
+    Testing,
+    DisplayBrowse,
+    CBrowseURL,
+    IIIFDisplay)
 import simplejson
-import requests
 
 
 import time
@@ -804,3 +809,8 @@ class CollectionTest(SimpleTestCase):
             list_browse1,
             modify=Testing.change_status_code(404)
         )
+
+    def viewer_works(self):
+        assert IIIFDisplay.get_viewer_url(example_noid1)
+        assert IIIFDisplay.get_viewer_url(example_noid2)
+        assert IIIFDisplay.get_viewer_url(example_noid3)

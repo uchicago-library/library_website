@@ -22,6 +22,8 @@
     {{ zotero|safe }}
   {% else %}
   {% endif %}
+  <meta property="og:url" content="{{ og_url }}" />
+  <link rel="canonical" href="{{ canonical_url }}" />
 {% endblock %}
 
       

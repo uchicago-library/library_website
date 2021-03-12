@@ -1000,8 +1000,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         endnote_link = get_ris(turtle_data, config)
         zotero = str(get_zotero(turtle_data, config))
 
-        # URL for social media sharing links
-        share_url = "%s/object/%s" % (self.url, manifid)
+        # URLs for social media sharing links
+        share_url = request.build_absolute_uri()
+        # "%s/object/%s" % (self.url, manifid)
+        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + manifid
+        canonical_url = og_url
 
         iiif_url = get_viewer_url(manifid)
 
@@ -1028,6 +1031,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['bibtex_link'] = bibtex_link
         context['endnote_link'] = endnote_link
         context['zotero'] = zotero
+        context['og_url'] = og_url
+        context['canonical_url'] = canonical_url
 
         # update context with staff info for sidebar
         context.update(self.staff_context())
