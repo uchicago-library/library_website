@@ -245,11 +245,13 @@ class DisplayBrowse():
         Helper function for get_iiif_labels.
 
         Args:
-            IIIF browse list URL, language abbreviation string
+            IIIF browse list URL, language abbreviation string,
+            response modifying-function for testing
 
         Returns:
             an association list from browses/browse types to the
             number of items falling under each browse
+
         """
         r = requests.get(url)
         modify(r)
@@ -273,7 +275,8 @@ class DisplayBrowse():
         (templates/collection_browse.html)
 
         Args:
-            IIIF browse list URL, browse type string, collection slug string
+            IIIF browse list URL, browse type string, collection slug string,
+            response modifying-function for testing
 
         Returns:
             JSON data for the browse list template
@@ -460,10 +463,12 @@ class DisplayBrowse():
                           modify=GeneralPurpose.noop,
                           func=GeneralPurpose.identity) -> list:
         """
-        Retrieve browse links from IIIF server.
+        Retrieve cluster browse links from IIIF server.
 
-        Args:
-            Collection slug string, browse string, browse type string
+        Args: 
+            Collection slug string, browse string, browse type
+            string, response modifying-function for testing,
+            json-modifying function for testing
 
         Returns:
             A list of dictionaries with thumbnail/link content for each
@@ -494,6 +499,18 @@ class DisplayBrowse():
                           browse: str,
                           modify=GeneralPurpose.noop,
                           func=GeneralPurpose.identity) -> list:
+        """
+        Retrieve list browse links from IIIF server.
+
+        Args: 
+            Collection slug string, browse string, browse type
+            string, response modifying-function for testing,
+            json-modifying function for testing
+
+        Returns:
+            A list of dictionaries with thumbnail/link content for each
+            item in a given browse.
+        """
         iiif_url = LBrowseURL.mk_lbrowse_url_iiif(
             collection_slug,
             browse,
