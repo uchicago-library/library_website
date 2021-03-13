@@ -41,6 +41,15 @@ class GeneralPurpose():
     """
 
     def noop(x):
+        """
+        Noop function.
+
+        Args:
+            Anything
+
+        Returns:
+            Side effect-ful; no return value
+        """
         pass
 
     def identity(x):
@@ -756,6 +765,16 @@ class IIIFDisplay:
 
     def test_url(url: str,
                  modify=GeneralPurpose.noop) -> str:
+        """
+        Test that an object manifest exists.
+
+        Args:
+            URL string, optional response-modifying function for
+            testing
+
+        Returns:
+            the input URL if it is valid, and the empty string otherwise
+        """
         try:
             r = requests.get(url)
             modify(r)
@@ -768,6 +787,14 @@ class IIIFDisplay:
 
     def get_viewer_url(manifid: str,
                        modify=GeneralPurpose.noop) -> str:
+        """
+        Test manifest URL and if it is valid, return a URL for the
+        Universal Viewer for that object.
+
+        Args:
+            NOID string, optional response-modifying function for testing
+        """
+
         test = IIIFDisplay.test_url(IIIFDisplay
                                     .mk_manifest_url(manifid),
                                     modify=modify)
@@ -784,7 +811,6 @@ class Testing():
     testing purposes only.  The functions in this class are intended
     to be the modify/func inputs to the various functions that
     retrieve data from over the web in utils.py and marklogic.py.
-
     """
 
     # sample turtle data for testing
@@ -859,22 +885,64 @@ class Testing():
     default_config = CitationInfo.default_config
 
     def bring_website_down(response):
+        """
+        Throw a ConnectionError.
+
+        Args:
+            HTTP response
+
+        Returns:
+            Side effect-ful function; no return value.
+        """
         raise requests.exceptions.ConnectionError(
             "Testing: pretending the server is down"
         )
 
     def change_status_code(code: int):
+        """
+        Take an HTTP response and mutate its status code to be that of the
+        input.
+
+        Args:
+            (Curried) status code integer, HTTP response
+
+        Returns:
+            Side effect-ful; no return value.
+
+        """
         def partial(response):
             response.status_code = code
         return partial
 
     def break_json(response):
+        """
+        Take an HTTP response and make its content syntactically invalid.
+        Assumes the body of the response is JSON.
+
+        Args:
+            HTTP response
+
+        Returns:
+            Side effect-ful; no return value.
+        """
         response._content += b'}'
 
     def unexpected_json(response):
+        """
+        Take an HTTP response and replace its content with a dictionary
+        whose structure is not what the code expects.  Assumes the
+        body of the response is (intended to be) JSON.
+
+        Args:
+            HTTP response
+
+        Returns:
+            Side effect-ful; no return value.
+        """
         new = b'{"random_dictionary": [{"with": 4}, {"stuff": false}]}'
         response._content = new
 
+    # constant function to empty SparQL query
     empty_sparql = GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
     )
