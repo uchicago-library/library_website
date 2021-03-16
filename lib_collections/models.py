@@ -42,6 +42,7 @@ from .utils import (CBrowseURL,
                     IIIFDisplay,
                     Testing)
 
+
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 

@@ -555,7 +555,7 @@ IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="
 WAGTAIL_PREFIX = "/collex/collections"
 
 # toggle these root URLs for dev/production
-# CITATION_ROOT = "http://localhost:9000"
+# CITATION_ROOT = "http://sequent.lib.uchicago.edu:9000"
 CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"

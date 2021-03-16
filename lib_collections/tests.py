@@ -1066,3 +1066,42 @@ class CollectionTest(SimpleTestCase):
             Testing.default_config,
             modify=Testing.change_status_code(500)
         )
+
+    def bibtex_works(self):
+        assert CitationInfo.get_bibtex(
+            Testing.example,
+            Testing.default_config,
+        )
+
+    def bibtex_down(self):
+        assert not CitationInfo.get_bibtex(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.bring_website_down
+        )
+
+    def ris_works(self):
+        assert CitationInfo.get_ris(
+            Testing.example,
+            Testing.default_config,
+        )
+
+    def ris_down(self):
+        assert not CitationInfo.get_ris(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.bring_website_down
+        )
+
+    def zotero_works(self):
+        assert CitationInfo.get_zotero(
+            Testing.example,
+            Testing.default_config,
+        )
+
+    def zotero_down(self):
+        assert not CitationInfo.get_zotero(
+            Testing.example,
+            Testing.default_config,
+            modify=Testing.bring_website_down
+        )

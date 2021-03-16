@@ -61,6 +61,10 @@
       {% elif iiif_url %}
           <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
 
+	  <!-- MT 3/16/21 we're temporarily taking the citation service out to get the display
+	       of the citations to look more like how they look in the catalog.  Once that's done,
+	       the plan is to uncomment this part. -->
+	  
 	  <div class="col-xs-12 coll-dropdown">
 	      {% if chicago and mla and apa %}
 		<div class="btn-group">
@@ -115,21 +119,21 @@
             </button>
             <ul class="dropdown-menu listings-dropdown">
 	            <li>
-		      <a href="https://www.facebook.com/sharer/sharer.php?u={{share_url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook &nbsp;<i aria-hidden="true" class="fa fa-facebook-f"></i></a>
+		      <a href="https://www.facebook.com/sharer/sharer.php?u={{og_url|urlencode}}" class="btn-floating" type="button" role="button" aria-label="share story on Facebook">Facebook &nbsp;<i aria-hidden="true" class="fa fa-facebook-f"></i></a>
 		    </li>
 		    <li>
-		      <a href="https://twitter.com/intent/tweet?url={{share_url|urlencode}}&text={{self.title|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter &nbsp;<i aria-hidden="true" class="fa fa-twitter"></i></a>
+		      <a href="https://twitter.com/intent/tweet?url={{og_url|urlencode}}&text={{self.title|urlencode|truncatechars:254}}" class="btn-floating" type="button" role="button" aria-label="Share story on Twitter">Twitter &nbsp;<i aria-hidden="true" class="fa fa-twitter"></i></a>
 		    </li>
 		    <li>
-		      <a href="https://www.linkedin.com/shareArticle?mini=true&url={{share_url|urlencode}}&title={{self.title|urlencode}}&summary={{self.short_abstract|urlencode|truncatechars:50}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button" aria-label="Share story on Linkedin">LinkedIn &nbsp;<i aria-hidden="true" class="fa fa-linkedin"></i></a>
+		      <a href="https://www.linkedin.com/shareArticle?mini=true&url={{og_url|urlencode}}&title={{self.title|urlencode}}&summary={{self.short_abstract|urlencode|truncatechars:50}}&source=lib.uchicago.edu" class="btn-floating" type="button" role="button" aria-label="Share story on Linkedin">LinkedIn &nbsp;<i aria-hidden="true" class="fa fa-linkedin"></i></a>
 		    </li>
 		    <li>
 		      <!-- TODO: neither does this -->
-		      <a href="https://pinterest.com/pin/create/button/?url={{share_url|urlencode}}&description={{self.short_abstract|urlencode|truncatechars:250}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest &nbsp;<i aria-hidden="true" class="fa fa-pinterest"></i></a>
+		      <a href="https://pinterest.com/pin/create/button/?url={{og_url|urlencode}}&description={{self.short_abstract|urlencode|truncatechars:250}}" class="btn-floating" type="button" role="button" aria-label="Share story on Pinterest">Pinterest &nbsp;<i aria-hidden="true" class="fa fa-pinterest"></i></a>
 		    </li>
 		    <li>
 		      <!-- TODO: not sure whether this works yet -->
-		      <a href="https://www.reddit.com/submit?url={{share_url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit &nbsp;<i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
+		      <a href="https://www.reddit.com/submit?url={{og_url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" role="button" aria-label="Share story on Reddit">Reddit &nbsp;<i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
 		    </li>
 	    </ul>
 	</div>

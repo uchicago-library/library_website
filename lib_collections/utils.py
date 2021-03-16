@@ -638,7 +638,6 @@ class CitationInfo():
 
         Returns:
             CSL-JSON as a Python dictionary
-
         """
         try:
             c = CitationInfo.get_citation("csl", turtle_data, config, modify)
@@ -648,7 +647,9 @@ class CitationInfo():
                 requests.exceptions.RequestException):
             return ''
 
-    def get_zotero(turtle_data: str, config: str) -> str:
+    def get_zotero(turtle_data: str,
+                   config: str,
+                   modify=GeneralPurpose.noop) -> str:
         """
         Main function to query the citation service for Zotero harvesting
         meta tags in models.py.
@@ -658,9 +659,14 @@ class CitationInfo():
 
         Returns:
             Zotero harvesting HTML
-
         """
-        return CitationInfo.get_citation("zotero", turtle_data, config)
+        try:
+            return CitationInfo.get_citation("zotero",
+                                             turtle_data,
+                                             config,
+                                             modify=modify)
+        except requests.exceptions.RequestException:
+            return ''
 
     def csl_json_to_html(csl_json: dict, style: str) -> str:
         """
@@ -675,7 +681,6 @@ class CitationInfo():
 
         Returns:
             Citation HTML
-
         """
         if not os.path.isfile(style):
             return ''
@@ -702,7 +707,10 @@ class CitationInfo():
             except AttributeError:
                 return ''
 
-    def citation_export(mode: str, turtle_data: str, config: str):
+    def citation_export(mode: str,
+                        turtle_data: str,
+                        config: str,
+                        modify=GeneralPurpose.noop):
         """
         Create link to display BibTeX or RIS citation as plaintext in the
         browser by forwarding citation information to the
@@ -712,12 +720,16 @@ class CitationInfo():
         Args:
             mode: Output format string,
             turtle_data: Turtle data string,
-            config: INI config string
+            config: INI config string,
+            modify: testing-only function for modifying responses
 
         Returns:
             URL to display the relevant citation in plaintext
         """
-        c = CitationInfo.get_citation(mode, turtle_data, config)
+        c = CitationInfo.get_citation(mode,
+                                      turtle_data,
+                                      config,
+                                      modify=modify)
         if c:
             query_params = {"content": c}
             query_string = urlencode(query_params)
@@ -726,32 +738,48 @@ class CitationInfo():
         else:
             return ''
 
-    def get_bibtex(turtle_data, config):
+    def get_bibtex(turtle_data, config, modify=GeneralPurpose.noop):
         """
         Main function to create link to display BibTeX citation in
         models.py.
 
         Args:
             turtle_data: Turtle data string,
-            config: INI config string
+            config: INI config string,
+            modify: testing-only function for modifying responses
 
         Returns:
             BibTeX viewing URL
         """
-        return CitationInfo.citation_export("bibtex", turtle_data, config)
+        try:
+            return CitationInfo.citation_export("bibtex",
+                                                turtle_data,
+                                                config,
+                                                modify=modify)
+        except requests.exceptions.RequestException:
+            return ''
 
-    def get_ris(turtle_data, config):
+    def get_ris(turtle_data,
+                config,
+                modify=GeneralPurpose.noop):
         """
         Main function to create link to display RIS citation in models.py.
 
         Args:
             turtle_data: Turtle data string,
             config: INI config string
+            modify: testing-only function for modifying responses
 
         Returns:
             RIS viewing URL
         """
-        return CitationInfo.citation_export("ris", turtle_data, config)
+        try:
+            return CitationInfo.citation_export("ris",
+                                                turtle_data,
+                                                config,
+                                                modify=modify)
+        except requests.exceptions.RequestException:
+            return ''
 
 
 class IIIFDisplay:
