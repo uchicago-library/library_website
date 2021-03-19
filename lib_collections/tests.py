@@ -1068,40 +1068,28 @@ class CollectionTest(SimpleTestCase):
         )
 
     def bibtex_works(self):
+        """
+        Check that the citation service is returning BibTeX data.
+        """
         assert CitationInfo.get_bibtex(
             Testing.example,
             Testing.default_config,
         )
 
-    def bibtex_down(self):
-        assert not CitationInfo.get_bibtex(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.bring_website_down
-        )
-
     def ris_works(self):
+        """
+        Check that the citation service is returning RIS data.
+        """
         assert CitationInfo.get_ris(
             Testing.example,
             Testing.default_config,
         )
 
-    def ris_down(self):
-        assert not CitationInfo.get_ris(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.bring_website_down
-        )
-
     def zotero_works(self):
+        """
+        Check that the citation service is returning Zotero data.
+        """
         assert CitationInfo.get_zotero(
             Testing.example,
             Testing.default_config,
-        )
-
-    def zotero_down(self):
-        assert not CitationInfo.get_zotero(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.bring_website_down
         )

@@ -25,7 +25,7 @@ def sp_query(manifid: str) -> str:
               FROM <{1}>
               WHERE {{
                   <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
-                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?creator .  }}
+                  OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/creator> ?creator . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/date> ?date . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/description> ?description . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/elements/1.1/format> ?format . }}
@@ -251,6 +251,16 @@ def render_field(parsed_field: dict) -> str:
 
 def add_extra_fields(manifid: str,
                      dct: dict) -> dict:
+    """
+    Add 'parent collection' and 'permanent url' to the end of a list
+    of metadata fields.  (We do this on every object page.)
+
+    Args: 
+        NOID string
+
+    Returns:
+        Nothing; mutates the input dictionary
+    """
     ark_base = 'https://www.lib.uchicago.edu/ark:/61001/'
     dct['Collection'] = 'Social Scientists Map Chicago'
     dct['Permanent URL'] = ark_base + manifid
