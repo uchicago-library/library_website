@@ -15,7 +15,7 @@ from django.utils.text import slugify
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
     SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
-    COLLECTION_OJBECT_TRUNCATE
+    COLLECTION_OBJECT_TRUNCATE
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
