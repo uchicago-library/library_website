@@ -566,3 +566,8 @@ APA_PATH = BASE_DIR + "/lib_collections/csl/apa.csl"
 MLA_PATH = BASE_DIR + "/lib_collections/csl/modern-language-association.csl"
 
 CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
+
+
+# how many characters to truncate breadcrumb trail text at, in the
+# digital collecitons app
+COLLECTION_OBJECT_TRUNCATE = 25

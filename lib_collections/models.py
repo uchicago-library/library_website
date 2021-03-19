@@ -1,6 +1,5 @@
 import datetime
 
-import json
 import simplejson
 import requests
 from base.models import DefaultBodyFields, PublicBasePage
@@ -10,12 +9,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.core.validators import RegexValidator
 from django.db import models
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
-    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH
+    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
+    COLLECTION_OJBECT_TRUNCATE
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
@@ -40,8 +40,7 @@ from .utils import (CBrowseURL,
                     DisplayBrowse,
                     LBrowseURL,
                     IIIFDisplay,
-                    Testing)
-
+                    )
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -878,9 +877,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             else:
                 return crumb
 
-        # truncate breadcrumb trail links at 25 characters
-        truncate_at = 25
-
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
@@ -890,10 +886,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final_crumb = object_title
         elif 'Title' in marklogic.keys():
             object_title = marklogic['Title'].split(',')[0]
-            final_crumb = truncate_crumb(object_title, truncate_at)
+            final_crumb = truncate_crumb(object_title,
+                                         COLLECTION_OBJECT_TRUNCATE)
         elif 'Description' in marklogic.keys():
             object_title = marklogic['Description'].split(',')[0]
-            final_crumb = truncate_crumb(object_title, truncate_at)
+            final_crumb = truncate_crumb(object_title,
+                                         COLLECTION_OBJECT_TRUNCATE)
         else:
             object_title = 'Object'
             final_crumb = object_title
