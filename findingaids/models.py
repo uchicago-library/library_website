@@ -42,7 +42,10 @@ class FindingAidsPage(PublicBasePage):
                 e = ElementTree.fromstring(xml_string)
                 for div in e.find('body').findall('div'):
                     span = div.findall('span')
-                    browses.append([span[0].text, span[1].text])
+                    if span[0].text and span[1].text:
+                        browses.append([span[0].text, span[1].text])
+                    else:
+                        pass
             except ElementTree.ParseError:
                 pass
 
@@ -50,16 +53,15 @@ class FindingAidsPage(PublicBasePage):
 
         def get_browse_list(browses, browse):
             return sorted(
-                # list(filter(
-                #     lambda b: b[1][0] == browse, browses
-                # ))
-                browses,
-                # key=lambda b: b[1]
+                list(filter(
+                    lambda b: b[1][0] == browse, browses
+                )),
+                key=lambda b: b[1]
             )
 
         # e.g. "A", "B", "C"...
-        # def get_browse_links(browses):
-        #     return sorted(list(set(map(lambda b: b[1][0], browses))))
+        def get_browse_links(browses):
+            return sorted(list(set(map(lambda b: b[1][0], browses))))
 
         def get_digitized_content():
 
@@ -187,7 +189,7 @@ class FindingAidsPage(PublicBasePage):
 
         # browse
         browses = get_browses()
-        # browselinks = get_browse_links(browses)
+        browselinks = get_browse_links(browses)
         if browse:
             browses = get_browse_list(browses, browse)
 
@@ -220,7 +222,7 @@ class FindingAidsPage(PublicBasePage):
                 thistopiclist = []
 
         context['browse'] = browse
-        # context['browselinks'] = browselinks
+        context['browselinks'] = browselinks
         context['browses'] = browses
         context['digitized'] = digitized
         context['digitizedlist'] = digitizedlist
