@@ -7,7 +7,6 @@ from __future__ import (
 )
 
 import json
-import simplejson
 import os
 import re
 from urllib.parse import urlencode
@@ -18,7 +17,6 @@ from citeproc import (
     formatter
 )
 from citeproc.source.json import CiteProcJSON
-from django.http.response import Http404, HttpResponse
 from django.utils.text import slugify
 from library_website.settings import (
     IIIF_PREFIX,
@@ -28,7 +26,6 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
-import requests
 from collections import OrderedDict
 
 
@@ -45,7 +42,7 @@ class GeneralPurpose():
         Noop function.
 
         Args:
-            Anything
+            x: anything
 
         Returns:
             Side effect-ful; no return value
@@ -57,7 +54,7 @@ class GeneralPurpose():
         The identity function.
 
         Args:
-            Anything
+            x: anything
 
         Returns:
             The same thing.
@@ -69,7 +66,7 @@ class GeneralPurpose():
         Curry's K-combinator.  Returns a constant function to the input.
 
         Args:
-            Anything
+            x: anything
 
         Returns:
             A constant function to the input.
@@ -93,8 +90,15 @@ class CBrowseURL():
         Create a local route to a digital collections cluster browse.
 
         Args:
-            root url, name of collection slug, browse type string, browse
-            name string, filename extension
+            prefix: root url, string
+
+            slug: name of collection slug, string
+
+            browse_type: name of browse type, string
+
+            browse_name: name of browse, string
+
+            extension: filename extension, string
 
         Returns:
             URL string
@@ -124,6 +128,18 @@ class CBrowseURL():
 
         full boolean input parameter determines whether it is a local
         or global URL
+
+        Args:
+            slug: name of collection slug, string
+
+            browse_type: name of browse type, string
+
+            browse_name: name of browse, string
+
+            full: whether to build global URL, bool
+
+        Returns:
+            URL string
         """
         url = CBrowseURL.mk_cbrowse_url(
             WAGTAIL_PREFIX, slug, browse_type, browse_name, ""
@@ -465,7 +481,7 @@ class DisplayBrowse():
         """
         Retrieve cluster browse links from IIIF server.
 
-        Args: 
+        Args:
             Collection slug string, browse string, browse type
             string, response modifying-function for testing,
             json-modifying function for testing
@@ -502,7 +518,7 @@ class DisplayBrowse():
         """
         Retrieve list browse links from IIIF server.
 
-        Args: 
+        Args:
             Collection slug string, browse string, browse type
             string, response modifying-function for testing,
             json-modifying function for testing
@@ -627,7 +643,9 @@ class CitationInfo():
         else:
             return ''
 
-    def get_csl(turtle_data: str, config: str, modify=GeneralPurpose.noop) -> dict:
+    def get_csl(turtle_data: str,
+                config: str,
+                modify=GeneralPurpose.noop) -> dict:
         """
         Main function to query the citation service for CSL-JSON info in
         models.py.  This is used to live-display the collection object

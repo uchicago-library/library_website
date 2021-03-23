@@ -18,7 +18,7 @@ def sp_query(manifid: str) -> str:
     Construct SparQL query from collection object NOID.
 
     Args:
-        NOID string
+        manifid: string, ARK NOID
 
     Returns:
         SparQL query in the form of a string
@@ -52,7 +52,7 @@ def get_raw_record(manifid: str,
     only there to help with unit testing.
 
     Args:
-        NOID string
+        manifid: string, ARK NOID
 
     Returns:
         Dictionary representation of the result of the SparQL query
@@ -81,8 +81,10 @@ def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
     order in which those fields appear in the Wagtail admin interface.
 
     Args:
-        Dictionary representing result of Mark Logic query, list of field
-        names (strings) stored in Wagtail database for a given collection
+        dct: Dictionary representing result of Mark Logic query,
+
+        wagtail_field_names: list of field names (strings) stored in
+        Wagtail database for a given collection
 
     Returns:
         Dictionary representing metadata for display in object page
@@ -102,8 +104,10 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
     not, displays all of them in alphabetical order.
 
     Args:
-        Dictionary represengint result of Mark Logic query, list of field
-        names (strings) stored in Wagtail database for a given collection
+        dct: Dictionary representing result of Mark Logic query,
+
+        wagtail_field_names: list of field names (strings) stored in
+        Wagtail database for a given collection
 
     Returns:
         Reformatted dictionary representing metadata
@@ -130,7 +134,10 @@ def get_record_no_parsing(manifid: str,
     of those metadata fields alone, in their raw form.
 
     Args:
-        NOID string, list of field names
+        manifid: string, ARK NOID
+
+        wagtail_field_names: list of field names (strings) stored in
+        Wagtail database for a given collection
 
     Returns:
         Dictionary representing metadata
@@ -147,7 +154,7 @@ def remove_trailing_comma(string: str) -> str:
     Remove leading/trailing whitespace and trailing commas from a string.
 
     Args:
-        Metadata string
+        string: string containing metadata
 
     Returns:
         Cleaned up metadata string
@@ -167,7 +174,7 @@ def brackets_parse(value: str) -> dict:
     information in dictionary form.
 
     Args:
-        Metadata string
+        string: string containing metadata
 
     Returns:
         Dictionary indicating whether author/date attributions are
@@ -207,7 +214,10 @@ def get_record_parsed(manifid: str,
     Wagtail database, and parses all of the metadata fields.
 
     Args:
-        NOID string, list of metadata field names
+        manifid: string, ARK NOID
+
+        wagtail_field_names: list of field names (strings) stored in
+        Wagtail database for a given collection
 
     Returns:
         Dictionary of metadata fields, with parse results in values
@@ -227,7 +237,7 @@ def render_field(parsed_field: dict) -> str:
     page.
 
     Args:
-        Field parse object
+        dict: dictionary encoding a parsetree for a metadata field
 
     Returns:
         String representing how that field will be displayed in the template
@@ -257,8 +267,8 @@ def add_extra_fields(manifid: str,
     Add 'parent collection' and 'permanent url' to the end of a list
     of metadata fields.  (We do this on every object page.)
 
-    Args: 
-        NOID string
+    Args:
+        manifid: string, ARK NOID
 
     Returns:
         Nothing; mutates the input dictionary
@@ -277,7 +287,10 @@ def get_record_for_display(manifid: str,
     collection object's NOID.
 
     Args:
-        NOID string, list of metadata field names
+        manifid: string, ARK NOID
+
+        wagtail_field_names: list of field names (strings) stored in
+        Wagtail database for a given collection
 
     Returns:
         Dictionary representing metadata to be displayed on collection
