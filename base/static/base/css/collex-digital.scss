@@ -87,11 +87,15 @@ body.collectionpage {
 	  content: "\f13a";
 	}
 	section.browse-list { /* List or Thumbnail Grid */
+		.card h3 {
+			 font-family: $base-font;
+			 weight: 300;
+		}
 		figure {
 			@include respond-to(medium) {
 			  display: grid;
 			  grid-template-columns: 25% 75%;
-			  grid-gap: 1.5em;
+ 			  grid-gap: 1.5em;
 			}
 			  &+figure {
 			  	margin-top: 1em;

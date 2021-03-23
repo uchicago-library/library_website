@@ -1074,11 +1074,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
 
         try:
-            kwargs["browse_type"]
+            browse_type = kwargs["browse_type"]
         except KeyError:
             browse_type = ''
-
-        browse_title = unslugify_browse(browse_type[:-1])
 
         if not browse_type:
             # default to subject browses if no browse type is specified in
@@ -1086,9 +1084,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             default_browse = all_browse_types.first()
             default = default_browse.label.lower()
             browse_type = default
+            browse_title = unslugify_browse(browse_type)
         else:
             # otherwise, get the browse type from the route
             browse_type = kwargs["browse_type"][:-1]
+            browse_title = unslugify_browse(browse_type)
 
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
