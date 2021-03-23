@@ -544,7 +544,6 @@ collection1 = "social-scientists-map-chicago"
 
 class CollectionTest(SimpleTestCase):
 
-    # browse type listing works when everything is working
     def browse_type_listing_works(self):
         """
         Make sure we can pull the browse type links down from IIIF.
@@ -979,7 +978,7 @@ class CollectionTest(SimpleTestCase):
     def marklogic_unexpected_json(self):
         """
         If Mark Logic returns unexpectedly-structured JSON, the object page
-        should dispaly a "contact us" message where the metadata
+        should display a "contact us" message where the metadata
         fields would be.
         """
         assert not get_record_for_display(
@@ -998,98 +997,102 @@ class CollectionTest(SimpleTestCase):
             modify=Testing.unexpected_json
         )
 
-    def secondary_ark_resolver_down(self):
-        """
-        If the secondary ARK resolver is down and can't provide Turtle data
-        for the collection object, the "Cite This" menu should not
-        display.  In this case, that means get_turtle_data should
-        return an empty string.
-        """
-        assert not CitationInfo.get_turtle_data(
-            example_noid1,
-            modify=Testing.bring_website_down
-        )
-        assert not CitationInfo.get_turtle_data(
-            example_noid2,
-            modify=Testing.bring_website_down
-        )
-        assert not CitationInfo.get_turtle_data(
-            example_noid3,
-            modify=Testing.bring_website_down
-        )
+    # MT 3/23/2021: temporarily commenting out citation-related unit
+    # tests while we revamp the citation service; will bring them back
+    # once the new citation service is in production
 
-    def citation_works(self):
-        """
-        Check that the citation service at
-        www.lib.uchicago.edu/cgi-bin/citation is returning CSL-JSON to
-        be displayed in the "Cite This" menu.
-        """
-        assert CitationInfo.get_csl(
-            Testing.example,
-            Testing.default_config
-        )
+    # def secondary_ark_resolver_down(self):
+    #     """
+    #     If the secondary ARK resolver is down and can't provide Turtle data
+    #     for the collection object, the "Cite This" menu should not
+    #     display.  In this case, that means get_turtle_data should
+    #     return an empty string.
+    #     """
+    #     assert not CitationInfo.get_turtle_data(
+    #         example_noid1,
+    #         modify=Testing.bring_website_down
+    #     )
+    #     assert not CitationInfo.get_turtle_data(
+    #         example_noid2,
+    #         modify=Testing.bring_website_down
+    #     )
+    #     assert not CitationInfo.get_turtle_data(
+    #         example_noid3,
+    #         modify=Testing.bring_website_down
+    #     )
 
-    def citation_down(self):
-        """
-        If the citation service is down, "Cite This" menu should not be
-        displayed.  In this case, that means get_csl should return an
-        empty string.
-        """
-        assert not CitationInfo.get_csl(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.bring_website_down
-        )
+    # def citation_works(self):
+    #     """
+    #     Check that the citation service at
+    #     www.lib.uchicago.edu/cgi-bin/citation is returning CSL-JSON to
+    #     be displayed in the "Cite This" menu.
+    #     """
+    #     assert CitationInfo.get_csl(
+    #         Testing.example,
+    #         Testing.default_config
+    #     )
 
-    def citation_400(self):
-        """
-        If the turtle data provided to the citation service is invalid, it
-        will return a 400 response.  In that situation, the "Cite
-        This" menu should not appear in the page.
-        """
-        assert not CitationInfo.get_csl(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.change_status_code(400)
-        )
+    # def citation_down(self):
+    #     """
+    #     If the citation service is down, "Cite This" menu should not be
+    #     displayed.  In this case, that means get_csl should return an
+    #     empty string.
+    #     """
+    #     assert not CitationInfo.get_csl(
+    #         Testing.example,
+    #         Testing.default_config,
+    #         modify=Testing.bring_website_down
+    #     )
 
-    def citation_500(self):
-        """
-        The citation service should never return 500 response---if it
-        does, then it failed to handle some variety of input it should
-        expect to get and that is officially considered a bug.  But if
-        it does have such a bug and therefore return a 500 response,
-        the "Cite This" menu should not appear in the object page.
-        """
-        assert not CitationInfo.get_csl(
-            Testing.example,
-            Testing.default_config,
-            modify=Testing.change_status_code(500)
-        )
+    # def citation_400(self):
+    #     """
+    #     If the turtle data provided to the citation service is invalid, it
+    #     will return a 400 response.  In that situation, the "Cite
+    #     This" menu should not appear in the page.
+    #     """
+    #     assert not CitationInfo.get_csl(
+    #         Testing.example,
+    #         Testing.default_config,
+    #         modify=Testing.change_status_code(400)
+    #     )
 
-    def bibtex_works(self):
-        """
-        Check that the citation service is returning BibTeX data.
-        """
-        assert CitationInfo.get_bibtex(
-            Testing.example,
-            Testing.default_config,
-        )
+    # def citation_500(self):
+    #     """
+    #     The citation service should never return 500 response---if it
+    #     does, then it failed to handle some variety of input it should
+    #     expect to get and that is officially considered a bug.  But if
+    #     it does have such a bug and therefore return a 500 response,
+    #     the "Cite This" menu should not appear in the object page.
+    #     """
+    #     assert not CitationInfo.get_csl(
+    #         Testing.example,
+    #         Testing.default_config,
+    #         modify=Testing.change_status_code(500)
+    #     )
 
-    def ris_works(self):
-        """
-        Check that the citation service is returning RIS data.
-        """
-        assert CitationInfo.get_ris(
-            Testing.example,
-            Testing.default_config,
-        )
+    # def bibtex_works(self):
+    #     """
+    #     Check that the citation service is returning BibTeX data.
+    #     """
+    #     assert CitationInfo.get_bibtex(
+    #         Testing.example,
+    #         Testing.default_config,
+    #     )
 
-    def zotero_works(self):
-        """
-        Check that the citation service is returning Zotero data.
-        """
-        assert CitationInfo.get_zotero(
-            Testing.example,
-            Testing.default_config,
-        )
+    # def ris_works(self):
+    #     """
+    #     Check that the citation service is returning RIS data.
+    #     """
+    #     assert CitationInfo.get_ris(
+    #         Testing.example,
+    #         Testing.default_config,
+    #     )
+
+    # def zotero_works(self):
+    #     """
+    #     Check that the citation service is returning Zotero data.
+    #     """
+    #     assert CitationInfo.get_zotero(
+    #         Testing.example,
+    #         Testing.default_config,
+    #     )

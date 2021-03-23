@@ -704,7 +704,7 @@ class CitationInfo():
                     html += (s + "<br>")
 
                 return html
-            except AttributeError:
+            except (AttributeError, TypeError):
                 return ''
 
     def citation_export(mode: str,
