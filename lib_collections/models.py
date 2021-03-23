@@ -1073,10 +1073,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             .filter(page=self)
         )
 
-        browse_type = kwargs["browse_type"]
+        try:
+            kwargs["browse_type"]
+        except KeyError:
+            browse_type = ''
+
         browse_title = unslugify_browse(browse_type[:-1])
 
-        if browse_type is None:
+        if not browse_type:
             # default to subject browses if no browse type is specified in
             # route
             default_browse = all_browse_types.first()
