@@ -14,7 +14,6 @@ from wagtail.core.models import Page, Site
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from lib_collections.utils import (
     Testing,
-    CitationInfo,
     DisplayBrowse,
     CBrowseURL,
     IIIFDisplay
@@ -36,7 +35,6 @@ class test_lib_collections_view(TestCase):
         # set up factory request
 
     def tearDown(self):
-        t = time.time() - self.startTime
 
         caches['default'].clear()
         # clear cache
@@ -48,16 +46,12 @@ class test_lib_collections_view(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        t = time.time() - self.startTime
-
     def test_view_collections(self):
         request = self.factory.get('/collection/?view=collections')
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
 
     def test_collections_digital(self):
         request = self.factory.get('/collection/?view=collections&digital=on')
@@ -66,8 +60,6 @@ class test_lib_collections_view(TestCase):
 
         self.assertContains(
             response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
-
-        t = time.time() - self.startTime
 
     def test_collections_format(self):
         formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals',
@@ -78,14 +70,12 @@ class test_lib_collections_view(TestCase):
             request = self.factory.get(
                 '/collection/?view=collections&format=%s' % f)
 
-        t = time.time() - self.startTime
-
     def test_collections_location(self):
         locations_list = list(
             LocationPage.objects.live().values_list('title', flat=True))
-        for l in locations_list:
+        for l1 in locations_list:
             request = self.factory.get(
-                '/collection/?view=collections&location=%s' % l)
+                '/collection/?view=collections&location=%s' % l1)
             request.user = self.user
             response = collections(request)
 
@@ -102,16 +92,12 @@ class test_lib_collections_view(TestCase):
 
             self.assertEqual(response.status_code, 200)
 
-        t = time.time() - self.startTime
-
     def test_view_exhibit(self):
         request = self.factory.get('/collection/?view=exhibits')
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
 
     def test_exhibit_location_none(self):
         request = self.factory.get(
@@ -121,8 +107,6 @@ class test_lib_collections_view(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        t = time.time() - self.startTime
-
     def test_exhibit_subject_none(self):
         request = self.factory.get(
             '/collection/?view=exhibits&subject=%s' % None)
@@ -130,8 +114,6 @@ class test_lib_collections_view(TestCase):
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
 
     def test_exhibit_digital_none(self):
         request = self.factory.get(
@@ -141,17 +123,12 @@ class test_lib_collections_view(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        t = time.time() - self.startTime
-
     def test_view_subjects(self):
         request = self.factory.get('/collection/?view=subjects')
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
-        # print("%s: %.3f" % (self.id(), t))
 
     def test_view_none(self):
         request = self.factory.get('/collection/?view=%s' % None)
@@ -160,25 +137,12 @@ class test_lib_collections_view(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        t = time.time() - self.startTime
-        # print("%s: %.3f" % (self.id(), t))
-
     def test_view_invalid(self):
         request = self.factory.get('/collection/?view=gibberish')
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
-
-        t = time.time() - self.startTime
-        # print("%s: %.3f" % (self.id(), t))
-
-    # def test_sorted(self):
-    #    request = self.factory.get('/collection/')
-    #    request.user = self.user
-    #    response = collections(request)
-    #    self.assertEqual(response['collections'].is_sorted, True)
-    #    self.assertEqual(response['subjects'].is_sorted, True)
 
 
 class TestCollectingAreaPages(TestCase):
