@@ -549,8 +549,8 @@ IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
 # IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
 
 # toggle this comment with the other to switch from dev to production
-IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="
-# IIIF_VIEWER_PREFIX = "https://www.lib.uchicago.edu/viewer?manifest="
+# IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="
+IIIF_VIEWER_PREFIX = "https://www.lib.uchicago.edu/viewer?manifest="
 
 WAGTAIL_PREFIX = "/collex/collections"
 
