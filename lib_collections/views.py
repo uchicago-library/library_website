@@ -207,7 +207,7 @@ def collections(request):
         qs = SubjectParentRelations.objects.all().prefetch_related('panels')
 
         for s in subjects_queryset:
-            if default_cache.has_key('subject_id_%s' % s.id):
+            if ('subject_id_%s' % s.id) in default_cache:
                 subjects_list_entry = default_cache.get('subject_id_%s' % s.id)
             else:
                 subject_descendants = default_cache.get(
