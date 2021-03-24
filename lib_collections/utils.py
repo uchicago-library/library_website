@@ -156,8 +156,13 @@ class CBrowseURL():
         Create a local route to a digital collections cluster browse type.
 
         Args:
-            root url, name of collection slug, browse type string,
-            filename extension
+            prefix: root url, string
+
+            slug: name of collection slug, string
+
+            browse_type: name of browse type, string
+
+            extension: filename extension, string
 
         Returns:
             URL string
@@ -169,6 +174,14 @@ class CBrowseURL():
     def mk_cbrowse_type_url_iiif(slug: str, browse_type: str) -> str:
         """
         mk_cbrowse_type_url, specialized to the IIIF host
+
+        Args:
+            slug: name of collection slug, string
+
+            browse_type: name of browse type, string
+
+        Returns:
+            URL string
         """
         return CBrowseURL.mk_cbrowse_type_url(
             IIIF_PREFIX, slug, browse_type, ".json"
@@ -179,9 +192,13 @@ class CBrowseURL():
     ) -> str:
         """
         mk_cbrowse_type_url, specialized to the Wagtail host
+        Args:
+            slug: name of collection slug, string
 
-        full boolean input parameter determines whether it is a local
-        or global URL
+            browse_type: name of browse type, string
+
+        Returns:
+            URL string
         """
         url = CBrowseURL.mk_cbrowse_type_url(
             WAGTAIL_PREFIX, slug, browse_type, ""
@@ -205,8 +222,13 @@ class LBrowseURL():
         Create a local route to a digital collections list browse.
 
         Args:
-            root url, name of collection slug, browse type string, browse
-            name string, filename extension
+            prefix: root url, string
+
+            slug: name of collection slug, string
+
+            browse_name: name of browse, string
+
+            extension: filename extension, string
 
         Returns:
             URL string
@@ -219,6 +241,14 @@ class LBrowseURL():
     def mk_lbrowse_url_iiif(slug: str, browse_name: str) -> str:
         """
         mk_lbrowse_url, specialized to the IIIF host
+
+        Args:
+            slug: name of collection slug, string
+
+            browse_name: name of browse, string
+
+        Returns:
+            URL string
         """
         return LBrowseURL.mk_lbrowse_url(
             IIIF_PREFIX, slug, browse_name, ".json"
@@ -245,7 +275,7 @@ class DisplayBrowse():
         display in the page.
 
         Args:
-            browse slug string
+            slug: name of browse in slug form, string
 
         Returns:
             string representing the name of the browse
@@ -261,8 +291,12 @@ class DisplayBrowse():
         Helper function for get_iiif_labels.
 
         Args:
-            IIIF browse list URL, language abbreviation string,
-            response modifying-function for testing
+
+            url: URL for IIIF browse listing, string
+
+            lang: language abbreviation, e.g. 'en', string
+
+            modify: response modifying-function for testing, function
 
         Returns:
             an association list from browses/browse types to the
@@ -291,8 +325,11 @@ class DisplayBrowse():
         (templates/collection_browse.html)
 
         Args:
-            IIIF browse list URL, browse type string, collection slug string,
-            response modifying-function for testing
+            url: URL for IIIF browse listing, string
+
+            browse_type: browse type, string
+
+            modify: response modifying-function for testing, function
 
         Returns:
             JSON data for the browse list template
@@ -328,8 +365,11 @@ class DisplayBrowse():
         """
         Create Wagtail URL for collection object.
 
+
         Args:
-            Collection slug string, NOID string
+            collection_slug: name of collection in slug form, string
+
+            manifid: ARK NOID, string
 
         Returns:
             Wagtail URL for the object with the relevant NOID
@@ -344,7 +384,9 @@ class DisplayBrowse():
         Helper function for prepare_browse_json.
 
         Args:
-            field name string, IIIF dictionary
+            name: metadata field name, string
+
+            dct: IIIF json data, dictionary
 
         Returns:
             list of values for that field
@@ -359,7 +401,11 @@ class DisplayBrowse():
         Helper function for prepare_browse_json.
 
         Args:
-            IIIF dictionary, field string, value string
+            dct: IIIF json data, dictionary
+
+            field: metadata field, string
+
+            value: metadata value, string
 
         Returns:
             n/a; side effect-ful function that mutates the input
@@ -376,7 +422,7 @@ class DisplayBrowse():
         Helper function for prepare_browse_json.
 
         Args:
-            IIIF dictionary
+            j: IIIF json data, dictionary
 
         Returns:
             dictionary with field strings as fields and lists of
@@ -397,7 +443,7 @@ class DisplayBrowse():
         thumbnail by regular expression matching on the ARK ID.
 
         Args:
-            Thumbnail URL
+            url: url to IIIF thumbnail for object, string
 
         Returns:
             Collection object NOID
@@ -415,7 +461,7 @@ class DisplayBrowse():
         prepare_browse_json.
 
         Args:
-            List of strings
+            lst: list of strings
 
         Returns:
             Comma-joined string
@@ -428,7 +474,9 @@ class DisplayBrowse():
         displayed for each item in a browse.
 
         Args:
-            IIIF dictionary, string joining function
+            j: IIIF json data, dictionary
+
+            joiner: string joining function
 
         Returns:
             dictionary with field strings as fields and lists of
@@ -482,9 +530,15 @@ class DisplayBrowse():
         Retrieve cluster browse links from IIIF server.
 
         Args:
-            Collection slug string, browse string, browse type
-            string, response modifying-function for testing,
-            json-modifying function for testing
+            collection_slug: slugified name of collection, string
+
+            browse: name of browse, string
+
+            browse_type: name of browse type, string
+
+            modify: response modifying-function for testing
+
+            func: json-modifying function for testing
 
         Returns:
             A list of dictionaries with thumbnail/link content for each
@@ -519,9 +573,15 @@ class DisplayBrowse():
         Retrieve list browse links from IIIF server.
 
         Args:
-            Collection slug string, browse string, browse type
-            string, response modifying-function for testing,
-            json-modifying function for testing
+            collection_slug: slugified name of collection, string
+
+            browse: name of browse, string
+
+            browse_type: name of browse type, string
+
+            modify: response modifying-function for testing
+
+            func: json-modifying function for testing
 
         Returns:
             A list of dictionaries with thumbnail/link content for each
@@ -590,7 +650,9 @@ class CitationInfo():
         Stay tuned.)
 
         Args:
-            NOID string
+            manifid: ARK NOID, string
+
+            modify: response modifying-function for testing
 
         Returns:
             Turtle data string
@@ -621,8 +683,10 @@ class CitationInfo():
         service, see our doc at uchicago-library.github.io.
 
         Args:
-            mode: String representing output format,
-            turtle_data: Turtle data string,
+            mode: String representing output format
+
+            turtle_data: Turtle data string
+
             config: INI config file string
 
         Returns:
@@ -652,7 +716,9 @@ class CitationInfo():
         citation in the object page.
 
         Args:
-            Turtle data string, INI config string
+            turtle_data: turtle data, string
+
+            config: INI config file string
 
         Returns:
             CSL-JSON as a Python dictionary
@@ -673,7 +739,9 @@ class CitationInfo():
         meta tags in models.py.
 
         Args:
-            Turtle data string, INI config string
+            turtle_data: turtle data, string
+
+            config: INI config file string
 
         Returns:
             Zotero harvesting HTML
@@ -695,7 +763,9 @@ class CitationInfo():
         path constants below.
 
         Args:
-            CSL-JSON dictionary, path to CSL style file
+            csl_json: CSL-JSON entry, dictionary
+
+            style: path on serverside filesystem to CSL style file
 
         Returns:
             Citation HTML
@@ -736,9 +806,12 @@ class CitationInfo():
         views.py for more info.
 
         Args:
-            mode: Output format string,
-            turtle_data: Turtle data string,
-            config: INI config string,
+            mode: Output format string
+
+            turtle_data: Turtle data string
+
+            config: INI config string
+
             modify: testing-only function for modifying responses
 
         Returns:
@@ -762,8 +835,10 @@ class CitationInfo():
         models.py.
 
         Args:
-            turtle_data: Turtle data string,
-            config: INI config string,
+            turtle_data: Turtle data string
+
+            config: INI config string
+
             modify: testing-only function for modifying responses
 
         Returns:
@@ -785,7 +860,9 @@ class CitationInfo():
 
         Args:
             turtle_data: Turtle data string,
+
             config: INI config string
+
             modify: testing-only function for modifying responses
 
         Returns:
@@ -807,7 +884,7 @@ class IIIFDisplay:
         Create URL for an object's IIIF manifest.
 
         Args:
-            NOID string
+            manifid: ARK NOID, string
 
         Returns:
             IIIF Manifest URL
@@ -819,7 +896,7 @@ class IIIFDisplay:
         Create Universal Viewer URL for a collection object.
 
         Args:
-            NOID string
+            manifid: ARK NOID, string
 
         Returns:
             Url for Universal Viewer viewing the relevant object
@@ -832,8 +909,9 @@ class IIIFDisplay:
         Test that an object manifest exists.
 
         Args:
-            URL string, optional response-modifying function for
-            testing
+            url: url to be tested, string
+
+            modify: testing-only function for modifying responses
 
         Returns:
             the input URL if it is valid, and the empty string otherwise
@@ -855,7 +933,9 @@ class IIIFDisplay:
         Universal Viewer for that object.
 
         Args:
-            NOID string, optional response-modifying function for testing
+            manifid: ARK NOID, string
+
+            modify: testing-only function for modifying responses
         """
 
         test = IIIFDisplay.test_url(IIIFDisplay
@@ -952,7 +1032,7 @@ class Testing():
         Throw a ConnectionError.
 
         Args:
-            HTTP response
+            response: HTTP response
 
         Returns:
             Side effect-ful function; no return value.
@@ -967,7 +1047,9 @@ class Testing():
         input.
 
         Args:
-            (Curried) status code integer, HTTP response
+            code: (curried) status code, integer
+
+            response: (curried) HTTP response
 
         Returns:
             Side effect-ful; no return value.
@@ -983,7 +1065,7 @@ class Testing():
         Assumes the body of the response is JSON.
 
         Args:
-            HTTP response
+            response: HTTP response
 
         Returns:
             Side effect-ful; no return value.
@@ -997,7 +1079,7 @@ class Testing():
         body of the response is (intended to be) JSON.
 
         Args:
-            HTTP response
+            response: HTTP response
 
         Returns:
             Side effect-ful; no return value.
@@ -1006,6 +1088,12 @@ class Testing():
         response._content = new
 
     # constant function to empty SparQL query
-    empty_sparql = GeneralPurpose.k(
+
+    # Args:
+    #     anything
+
+    # Returns: an unexpected JSON dictionary
+    empty_sparql =
+    GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
     )
