@@ -2,8 +2,15 @@
 
 {% for page in self.get_ancestors %}
     {% if not page.is_root and not page.get_parent.is_root %}
-        <a href="{% pageurl page %}">{{ page.title }}</a> &gt;
+	<a href="{% pageurl page %}">{{ page.title }}</a> &gt;
     {% endif %}
 {% endfor %}
 
-{{self.title}}
+{% if collection_breadcrumb %}
+    {% for name, link in collection_breadcrumb.items %}
+	<a href ="{{ link }}">{{ name }}</a> &gt;
+    {% endfor %}
+    {{ collection_final_breadcrumb }}
+{% else %}
+    {{self.title}}
+{% endif %}

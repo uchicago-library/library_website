@@ -1,27 +1,43 @@
 import datetime
 import re
 
-from django.core.cache import caches
-from django.core.management import call_command
-from django.shortcuts import render
-from wagtail.core.models import Site
-from wagtail.images.models import Image
-from wagtail.search.backends import get_search_backend
-
 from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_css, get_unit_chat_link
 )
 from base.utils import get_hours_and_location
-from lib_collections.models import (
-    CollectionPage, CollectionPageSubjectPlacement, ExhibitPage,
-    ExhibitPageSubjectPlacement, Format
-)
+from django.core.cache import caches
+from django.core.management import call_command
+from django.http import HttpResponse
+from django.shortcuts import render
 from library_website.settings import PUBLIC_HOMEPAGE
 from public.models import LocationPage, StandardPage
 from staff.models import StaffPageSubjectPlacement
 from subjects.models import Subject, SubjectParentRelations
 from units.models import UnitPage
+from wagtail.core.models import Site
+from wagtail.images.models import Image
+from wagtail.search.backends import get_search_backend
+
+from lib_collections.models import (
+    CollectionPage, CollectionPageSubjectPlacement, ExhibitPage,
+    ExhibitPageSubjectPlacement, Format
+)
+
+
+def citation_display(request):
+    """
+    View that displays BibTeX or RIS citations in the browser as
+    plaintext.
+
+    Args:
+        HTTP request
+
+    Returns:
+        HTTP response
+    """
+    citation = request.GET.get('content')
+    return HttpResponse(citation, content_type='text/plain')
 
 
 def collections(request):
@@ -81,10 +97,11 @@ def collections(request):
         if unit:
             filter_arguments['unit'] = UnitPage.objects.get(title=unit)
 
-        collections = CollectionPage.objects.live(
-        ).filter(**filter_arguments).distinct().select_related(
-            'thumbnail'
-        ).prefetch_related('collection_subject_placements')
+        collections = CollectionPage.objects.live().filter(
+            **filter_arguments
+        ).distinct().select_related('thumbnail').prefetch_related(
+            'collection_subject_placements'
+        )
 
         # sort browses by title, omitting leading articles.
         if not search:
@@ -112,8 +129,9 @@ def collections(request):
         if digital:
             filter_arguments['web_exhibit'] = True
 
-        exhibits = ExhibitPage.objects.live(
-        ).filter(**filter_arguments).distinct().select_related(
+        exhibits = ExhibitPage.objects.live().filter(
+            **filter_arguments
+        ).distinct().select_related(
             'thumbnail', 'exhibit_location'
         ).prefetch_related('exhibit_subject_placements')
         exhibits_current = exhibits.filter(
@@ -150,17 +168,18 @@ def collections(request):
 
     # the formats pulldown should skip 'Digital'. That shows up as a checkbox.
     formats_pulldown = [
-        'Archives & Manuscripts', 'Audio', 'Books & Journals', 'Images', 'Maps',
-        'Microform', 'Music Scores', 'Photographs', 'Reference Works',
-        'Statistics & Datasets', 'Video'
+        'Archives & Manuscripts', 'Audio', 'Books & Journals',
+        'Images', 'Maps', 'Microform', 'Music Scores',
+        'Photographs', 'Reference Works', 'Statistics & Datasets',
+        'Video'
     ]
 
     subjects = []
     if view == 'subjects':
-        # for the code below, list all subjects that are children of the subjects in the list
-        # above, plus anything with a libguide id. right now that is equal to
-        # business, medicine and law. See DB's "collections subjects" lucid chart for more
-        # info.
+        # for the code below, list all subjects that are children of the
+        # subjects in the list above, plus anything with a libguide
+        # id. right now that is equal to business, medicine and law. See
+        # DB's "collections subjects" lucid chart for more info.
         subjects_queryset = Subject.objects.all().prefetch_related('see_also')
 
         if search:
@@ -188,10 +207,11 @@ def collections(request):
         qs = SubjectParentRelations.objects.all().prefetch_related('panels')
 
         for s in subjects_queryset:
-            if default_cache.has_key('subject_id_%s' % s.id):
+            if ('subject_id_%s' % s.id) in default_cache:
                 subjects_list_entry = default_cache.get('subject_id_%s' % s.id)
             else:
-                subject_descendants = default_cache.get('descendants_%s' % s.id)
+                subject_descendants = default_cache.get(
+                    'descendants_%s' % s.id)
 
                 if not subject_descendants:
                     subject_descendants = set(
@@ -204,7 +224,7 @@ def collections(request):
                 parents = qs.filter(child=s
                                     ).order_by('parent__name').values_list(
                                         'parent__name', flat=True
-                                    ).prefetch_related('subject')
+                ).prefetch_related('subject')
                 has_collections = bool(
                     subjects_with_collections.intersection(subject_descendants)
                 )
@@ -254,23 +274,21 @@ def collections(request):
         subjecttree = subjecttree.replace('<body>', '')
         subjecttree = subjecttree.replace('</body>', '')
 
-    # for the subject pulldown, find subjects that are first generation children- their parents should have no parent.
-    # still need these:
-    # Area Studies
-    # Social Sciences
-    # Biological Sciences
-    # Physical Sciences
+    # for the subject pulldown, find subjects that are first generation
+    # children- their parents should have no parent.  still need these:
+    # Area Studies Social Sciences Biological Sciences Physical Sciences
 
     subjects_pulldown = [
-        'Area Studies', 'Arts', 'Biological Sciences', 'Business', 'Humanities',
-        'Law', 'Literature', 'Medicine', 'Physical Sciences', 'Social Sciences',
-        'Social Services', 'Special Collections'
+        'Area Studies', 'Arts', 'Biological Sciences', 'Business',
+        'Humanities', 'Law', 'Literature', 'Medicine',
+        'Physical Sciences', 'Social Sciences', 'Social Services',
+        'Special Collections'
     ]
 
     default_image = None
     try:
         default_image = Image.objects.get(title="Default Placeholder Photo")
-    except:
+    except Image.DoesNotExist:
         pass
 
     # Set context variables for templates

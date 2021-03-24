@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.inclusion_tag('lib_collections/collections_formats.html')
 def collections_formats(collection_page):
     formats = []
@@ -10,7 +11,7 @@ def collections_formats(collection_page):
 
     formats.sort()
 
-    # 'Digital' should be the first, no matter what. 
+    # 'Digital' should be the first, no matter what.
     if 'Digital' in formats:
         formats.remove('Digital')
         formats = ['Digital'] + formats
@@ -18,4 +19,3 @@ def collections_formats(collection_page):
     return {
         'formats': formats
     }
-

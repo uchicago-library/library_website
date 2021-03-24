@@ -523,10 +523,51 @@ if 'test' in sys.argv:
 
 IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 
-MARKLOGIC_BASE = "http://marklogic.lib.uchicago.edu"
+MARKLOGIC_LDR_PORT = 8008
+
+MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
+
+MARKLOGIC_LDR_ROUTE = "/v1/graphs"
+
+MARKLOGIC_LDR_URL = "%s:%i%s" % (MARKLOGIC_LDR_BASE,
+                                 MARKLOGIC_LDR_PORT,
+                                 MARKLOGIC_LDR_ROUTE
+                                 )
 
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
 # "http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")
 
 EBOOKS_SEARCH = 'https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor='
+
+SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
+
+LANGUAGE_ABBREVS = {'en': 'English'}
+
+# toggle this comment to go between dev and production
+IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+# IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
+
+# toggle this comment with the other to switch from dev to production
+IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="
+# IIIF_VIEWER_PREFIX = "https://www.lib.uchicago.edu/viewer?manifest="
+
+WAGTAIL_PREFIX = "/collex/collections"
+
+# toggle these root URLs for dev/production
+# CITATION_ROOT = "http://sequent.lib.uchicago.edu:9000"
+CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
+
+TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
+
+# CSL file paths
+APA_PATH = BASE_DIR + "/lib_collections/csl/apa.csl"
+
+MLA_PATH = BASE_DIR + "/lib_collections/csl/modern-language-association.csl"
+
+CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
+
+
+# how many characters to truncate breadcrumb trail text at, in the
+# digital collecitons app
+COLLECTION_OBJECT_TRUNCATE = 25

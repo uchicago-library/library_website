@@ -1,17 +1,24 @@
 import datetime
 
+import simplejson
+import requests
 from base.models import DefaultBodyFields, PublicBasePage
+from collections import OrderedDict
 from diablo_utils import lazy_dotchain
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import RegexValidator
 from django.db import models
+from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
+from django.utils.text import slugify
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
-    SCRC_EXHIBIT_FOOTER_IMG
+    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
+    COLLECTION_OBJECT_TRUNCATE
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
-from pyiiif.pres_api.utils import get_record
 from staff.models import StaffPage
 from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
@@ -27,7 +34,13 @@ from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from .utils import collection
+from .marklogic import get_record_for_display, get_record_no_parsing
+from .utils import (CBrowseURL,
+                    CitationInfo,
+                    DisplayBrowse,
+                    LBrowseURL,
+                    IIIFDisplay,
+                    )
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -374,6 +387,7 @@ class CBrowse(models.Model):
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
+    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
@@ -381,6 +395,7 @@ class CBrowse(models.Model):
                 FieldPanel('label'),
                 FieldPanel('include'),
                 FieldPanel('iiif_location'),
+                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -412,6 +427,7 @@ class LBrowse(models.Model):
         )
     )
     iiif_location = models.URLField(max_length=255, blank=True)
+    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
@@ -419,6 +435,7 @@ class LBrowse(models.Model):
                 FieldPanel('label'),
                 FieldPanel('include'),
                 FieldPanel('iiif_location'),
+                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -486,6 +503,8 @@ class CollectionPageSearch(Orderable, CSearch):
 
 
 # Collection page content type
+
+
 class CollectionPage(RoutablePageMixin, PublicBasePage):
     """
     Pages for individual collections.
@@ -494,6 +513,232 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_viewer = False
+
+    def metadata_field_names(self):
+        """
+        Convert list of metadata objects to a list of field names (strings).
+
+        Args:
+            Collection Page
+
+        Returns:
+            List of field names (strings)
+        """
+        metadata_fields = CollectionPageObjectMetadata.objects.filter(
+            page_id=self.id
+        )
+        query_set = metadata_fields.values_list('edm_field_label')
+        return [field[0] for field in query_set]
+
+    def staff_context(self):
+        """
+        Create context dictionary containing information about the staff
+        member in charge of the collection; template context then gets
+        updated with this in various places.
+
+        Args:
+            Collection Page
+
+        Returns:
+            Template context dictionary
+        """
+
+        def default(thunk, defval):
+            """
+            Abstraction over pattern of catching an AttributeError or
+            ObjectDoesNotExist exception and returning a default
+            value.
+
+            Args:
+               A thunked Python expression
+
+            Returns:
+               Default input value
+            """
+            try:
+                return thunk()
+            except (AttributeError, ObjectDoesNotExist):
+                return defval
+
+        output = {}
+
+        staff_title = default(lambda: self.staff_contact.title, '')
+        staff_position_title = default(
+            lambda: self.staff_contact.position_title, ''
+        )
+        staff_email = default(
+            lambda: self.staff_contact.staff_page_email.first().email, ''
+        )
+        staff_phone_number = default(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first())
+            .phone_number, ''
+        )
+        staff_faculty_exchange = default(
+            lambda: (self
+                     .staff_contact
+                     .staff_page_phone_faculty_exchange
+                     .first())
+            .faculty_exchange, ''
+        )
+        staff_url = default(
+            lambda: (StaffPublicPage
+                     .objects
+                     .get(cnetid=self.staff_contact.cnetid)
+                     .url),
+            ''
+        )
+
+        access_location = default(
+            lambda: {
+                "url": self.collection_location.url,
+                "title": self.collection_location.title
+            }, ''
+        )
+
+        unit_title = lazy_dotchain(lambda: self.unit.title, '')
+        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
+        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
+        unit_email = lazy_dotchain(lambda: self.unit.email, '')
+        unit_phone_label = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
+        )
+        unit_phone_number = lazy_dotchain(
+            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
+        )
+        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
+        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
+        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
+        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
+        unit_link_document = lazy_dotchain(
+            lambda: self.unit.link_document.file.url, ''
+        )
+
+        related_collections = lazy_dotchain(
+            lambda: self.related_collection_placement.all(), ''
+        )
+        related_exhibits = lazy_dotchain(
+            lambda: self.exhibit_page_related_collection.all(), ''
+        )
+        collections_by_subject = lazy_dotchain(
+            lambda: self.collection_subject_placements.all(), ''
+        )
+        collections_by_format = lazy_dotchain(
+            lambda: self.collection_placements.all(), ''
+        )
+
+        output['staff_title'] = staff_title
+        output['staff_position_title'] = staff_position_title
+        output['staff_email'] = staff_email
+        output['staff_phone_number'] = staff_phone_number
+        output['staff_faculty_exchange'] = staff_faculty_exchange
+        output['staff_url'] = staff_url
+
+        output['unit_title'] = unit_title
+        output['unit_url'] = unit_url
+        output['unit_email'] = unit_email
+        output['unit_email_label'] = unit_email_label
+        output['unit_phone_label'] = unit_phone_label
+        output['unit_phone_number'] = unit_phone_number
+        output['unit_fax_number'] = unit_fax_number
+        output['unit_link_text'] = unit_link_text
+        output['unit_link_external'] = unit_link_external
+        output['unit_link_page'] = unit_link_page
+        output['unit_link_document'] = unit_link_document
+
+        output["access_location"] = access_location
+
+        output["related_collections"] = related_collections
+        output["collections_by_subject"] = collections_by_subject
+        output["related_exhibits"] = related_exhibits
+        output["collections_by_format"] = collections_by_format
+
+        return output
+
+    def build_breadcrumbs(request):
+        """
+        Create breadcrumb trail.
+
+        Args:
+            HTTP request
+
+        Returns:
+            Tuple containing breadcrumb trail, along with the
+            final breadcrumb text (which is different because it isn't
+            a link)
+        """
+        breadcrumbs = list(
+            filter(lambda x: x != "", request.path.split('/'))
+        )
+
+        trimmed_crumbs = breadcrumbs[2:-1]
+        final_crumb = breadcrumbs[-1]
+
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        def path_up_to(idx, lst):
+            return {
+                unslugify_browse(lst[i - 1]):
+                ("/collex/collections/" + "/".join(lst[:i]))
+                for i in range(1, idx + 1)
+                if lst[i - 1] not in [
+                    'list-browse',
+                    'object',
+                    'cluster-browse',
+                ]
+            }
+
+        breads = path_up_to(len(trimmed_crumbs), trimmed_crumbs)
+        return (breads, final_crumb)
+
+    def override(new_string, string):
+        """
+        Reset name of link text for list browse to be 'All Maps'
+
+        Args:
+            Link text
+
+        Returns:
+            New link text: 'All Maps'
+        """
+        if new_string:
+            return new_string
+        else:
+            return string
+
+    def build_browse_types(self):
+        """
+        Create dictionary containing information needed to generate
+        sidebar links for all the different browse types.
+
+        Args:
+            Collection page
+
+        Returns:
+            Dictionary representing information in sidebar browse
+            links
+        """
+        slug = self.slug
+
+        # bring CBrowseURL utility functions into local namespace
+        mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
+        mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
+
+        return OrderedDict(
+            [(CollectionPage.override(x.link_text_override, x.label),
+              mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
+             for x in CollectionPageClusterBrowse
+             .objects
+             .filter(page=self)]
+            +
+            [(CollectionPage.override(x.link_text_override, x.label),
+              mk_lbrowse_url_wagtail(slug, slugify(x.label)))
+             for x in CollectionPageListBrowse
+             .objects
+             .filter(page=self)]
+        )
 
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
@@ -542,6 +787,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
+    citation_config = models.TextField(
+        default=CitationInfo.default_config,
+        help_text=(
+            'INI-style configuration for Citation service, saying which'
+            ' metadata fields to pull from the Turtle data on the object; '
+            'see https://github.com/uchicago-library/uchicago-library.github.io '
+            'for more info on how to edit/construct one of these'
+        ),
+        verbose_name="Citation Configuration",
+    )
     highlighted_records = models.URLField(
         blank=True,
         help_text=(
@@ -562,21 +817,476 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
-    @route(r'^viewer/$')
-    def viewer(self, request, *args, **kwargs):
+    @route(r'^object/(?P<manifid>\w+)/$')
+    def object(self, request, *args, **kwargs):
         """
-        Individual image view. Template renders the image
-        displayed in the Universal Viewer.
+        Route for digital collection object page.
         """
-        # context = super().get_context(request)
-        self.is_viewer = True
+        template = "lib_collections/collection_object_page.html"
 
-        # Override the page title field
-        self.title = get_record(request.GET.get('manifest'))['label']
+        # list of metadata fields from Mark Logic to display in object page
+        field_names = self.metadata_field_names()
 
-        return TemplateResponse(
-            request, self.get_template(request), self.get_context(request)
+        # object NOID
+        manifid = kwargs["manifid"]
+
+        slug = self.slug
+
+        # gather information for sidebar browse links
+        sidebar_browse_types = self.build_browse_types()
+
+        def injection_safe(id):
+            """
+            Check that URL route ends in a well-formed NOID.  This is mostly
+            just a simple safeguard against possible SparQL injection
+            attacks.
+
+            Args:
+                Candidate NOID
+
+            Returns:
+                Boolean
+
+            """
+            length_ok = len(id) >= 1 and len(id) <= 30
+            alphanum = id.isalnum()
+            return length_ok and alphanum
+
+        # query Mark Logic for object metadata
+        if injection_safe(manifid):
+            marklogic = get_record_for_display(
+                manifid,
+                field_names,
+            )
+        else:
+            raise Http404
+
+        def truncate_crumb(crumb, length):
+            """
+            Truncate breadcrumb trail link text at a given number of
+            characters.
+
+            Args:
+                Link text, Max link text length
+
+            Returns:
+                New link text
+            """
+            if len(crumb) >= length:
+                return crumb[:length].rstrip() + ' ...'
+            else:
+                return crumb
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        # adjust value of final breadcrumb to show object title if possible
+        if not marklogic:
+            object_title = 'Object'
+            final_crumb = object_title
+        elif 'Title' in marklogic.keys():
+            object_title = marklogic['Title'].split(',')[0]
+            final_crumb = truncate_crumb(object_title,
+                                         COLLECTION_OBJECT_TRUNCATE)
+        elif 'Description' in marklogic.keys():
+            object_title = marklogic['Description'].split(',')[0]
+            final_crumb = truncate_crumb(object_title,
+                                         COLLECTION_OBJECT_TRUNCATE)
+        else:
+            object_title = 'Object'
+            final_crumb = object_title
+
+        def default(thunk, defval):
+            """
+            Abstraction over the repeated pattern of catching a KeyError
+            exception and returning a default value.
+
+            Args:
+                Dictionary lookup
+
+            Returns:
+                Value corresponding to the key (or the default in
+                case of a key error)
+            """
+            try:
+                return thunk()
+            except (KeyError, TypeError):
+                return defval
+
+        def callno_to_pi(callno):
+            return '-'.join(
+                callno.replace(':', ' ').replace('.', ' ').upper().split()
+            )
+
+        # get link to physical object in VuFind
+        physical_object = default(
+            lambda: get_record_no_parsing(manifid, '')['Local'], ''
         )
+        callno = default(
+            lambda: get_record_no_parsing(manifid, '')['Classificationlcc'], ''
+        )
+
+        # get link to catalog call number for collection object
+
+        def linkify(service, pi):
+            """
+            Build BTAA/LUNA link.
+
+            Args:
+                External Service instance, Permanent Identifier string
+
+            Returns:
+                Dictionary containing information for BTAA/LUNA
+                links in object template
+            """
+            if service.get_service_display() == 'LUNA':
+                return {
+                    'service':
+                    'LUNA',
+                    'caption':
+                    'Assemble Slide Decks',
+                    'link': (
+                        'https://luna.lib.uchicago.edu/'
+                        'luna/servlet/view/search'
+                        '?q=_luna_media_exif_filename='
+                        '%s.tif'
+                    ) % pi,
+                }
+            elif service.get_service_display() == 'BTAA':
+                return {
+                    'service': 'BTAA Geoportal',
+                    'caption': 'Discover Maps & GIS Data',
+                    'link': service.identifier,
+                }
+            else:
+                return {}
+
+        # build BTAA/LUNA links
+        external_links = [
+            linkify(service, callno_to_pi(callno))
+            for service in self.col_external_service.all()
+        ]
+
+        # bring utility functions from DisplayBrowse into local namespace
+        get_viewer_url = IIIFDisplay.get_viewer_url
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        # bring utility functions from CitationInfo into local namespace
+
+        # MT 3/23/2021: commented out temporarily while we overhaul
+        # the citation service
+
+        # get_turtle_data = CitationInfo.get_turtle_data
+        # get_csl = CitationInfo.get_csl
+        # get_bibtex = CitationInfo.get_bibtex
+        # get_ris = CitationInfo.get_ris
+        # get_zotero = CitationInfo.get_zotero
+        # csl_json_to_html = CitationInfo.csl_json_to_html
+        # config = self.citation_config
+
+        # get Turtle data for collection object
+        # turtle_data = get_turtle_data(manifid)
+
+        # get CSL-JSON data
+        # csl = get_csl(
+        #     turtle_data,
+        #     config,
+        # )
+
+        # get CSL files for Chicago, MLA, and APA styles off disk
+
+        # chicago = csl_json_to_html(csl, CHICAGO_PATH)
+        # mla = csl_json_to_html(csl, MLA_PATH)
+        # apa = csl_json_to_html(csl, APA_PATH)
+
+        # get Bibtex, RIS, and Zotero harvesting citation info
+        # bibtex_link = get_bibtex(turtle_data, config)
+        # endnote_link = get_ris(turtle_data, config)
+        # zotero = str(get_zotero(turtle_data, config))
+
+        # URLs for social media sharing links
+        share_url = request.build_absolute_uri()
+        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + manifid
+        canonical_url = og_url
+
+        iiif_url = get_viewer_url(manifid)
+
+        internal_error = not marklogic and not iiif_url
+
+        # populate context
+
+        # MT: citation-related stuff temprarily commented out: see
+        # above note
+
+        context = super().get_context(request)
+        context["manifid"] = manifid
+        context["iiif_url"] = iiif_url
+        context["share_url"] = share_url
+        context["slug"] = slug
+        context["internal_error"] = internal_error
+        context["marklogic"] = marklogic
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context["external_links"] = external_links
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+        context['object_title'] = object_title
+        context['physical_object'] = physical_object
+        context['callno'] = callno
+
+        # context['chicago'] = chicago
+        # context['mla'] = mla
+        # context['apa'] = apa
+        # context['bibtex_link'] = bibtex_link
+        # context['endnote_link'] = endnote_link
+        # context['zotero'] = zotero
+
+        context['og_url'] = og_url
+        context['canonical_url'] = canonical_url
+
+        # update context with staff info for sidebar
+        context.update(self.staff_context())
+
+        # at long last, we are done defining this route
+        return TemplateResponse(request, template, context)
+
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
+    def cluster_browse_list(self, request, *args, **kwargs):
+        """
+        Route for listing of multiple cluster browses.  For example: the
+        list of all Subject browses.
+        """
+
+        template = "lib_collections/collection_browse.html"
+
+        slug = self.slug
+
+        # bring DisplayBrowse functions into local namespace
+        get_iiif_labels = DisplayBrowse.get_iiif_labels
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        # construct browse type links for sidebar
+        sidebar_browse_types = self.build_browse_types()
+
+        all_browse_types = (
+            CollectionPageClusterBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        try:
+            browse_type = kwargs["browse_type"]
+        except KeyError:
+            browse_type = ''
+
+        if not browse_type:
+            # default to subject browses if no browse type is specified in
+            # route
+            default_browse = all_browse_types.first()
+            default = default_browse.label.lower()
+            browse_type = default
+            browse_title = unslugify_browse(browse_type)
+        else:
+            # otherwise, get the browse type from the route
+            browse_type = kwargs["browse_type"][:-1]
+            browse_title = unslugify_browse(browse_type)
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        # bring CBrowseURL function into local namespace
+        mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
+
+        names = [x.label.lower() for x in all_browse_types]
+
+        try:
+            browses = get_iiif_labels(
+                mk_cbrowse_type_url_iiif(slug, browse_type),
+                browse_type,
+                slug,
+            )
+            internal_error = False
+        except (KeyError, simplejson.JSONDecodeError):
+            browses = ''
+            internal_error = True
+
+        browse_is_ready = browse_type in names and browses
+
+        # populate context
+        context = super().get_context(request)
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context["browses"] = browses
+        context["browse_title"] = browse_title
+        context["browse_is_ready"] = browse_is_ready
+        context["internal_error"] = internal_error
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+
+        return TemplateResponse(request, template, context)
+
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    def cluster_browse(self, request, *args, **kwargs):
+        """
+        Route for listing a particular cluster browse.  For example: the
+        list of objects falling under the Criminals Subject browse.
+        """
+
+        template = "lib_collections/collection_browse.html"
+
+        slug = self.slug
+
+        # pull browse information from URL
+        browse_s = kwargs['browse']
+        browse_type_s = kwargs['browse_type']
+
+        all_browse_types = (
+            CollectionPageClusterBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        names = [x.label.lower() for x in all_browse_types]
+
+        # construct browse type dictionary for sidebar
+        sidebar_browse_types = self.build_browse_types()
+
+        try:
+            objects = DisplayBrowse.get_cbrowse_items(
+                slug,
+                browse_s,
+                browse_type_s,
+            )
+            internal_error = False
+        except (KeyError,
+                simplejson.JSONDecodeError):
+            objects = ''
+            internal_error = True
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        # get DisplayBrowse helper function into local namespace
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        browse_is_ready = browse_type_s in names and objects
+
+        # convert browse and browse type slugs into something suitable for
+        # display
+        browse = unslugify_browse(browse_s)
+        browse_type = unslugify_browse(browse_type_s)
+
+        # construct context
+        context = super().get_context(request)
+        context["browse_title"] = browse
+        context["browse_type"] = browse_type
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context["slug"] = slug
+        context["objects"] = objects
+        context["internal_error"] = internal_error
+        context["browse_is_ready"] = browse_is_ready
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+
+        return TemplateResponse(request, template, context)
+
+    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    def list_browse(self, request, *args, **kwargs):
+        """
+        Route for main list browse index.
+        """
+
+        # display a max of 25 items per page
+        THUMBS_PER_PAGE = 25
+
+        template = "lib_collections/collection_browse.html"
+
+        collection = self.slug
+
+        paginate_name = kwargs['browse_name']
+
+        browse_name = paginate_name[:-1]
+
+        all_browse_types = (
+            CollectionPageListBrowse
+            .objects
+            .filter(page=self)
+        )
+
+        names = [x.label.lower() for x in all_browse_types]
+
+        try:
+            pageno = int(kwargs["pageno"][:-1])
+        except KeyError:
+            pageno = 1
+
+        # list of browse types for sidebar
+        sidebar_browse_types = self.build_browse_types()
+
+        # retrieve list browse information from IIIF server
+
+        try:
+            objects = DisplayBrowse.get_lbrowse_items(
+                collection,
+                browse_name,
+            )
+            internal_error = False
+        except (KeyError,
+                simplejson.JSONDecodeError):
+            objects = ''
+            internal_error = True
+
+        # create pagination
+        list_objects = Paginator(objects, THUMBS_PER_PAGE)
+
+        if pageno > 0 and pageno <= list_objects.num_pages:
+            list_objects_page = list_objects.page(pageno)
+        else:
+            raise Http404
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        current_browse = CollectionPageListBrowse.objects.filter(
+            label=unslugify_browse(browse_name), page=self).first()
+
+        if current_browse:
+            browse_title = CollectionPage.override(
+                current_browse.link_text_override,
+                "Browse by %s" % current_browse.label)
+            collection_final_breadcrumb = CollectionPage.override(
+                current_browse.link_text_override,
+                unslugify_browse(final_crumb)
+            )
+        else:
+            browse_title = unslugify_browse(browse_name)
+            collection_final_breadcrumb = unslugify_browse(final_crumb)
+
+        # final breadcrumb just says e.g. Page 2
+        try:
+            int(final_crumb)
+            final_crumb = ('Page ' + final_crumb)
+        except ValueError:
+            pass
+
+        browse_is_ready = browse_name in names and objects
+
+        # return HttpResponse(browse_name)
+
+        # populate context
+        context = super().get_context(request)
+        context["browse_title"] = browse_title
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context["browse_is_ready"] = browse_is_ready
+        context["internal_error"] = internal_error
+        context["list_objects"] = list_objects_page
+        context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
+            collection, paginate_name
+        )
+        context['collection_final_breadcrumb'] = collection_final_breadcrumb
+        context['collection_breadcrumb'] = breads
+
+        return TemplateResponse(request, template, context)
 
     subpage_types = ['public.StandardPage']
 
@@ -628,25 +1338,26 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     # panels within the 'Collection' tab in the admin interface
     collection_panels = [
-        FieldPanel('digital_collection'),
-        MultiFieldPanel(
-            [
-                ImageChooserPanel('banner_image'),
-                ImageChooserPanel('banner_feature'),
-                FieldPanel('banner_title'),
-                FieldPanel('banner_subtitle'),
-            ],
-            heading='Banner'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('branding_color'),
-                FieldPanel('google_font_link'),
-                FieldPanel('font_family'),
-            ],
-            heading='Branding'
-        ),
+        # FieldPanel('digital_collection'),
+        # MultiFieldPanel(
+        #     [
+        #         ImageChooserPanel('banner_image'),
+        #         ImageChooserPanel('banner_feature'),
+        #         FieldPanel('banner_title'),
+        #         FieldPanel('banner_subtitle'),
+        #     ],
+        #     heading='Banner'
+        # ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('branding_color'),
+        #         FieldPanel('google_font_link'),
+        #         FieldPanel('font_family'),
+        #     ],
+        #     heading='Branding'
+        # ),
         FieldPanel('highlighted_records'),
+        FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
         InlinePanel('col_cbrowse', label='Cluster Browses'),
@@ -670,83 +1381,36 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     def get_context(self, request):
 
-        # TODO - temporary, this will come from the page object
-        # manifest = 'https://iiif-collection.lib.uchicago.edu/maps/maps.json'
-        manifest = ''
+        # get URL for highlighted records listing from Wagtail database
+        iiif_url = self.highlighted_records
 
-        staff_title = ''
-        staff_position_title = ''
-        staff_email = ''
-        staff_phone_number = ''
-        staff_faculty_exchange = ''
-        try:
-            staff_title = self.staff_contact.title
-            staff_position_title = self.staff_contact.position_title
-            staff_email = self.staff_contact.staff_page_email.first().email
-            staff_phone_number = self.staff_contact.staff_page_phone_faculty_exchange.first(
-            ).phone_number
-            staff_faculty_exchange = self.staff_contact.staff_page_phone_faculty_exchange.first(
-            ).faculty_exchange
-        except:
-            pass
+        # display first five records in selected listing
+        if iiif_url:
+            r = requests.get(iiif_url)
+            j = r.json()
+            objects = [
+                DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
+                for x in j['items']
+            ][:5]
+        else:
+            objects = []
 
-        staff_url = ''
-        try:
-            staff_url = StaffPublicPage.objects.get(
-                cnetid=self.staff_contact.cnetid
-            ).url
-        except:
-            pass
-
-        unit_title = lazy_dotchain(lambda: self.unit.title, '')
-        unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
-        unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
-        unit_email = lazy_dotchain(lambda: self.unit.email, '')
-        unit_phone_label = lazy_dotchain(
-            lambda: self.unit.unit_page_phone_number.first().phone_label, ''
-        )
-        unit_phone_number = lazy_dotchain(
-            lambda: self.unit.unit_page_phone_number.first().phone_number, ''
-        )
-        unit_fax_number = lazy_dotchain(lambda: self.unit.fax_number, '')
-        unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
-        unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
-        unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document = lazy_dotchain(
-            lambda: self.unit.link_document.file.url, ''
-        )
+        # browse links for sidebar
+        sidebar_browse_types = self.build_browse_types()
 
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
+        # populate context
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
-        context['staff_title'] = staff_title
-        context['staff_url'] = staff_url
-        context['staff_position_title'] = staff_position_title
-        context['staff_email'] = staff_email
-        context['staff_phone_number'] = staff_phone_number
-        context['staff_faculty_exchange'] = staff_faculty_exchange
-        context['unit_contact'] = self.unit_contact
-        context['unit_title'] = unit_title
-        context['unit_url'] = unit_url
-        context['unit_email_label'] = unit_email_label
-        context['unit_email'] = unit_email
-        context['unit_phone_label'] = unit_phone_label
-        context['unit_phone_number'] = unit_phone_number
-        context['unit_fax_number'] = unit_fax_number
-        context['unit_link_text'] = unit_link_text
-        context['unit_link_external'] = unit_link_external
-        context['unit_link_page'] = unit_link_page
-        context['unit_link_document'] = unit_link_document
-        context['supplementary_access_links'
-                ] = self.supplementary_access_links.get_object_list()
+        context['sidebar_browse_types'] = sidebar_browse_types
+        context['objects'] = objects
 
-        # Merge the context dictionary with the results from iiif
-        if manifest:
-            context = dict(
-                context, **collection(request, self.is_viewer, manifest)
-            )
+        # update context with information about staff associated with the
+        # relevant collection
+        context.update(self.staff_context())
+
         return context
 
     def has_right_sidebar(self):
@@ -1003,7 +1667,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         Return:
             A set of subjects or an empty set
         """
-        if self.subject == None:
+        if self.subject is None:
             return set([])
         elif children:
             return set(self.subject.get_descendants())

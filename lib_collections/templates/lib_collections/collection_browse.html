@@ -1,0 +1,51 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
+{% load wagtailimages_tags %}
+
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+{% block styles %}
+  {% compress css %}
+      <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+  {% endcompress %}
+{% endblock %}
+
+<!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
+
+{% block content %}
+<!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
+
+<div class="results">
+    {% if browse_title %}
+	<h2>{{ browse_title }}</h2>
+    {% else %}
+    {% endif %}
+</div>
+
+{% if browse_is_ready %}
+    <section class="browse-list" id="content" role="main">
+	{% include "includes/general_listing.html" %}
+    </section>
+{% elif internal_error %}
+    <h4>
+	<p>We are experiencing an error with this browse listing.</p>
+	<p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+    </h4>
+{% else %}
+    <h4>
+	<p>Not found. Are you sure you typed the URL correctly?</p>
+    </h4>
+{% endif %}
+
+{% endblock %}
+
+
+{% block right_sidebar %}
+{% include "includes/sidebar.html" %}
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+
