@@ -3,7 +3,7 @@ import simplejson
 import re
 
 import requests
-from library_website.settings_panels import (
+from library_website.settings import (
     MARKLOGIC_LDR_PASSWORD,
     MARKLOGIC_LDR_USER,
     MARKLOGIC_LDR_URL,

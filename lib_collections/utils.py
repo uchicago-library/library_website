@@ -1093,7 +1093,6 @@ class Testing():
     #     anything
 
     # Returns: an unexpected JSON dictionary
-    empty_sparql =
-    GeneralPurpose.k(
+    empty_sparql = GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
     )
