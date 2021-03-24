@@ -6,7 +6,7 @@ from base.models import DefaultBodyFields, PublicBasePage
 from collections import OrderedDict
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import RegexValidator
 from django.db import models
 from django.http import Http404, HttpResponse
@@ -1237,6 +1237,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # create pagination
         list_objects = Paginator(objects, THUMBS_PER_PAGE)
 
+        if pageno > 0 and pageno <= list_objects.num_pages:
+            list_objects_page = list_objects.page(pageno)
+        else:
+            raise Http404
+
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
@@ -1274,7 +1279,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["sidebar_browse_types"] = sidebar_browse_types
         context["browse_is_ready"] = browse_is_ready
         context["internal_error"] = internal_error
-        context["list_objects"] = list_objects.page(pageno)
+        context["list_objects"] = list_objects_page
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
             collection, paginate_name
         )
