@@ -1,6 +1,5 @@
 beautifulsoup4==4.8.2
 bleach==3.1.4
-citeproc-py==0.5.1
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 

@@ -12,11 +12,11 @@ import re
 from urllib.parse import urlencode
 
 import requests
-from citeproc import (
-    Citation, CitationItem, CitationStylesBibliography, CitationStylesStyle,
-    formatter
-)
-from citeproc.source.json import CiteProcJSON
+# from citeproc import (
+#     Citation, CitationItem, CitationStylesBibliography, CitationStylesStyle,
+#     formatter
+# )
+# from citeproc.source.json import CiteProcJSON
 from django.utils.text import slugify
 from library_website.settings import (
     IIIF_PREFIX,
@@ -754,46 +754,46 @@ class CitationInfo():
         except requests.exceptions.RequestException:
             return ''
 
-    def csl_json_to_html(csl_json: dict, style: str) -> str:
-        """
-        Render CSL-JSON in HTML for the collection object template.  Note
-        that this uses code from the citeproc-py library, which,
-        annoyingly, insists on reading the CSL style files off disk.
-        Those style files are located at lib_collections/csl.  See
-        path constants below.
+    # def csl_json_to_html(csl_json: dict, style: str) -> str:
+    #     """
+    #     Render CSL-JSON in HTML for the collection object template.  Note
+    #     that this uses code from the citeproc-py library, which,
+    #     annoyingly, insists on reading the CSL style files off disk.
+    #     Those style files are located at lib_collections/csl.  See
+    #     path constants below.
 
-        Args:
-            csl_json: CSL-JSON entry, dictionary
+    #     Args:
+    #         csl_json: CSL-JSON entry, dictionary
 
-            style: path on serverside filesystem to CSL style file
+    #         style: path on serverside filesystem to CSL style file
 
-        Returns:
-            Citation HTML
-        """
-        if not os.path.isfile(style):
-            return ''
-        else:
-            try:
-                bib_source = CiteProcJSON(csl_json)
-                bib_style = CitationStylesStyle(style, validate=False)
-                bibliography = CitationStylesBibliography(
-                    bib_style, bib_source, formatter.html
-                )
+    #     Returns:
+    #         Citation HTML
+    #     """
+    #     if not os.path.isfile(style):
+    #         return ''
+    #     else:
+    #         try:
+    #             bib_source = CiteProcJSON(csl_json)
+    #             bib_style = CitationStylesStyle(style, validate=False)
+    #             bibliography = CitationStylesBibliography(
+    #                 bib_style, bib_source, formatter.html
+    #             )
 
-                for obj in csl_json:
-                    # Gets the object's id and makes it into citation item.
-                    citation = Citation([CitationItem(obj['id'])])
-                    bibliography.register(citation)
+    #             for obj in csl_json:
+    #                 # Gets the object's id and makes it into citation item.
+    #                 citation = Citation([CitationItem(obj['id'])])
+    #                 bibliography.register(citation)
 
-                html = ""
-                for ms in bibliography.bibliography():
-                    lst = list(OrderedDict.fromkeys(ms.split()))
-                    s = ' '.join(lst)
-                    html += (s + "<br>")
+    #             html = ""
+    #             for ms in bibliography.bibliography():
+    #                 lst = list(OrderedDict.fromkeys(ms.split()))
+    #                 s = ' '.join(lst)
+    #                 html += (s + "<br>")
 
-                return html
-            except (AttributeError, TypeError):
-                return ''
+    #             return html
+    #         except (AttributeError, TypeError):
+    #             return ''
 
     def citation_export(mode: str,
                         turtle_data: str,
