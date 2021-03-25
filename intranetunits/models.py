@@ -38,13 +38,6 @@ class IntranetUnitsReportsIndexPage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
     subpage_types = ['intranetunits.IntranetUnitsReportsPage']
 
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_reports(self.title)
-
     def get_context(self, request):
         """
         Get reports from children.
@@ -58,7 +51,8 @@ class IntranetUnitsReportsIndexPage(BasePage):
         data = []
         for page in year_pages:
             year_title = page.title
-            year_reports = page.intranetunitsreportspage.get_reports_grouped_by_date()
+            year_reports = page.intranetunitsreportspage.get_reports_grouped_by_date(
+            )
             data.append((year_title, year_reports))
 
         context['data'] = data
@@ -71,18 +65,13 @@ class IntranetUnitsReportsPage(BasePage):
     ] + BasePage.content_panels
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('get_report_summaries_for_indexing', partial_match=True),
-        index.SearchField('get_report_doc_links_for_indexing', partial_match=True),
+        index.
+        SearchField('get_report_summaries_for_indexing', partial_match=True),
+        index.
+        SearchField('get_report_doc_links_for_indexing', partial_match=True),
     ]
 
     subpage_types = ['base.IntranetPlainPage']
-
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_year(self.title)
 
     def get_context(self, request):
         """
@@ -277,9 +266,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                 except AttributeError:
                     email = None
                 phone_numbers = staff_page.staff_page_phone_faculty_exchange.all(
-                ).values_list(
-                    'phone_number', flat=True
-                )
+                ).values_list('phone_number', flat=True)
                 titles = [staff_page.position_title]
 
                 department_members.append(

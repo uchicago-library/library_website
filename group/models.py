@@ -475,13 +475,6 @@ class GroupReportsIndexPage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
     subpage_types = ['group.GroupReportsPage']
 
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_reports(self.title)
-
     def get_context(self, request):
         """
         Get reports from children.
@@ -519,13 +512,6 @@ class GroupReportsPage(BasePage):
     ]
 
     subpage_types = ['base.IntranetPlainPage']
-
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_year(self.title)
 
     def get_context(self, request):
         """
