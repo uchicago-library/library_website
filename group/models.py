@@ -67,16 +67,6 @@ def enforce_name_as_year(title):
         )
 
 
-def enforce_name_as_reports(title):
-    """
-    Helper function for making sure
-    page titles adhere to a strict
-    formatting policy.
-    """
-    if not title.strip() == "Reports":
-        raise ValidationError({'title': ('The title should be "Reports"')})
-
-
 def get_page_objects_grouped_by_date(obj):
     """
     Helper function for getting page objects and

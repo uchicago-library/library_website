@@ -10,8 +10,7 @@ from wagtail.search import index
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
 from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 from group.models import (
-    enforce_name_as_reports, enforce_name_as_year, get_page_objects_as_list,
-    get_page_objects_grouped_by_date
+    get_page_objects_as_list, get_page_objects_grouped_by_date
 )
 from staff.models import StaffPage
 
