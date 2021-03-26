@@ -67,16 +67,6 @@ def enforce_name_as_year(title):
         )
 
 
-def enforce_name_as_reports(title):
-    """
-    Helper function for making sure
-    page titles adhere to a strict
-    formatting policy.
-    """
-    if not title.strip() == "Reports":
-        raise ValidationError({'title': ('The title should be "Reports"')})
-
-
 def get_page_objects_grouped_by_date(obj):
     """
     Helper function for getting page objects and
@@ -475,13 +465,6 @@ class GroupReportsIndexPage(BasePage):
     content_panels = Page.content_panels + BasePage.content_panels
     subpage_types = ['group.GroupReportsPage']
 
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_reports(self.title)
-
     def get_context(self, request):
         """
         Get reports from children.
@@ -519,13 +502,6 @@ class GroupReportsPage(BasePage):
     ]
 
     subpage_types = ['base.IntranetPlainPage']
-
-    def clean(self):
-        """
-        Make sure page titles adhere to strict
-        formatting policy.
-        """
-        enforce_name_as_year(self.title)
 
     def get_context(self, request):
         """
