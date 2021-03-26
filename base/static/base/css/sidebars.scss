@@ -275,6 +275,13 @@ Right Sidebar: Widget Items
 
 .rightside-mod { //Wrapper for individual modules
   padding: 0 0 2em 0;
+  & h4 {
+    color: #000000;
+    font-size: 1em;
+    font-weight: 600;
+    font-style: normal;
+    margin-bottom: 0.25em;
+  }
   ul {
     list-style: none;
     margin-left: 0;

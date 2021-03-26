@@ -145,9 +145,11 @@
                 {{ exhibit.short_abstract }}
               </td>
               <td>
-                <strong>Locations</strong>
-                <br/>
-                <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                {% if exhibit.exhibit_location %}
+                  <strong>Locations</strong>
+                  <br/>
+                  <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                {% endif %}
                 {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
                   <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
                 {% endif %}
