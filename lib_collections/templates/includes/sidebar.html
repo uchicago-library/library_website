@@ -13,7 +13,7 @@
 <!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->
 {% if external_links %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Other Ways to View</h2>
+	<h3>Other Ways to View</h3>
 	<ul class="no-indent">
 	    {% for item in external_links %}
 		<!-- @to-do: ADD for loop for item in EXTERNAL SERVICE ITEM -->
@@ -27,18 +27,18 @@
     
 {% if access_location %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Access Location</h2>
+	<h3>Access Location</h3>
 	<p><a href="{{ access_location.url }}">{{ access_location.title }}</a></p>
 	{% if physical_object and callno %}
-	    Call Number: {{ callno }}
-	    <p><a href="{{ physical_object }}">UChicago Catalog Record</a></p>
+	    Call Number:<br/>{{ callno }}<br/>
+	    <a href="{{ physical_object }}">UChicago Catalog Record</a>
 	{% endif %}
     </div>
 {% endif %}
 
 {% if staff_title %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Subject Specialist</h2>
+	<h3>Subject Specialist</h3>
 	<p>
 	    {% if staff_url %}
 	        <a href="{{ staff_url }}">{{ staff_title }}</a>
@@ -57,7 +57,7 @@
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
 	<p>
 	    {% if unit_url and unit_title%}
-		<h2>Contact</h2>
+		<h3>Contact</h3>
 		<a href="unit_url">unit_title</a><br/>
 	    {% else %}
 	        {{ unit_title }}<br/>
@@ -91,9 +91,9 @@
 <!-- dev-note: Do we want this info to be inherited from the parent collection page? -->
 {% if related_collections or related_exhibits or collections_by_subject or collections_by_format %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Explore Related Content</h2>
+	<h3>Explore Related Content</h3>
 	{% if related_collections %}
-	    <strong>Related Collections</strong>
+	    <h4>Related Collections</h4>
 	    <ul>
 		{% for c in related_collections %}
 		<li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
@@ -102,7 +102,7 @@
 	{% endif %}
 
 	{% if related_exhibits %}
-	    <strong>Related Exhibits</strong>
+	    <h4>Related Exhibits</h4>
 	    <ul>
 		{% for e in related_exhibits %}
 		<li><a href="{{ e.parent.url }}">{{ e.parent.title }}</a></li>
@@ -111,7 +111,7 @@
 	{% endif %}
 
 	{% if collections_by_subject %}
-	    <strong>Collections by Subject</strong>
+	    <h4>Collections by Subject</h4>
 	    <ul>
 		{% for s in collections_by_subject %}
 		<li><a href="/collex/?view=collections&subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
@@ -120,7 +120,7 @@
 	{% endif %}
 
 	{% if collections_by_format %}
-	    <strong>Collections by Format</strong>
+	    <h4>Collections by Format</h4>
 	    <ul>
 		{% for f in collections_by_format %}
 		<li><a href="/collex/?view=collections&format={{ f.format.text|urlencode }}">{{ f.format.text }}</a></li>

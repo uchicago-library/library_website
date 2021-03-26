@@ -8,7 +8,7 @@
       
 <div class="col-sm-6">
   <form class="searchbox">
-    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aira-label="search exhibits" placeholder="Search exhibits"{% if search %} value="{{ search }}"{% endif %}/>
+    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aria-label="search exhibits" placeholder="Search exhibits"{% if search %} value="{{ search }}"{% endif %}/>
     <input name="view" type="hidden" value="exhibits"/>
     <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
       <input type="submit" style="background-color: transparent; color: transparent;" class="searchbox-submit">
@@ -57,7 +57,7 @@
 <div class="col-xs-12 col-sm-5">
   <span class="headline">Limit to</span> &nbsp;
   <form action="." method="get" style="display: inline;">
-    <input name="digital" type="checkbox" arial-label="limit to web exhibits" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> web exhibits &nbsp;
+    <input name="digital" type="checkbox" aria-label="limit to web exhibits" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> web exhibits &nbsp;
     <input name="view" type="hidden" value="exhibits"/>
     {% if location %}<input name="location" type="hidden" value="{{ location }}"/>{% endif %}
     {% if search %}<input name="search" type="hidden" value="{{ search }}"/>{% endif %}

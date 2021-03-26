@@ -8,7 +8,7 @@
 
 <div class="col-xs-12 col-sm-6">
   <form class="searchbox">
-    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aira-label="search collections" placeholder="Search collections"{% if search %} value="{{ search }}"{% endif %}/>
+    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aria-label="search collections" placeholder="Search collections"{% if search %} value="{{ search }}"{% endif %}/>
     <input name="view" type="hidden" value="collections"/>
     <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
       <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
@@ -47,7 +47,7 @@
 <div class="col-xs-12 col-sm-5">
   <form action="." method="get">
     <span class="headline">Limit to</span> &nbsp;
-    <input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
+    <input name="digital" type="checkbox" aria-label="limit to digital collections" id="checkboxdigital"{% if digital == 'on' %} checked="checked"{% endif %}> digital <span class="hidden-xs hidden-sm">materials</span> <span class="hidden-md hidden-lg">only</span>&nbsp;
     <input name="view" type="hidden" value="collections"/>
     {% if format %}<input name="format" type="hidden" value="{{ format }}"/>{% endif %}
     {% if search %}<input name="search" type="hidden" value="{{ search }}"/>{% endif %}
