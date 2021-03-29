@@ -1,24 +1,25 @@
+import requests
+
 from base.wagtail_hooks import (
     get_required_groups, has_permission, redirect_users_without_permissions
 )
-from django.db.models import Q
-from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
+from django.shortcuts import render
+from intranetunits.models import IntranetUnitsPage
 from public.models import LocationPage
-from subjects.models import Subject
-from staff.models import StaffPage, StaffPageSubjectPlacement
-from units.views import get_staff_pages_for_unit
-from wagtail.core.models import Page, Site
-from wagtail.images.models import Image
-from wagtail.search.models import Query
-from wagtail.contrib.search_promotions.models import SearchPromotion
-
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import (
+    SessionAuthentication, TokenAuthentication
+)
+from rest_framework.decorators import (
+    api_view, authentication_classes, permission_classes
+)
 from rest_framework.permissions import IsAuthenticated
-import requests
+from staff.models import StaffPage, StaffPageSubjectPlacement
+from subjects.models import Subject
+from units.views import get_staff_pages_for_unit
+from wagtail.core.models import Site
+from wagtail.images.models import Image
 
 
 def staff(request):
@@ -43,19 +44,24 @@ def staff(request):
         elif library:
             staff_pages = StaffPage.get_staff_by_building(library)
         else:
-            staff_pages = StaffPage.objects.live().order_by('last_name', 'first_name')
+            staff_pages = StaffPage.objects.live().order_by(
+                'last_name', 'first_name'
+            )
 
         if subject:
             subject_pk = Subject.objects.get(name=subject).pk
             staff_pks = StaffPageSubjectPlacement.objects.filter(
-                subject=subject_pk).values_list('page', flat=True).distinct()
+                subject=subject_pk
+            ).values_list('page', flat=True).distinct()
 
             if staff_pages:
                 staff_pages = staff_pages.filter(
-                    pk__in=staff_pks).order_by('last_name', 'first_name')
+                    pk__in=staff_pks
+                ).order_by('last_name', 'first_name')
             else:
                 staff_pages = StaffPage.objects.filter(
-                    pk__in=staff_pks).order_by('last_name', 'first_name')
+                    pk__in=staff_pks
+                ).order_by('last_name', 'first_name')
 
         if query:
             if staff_pages:
@@ -64,8 +70,9 @@ def staff(request):
                 staff_pages = StaffPage.objects.live().search(query)
 
         if not department and not library and not subject and not query:
-            staff_pages = StaffPage.objects.live().order_by(
-                'title').order_by('last_name', 'first_name')
+            staff_pages = StaffPage.objects.live().order_by('title').order_by(
+                'last_name', 'first_name'
+            )
     elif view == 'department':
         if query:
             intranetunits_qs = IntranetUnitsPage.objects.live().search(query)
@@ -77,36 +84,54 @@ def staff(request):
                 i_title = i.get_full_name()
             except AttributeError:
                 continue
-            flat_units.append({
-                'internal_location': i.internal_location,
-                'internal_phone_number': i.internal_phone_number,
-                'library': i_library,
-                'title': i_title,
-                'url': i.url,
-            })
+            flat_units.append(
+                {
+                    'internal_location': i.internal_location,
+                    'internal_phone_number': i.internal_phone_number,
+                    'library': i_library,
+                    'title': i_title,
+                    'url': i.url,
+                }
+            )
         flat_units = sorted(flat_units, key=lambda k: k['title'])
 
     # Subjects
-    subject_pks = StaffPageSubjectPlacement.objects.all().values_list('subject',
-                                                                      flat=True).distinct()
-    subjects = Subject.objects.filter(
-        pk__in=subject_pks).values_list('name', flat=True)
+    subject_pks = StaffPageSubjectPlacement.objects.all().values_list(
+        'subject', flat=True
+    ).distinct()
+    subjects = Subject.objects.filter(pk__in=subject_pks
+                                      ).values_list('name', flat=True)
 
     default_image = Image.objects.get(title="Default Placeholder Photo")
 
-    return render(request, 'staff/staff_index_page.html', {
-        'default_image': default_image,
-        'department': department,
-        'flat_intranet_units': flat_units,
-        'libraries': [str(p) for p in LocationPage.objects.live().filter(is_building=True)],
-        'library': library,
-        'query': query,
-        'subject': subject,
-        'subjects': subjects,
-        'subjects': subjects,
-        'staff_pages': staff_pages,
-        'view': view
-    })
+    return render(
+        request, 'staff/staff_index_page.html', {
+            'default_image':
+            default_image,
+            'department':
+            department,
+            'flat_intranet_units':
+            flat_units,
+            'libraries': [
+                str(p)
+                for p in LocationPage.objects.live().filter(is_building=True)
+            ],
+            'library':
+            library,
+            'query':
+            query,
+            'subject':
+            subject,
+            'subjects':
+            subjects,
+            'subjects':
+            subjects,
+            'staff_pages':
+            staff_pages,
+            'view':
+            view
+        }
+    )
 
 
 @api_view(['GET'])
@@ -153,6 +178,6 @@ def staff_api(request):
             rest_headers = {'Authorization': token}
             rest_response = requests.get(rest_url, headers=rest_headers)
             return JsonResponse(rest_response.json())
-        except(KeyError):
+        except (KeyError):
             raise PermissionDenied
     raise PermissionDenied
