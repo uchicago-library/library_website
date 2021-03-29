@@ -4,7 +4,7 @@ from base.wagtail_hooks import (
 from django.db.models import Q
 from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from public.models import LocationPage
 from subjects.models import Subject
