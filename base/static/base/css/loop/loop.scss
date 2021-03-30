@@ -52,6 +52,14 @@ a {
   }
 }
 
+.swside-home {
+  .divider {
+    border-bottom:1px solid #ADB17D;
+    margin-top: 1em;
+    margin-bottom: 1em !important;
+  }
+}
+
 // a.link-alert {
 //     color: #800000;
 //     &:after {
@@ -72,9 +80,6 @@ h1 {
   font-size: 1.4em;
   margin-bottom: 10px;
   color: $accentlink;
-  .swside-home & {
-    color: $darkaccent
-  }
 }
 
 h2 {
@@ -83,7 +88,7 @@ h2 {
   margin: 2em 0 5px 0;
   color:#9A5324;
   .swside-home & {
-    color: $darkgray;
+    color: $darkaccent
   }
 }
 
@@ -94,6 +99,7 @@ h3 {
   margin: 30px 0 15px 0;
   color: $darkaccent;
     .swside-home & {
+      color: $darkgray;
       font-size: 1.2em;
     }
     &.description {
