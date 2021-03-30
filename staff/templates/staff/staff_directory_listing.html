@@ -4,8 +4,9 @@
 
 {% cache 86400 staff_directory_listing staff_page.cnetid %}
   <article>
+      <h3 class="visually-hidden">{{ staff_page.display_name }}</h3>
     <div>
-      <h3>{% staff_public_page_link staff_page %}</h3>
+      <h4 class="staff-name"><span class="visually-hidden">About </span>{% staff_public_page_link staff_page %}</h3>
       {% if staff_page.pronouns %}
         <span class="pronouns-listing">{{ staff_page.pronouns }}</span>
       {% endif %}
@@ -15,14 +16,14 @@
       </p>
     </div>
     <div>
-      <span role="heading">Contact<span class="visually-hidden"> {{ staff_page.first_name }}</span></span>
+      <h4>Contact<span class="visually-hidden"> {{ staff_page.first_name }}</span></h4>
       {% staff_email_addresses staff_page %}
       {% staff_faculty_exchanges_phone_numbers staff_page %}
       {% staff_libcal_schedules staff_page %}
     </div>
     <div>
       {% if staff_page.staff_subject_placements.all %}
-      <span role="heading"><span class="visually-hidden">{{ staff_page.first_name }}'s</span> Subject Specialties</span>
+      <h4><span class="visually-hidden">{{ staff_page.first_name }}'s </span>Specialties</h4>
       <ul>
         {% staff_subjects staff_page %}
       </ul>

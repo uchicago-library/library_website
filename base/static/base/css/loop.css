@@ -58,7 +58,7 @@ body {
   background: #fbfbfa; }
 
 a {
-  color: #8A9045; }
+  color: #6e7337; }
   a:hover {
     color: #565A25;
     text-decoration: underline; }
@@ -77,7 +77,7 @@ h1 {
   font-weight: 600;
   font-size: 1.4em;
   margin-bottom: 10px;
-  color: #8A9045; }
+  color: #6e7337; }
   .swside-home h1 {
     color: #565A25; }
 
@@ -386,6 +386,20 @@ input[type=checkbox], input[type=radio] {
  * Directory / Staff Profile
  * --------------------------------------------------
  */
+button[id^='mysched'] {
+  color: #ffffff;
+  background: #6e7337;
+  margin-top: 0.5em;
+  border: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px; }
+  button[id^='mysched']:hover, button[id^='mysched']:focus {
+    color: #2A5DB0;
+    background: transparent;
+    border: 1px solid #2A5DB0; }
+
 .staff-headers h1 {
   display: inline-block; }
 
@@ -485,13 +499,23 @@ select {
       @media (min-width: 75em) {
         .sdir article p {
           max-width: unset; } }
-    .sdir article span[role=heading] {
+    .sdir article h4 {
+      color: #525252;
       font-weight: 600;
+      font-style: normal;
       display: block;
-      padding-top: 1em; }
+      padding-top: 1em;
+      margin-top: 0;
+      margin-bottom: 0.25em; }
       @media (min-width: 48em) {
-        .sdir article span[role=heading] {
+        .sdir article h4 {
           padding-top: 0; } }
+      .sdir article h4 a {
+        color: #6e7337;
+        text-decoration: underline; }
+        .sdir article h4 a:hover, .sdir article h4 a:focus {
+          color: #565A25;
+          text-decoration: none; }
     .sdir article .profile-image {
       padding-bottom: 1em;
       grid-row-start: 1;

@@ -460,6 +460,22 @@ figure {
  * --------------------------------------------------
  */
 
+ button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
+  color: #ffffff;
+  background: #6e7337;
+  margin-top: 0.5em;
+  border: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  &:hover, &:focus {
+    color: #2A5DB0;
+    background: transparent;
+    border: 1px solid #2A5DB0;
+  }
+}
+
 .staff-headers {
   h1 {
     display: inline-block;
@@ -578,12 +594,24 @@ select {
         max-width: unset;
       }
     }
-    span[role=heading] {
+    h4 {
+      color: $mid-dark;
       font-weight: 600;
+      font-style: normal;
       display: block;
       padding-top: 1em;
+      margin-top: 0;
+      margin-bottom: 0.25em;
       @include respond-to(small) {
         padding-top: 0;
+      }
+      a {
+        color: $accentlink;
+        text-decoration: underline;
+        &:hover, &:focus {
+          color: $darkaccent;
+          text-decoration: none;
+        }
       }
     }
     .profile-image {

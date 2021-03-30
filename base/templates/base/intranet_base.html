@@ -7,9 +7,17 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
-  <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_suffix %}{% endblock %}</title>
+  <title>
+    {% block title %}
+        {% if self.seo_title %}
+            {{self.seo_title}}
+        {% else %} 
+            {{ self.title }}
+        {% endif %}
+    {% endblock %} 
+  </title>
   <meta name="generator" content="Bootply" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, user-scalable=yes">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
   <!--[if lt IE 9]>
@@ -136,7 +144,7 @@
 
   <!-- Footer Section -->
   <footer class="container-fluid footer" role="contentinfo"> 
-    <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="/static/base/images/color-logo.png"></a></span>
+    <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="/static/base/images/color-logo.png" alt="Loop logo"></a></span>
       <ul>
         <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
         <li><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>

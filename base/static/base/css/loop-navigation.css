@@ -65,7 +65,7 @@ Footer
 
 .btn-default {
   color: #fff;
-  background-color: #8A9045;
+  background-color: #6e7337;
   border-color: #ccc; }
   .btn-default:hover {
     background-color: #ADB17D; }
@@ -93,7 +93,7 @@ Footer
     background-color: #fff; }
 
 .navbar-toggle {
-  background: #8A9045; }
+  background: #6e7337; }
   .navbar-toggle:hover, .navbar-toggle:visited, .navbar-toggle:focus {
     background: #ADB17D; }
 
@@ -121,9 +121,9 @@ Footer
         float: none;
         text-align: center; } }
     .navbar .nav li:hover, .navbar .nav li.current {
-      background-image: linear-gradient(to bottom, #8A9045, #666A35); }
+      background-image: linear-gradient(to bottom, #6e7337, #666A35); }
     .navbar .nav li a {
-      color: #696e34; }
+      color: #4d5127; }
       @media (min-width: 48em) {
         .navbar .nav li a {
           font-size: 1.1em;
@@ -163,7 +163,7 @@ html, body {
     .swside-home ul li {
       margin-bottom: 0.35em; }
   .swside-home a {
-    color: #8A9045;
+    color: #6e7337;
     text-decoration: none; }
   @media (min-width: 48em) {
     .swside-home {
@@ -206,12 +206,12 @@ html, body {
       padding-left: 25px; } }
 
 .btn-sidebar {
-  background: #8A9045;
+  background: #6e7337;
   color: #fff;
   position: absolute;
   padding: 10px;
   left: 0;
-  border-color: #8A9045;
+  border-color: #6e7337;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   margin-left: 0; }
@@ -292,7 +292,7 @@ html {
   width: 100%;
   height: 60px;
   padding: 15px 5px 5px 5px;
-  background-image: linear-gradient(to bottom, #8A9045, #666A35); }
+  background-image: linear-gradient(to bottom, #6e7337, #666A35); }
   @media (min-width: 48em) {
     .footer {
       padding-top: 0px;

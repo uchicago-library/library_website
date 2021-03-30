@@ -208,11 +208,6 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
  * --------------------------------------------------
  */
 
-
-h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty {
-    display: none; // ADA: Hides empty header tags
-}
-
 #footnotes {
   font-family: 'ProximaNova-Light';
   font-size: 0.8em;
@@ -594,18 +589,19 @@ figure.coll-thumb {
     text-align: center;
   }
   a {
-    color: $eckhartpurple;    
-  }
-  a:hover {
-    text-decoration: none;
-  }
-  .material-icons, a.material-icons {
     color: $eckhartpurple;
+    text-decoration: none;  
+    &:hover, &:focus {
+      color: $default-link;
+      text-decoration: underline;
+    }  
+  }
+  .material-icons {
     vertical-align: middle;
     font-size: 2em;
+
   }
-  .fa, a.fa {  // to make-up for the size difference between the two icon families
-    color: $eckhartpurple;
+  .fa {  // to make-up for the size difference between the two icon families
     font-size:1.5em;
     padding-top: 10px;
     padding-bottom:7px;
@@ -615,12 +611,9 @@ figure.coll-thumb {
 .icon-widget {
   @extend .studymod;
   text-align: center;
-  a {
-    text-decoration: none;
-  }
-  .fa, a.fa {
+  & .fa, & .material-icons {
     display: block;
-    font-size: 3rem;
+    padding-left: 0;
   }
 }
 
@@ -893,10 +886,11 @@ figure.embed {
 
  .distinct-list { //table base
   a {
-    color: #8a4a20;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
+    color: $default-link;
+    text-decoration: underline;
+    &:hover, &:focus {
+      color: $dark-link;
+      text-decoration: none;
     }
   }
   .material-icons, .fa {
@@ -1812,13 +1806,12 @@ a.coll-access {
   margin: 2em 0 0.25em 0;
   padding-left: 0;
   h2 {
-    font-family: $accent-font;
-    color: $reggreen;
-    font-size: 1.3em;
+    color: $darkred;
+    font-size: 1.15em;
     padding-left: 15px;
     margin-right: 2em;
     margin-bottom: 0.25em;
-    border-bottom: 2px solid #ADB17D;
+    border-bottom: 2px solid #ddd;
       a, a:active, a:focus, a:hover {
       color: $mid-dark;
       text-decoration: none;
@@ -1856,12 +1849,28 @@ a.coll-access {
         max-width: unset;
       }
     }
-    span[role=heading] {
+    h4 {
+      font-size: 1em; 
+      color: darken($mid-dark, 10%);
       font-weight: 600;
+      font-style: normal;
       display: block;
       padding-top: 1em;
+      margin-top: 0;
+      margin-bottom: 0.25em;
       @include respond-to(small) {
         padding-top: 0;
+      }
+      a {
+        color: $default-link;
+        text-decoration: underline;
+        &:hover, &:focus {
+          color: $dark-link;
+          text-decoration: none;
+        }
+      }
+      &.staff-name {
+        font-size: 1.1em;
       }
     }
     .profile-image {
@@ -1873,8 +1882,13 @@ a.coll-access {
       }
     }
     ul {
-      padding-left: 0px;
+      padding-left: 1em;
+      text-indent: -1em;
       list-style: none;
+      li {
+        margin-bottom: 0.35rem;
+        font-size: 1.35rem;
+      }
     }
   }
 }
