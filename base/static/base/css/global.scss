@@ -71,6 +71,10 @@ a {
  * --------------------------------------------------
  */
 
+ h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, a:empty, p:empty, ul:empty {
+    display: none; // ADA: Hides empty header tags
+}
+
  h1 {
   font-size: 1.4em;
   color: #800000;

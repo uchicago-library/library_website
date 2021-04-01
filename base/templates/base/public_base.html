@@ -399,19 +399,18 @@
                     {% if self.has_find_spaces %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
                             <h3>Find Spaces</h3>
-                            <div class="studymod row">
-                                <div class="col-xs-4 nopadding">
-                                    <p><a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i></a><br/>
-                                    <span class="hidden-xs hidden-sm hidden-md" aria-role="presentation">Quiet </span>Study</p>
+                            <div class="studymod col-xs-12 columns icon-widget">
+                                <div class="column">
+                                    <a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i>Quiet Study<span class="visually-hidden"> Spaces</span></a>
                                 </div>
-                                <div class="col-xs-4 nopadding">
-                                    <p><a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i></a><br/>Collaboration</p>
+                                <div class="column">
+                                    <a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i>Collaboration<span class="visually-hidden"> Spaces</span></a>
                                 </div>
                                 {% if self.book_a_room_link %}
-                                    <div class="col-xs-4 nopadding">
-                                        <p><a href="{{self.book_a_room_link}}">
-                                        <i class="fa fa-calendar-plus-o fa-lg" aria-hidden="true"></i></a>
-                                        <br/><span class="hidden-xs hidden-sm hidden-md">Book a Room</span><span class="hidden-lg">Reserve</span></p>
+                                    <div class="column">
+                                        <a href="{{self.book_a_room_link}}">
+                                        <i class="fa fa-calendar-plus-o fa-lg" aria-hidden="true"></i>
+                                        Reserve<span class="visually-hidden"> a Space</span></a>
                                     </div>
                                 {% endif %}
                             </div>
