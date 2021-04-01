@@ -139,7 +139,7 @@ InvalidJSON.propTypes = {
 };
 
 const buildField = (elm, state, handleChange) => {
-  const id = elm.name || null;
+  const id = elm.id || elm.name || null;
   const value = elm.value || state[id] || defaultFieldMappings(elm, state) || null;
   const type = elm.type || null;
   const name = elm.name || null;
