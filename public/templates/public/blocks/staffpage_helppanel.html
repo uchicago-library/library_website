@@ -1,0 +1,11 @@
+<fieldset>
+    {% if self.heading %}
+        <legend>{{ self.heading }}</legend>
+    {% endif %}
+    <div class="{{ self.classname }}">
+    	<h2>Want to edit your staff page?</h2>
+    	<h3>Edit your info on your <a href="/admin/pages/{{ self.instance.get_staff_page_id }}/edit/">Loop staff page</a></h3>
+    	<p>(∩｀-´)⊃━☆ﾟ.*･｡ﾟ</p>
+    	<p>This page is a container for your data on the public site. All staff info is housed in <a href="/admin/pages/38/">Loop</a> and gets duplicated onto your public staff page. Do not edit any info on this page or you will break the staff data magic.</p>
+    </div>
+</fieldset>

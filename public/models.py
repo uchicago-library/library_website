@@ -13,8 +13,8 @@ from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS
 from wagtail.admin.edit_handlers import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-    PageChooserPanel, StreamFieldPanel, TabbedInterface
+    FieldPanel, FieldRowPanel, HelpPanel, InlinePanel, MultiFieldPanel,
+    ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
 )
 from wagtail.api import APIField
 from wagtail.core import blocks
@@ -843,8 +843,24 @@ class StaffPublicPage(PublicBasePage):
 
     subpage_types = ['public.StandardPage']
     content_panels = Page.content_panels + [
+        HelpPanel(
+            heading='Editing your staff page',
+            template='public/blocks/staffpage_helppanel.html',
+        ),
         FieldPanel('cnetid')
     ] + PublicBasePage.content_panels
+
+    def get_staff_page_id(self):
+        """
+        Gets the page ID from a loop staff page.
+
+        Returns:
+            ID or empty string.
+        """
+        try:
+            return StaffPage.objects.all().filter(cnetid=self.cnetid)[0].id
+        except (IndexError):
+            return ''
 
     def get_bio(self):
         """
