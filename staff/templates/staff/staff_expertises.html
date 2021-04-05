@@ -1,0 +1,6 @@
+{% if expertises %}
+    <h4><span class="visually-hidden">{{ staff_page.first_name }}'s </span>Expertises</h4>
+    {% for expertise in expertises %}
+	<li>{{ expertise }}</a></li>
+    {% endfor %}
+{% endif %}

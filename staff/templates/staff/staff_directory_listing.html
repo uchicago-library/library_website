@@ -27,16 +27,19 @@
       <ul>
         {% staff_subjects staff_page %}
       </ul>
+      <ul>
+        {% staff_expertises staff_page %}
+      </ul>
       {% endif %}
 
-      {% if staff_page.expertise_placements.all %}
-      <ul>
-          <li>test</li>
-          {% for expertise in expertises %}
-            <li>{{ expertise }}</li>
-          {% endfor %}
-      <ul>
-      {% endif %}
+      <!-- {% if staff_page.expertise_placements.all %} -->
+      <!-- <ul> -->
+      <!--     <li>test</li> -->
+      <!--     {% for expertise in expertises %} -->
+      <!--       <li>{{ expertise }}</li> -->
+      <!--     {% endfor %} -->
+      <!-- <ul> -->
+      <!-- {% endif %} -->
 
       {% if staff_page.libguide_url %}
           <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>

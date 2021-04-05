@@ -134,6 +134,15 @@ def staff_subjects(staff_page):
     return {'subjects': sorted(subjects)}
 
 
+@register.inclusion_tag('staff/staff_expertises.html')
+def staff_expertises(staff_page):
+    expertises = []
+    for expertise in staff_page.expertise_placements.all():
+        expertises.append(expertise.expertise.text)
+
+    return {'expertises': sorted(expertises)}
+
+
 @register.inclusion_tag('staff/staff_public_page_link.html')
 def staff_public_page_link(staff_page):
     try:
