@@ -59,18 +59,16 @@
 
   {% if subjects or libguide_url %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h4>Subject Specialties</h4>
-      <p style="line-height: 1.7em;">
+      <h4>Specialties</h4>
+      <ul>
         {% if subjects %}
             {% autoescape off %}
-                {{subjects}}
+              {% staff_subjects staff_page %}
             {% endautoescape %}
         {% endif %}
-      </p>
+      </ul>
       {% if libguide_url %}
-        <p>
           <a role="button" class="btn btn-morelink" href="{{ libguide_url }}">View Research Guides </a>
-        </p>
       {% endif %}
     </div>
   {% endif %}
@@ -78,11 +76,11 @@
   {% if expertises %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
       <h4>Expertise</h4>
-      <p style="line-height: 1.7em;">
+      <ul>
         {% for expertise in expertises %}
-          {{ expertise }}<br/>
+          <li>{{ expertise }}</li>
         {% endfor %}
-      </p>
+      </ul>
     </div>
   {% endif %}
 {% endblock %}
