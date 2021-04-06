@@ -21,25 +21,22 @@
       {% staff_faculty_exchanges_phone_numbers staff_page %}
       {% staff_libcal_schedules staff_page %}
     </div>
-    <div>
-      {% if staff_page.staff_subject_placements.all %}
+    <div class="sdir-specialties">
+      {% if staff_page.staff_subject_placements.all or staff_page.expertise_placements.all %}
       <h4><span class="visually-hidden">{{ staff_page.first_name }}'s </span>Specialties</h4>
-      <ul>
-        {% staff_subjects staff_page %}
-      </ul>
-      <ul>
-        {% staff_expertises staff_page %}
-      </ul>
       {% endif %}
 
-      <!-- {% if staff_page.expertise_placements.all %} -->
-      <!-- <ul> -->
-      <!--     <li>test</li> -->
-      <!--     {% for expertise in expertises %} -->
-      <!--       <li>{{ expertise }}</li> -->
-      <!--     {% endfor %} -->
-      <!-- <ul> -->
-      <!-- {% endif %} -->
+      {% if staff_page.staff_subject_placements.all %}
+        <ul>
+          {% staff_subjects staff_page %}
+        </ul>
+      {% endif %}
+
+      {% if staff_page.expertise_placements.all %}
+        <ul>
+          {% staff_expertises staff_page %}
+        </ul>
+      {% endif %}
 
       {% if staff_page.libguide_url %}
           <a href="{{ staff_page.libguide_url }}" class="guide-link"> Subject Guides</a>

@@ -57,30 +57,29 @@
     </p>
   </div>
 
-  {% if subjects or libguide_url %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+  {% if subjects or expertises or libguide_url %}
+    <div class="rightside-mod sdir-specialties col-xs-12 col-sm-6 col-md-12">
       <h4>Specialties</h4>
-      <ul>
-        {% if subjects %}
-            {% autoescape off %}
-              {% staff_subjects staff_page %}
-            {% endautoescape %}
-        {% endif %}
-      </ul>
+      {% if subjects %}
+        <ul>
+          {% autoescape off %}
+            {% staff_subjects staff_page %}
+          {% endautoescape %}
+        </ul>
+      {% endif %}
+
+      {% if expertises %}
+        <ul>
+          {% for expertise in expertises %}
+            <li>{{ expertise }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
       {% if libguide_url %}
           <a role="button" class="btn btn-morelink" href="{{ libguide_url }}">View Research Guides </a>
       {% endif %}
     </div>
   {% endif %}
 
-  {% if expertises %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h4>Expertise</h4>
-      <ul>
-        {% for expertise in expertises %}
-          <li>{{ expertise }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
 {% endblock %}

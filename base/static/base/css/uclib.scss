@@ -1916,6 +1916,13 @@ a.coll-access {
   }
 }
 
+.sdir-specialties {
+  ul + ul {
+    border-top: 1px solid $lightgray;
+    padding-top: 0.5em;
+  }
+}
+
 /*
  * Staff Profile Page
  * --------------------------------------------------
