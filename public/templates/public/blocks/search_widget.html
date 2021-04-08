@@ -15,7 +15,6 @@
         <div class="input-group"> <!-- Input Group -->
 	  <label for="lookfor" class="visually-hidden">Search for </label>
           <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search for" class="form-control" id="search_form1" onchange="propagate(this)"/>
-
 	  <input type="hidden" name="which-form" value="catalog">
 	  {% csrf_token %}
           <select class="selectpicker btn-searchtype" aria-label="Limit search to" name="type">
