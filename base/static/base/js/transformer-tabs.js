@@ -56,3 +56,23 @@ var Tabs = {
 }
 
 Tabs.init();
+
+// propagate an input element's content to all the other forms in the
+// search box
+const propagate = (element) => {
+
+    // get all the forms on the search box page
+    const form1 = document.getElementById("search_form1");
+    const form2 = document.getElementById("search_form2");
+    const form3 = document.getElementById("search_form3");
+    const form4 = document.getElementById("search_form4");
+    const form5 = document.getElementById("search_form5");
+
+    const all_the_forms = [ form1, form2, form3, form4, form5 ];
+
+    // propagate content of input element out to other forms
+    var i;
+    for (i = 0; i < all_the_forms.length; i++) {
+	all_the_forms[i].value = element.value
+    }
+};
