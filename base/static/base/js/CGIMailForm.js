@@ -46,7 +46,7 @@ function getType(e) {
 }
 
 function getLabel(e) {
-  const id = e.name || null;
+  const id = e.id || e.name || null;
   const required = e.required || null;
   const labelText = e.label || null;
   if (labelText) {
