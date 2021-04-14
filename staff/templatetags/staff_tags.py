@@ -1,4 +1,5 @@
 from django import template
+from library_website.settings import BUILDINGS
 from public.models import LocationPage, StaffPublicPage
 from staff.utils import libcal_id_by_email
 
@@ -89,18 +90,12 @@ def libcal_button(staff_page, email):
 @register.inclusion_tag('staff/staff_faculty_exchanges_phone_numbers.html')
 def staff_faculty_exchanges_phone_numbers(staff_page):
     libraries = {
-        'JCL':
-        LocationPage.objects.get(title='The John Crerar Library'),
-        'JRL':
-        LocationPage.objects.get(title='The Joseph Regenstein Library'),
-        'LBQ':
-        LocationPage.objects.get(title='The D\'Angelo Law Library'),
-        'Mansueto':
-        LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'MAN':
-        LocationPage.objects.get(title='The Joe and Rika Mansueto Library'),
-        'SSA':
-        LocationPage.objects.get(title='Social Service Administration Library')
+        'JCL': LocationPage.objects.get(title=BUILDINGS[0][1]),
+        'JRL': LocationPage.objects.get(title=BUILDINGS[4][1]),
+        'LBQ': LocationPage.objects.get(title=BUILDINGS[1][1]),
+        'Mansueto': LocationPage.objects.get(title=BUILDINGS[3][1]),
+        'MAN': LocationPage.objects.get(title=BUILDINGS[3][1]),
+        'SSA': LocationPage.objects.get(title=BUILDINGS[6][1])
     }
 
     lib_room_phone = []

@@ -418,8 +418,8 @@ QUICK_NUMS = {
     }],
 }
 
-# This setting is used in units.models. The code needs to be updated
-# to use LocationPage.objects.live().filter(is_building=True) instead.
+# This setting is used in units/models.py and staff/templatetags/staff_tags.py.
+# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead.
 BUILDINGS = (
     (1, 'The John Crerar Library'),
     (2, 'The D\'Angelo Law Library'),
