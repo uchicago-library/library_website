@@ -399,7 +399,7 @@ QUICK_NUMS = {
             'link': None
         }
     ],
-    'special-collections-research-center': [
+    'the-hanna-holborn-gray-special-collections-research-center': [
         {
             'label': 'SCRC Front Desk',
             'number': '773-702-8705',
@@ -410,13 +410,25 @@ QUICK_NUMS = {
             'link': SCRC_ASK_PAGE
         }
     ],
-    'social-service-administration-library':
+    'the-social-service-administration-library':
     [{
         'label': 'SSA Library',
         'number': '773-702-1199',
         'link': None
     }],
 }
+
+# This setting is used in units/models.py and staff/templatetags/staff_tags.py.
+# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead.
+BUILDINGS = (
+    (1, 'The John Crerar Library'),
+    (2, 'The D\'Angelo Law Library'),
+    (3, 'Eckhart Library'),
+    (4, 'The Joe and Rika Mansueto Library'),
+    (5, 'The Joseph Regenstein Library'),
+    (6, 'The Hanna Holborn Gray Special Collections Research Center'),
+    (7, 'The Social Service Administration Library')
+)
 
 # Location pages
 SCRC_BUILDING_ID = 2971

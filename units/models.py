@@ -1,26 +1,15 @@
+from base.models import BasePage, Email, FaxNumber, LinkedText, PhoneNumber
 from django.db import models
-from library_website.settings import PHONE_FORMAT, PHONE_ERROR_MSG
-from wagtail.core.models import Orderable, Page
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import FieldPanel, FieldRowPanel, \
-    InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, \
-    StreamFieldPanel, TabbedInterface
-from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.search import index
-from wagtail.snippets.models import register_snippet
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from library_website.settings import BUILDINGS
 from modelcluster.fields import ParentalKey
-from django.core.validators import RegexValidator
-from base.models import BasePage, DefaultBodyFields, Email, FaxNumber, \
-    LinkedText, PhoneNumber
-
-BUILDINGS = (
-    (1, 'The John Crerar Library'), (2, 'The D\'Angelo Law Library'),
-    (3, 'Eckhart Library'), (4, 'The Joe and Rika Mansueto Library'),
-    (5, 'The Joseph Regenstein Library'),
-    (6, 'Special Collections Research Center'),
-    (7, 'Social Service Administration Library')
+from wagtail.admin.edit_handlers import (
+    FieldPanel, InlinePanel, ObjectList, PageChooserPanel, TabbedInterface
 )
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Orderable, Page
+from wagtail.search import index
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.snippets.models import register_snippet
 
 
 class Tree(object):
