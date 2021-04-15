@@ -32,6 +32,25 @@
 		    {{ block }}
 		{% endfor %}
 
+		{% if self.primary_online_access_link_url and self.primary_online_access_link_label %}
+		    <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
+		{% endif %}
+		
+		{% if self.access_instructions or supplementary_access_links %}
+		    <h3>Access Information</h3>
+
+		    {% if supplementary_access_links %}
+			<p>
+			    {% for l in supplementary_access_links %}
+			        <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
+			    {% endfor %}
+			</p>
+		    {% endif %}
+
+		    {% if self.access_instructions %}
+			<p>{{ self.access_instructions }}</p>
+		    {% endif %}
+		{% endif %}
 	    </div>
 	</div><!--/.row-->
     </article>
