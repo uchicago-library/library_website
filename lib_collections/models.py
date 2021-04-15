@@ -1315,7 +1315,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement', label='Related Collection'),
+        InlinePanel('related_collection_placement',
+                    label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -1401,11 +1402,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
+        show_external_link = self.highlighted_records == ''
+
         # populate context
         context = super(CollectionPage, self).get_context(request)
         context['default_image'] = default_image
         context['sidebar_browse_types'] = sidebar_browse_types
         context['objects'] = objects
+        context['show_external_link'] = show_external_link
 
         # update context with information about staff associated with the
         # relevant collection
@@ -1526,7 +1530,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(
+        max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
@@ -1936,14 +1941,12 @@ class ExhibitPage(PublicBasePage):
     exhibit_open_date = models.DateField(
         blank=True,
         null=True,
-        help_text=
-        'Controls when an exhibit starts being featured as "current" in browse and widgets.'
+        help_text='Controls when an exhibit starts being featured as "current" in browse and widgets.'
     )
     exhibit_close_date = models.DateField(
         blank=True,
         null=True,
-        help_text=
-        'When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
+        help_text='When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
     )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -2107,8 +2110,7 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('ordering_information'),
                 FieldPanel(
                     'publication_url',
-                    help_text=
-                    'If exhibit publication is hosted outside of Library site'
+                    help_text='If exhibit publication is hosted outside of Library site'
                 ),
                 FieldPanel(
                     'web_exhibit_url',
