@@ -193,18 +193,18 @@
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
 
                         {% if carousel_multi %} 
-                            <ol class="carousel-indicators">
+                            <ol class="carousel-indicators" role="listbox">
                                 {% for i in carousel_items %}
                                     <li data-target="#carousel-example-generic" data-slide-to="{{forloop.counter0}}" {% if forloop.first %}class="active"{% endif %}></li>
                                 {% endfor %}
                             </ol>
                         {% endif %}
 
-                        <div class="carousel-inner" {% if carousel_multi %}role="listbox" {% endif %}>
+                        <div class="carousel-inner">
                             {% for item in carousel_items %}
                                 {% image item.image original as nifty %}
                                 {% if nifty %} 
-                                    <div class="item {% if forloop.first %}active{% endif %}">
+                                    <article class="item {% if forloop.first %}active{% endif %}">
                                         {% if item.link %}
                                             <a href="{{item.link}}">
                                         {% endif %}
@@ -223,7 +223,7 @@
                                         {% if item.link %}
                                             </a>
                                         {% endif %}
-                                    </div>
+                                    </article>
                                 {% endif %}
                             {% endfor %}
                         </div>
