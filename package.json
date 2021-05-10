@@ -39,7 +39,7 @@
   "dependencies": {
     "eslint-utils": "^2.0.0",
     "is-my-json-valid": "^2.20.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mixin-deep": "^2.0.1",
     "oboe": "^2.1.4",
     "prop-types": "^15.7.2",
