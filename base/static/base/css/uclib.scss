@@ -149,6 +149,11 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
  * --------------------------------------------------
  */
 
+ a:focus {  // For SiteImprove ADA; Overrides `-webkit-focus-ring-color` from Bootstrap
+  outline: auto!important;
+  outline-offset: unset!important;
+}
+
 .breadcrumbs {
   padding-top: 5px;
   padding-left: 20px;
