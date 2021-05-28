@@ -817,6 +817,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    @route(r'^mockdmaobject/$')
+    def mockdmaobject(self, request, *args, **kwargs):
+        template = "lib_collections/mockdma_object_page.html"
+
+        audio_url = True
+
+        context = super().get_context(request)
+        context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+
+        return TemplateResponse(request, template, context)
+
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
