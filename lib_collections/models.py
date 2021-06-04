@@ -1,6 +1,7 @@
 import datetime
 
 import simplejson
+import os
 import requests
 from base.models import DefaultBodyFields, PublicBasePage
 from collections import OrderedDict
@@ -823,8 +824,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         audio_url = True
 
+        rat = "rat"
+
         context = super().get_context(request)
         context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+        context["rat"] = rat
 
         return TemplateResponse(request, template, context)
 
