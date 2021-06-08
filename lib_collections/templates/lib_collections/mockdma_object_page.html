@@ -143,18 +143,23 @@
 	<h2>
 	    {{ rat }}
 	</h2>
-	
-	<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f8bed2c9-bfb2-41e8-968b-acd2013ac871&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-	<p>Open to the world.</p>
+	{% if is_open %}
+	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f8bed2c9-bfb2-41e8-968b-acd2013ac871&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+	    <p>Open to the world.</p>
+	{% endif %}
 
-	<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=22c97e79-3920-49c3-a1ac-ad3a011985ec&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-	<p>Open to anyone at the organization.</p>
+	{% if is_campus %}
+	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=22c97e79-3920-49c3-a1ac-ad3a011985ec&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+	    <p>Open to anyone at the organization.</p>
+	{% endif %}
 
-	<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-	<p>Open to MT & DB.</p>
+	{% if is_restricted %}
+	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+	    <p>Open to MT & DB.</p>
 
-	<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=d7595248-2e45-4662-83bb-acd2012ed21d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-	<p>Open to someone other than MT.</p>
+	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=d7595248-2e45-4662-83bb-acd2012ed21d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+	    <p>Open to someone other than MT.</p>
+	{% endif %}
 
 	<script>
          // Code to load the IFrame player API code asynchronously
@@ -163,59 +168,6 @@
          tag.src = "https://developers.panopto.com/scripts/embedapi.min.js"
          var firstScriptTag = document.getElementsByTagName('script')[0];
          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-         // The following function creates an <iframe> and Panopto player
-         var embedApi;
-         function onPanoptoEmbedApiReady()
-         {
-             embedApi = new EmbedApi("player", {
-                 width: "750",
-                 height: "422",
-                 //This is the URL of your Panopto site
-                 serverName: "uchicago.hosted.panopto.com",
-                 sessionId: "3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a",
-                 videoParams: { // Optional parameters
-                     //interactivity parameter controls if the user sees table of contents, discussions, notes, & in-video search
-                     "interactivity": "none",
-				"showtitle": "false"
-                 },
-                 events: {
-                     "onIframeReady": onPanoptoIframeReady,
-                     "onReady": onPanoptoVideoReady,
-                     "onStateChange": onPanoptoStateUpdate
-                 }
-             });
-         }
-
-         //The API will call this function when the iframe is ready
-         function onPanoptoIframeReady()
-         {
-             // The iframe is ready and the video is not yet loaded (on the splash screen)
-             // Load video will begin playback
-             embedApi.loadVideo();
-         }
-
-         //The API will call this function when the video player is ready
-         function onPanoptoVideoReady()
-         {
-             // The video has successfully been loaded by onPanoptoIframeReady
-
-             // Seek to 100s
-             embedApi.seekTo(100);
-         }
-
-         //The API calls this function when a player state change happens
-         function onPanoptoStateUpdate(state)
-         {
-             if (state === PlayerState.Playing)
-             {
-                 embedApi.setVolume(0.3);
-                 embedApi.setPlaybackRate(1);
-             }
-         }
-	</script>
-
-	<div id="player"></div>
 	
       {% else %}
 	  <h4>

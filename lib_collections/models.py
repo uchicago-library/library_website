@@ -13,6 +13,7 @@ from django.db import models
 from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
+# from library_website.wsgi import application
 from library_website.settings import (
     CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
     SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
@@ -824,11 +825,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         audio_url = True
 
-        rat = "rat"
+        apache_env = request.environ
+
+        is_open, is_restricted = True, False
+
+        try:
+            is_campus = apache_env["REMOTE_USER"]
+        except KeyError:
+            is_campus = ''
 
         context = super().get_context(request)
         context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
-        context["rat"] = rat
+        context["is_open"] = is_open
+        context["is_campus"] = is_campus
+        context["is_restricted"] = is_restricted
 
         return TemplateResponse(request, template, context)
 
