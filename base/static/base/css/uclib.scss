@@ -108,6 +108,7 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
     text-decoration: none;
     &:hover {
       text-decoration: underline;
+      font-weight: 600;
     }
   }
   .h2 {
@@ -575,6 +576,7 @@ figure.coll-thumb {
     text-decoration: underline;
     &:hover {
       color: $eckhartpurple;
+      font-weight: 600;
     }
   }
   .alert-box {
@@ -596,10 +598,15 @@ figure.coll-thumb {
   a {
     color: $eckhartpurple;
     text-decoration: none;  
-    &:hover, &:focus {
+    &:hover {
       color: $default-link;
       text-decoration: underline;
-    }  
+      font-weight: 600;
+    }
+    &:focus {
+      outline: 2px dashed $crerarblue;
+      outline-offset: 2px;
+    }
   }
   .material-icons {
     vertical-align: middle;
@@ -893,9 +900,14 @@ figure.embed {
   a {
     color: $default-link;
     text-decoration: underline;
-    &:hover, &:focus {
+    &:hover {
       color: $dark-link;
       text-decoration: none;
+      font-weight: 600;
+    }
+    &:focus {
+      outline: 2px dashed $crerarblue;
+      outline-offset: 2px;
     }
   }
   .material-icons, .fa {
@@ -1869,9 +1881,14 @@ a.coll-access {
       a {
         color: $default-link;
         text-decoration: underline;
-        &:hover, &:focus {
+        &:hover {
           color: $dark-link;
           text-decoration: none;
+          font-weight: 600;
+        }
+        &:focus {
+          outline: 2px dashed $crerarblue;
+          outline-offset: 2px;
         }
       }
       &.staff-name {
@@ -1905,9 +1922,14 @@ a.coll-access {
     font-size: 1.1em;
     margin-bottom: 0;
   }
-  a, a:active, a:focus, a:hover {
+  a, a:active, a:hover {
     color: $crerarblue;
     text-decoration: underline;
+    font-weight: 600;
+  }
+  &:focus {
+    outline: 2px dashed $crerarblue;
+    outline-offset: 2px;
   }
   .col-xs-12 {
     padding-bottom: 1em;
