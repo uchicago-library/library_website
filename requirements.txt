@@ -17,7 +17,7 @@ django-redis
 -e git+https://github.com/cafehaine/django-static-precompiler.git@5499f745e5823f6eb9136a7591f9c0d5e2485a18#egg=django-static-precompiler
 django-taggit==1.2.0
 django-treebeard==4.3.1
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 django-webpack-loader==0.7.0
 elasticsearch>=5.0.0,<6.0.0
 feedparser==5.2.1
