@@ -31,7 +31,7 @@ Pillow>=7.1.0,<8
 -e git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
 pocli==0.1.10
 psycopg2>=2.8,<2.9
-Pygments==2.0.2
+Pygments==2.7.4
 pytz==2019.3
 python-dateutil
 rcssmin==1.0.6
