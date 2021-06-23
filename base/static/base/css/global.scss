@@ -59,7 +59,8 @@ a {
     &:hover, &:focus {
       color: #487286;
       outline-offset: 1px;
-      text-decoration: none;
+      text-decoration: underline;
+      text-decoration-style: dotted;
     }
   &.social {
     color: #767676;

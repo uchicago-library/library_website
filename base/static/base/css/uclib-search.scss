@@ -10,6 +10,11 @@ Other Search Row
 @import "variables.scss";
 @import "media.scss";
 
+
+.bootstrap-select.btn-group .dropdown-toggle .filter-option { // ADA automation error silencer
+  overflow: visible!important; 
+}
+
 /*
  * Search Type Tabs
  * --------------------------------------------------
