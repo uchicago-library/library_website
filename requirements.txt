@@ -1,5 +1,5 @@
 beautifulsoup4==4.8.2
-bleach==3.1.4
+bleach==3.3.0
 DateTime==4.0.1
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
@@ -24,22 +24,22 @@ libsass==0.19.4
 lxml
 networkx
 openpyxl
-Pillow>=7.1.0,<8
+Pillow>=8.2.0,<9
 -e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 -e git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
 pocli==0.1.10
 psycopg2>=2.8,<2.9
-Pygments==2.0.2
+Pygments==2.7.4
 pytz==2019.3
 python-dateutil
 rcssmin==1.0.6
-requests==2.23.0
+requests>=requests==2.25.1,<2.26.0
 rjsmin==1.1.0
 simplejson==3.11.1
 six==1.14.0
 sqlparse==0.3.1
 Unidecode==1.1.1
-urllib3==1.25.9
+urllib3==1.26.5
 wagtail==2.12.5
 wagtailmedia==0.5.0
 wagtail-cache==1.0.0
