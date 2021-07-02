@@ -138,10 +138,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Featured Library Expert
     featured_library_expert_fallback = StreamField(
-        FeaturedLibraryExpertBaseFields(required=False), default=[]
+        FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
     featured_library_experts = StreamField(
-        FeaturedLibraryExpertFields(required=False), default=[]
+        FeaturedLibraryExpertFields(required=False), blank=True, default=[]
     )
 
     subpage_types = [
