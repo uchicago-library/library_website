@@ -417,7 +417,7 @@ QUICK_NUMS = {
 }
 
 # This setting is used in units/models.py and staff/templatetags/staff_tags.py.
-# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead.
+# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead
 BUILDINGS = (
     (1, 'The John Crerar Library'),
     (2, 'The D\'Angelo Law Library'),
@@ -425,7 +425,7 @@ BUILDINGS = (
     (4, 'The Joe and Rika Mansueto Library'),
     (5, 'The Joseph Regenstein Library'),
     (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Service Administration Library')
+    (7, 'The Social Work Library')
 )
 
 # Location pages
