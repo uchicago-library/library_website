@@ -118,7 +118,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     A standard basic page.
     """
     # Page content
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(DefaultBodyFields(), blank=True)
 
     # Search widget
     enable_search_widget = models.BooleanField(default=False)
