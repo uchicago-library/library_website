@@ -408,7 +408,7 @@ QUICK_NUMS = {
             'link': SCRC_ASK_PAGE
         }
     ],
-    'the-social-service-administration-library':
+    'the-social-work-library':
     [{
         'label': 'SSA Library',
         'number': '773-702-1199',
