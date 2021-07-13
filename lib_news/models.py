@@ -339,7 +339,7 @@ class LibNewsPage(PublicBasePage):
     is_feature_story = models.BooleanField(default=False)
     excerpt = RichTextField(blank=True)
     related_exhibits = StreamField(
-        RelatedExhibitBlock(required=False), default=[]
+        RelatedExhibitBlock(required=False), blank=True, default=[]
     )
     by_staff_or_unit = models.ForeignKey(
         'lib_news.PublicNewsAuthors',

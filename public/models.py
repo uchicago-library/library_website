@@ -118,7 +118,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     A standard basic page.
     """
     # Page content
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(DefaultBodyFields(), blank=True)
 
     # Search widget
     enable_search_widget = models.BooleanField(default=False)
@@ -138,10 +138,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Featured Library Expert
     featured_library_expert_fallback = StreamField(
-        FeaturedLibraryExpertBaseFields(required=False), default=[]
+        FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
     featured_library_experts = StreamField(
-        FeaturedLibraryExpertFields(required=False), default=[]
+        FeaturedLibraryExpertFields(required=False), blank=True, default=[]
     )
 
     subpage_types = [
