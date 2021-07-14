@@ -33,7 +33,7 @@ Pygments==2.7.4
 pytz==2019.3
 python-dateutil
 rcssmin==1.0.6
-requests>=requests==2.25.1,<2.26.0
+requests>=2.25.1,<2.26.0
 rjsmin==1.1.0
 simplejson==3.11.1
 six==1.14.0
