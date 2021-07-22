@@ -517,7 +517,7 @@ LIBCAL_CREDENTIALS = {
 }
 
 # CGIMail Forms
-CGI_MAIL_SERVICE = 'https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail'
+CGI_MAIL_SERVICE = '/cgi-bin/cgimail/cgimail'
 ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
 SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
