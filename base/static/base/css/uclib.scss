@@ -566,7 +566,7 @@ figure.coll-thumb {
   }
 }
 
-.block-reusable_content { // in-page content styling
+.block-reusable_content, .block-reusable_content_block { // in-page content styling
   margin-bottom: 0.5em;
   h2 {
     margin-top: 0;
@@ -1637,6 +1637,7 @@ td.time, td.event-nav {
 .features-list {
   line-height: 2em;
   list-style: none;
+  padding-left: 0;
 }
 
 .locations-list {
@@ -1668,6 +1669,14 @@ td.time, td.event-nav {
       color: #fff;
       background-color: $active-hover;
   }
+}
+
+img.spaces {
+  padding-top: 1em;
+}
+
+h2.spaces {
+  margin-top: 0.75em;
 }
 
 /*
