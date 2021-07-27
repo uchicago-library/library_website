@@ -282,7 +282,7 @@ Right Sidebar: Widget Items
     font-style: normal;
     margin-bottom: 0.25em;
   }
-  ul {
+  ul:not(.features-list) {
     list-style: none;
     margin-left: 0;
     padding-left: 1em;

@@ -2,7 +2,8 @@ from datetime import date
 
 from base.models import (
     Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
-    PhoneNumber, PublicBasePage, RawHTMLBodyField, SocialMediaFields
+    PhoneNumber, PublicBasePage, RawHTMLBodyField, RawHTMLBlock,
+    ReusableContentBlock, SocialMediaFields
 )
 from django.db import models
 from django.db.models.fields import CharField
@@ -18,6 +19,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.api import APIField
 from wagtail.core import blocks
+from wagtail.core.blocks import RichTextBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, Site
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -531,6 +533,15 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     # Model fields
     short_description = models.TextField(null=False, blank=False)
+    page_alerts = StreamField(
+        [
+            ('paragraph', RichTextBlock()),
+            ('reusable_content_block', ReusableContentBlock()),
+            ('html', RawHTMLBlock()),
+        ],
+        null=True,
+        blank=True,
+    )
     long_description = RichTextField(null=False, blank=False)
     parent_building = models.ForeignKey(
         'self',
@@ -636,6 +647,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
     widget_content_panels = [
+        StreamFieldPanel('page_alerts'),
         MultiFieldPanel(
             [
                 FieldPanel('quicklinks_title'),

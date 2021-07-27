@@ -5,12 +5,13 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
+    {{ self.page_alerts }}
     <article>
             <div class="col-xs-12 col-sm-4">
                 {% if self.location_photo %}
-                    {% image self.location_photo width-200 class="img-responsive" %}
+                    {% image self.location_photo width-500 class="img-responsive spaces" %}
                 {% else %}
-                    {% image default_image width-200 class="img-responsive" %}
+                    {% image default_image width-500 class="img-responsive spaces" %}
                 {% endif %}
                 {% if self.address_1 %}
                     <p>
@@ -29,7 +30,7 @@
             </div><!--/.col-->
 
             <div class="col-xs-12 col-sm-8">
-                <h2>About</h2>
+                <h2 class="spaces">About</h2>
                 {{ self.long_description|richtext }}
             </div><!--/.col-->
 
