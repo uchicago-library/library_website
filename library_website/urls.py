@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^ebooks-search/$', ebooks_search, name='ebooks'),
     url(r'^api/v2/', api_router.urls),
     url('^inventory\.xml$', sitemap),
-    # url(r'^spaces/$', spaces_view, name='spaces'),
+    url(r'^spaces/$', spaces_view, name='spaces'),
     url(r'^staff/$', staff, name='staff'),
     url(r'^staff_api/$', staff_api, name='staff_api'),
     url(r'^about/directory/$', unit_view, name='unit'),
@@ -61,9 +61,7 @@ urlpatterns = [
     url(r'^workflowautomator/', include('workflowautomator.urls')),
     url(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
     url(r'', include(wagtail_urls)),
-] + static(
-    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Prepend the shibboleth logout url if the application
 # is configured for shibboleth
@@ -76,5 +74,4 @@ if settings.DEBUG:
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

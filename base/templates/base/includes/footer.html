@@ -10,10 +10,6 @@
                 <li><a href="/about/directory/?view=department" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Library Departments">Library Departments</a></li>
                 <li><a href="/about/directory/?view=staff" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Contact &gt; Staff Directory">Staff Directory</a></li>
             </ul>
-            <span class="footer-heading" id="policies_label">Policies</span>
-            <ul aria-labelledby="policies_label">
-                <li><a href="/about/thelibrary/policies/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Policies &gt; Library Policies">Library Policies</a></li>
-            </ul>
         </div>
         <!-- // Contact -->
 
@@ -25,18 +21,16 @@
             {% if is_law %}
                 <li><a href="http://guides.lib.uchicago.edu/lawfacultyservices" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Law Faculty</a></li>
                 <li><a href="http://guides.lib.uchicago.edu/lawstudents" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Law Students</a></li>
-            {% else %}
-                <li><a href="/research/help/infofor/faculty/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Faculty">Faculty</a></li>
-                <li><a href="/research/help/infofor/students/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Students">Students</a></li>
-            {% endif %}
-                <li><a href="/research/help/infofor/staff/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; University Staff">University Staff</a></li>
-            {% if is_law %}
                 <li><a href="/law/about/access/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visiting the Law Library</a></li>
-            {% else %}
-                <li><a href="/research/help/infofor/information-visitors/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Visitors">Visitors</a></li>
             {% endif %}
-                <li><a href="/research/help/infofor/alumni/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Alumni &amp; Library Friends">Alumni &amp; Library Friends</a></li>
                 <li><a href="/research/help/infofor/accessibility/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Information for &gt; Patrons with Disabilities">Patrons with Disabilities</a></li>
+            </ul>
+
+            <span class="footer-heading" id="policies_label">Policies</span>
+            <ul aria-labelledby="policies_label">
+                <li><a href="/about/thelibrary/policies/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Policies &gt; Library Policies">Library Policies</a></li>
+                <li><a href="/about/thelibrary/policies/privacy/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Policies &gt; Privacy Statement">Privacy Statement</a></li>
+                <li><a href="https://accessibility.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Policies &gt; University Accessibility">University Accessibility</a></li>
             </ul>
         </div>
         <!-- // Information -->
@@ -83,9 +77,7 @@
                 <a href="//www.uchicago.edu/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="The University of Chicago"><img alt="The University of Chicago" src="{% static "base/images/unvlogo-white.png" %}" width="150" /></a>
                 <!-- Library Location: Address -->
                 <p><span>{{page_location}}</span><br/><span>{{address}}</span></p>
-                <small><a href="/about/thelibrary/policies/privacy/" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Privacy Statement">Privacy Statement</a><br/>
-                <a href="https://accessibility.uchicago.edu/">University Accessibility</a><br/>
-                &copy; <span>The University of Chicago</span><br/>
+                <small>&copy; <span>The University of Chicago</span><br/>
                 <span class="staff-login"><a href="/admin" data-ga-category="footer-links" data-ga-action="click" data-ga-label="Staff Login">Staff Login</a></span>
                 </small>
             </div>
