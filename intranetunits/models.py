@@ -43,9 +43,7 @@ class IntranetUnitsReportsIndexPage(BasePage):
         """
         context = super(IntranetUnitsReportsIndexPage,
                         self).get_context(request)
-        year_pages = Page.objects.live().descendant_of(
-            self.get_parent()
-        ).type(IntranetUnitsReportsPage).order_by('-title')
+        year_pages = self.get_children().order_by('-title')
 
         data = []
         for page in year_pages:
