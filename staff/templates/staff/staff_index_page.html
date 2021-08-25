@@ -21,12 +21,12 @@
               </div><!--// bg-directory-->
 
               <div class="row">
-                <div class="col-xs-12 col-md-7 bg-filter">
+                <div class="col-xs-12 col-md-7 bg-filter" role="group" aria-label="Filter Staff Results">
                   {% if view == 'staff' %} 
-                    <div class="dir-subheader">Browse</div>
+                    <div class="dir-subheader" id="browseBy">Browse</div>
                     <div class="btn-group bg-filter">
                         <button style="padding: 5px 15px;" class="btn btn-directory" type="button">{% if library %}{{ library }}{% else %}Library{% endif %}</button>
-                        <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button">
+                        <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" style="padding: 5px 10px;" class="btn btn-directory dropdown-toggle" type="button" aria-labelledby="browseBy">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>

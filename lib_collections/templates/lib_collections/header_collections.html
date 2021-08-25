@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-6">
+<div class="col-xs-12 col-sm-6" role="navigation" aria-label="Switch Browse Type">
   <div class="btn-group spaces-toggle">
     <a class="btn btn-list-toggle active" href="?view=collections"><span class="visually-hidden">Currently viewing</span> Collections</a>
     <a class="btn btn-list-toggle" href="?view=exhibits"><span class="visually-hidden">Switch to</span> Exhibits</a>
@@ -16,11 +16,11 @@
   </form>
 </div>
 
-<div class="col-xs-12 col-sm-7 coll-dropdown">
-  <span class="headline">Browse by</span>
+<div class="col-xs-12 col-sm-7 coll-dropdown" role="group" aria-label="Filter Results">
+  <span class="headline" id="browseBy">Browse by</span>
 
   <div class="btn-group">
-    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button" aria-labelledby="browseBy">
       <span class="visually-hidden">Browse by</span> Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
