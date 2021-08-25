@@ -1913,9 +1913,11 @@ a.coll-access {
       }
     }
     ul {
-      padding-left: 1em;
-      text-indent: -1em;
       list-style: none;
+      @include respond-to(small) {
+        padding-left: 1em;
+        text-indent: -1em;
+      }
       li {
         margin-bottom: 0.35rem;
         font-size: 1.35rem;
