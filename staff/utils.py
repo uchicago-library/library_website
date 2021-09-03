@@ -781,7 +781,7 @@ def get_token(url, data):
     try:
         resp = requests.post(url, data)
         return resp.json()['access_token']
-    except(KeyError, requests.exceptions.MissingSchema):
+    except(KeyError, requests.exceptions.RequestException):
         return ''
 
 
@@ -804,7 +804,7 @@ def lookup_staff_ids():
         # the wrong URL will not return JSON
         json = resp.json()
         return {person['email']: person['id'] for person in json}
-    except(JSONDecodeError, requests.exceptions.MissingSchema):
+    except(JSONDecodeError, requests.exceptions.RequestException):
         return ''
 
 
