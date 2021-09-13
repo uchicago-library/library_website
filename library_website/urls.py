@@ -11,6 +11,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
+from item_servlet.views import item_servlet
 from lib_collections.views import collections as collection_view
 from lib_collections.views import citation_display as citation_display
 from lib_news.views import ltdrfr
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r'^json-events/', json_events, name='json-events'),
     url(r'^external-include/', external_include, name='external-include'),
     url(r'^chat-status/', chat_status, name='chat-status'),
+    url(r'^item-servlet/', item_servlet, name='item-servlet'),
     url(r'^results/$', results_view, name='results'),
     url(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
     url(r'^loop-search/$', search_view, name='search'),
