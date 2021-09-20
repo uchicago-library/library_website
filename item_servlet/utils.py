@@ -2,16 +2,14 @@ import json
 
 import requests
 
-from library_website.settings import (
-    FOLIO_BASE_URL, FOLIO_PASSWORD, FOLIO_TENANT, FOLIO_USERNAME
-)
+from django.conf import settings
 
 TIMEOUT = 2
 
 GENERIC_HEADERS = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-Okapi-Tenant': '%s' % FOLIO_TENANT
+    'X-Okapi-Tenant': '%s' % settings.FOLIO_TENANT
 }
 
 
@@ -25,10 +23,10 @@ def get_auth():
     data = {"x-okapi-token": '', 'refreshtoken': ''}
     try:
         payload = '{"username": "%s", "password": "%s"}' % (
-            FOLIO_USERNAME, FOLIO_PASSWORD
+            settings.FOLIO_USERNAME, settings.FOLIO_PASSWORD
         )
         response = requests.post(
-            FOLIO_BASE_URL + '/authn/login',
+            settings.FOLIO_BASE_URL + '/authn/login',
             headers=GENERIC_HEADERS,
             data=payload,
             timeout=TIMEOUT
@@ -65,11 +63,8 @@ def get_instances(bib, token):
         q = "(hrid==%s)" % bib
         headers = GENERIC_HEADERS
         headers.update({'X-Okapi-Token': token})
-        response = requests.get(
-            FOLIO_BASE_URL + '/instance-storage/instances?query=%s' % q,
-            headers=headers,
-            timeout=TIMEOUT
-        )
+        url = settings.FOLIO_BASE_URL + '/instance-storage/instances?query=%s' % q
+        response = requests.get(url, headers=headers, timeout=TIMEOUT)
         return json.loads(response.content)['instances'][0]
     except (
         requests.exceptions.Timeout, json.decoder.JSONDecodeError,
@@ -97,7 +92,7 @@ def get_holdings(instance_id, token):
         headers = GENERIC_HEADERS
         headers.update({'X-Okapi-Token': token})
         response = requests.get(
-            FOLIO_BASE_URL + '/holdings-storage/holdings?query=%s' % q,
+            settings.FOLIO_BASE_URL + '/holdings-storage/holdings?query=%s' % q,
             headers=headers,
             timeout=TIMEOUT
         )
@@ -125,21 +120,18 @@ def get_item(holdings, barcode, token):
     """
     if holdings and barcode and token:
         try:
-            for holding in holdings['holdingsRecords']:
-                holdings_record_id = holding['id']
-                q = '(holdingsRecordId=="' + holdings_record_id + \
-                    '" AND barcode=' + barcode + ' NOT discoverySuppress==true)'
-                headers = GENERIC_HEADERS
-                headers.update({'X-Okapi-Token': token})
-                response = requests.get(
-                    FOLIO_BASE_URL + '/item-storage/items?query=%s' % q,
-                    headers=headers,
-                    timeout=TIMEOUT
-                )
-                return json.loads(response.content)['items'][0]
+            holding = holdings['holdingsRecords'][0]
+            holdings_record_id = holding['id']
+            q = '(holdingsRecordId=="' + holdings_record_id + \
+                '" AND barcode=' + barcode + ' NOT discoverySuppress==true)'
+            headers = GENERIC_HEADERS
+            headers.update({'X-Okapi-Token': token})
+            url = settings.FOLIO_BASE_URL + '/item-storage/items?query=%s' % q
+            response = requests.get(url, headers=headers, timeout=TIMEOUT)
+            return json.loads(response.content)['items'][0]
         except (
             requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-            requests.exceptions.ConnectionError
+            requests.exceptions.ConnectionError, KeyError
         ):
             pass
     return dict()
@@ -161,7 +153,7 @@ def get_location(loc_id, token):
     headers.update({'X-Okapi-Token': token})
     try:
         response = requests.get(
-            FOLIO_BASE_URL + '/locations/%s' % loc_id,
+            settings.FOLIO_BASE_URL + '/locations/%s' % loc_id,
             headers=headers,
             timeout=TIMEOUT
         )

@@ -72,7 +72,7 @@ def parse_data(instances, item, location, bib=None, barcode=None):
         data['dateIssued'] = sep.join(d for d in publication_range)
     if editions:
         data['edition'] = sep.join(e for e in editions)
-    if barcode:
+    if barcode and item:
         data['barcode'] = barcode
         callnum = item.get('effectiveCallNumberComponents')
         if callnum:
