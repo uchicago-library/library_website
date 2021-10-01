@@ -583,6 +583,12 @@ CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
 # digital collecitons app
 COLLECTION_OBJECT_TRUNCATE = 25
 
+# Folio API
+FOLIO_USERNAME = ''
+FOLIO_PASSWORD = ''
+FOLIO_TENANT = ''
+FOLIO_BASE_URL = ''
+
 # Folio IDs
 FOLIO_TYPE_ISBN_ID = '8261054f-be78-422d-bd51-4ed9f33c3422'
 FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
