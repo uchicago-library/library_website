@@ -2,17 +2,14 @@ import base64
 import json
 from http.client import HTTPSConnection
 
-import feedparser
 import requests
-from bs4 import BeautifulSoup
-from django.utils.html import strip_tags
 from django.utils.text import slugify
 from wagtail.core.models import Page
 from wagtail.documents.models import Document
 
 from library_website.settings import (
     ADDRESS_TEMPLATE, CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
-    HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE, NEWS_CATEGORIES,
+    HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE,
     SCRC_HOMEPAGE, SSA_HOMEPAGE
 )
 

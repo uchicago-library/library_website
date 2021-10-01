@@ -110,7 +110,7 @@ class StandardPageCarouselItem(Orderable, CarouselItem):
 
 class StandardPageIconLinkItem(Orderable, IconLinkItem):
     """
-    Carousel widgets for standard pages
+    Custom icon links widget for standard pages
     """
     page = ParentalKey('public.StandardPage', related_name='icon_link_items')
 
@@ -128,6 +128,15 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     # Find spaces fields
     enable_find_spaces = models.BooleanField(default=False)
     book_a_room_link = models.URLField(max_length=255, blank=True, default='')
+
+    # Custom icons fields
+    widget_title = models.CharField(max_length=100, blank=True)
+    more_icons_link = models.URLField(
+        max_length=255, blank=True, default='', verbose_name='View More Link'
+    )
+    more_icons_link_label = models.CharField(
+        max_length=100, blank=True, verbose_name='View More Link Label'
+    )
 
     # Featured collections
     collection_page = models.ForeignKey(
@@ -242,7 +251,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             heading='Rich Text'
         ),
         InlinePanel('carousel_items', label='Carousel items'),
-        InlinePanel('icon_link_items', max_num=3, label='Icon Link items'),
+        MultiFieldPanel(
+            [
+                FieldPanel('widget_title'),
+                InlinePanel(
+                    'icon_link_items', max_num=3, label='Icon Link items'
+                ),
+                FieldPanel('more_icons_link'),
+                FieldPanel('more_icons_link_label'),
+            ],
+            heading='Custom Icon Links'
+        ),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
