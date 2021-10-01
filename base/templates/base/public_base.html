@@ -378,7 +378,9 @@
 
                     {% if self.has_icon_link_items %}
                         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h3>Reserve Seats</h3>
+                            {% if self.widget_title %}
+                                <h3>{{self.widget_title}}</h3>
+                            {% endif %}
                             <div class="col-xs-12 columns icon-widget">
                                 {% for item in self.icon_link_items.all %}
                                     <div class="column">
@@ -393,6 +395,9 @@
                                     </div>
                                 {% endfor %}
                             </div>
+                            {% if self.more_icons_link and self.more_icons_link_label %}
+                                <p><a href="{{self.more_icons_link}}" class="btn btn-morelink" role="button">{{self.more_icons_link_label}}</a></p>
+                            {% endif %}
                         </div>
                     {% endif %}
 
