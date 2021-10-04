@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'intranethome',
     'intranettocs',
     'intranetunits',
+    'item_servlet',
     'lib_collections',
     'lib_news',
     'library_website',
@@ -581,3 +582,14 @@ CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
 # how many characters to truncate breadcrumb trail text at, in the
 # digital collecitons app
 COLLECTION_OBJECT_TRUNCATE = 25
+
+# Folio API
+FOLIO_USERNAME = ''
+FOLIO_PASSWORD = ''
+FOLIO_TENANT = ''
+FOLIO_BASE_URL = ''
+
+# Folio IDs
+FOLIO_TYPE_ISBN_ID = '8261054f-be78-422d-bd51-4ed9f33c3422'
+FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
+FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
