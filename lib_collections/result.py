@@ -8,7 +8,7 @@ from functools import reduce
 import requests
 
 
-class Result:
+class Result():
 
     class Ok():
 
@@ -36,40 +36,49 @@ class Result:
     def error(val):
         return (Result.Error(), val)
 
-    def is_ok(result):
-        (r, v) = result
-        return r.is_ok
+    class Validations():
 
-    def is_error(result):
-        (r, v) = result
-        return r.is_error
+        def check_type(result):
+            try:
+                (r, v) = result
+                _ = r.is_ok
+                _ = r.is_error
+                return result
+            except (TypeError, AttributeError, ValueError):
+                return Result.error(
+                    TypeError("Result: input must be a result tuple")
+                )
 
-    def bind(mx, kleisli):
-        if Result.is_ok(mx):
-            (r, v) = mx
-            return kleisli(v)
-        elif Result.is_error(mx):
-            return mx
+    def is_ok(result, check_type=True):
+        if check_type:
+            (r, v) = Result.Validations.check_type(result)
+            return r.is_ok
         else:
-            raise Exception("Result: invalid data formatting")
+            (r, v) = result
+            return r.is_ok
 
-    def kleisli_fish(mf, mg):
-        def partial(x):
-            return Result.bind(mf(x), mg)
-        return partial
+    def is_error(result, check_type=True):
+        if check_type:
+            (r, v) = Result.Validations.check_type(result)
+            return r.is_error
+        else:
+            (r, v) = result
+            return r.is_error
 
-    def multibind(mx, *kleislis):
-        return Result.bind(mx, reduce(Result.kleisli_fish, kleislis))
-
-    def multimap(x, *kleislis):
-        return Result.multibind(Result.pure(x), *kleislis)
-
-    def get(url):
-        try:
-            r = requests.get(url)
-            return Result.ok(r)
-        except Exception as e:
-            return Result.error(e)
+    def bind(mx, kleisli, check_type=True):
+        if check_type:
+            val = Result.Validations.check_type(mx)
+        else:
+            val = mx
+        if Result.is_ok(val, check_type=check_type):
+            (r, v) = val
+            return kleisli(v)
+        elif Result.is_error(val, check_type=check_type):
+            return val
+        else:
+            return Result.error(
+                Exception("Result: invalid data formatting")
+            )
 
     def map_error(result, f):
         (r, v) = result
@@ -78,7 +87,38 @@ class Result:
         elif result.is_error:
             return Result.error(f(v))
         else:
-            raise Exception("Result: invalid data formatting")
+            return Result.error(
+                Exception("Result: invalid data formatting")
+            )
+
+    def kleisli_fish(mf, mg):
+        def partial(x):
+            return Result.bind(mf(x), mg)
+        return partial
+
+    def multibind(mx, *kleislis, check_type=True):
+        if check_type:
+            return Result.bind(mx,
+                               reduce(Result.kleisli_fish,
+                                      kleislis),
+                               check_type=check_type)
+        else:
+            return Result.bind(mx,
+                               reduce(Result.kleisli_fish,
+                                      kleislis),
+                               check_type=check_type)
+
+    def multimap(x, *kleislis):
+        return Result.multibind(Result.pure(x), *kleislis)
+
+    check_type = Validations.check_type
+
+    def get(url):
+        try:
+            r = requests.get(url)
+            return Result.ok(r)
+        except Exception as e:
+            return Result.error(e)
 
 
 class Examples():
