@@ -8,18 +8,18 @@
     <article>
           <div class="row">
             <div class="col-xs-12 col-sm-6">
-                <div class="btn-group spaces-toggle">
-                  <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" href="?space_type=is_study_space">To Study</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" href="?space_type=is_teaching_space">To Teach</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" href="?space_type=is_event_space">For Events</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_special_use' %} active {% endif %}" href="?space_type=is_special_use">Special Use</a>
+                <div class="btn-group spaces-toggle" role="navigation" aria-label="Browse Space Type">
+                  <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" aria-selected="{% if space_type == 'is_study_space' %}true{% else %}false{% endif %}" href="?space_type=is_study_space">To Study</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_teaching_space' %}true{% else %}false{% endif %}" href="?space_type=is_teaching_space">To Teach</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_event_space' %}true{% else %}false{% endif %}" href="?space_type=is_event_space">For Events</a>
+                  <a class="btn btn-list-toggle{% if space_type == 'is_special_use' %} active {% endif %}" aria-selected="{% if space_type == 'is_special_use' %}true{% else %}false{% endif %}" href="?space_type=is_special_use">Special Use</a>
                 </div>
             </div>
         
-            <div class="col-xs-12 col-sm-6 coll-dropdown">
-                <span class="headline">Filter by</span>
+            <div class="col-xs-12 col-sm-6 coll-dropdown" role="group" aria-label="Filter Results">
+                <span class="headline" id="filterBy">Filter by</span>
                 <div class="btn-group">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button">
+                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button" aria-labelledby="filterBy">
                     {% if building %}
                         {{ building }}
                     {% else %}
@@ -87,52 +87,52 @@
                 </div>          
             </div>
         </div>
-        <table class="table table-striped spacelist">
-            <tbody>
-            <tr class="etable-header">
-                <th colspan="4">
-                    {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
-                    {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
-                    {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
-                    {% if space_type == 'is_special_use' %}All Special Use Spaces{% endif %}
-                </th>
-            </tr>
-            {% for space in spaces %}
-              <tr>
-                <td>
-                  {% if space.location_photo %}
-                    {% image space.location_photo width-200 %}
-                  {% else %}
-                    {% image default_image width-200 %}
-                  {% endif %}
-                </td>
-                <td>
-                    <a href="{{ space.url }}">{{ space.title }}</a><br/>
-                    {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
-                    <!-- floor coming soon -->
-                    {% if space.reservation_url %}
-                        <form action="{{ space.reservation_url }}" method="get">
-                            <button class="btn btn-reserve" type="submit">
-                                {% if space.reservation_display_text %}
-                                    {{space.reservation_display_text}}
-                                {% else %}
-                                    Reserve
-                                {% endif %}
-                            </button>
-                        </form>
-                    {% endif %}
-                </td>
-                <td>
-                    {% autoescape off %}
-                        {{space.features_html}} 
-                    {% endautoescape %}
-                </td>
-                <td>
-                    {{ space.short_description|safe }}
-                </td>
-              </tr>
+        <div class="row sdir spacelist">
+            <h2>
+                {% if space_type == 'is_study_space' %}All Study Spaces{% endif %}
+                {% if space_type == 'is_teaching_space' %}All Teaching Spaces{% endif %}
+                {% if space_type == 'is_event_space' %}All Event Spaces{% endif %}
+                {% if space_type == 'is_special_use' %}All Special Use Spaces{% endif %}
+            </h2>
+            {% for space in spaces %}                
+                <article>
+                    <div>
+                        <h3><a href="{{ space.url }}">{{ space.title }}</a></h3>
+                        {% if space.parent_building %}{{ space.parent_building }}<br/>{% endif %}
+                        <!-- floor coming soon -->
+                        {% if space.reservation_url %}
+                            <form action="{{ space.reservation_url }}" method="get">
+                                <button class="btn btn-reserve" type="submit">
+                                    {% if space.reservation_display_text %}
+                                        {{space.reservation_display_text}}
+                                    {% else %}
+                                        Reserve
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% autoescape off %}
+                        <h3 class="visually-hidden">features of {{ space.title }}</h3>
+                            {{space.features_html}} 
+                        {% endautoescape %}
+                    </div>
+                    <div>
+                        <h3 class="visually-hidden">space description</h3>
+                        {{ space.short_description|safe }}
+                    </div>
+                    <div class="profile-image">
+                        {% if space.location_photo %}
+                            {% image space.location_photo width-100 %}
+                        {% else %}
+                            {% image default_image width-100 %}
+                        {% endif %}
+                    </div>
+                </article>
+                {% empty %}
+                    <p class="empty-state">
+                      <span class="nothing">Sorry, no spaces available with these features</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
+                    </p>
             {% endfor %}
-          </tbody>
-        </table>
-    </article>
 {% endblock %}

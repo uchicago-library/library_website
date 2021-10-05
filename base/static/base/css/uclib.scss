@@ -62,6 +62,10 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
    @include visually-hidden;
 }
 
+body.libnewsindexpage article .img-object .preload span {
+  color: #000000;
+}
+
  .h1-banner, #p-4898 h1, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
   @include visually-hidden;
 }
@@ -108,6 +112,7 @@ body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .b
     text-decoration: none;
     &:hover {
       text-decoration: underline;
+      font-weight: 600;
     }
   }
   .h2 {
@@ -478,6 +483,7 @@ figure.coll-thumb {
 }
 
 .carousel-inner {
+  background-color: #575757;
   &>.item>a>img, &>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
     width: 100%
   }
@@ -565,7 +571,7 @@ figure.coll-thumb {
   }
 }
 
-.block-reusable_content { // in-page content styling
+.block-reusable_content, .block-reusable_content_block { // in-page content styling
   margin-bottom: 0.5em;
   h2 {
     margin-top: 0;
@@ -575,6 +581,7 @@ figure.coll-thumb {
     text-decoration: underline;
     &:hover {
       color: $eckhartpurple;
+      font-weight: 600;
     }
   }
   .alert-box {
@@ -596,10 +603,15 @@ figure.coll-thumb {
   a {
     color: $eckhartpurple;
     text-decoration: none;  
-    &:hover, &:focus {
+    &:hover {
       color: $default-link;
       text-decoration: underline;
-    }  
+      font-weight: 600;
+    }
+    &:focus {
+      outline: 2px dashed $crerarblue;
+      outline-offset: 2px;
+    }
   }
   .material-icons {
     vertical-align: middle;
@@ -893,9 +905,14 @@ figure.embed {
   a {
     color: $default-link;
     text-decoration: underline;
-    &:hover, &:focus {
+    &:hover {
       color: $dark-link;
       text-decoration: none;
+      font-weight: 600;
+    }
+    &:focus {
+      outline: 2px dashed $crerarblue;
+      outline-offset: 2px;
     }
   }
   .material-icons, .fa {
@@ -1625,6 +1642,7 @@ td.time, td.event-nav {
 .features-list {
   line-height: 2em;
   list-style: none;
+  padding-left: 0;
 }
 
 .locations-list {
@@ -1656,6 +1674,14 @@ td.time, td.event-nav {
       color: #fff;
       background-color: $active-hover;
   }
+}
+
+img.spaces {
+  padding-top: 1em;
+}
+
+h2.spaces {
+  margin-top: 0.75em;
 }
 
 /*
@@ -1869,9 +1895,14 @@ a.coll-access {
       a {
         color: $default-link;
         text-decoration: underline;
-        &:hover, &:focus {
+        &:hover {
           color: $dark-link;
           text-decoration: none;
+          font-weight: 600;
+        }
+        &:focus {
+          outline: 2px dashed $crerarblue;
+          outline-offset: 2px;
         }
       }
       &.staff-name {
@@ -1887,9 +1918,11 @@ a.coll-access {
       }
     }
     ul {
-      padding-left: 1em;
-      text-indent: -1em;
       list-style: none;
+      @include respond-to(small) {
+        padding-left: 1em;
+        text-indent: -1em;
+      }
       li {
         margin-bottom: 0.35rem;
         font-size: 1.35rem;
@@ -1905,9 +1938,14 @@ a.coll-access {
     font-size: 1.1em;
     margin-bottom: 0;
   }
-  a, a:active, a:focus, a:hover {
+  a, a:active, a:hover {
     color: $crerarblue;
     text-decoration: underline;
+    font-weight: 600;
+  }
+  &:focus {
+    outline: 2px dashed $crerarblue;
+    outline-offset: 2px;
   }
   .col-xs-12 {
     padding-bottom: 1em;
@@ -1987,7 +2025,7 @@ body.staffpublicpage {
     border-radius: 8px;
   }
   abbr[title] {
-    color: #FF3399;
+    color: #a01f60;
     font-size: 1.3em;
     font-weight: 900;
     margin-left: 0.25em;
@@ -2035,6 +2073,9 @@ body.staffpublicpage {
     font-weight: 600;
     line-height: 1.42857143;
     border-radius: 4px;
+  }
+  input[type="checkbox"], input[type="radio"] {
+    margin-bottom: 1em;
   }
   .ty-message {
     padding: 1em 0;

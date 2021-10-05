@@ -2,7 +2,8 @@ from datetime import date
 
 from base.models import (
     Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
-    PhoneNumber, PublicBasePage, RawHTMLBodyField, SocialMediaFields
+    PhoneNumber, PublicBasePage, RawHTMLBodyField, RawHTMLBlock,
+    ReusableContentBlock, SocialMediaFields
 )
 from django.db import models
 from django.db.models.fields import CharField
@@ -18,6 +19,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.api import APIField
 from wagtail.core import blocks
+from wagtail.core.blocks import RichTextBlock
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, Site
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -108,7 +110,7 @@ class StandardPageCarouselItem(Orderable, CarouselItem):
 
 class StandardPageIconLinkItem(Orderable, IconLinkItem):
     """
-    Carousel widgets for standard pages
+    Custom icon links widget for standard pages
     """
     page = ParentalKey('public.StandardPage', related_name='icon_link_items')
 
@@ -118,7 +120,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     A standard basic page.
     """
     # Page content
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(DefaultBodyFields(), blank=True)
 
     # Search widget
     enable_search_widget = models.BooleanField(default=False)
@@ -126,6 +128,15 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     # Find spaces fields
     enable_find_spaces = models.BooleanField(default=False)
     book_a_room_link = models.URLField(max_length=255, blank=True, default='')
+
+    # Custom icons fields
+    widget_title = models.CharField(max_length=100, blank=True)
+    more_icons_link = models.URLField(
+        max_length=255, blank=True, default='', verbose_name='View More Link'
+    )
+    more_icons_link_label = models.CharField(
+        max_length=100, blank=True, verbose_name='View More Link Label'
+    )
 
     # Featured collections
     collection_page = models.ForeignKey(
@@ -138,10 +149,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Featured Library Expert
     featured_library_expert_fallback = StreamField(
-        FeaturedLibraryExpertBaseFields(required=False), default=[]
+        FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
     featured_library_experts = StreamField(
-        FeaturedLibraryExpertFields(required=False), default=[]
+        FeaturedLibraryExpertFields(required=False), blank=True, default=[]
     )
 
     subpage_types = [
@@ -240,7 +251,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             heading='Rich Text'
         ),
         InlinePanel('carousel_items', label='Carousel items'),
-        InlinePanel('icon_link_items', max_num=3, label='Icon Link items'),
+        MultiFieldPanel(
+            [
+                FieldPanel('widget_title'),
+                InlinePanel(
+                    'icon_link_items', max_num=3, label='Icon Link items'
+                ),
+                FieldPanel('more_icons_link'),
+                FieldPanel('more_icons_link_label'),
+            ],
+            heading='Custom Icon Links'
+        ),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
@@ -531,6 +552,15 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     # Model fields
     short_description = models.TextField(null=False, blank=False)
+    page_alerts = StreamField(
+        [
+            ('paragraph', RichTextBlock()),
+            ('reusable_content_block', ReusableContentBlock()),
+            ('html', RawHTMLBlock()),
+        ],
+        null=True,
+        blank=True,
+    )
     long_description = RichTextField(null=False, blank=False)
     parent_building = models.ForeignKey(
         'self',
@@ -636,6 +666,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
     widget_content_panels = [
+        StreamFieldPanel('page_alerts'),
         MultiFieldPanel(
             [
                 FieldPanel('quicklinks_title'),

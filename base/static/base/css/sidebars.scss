@@ -168,9 +168,11 @@ Right Sidebar: Widget Items
   padding: 20px 15px 0px 15px;
   a {
     color:  $active-hover;
-    &:hover {
+    &:hover, &:focus {
       color: $default-link;
-      text-decoration: none;
+      outline-offset: 1px;
+      text-decoration: underline;
+      text-decoration-style: dotted;
     }
   }
   h2, h3 {
@@ -282,7 +284,7 @@ Right Sidebar: Widget Items
     font-style: normal;
     margin-bottom: 0.25em;
   }
-  ul {
+  ul:not(.features-list) {
     list-style: none;
     margin-left: 0;
     padding-left: 1em;

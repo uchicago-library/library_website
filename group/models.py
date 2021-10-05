@@ -308,7 +308,10 @@ class GroupPage(BasePage, Email):
         group_reports_pages = GroupReportsPage.objects.descendant_of(self)
         for group_reports_page in group_reports_pages:
             for r in group_reports_page.group_reports.all():
-                if not r.link and not r.document.url:
+                try:
+                    if not r.link and not r.document.url:
+                        continue
+                except AttributeError:
                     continue
                 report = {
                     'summary': r.summary,

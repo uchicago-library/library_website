@@ -102,15 +102,13 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'wagtailcache.cache.FetchFromCacheMiddleware',
 ]
@@ -410,7 +408,7 @@ QUICK_NUMS = {
             'link': SCRC_ASK_PAGE
         }
     ],
-    'the-social-service-administration-library':
+    'the-social-work-library':
     [{
         'label': 'SSA Library',
         'number': '773-702-1199',
@@ -419,7 +417,7 @@ QUICK_NUMS = {
 }
 
 # This setting is used in units/models.py and staff/templatetags/staff_tags.py.
-# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead.
+# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead
 BUILDINGS = (
     (1, 'The John Crerar Library'),
     (2, 'The D\'Angelo Law Library'),
@@ -427,7 +425,7 @@ BUILDINGS = (
     (4, 'The Joe and Rika Mansueto Library'),
     (5, 'The Joseph Regenstein Library'),
     (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Service Administration Library')
+    (7, 'The Social Work Library')
 )
 
 # Location pages
@@ -519,7 +517,7 @@ LIBCAL_CREDENTIALS = {
 }
 
 # CGIMail Forms
-CGI_MAIL_SERVICE = 'https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail'
+CGI_MAIL_SERVICE = '/cgi-bin/cgimail/cgimail'
 ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
 SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 

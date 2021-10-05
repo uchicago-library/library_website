@@ -59,7 +59,7 @@ class test_lib_collections_view(TestCase):
         response = collections(request)
 
         self.assertContains(
-            response, '<input name="digital" type="checkbox" arial-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
+            response, '<input name="digital" type="checkbox" aria-label="limit to digital collections" id="checkboxdigital" checked="checked">', html=True)
 
     def test_collections_format(self):
         formats_list = ['Archives & Manuscripts', 'Audio', 'Books & Journals',
