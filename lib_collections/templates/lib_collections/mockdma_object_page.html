@@ -141,25 +141,19 @@
 	{% elif audio_url %}
 
 	<h2>
-	    {{ rat }}
+	    {{ ip_dude }}
 	</h2>
-	{% if is_open %}
 	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f8bed2c9-bfb2-41e8-968b-acd2013ac871&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 	    <p>Open to the world.</p>
-	{% endif %}
 
-	{% if is_campus %}
 	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=22c97e79-3920-49c3-a1ac-ad3a011985ec&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 	    <p>Open to anyone at the organization.</p>
-	{% endif %}
 
-	{% if is_restricted %}
 	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 	    <p>Open to MT & DB.</p>
 
 	    <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=d7595248-2e45-4662-83bb-acd2012ed21d&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 	    <p>Open to someone other than MT.</p>
-	{% endif %}
 
 	<script>
          // Code to load the IFrame player API code asynchronously

@@ -8,7 +8,7 @@ from functools import reduce
 import requests
 
 
-class Either:
+class Result:
 
     class Ok():
 
@@ -29,41 +29,56 @@ class Either:
             return "error"
 
     def ok(val):
-        return (Either.Ok(), val)
+        return (Result.Ok(), val)
+
+    pure = ok
 
     def error(val):
-        return (Either.Error(), val)
+        return (Result.Error(), val)
+
+    def is_ok(result):
+        (r, v) = result
+        return r.is_ok
+
+    def is_error(result):
+        (r, v) = result
+        return r.is_error
 
     def bind(mx, kleisli):
-        if mx[0].is_ok:
-            return kleisli(mx[1])
-        elif mx[0].is_error:
+        if Result.is_ok(mx):
+            (r, v) = mx
+            return kleisli(v)
+        elif Result.is_error(mx):
             return mx
         else:
-            raise Exception("Either: invalid data formatting")
+            raise Exception("Result: invalid data formatting")
 
     def kleisli_fish(mf, mg):
         def partial(x):
-            return Either.bind(mf(x), mg)
+            return Result.bind(mf(x), mg)
         return partial
 
     def multibind(mx, *kleislis):
-        return Either.bind(mx, reduce(Either.kleisli_fish, kleislis))
+        return Result.bind(mx, reduce(Result.kleisli_fish, kleislis))
+
+    def multimap(x, *kleislis):
+        return Result.multibind(Result.pure(x), *kleislis)
 
     def get(url):
         try:
             r = requests.get(url)
-            return Either.ok(r)
+            return Result.ok(r)
         except Exception as e:
-            return Either.error(e)
+            return Result.error(e)
 
-    def map_error(either, f):
-        if either.is_ok:
-            return either
-        elif either.is_error:
-            return Either.error(f(either[1]))
+    def map_error(result, f):
+        (r, v) = result
+        if result.is_ok:
+            return result
+        elif result.is_error:
+            return Result.error(f(v))
         else:
-            raise Exception("Either: invalid data formatting")
+            raise Exception("Result: invalid data formatting")
 
 
 class Examples():
@@ -72,18 +87,18 @@ class Examples():
     """
     def safeDiv(n, m):
         if m == 0:
-            return Either.error("Error: divide by zero")
+            return Result.error("Error: divide by zero")
         else:
-            return Either.ok(int(n / m))
+            return Result.ok(int(n / m))
 
     def isEven(n):
         if n % 2 == 0:
-            return Either.ok(n)
+            return Result.ok(n)
         else:
-            return Either.error("Error: must be even")
+            return Result.error("Error: must be even")
 
     def isPositive(n):
         if n > 0:
-            return Either.ok(n)
+            return Result.ok(n)
         else:
-            return Either.error("Error: must be positive")
+            return Result.error("Error: must be positive")

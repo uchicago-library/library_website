@@ -10,6 +10,7 @@ import json
 import os
 import re
 from urllib.parse import urlencode
+from result import Result
 
 import requests
 # from citeproc import (
@@ -1096,3 +1097,16 @@ class Testing():
     empty_sparql = GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
     )
+
+
+class Permissions():
+    """
+    Namespace class containing helper functions for determining
+    permissions in a collection page.
+    """
+
+    def get_users_ip(request):
+        try:
+            return request.environ["REMOTE_ADDR"]
+        except KeyError:
+            return ''

@@ -830,15 +830,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         is_open, is_restricted = True, False
 
         try:
-            is_campus = apache_env["REMOTE_USER"]
+            ip_dude = apache_env["REMOTE_ADDR"]
         except KeyError:
-            is_campus = ''
+            ip_dude = ''
 
         context = super().get_context(request)
         context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
-        context["is_open"] = is_open
-        context["is_campus"] = is_campus
-        context["is_restricted"] = is_restricted
+        context["ip_dude"] = ip_dude
 
         return TemplateResponse(request, template, context)
 
