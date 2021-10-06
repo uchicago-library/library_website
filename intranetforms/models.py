@@ -1,15 +1,15 @@
-from django.db import models
-
-from base.models import get_breadcrumbs, AbstractBase
+from base.models import AbstractBase, get_breadcrumbs
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (FieldPanel, InlinePanel,
-    MultiFieldPanel)
-from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import (
+    FieldPanel, InlinePanel, MultiFieldPanel
+)
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
-from wagtail.search import index
+from wagtail.core.fields import RichTextField
+
 
 class IntranetFormField(AbstractFormField):
     page = ParentalKey('IntranetFormPage', related_name='form_fields')
+
 
 class IntranetFormPage(AbstractEmailForm, AbstractBase):
     intro = RichTextField(blank=True)
@@ -19,22 +19,19 @@ class IntranetFormPage(AbstractEmailForm, AbstractBase):
         FieldPanel('intro', classname="full"),
         InlinePanel('form_fields', label="Form fields"),
         FieldPanel('thank_you_text', classname="full"),
-        MultiFieldPanel([
-            FieldPanel('to_address', classname="full"),
-            FieldPanel('from_address', classname="full"),
-            FieldPanel('subject', classname="full"),
-        ], "Email")
+        MultiFieldPanel(
+            [
+                FieldPanel('to_address', classname="full"),
+                FieldPanel('from_address', classname="full"),
+                FieldPanel('subject', classname="full"),
+            ], "Email"
+        )
     ] + AbstractBase.content_panels
 
-    promote_panels = AbstractEmailForm.promote_panels + AbstractBase.left_sidebar_panels
+    promote_panels = AbstractEmailForm.promote_panels + \
+        AbstractBase.left_sidebar_panels
 
-    search_fields = AbstractBase.search_fields + [
-        index.SearchField('intro'),
-        index.SearchField('thank_you_text'),
-        index.SearchField('to_address'),
-        index.SearchField('from_address'),
-        index.SearchField('subject'),
-    ]
+    search_fields = []
 
     subpage_types = []
 
@@ -42,4 +39,3 @@ class IntranetFormPage(AbstractEmailForm, AbstractBase):
         context = super(IntranetFormPage, self).get_context(request)
         context['breadcrumbs'] = get_breadcrumbs(self)
         return context
-
