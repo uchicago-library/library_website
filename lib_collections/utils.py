@@ -1110,3 +1110,6 @@ class Permissions():
             return request.environ["REMOTE_ADDR"]
         except KeyError:
             return ''
+
+    def shib_status(request):
+        return request.environ["REMOTE_USER"]

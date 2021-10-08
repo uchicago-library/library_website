@@ -73,27 +73,29 @@ class Result():
         if Result.is_ok(val, check_type=check_type):
             (r, v) = val
             return kleisli(v)
-        elif Result.is_error(val, check_type=check_type):
-            return val
         else:
-            return Result.error(
-                Exception("Result: invalid data formatting")
-            )
+            return val
 
-    def map_error(result, f):
-        (r, v) = result
-        if result.is_ok:
+    def map_error(f, result, check_type=True):
+        if check_type:
+            val = Result.Validations.check_type(result)
+        else:
+            val = result
+        (r, v) = val
+        if Result.is_ok(val):
             return result
-        elif result.is_error:
+        elif Result.is_error(val):
             return Result.error(f(v))
         else:
             return Result.error(
                 Exception("Result: invalid data formatting")
             )
 
-    def kleisli_fish(mf, mg):
+    def kleisli_fish(mf, mg, check_type=True):
         def partial(x):
-            return Result.bind(mf(x), mg)
+            return Result.bind(mf(x),
+                               mg,
+                               check_type=check_type)
         return partial
 
     def multibind(mx, *kleislis, check_type=True):
@@ -108,17 +110,22 @@ class Result():
                                       kleislis),
                                check_type=check_type)
 
-    def multimap(x, *kleislis):
-        return Result.multibind(Result.pure(x), *kleislis)
+    def multimap(x, *kleislis, check_type=True):
+        return Result.multibind(Result.pure(x),
+                                *kleislis,
+                                check_type=check_type)
 
-    check_type = Validations.check_type
-
-    def get(url):
+    def catch(f, x, **kwargs):
         try:
-            r = requests.get(url)
-            return Result.ok(r)
+            val = f(x, **kwargs)
+            return Result.ok(val)
         except Exception as e:
             return Result.error(e)
+
+    def get(url, **kwargs):
+        return(Result.catch(requests.get,
+                            url,
+                            **kwargs))
 
 
 class Examples():
