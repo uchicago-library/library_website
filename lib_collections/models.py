@@ -42,6 +42,7 @@ from .utils import (CBrowseURL,
                     DisplayBrowse,
                     LBrowseURL,
                     IIIFDisplay,
+                    Permissions,
                     )
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -834,9 +835,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         except KeyError:
             ip_dude = ''
 
+        user_dude = apache_env['REMOTE_USER']
+
+        perm = "Open"
+
+        display_player = {
+            "OpenShowPlayer":
+            Permissions.open_show_player(perm, request),
+            "CampusShowPlayer":
+            Permissions.campus_show_player(perm, request),
+            "CampusCrossOutPlayer":
+            Permissions.campus_crossout_player(perm, request),
+            "RestrictedPlayer":
+            Permissions.restricted_player(perm, request),
+        }
+
         context = super().get_context(request)
         context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
-        context["ip_dude"] = ip_dude
+        context["display_player"] = display_player
 
         return TemplateResponse(request, template, context)
 

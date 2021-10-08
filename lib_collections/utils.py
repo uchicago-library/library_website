@@ -9,8 +9,9 @@ from __future__ import (
 import json
 import os
 import re
+import ipaddress
 from urllib.parse import urlencode
-from result import Result
+from lib_collections.result import Result
 
 import requests
 # from citeproc import (
@@ -1111,5 +1112,55 @@ class Permissions():
         except KeyError:
             return ''
 
-    def shib_status(request):
+    def shibbed_cnetid(request):
         return request.environ["REMOTE_USER"]
+
+    CAMPUS_SUBNETS = [
+        "128.135.43.0/24",
+        "128.135.53.0/24",
+        "128.135.55.0/24",
+        "128.135.153.0/24",
+        "128.135.159.0/24",
+
+        "128.135.0.0/16",
+        "205.208.0.0/17",
+        "165.68.0.0/16",
+        "192.170.192.0/19",
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16",
+
+        "165.68.0.0/16",
+        "64.107.48.0/23",
+    ]
+
+    def in_subnet(ip_string, subnet_string):
+        input_ip = ipaddress.ip_address(ip_string)
+        subnet = ipaddress.ip_network(subnet_string)
+        return input_ip in subnet
+
+    def on_campus(ip_string, subnets=CAMPUS_SUBNETS):
+        the_possibilities = [Permissions.in_subnet(
+            ip_string, x) for x in subnets]
+        return any(the_possibilities)
+
+    def open_show_player(perm, request):
+        return perm == "Open"
+
+    def campus_show_player(perm, request):
+        perm_is_campus = perm == "Campus"
+        user_ip = Permissions.get_users_ip(request)
+        user_on_campus = Permissions.on_campus(user_ip)
+        user_shibbed = Permissions.shibbed_cnetid(request)
+        return perm_is_campus and (user_on_campus or user_shibbed)
+
+    def campus_crossout_player(perm, request):
+        perm_is_campus = perm == "Campus"
+        user_ip = Permissions.get_users_ip(request)
+        user_on_campus = Permissions.on_campus(user_ip)
+        user_shibbed = Permissions.shibbed_cnetid(request)
+        return (perm_is_campus and
+                ((not user_on_campus) and (not user_shibbed)))
+
+    def restricted_player(perm, request):
+        return perm == "Restricted"
