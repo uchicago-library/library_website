@@ -1114,6 +1114,9 @@ class Permissions():
         return Result.default(
             Result.lookup("REMOTE_USER", request.environ))
 
+    def shibbed_in(request):
+        return bool(Permissions.shibbed_cnetid(request))
+
     CAMPUS_SUBNETS = [
         "128.135.43.0/24",
         "128.135.53.0/24",
@@ -1139,8 +1142,8 @@ class Permissions():
         return input_ip in subnet
 
     def on_campus(ip_string, subnets=CAMPUS_SUBNETS):
-        the_possibilities = [Permissions.in_subnet(
-            ip_string, x) for x in subnets]
+        the_possibilities = [Permissions.in_subnet(ip_string, x)
+                             for x in subnets]
         return any(the_possibilities)
 
     def open_show_player(perm, request):

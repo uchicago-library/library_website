@@ -826,23 +826,30 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/mockdma_object_page.html"
 
-        audio_url = True
-
         apache_env = request.environ
-
-        is_open, is_restricted = True, False
-
         query_string = request.GET
 
         lookup = Result.lookup
         default = Result.default
 
-        user_ip = default(
-            lookup("REMOTE_ADDR", apache_env))
-        user_cnetid = default(
-            lookup("REMOTE_USER", apache_env))
+        users_ip = Permissions.get_users_ip(request)
+        user_cnetid = Permissions.shibbed_cnetid(request)
+
+        def string_to_bool(string):
+            if string.lower() == 'true':
+                return True
+            else:
+                return False
+
         override_reality = default(
-            lookup("override_reality", apache_env))
+            lookup("override_reality", query_string)) == 'true'
+
+        item_permission = default(
+            lookup("item_permission", query_string)) == 'true'
+
+        on_campus = default(lookup("on_campus", query_string)) == 'true'
+
+        shibbed_in = default(lookup("shibbed_in", query_string)) == 'true'
 
         # query string spec
 
@@ -852,7 +859,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # on_campus -> boolean
         # shibbed_in -> boolean
 
-        if query_string and override_reality:
+        overriding_reality = all([
+            query_string,
+            override_reality,
+            item_permission,
+            default(lookup("on_campus", query_string)),
+            default(lookup("shibbed_in", query_string)),
+        ])
+
+        if overriding_reality:
+
             def num_to_perm(n):
                 if n == '1':
                     return "Open"
@@ -863,38 +879,56 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 else:
                     return ''
 
-            item_permission = query_string['item_permission']
-            user_status = query_string['user_status']
             perm = num_to_perm(item_permission)
+
+            show_player = ((perm == "Open")
+                           or (perm == "Campus" and on_campus))
+
+            display_player = {
+                "ShowPlayer": show_player,
+                "CampusCrossOutPlayer": perm == "Campus" and (not on_campus),
+                "RestrictedPlayer": perm == "Restricted",
+            }
+
         else:
             perm = "Open"
-            user_status = 1
 
-        show_player = (Permissions.open_show_player(perm, request)
-                       or Permissions.campus_show_player(perm, request))
+            show_player = (Permissions.open_show_player(perm, request)
+                           or Permissions.campus_show_player(perm, request))
 
-        display_player = {
-            "ShowPlayer": show_player,
-            "CampusCrossOutPlayer":
-            Permissions.campus_crossout_player(perm, request),
-            "RestrictedPlayer":
-            Permissions.restricted_player(perm, request),
-        }
+            display_player = {
+                "ShowPlayer": show_player,
+                "CampusCrossOutPlayer":
+                Permissions.campus_crossout_player(perm, request),
+                "RestrictedPlayer":
+                Permissions.restricted_player(perm, request),
+            }
 
-        # users_ip =
-        # try:
-        #     users_ip = apache_env["REMOTE_ADDR"]
-        #     user_dude = apache_env['REMOTE_USER']
-        # except KeyError:
-        #     users_ip = ''
+            # raise Exception("AAAAH")
+            # on_campus = Permissions.on_campus(users_ip)
+            # shibbed_in = Permissions.shibbed_in(request)
+
+        def perm_to_panopto_id(perm):
+            if perm == "Open":
+                return "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+            elif perm == "Campus":
+                return "22c97e79-3920-49c3-a1ac-ad3a011985ec"
+            elif perm == "Restricted":
+                return "3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a"
+            else:
+                raise Exception(
+                    "Permission must be Open, Campus, or Restricted")
 
         context = super().get_context(request)
-        context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+        context["audio_id"] = perm_to_panopto_id(perm)
         context["display_player"] = display_player
+        context["perm"] = perm
+        context["on_campus"] = on_campus
+        context["shibbed_in"] = shibbed_in
 
         return TemplateResponse(request, template, context)
 
-    @route(r'^object/(?P<manifid>\w+)/$')
+    @ route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
         Route for digital collection object page.
@@ -1126,7 +1160,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
+    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
     def cluster_browse_list(self, request, *args, **kwargs):
         """
         Route for listing of multiple cluster browses.  For example: the
@@ -1315,16 +1349,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         list_objects = Paginator(objects, THUMBS_PER_PAGE)
 
         if pageno > 0 and pageno <= list_objects.num_pages:
-            list_objects_page = list_objects.page(pageno)
+            list_objects_page=list_objects.page(pageno)
         else:
             raise Http404
 
         # construct breadcrumb trail
-        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb=CollectionPage.build_breadcrumbs(request)
 
-        unslugify_browse = DisplayBrowse.unslugify_browse
+        unslugify_browse=DisplayBrowse.unslugify_browse
 
-        current_browse = CollectionPageListBrowse.objects.filter(
+        current_browse=CollectionPageListBrowse.objects.filter(
             label=unslugify_browse(browse_name), page=self).first()
 
         if current_browse:
