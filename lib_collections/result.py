@@ -115,17 +115,41 @@ class Result():
                                 *kleislis,
                                 check_type=check_type)
 
-    def catch(f, x, **kwargs):
-        try:
-            val = f(x, **kwargs)
-            return Result.ok(val)
-        except Exception as e:
-            return Result.error(e)
+    class Catch():
 
-    def get(url, **kwargs):
-        return(Result.catch(requests.get,
-                            url,
-                            **kwargs))
+        def catch(f, x):
+            try:
+                val = f(x)
+                return Result.ok(val)
+            except Exception as e:
+                return Result.error(e)
+
+        def lookup(key, dct):
+            def getter(key):
+                def partial(dct):
+                    return dct[key]
+                return partial
+            return Result.Catch.catch(getter(key), dct)
+
+        def default(result, defval='', debug=False):
+            (tag, val) = result
+            if Result.is_ok(result, check_type=False):
+                return val
+            elif Result.is_error(result, check_type=False):
+                if debug:
+                    return val
+                else:
+                    return defval
+
+        def get_request(url, **kwargs):
+            return(Result.Catch.catch(requests.get,
+                                      url,
+                                      **kwargs))
+
+    catch = Catch.catch
+    lookup = Catch.lookup
+    default = Catch.default
+    get_request = Catch.get_request
 
 
 class Examples():

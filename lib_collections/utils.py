@@ -1107,13 +1107,12 @@ class Permissions():
     """
 
     def get_users_ip(request):
-        try:
-            return request.environ["REMOTE_ADDR"]
-        except KeyError:
-            return ''
+        return Result.default(
+            Result.lookup("REMOTE_ADDR", request.environ))
 
     def shibbed_cnetid(request):
-        return request.environ["REMOTE_USER"]
+        return Result.default(
+            Result.lookup("REMOTE_USER", request.environ))
 
     CAMPUS_SUBNETS = [
         "128.135.43.0/24",

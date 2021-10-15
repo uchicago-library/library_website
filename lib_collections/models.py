@@ -37,6 +37,7 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
+from .result import Result
 from .utils import (CBrowseURL,
                     CitationInfo,
                     DisplayBrowse,
@@ -822,6 +823,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     @route(r'^mockdmaobject/$')
     def mockdmaobject(self, request, *args, **kwargs):
+
         template = "lib_collections/mockdma_object_page.html"
 
         audio_url = True
@@ -830,25 +832,61 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         is_open, is_restricted = True, False
 
-        try:
-            ip_dude = apache_env["REMOTE_ADDR"]
-        except KeyError:
-            ip_dude = ''
+        query_string = request.GET
 
-        user_dude = apache_env['REMOTE_USER']
+        lookup = Result.lookup
+        default = Result.default
 
-        perm = "Open"
+        user_ip = default(
+            lookup("REMOTE_ADDR", apache_env))
+        user_cnetid = default(
+            lookup("REMOTE_USER", apache_env))
+        override_reality = default(
+            lookup("override_reality", apache_env))
+
+        # query string spec
+
+        # override_reality -> pretend we're in situation described by query string
+        # item_permission -> 1 is world, 2 is campus, 3 is restricted
+        # example = 1 is world, 2 is campus, 3 is restricted
+        # on_campus -> boolean
+        # shibbed_in -> boolean
+
+        if query_string and override_reality:
+            def num_to_perm(n):
+                if n == '1':
+                    return "Open"
+                elif n == '2':
+                    return "Campus"
+                elif n == '3':
+                    return "Restricted"
+                else:
+                    return ''
+
+            item_permission = query_string['item_permission']
+            user_status = query_string['user_status']
+            perm = num_to_perm(item_permission)
+        else:
+            perm = "Open"
+            user_status = 1
+
+        show_player = (Permissions.open_show_player(perm, request)
+                       or Permissions.campus_show_player(perm, request))
 
         display_player = {
-            "OpenShowPlayer":
-            Permissions.open_show_player(perm, request),
-            "CampusShowPlayer":
-            Permissions.campus_show_player(perm, request),
+            "ShowPlayer": show_player,
             "CampusCrossOutPlayer":
             Permissions.campus_crossout_player(perm, request),
             "RestrictedPlayer":
             Permissions.restricted_player(perm, request),
         }
+
+        # users_ip =
+        # try:
+        #     users_ip = apache_env["REMOTE_ADDR"]
+        #     user_dude = apache_env['REMOTE_USER']
+        # except KeyError:
+        #     users_ip = ''
 
         context = super().get_context(request)
         context["audio_url"] = "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
