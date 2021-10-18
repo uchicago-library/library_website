@@ -867,19 +867,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             default(lookup("shibbed_in", query_string)),
         ])
 
+        def num_to_perm(n):
+            if n == '1':
+                return "Open"
+            elif n == '2':
+                return "Campus"
+            elif n == '3':
+                return "Restricted"
+            else:
+                return ''
+
+        perm = num_to_perm(item_permission)
+
         if overriding_reality:
-
-            def num_to_perm(n):
-                if n == '1':
-                    return "Open"
-                elif n == '2':
-                    return "Campus"
-                elif n == '3':
-                    return "Restricted"
-                else:
-                    return ''
-
-            perm = num_to_perm(item_permission)
 
             show_player = ((perm == "Open")
                            or (perm == "Campus" and on_campus))
@@ -892,10 +892,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             }
 
         else:
-            perm = "Open"
-
-            # show_player = (Permissions.open_show_player(perm, request)
-            #                or Permissions.campus_show_player(perm, request))
 
             display_player = {
                 "OpenShowPlayer": Permissions.open_show_player(perm, request),
