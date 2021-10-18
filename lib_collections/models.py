@@ -845,7 +845,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lookup("override_reality", query_string)) == 'true'
 
         item_permission = default(
-            lookup("item_permission", query_string)) == 'true'
+            lookup("item_permission", query_string))
 
         on_campus = default(lookup("on_campus", query_string)) == 'true'
 
@@ -862,7 +862,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         overriding_reality = all([
             query_string,
             override_reality,
-            item_permission,
+            # item_permission,
             default(lookup("on_campus", query_string)),
             default(lookup("shibbed_in", query_string)),
         ])
@@ -885,19 +885,21 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                            or (perm == "Campus" and on_campus))
 
             display_player = {
-                "ShowPlayer": show_player,
-                "CampusCrossOutPlayer": perm == "Campus" and (not on_campus),
+                "OpenShowPlayer": perm == "Open",
+                "CampusShowPlayer": perm == "Campus" and (on_campus or shibbed_in),
+                "CampusCrossOutPlayer": perm == "Campus" and (not (on_campus or shibbed_in)),
                 "RestrictedPlayer": perm == "Restricted",
             }
 
         else:
             perm = "Open"
 
-            show_player = (Permissions.open_show_player(perm, request)
-                           or Permissions.campus_show_player(perm, request))
+            # show_player = (Permissions.open_show_player(perm, request)
+            #                or Permissions.campus_show_player(perm, request))
 
             display_player = {
-                "ShowPlayer": show_player,
+                "OpenShowPlayer": Permissions.open_show_player(perm, request),
+                "CampusShowPlayer": Permissions.campus_show_player(perm, request),
                 "CampusCrossOutPlayer":
                 Permissions.campus_crossout_player(perm, request),
                 "RestrictedPlayer":
@@ -906,7 +908,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
             # raise Exception("AAAAH")
             # on_campus = Permissions.on_campus(users_ip)
-            # shibbed_in = Permissions.shibbed_in(request)
+            shibbed_in = Permissions.shibbed_in(request)
 
         def perm_to_panopto_id(perm):
             if perm == "Open":
@@ -915,6 +917,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 return "22c97e79-3920-49c3-a1ac-ad3a011985ec"
             elif perm == "Restricted":
                 return "3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a"
+            elif perm == '':
+                return ''
             else:
                 raise Exception(
                     "Permission must be Open, Campus, or Restricted")
@@ -925,6 +929,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["perm"] = perm
         context["on_campus"] = on_campus
         context["shibbed_in"] = shibbed_in
+        context["overriding_reality"] = overriding_reality
 
         return TemplateResponse(request, template, context)
 
@@ -1349,16 +1354,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         list_objects = Paginator(objects, THUMBS_PER_PAGE)
 
         if pageno > 0 and pageno <= list_objects.num_pages:
-            list_objects_page=list_objects.page(pageno)
+            list_objects_page = list_objects.page(pageno)
         else:
             raise Http404
 
         # construct breadcrumb trail
-        breads, final_crumb=CollectionPage.build_breadcrumbs(request)
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
-        unslugify_browse=DisplayBrowse.unslugify_browse
+        unslugify_browse = DisplayBrowse.unslugify_browse
 
-        current_browse=CollectionPageListBrowse.objects.filter(
+        current_browse = CollectionPageListBrowse.objects.filter(
             label=unslugify_browse(browse_name), page=self).first()
 
         if current_browse:

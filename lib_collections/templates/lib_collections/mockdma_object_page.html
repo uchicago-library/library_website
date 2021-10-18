@@ -154,32 +154,33 @@
 	    </p>
 
 	    <p>
-		ShowPlayer : {{ display_player.ShowPlayer }} <br>
+		We are overriding reality: {{ overriding_reality }}
+	    </p>
+	    
+	    <p>
+		OpenShowPlayer : {{ display_player.OpenShowPlayer }} <br>
 		CampusShowPlayer : {{ display_player.CampusShowPlayer }} <br>
-		CampusCrossoutPlayer : {{ display_player.CampusCrossoutPlayer }} <br>
+		CampusCrossOutPlayer : {{ display_player.CampusCrossOutPlayer }} <br>
 		RestrictedPlayer : {{ display_player.RestrictedPlayer }} <br>
 	    </p>
 	</h2>
 	
-	    {% if display_player.ShowPlayer %}
-		<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id={{ audio_id }}&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-		<p>Open to the world.</p>
-
+	    {% if display_player.OpenShowPlayer %}
+	        <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id={{ audio_id }}&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
+		<br>
+		Open to the world.
 	    {% elif display_player.CampusShowPlayer %}
-
 		<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id={{ audio_id }}&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
-		<p>Open to anyone at the organization.</p>
-
-	    {% elif display_player.CampusCrossoutPlayer %}
-
+		<br>
+		Open to on-campus and shibbed-in people.
+	    {% elif display_player.CampusCrossOutPlayer %}
+		You need to be logged in to view the player.
 		<!-- put Kathy's mock here -->
-
 	    {% elif display_player.RestrictedPlayer %}
 		<a href ="https://archlinux.org">
 		    <h3>Click here to see the link.</h3>
 		</a>
 		<p>Special Access.</p>
-
 	    {% else %}
 	    {% endif %}
 
