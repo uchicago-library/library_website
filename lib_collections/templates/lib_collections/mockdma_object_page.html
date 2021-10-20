@@ -144,15 +144,24 @@
 	    <p>
 		Permission: {{ perm }}
 	    </p>
+
+	    {% if overriding_reality %}
+		<p>
+		    User on campus: {{ on_campus }}
+		</p>
+		<p>
+		    User is shibbed in: {{ shibbed_in }}
+		</p>
+	    {% else %}
+		<p>
+		    Shibbed in user: {{ user_cnetid }}
+		</p>
+		<p>
+		    User IP: {{ users_ip }}
+		</p>
+	    {% endif %}
+
 	    
-	    <p>
-		User on campus: {{ on_campus }}
-	    </p>
-
-	    <p>
-		User is shibbed in: {{ shibbed_in }}
-	    </p>
-
 	    <p>
 		We are overriding reality: {{ overriding_reality }}
 	    </p>

@@ -926,6 +926,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["on_campus"] = on_campus
         context["shibbed_in"] = shibbed_in
         context["overriding_reality"] = overriding_reality
+        context["users_ip"] = users_ip
+        context["user_cnetid"] = user_cnetid
 
         return TemplateResponse(request, template, context)
 
