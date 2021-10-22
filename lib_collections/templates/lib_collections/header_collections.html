@@ -19,8 +19,8 @@
 <div class="col-xs-12 col-sm-7 coll-dropdown" role="group" aria-label="Filter Results">
   <span class="headline" id="browseBy">Browse by</span>
 
-  <div class="btn-group">
-    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button" aria-labelledby="browseBy">
+  <div class="btn-group" aria-labelledby="browseBy">
+    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button" aria-label="filtered to {{ subject }}">
       <span class="visually-hidden">Browse by</span> Subject{% if subject %}: {{ subject }}{% endif %} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu listings-dropdown">
