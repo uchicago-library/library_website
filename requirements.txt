@@ -1,6 +1,6 @@
 beautifulsoup4==4.8.2
 bleach==3.3.0
-DateTime==4.0.1
+DateTime>=4,<5
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
 Django==3.1.12

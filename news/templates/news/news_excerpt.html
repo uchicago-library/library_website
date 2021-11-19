@@ -1,4 +1,9 @@
-<div class="rich-text">{{ excerpt|safe }}</div>
-{% if read_more %}
-  <p><a class="view-more" href="{{ news_page.url }}">Read more &gt;&gt;</a></p>
-{% endif %}
+{% load wagtailcore_tags %}
+<div class="rich-text">
+  {% if rt %}
+    {{ excerpt|truncatewords_html:70|richtext }}
+  {% else %}
+    {{ excerpt|truncatewords:70 }}
+  {% endif %}
+</div>
+<p><a class="view-more" href="{{ news_page_url }}">Read more &gt;&gt;</a></p>
