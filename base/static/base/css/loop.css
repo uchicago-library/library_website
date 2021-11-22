@@ -326,6 +326,7 @@ figure.center-block {
   font-style: italic; }
 
 .media-body .rich-text {
+  font-size: 1.2em;
   line-height: 1.7em;
   max-width: 46em; }
 
