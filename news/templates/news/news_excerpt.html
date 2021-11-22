@@ -3,7 +3,7 @@
   {% if rt %}
     {{ excerpt|truncatewords_html:70|richtext }}
   {% else %}
-    {{ excerpt|truncatewords:70 }}
+    {{ excerpt|truncatewords_html:70 }}
   {% endif %}
 </div>
 <p><a class="view-more" href="{{ news_page_url }}">Read more &gt;&gt;</a></p>
