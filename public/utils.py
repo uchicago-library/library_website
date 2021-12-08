@@ -90,6 +90,10 @@ FEATURES_LIST = [
         'has_day_lockers', 'Day Lockers',
         '<i class="material-icons" aria-hidden="true">lock_open</i>'
     ),
+    (
+        'has_all_gender_restrooms', 'All-Gender Restrooms',
+        '<i class="fa fa-transgender-alt" aria-hidden="true"></i>'
+    ),
 ]
 
 

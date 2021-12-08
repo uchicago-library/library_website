@@ -610,6 +610,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     has_standing_desk = models.BooleanField(default=False)
     has_lockers = models.BooleanField(default=False)
     has_day_lockers = models.BooleanField(default=False)
+    has_all_gender_restrooms = models.BooleanField(default=False)
 
     ROW_CLASS = 'col4'
 
@@ -659,6 +660,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
                 FieldPanel('has_standing_desk', classname=ROW_CLASS),
                 FieldPanel('has_lockers', classname=ROW_CLASS),
                 FieldPanel('has_day_lockers', classname=ROW_CLASS),
+                FieldPanel('has_all_gender_restrooms', classname=ROW_CLASS),
             ]
         ),
         MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
