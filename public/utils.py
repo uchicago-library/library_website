@@ -271,4 +271,13 @@ def switchboard_url(form_name, form_option=''):
 
 
 def mk_search_field(string):
+    """
+    Make a 'partial match' search field out of a string.
+
+    Args:
+        a string to go into the search index
+
+    Returns:
+        a search field
+    """
     return index.SearchField(string, partial_match=True)
