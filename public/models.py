@@ -699,7 +699,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
-    # location_strings = post_process([item[0] for item in get_features()])
     location_fields = [mk_search_field(item[0]) for item in get_features()]
 
     search_fields = PublicBasePage.search_fields + [
