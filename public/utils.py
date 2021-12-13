@@ -1,8 +1,6 @@
 from library_website.settings import IDRESOLVE_URL
 from wagtail.search import index
-import re
 import requests
-import itertools
 
 FEATURES_LIST = [
     (
