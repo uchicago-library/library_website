@@ -8,7 +8,7 @@ from base.models import (
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
-from public.utils import get_features
+from public.utils import get_features, mk_search_field
 from staff.models import StaffPage
 from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
@@ -699,6 +699,9 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
+    # location_strings = post_process([item[0] for item in get_features()])
+    location_fields = [mk_search_field(item[0]) for item in get_features()]
+
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('short_description', partial_match=True),
         index.SearchField('long_description', partial_match=True),
@@ -706,7 +709,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         index.SearchField('location_photo'),
         index.SearchField('reservation_url'),
         index.SearchField('reservation_display_text'),
-    ]
+    ] + location_fields
 
     api_fields = [
         APIField('libcal_library_id'),

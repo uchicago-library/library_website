@@ -1,5 +1,8 @@
 from library_website.settings import IDRESOLVE_URL
+from wagtail.search import index
+import re
 import requests
+import itertools
 
 FEATURES_LIST = [
     (
@@ -267,3 +270,7 @@ def switchboard_url(form_name, form_option=''):
         return '/about/news/search/'
     else:
         assert (False)
+
+
+def mk_search_field(string):
+    return index.SearchField(string, partial_match=True)
