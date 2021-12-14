@@ -699,7 +699,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
     subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
 
-    location_fields = [mk_search_field(item[0]) for item in get_features()]
+    def mk_search_field(self):
+        return ' '.join(i[0] for i in get_features())
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('short_description', partial_match=True),
@@ -707,8 +708,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         index.SearchField('parent_building'),
         index.SearchField('location_photo'),
         index.SearchField('reservation_url'),
-        index.SearchField('reservation_display_text'),
-    ] + location_fields
+        index.SearchField('mk_search_field'),
+    ]
 
     api_fields = [
         APIField('libcal_library_id'),
