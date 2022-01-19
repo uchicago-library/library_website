@@ -91,6 +91,7 @@ class Result():
                 Exception("Result: invalid data formatting")
             )
 
+
     def kleisli_fish(mf, mg, check_type=True):
         def partial(x):
             return Result.bind(mf(x),
