@@ -218,7 +218,8 @@ def get_building_hours_and_lid(current_site):
             hours = HOURS_TEMPLATE % (
                 page['name'], process_hours(page['rendered'])
             )
-            buildings.append((str(llid), str(hours), library_data[llid]['url']))
+            buildings.append(
+                (str(llid), str(hours), library_data[llid]['url']))
     return buildings
 
 
@@ -407,3 +408,14 @@ def get_doc_titles_for_indexing(id_field, iterable):
             title = Document.objects.get(id=item[id_field]).title
             retval += ' %s' % (title,)
     return retval
+
+
+def unfold(step, initial):
+    def generator(tup):
+        while True:
+            tup = step(tup[1])
+            if tup == False:
+                break
+            else:
+                yield tup[0]
+    return [item for item in generator((None, initial))]
