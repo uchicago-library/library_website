@@ -1,3 +1,5 @@
+from base.utils import unfold
+
 from datetime import date
 
 from base.models import (
@@ -958,6 +960,16 @@ class StaffPublicPage(PublicBasePage):
         except AttributeError:
             building_str = None
 
+        def next_unit(unit):
+            if unit.title == "Units":
+                return False
+            else:
+                return (unit, unit.get_parent())
+
+        unit = s.staff_page.units.first().library_unit
+
+        parent_units = [u.title for u in unfold(next_unit, unit)]
+
         context.update(
             {
                 'bio': self.get_bio(),
@@ -977,7 +989,8 @@ class StaffPublicPage(PublicBasePage):
                 'profile_picture': s.profile_picture,
                 'staff_page': s,
                 'subjects': get_subjects_html(s.staff_subject_placements.all()),
-                'positiontitle': s.position_title
+                'positiontitle': s.position_title,
+                'parent_units': parent_units
             }
         )
         return context
