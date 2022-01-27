@@ -29,8 +29,6 @@ from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-import urllib.parse
-
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
 # from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
@@ -976,7 +974,6 @@ class StaffPublicPage(PublicBasePage):
 
         while index < len(parent_units):
             parent_units[index] = parent_units[index - 1] + " " + parent_units[index]  
-            parent_units[i] = urllib.parse.quote(i)      
             index += 1
 
         context.update(
