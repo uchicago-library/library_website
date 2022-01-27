@@ -966,7 +966,7 @@ class StaffPublicPage(PublicBasePage):
             else:
                 return (unit, unit.get_parent())
 
-        unit = s.staff_page.units.first().library_unit
+        unit = s.staff_page_units.first().library_unit
 
         parent_units = [u.title for u in unfold(next_unit, unit)]
 
