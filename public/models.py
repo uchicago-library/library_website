@@ -976,6 +976,9 @@ class StaffPublicPage(PublicBasePage):
             parent_units[index] = parent_units[index - 1] + " " + parent_units[index]        
             index += 1   
 
+        for i in range(len(parent_units)):
+            parent_units[i] = urlencode(i)
+
         context.update(
             {
                 'bio': self.get_bio(),
