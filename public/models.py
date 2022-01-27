@@ -970,6 +970,11 @@ class StaffPublicPage(PublicBasePage):
 
         parent_units = [u.title for u in unfold(next_unit, unit)]
 
+        index = 1
+
+        while index < len(parent_units):
+            parent_units[index] = parent_units[index - 1] + parent_units[index]           
+
         context.update(
             {
                 'bio': self.get_bio(),
