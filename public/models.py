@@ -973,7 +973,7 @@ class StaffPublicPage(PublicBasePage):
         index = 1
 
         while index < len(parent_units):
-            parent_units[index] = parent_units[index - 1] + parent_units[index]        
+            parent_units[index] = parent_units[index - 1] + " " + parent_units[index]        
             index += 1   
 
         context.update(
