@@ -985,7 +985,7 @@ class StaffPublicPage(PublicBasePage):
         parent_unit_list.reverse()      
 
         for u in parent_units:
-            parent_units[u] = ([quote(link.encode('utf8')) for link in parent_unit_list])  
+            parent_units[u] = [quote(link.encode('utf8')) for link in parent_unit_list]
 
         context.update(
             {
