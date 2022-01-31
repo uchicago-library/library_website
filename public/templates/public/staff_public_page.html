@@ -51,8 +51,8 @@
     <h4>Library &amp; Department</h4>
     <p>
       {% if parent_units %}
-        {% for unit in parent_units %}
-          <br><a href="/about/directory/?view=staff&amp;department={{ unit.title }}">{{ unit }}</a>
+        {% for unit, link in parent_units.items %}
+          <br><a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a>
         {% endfor %}
       {% endif %}
       {% if department_name %}

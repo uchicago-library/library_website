@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from base.utils import unfold
 
 from datetime import date
@@ -968,13 +970,22 @@ class StaffPublicPage(PublicBasePage):
 
         unit = s.staff_page_units.first().library_unit
 
-        parent_units = [u.title for u in unfold(next_unit, unit)]
+        parent_unit_list = [u.title for u in unfold(next_unit, unit)]
+
+        parent_unit_list.reverse()
+
+        parent_units = {u.title : "" for u in unfold(next_unit, unit)}
 
         index = 1
 
-        while index < len(parent_units):
-            parent_units[index] = parent_units[index - 1] + " " + parent_units[index]  
-            index += 1
+        while index < len(parent_units_list):
+            parent_units_list[index] = parent_units_list[index - 1] + " - " + parent_units_list[index]  
+            index += 1   
+
+        parent_units_list.reverse()      
+
+        for u in parent_units:
+            parent_units[u] = ([quote(link.encode('utf8')) for link in parent_unit_list])  
 
         context.update(
             {
