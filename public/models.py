@@ -987,7 +987,7 @@ class StaffPublicPage(PublicBasePage):
         second_index = 0
         
         for u in parent_units:
-                parent_units[u] = quote(parents_unit_list[index].encode('utf8'))  
+                parent_units[u] = quote(parents_unit_list[second_index].encode('utf8'))  
                 second_index += 1
 
         context.update(
