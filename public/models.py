@@ -984,9 +984,11 @@ class StaffPublicPage(PublicBasePage):
 
         parent_unit_list.reverse()      
 
+        second_index = 0
+        
         for u in parent_units:
-            for link in parent_unit_list:
-                parent_units[u] = quote(link.encode('utf8'))  
+                parent_units[u] = quote(parents_unit_list[index].encode('utf8'))  
+                second_index += 1;
 
         context.update(
             {
