@@ -988,7 +988,7 @@ class StaffPublicPage(PublicBasePage):
         
         for u in parent_units:
                 parent_units[u] = quote(parents_unit_list[index].encode('utf8'))  
-                second_index += 1;
+                second_index += 1
 
         context.update(
             {
