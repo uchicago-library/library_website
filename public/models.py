@@ -978,7 +978,7 @@ class StaffPublicPage(PublicBasePage):
 
         index = 1
 
-        while index < len(parent_units_list):
+        while index < len(parent_unit_list):
             parent_units_list[index] = parent_units_list[index - 1] + " - " + parent_units_list[index]  
             index += 1   
 
