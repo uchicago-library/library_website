@@ -979,10 +979,10 @@ class StaffPublicPage(PublicBasePage):
         index = 1
 
         while index < len(parent_unit_list):
-            parent_units_list[index] = parent_units_list[index - 1] + " - " + parent_units_list[index]  
+            parent_unit_list[index] = parent_unit_list[index - 1] + " - " + parent_unit_list[index]  
             index += 1   
 
-        parent_units_list.reverse()      
+        parent_unit_list.reverse()      
 
         for u in parent_units:
             parent_units[u] = ([quote(link.encode('utf8')) for link in parent_unit_list])  
