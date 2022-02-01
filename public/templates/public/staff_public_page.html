@@ -49,13 +49,11 @@
 
   <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
     <h4>Library &amp; Department</h4>
-    <p style="line-height: 1.7em;"></p>
       {% if parent_units %}
         {% for unit, link in parent_units.items %}
-          <br><a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a>
+          <a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a>
         {% endfor %}
       {% endif %}
-    </p>
   </div>
 
   {% if subjects or libguide_url %}
