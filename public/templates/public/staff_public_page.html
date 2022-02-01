@@ -52,7 +52,7 @@
     <p>
       {% if parent_units %}
         {% for unit, link in parent_units.items %}
-          <br><a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a>
+          <br><a href="/about/directory/?view=staff&amp;department={{ link }}">{{ link }}</a>
         {% endfor %}
       {% endif %}
       {% if department_name %}
