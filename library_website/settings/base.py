@@ -427,7 +427,7 @@ BUILDINGS = (
     (5, 'The Joseph Regenstein Library'),
     (6, 'The Hanna Holborn Gray Special Collections Research Center'),
     (7, 'The Social Work Library'),
-    (8, 'Ryerson Laboratory'),
+    (8, 'Ryerson Physical Laboratory'),
 )
 
 # Location pages
