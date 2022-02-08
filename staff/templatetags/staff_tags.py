@@ -96,6 +96,7 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
         'Mansueto': LocationPage.objects.get(title=BUILDINGS[3][1]),
         'MAN': LocationPage.objects.get(title=BUILDINGS[3][1]),
         'SSA': LocationPage.objects.get(title=BUILDINGS[6][1])
+        'RY': LocationPage.objects.get(title=BUILDINGS[7][1])
     }
 
     lib_room_phone = []
