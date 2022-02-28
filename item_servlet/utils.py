@@ -104,13 +104,11 @@ def get_holdings(instance_id, token):
         return dict()
 
 
-def get_item(holdings, barcode, token):
+def get_item(barcode, token):
     """
     Queries the Folio item storage API.
 
     Args:
-        holdings: dict
-
         barcode: string
 
         token: string, token from get_auth dict
@@ -118,12 +116,9 @@ def get_item(holdings, barcode, token):
     Returns:
         dict
     """
-    if holdings and barcode and token:
+    if barcode and token:
         try:
-            holding = holdings['holdingsRecords'][0]
-            holdings_record_id = holding['id']
-            q = '(holdingsRecordId=="' + holdings_record_id + \
-                '" AND barcode=' + barcode + ' NOT discoverySuppress==true)'
+            q = '(barcode=' + barcode + ' NOT discoverySuppress==true)'
             headers = GENERIC_HEADERS
             headers.update({'X-Okapi-Token': token})
             url = settings.FOLIO_BASE_URL + '/item-storage/items?query=%s' % q
@@ -131,7 +126,7 @@ def get_item(holdings, barcode, token):
             return json.loads(response.content)['items'][0]
         except (
             requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-            requests.exceptions.ConnectionError, KeyError
+            requests.exceptions.ConnectionError, IndexError, KeyError
         ):
             pass
     return dict()

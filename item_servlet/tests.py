@@ -69,7 +69,7 @@ class TestItemServletUtils(TestCase):
         self.assertTrue(holdings == {})
 
     def test_get_item_with_bad_data(self):
-        item = get_item({'foo': 'bar'}, 'badbarcode', 'badtoken')
+        item = get_item('badbarcode', 'badtoken')
         self.assertTrue(item == {})
 
     def test_get_location_with_bad_data(self):
