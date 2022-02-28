@@ -68,7 +68,7 @@ def get_instances(bib, token):
         return json.loads(response.content)['instances'][0]
     except (
         requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-        requests.exceptions.ConnectionError
+        requests.exceptions.ConnectionError, IndexError
     ):
         return dict()
 
