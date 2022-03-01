@@ -31,7 +31,7 @@ from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
+# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtfeail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
 # from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
 # class TabbedInterface(OriginalTabbedInterface):
@@ -155,6 +155,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     featured_library_expert_fallback = StreamField(
         FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
+
+    expert_link = models.URLField(max_length=300)
+
     featured_library_experts = StreamField(
         FeaturedLibraryExpertFields(required=False), blank=True, default=[]
     )
@@ -183,6 +186,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
+        FieldPanel('expert_link'),
         MultiFieldPanel(
             [FieldPanel('enable_search_widget')], heading='Search Widget'
         ),
