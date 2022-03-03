@@ -156,7 +156,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
 
-    expert_link = models.URLField(max_length=300)
+    expert_link = models.URLField(max_length=300, default="https://your.library.here")
 
     featured_library_experts = StreamField(
         FeaturedLibraryExpertFields(required=False), blank=True, default=[]
