@@ -156,7 +156,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
 
-    expert_link = models.URLField(max_length=300, default="https://your.library.here")
+    expert_link = models.URLField(max_length=300, default="/", verbose_name="Featured Expert Link")
 
     featured_library_experts = StreamField(
         FeaturedLibraryExpertFields(required=False), blank=True, default=[]
@@ -186,7 +186,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
-        FieldPanel('expert_link'),
         MultiFieldPanel(
             [FieldPanel('enable_search_widget')], heading='Search Widget'
         ),
@@ -271,6 +270,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             heading='Custom Icon Links'
         ),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
+        FieldPanel('expert_link'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
         MultiFieldPanel(
