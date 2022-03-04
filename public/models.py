@@ -31,7 +31,7 @@ from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
+# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtfeail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
 # from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
 # class TabbedInterface(OriginalTabbedInterface):
@@ -141,7 +141,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     more_icons_link_label = models.CharField(
         max_length=100, blank=True, verbose_name='View More Link Label'
     )
-    
+
     # Featured collections
     collection_page = models.ForeignKey(
         'lib_collections.CollectionPage',
@@ -150,11 +150,14 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         related_name='+',
         on_delete=models.SET_NULL
     )
-        
+
     # Featured Library Expert
     featured_library_expert_fallback = StreamField(
         FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
+
+    expert_link = models.URLField(max_length=300, default="/", verbose_name="Featured Expert Link")
+
     featured_library_experts = StreamField(
         FeaturedLibraryExpertFields(required=False), blank=True, default=[]
     )
@@ -267,6 +270,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             heading='Custom Icon Links'
         ),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
+        FieldPanel('expert_link'),
         StreamFieldPanel('featured_library_expert_fallback'),
         StreamFieldPanel('featured_library_experts'),
         MultiFieldPanel(
