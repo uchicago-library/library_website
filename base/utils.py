@@ -4,17 +4,18 @@ from http.client import HTTPSConnection
 
 import requests
 from django.utils.text import slugify
+from library_website.settings import (ADDRESS_TEMPLATE, CRERAR_HOMEPAGE,
+                                      DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
+                                      HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID,
+                                      MANSUETO_HOMEPAGE, SCRC_HOMEPAGE,
+                                      SSA_HOMEPAGE)
 from wagtail.core.models import Page
 from wagtail.documents.models import Document
 
-from library_website.settings import (
-    ADDRESS_TEMPLATE, CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
-    HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE,
-    SCRC_HOMEPAGE, SSA_HOMEPAGE
-)
-
 try:
-    from library_website.settings.local import DIRECTORY_WEB_SERVICE, DIRECTORY_USERNAME, DIRECTORY_PASSWORD
+    from library_website.settings.local import (DIRECTORY_PASSWORD,
+                                                DIRECTORY_USERNAME,
+                                                DIRECTORY_WEB_SERVICE)
 except (ImportError):
     import os
     DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
@@ -347,6 +348,7 @@ def sort_buildings(spaces):
         If not used, buildings list will be randomly organized.
     """
     from public.models import LocationPage, StandardPage
+
     # LocationPage Object ids
     REG, SSA, MANSUETO, CRERAR, ECKHART, DANGELO, SCRC = 1797, 1798, 1816, 2713, 2714, 3393, 2971
     new_list = []
