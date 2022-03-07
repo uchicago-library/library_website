@@ -4,7 +4,7 @@ from library_website.settings import (
 )
 
 from .utils import (
-    get_auth, get_holdings, get_instances, get_item, get_location
+    get_auth, get_instances, get_item, get_location
 )
 
 # Lookup for identifier types
@@ -110,8 +110,7 @@ def item_servlet(request):
         auth = get_auth()
         token = auth['x-okapi-token']
         instances = get_instances(bib, token)
-        holdings = get_holdings(instances.get('id'), token)
-        item = get_item(holdings, barcode, token)
+        item = get_item(barcode, token)
         location_id = item.get('effectiveLocationId')
         location = dict()
         if location_id:

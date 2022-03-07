@@ -426,7 +426,8 @@ BUILDINGS = (
     (4, 'The Joe and Rika Mansueto Library'),
     (5, 'The Joseph Regenstein Library'),
     (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Work Library')
+    (7, 'The Social Work Library'),
+    (8, 'Ryerson Physical Laboratory'),
 )
 
 # Location pages
