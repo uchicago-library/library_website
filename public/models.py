@@ -31,7 +31,7 @@ from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtfeail/issues/2267
+# TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
 # from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
 # class TabbedInterface(OriginalTabbedInterface):
