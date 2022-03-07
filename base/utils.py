@@ -411,6 +411,26 @@ def get_doc_titles_for_indexing(id_field, iterable):
 
 
 def unfold(step, initial):
+    """
+    Higher-order utility function; anamorphism over generators.  Don't
+    be put off by the fancy name; unfold is a useful function that
+    'unpacks' a single piece of data into a generator of items that
+    are the result of successively running a step function on that
+    initial input.
+
+    Args: 
+        step: a function from any input value to a tuple containing
+        that input in the 0 slot and a transformed version of that
+        input in the 1 slot; when an input that can't be transformed
+        anymore is passed into it, it returns False
+
+        initial: the initial input, to be unpacked by the step
+        function
+
+    Returns: 
+        generator that is the result of successively applying the
+        step function to the initial input
+    """
     def generator(tup):
         while True:
             tup = step(tup[1])
