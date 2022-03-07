@@ -4,18 +4,18 @@ from http.client import HTTPSConnection
 
 import requests
 from django.utils.text import slugify
-from library_website.settings import (ADDRESS_TEMPLATE, CRERAR_HOMEPAGE,
-                                      DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
-                                      HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID,
-                                      MANSUETO_HOMEPAGE, SCRC_HOMEPAGE,
-                                      SSA_HOMEPAGE)
+from library_website.settings import (
+    ADDRESS_TEMPLATE, CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
+    HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE, SCRC_HOMEPAGE,
+    SSA_HOMEPAGE
+)
 from wagtail.core.models import Page
 from wagtail.documents.models import Document
 
 try:
-    from library_website.settings.local import (DIRECTORY_PASSWORD,
-                                                DIRECTORY_USERNAME,
-                                                DIRECTORY_WEB_SERVICE)
+    from library_website.settings.local import (
+        DIRECTORY_PASSWORD, DIRECTORY_USERNAME, DIRECTORY_WEB_SERVICE
+    )
 except (ImportError):
     import os
     DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
@@ -219,8 +219,7 @@ def get_building_hours_and_lid(current_site):
             hours = HOURS_TEMPLATE % (
                 page['name'], process_hours(page['rendered'])
             )
-            buildings.append(
-                (str(llid), str(hours), library_data[llid]['url']))
+            buildings.append((str(llid), str(hours), library_data[llid]['url']))
     return buildings
 
 
@@ -433,6 +432,7 @@ def unfold(step, initial):
         generator that is the result of successively applying the
         step function to the initial input
     """
+
     def generator(tup):
         while True:
             tup = step(tup[1])
@@ -440,4 +440,5 @@ def unfold(step, initial):
                 break
             else:
                 yield tup[0]
+
     return [item for item in generator((None, initial))]
