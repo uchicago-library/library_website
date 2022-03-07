@@ -1,18 +1,15 @@
-from urllib.parse import quote
-
-from base.utils import unfold
-
 from datetime import date
+from urllib.parse import quote
 
 from base.models import (
     Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
-    PhoneNumber, PublicBasePage, RawHTMLBodyField, RawHTMLBlock,
+    PhoneNumber, PublicBasePage, RawHTMLBlock, RawHTMLBodyField,
     ReusableContentBlock, SocialMediaFields
 )
+from base.utils import unfold
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
-from public.utils import get_features, mk_search_field
 from staff.models import StaffPage
 from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
@@ -30,6 +27,8 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
+
+from public.utils import get_features, mk_search_field
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
@@ -156,7 +155,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
     )
 
-    expert_link = models.CharField(max_length=400, default="/", verbose_name="Featured Expert Link")
+    expert_link = models.CharField(
+        max_length=400, default="/", verbose_name="Featured Expert Link"
+    )
 
     featured_library_experts = StreamField(
         FeaturedLibraryExpertFields(required=False), blank=True, default=[]
@@ -978,21 +979,24 @@ class StaffPublicPage(PublicBasePage):
 
         parent_unit_list.reverse()
 
-        parent_units = {u.title : "" for u in unfold(next_unit, unit)}
+        parent_units = {u.title: "" for u in unfold(next_unit, unit)}
 
         index = 1
 
         while index < len(parent_unit_list):
-            parent_unit_list[index] = parent_unit_list[index - 1] + " - " + parent_unit_list[index]  
-            index += 1   
+            parent_unit_list[index] = parent_unit_list[
+                index - 1] + " - " + parent_unit_list[index]
+            index += 1
 
-        parent_unit_list.reverse()      
+        parent_unit_list.reverse()
 
         second_index = 0
-        
+
         for u in parent_units:
-                parent_units[u] = quote(parent_unit_list[second_index].encode('utf8'))  
-                second_index += 1
+            parent_units[u] = quote(
+                parent_unit_list[second_index].encode('utf8')
+            )
+            second_index += 1
 
         context.update(
             {
