@@ -419,7 +419,7 @@ def unfold(step, initial):
     are the result of successively running a step function on that
     initial input.
 
-    Args: 
+    Args:
         step: a function from any input value to a tuple containing
         that input in the 0 slot and a transformed version of that
         input in the 1 slot; when an input that can't be transformed
@@ -428,7 +428,7 @@ def unfold(step, initial):
         initial: the initial input, to be unpacked by the step
         function
 
-    Returns: 
+    Returns:
         generator that is the result of successively applying the
         step function to the initial input
     """
