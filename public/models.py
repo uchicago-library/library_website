@@ -156,7 +156,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     expert_link = models.CharField(
-        max_length=400, default="/", verbose_name="Featured Expert Link"
+        max_length=400, default="/about/directory/?view=staff", verbose_name="Featured Expert Link"
     )
 
     featured_library_experts = StreamField(
