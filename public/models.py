@@ -968,7 +968,7 @@ class StaffPublicPage(PublicBasePage):
             building_str = None
 
         def next_unit(unit):
-            if unit.title == "Units":
+            if type(unit) == "UnitIndexPage":
                 return False
             else:
                 return (unit, unit.get_parent())
