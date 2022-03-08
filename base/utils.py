@@ -436,7 +436,7 @@ def unfold(step, initial):
     def generator(tup):
         while True:
             tup = step(tup[1])
-            if tup == False:
+            if tup is False:
                 break
             else:
                 yield tup[0]
