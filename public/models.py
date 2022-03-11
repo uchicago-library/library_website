@@ -13,7 +13,7 @@ from modelcluster.fields import ParentalKey
 from staff.models import StaffPage
 from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
-from units.models import BUILDINGS
+from units.models import BUILDINGS, UnitIndexPage
 from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel, HelpPanel, InlinePanel, MultiFieldPanel,
     ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
@@ -968,7 +968,7 @@ class StaffPublicPage(PublicBasePage):
             building_str = None
 
         def next_unit(unit):
-            if type(unit.specific) == "UnitIndexPage":
+            if isinstance(unit.specific, UnitIndexPage):
                 return False
             else:
                 return (unit, unit.get_parent())
