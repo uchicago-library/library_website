@@ -264,7 +264,9 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                     email = None
                 phone_numbers = staff_page.staff_page_phone_faculty_exchange.all(
                 ).values_list('phone_number', flat=True)
-                titles = [staff_page.position_title]
+                titles = []
+                if staff_page.position_title:
+                    titles = [staff_page.position_title]
 
                 department_members.append(
                     {
