@@ -4,7 +4,7 @@ from wagtail.core.models import Page
 from wagtail.admin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.search import index
-from base.models import PublicBasePage, LinkFields
+from base.models import PublicBasePage, LinkFields, BasePage
 
 class RedirectPage(PublicBasePage, LinkFields):
     """
@@ -31,3 +31,24 @@ class RedirectPage(PublicBasePage, LinkFields):
         Override the serve method to create a redirect. 
         """
         return redirect(self.link, permanent=True)
+
+class LoopRedirectPage(BasePage):
+    subpage_types = []
+
+    redirect_url = models.URLField(
+        max_length=200, 
+        default = "https://loop.lib.uchicago.edu/")
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel('redirect_url')
+            ]
+        )
+    ] + BasePage.content_panels
+
+    def serve(self, request):
+        """
+        Override the serve method to create a redirect. 
+        """
+        return redirect(self.redirect_url, permanent=True)

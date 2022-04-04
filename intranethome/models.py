@@ -7,6 +7,7 @@ from base.models import BasePage
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
 from news.models import NewsPage
+from redirects.models import LoopRedirectPage
 
 
 class IntranetHomePage(BasePage):
@@ -16,7 +17,7 @@ class IntranetHomePage(BasePage):
         'base.IntranetIndexPage', 'base.IntranetPlainPage',
         'intranetunits.IntranetUnitsIndexPage', 'group.GroupIndexPage',
         'news.NewsIndexPage', 'staff.StaffIndexPage', 'units.UnitIndexPage',
-        'intranettocs.TOCPage'
+        'intranettocs.TOCPage', 'redirects.LoopRedirectPage'
     ]
 
     def get_context(self, request):
