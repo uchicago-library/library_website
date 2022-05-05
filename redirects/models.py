@@ -32,7 +32,7 @@ class RedirectPage(PublicBasePage, LinkFields):
         """
         return redirect(self.link, permanent=True)
 
-class LoopRedirectPage(BasePage):
+class LoopRedirectPage(BasePage, LinkFields):
     subpage_types = []
 
     redirect_url = models.URLField(
@@ -42,7 +42,8 @@ class LoopRedirectPage(BasePage):
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
-                FieldPanel('redirect_url')
+                FieldPanel('redirect_url'),
+                PageChooserPanel('link_page')
             ]
         )
     ] + BasePage.content_panels
