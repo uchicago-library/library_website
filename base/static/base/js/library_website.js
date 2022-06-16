@@ -15,7 +15,7 @@ function renderEvents() {
         json = $.getJSON('/json-events/?feed='.concat(feed), function(data) {
             var innerJson = data['events'];
             $.each(innerJson, function(i, v){
-                if (v['start_date'] == v['end_date']) {
+                if (v['start_date'] == v['end_date'] || v['end_date'] == '') {
                     // single-day events.
                     eventsHtml += '<p><a class="event-header" href="' + v['link'] + '">' + v['title'] + '</a><br/><span class="event-date">' + v['start_date'] + '</span> | ' + v['start_time'] + ' - ' + v['end_time'] + '</p>'
                 } else {
