@@ -22,28 +22,39 @@ def get_xml_from_feed(feed):
 
 def get_entries_from_events_uchicago(x):
     entries = []
+    from lxml import etree
     for entry in x.find('channel').findall('item'):
-        content = truncate_summary(entry.find('description').text)
+        content = ''
+        html = entry.find('description').itertext()
+        for tag in html:
+            content += tag
+        content = truncate_summary(content)
 
-        guid = entry.find('guid').text
+        # guid = entry.find('title').text
+        guid = entry.find('link').text
 
-        start_date = entry.find('startDate').text
-        start_time = entry.find('startTime').text
+        start_date = entry.find('startDate').text.strip()
+        start_time = entry.find('startTime').text.strip()
 
-        end_date = entry.find('endDate').text
-        end_time = entry.find('endTime').text
+        end_date = ''
+        sortable_end_date = ''
+        end_date_short_form = ''
+        if entry.find('endDate').text:
+            end_date = entry.find('endDate').text.strip()
+            sortable_end_date = datetime.strptime(end_date, '%b %d, %Y').strftime('%Y-%m-%d')
+            end_date_short_form = datetime.strptime(end_date, '%b %d, %Y').strftime('%m/%d')
+
+        end_time = ''
+
+        if entry.find('endTime').text:
+            end_time = entry.find('endTime').text.strip()
     
-        sortable_date = datetime.strptime(start_date, '%B %d, %Y').strftime('%Y-%m-%d')
+        sortable_date = datetime.strptime(start_date, '%b %d, %Y').strftime('%Y-%m-%d')
         sortable_datetime = sortable_date + ' ' + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
 
-        sortable_end_date = datetime.strptime(end_date, '%B %d, %Y').strftime('%Y-%m-%d')
+        start_date_short_form = datetime.strptime(start_date, '%b %d, %Y').strftime('%m/%d')
 
-        start_date_short_form = datetime.strptime(start_date, '%B %d, %Y').strftime('%m/%d')
-        end_date_short_form = datetime.strptime(end_date, '%B %d, %Y').strftime('%m/%d')
-        
-        # the date and time appear in the title, like "Aug 18: ", or "Aug 18, 5:00PM: ".
-        # strip that out.
-        title = re.sub(r'^.*?: ', '', entry.find('title').text)
+        title = entry.find('title').text
 
         entries.append({
             'content': content,
@@ -87,18 +98,18 @@ def expand_multiday_entries(entries, nudge_to_date):
     entries_out = []
     i = 0 
     while i < len(entries):
-        if entries[i]['start_date'] == entries[i]['end_date']:
+        if entries[i]['end_date'] == '' or entries[i]['start_date'] == entries[i]['end_date']:
             entries_out.append(entries[i])
         else:
-            start_date = datetime.strptime(entries[i]['start_date'], '%B %d, %Y')
+            start_date = datetime.strptime(entries[i]['start_date'], '%b %d, %Y')
             current_date = start_date
-            end_date = datetime.strptime(entries[i]['end_date'], '%B %d, %Y')
+            end_date = datetime.strptime(entries[i]['end_date'], '%b %d, %Y')
             while current_date <= end_date:
                 if nudge_to_date == None or current_date.date() == nudge_to_date:
-                    # using dict() makes a new copy. 
+                    # using dict() makes a new copy.
                     tmp = dict(entries[i])
                     tmp['sortable_date'] = current_date.strftime('%Y-%m-%d')
-                    tmp['sortable_date_label'] = current_date.strftime('%B %d, %Y')
+                    tmp['sortable_date_label'] = current_date.strftime('%b %d, %Y')
                     tmp['sortable_datetime'] = current_date.strftime('%Y-%m-%d')
                     entries_out.append(tmp)
                     if nudge_to_date != None:
@@ -113,9 +124,7 @@ def expand_multiday_entries(entries, nudge_to_date):
 def get_flat_entries_from_ttrss(x):
     entries = []
     for entry in x.findall('{http://www.w3.org/2005/Atom}entry'):
-        link = entry.find('{http://www.w3.org/2005/Atom}link').get('href')
-        query = urlparse(link).query
-        guid = parse_qs(query)['guid'][0]
+        guid = entry.find('{http://www.w3.org/2005/Atom}link').get('href')
         entries.append({'guid': guid})
     return entries
 
@@ -177,22 +186,6 @@ def filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries
     return entries_out
 
 def truncate_summary(summary_string):
-    # remove CDATA marker. 
-    summary_string = summary_string.replace('<![CDATA[', '')
-
-    # remove dates, times, hyperlinks, etc. 
-    summary_string = re.sub(r'<strong>Date:</strong>[^<]*<br />', '', summary_string)
-    summary_string = re.sub(r'<strong>Ends:</strong>[^<]*<br />', '', summary_string)
-    summary_string = re.sub(r'<strong>See:</strong>\s*<a[^<]*</a><br />', '', summary_string)
-    summary_string = re.sub(r'<strong>Starts:</strong>[^<]*<br />', '', summary_string)
-    summary_string = re.sub(r'<strong>Time:</strong>[^<]*<br />', '', summary_string)
-
-    # remove nulls and characters that don't fit into seven bits. 
-    summary_string = re.sub('[\0\200-\377]', '', summary_string)
-
-    # remove HTML tags. 
-    summary_string = re.sub('<.*?>', '', summary_string)
-    
     # replace all whitespace with a single space. 
     summary_string = re.sub('\s+', ' ', summary_string)
 
