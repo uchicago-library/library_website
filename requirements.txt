@@ -2,7 +2,7 @@ beautifulsoup4==4.8.2
 bleach==3.3.0
 DateTime>=4,<5
 defusedxml
--e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python 
+-e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python
 Django==3.1.12
 django-appconf==1.0.4
 django-bleach==0.6.1
@@ -13,7 +13,7 @@ django-localflavor==1.2
 django-macros==0.4.0
 django-redis
 -e git+https://github.com/Brown-University-Library/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
--e git+https://github.com/cafehaine/django-static-precompiler.git@5499f745e5823f6eb9136a7591f9c0d5e2485a18#egg=django-static-precompiler
+django-static-precompiler
 django-taggit==1.2.0
 django-treebeard==4.3.1
 django-webpack-loader==0.7.0

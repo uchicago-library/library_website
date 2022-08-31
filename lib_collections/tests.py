@@ -455,8 +455,11 @@ class TestCollectingAreaPages(TestCase):
         page = self.collecting_area
         subject_specialist = page._build_subject_specialist(
             self.captain, self.site)
-        self.assertEqual(subject_specialist, ('Jean-Luc Picard', 'Captain of the USS Enterprise',
-                                              '/jean-luc-picard-public/', 'picard@starfleet.io', (('012-345-6789', 'Bridge'),), None))
+        self.assertEqual(subject_specialist[0], 'Jean-Luc Picard')
+        self.assertEqual(subject_specialist[1], 'Captain of the USS Enterprise')
+        self.assertEqual(subject_specialist[2], '/jean-luc-picard-public/')
+        self.assertEqual(subject_specialist[3].email, 'picard@starfleet.io')
+        self.assertEqual(subject_specialist[4], (('012-345-6789', 'Bridge'),), None)
 
     def test_build_subject_specialist_with_wrong_page_type(self):
         page = self.collecting_area

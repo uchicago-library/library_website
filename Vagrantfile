@@ -48,7 +48,8 @@ Vagrant.configure("2") do |config|
     # Display the VirtualBox GUI when booting the machine
     vb.gui = false
     # Customize the amount of memory on the VM:
-    vb.memory = "4096"
+    vb.memory = "10240"
+    vb.cpus = 8
   end
   #
   # View the documentation for the provider you are using for more
@@ -93,7 +94,7 @@ Vagrant.configure("2") do |config|
 
     # Pip install project dependencies
     echo "Pip installing project dependencies"
-    source lw/bin/activate && cd /vagrant/ && pip install -r requirements.txt
+    source lw/bin/activate && cd /vagrant/ && pip install -r requirements.txt && pip install -r requirements-dev.txt
    
     # Start Elasticsearch
     systemctl enable elasticsearch
