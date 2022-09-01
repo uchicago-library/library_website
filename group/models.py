@@ -208,7 +208,7 @@ class GroupPage(BasePage, Email):
     subpage_types = [
         'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage',
         'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
-        'intranetforms.IntranetFormPage', 'projects.ProjectPage'
+        'intranetforms.IntranetFormPage', 'projects.ProjectPage', 'redirects.LoopRedirectPage'
     ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
