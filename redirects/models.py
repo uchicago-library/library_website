@@ -33,10 +33,14 @@ class RedirectPage(PublicBasePage, LinkFields):
         return redirect(self.link, permanent=True)
 
 class LoopRedirectPage(BasePage, LinkFields):
+    """
+    Page object for setting up redirects in loop that need to 
+    appear in the sidebar in a given section of the site.
+    """
     subpage_types = []
 
     redirect_url = models.URLField(
-        max_length=200, 
+        max_length=200,
         default = "https://loop.lib.uchicago.edu/")
 
     content_panels = Page.content_panels + [
