@@ -28,7 +28,9 @@ from wagtail.images.models import Image
 from wagtail.search import index
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-from public.utils import get_features, mk_search_field
+from public.utils import get_features
+
+from units.utils import get_default_unit
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
@@ -973,7 +975,11 @@ class StaffPublicPage(PublicBasePage):
             else:
                 return (unit, unit.get_parent())
 
-        unit = s.staff_page_units.first().library_unit
+        unit = get_default_unit()
+        try:
+            unit = s.staff_page_units.first().library_unit
+        except AttributeError:
+            pass
 
         parent_unit_list = [u.title for u in unfold(next_unit, unit)]
 

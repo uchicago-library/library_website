@@ -51,7 +51,8 @@ def events(request):
     while d >= 0:
         e = len(entries[d][1]) - 1
         while e >= 0:
-            if entries[d][1][e]['start_date'] != entries[d][1][e]['end_date']:
+            end_date = entries[d][1][e]['end_date'] 
+            if entries[d][1][e]['start_date'] != end_date and end_date != '':
                 del (entries[d][1][e])
                 if not entries[d][1]:
                     del (entries[d])

@@ -4,7 +4,7 @@ import requests
 
 from django.conf import settings
 
-TIMEOUT = 2
+TIMEOUT = 5
 
 GENERIC_HEADERS = {
     'Accept': 'application/json',
@@ -118,7 +118,7 @@ def get_item(barcode, token):
     """
     if barcode and token:
         try:
-            q = '(barcode=' + barcode + ' NOT discoverySuppress==true)'
+            q = '(barcode==' + barcode + ' NOT discoverySuppress==true)'
             headers = GENERIC_HEADERS
             headers.update({'X-Okapi-Token': token})
             url = settings.FOLIO_BASE_URL + '/item-storage/items?query=%s' % q
