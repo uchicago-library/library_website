@@ -1,11 +1,10 @@
 from base.models import BasePage, LinkFields, PublicBasePage
 from django.db import models
 from django.shortcuts import redirect
-from wagtail.admin.edit_handlers import (FieldPanel, FieldRowPanel,
-                                         MultiFieldPanel, PageChooserPanel)
+from wagtail.admin.edit_handlers import (FieldPanel, MultiFieldPanel,
+                                         PageChooserPanel)
 from wagtail.core.models import Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.search import index
 
 
 class RedirectPage(PublicBasePage, LinkFields):
