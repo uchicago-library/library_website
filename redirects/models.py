@@ -1,10 +1,12 @@
+from base.models import BasePage, LinkFields, PublicBasePage
 from django.db import models
 from django.shortcuts import redirect
+from wagtail.admin.edit_handlers import (FieldPanel, FieldRowPanel,
+                                         MultiFieldPanel, PageChooserPanel)
 from wagtail.core.models import Page
-from wagtail.admin.edit_handlers import FieldPanel, FieldRowPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.search import index
-from base.models import PublicBasePage, LinkFields, BasePage
+
 
 class RedirectPage(PublicBasePage, LinkFields):
     """
@@ -31,17 +33,18 @@ class RedirectPage(PublicBasePage, LinkFields):
         Override the serve method to create a redirect. 
         """
         return redirect(self.link, permanent=True)
+    
 
 class LoopRedirectPage(BasePage, LinkFields):
     """
-    Page object for setting up redirects in loop that need to 
+    Page object for setting up redirects in loop that need to
     appear in the sidebar in a given section of the site.
     """
     subpage_types = []
 
-    redirect_url = models.URLField(
+    redirect_url=models.URLField(
         max_length=200,
-        default = "https://loop.lib.uchicago.edu/")
+        default="https://loop.lib.uchicago.edu/")
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -54,6 +57,6 @@ class LoopRedirectPage(BasePage, LinkFields):
 
     def serve(self, request):
         """
-        Override the serve method to create a redirect. 
+        Override the serve method to create a redirect.
         """
         return redirect(self.redirect_url, permanent=True)

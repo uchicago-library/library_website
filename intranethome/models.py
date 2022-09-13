@@ -1,13 +1,11 @@
 from __future__ import unicode_literals
 
-from django.core.paginator import EmptyPage
-from wagtail.core.models import Page
-
 from base.models import BasePage
+from django.core.paginator import EmptyPage
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
 from news.models import NewsPage
-from redirects.models import LoopRedirectPage
+from wagtail.core.models import Page
 
 
 class IntranetHomePage(BasePage):
