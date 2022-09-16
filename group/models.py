@@ -2,23 +2,21 @@ import re
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
+from base.models import (AbstractReport, BasePage, DefaultBodyFields, Email,
+                         Report)
+from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.fields import CharField
 from django.utils import timezone
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
-)
+from wagtail.admin.edit_handlers import (FieldPanel, InlinePanel,
+                                         MultiFieldPanel, PageChooserPanel,
+                                         StreamFieldPanel)
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
-
-from base.models import (
-    AbstractReport, BasePage, DefaultBodyFields, Email, Report
-)
-from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 
 GROUP_PAGE_CONTENT_TYPES = ['group | group page', 'group | group index page']
 
@@ -208,7 +206,8 @@ class GroupPage(BasePage, Email):
     subpage_types = [
         'base.IntranetIndexPage', 'base.IntranetPlainPage', 'group.GroupPage',
         'group.GroupMeetingMinutesIndexPage', 'group.GroupReportsIndexPage',
-        'intranetforms.IntranetFormPage', 'projects.ProjectPage'
+        'intranetforms.IntranetFormPage', 'projects.ProjectPage',
+        'redirects.LoopRedirectPage'
     ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
