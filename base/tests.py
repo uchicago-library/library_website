@@ -312,7 +312,7 @@ class TestPageModels(TestCase):
                 'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
                 'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
                 'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
-                'ProjectIndexPage', 'RedirectPage'
+                'ProjectIndexPage', 'RedirectPage', 'LoopRedirectPage'
             ]
         )
         no_search_fields = set([])
