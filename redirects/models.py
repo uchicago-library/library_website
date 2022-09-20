@@ -41,16 +41,14 @@ class LoopRedirectPage(BasePage, LinkFields):
     """
     subpage_types = []
 
-    redirect_url=models.URLField(
-        max_length=200,
-        default="https://loop.lib.uchicago.edu/")
-
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
-                FieldPanel('redirect_url'),
-                PageChooserPanel('link_page')
-            ]
+                PageChooserPanel('link_page'),
+                FieldPanel('link_external'),
+                DocumentChooserPanel('link_document')
+            ],
+            heading='Redirect to'
         )
     ] + BasePage.content_panels
 
@@ -58,4 +56,4 @@ class LoopRedirectPage(BasePage, LinkFields):
         """
         Override the serve method to create a redirect.
         """
-        return redirect(self.redirect_url, permanent=True)
+        return redirect(self.link, permanent=True)
