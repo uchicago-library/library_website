@@ -9,7 +9,7 @@ from library_website.settings import (
     HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE, SCRC_HOMEPAGE,
     SSA_HOMEPAGE
 )
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.documents.models import Document
 
 try:

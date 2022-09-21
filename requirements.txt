@@ -30,8 +30,8 @@ simplejson==3.11.1
 sqlparse==0.3.1
 Unidecode==1.1.1
 urllib3==1.26.5
-wagtail==2.16.2
-wagtailmedia==0.5.0
-wagtail-cache==1.0.0
+wagtail==3.0.3
+wagtailmedia==0.11.0
+wagtail-cache==2.1.1
 wheel==0.24.0
 zope.interface==4.1.2

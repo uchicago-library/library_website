@@ -1,10 +1,10 @@
 from base.models import AbstractBase, get_breadcrumbs
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel, InlinePanel, MultiFieldPanel
 )
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
-from wagtail.core.fields import RichTextField
+from wagtail.fields import RichTextField
 
 
 class IntranetFormField(AbstractFormField):

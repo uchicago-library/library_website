@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='standardpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(default=''),
+            field=wagtail.fields.RichTextField(default=''),
             preserve_default=False,
         ),
     ]

@@ -2,13 +2,12 @@ from base.models import BasePage, Email, FaxNumber, LinkedText, PhoneNumber
 from django.db import models
 from library_website.settings import BUILDINGS
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel, InlinePanel, ObjectList, PageChooserPanel, TabbedInterface
 )
-from wagtail.core.fields import RichTextField
-from wagtail.core.models import Orderable, Page
+from wagtail.fields import RichTextField
+from wagtail.models import Orderable, Page
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 
@@ -81,7 +80,7 @@ class UnitPageRolePlacement(Orderable, models.Model):
         verbose_name_plural = 'Unit Placements'
 
     panels = [
-        SnippetChooserPanel('role'),
+        FieldPanel('role'),
     ]
 
     def __str__(self):

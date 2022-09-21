@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 import hashlib
 from io import StringIO
 import sys
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtail.contrib.forms.models import FormSubmission
 
 class Command (BaseCommand):

@@ -9,20 +9,18 @@ from django.template.response import TemplateResponse
 from django.utils import text, timezone
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-    PageChooserPanel, StreamFieldPanel, TabbedInterface
+    PageChooserPanel, TabbedInterface
 )
 from wagtail.api import APIField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core.blocks import PageChooserBlock
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page
-from wagtail.core.signals import page_published, page_unpublished
+from wagtail.blocks import PageChooserBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page
+from wagtail.signals import page_published, page_unpublished
 from wagtail.images.api.fields import ImageRenditionField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import clear_cache
 
@@ -106,7 +104,7 @@ class LibNewsPageCategories(Orderable, models.Model):
     )
 
     panels = [
-        SnippetChooserPanel('category'),
+        FieldPanel('category'),
     ]
 
     def __str__(self):
@@ -123,7 +121,11 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         self.is_unrouted = True
         self.news_feed_api = '/static/lib_news/files/lib-news.json'
 
-    contacts = StreamField(ContactPersonBlock(required=False), default=[])
+    contacts = StreamField(
+        ContactPersonBlock(required=False),
+        default=[],
+        use_json_field=True,
+    )
 
     navigation = StreamField(
         [
@@ -137,6 +139,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         default=[],
         null=True,
         blank=True,
+        use_json_field=True,
     )
 
     fallback_image = models.ForeignKey(
@@ -150,14 +153,14 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     )
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('fallback_image'),
-        StreamFieldPanel('navigation'),
+        FieldPanel('fallback_image'),
+        FieldPanel('navigation'),
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
         MultiFieldPanel(
             [
-                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_image'),
                 FieldPanel('banner_title'),
             ],
             heading='Banner'
@@ -173,7 +176,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             ],
             heading='Current Web Exhibits'
         ),
-        StreamFieldPanel('contacts'),
+        FieldPanel('contacts'),
     ]
 
     edit_handler = TabbedInterface(
@@ -327,7 +330,10 @@ class LibNewsPage(PublicBasePage):
         self.news_pages = LibNewsPage.objects.live(
         ).prefetch_related('lib_news_categories')
 
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -339,7 +345,10 @@ class LibNewsPage(PublicBasePage):
     is_feature_story = models.BooleanField(default=False)
     excerpt = RichTextField(blank=True)
     related_exhibits = StreamField(
-        RelatedExhibitBlock(required=False), blank=True, default=[]
+        RelatedExhibitBlock(required=False),
+        blank=True,
+        default=[],
+        use_json_field=True,
     )
     by_staff_or_unit = models.ForeignKey(
         'lib_news.PublicNewsAuthors',
@@ -444,19 +453,19 @@ class LibNewsPage(PublicBasePage):
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
-                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail'),
                 FieldPanel('alt_text'),
             ],
             heading='Thumbnail',
         ),
         FieldPanel('is_feature_story'),
         FieldPanel('excerpt'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('lib_news_categories', label='Categories'),
         FieldPanel('published_at'),
         MultiFieldPanel(
             [
-                SnippetChooserPanel('by_staff_or_unit'),
+                FieldPanel('by_staff_or_unit'),
                 FieldPanel('custom_author_byline'),
             ],
             heading='Author'
@@ -477,7 +486,7 @@ class LibNewsPage(PublicBasePage):
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
-        StreamFieldPanel('related_exhibits'),
+        FieldPanel('related_exhibits'),
         FieldPanel('treat_as_webpage'),
         MultiFieldPanel(
             [

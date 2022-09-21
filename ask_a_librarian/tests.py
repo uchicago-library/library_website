@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 from django.test import TestCase
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from ask_a_librarian.models import AskPage
 from ask_a_librarian.utils import get_chat_statuses, get_unit_chat_link

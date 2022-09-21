@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.core.fields
-import wagtail.core.blocks
+import wagtail.fields
+import wagtail.blocks
 import django.db.models.deletion
 
 
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(verbose_name='Last Reviewed', null=True, blank=True)),
                 ('sort_order', models.IntegerField(default=0, blank=True)),
-                ('body', wagtail.core.fields.StreamField((('list_block', wagtail.core.blocks.StructBlock((('icon', wagtail.core.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.core.blocks.CharBlock()), ('text', wagtail.core.blocks.RichTextBlock())))),))),
+                ('body', wagtail.fields.StreamField((('list_block', wagtail.blocks.StructBlock((('icon', wagtail.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.blocks.CharBlock()), ('text', wagtail.blocks.RichTextBlock())))),))),
                 ('editor', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage', blank=True, related_name='intranettocs_tocpage_editor', null=True)),
                 ('page_maintainer', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to='staff.StaffPage', blank=True, related_name='intranettocs_tocpage_maintainer', null=True)),
             ],

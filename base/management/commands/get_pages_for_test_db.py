@@ -1,6 +1,6 @@
 import sys
 from django.core.management.base import BaseCommand, CommandError
-from wagtail.core.models import Page
+from wagtail.models import Page
 import django.apps
 
 def get_all_page_models():

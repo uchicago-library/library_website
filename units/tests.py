@@ -6,7 +6,7 @@ from django.core import management
 from django.db.models.query import QuerySet
 from django.test import Client, TestCase
 from openpyxl import load_workbook
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 
 from library_website.settings import PUBLIC_HOMEPAGE, QUICK_NUMS
 from staff.models import StaffPage

@@ -13,7 +13,7 @@ from events.utils import flatten_events, get_events
 from library_website.settings import PUBLIC_HOMEPAGE, UC_EVENTS_FEED
 from public.models import StandardPage
 from units.utils import get_default_unit
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from base.utils import (
     get_building_hours_and_lid, get_hours_and_location, get_json_hours_by_id

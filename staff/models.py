@@ -13,17 +13,14 @@ from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from subjects.models import Subject
 from units.models import BUILDINGS
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
-    StreamFieldPanel, TabbedInterface
+    TabbedInterface
 )
 from wagtail.api import APIField
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page, PageManager
-from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page, PageManager
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 EMPLOYEE_TYPES = (
@@ -50,7 +47,7 @@ class StaffPageSubjectPlacement(Orderable, models.Model):
         verbose_name_plural = 'Subject Placements'
 
     panels = [
-        SnippetChooserPanel('subject'),
+        FieldPanel('subject'),
     ]
 
     def __str__(self):
@@ -203,7 +200,8 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         DefaultBodyFields(),
         blank=True,
         help_text='A brief bio highlighting what you offer to Library users.',
-        null=True
+        null=True,
+        use_json_field=True,
     )
     cv = models.ForeignKey(
         'wagtaildocs.Document',
@@ -388,10 +386,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             return StaffPage.objects.none()
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('profile_picture'),
+        FieldPanel('profile_picture'),
         FieldPanel('pronouns'),
-        StreamFieldPanel('bio'),
-        DocumentChooserPanel('cv'),
+        FieldPanel('bio'),
+        FieldPanel('cv'),
         FieldPanel('libguide_url'),
         FieldPanel('is_public_persona'),
         InlinePanel('staff_subject_placements', label='Subject Specialties'),
@@ -562,7 +560,7 @@ class StaffPageExpertisePlacement(Orderable, models.Model):
         verbose_name_plural = "Expertise Placements"
 
     panels = [
-        SnippetChooserPanel('expertise'),
+        FieldPanel('expertise'),
     ]
 
     def __str__(self):

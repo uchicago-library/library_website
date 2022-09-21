@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from library_website.settings import EBOOKS_SEARCH
 from units.models import UnitIndexPage
 from wagtail.contrib.search_promotions.models import SearchPromotion
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 from wagtail.search.models import Query
 
 

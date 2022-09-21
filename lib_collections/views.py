@@ -15,7 +15,7 @@ from public.models import LocationPage, StandardPage
 from staff.models import StaffPageSubjectPlacement
 from subjects.models import Subject, SubjectParentRelations
 from units.models import UnitPage
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.images.models import Image
 from wagtail.search.backends import get_search_backend
 

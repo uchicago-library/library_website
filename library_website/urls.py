@@ -6,7 +6,7 @@ from django.views.generic.base import RedirectView
 from django.urls import path
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
-from wagtail.core import urls as wagtail_urls
+from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from base.views import chat_status, external_include, json_events, json_hours

@@ -10,7 +10,7 @@ from django.core.cache import caches
 from subjects.models import Subject
 from units.models import UnitPage
 from public.models import LocationPage, StaffPublicPage
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from lib_collections.utils import (
     Testing,

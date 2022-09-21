@@ -14,19 +14,17 @@ from staff.models import StaffPage
 from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS, UnitIndexPage
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel, FieldRowPanel, HelpPanel, InlinePanel, MultiFieldPanel,
-    ObjectList, PageChooserPanel, StreamFieldPanel, TabbedInterface
+    ObjectList, PageChooserPanel, TabbedInterface
 )
 from wagtail.api import APIField
-from wagtail.core import blocks
-from wagtail.core.blocks import RichTextBlock
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page, Site
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail import blocks
+from wagtail.blocks import RichTextBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page, Site
 from wagtail.images.models import Image
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
 from public.utils import get_features
 
@@ -34,7 +32,7 @@ from units.utils import get_default_unit
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
 # from wagtail.admin.forms import WagtailAdminPageForm
-# from wagtail.admin.edit_handlers import TabbedInterface as OriginalTabbedInterface
+# from wagtail.admin.panels import TabbedInterface as OriginalTabbedInterface
 # class TabbedInterface(OriginalTabbedInterface):
 #
 #    def __init__(self, children, base_form_class=WagtailAdminPageForm):
@@ -102,7 +100,7 @@ class StandardPageSidebarReusableContent(Orderable, models.Model):
         verbose_name_plural = "Content"
 
     panels = [
-        SnippetChooserPanel('content'),
+        FieldPanel('content'),
     ]
 
 
@@ -125,7 +123,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     A standard basic page.
     """
     # Page content
-    body = StreamField(DefaultBodyFields(), blank=True)
+    body = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        use_json_field=True,
+    )
 
     # Search widget
     enable_search_widget = models.BooleanField(default=False)
@@ -154,7 +156,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Featured Library Expert
     featured_library_expert_fallback = StreamField(
-        FeaturedLibraryExpertBaseFields(required=False), blank=True, default=[]
+        FeaturedLibraryExpertBaseFields(required=False),
+        blank=True,
+        default=[],
+        use_json_field=True,
     )
 
     expert_link = models.CharField(
@@ -162,7 +167,10 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     featured_library_experts = StreamField(
-        FeaturedLibraryExpertFields(required=False), blank=True, default=[]
+        FeaturedLibraryExpertFields(required=False),
+        blank=True,
+        default=[],
+        use_json_field=True,
     )
 
     subpage_types = [
@@ -185,7 +193,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ]
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [
@@ -217,7 +225,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ),
         MultiFieldPanel(
             [
-                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_image'),
                 FieldPanel('banner_title'),
             ],
             heading='Banner'
@@ -274,8 +282,8 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         ),
         InlinePanel('reusable_content', label='Reusable Content Blocks'),
         FieldPanel('expert_link'),
-        StreamFieldPanel('featured_library_expert_fallback'),
-        StreamFieldPanel('featured_library_experts'),
+        FieldPanel('featured_library_expert_fallback'),
+        FieldPanel('featured_library_experts'),
         MultiFieldPanel(
             [
                 FieldPanel('cgi_mail_form_thank_you_text'),
@@ -308,7 +316,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
         Args:
             streamblock: streamfield block object,
-            wagtail.core.blocks.stream_block.StreamValue.StreamChild.
+            wagtail.blocks.stream_block.StreamValue.StreamChild.
 
             field: string field name that contains
             a ListBlock of LinkBlocks.
@@ -329,7 +337,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
         Args:
             streamblock: streamfield block object,
-            wagtail.core.blocks.stream_block.StreamValue.StreamChild.
+            wagtail.blocks.stream_block.StreamValue.StreamChild.
 
             field_names: list of strings, field names.
 
@@ -571,6 +579,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         ],
         null=True,
         blank=True,
+        use_json_field=True,
     )
     long_description = RichTextField(null=False, blank=False)
     parent_building = models.ForeignKey(
@@ -640,7 +649,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             ],
             heading='Room Reservation Link'
         ),
-        ImageChooserPanel('location_photo'),
+        FieldPanel('location_photo'),
         FieldRowPanel(
             [
                 FieldPanel('is_building', classname=ROW_CLASS),
@@ -679,7 +688,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
 
     widget_content_panels = [
-        StreamFieldPanel('page_alerts'),
+        FieldPanel('page_alerts'),
         MultiFieldPanel(
             [
                 FieldPanel('quicklinks_title'),
@@ -844,7 +853,7 @@ class DonorPage(PublicBasePage):
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -874,7 +883,7 @@ class FloorPlanPage(PublicBasePage):
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
@@ -1038,10 +1047,13 @@ class PublicRawHTMLPage(PublicBasePage):
     """
     A public page for raw HTML.
     """
-    html = StreamField(RawHTMLBodyField())
+    html = StreamField(
+        RawHTMLBodyField(),
+        use_json_field=True,
+    )
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('html')
+        FieldPanel('html')
     ] + PublicBasePage.content_panels
 
     widget_content_panels = [

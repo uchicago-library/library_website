@@ -7,7 +7,7 @@ from openpyxl.writer.excel import save_virtual_workbook
 from staff.models import StaffPage
 from staff.utils import WagtailStaffReport
 from wagtail.admin.menu import MenuItem
-from wagtail.core import hooks
+from wagtail import hooks
 
 def admin_view(request):
     from staff.forms import StaffReportingForm

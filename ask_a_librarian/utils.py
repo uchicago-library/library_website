@@ -1,7 +1,7 @@
 import json
 
 import requests
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from library_website.settings import (
     DEFAULT_UNIT, LIBCHAT_IDS, LIBCHAT_STATUS_URL, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
@@ -103,7 +103,7 @@ def get_unit_chat_link(unit, request):
         upon failure.
     """
     from .models import AskPage
-    from wagtail.core.models import Page
+    from wagtail.models import Page
     current_site = Site.find_for_request(request)
 
     try:

@@ -1,46 +1,39 @@
 import datetime
-
-import simplejson
-import requests
-from base.models import DefaultBodyFields, PublicBasePage
 from collections import OrderedDict
+
+import requests
+import simplejson
+from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator, EmptyPage
+from django.core.paginator import Paginator
 from django.core.validators import RegexValidator
 from django.db import models
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
 from library_website.settings import (
-    CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
-    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
-    COLLECTION_OBJECT_TRUNCATE
+    COLLECTION_OBJECT_TRUNCATE, CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG,
+    SCRC_BUILDING_ID, SCRC_EXHIBIT_FOOTER_IMG
 )
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
 from staff.models import StaffPage
-from wagtail.admin.edit_handlers import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-    PageChooserPanel, StreamFieldPanel, TabbedInterface
+from wagtail.admin.panels import (
+    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    TabbedInterface
 )
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page, Site
-from wagtail.documents.edit_handlers import DocumentChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
+from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import (CBrowseURL,
-                    CitationInfo,
-                    DisplayBrowse,
-                    LBrowseURL,
-                    IIIFDisplay,
-                    )
+from .utils import (
+    CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay, LBrowseURL
+)
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -127,7 +120,7 @@ class CollectionPageFormatPlacement(Orderable, models.Model):
         verbose_name_plural = "Collection Placements"
 
     panels = [
-        SnippetChooserPanel('format'),
+        FieldPanel('format'),
     ]
 
     def __str__(self):
@@ -151,7 +144,7 @@ class CollectionPageSubjectPlacement(Orderable, models.Model):
         verbose_name_plural = "Subbject Placements"
 
     panels = [
-        SnippetChooserPanel('subject'),
+        FieldPanel('subject'),
     ]
 
     def __str__(self):
@@ -570,24 +563,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lambda: self.staff_contact.staff_page_email.first().email, ''
         )
         staff_phone_number = default(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first())
-            .phone_number, ''
+            lambda:
+            (self.staff_contact.staff_page_phone_faculty_exchange.first()
+             ).phone_number, ''
         )
         staff_faculty_exchange = default(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first())
-            .faculty_exchange, ''
+            lambda:
+            (self.staff_contact.staff_page_phone_faculty_exchange.first()
+             ).faculty_exchange, ''
         )
         staff_url = default(
-            lambda: (StaffPublicPage
-                     .objects
-                     .get(cnetid=self.staff_contact.cnetid)
-                     .url),
+            lambda:
+            (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
             ''
         )
 
@@ -669,9 +656,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final breadcrumb text (which is different because it isn't
             a link)
         """
-        breadcrumbs = list(
-            filter(lambda x: x != "", request.path.split('/'))
-        )
+        breadcrumbs = list(filter(lambda x: x != "", request.path.split('/')))
 
         trimmed_crumbs = breadcrumbs[2:-1]
         final_crumb = breadcrumbs[-1]
@@ -727,23 +712,29 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
         return OrderedDict(
-            [(CollectionPage.override(x.link_text_override, x.label),
-              mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
-             for x in CollectionPageClusterBrowse
-             .objects
-             .filter(page=self)]
-            +
-            [(CollectionPage.override(x.link_text_override, x.label),
-              mk_lbrowse_url_wagtail(slug, slugify(x.label)))
-             for x in CollectionPageListBrowse
-             .objects
-             .filter(page=self)]
+            [
+                (
+                    CollectionPage.override(x.link_text_override, x.label),
+                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
+                )
+                for x in CollectionPageClusterBrowse.objects.filter(page=self)
+            ] + [
+                (
+                    CollectionPage.override(x.link_text_override, x.label),
+                    mk_lbrowse_url_wagtail(slug, slugify(x.label))
+                ) for x in CollectionPageListBrowse.objects.filter(page=self)
+            ]
         )
 
     # Main Admin Panel Fields
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
-    full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
+    full_description = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        null=True,
+        use_json_field=True,
+    )
     access_instructions = models.TextField(null=False, blank=True, default='')
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
@@ -886,12 +877,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final_crumb = object_title
         elif 'Title' in marklogic.keys():
             object_title = marklogic['Title'].split(',')[0]
-            final_crumb = truncate_crumb(object_title,
-                                         COLLECTION_OBJECT_TRUNCATE)
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
         elif 'Description' in marklogic.keys():
             object_title = marklogic['Description'].split(',')[0]
-            final_crumb = truncate_crumb(object_title,
-                                         COLLECTION_OBJECT_TRUNCATE)
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
         else:
             object_title = 'Object'
             final_crumb = object_title
@@ -1068,9 +1061,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         sidebar_browse_types = self.build_browse_types()
 
         all_browse_types = (
-            CollectionPageClusterBrowse
-            .objects
-            .filter(page=self)
+            CollectionPageClusterBrowse.objects.filter(page=self)
         )
 
         try:
@@ -1123,7 +1114,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1139,9 +1130,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_type_s = kwargs['browse_type']
 
         all_browse_types = (
-            CollectionPageClusterBrowse
-            .objects
-            .filter(page=self)
+            CollectionPageClusterBrowse.objects.filter(page=self)
         )
 
         names = [x.label.lower() for x in all_browse_types]
@@ -1156,8 +1145,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 browse_type_s,
             )
             internal_error = False
-        except (KeyError,
-                simplejson.JSONDecodeError):
+        except (KeyError, simplejson.JSONDecodeError):
             objects = ''
             internal_error = True
 
@@ -1188,7 +1176,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    @route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
@@ -1205,11 +1193,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_name = paginate_name[:-1]
 
-        all_browse_types = (
-            CollectionPageListBrowse
-            .objects
-            .filter(page=self)
-        )
+        all_browse_types = (CollectionPageListBrowse.objects.filter(page=self))
 
         names = [x.label.lower() for x in all_browse_types]
 
@@ -1229,8 +1213,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 browse_name,
             )
             internal_error = False
-        except (KeyError,
-                simplejson.JSONDecodeError):
+        except (KeyError, simplejson.JSONDecodeError):
             objects = ''
             internal_error = True
 
@@ -1248,12 +1231,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         current_browse = CollectionPageListBrowse.objects.filter(
-            label=unslugify_browse(browse_name), page=self).first()
+            label=unslugify_browse(browse_name), page=self
+        ).first()
 
         if current_browse:
             browse_title = CollectionPage.override(
                 current_browse.link_text_override,
-                "Browse by %s" % current_browse.label)
+                "Browse by %s" % current_browse.label
+            )
             collection_final_breadcrumb = CollectionPage.override(
                 current_browse.link_text_override,
                 unslugify_browse(final_crumb)
@@ -1294,10 +1279,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         FieldPanel('acknowledgments'),
         InlinePanel('alternate_name', label='Alternate Names'),
         FieldPanel('short_abstract'),
-        StreamFieldPanel('full_description'),
+        FieldPanel('full_description'),
         MultiFieldPanel(
             [
-                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail'),
                 FieldPanel('thumbnail_caption'),
             ],
             heading='Thumbnail'
@@ -1315,8 +1300,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement',
-                    label='Related Collection'),
+        InlinePanel('related_collection_placement', label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -1342,8 +1326,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # FieldPanel('digital_collection'),
         # MultiFieldPanel(
         #     [
-        #         ImageChooserPanel('banner_image'),
-        #         ImageChooserPanel('banner_feature'),
+        #         FieldPanel('banner_image'),
+        #         FieldPanel('banner_feature'),
         #         FieldPanel('banner_title'),
         #         FieldPanel('banner_subtitle'),
         #     ],
@@ -1513,7 +1497,10 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         related_name='%(app_label)s_%(class)s_related'
     )
     collecting_statement = StreamField(
-        DefaultBodyFields(), blank=False, null=True
+        DefaultBodyFields(),
+        blank=False,
+        null=True,
+        use_json_field=True,
     )
     policy_link_text = models.CharField(max_length=255, blank=True, null=True)
     policy_link_url = models.URLField("Policy URL", blank=True, null=True)
@@ -1530,8 +1517,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(
-        max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
@@ -1570,7 +1556,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
 
     content_panels = Page.content_panels + [
         FieldPanel('subject'),
-        StreamFieldPanel('collecting_statement'),
+        FieldPanel('collecting_statement'),
         MultiFieldPanel(
             [
                 FieldPanel('policy_link_text'),
@@ -1580,7 +1566,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             classname='collapsible collapsed',
         ),
         FieldPanel('short_abstract'),
-        ImageChooserPanel('thumbnail'),
+        FieldPanel('thumbnail'),
         FieldPanel('collection_location'),
         InlinePanel('lib_guides', label='Subject Guides'),
         MultiFieldPanel(
@@ -1850,7 +1836,7 @@ class ExhibitPageSubjectPlacement(Orderable, models.Model):
         verbose_name_plural = "Subject Placements"
 
     panels = [
-        SnippetChooserPanel('subject'),
+        FieldPanel('subject'),
     ]
 
     def __str__(self):
@@ -1917,7 +1903,12 @@ class ExhibitPage(PublicBasePage):
         default='',
         help_text='Shown in Exhibit browse view'
     )
-    full_description = StreamField(DefaultBodyFields(), blank=True, null=True)
+    full_description = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        null=True,
+        use_json_field=True,
+    )
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
@@ -1941,12 +1932,14 @@ class ExhibitPage(PublicBasePage):
     exhibit_open_date = models.DateField(
         blank=True,
         null=True,
-        help_text='Controls when an exhibit starts being featured as "current" in browse and widgets.'
+        help_text=
+        'Controls when an exhibit starts being featured as "current" in browse and widgets.'
     )
     exhibit_close_date = models.DateField(
         blank=True,
         null=True,
-        help_text='When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
+        help_text=
+        'When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
     )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -2037,8 +2030,8 @@ class ExhibitPage(PublicBasePage):
         MultiFieldPanel(
             [
                 FieldPanel('web_exhibit'),
-                ImageChooserPanel('banner_image'),
-                ImageChooserPanel('banner_feature'),
+                FieldPanel('banner_image'),
+                FieldPanel('banner_feature'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
             ],
@@ -2058,7 +2051,7 @@ class ExhibitPage(PublicBasePage):
         MultiFieldPanel(
             [
                 FieldPanel('short_abstract'),
-                ImageChooserPanel('thumbnail'),
+                FieldPanel('thumbnail'),
                 FieldPanel('thumbnail_caption')
             ],
             heading='Browse View'
@@ -2081,7 +2074,7 @@ class ExhibitPage(PublicBasePage):
             heading='Acknowledgments and Donors',
             classname='collapsible collapsed'
         ),
-        StreamFieldPanel('full_description'),
+        FieldPanel('full_description'),
         InlinePanel('exhibit_subject_placements', label='Subjects'),
         InlinePanel(
             'exhibit_page_related_collection_placement',
@@ -2110,7 +2103,8 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('ordering_information'),
                 FieldPanel(
                     'publication_url',
-                    help_text='If exhibit publication is hosted outside of Library site'
+                    help_text=
+                    'If exhibit publication is hosted outside of Library site'
                 ),
                 FieldPanel(
                     'web_exhibit_url',
@@ -2124,7 +2118,7 @@ class ExhibitPage(PublicBasePage):
             [
                 FieldPanel('exhibit_checklist_link_external'),
                 PageChooserPanel('exhibit_checklist_link_page'),
-                DocumentChooserPanel('exhibit_checklist_document')
+                FieldPanel('exhibit_checklist_document')
             ],
             heading='Exhibit Checklist (Choose One or None)',
             classname='collapsible collapsed'
@@ -2133,7 +2127,7 @@ class ExhibitPage(PublicBasePage):
             [
                 FieldPanel('exhibit_text_link_external'),
                 PageChooserPanel('exhibit_text_link_page'),
-                DocumentChooserPanel('exhibit_text_document')
+                FieldPanel('exhibit_text_document')
             ],
             heading='Physical Exhibit Texts (Choose One or None)',
             classname='collapsible collapsed'
@@ -2341,12 +2335,16 @@ class ExhibitChildPage(PublicBasePage):
     Pages for web exhibit child pages.
     """
 
-    body = StreamField(DefaultBodyFields(), blank=True)
+    body = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        use_json_field=True,
+    )
 
     subpage_types = ['lib_collections.ExhibitChildPage']
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + PublicBasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [

@@ -3,7 +3,7 @@ import re
 from django.http import HttpResponse
 from django.shortcuts import render
 from openpyxl.writer.excel import save_virtual_workbook
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.images.models import Image
 
 from alerts.utils import get_browse_alerts

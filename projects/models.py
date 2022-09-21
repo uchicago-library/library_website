@@ -1,7 +1,7 @@
 from django.db import models
-from wagtail.core.models import Page
+from wagtail.models import Page
 from base.models import BasePage
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
 from django.utils import timezone
 

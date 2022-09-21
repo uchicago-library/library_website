@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('start_sidebar_from_here', models.BooleanField(default=False)),
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
-                ('quicklinks', wagtail.core.fields.RichTextField(blank=True)),
+                ('quicklinks', wagtail.fields.RichTextField(blank=True)),
                 ('quicklinks_title', models.CharField(blank=True, max_length=100)),
                 ('view_more_link', models.URLField(blank=True, default='', max_length=255)),
                 ('view_more_link_label', models.CharField(blank=True, max_length=100)),
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('news_feed_url', models.URLField(blank=True, help_text='Link to a wordpress feed from the Library News Site')),
                 ('external_news_page', models.URLField(blank=True, help_text='Link to an external news page, e.g. wordpress')),
                 ('rich_text_heading', models.CharField(blank=True, max_length=25)),
-                ('rich_text', wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
+                ('rich_text', wagtail.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
                 ('rich_text_external_link', models.URLField(blank=True, help_text='Optional external link that displays next to the heading')),
                 ('rich_text_link_text', models.CharField(blank=True, help_text='Display text for the rich text link', max_length=25)),
                 ('banner_image', models.ForeignKey(blank=True, help_text='Banners should be approximately 1200 × 200 pixels', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('start_sidebar_from_here', models.BooleanField(default=False)),
                 ('show_sidebar', models.BooleanField(default=False)),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
-                ('quicklinks', wagtail.core.fields.RichTextField(blank=True)),
+                ('quicklinks', wagtail.fields.RichTextField(blank=True)),
                 ('quicklinks_title', models.CharField(blank=True, max_length=100)),
                 ('view_more_link', models.URLField(blank=True, default='', max_length=255)),
                 ('view_more_link_label', models.CharField(blank=True, max_length=100)),
@@ -71,11 +71,11 @@ class Migration(migrations.Migration):
                 ('news_feed_url', models.URLField(blank=True, help_text='Link to a wordpress feed from the Library News Site')),
                 ('external_news_page', models.URLField(blank=True, help_text='Link to an external news page, e.g. wordpress')),
                 ('rich_text_heading', models.CharField(blank=True, max_length=25)),
-                ('rich_text', wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
+                ('rich_text', wagtail.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists')),
                 ('rich_text_external_link', models.URLField(blank=True, help_text='Optional external link that displays next to the heading')),
                 ('rich_text_link_text', models.CharField(blank=True, help_text='Display text for the rich text link', max_length=25)),
-                ('banner_message', wagtail.core.fields.RichTextField()),
-                ('more_info', wagtail.core.fields.RichTextField(blank=True)),
+                ('banner_message', wagtail.fields.RichTextField()),
+                ('more_info', wagtail.fields.RichTextField(blank=True)),
                 ('alert_level', models.CharField(choices=[('alert-info', 'Informational Alert'), ('alert-high', 'Critical Alert')], default='alert-info', max_length=25)),
                 ('banner_image', models.ForeignKey(blank=True, help_text='Banners should be approximately 1200 × 200 pixels', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
                 ('content_specialist', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='alerts_alertpage_content_specialist', to='staff.StaffPage')),

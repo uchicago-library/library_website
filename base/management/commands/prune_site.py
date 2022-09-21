@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from base.management.commands.get_pages_for_test_db import Command as GetPagesForTestDb
 from django.core.management.base import BaseCommand
-from wagtail.core.models import Page, PageRevision
+from wagtail.models import Page, PageRevision
 
 import ast
 import networkx

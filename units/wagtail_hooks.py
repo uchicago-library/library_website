@@ -2,7 +2,7 @@ from .views import unit_reporting_admin_view
 from django.conf.urls import url
 from django.urls import reverse
 from wagtail.admin.menu import MenuItem
-from wagtail.core import hooks
+from wagtail import hooks
 
 @hooks.register('register_admin_urls')
 def urlconf_time():

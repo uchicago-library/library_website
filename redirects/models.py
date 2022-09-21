@@ -1,15 +1,13 @@
 from base.models import BasePage, LinkFields, PublicBasePage
 from django.db import models
 from django.shortcuts import redirect
-from wagtail.admin.edit_handlers import (FieldPanel, MultiFieldPanel,
-                                         PageChooserPanel)
-from wagtail.core.models import Page
-from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, PageChooserPanel
+from wagtail.models import Page
 
 
 class RedirectPage(PublicBasePage, LinkFields):
     """
-    Page object for setting up redirects that need to 
+    Page object for setting up redirects that need to
     appear in the sidebar in a given section of the site.
     """
     subpage_types = []
@@ -19,7 +17,7 @@ class RedirectPage(PublicBasePage, LinkFields):
             [
                 PageChooserPanel('link_page'),
                 FieldPanel('link_external'),
-                DocumentChooserPanel('link_document'),
+                FieldPanel('link_document'),
             ],
             heading='Redirect to'
         )
@@ -29,10 +27,10 @@ class RedirectPage(PublicBasePage, LinkFields):
 
     def serve(self, request):
         """
-        Override the serve method to create a redirect. 
+        Override the serve method to create a redirect.
         """
         return redirect(self.link, permanent=True)
-    
+
 
 class LoopRedirectPage(BasePage, LinkFields):
     """
@@ -41,16 +39,14 @@ class LoopRedirectPage(BasePage, LinkFields):
     """
     subpage_types = []
 
-    redirect_url=models.URLField(
-        max_length=200,
-        default="https://loop.lib.uchicago.edu/")
+    redirect_url = models.URLField(
+        max_length=200, default="https://loop.lib.uchicago.edu/"
+    )
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
-            [
-                FieldPanel('redirect_url'),
-                PageChooserPanel('link_page')
-            ]
+            [FieldPanel('redirect_url'),
+             PageChooserPanel('link_page')]
         )
     ] + BasePage.content_panels
 

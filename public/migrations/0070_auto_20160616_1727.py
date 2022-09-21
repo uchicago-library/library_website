@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='donorpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(blank=True),
+            field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AddField(
             model_name='donorpage',
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='floorplanpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(blank=True),
+            field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AddField(
             model_name='floorplanpage',
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='locationpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(blank=True),
+            field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AddField(
             model_name='locationpage',
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='publicrawhtmlpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(blank=True),
+            field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AddField(
             model_name='publicrawhtmlpage',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='staffpublicpage',
             name='quicklinks',
-            field=wagtail.core.fields.RichTextField(blank=True),
+            field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AddField(
             model_name='staffpublicpage',

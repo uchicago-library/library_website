@@ -1,15 +1,13 @@
-from django.db import models
-from django.db.models import F
-from wagtail.core.blocks import StructBlock, StreamBlock, FieldBlock, CharBlock, ListBlock, PageChooserBlock, RichTextBlock
-from wagtail.core.models import Page
-from wagtail.documents.blocks import DocumentChooserBlock
-from base.models import LinkFields
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, StreamFieldPanel
-from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.blocks import (
+    CharBlock, PageChooserBlock, RichTextBlock,
+    StreamBlock, StructBlock
+)
+from wagtail.models import Page
+
 
 class IconListBlock(StructBlock):
     """
-    A streamfield for aesthetically pleasing 
+    A streamfield for aesthetically pleasing
     lists of links with an icon and heading.
     """
     icon = CharBlock(help_text="Add a Font Awesome icon name here")
@@ -23,34 +21,35 @@ class IconListBlock(StructBlock):
 
 class IconAutoListBlock(StructBlock):
     """
-    A streamfield for aesthetically pleasing, 
-    automatically generated lists of links 
+    A streamfield for aesthetically pleasing,
+    automatically generated lists of links
     with an icon.
     """
     icon = CharBlock(help_text="Add a Font Awesome icon name here")
     starting_page = PageChooserBlock()
 
-    def get_context(self, value): 
-        context = super(IconAutoListBlock, self).get_context(value) 
+    def get_context(self, value):
+        context = super(IconAutoListBlock, self).get_context(value)
 
         d = []
         if value['starting_page']:
             url_path = value['starting_page'].url_path
 
-            for child in Page.objects.get(url_path=url_path).get_children().in_menu().live().specific():
-                c = {
-                    'title': child.title,
-                    'url': child.url,
-                    'children': []
-                }
-                for grandchild in child.get_children().in_menu().live().specific():
-                    c['children'].append({
-                        'title': grandchild.title,
-                        'url': grandchild.url
-                    })
+            for child in Page.objects.get(
+                url_path=url_path
+            ).get_children().in_menu().live().specific():
+                c = {'title': child.title, 'url': child.url, 'children': []}
+                for grandchild in child.get_children().in_menu().live(
+                ).specific():
+                    c['children'].append(
+                        {
+                            'title': grandchild.title,
+                            'url': grandchild.url
+                        }
+                    )
                 d.append(c)
         context['descendants'] = d
-        return context 
+        return context
 
     class Meta:
         icon = 'folder'
@@ -64,5 +63,3 @@ class IconListCluster(StreamBlock):
     """
     list_block = IconListBlock()
     automatic_directory_list_block = IconAutoListBlock()
-
-

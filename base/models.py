@@ -14,23 +14,20 @@ from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
-from wagtail.admin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel,
-    TabbedInterface
+from wagtail.admin.panels import (
+    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface
 )
 from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.core.blocks import (
+from wagtail.blocks import (
     BooleanBlock, CharBlock, ChoiceBlock, ChooserBlock, FieldBlock, ListBlock,
     PageChooserBlock, RawHTMLBlock, RichTextBlock, StreamBlock, StructBlock,
     TextBlock, TimeBlock, URLBlock
 )
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page, Site
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page, Site
 from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
@@ -320,7 +317,7 @@ class LinkFields(models.Model):
     content_panels = [
         FieldPanel('link_external'),
         PageChooserPanel('link_page'),
-        DocumentChooserPanel('link_document'),
+        FieldPanel('link_document'),
     ]
 
     class Meta:
@@ -343,7 +340,7 @@ class CarouselItem(LinkFields):
     image_subtitle = models.CharField(max_length=55, blank=True)
 
     panels = [  # WARNIG: do not rename content_panels! Won't work with InlinePanel
-        ImageChooserPanel('image'),
+        FieldPanel('image'),
         FieldPanel('image_title'),
         FieldPanel('image_subtitle'),
         MultiFieldPanel(
@@ -530,7 +527,7 @@ class LinkedTextOrLogo(LinkedText):
             return ''
 
     panels = [
-        ImageChooserPanel('logo'),
+        FieldPanel('logo'),
     ] + LinkedText.content_panels
 
     class Meta:
@@ -1973,7 +1970,10 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
 
 class IntranetPlainPage(BasePage):
-    body = StreamField(IntranetDefaultBodyFields())
+    body = StreamField(
+        IntranetDefaultBodyFields(),
+        use_json_field=True,
+    )
 
     subpage_types = [
         'base.IntranetIndexPage', 'base.IntranetPlainPage',
@@ -1997,7 +1997,7 @@ follow a strict schema. Contact DLDC for help with this'
     )
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body')
+        FieldPanel('body')
     ] + BasePage.content_panels
 
     widget_content_panels = [
@@ -2031,9 +2031,15 @@ follow a strict schema. Contact DLDC for help with this'
 
 
 class IntranetIndexPage(BasePage):
-    intro = StreamField(DefaultBodyFields())
+    intro = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
     display_hierarchical_listing = models.BooleanField(default=False)
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
 
     subpage_types = [
         'base.IntranetIndexPage', 'base.IntranetPlainPage',
@@ -2041,9 +2047,9 @@ class IntranetIndexPage(BasePage):
     ]
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('intro'),
+        FieldPanel('intro'),
         FieldPanel('display_hierarchical_listing'),
-        StreamFieldPanel('body')
+        FieldPanel('body')
     ] + BasePage.content_panels
 
     search_fields = PublicBasePage.search_fields + [
