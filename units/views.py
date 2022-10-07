@@ -14,6 +14,7 @@ from base.utils import get_hours_and_location
 from library_website.settings import PUBLIC_HOMEPAGE
 from public.models import LocationPage, StandardPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
+from staff.utils import make_org_dict, print_org_dict, head_link_html, entaggen, org_dict_to_html
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import WagtailUnitsReport, get_quick_nums_for_library_or_dept
@@ -163,6 +164,8 @@ def units(request):
         title = 'Library Directory: Departments'
     elif view == 'org':
         title = 'Library Directory: Org Chart'
+        all_units = UnitPage.objects.first().get_parent().get_children()
+        preliminary = [ make_org_dict(u) for u in all_units ]
 
     quick_nums = get_quick_nums_for_library_or_dept(request).replace(
         '<td>', '<li>'
@@ -205,6 +208,9 @@ def units(request):
             'alert_level': alert_data[1][1],
             'alert_more_info': alert_data[1][2],
             'alert_link': alert_data[1][3],
+            'example1': entaggen("b", "giraffe"),
+            'example2': [ org_dict_to_html(x) for x in preliminary ],
+            'example3': head_link_html(preliminary[0]),
         }
     )
 

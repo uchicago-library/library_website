@@ -13,7 +13,7 @@ import requests
 
 from base.utils import get_xml_from_directory_api
 from django.contrib.auth.models import User
-from library_website.settings import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS
+from library_website.settings import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS, get_staff_url
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
@@ -813,3 +813,126 @@ def libcal_id_by_email(emailaddr):
         return lookup_staff_ids()[emailaddr]
     except (KeyError, TypeError):
         return ''
+
+
+
+def staff_to_unit(s):
+    stuff = s.staff_page_units.get_queryset()
+    if len(stuff) > 0:
+        return UnitPage.objects.get(pk=stuff.first().library_unit_id)
+    else:
+        return UnitPage.objects.get(title="Library")
+
+ 
+def unit_to_staff(unit_id):
+    return (StaffPage
+            .objects
+            .live()
+            .filter(staff_page_units__library_unit_id=unit_id))
+
+
+def make_org_dict(unit):
+    def safe_head(unit):
+        try:
+            output = unit.specific.department_head.title
+            head_url = get_staff_url(unit.specific.department_head)
+        except AttributeError:
+            output = "No Department Head Listed"
+            head_url = ""
+        return (output, head_url)
+    output = { "head" : safe_head(unit)[0],
+               "head_url" : safe_head(unit)[1],
+               "name": unit.specific.title,
+               "draft" : unit.has_unpublished_changes,
+               "unit_id" : unit.id,
+               "unit_url" : unit.url,
+               "interim" : unit.specific.department_head_is_interim,
+               "subunits" : [ make_org_dict(u)
+                              for u in unit.get_children() ] }
+    return output
+
+
+
+def print_staff(dct, head, tab_level=0):
+    staff = unit_to_staff(dct["unit_id"])
+    non_draft_subunits = [
+        x for x in dct["subunits"] if not x["draft"]
+    ]
+    if non_draft_subunits == []:
+        for s in staff:
+            url = "abbreviated/.../..." + get_staff_url(s)[-10:-1]
+            if s.title != head:
+                print((tab_level * "  ") + s.title,
+                      "(" + url +")" )
+            else:
+                pass
+    else:
+        pass
+    
+
+def print_org_dict(dct, tab_level=0):
+    try:
+        if dct["interim"]:
+            head = (tab_level * "  ") + dct["head"] + " -- INTERIM --"
+        else:
+            head = (tab_level * "  ") + dct["head"]
+        name = dct["name"]
+        head_url = "abbreviated/.../..." + dct["head_url"][-10:-1]
+        unit_url = "abbreviated.../..." + dct["unit_url"][-10:-1]
+        subs = dct["subunits"]
+    except KeyError:
+        name = ""
+        head_url = ""
+        unit_url = ""
+        subs = ""
+    if not dct["draft"]:
+        print(head,
+              "(" + head_url + ") --",
+              name,
+              "(" + unit_url + ")")
+        for x in subs:
+            print_org_dict(x, tab_level=tab_level + 1)
+        print_staff(dct, head.strip(), tab_level=tab_level + 1)
+    else:
+        pass
+
+
+def entaggen(tag, text):
+    return "<%s>\n\t%s\n</%s>" % (tag, text, tag)
+
+def unordered_list(lst):
+    output = entaggen("ul", "".join([entaggen("li", x) for x in lst]))
+    return output
+
+def link_html(text, url):
+    parts = [
+        '<a href="',
+        url,
+        '">',
+        text,
+        "</a>",
+        ]
+    output = "".join(parts)
+    return output
+
+def head_link_html(dct):
+    text = dct["head"]
+    url = dct["head_url"]
+    return link_html(text, url)
+
+def org_dict_to_html(dct):
+    if dct["interim"]:
+        interim = " -- INTERIM"
+    else:
+        interim = ""
+    name = entaggen("i", dct["name"])
+    unit_url = dct["unit_url"]
+    subs = dct["subunits"]
+    if not dct["draft"]:
+        the_rest = [org_dict_to_html(x) for x in subs]
+        output = "%s %s -- %s%s" % (head_link_html(dct),
+                                    interim,
+                                    name,
+                                    unordered_list(the_rest))
+        return output
+                          
