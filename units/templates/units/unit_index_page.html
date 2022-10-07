@@ -84,11 +84,7 @@
           {% include "units/unit_division_listing.html" %}
         {% endcache %}
       {% elif view == 'org' %}
-        <div style="padding: 2em 0;">
-          {% if org_chart_image %}
-            {% image org_chart_image original class="img-responsive" %}
-          {% endif %}
-        </div>
+	{% include 'includes/org_chart.html' %}
       {% endif %}
     </section>
   </div><!--/centermain-->
