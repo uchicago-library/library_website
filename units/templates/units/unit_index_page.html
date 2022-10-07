@@ -85,6 +85,7 @@
         {% endcache %}
       {% elif view == 'org' %}
         <div style="padding: 2em 0;">
+	  {% include "includes/org_chart.html" %}
           {% if org_chart_image %}
             {% image org_chart_image original class="img-responsive" %}
           {% endif %}
