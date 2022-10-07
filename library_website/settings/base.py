@@ -594,3 +594,6 @@ FOLIO_BASE_URL = ''
 FOLIO_TYPE_ISBN_ID = '8261054f-be78-422d-bd51-4ed9f33c3422'
 FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
 FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
+
+def get_staff_url(staff_page):
+    return staff_page.public_page.url
