@@ -929,14 +929,11 @@ def org_dict_to_html(dct):
     unit_url = dct["unit_url"]
     subs = dct["subunits"]
     if not dct["draft"]:
-        the_rest = [org_dict_to_html(x) for x in subs]
+        the_rest = [org_dict_to_html(x) for x in subs if not x["draft"] ]
         output = "%s %s -- %s%s" % (head_link_html(dct),
                                     interim,
                                     name,
                                     unordered_list(the_rest))
         return output
-                          
-
-    # try:
-    #     if dct["interim"]:
-            
+    else:
+        return ""
