@@ -212,6 +212,12 @@ def units(request):
             'example1': entaggen("b", "giraffe"),
             'example2': [ org_dict_to_html(x) for x in preliminary ],
             'example3': head_link_html(preliminary[0]),
+            'mermaid' : """graph TD
+  0((0)) --> 1((1))
+  0((0)) --> 3((3))
+  1((1)) --> 2((2))
+  1((1)) --> 4((4))
+""",
         }
     )
 

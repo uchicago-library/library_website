@@ -920,6 +920,20 @@ def head_link_html(dct):
     url = dct["head_url"]
     return link_html(text, url)
 
+def staff_html(dct, head):
+    staff = unit_to_staff(dct["unit_id"])
+    non_draft_subunits = [
+        x for x in dct["subunits"] if not x["draft"]
+    ]
+    if non_draft_subunits == []:
+        list_elements = [ link_html(s.title,
+                                    get_staff_url(s))
+                          for s in staff
+                          if s.title != head ]
+        return unordered_list(list_elements)
+    else:
+        return ''
+
 def org_dict_to_html(dct):
     if dct["interim"]:
         interim = " -- INTERIM"
@@ -930,10 +944,15 @@ def org_dict_to_html(dct):
     subs = dct["subunits"]
     if not dct["draft"]:
         the_rest = [org_dict_to_html(x) for x in subs if not x["draft"] ]
-        output = "%s %s -- %s%s" % (head_link_html(dct),
+        output = "%s %s -- %s%s" % (link_html(dct["head"], dct["head_url"]),
                                     interim,
-                                    name,
+                                    link_html(name, dct["unit_url"]),
                                     unordered_list(the_rest))
-        return output
+        staff_listing = staff_html(dct, dct["head"].strip())
+        if staff_listing:
+            return output + staff_listing
+        else:
+            return output
     else:
-        return ""
+        return ''
+    
