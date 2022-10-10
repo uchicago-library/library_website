@@ -3,12 +3,10 @@
 
 <center>
     <div class="mermaid">
-	graph TD 
-	A[Big Boss Honcho<br>Department of Stuff] --> B[Minor Honcho<br>Department of Miscellany]
-	A[Big Boss Honcho<br>Department of Stuff] --> C[Normal employee]
-	click B "http://www.lib.uchicago.edu" "minor honcho link"
+	{{ mermaid|safe }}
     </div>
 </center>
+
 <p />
 
 {% for dink in example2 %}

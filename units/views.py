@@ -14,7 +14,7 @@ from base.utils import get_hours_and_location
 from library_website.settings import PUBLIC_HOMEPAGE
 from public.models import LocationPage, StandardPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
-from staff.utils import entaggen, make_org_dict, org_dict_to_html, head_link_html
+from staff.utils import entaggen, make_org_dict, org_dict_to_html, head_link_html, org_dict_to_mermaid, unit_to_line, unit_to_lines, mk_graph
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import WagtailUnitsReport, get_quick_nums_for_library_or_dept
@@ -166,7 +166,8 @@ def units(request):
         title = 'Library Directory: Org Chart'
         all_units = UnitPage.objects.first().get_parent().get_children()
         preliminary = [ make_org_dict(u) for u in all_units ]
-
+        unit = UnitPage.objects.get(title="Research & Learning")
+        unit_dict = make_org_dict(unit)
 
     quick_nums = get_quick_nums_for_library_or_dept(request).replace(
         '<td>', '<li>'
@@ -212,12 +213,7 @@ def units(request):
             'example1': entaggen("b", "giraffe"),
             'example2': [ org_dict_to_html(x) for x in preliminary ],
             'example3': head_link_html(preliminary[0]),
-            'mermaid' : """graph TD
-  0((0)) --> 1((1))
-  0((0)) --> 3((3))
-  1((1)) --> 2((2))
-  1((1)) --> 4((4))
-""",
+            'mermaid' : mk_graph(unit_to_lines(unit_dict)),
         }
     )
 
