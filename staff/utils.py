@@ -847,6 +847,7 @@ def make_org_dict(unit):
                "unit_id" : unit.id,
                "unit_url" : unit.url,
                "interim" : unit.specific.department_head_is_interim,
+               "node_name" : gensym(),
                "subunits" : [ make_org_dict(u)
                               for u in unit.get_children() ] }
     return output
@@ -959,34 +960,38 @@ def org_dict_to_html(dct):
 def mk_graph(str):
     return "graph TD\n" + str
 
+def trim_parens(str):
+    return str.split("(")[0].strip()
+
 def node_content(dct):
-    output = "<br>%s<br>%s" % (dct["name"], dct["head"])
+    name = trim_parens(dct["name"])
+    head = trim_parens(dct["head"])
+    output = "<br>%s<br>%s" % (name, head)
     return output
 
 def org_chart_link(dct):
     format_string = "?view=org&unit=%i"
     return format_string % dct["unit_id"]
 
-def unit_to_line(parent_dict, parent_node_name, child_dict):
+def unit_to_line(parent_dict, child_dict):
     parent_name = node_content(parent_dict)
-    child_node_name = gensym()
     child_name = node_content(child_dict)
-    format_string = ("%s[%s] --> %s[%s]"
-                     "\nclick %s \"%s\""
-                     "\nclick %s \"%s\"")
-    return format_string % (parent_node_name,
+    format_string = ("%s[%s] --> %s[%s]\n"
+                     "click %s \"%s\"\n"
+                     "click %s \"%s\"\n")
+    return format_string % (parent_dict["node_name"],
                             parent_name,
-                            child_node_name,
+                            child_dict["node_name"],
                             child_name,
-                            parent_node_name,
+                            parent_dict["node_name"],
                             org_chart_link(parent_dict),
-                            child_node_name,
-                            org_chart_link(child_dict))
-
+                            child_dict["node_name"],
+                            org_chart_link(child_dict),
+                            )
 def unit_to_lines(dct):
-    node_name = gensym()
-    output = [ unit_to_line(dct, node_name, x) for x in dct["subunits"] ]
-    return "\n".join(output)
+    current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"] ])
+    recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"] ])
+    return current_daughters + recursive_daughters
 
 def org_dict_to_mermaid(dct):
     return mk_graph(unit_to_lines(dct))

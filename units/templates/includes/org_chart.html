@@ -2,11 +2,21 @@
 
 <hr>
 
+<h2>
+    List of Units
+</h2>
+
+<br>
+
 {% for name, link in unit_links.items %}
     <p><a href="{{ link }}">{{ name }}</a></p>
 {% endfor %}
 
 <hr>
+
+<h2>
+    Picture
+</h2>
 
 <center>
     <div class="mermaid">
@@ -17,6 +27,12 @@
 <p />
 
 <hr>
+
+<h2>
+    HTML Tree Representation
+</h2>
+
+<br>
 
 {% for unit in example2 %}
     {{ unit|safe }}
