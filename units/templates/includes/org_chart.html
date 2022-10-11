@@ -1,15 +1,24 @@
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 
+<hr>
+
+{% for name, link in unit_links.items %}
+    <p><a href="{{ link }}">{{ name }}</a></p>
+{% endfor %}
+
+<hr>
 
 <center>
     <div class="mermaid">
-	{{ mermaid|safe }}
+	{{ mermaid_picture|safe }}
     </div>
 </center>
 
 <p />
 
-{% for dink in example2 %}
-    {{ dink|safe }}
+<hr>
+
+{% for unit in example2 %}
+    {{ unit|safe }}
 {% endfor %}
 

@@ -442,3 +442,11 @@ def unfold(step, initial):
                 yield tup[0]
 
     return [item for item in generator((None, initial))]
+
+gensym_ref = 0
+
+def gensym():
+    global gensym_ref
+    output = "A%d" % gensym_ref
+    gensym_ref +=1
+    return output

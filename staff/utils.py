@@ -11,7 +11,7 @@ from xml.etree import ElementTree
 
 import requests
 
-from base.utils import get_xml_from_directory_api
+from base.utils import get_xml_from_directory_api, gensym
 from django.contrib.auth.models import User
 from library_website.settings import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIBCAL_CREDENTIALS, get_staff_url
 from openpyxl import Workbook
@@ -959,22 +959,29 @@ def org_dict_to_html(dct):
 def mk_graph(str):
     return "graph TD\n" + str
 
-gensym_ref = 0
-
-def gensym():
-    global gensym_ref
-    output = "A%d" % gensym_ref
-    gensym_ref +=1
+def node_content(dct):
+    output = "<br>%s<br>%s" % (dct["name"], dct["head"])
     return output
 
+def org_chart_link(dct):
+    format_string = "?view=org&unit=%i"
+    return format_string % dct["unit_id"]
+
 def unit_to_line(parent_dict, parent_node_name, child_dict):
-    parent_name = parent_dict["name"]
+    parent_name = node_content(parent_dict)
     child_node_name = gensym()
-    child_name = child_dict["name"]
-    return "%s[%s] --> %s[%s]" % (parent_node_name,
-                                  parent_name,
-                                  child_node_name,
-                                  child_name)
+    child_name = node_content(child_dict)
+    format_string = ("%s[%s] --> %s[%s]"
+                     "\nclick %s \"%s\""
+                     "\nclick %s \"%s\"")
+    return format_string % (parent_node_name,
+                            parent_name,
+                            child_node_name,
+                            child_name,
+                            parent_node_name,
+                            org_chart_link(parent_dict),
+                            child_node_name,
+                            org_chart_link(child_dict))
 
 def unit_to_lines(dct):
     node_name = gensym()
@@ -982,5 +989,4 @@ def unit_to_lines(dct):
     return "\n".join(output)
 
 def org_dict_to_mermaid(dct):
-    
-    return mk_graph("A2934678[hi!] --> B20343[hello!]")
+    return mk_graph(unit_to_lines(dct))

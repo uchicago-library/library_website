@@ -166,8 +166,12 @@ def units(request):
         title = 'Library Directory: Org Chart'
         all_units = UnitPage.objects.first().get_parent().get_children()
         preliminary = [ make_org_dict(u) for u in all_units ]
-        unit = UnitPage.objects.get(title="Research & Learning")
-        unit_dict = make_org_dict(unit)
+        current_unit = UnitPage.objects.get(pk=request.GET["unit"])
+        unit_dict = make_org_dict(current_unit)
+        unit_links = { unit.title : ("?view=org&unit=%s" % unit.id)
+                       for unit in all_units }
+        mermaid_picture = mk_graph(unit_to_lines(unit_dict))
+        
 
     quick_nums = get_quick_nums_for_library_or_dept(request).replace(
         '<td>', '<li>'
@@ -213,7 +217,8 @@ def units(request):
             'example1': entaggen("b", "giraffe"),
             'example2': [ org_dict_to_html(x) for x in preliminary ],
             'example3': head_link_html(preliminary[0]),
-            'mermaid' : mk_graph(unit_to_lines(unit_dict)),
+            'unit_links' : unit_links,
+            'mermaid_picture' : mermaid_picture
         }
     )
 
