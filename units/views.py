@@ -214,9 +214,6 @@ def units(request):
             'alert_level': alert_data[1][1],
             'alert_more_info': alert_data[1][2],
             'alert_link': alert_data[1][3],
-            'example1': entaggen("b", "giraffe"),
-            'example2': [ org_dict_to_html(x) for x in preliminary ],
-            'example3': head_link_html(preliminary[0]),
             'unit_links' : unit_links,
             'mermaid_picture' : mermaid_picture
         }

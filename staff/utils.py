@@ -1019,5 +1019,6 @@ def staff_diagram(dct):
         return "\n".join([ staff_line(dct, s)
                            for s in unit_to_staff(dct["unit_id"]) ])
 
+
 def org_dict_to_mermaid(dct):
     return mk_graph(unit_to_lines(dct))
