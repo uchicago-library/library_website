@@ -991,7 +991,33 @@ def unit_to_line(parent_dict, child_dict):
 def unit_to_lines(dct):
     current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"] ])
     recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"] ])
-    return current_daughters + recursive_daughters
+    staff = staff_diagram(dct)
+    return current_daughters + recursive_daughters + staff
+
+def staff_line(parent_dict, staffpage):
+    parent_name = node_content(parent_dict)
+    child_name = staffpage.specific.title
+    child_node_name = gensym()
+    format_string = ("%s[%s] --> %s[%s]\n"
+                     "click %s \"%s\"\n")
+    return format_string % (parent_dict["node_name"],
+                            parent_name,
+                            child_node_name,
+                            child_name,
+                            child_node_name,
+                            get_staff_url(staffpage),
+                            )
+
+def staff_diagram(dct):
+    non_draft_subunits = [
+        x for x in dct["subunits"] if not x["draft"]
+    ]
+    staff = unit_to_staff(dct["unit_id"])
+    if non_draft_subunits:
+        return ""
+    else:
+        return "\n".join([ staff_line(dct, s)
+                           for s in unit_to_staff(dct["unit_id"]) ])
 
 def org_dict_to_mermaid(dct):
     return mk_graph(unit_to_lines(dct))
