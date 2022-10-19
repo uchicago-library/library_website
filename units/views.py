@@ -18,7 +18,7 @@ from staff.utils import entaggen, make_org_dict, org_dict_to_html, head_link_htm
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import WagtailUnitsReport, get_quick_nums_for_library_or_dept
-
+from django.views.decorators.cache import cache_page
 from .forms import UnitReportingForm
 
 
@@ -66,6 +66,8 @@ def get_libraries():
     )
 
 
+
+@cache_page(60 * 15)
 def units(request):
     divisions = []
 
