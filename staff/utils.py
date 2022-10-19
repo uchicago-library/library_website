@@ -832,6 +832,7 @@ def unit_to_staff(unit_id):
 
 
 def make_org_dict(unit):
+    non_draft_subunits = unit.get_children().live()
     def safe_head(unit):
         try:
             output = unit.specific.department_head.title
@@ -840,6 +841,14 @@ def make_org_dict(unit):
             output = "No Department Head Listed"
             head_url = ""
         return (output, head_url)
+    if non_draft_subunits:
+        subunit_dict = [ make_org_dict(u) for u in non_draft_subunits ]
+        node_type = "unit"
+    else:
+        staff = unit_to_staff(unit.id)
+        subunit_dict = { s.title : get_staff_url(s)
+                         for s in staff }
+        node_type = "staff"
     output = { "head" : safe_head(unit)[0],
                "head_url" : safe_head(unit)[1],
                "name": unit.specific.title,
@@ -848,30 +857,42 @@ def make_org_dict(unit):
                "unit_url" : unit.url,
                "interim" : unit.specific.department_head_is_interim,
                "node_name" : gensym(),
-               "subunits" : [ make_org_dict(u)
-                              for u in unit.get_children() ] }
+               "node_type" : node_type,
+               "subunits" : subunit_dict }
     return output
 
-
-
-def print_staff(dct, head, tab_level=0):
-    staff = unit_to_staff(dct["unit_id"])
-    non_draft_subunits = [
-        x for x in dct["subunits"] if not x["draft"]
-    ]
-    if non_draft_subunits == []:
-        for s in staff:
-            url = "abbreviated/.../..." + get_staff_url(s)[-10:-1]
-            if s.title != head:
-                print((tab_level * "  ") + s.title,
-                      "(" + url +")" )
-            else:
-                pass
-    else:
-        pass
+# def print_staff(dct, head, tab_level=0):
+#     staff = unit_to_staff(dct["unit_id"])
+#     non_draft_subunits = [
+#         x for x in dct["subunits"] if not x["draft"]
+#     ]
+#     if non_draft_subunits == []:
+#         for s in staff:
+#             url = "abbreviated/.../..." + get_staff_url(s)[-10:-1]
+#             if s.title != head:
+#                 print((tab_level * "  ") + s.title,
+#                       "(" + url +")" )
+#             else:
+#                 pass
+#     else:
+#         pass
     
 
+
+# TODO: fix print_terminal_dict
+
 def print_org_dict(dct, tab_level=0):
+    if dct["node_type"] == "unit":
+           return print_intermediate_dict(dct, tab_level=tab_level)
+    else: # i.e. if dct["node_type"] == "staff"
+        return print_terminal_dict(dct, tab_level=tab_level)
+
+def print_terminal_dict(dct, tab_level=0):
+    print(dct)
+    # for name, url in dct:
+    #     print(name, "(", url, ")")
+
+def print_intermediate_dict(dct, tab_level=0):
     try:
         if dct["interim"]:
             head = (tab_level * "  ") + dct["head"] + " -- INTERIM --"
@@ -893,6 +914,7 @@ def print_org_dict(dct, tab_level=0):
               "(" + unit_url + ")")
         for x in subs:
             print_org_dict(x, tab_level=tab_level + 1)
+        
         print_staff(dct, head.strip(), tab_level=tab_level + 1)
     else:
         pass
