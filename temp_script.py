@@ -4,8 +4,10 @@ from staff.utils import (print_org_dict,
                          make_org_dict,
                          unit_to_line,
                          unit_to_lines,
-                         staff_diagram,
                          org_dict_to_mermaid,
+                         cache_unit_json,
+                         cache_lookup,
+                         update_org_chart_cache
                          )
                          
 import json

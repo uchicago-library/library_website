@@ -17,6 +17,7 @@ from library_website.settings import LIBCAL_TOKEN_ENDPOINT, LIBCAL_ENDPOINT, LIB
 from openpyxl import Workbook
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 from units.models import UnitPage
+from django.core.cache import cache
 
 # need a list of all individuals.
 # this thing needs to deal with VCards.
@@ -1005,3 +1006,15 @@ def unit_to_lines(dct):
 
 def org_dict_to_mermaid(dct):
     return mk_graph(unit_to_lines(dct))
+
+def cache_unit_json(unit):
+    cache_key = "org_chart_" + str(unit.id)
+    cache.set(cache_key, make_org_dict(unit))
+
+def cache_lookup(unit):
+    cache_key = "org_chart_" + str(unit.id)
+    return cache.get(cache_key)
+
+def update_org_chart_cache():
+    for u in UnitPage.objects.live():
+        cache_unit_json(unit)

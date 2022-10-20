@@ -19,13 +19,14 @@ from staff.utils import (make_org_dict,
                          # org_dict_to_html,
                          # head_link_html,
                          org_dict_to_mermaid,
-                         unit_to_line,
-                         unit_to_lines, mk_graph
+                         cache_lookup,
+                         cache_unit_json,
                          )
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import WagtailUnitsReport, get_quick_nums_for_library_or_dept
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from .forms import UnitReportingForm
 
 
@@ -172,11 +173,15 @@ def units(request):
     elif view == 'department':
         title = 'Library Directory: Departments'
     elif view == 'org':
+        all_units = UnitPage.objects.first().get_parent().get_children().live()
         title = 'Library Directory: Org Chart'
-        all_units = UnitPage.objects.first().get_parent().get_children()
-        preliminary = [ make_org_dict(u) for u in all_units ]
         current_unit = UnitPage.objects.get(pk=request.GET["unit"])
-        unit_dict = make_org_dict(current_unit)
+        cached = cache_lookup(current_unit)
+        if cached:
+            unit_dict = cached
+        else:
+            cache_unit_json(current_unit)
+            unit_dict = cache_lookup(current_unit)
         unit_links = { unit.title : ("?view=org&unit=%s" % unit.id)
                        for unit in all_units }
         mermaid_picture = org_dict_to_mermaid(unit_dict)
