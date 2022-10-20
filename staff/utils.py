@@ -994,38 +994,14 @@ def unit_to_line(parent_dict, child_dict):
                             url,
                             )
 def unit_to_lines(dct):
-    current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"]])
+    current_daughters = "\n".join([ unit_to_line(dct, u)
+                                    for u in dct["subunits"] ])
     if dct["node_type"] == "unit":
-        recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"]])
-        # staff = staff_diagram(dct)
+        recursive_daughters = "\n".join([ unit_to_lines(u)
+                                          for u in dct["subunits"] ])
     else:
-        recursive_daughters = "\n".join([ staff_line(dct, staff_dct) for staff_dct in dct["subunits"]])
+        recursive_daughters = ""
     return current_daughters + recursive_daughters
-# + staff
-
-def staff_line(parent_dict, staff_dict):
-    parent_name = node_content(parent_dict)
-    child_name = staff_dict["name"]
-    child_node_name = gensym()
-    format_string = ("%s[%s] --> %s[%s]\n"
-                     "click %s \"%s\"\n")
-    return format_string % (parent_dict["node_name"],
-                            parent_name,
-                            child_node_name,
-                            child_name,
-                            child_node_name,
-                            staff_dict["url"],
-                            )
-
-def staff_diagram(dct):
-
-    staff = unit_to_staff(dct["unit_id"])
-    if non_draft_subunits:
-        return ""
-    else:
-        return "\n".join([ staff_line(dct, s)
-                           for s in unit_to_staff(dct["unit_id"]) ])
-
 
 def org_dict_to_mermaid(dct):
     return mk_graph(unit_to_lines(dct))

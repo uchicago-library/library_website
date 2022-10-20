@@ -10,6 +10,5 @@ from staff.utils import (print_org_dict,
                          
 import json
 
-admin = UnitPage.objects.get(title="Administration")
 infotech = UnitPage.objects.get(pk=2224)
 rl = UnitPage.objects.get(title="Research & Learning")

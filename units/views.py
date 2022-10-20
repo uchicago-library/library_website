@@ -74,7 +74,7 @@ def get_libraries():
 
 
 
-@cache_page(60 * 15)
+# @cache_page(60 * 15)
 def units(request):
     divisions = []
 
@@ -179,7 +179,7 @@ def units(request):
         unit_dict = make_org_dict(current_unit)
         unit_links = { unit.title : ("?view=org&unit=%s" % unit.id)
                        for unit in all_units }
-        mermaid_picture = mk_graph("".join(unit_to_lines(unit_dict)))
+        mermaid_picture = org_dict_to_mermaid(unit_dict)
         
 
     quick_nums = get_quick_nums_for_library_or_dept(request).replace(
