@@ -848,11 +848,11 @@ def make_org_dict(unit):
             head_url = ""
         return (output, head_url)
     if non_draft_subunits:
-        subunit_dict = [ make_org_dict(u) for u in non_draft_subunits ]
+        subunit_json = [ make_org_dict(u) for u in non_draft_subunits ]
         node_type = "unit"
     else:
         staff = unit_to_staff(unit.id)
-        subunit_dict = { s.title : make_staff_dict(s) for s in unit_to_staff(unit.id) }
+        subunit_json = [ make_staff_dict(s) for s in unit_to_staff(unit.id) ]
         node_type = "staff"
     output = { "head" : safe_head(unit)[0],
                "head_url" : safe_head(unit)[1],
@@ -863,13 +863,13 @@ def make_org_dict(unit):
                "interim" : unit.specific.department_head_is_interim,
                "node_name" : gensym(),
                "node_type" : node_type,
-               "subunits" : subunit_dict }
+               "subunits" : subunit_json }
     return output
 
 def print_staff_dict(dct, tab_level=0):
-    for name, info in dct["subunits"].items():
+    for person in dct["subunits"]:
         tab = "  " * tab_level
-        print(tab + name + " " + info["url"])
+        print(tab + person["name"] + " (" + person["url"] + ")")
 
 def print_org_dict(dct, tab_level=0):
     try:
@@ -882,7 +882,7 @@ def print_org_dict(dct, tab_level=0):
         unit_url = dct["unit_url"]
         subs = dct["subunits"]
         print(head,
-              "(" + head_url + ") --",
+              "--",
               name,
               "(" + unit_url + ")")
         if dct["node_type"] == "staff":
@@ -962,9 +962,12 @@ def trim_parens(str):
     return str.split("(")[0].strip()
 
 def node_content(dct):
-    name = trim_parens(dct["name"])
-    head = trim_parens(dct["head"])
-    output = "<br>%s<br>%s" % (name, head)
+    if dct["node_type"] == "person":
+        output = trim_parens(dct["name"])
+    else:
+        name = trim_parens(dct["name"])
+        head = trim_parens(dct["head"])
+        output = "<br>%s<br>%s" % (name, head)
     return output
 
 def org_chart_link(dct):
@@ -977,6 +980,10 @@ def unit_to_line(parent_dict, child_dict):
     format_string = ("%s[%s] --> %s[%s]\n"
                      "click %s \"%s\"\n"
                      "click %s \"%s\"\n")
+    if parent_dict["node_type"] == "unit":
+        url = org_chart_link(child_dict)
+    else:
+        url = child_dict["url"]
     return format_string % (parent_dict["node_name"],
                             parent_name,
                             child_dict["node_name"],
@@ -984,7 +991,7 @@ def unit_to_line(parent_dict, child_dict):
                             parent_dict["node_name"],
                             org_chart_link(parent_dict),
                             child_dict["node_name"],
-                            org_chart_link(child_dict),
+                            url,
                             )
 def unit_to_lines(dct):
     current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"]])
@@ -992,13 +999,13 @@ def unit_to_lines(dct):
         recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"]])
         # staff = staff_diagram(dct)
     else:
-        recursive_daughters = "\n".join([ staff_line(dct, staff_dct) for staff_dict in dct["subunits"].items()])
+        recursive_daughters = "\n".join([ staff_line(dct, staff_dct) for staff_dct in dct["subunits"]])
     return current_daughters + recursive_daughters
 # + staff
 
 def staff_line(parent_dict, staff_dict):
     parent_name = node_content(parent_dict)
-    child_name = staffpage.specific.title
+    child_name = staff_dict["name"]
     child_node_name = gensym()
     format_string = ("%s[%s] --> %s[%s]\n"
                      "click %s \"%s\"\n")
@@ -1007,7 +1014,7 @@ def staff_line(parent_dict, staff_dict):
                             child_node_name,
                             child_name,
                             child_node_name,
-                            staff_dict,
+                            staff_dict["url"],
                             )
 
 def staff_diagram(dct):
