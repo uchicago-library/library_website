@@ -14,7 +14,14 @@ from base.utils import get_hours_and_location
 from library_website.settings import PUBLIC_HOMEPAGE
 from public.models import LocationPage, StandardPage
 from staff.models import StaffPage, StaffPageSubjectPlacement
-from staff.utils import entaggen, make_org_dict, org_dict_to_html, head_link_html, org_dict_to_mermaid, unit_to_line, unit_to_lines, mk_graph
+from staff.utils import (make_org_dict,
+                         # entaggen,
+                         # org_dict_to_html,
+                         # head_link_html,
+                         org_dict_to_mermaid,
+                         unit_to_line,
+                         unit_to_lines, mk_graph
+                         )
 from subjects.models import Subject
 from units.models import UnitIndexPage, UnitPage
 from units.utils import WagtailUnitsReport, get_quick_nums_for_library_or_dept
@@ -172,7 +179,7 @@ def units(request):
         unit_dict = make_org_dict(current_unit)
         unit_links = { unit.title : ("?view=org&unit=%s" % unit.id)
                        for unit in all_units }
-        mermaid_picture = mk_graph(unit_to_lines(unit_dict))
+        mermaid_picture = mk_graph("".join(unit_to_lines(unit_dict)))
         
 
     quick_nums = get_quick_nums_for_library_or_dept(request).replace(

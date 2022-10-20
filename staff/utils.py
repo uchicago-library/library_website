@@ -984,8 +984,9 @@ def unit_to_line(parent_dict, child_dict):
 def unit_to_lines(dct):
     current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"] ])
     recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"] ])
-    staff = staff_diagram(dct)
-    return current_daughters + recursive_daughters + staff
+    # staff = staff_diagram(dct)
+    return current_daughters + recursive_daughters
+# + staff
 
 def staff_line(parent_dict, staffpage):
     parent_name = node_content(parent_dict)
