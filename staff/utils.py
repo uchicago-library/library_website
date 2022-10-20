@@ -861,123 +861,94 @@ def make_org_dict(unit):
                "subunits" : subunit_dict }
     return output
 
-# def print_staff(dct, head, tab_level=0):
-#     staff = unit_to_staff(dct["unit_id"])
-#     non_draft_subunits = [
-#         x for x in dct["subunits"] if not x["draft"]
-#     ]
-#     if non_draft_subunits == []:
-#         for s in staff:
-#             url = "abbreviated/.../..." + get_staff_url(s)[-10:-1]
-#             if s.title != head:
-#                 print((tab_level * "  ") + s.title,
-#                       "(" + url +")" )
-#             else:
-#                 pass
-#     else:
-#         pass
-    
-
-
-# TODO: fix print_terminal_dict
+def print_staff_dict(dct, tab_level=0):
+    for name, url in dct["subunits"].items():
+        tab = "  " * tab_level
+        print(tab + name + " (" + url + ")")
 
 def print_org_dict(dct, tab_level=0):
-    if dct["node_type"] == "unit":
-           return print_intermediate_dict(dct, tab_level=tab_level)
-    else: # i.e. if dct["node_type"] == "staff"
-        return print_terminal_dict(dct, tab_level=tab_level)
-
-def print_terminal_dict(dct, tab_level=0):
-    print(dct)
-    # for name, url in dct:
-    #     print(name, "(", url, ")")
-
-def print_intermediate_dict(dct, tab_level=0):
     try:
         if dct["interim"]:
             head = (tab_level * "  ") + dct["head"] + " -- INTERIM --"
         else:
             head = (tab_level * "  ") + dct["head"]
         name = dct["name"]
-        head_url = "abbreviated/.../..." + dct["head_url"][-10:-1]
-        unit_url = "abbreviated.../..." + dct["unit_url"][-10:-1]
+        head_url = dct["head_url"]
+        unit_url = dct["unit_url"]
         subs = dct["subunits"]
-    except KeyError:
-        name = ""
-        head_url = ""
-        unit_url = ""
-        subs = ""
-    if not dct["draft"]:
         print(head,
-              "(" + head_url + ") --",
+        "(" + head_url + ") --",
               name,
               "(" + unit_url + ")")
-        for x in subs:
-            print_org_dict(x, tab_level=tab_level + 1)
-        
-        print_staff(dct, head.strip(), tab_level=tab_level + 1)
-    else:
+        if dct["node_type"] == "staff":
+            print_staff_dict(dct, tab_level=tab_level + 1)
+        else:
+            for s in subs:
+                print_org_dict(s, tab_level=tab_level + 1)
+    except KeyError:
         pass
 
+# TODO: HTML code needs to be revised in light of changes to
+# make_org_dict
 
-def entaggen(tag, text):
-    return "<%s>\n\t%s\n</%s>" % (tag, text, tag)
+# def entaggen(tag, text):
+#     return "<%s>\n\t%s\n</%s>" % (tag, text, tag)
 
-def unordered_list(lst):
-    output = entaggen("ul", "".join([entaggen("li", x) for x in lst]))
-    return output
+# def unordered_list(lst):
+#     output = entaggen("ul", "".join([entaggen("li", x) for x in lst]))
+#     return output
 
-def link_html(text, url):
-    parts = [
-        '<a href="',
-        url,
-        '">',
-        text,
-        "</a>",
-        ]
-    output = "".join(parts)
-    return output
+# def link_html(text, url):
+#     parts = [
+#         '<a href="',
+#         url,
+#         '">',
+#         text,
+#         "</a>",
+#         ]
+#     output = "".join(parts)
+#     return output
 
-def head_link_html(dct):
-    text = dct["head"]
-    url = dct["head_url"]
-    return link_html(text, url)
+# def head_link_html(dct):
+#     text = dct["head"]
+#     url = dct["head_url"]
+#     return link_html(text, url)
 
-def staff_html(dct, head):
-    staff = unit_to_staff(dct["unit_id"])
-    non_draft_subunits = [
-        x for x in dct["subunits"] if not x["draft"]
-    ]
-    if non_draft_subunits == []:
-        list_elements = [ link_html(s.title,
-                                    get_staff_url(s))
-                          for s in staff
-                          if s.title != head ]
-        return unordered_list(list_elements)
-    else:
-        return ''
+# def staff_html(dct, head):
+#     staff = unit_to_staff(dct["unit_id"])
+#     non_draft_subunits = [
+#         x for x in dct["subunits"] if not x["draft"]
+#     ]
+#     if non_draft_subunits == []:
+#         list_elements = [ link_html(s.title,
+#                                     get_staff_url(s))
+#                           for s in staff
+#                           if s.title != head ]
+#         return unordered_list(list_elements)
+#     else:
+#         return ''
 
-def org_dict_to_html(dct):
-    if dct["interim"]:
-        interim = " -- INTERIM"
-    else:
-        interim = ""
-    name = entaggen("i", dct["name"])
-    unit_url = dct["unit_url"]
-    subs = dct["subunits"]
-    if not dct["draft"]:
-        the_rest = [org_dict_to_html(x) for x in subs if not x["draft"] ]
-        output = "%s %s -- %s%s" % (link_html(dct["head"], dct["head_url"]),
-                                    interim,
-                                    link_html(name, dct["unit_url"]),
-                                    unordered_list(the_rest))
-        staff_listing = staff_html(dct, dct["head"].strip())
-        if staff_listing:
-            return output + staff_listing
-        else:
-            return output
-    else:
-        return ''
+# def org_dict_to_html(dct):
+#     if dct["interim"]:
+#         interim = " -- INTERIM"
+#     else:
+#         interim = ""
+#     name = entaggen("i", dct["name"])
+#     unit_url = dct["unit_url"]
+#     subs = dct["subunits"]
+#     if not dct["draft"]:
+#         the_rest = [org_dict_to_html(x) for x in subs if not x["draft"] ]
+#         output = "%s %s -- %s%s" % (link_html(dct["head"], dct["head_url"]),
+#                                     interim,
+#                                     link_html(name, dct["unit_url"]),
+#                                     unordered_list(the_rest))
+#         staff_listing = staff_html(dct, dct["head"].strip())
+#         if staff_listing:
+#             return output + staff_listing
+#         else:
+#             return output
+#     else:
+#         return ''
 
 def mk_graph(str):
     return "graph TD\n" + str
