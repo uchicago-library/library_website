@@ -1,8 +1,13 @@
 from units.models import UnitPage
-from staff.utils import print_org_dict, make_org_dict
+from staff.utils import (print_org_dict,
+                         make_staff_dict,
+                         make_org_dict,
+                         unit_to_line,
+                         unit_to_lines,
+                         )
+                         
 import json
 
-hr = UnitPage.objects.get(title="Human Resources")
+admin = UnitPage.objects.get(title="Administration")
 infotech = UnitPage.objects.get(pk=2224)
-payments = UnitPage.objects.get(title="Payments")
-research = UnitPage.objects.get(title="Research & Learning")
+rl = UnitPage.objects.get(title="Research & Learning")

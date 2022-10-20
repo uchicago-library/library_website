@@ -830,6 +830,12 @@ def unit_to_staff(unit_id):
             .live()
             .filter(staff_page_units__library_unit_id=unit_id))
 
+def make_staff_dict(staffpage):
+    output = { "name" : staffpage.title,
+               "node_name" : gensym(),
+               "node_type" : "person",
+               "url" : get_staff_url(staffpage) }
+    return output
 
 def make_org_dict(unit):
     non_draft_subunits = unit.get_children().live()
@@ -846,8 +852,7 @@ def make_org_dict(unit):
         node_type = "unit"
     else:
         staff = unit_to_staff(unit.id)
-        subunit_dict = { s.title : get_staff_url(s)
-                         for s in staff }
+        subunit_dict = { s.title : make_staff_dict(s) for s in unit_to_staff(unit.id) }
         node_type = "staff"
     output = { "head" : safe_head(unit)[0],
                "head_url" : safe_head(unit)[1],
@@ -862,9 +867,9 @@ def make_org_dict(unit):
     return output
 
 def print_staff_dict(dct, tab_level=0):
-    for name, url in dct["subunits"].items():
+    for name, info in dct["subunits"].items():
         tab = "  " * tab_level
-        print(tab + name + " (" + url + ")")
+        print(tab + name + " " + info["url"])
 
 def print_org_dict(dct, tab_level=0):
     try:
@@ -877,7 +882,7 @@ def print_org_dict(dct, tab_level=0):
         unit_url = dct["unit_url"]
         subs = dct["subunits"]
         print(head,
-        "(" + head_url + ") --",
+              "(" + head_url + ") --",
               name,
               "(" + unit_url + ")")
         if dct["node_type"] == "staff":
@@ -982,13 +987,16 @@ def unit_to_line(parent_dict, child_dict):
                             org_chart_link(child_dict),
                             )
 def unit_to_lines(dct):
-    current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"] ])
-    recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"] ])
-    # staff = staff_diagram(dct)
+    current_daughters = "\n".join([ unit_to_line(dct, u) for u in dct["subunits"]])
+    if dct["node_type"] == "unit":
+        recursive_daughters = "\n".join([ unit_to_lines(u) for u in dct["subunits"]])
+        # staff = staff_diagram(dct)
+    else:
+        recursive_daughters = "\n".join([ staff_line(dct, staff_dct) for staff_dict in dct["subunits"].items()])
     return current_daughters + recursive_daughters
 # + staff
 
-def staff_line(parent_dict, staffpage):
+def staff_line(parent_dict, staff_dict):
     parent_name = node_content(parent_dict)
     child_name = staffpage.specific.title
     child_node_name = gensym()
@@ -999,13 +1007,11 @@ def staff_line(parent_dict, staffpage):
                             child_node_name,
                             child_name,
                             child_node_name,
-                            get_staff_url(staffpage),
+                            staff_dict,
                             )
 
 def staff_diagram(dct):
-    non_draft_subunits = [
-        x for x in dct["subunits"] if not x["draft"]
-    ]
+
     staff = unit_to_staff(dct["unit_id"])
     if non_draft_subunits:
         return ""
