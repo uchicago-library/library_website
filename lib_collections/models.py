@@ -1,29 +1,30 @@
 import datetime
-
-import simplejson
-import requests
-from base.models import DefaultBodyFields, PublicBasePage
 from collections import OrderedDict
+
+import requests
+import simplejson
+from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator, EmptyPage
+from django.core.paginator import EmptyPage, Paginator
 from django.core.validators import RegexValidator
 from django.db import models
 from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
-from library_website.settings import (
-    CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG, SCRC_BUILDING_ID,
-    SCRC_EXHIBIT_FOOTER_IMG, APA_PATH, CHICAGO_PATH, MLA_PATH,
-    COLLECTION_OBJECT_TRUNCATE
-)
+from library_website.settings import (APA_PATH, CHICAGO_PATH,
+                                      COLLECTION_OBJECT_TRUNCATE,
+                                      CRERAR_BUILDING_ID,
+                                      CRERAR_EXHIBIT_FOOTER_IMG, MLA_PATH,
+                                      SCRC_BUILDING_ID,
+                                      SCRC_EXHIBIT_FOOTER_IMG)
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
 from staff.models import StaffPage
-from wagtail.admin.edit_handlers import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-    PageChooserPanel, StreamFieldPanel, TabbedInterface
-)
+from wagtail.admin.edit_handlers import (FieldPanel, FieldRowPanel,
+                                         InlinePanel, MultiFieldPanel,
+                                         ObjectList, PageChooserPanel,
+                                         StreamFieldPanel, TabbedInterface)
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page, Site
@@ -35,12 +36,8 @@ from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import (CBrowseURL,
-                    CitationInfo,
-                    DisplayBrowse,
-                    LBrowseURL,
-                    IIIFDisplay,
-                    )
+from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
+                    LBrowseURL)
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -570,24 +567,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lambda: self.staff_contact.staff_page_email.first().email, ''
         )
         staff_phone_number = default(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first())
-            .phone_number, ''
+            lambda: (
+                self.staff_contact.staff_page_phone_faculty_exchange.first()
+            ).phone_number, ''
         )
         staff_faculty_exchange = default(
-            lambda: (self
-                     .staff_contact
-                     .staff_page_phone_faculty_exchange
-                     .first())
-            .faculty_exchange, ''
+            lambda: (
+                self.staff_contact.staff_page_phone_faculty_exchange.first()
+            ).faculty_exchange, ''
         )
         staff_url = default(
-            lambda: (StaffPublicPage
-                     .objects
-                     .get(cnetid=self.staff_contact.cnetid)
-                     .url),
+            lambda:
+            (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
             ''
         )
 
@@ -669,9 +660,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final breadcrumb text (which is different because it isn't
             a link)
         """
-        breadcrumbs = list(
-            filter(lambda x: x != "", request.path.split('/'))
-        )
+        breadcrumbs = list(filter(lambda x: x != "", request.path.split('/')))
 
         trimmed_crumbs = breadcrumbs[2:-1]
         final_crumb = breadcrumbs[-1]
@@ -727,17 +716,18 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
         return OrderedDict(
-            [(CollectionPage.override(x.link_text_override, x.label),
-              mk_cbrowse_type_url_wagtail(slug, slugify(x.label)))
-             for x in CollectionPageClusterBrowse
-             .objects
-             .filter(page=self)]
-            +
-            [(CollectionPage.override(x.link_text_override, x.label),
-              mk_lbrowse_url_wagtail(slug, slugify(x.label)))
-             for x in CollectionPageListBrowse
-             .objects
-             .filter(page=self)]
+            [
+                (
+                    CollectionPage.override(x.link_text_override, x.label),
+                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
+                )
+                for x in CollectionPageClusterBrowse.objects.filter(page=self)
+            ] + [
+                (
+                    CollectionPage.override(x.link_text_override, x.label),
+                    mk_lbrowse_url_wagtail(slug, slugify(x.label))
+                ) for x in CollectionPageListBrowse.objects.filter(page=self)
+            ]
         )
 
     # Main Admin Panel Fields
@@ -886,12 +876,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final_crumb = object_title
         elif 'Title' in marklogic.keys():
             object_title = marklogic['Title'].split(',')[0]
-            final_crumb = truncate_crumb(object_title,
-                                         COLLECTION_OBJECT_TRUNCATE)
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
         elif 'Description' in marklogic.keys():
             object_title = marklogic['Description'].split(',')[0]
-            final_crumb = truncate_crumb(object_title,
-                                         COLLECTION_OBJECT_TRUNCATE)
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
         else:
             object_title = 'Object'
             final_crumb = object_title
@@ -1068,9 +1060,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         sidebar_browse_types = self.build_browse_types()
 
         all_browse_types = (
-            CollectionPageClusterBrowse
-            .objects
-            .filter(page=self)
+            CollectionPageClusterBrowse.objects.filter(page=self)
         )
 
         try:
@@ -1123,7 +1113,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1139,9 +1129,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_type_s = kwargs['browse_type']
 
         all_browse_types = (
-            CollectionPageClusterBrowse
-            .objects
-            .filter(page=self)
+            CollectionPageClusterBrowse.objects.filter(page=self)
         )
 
         names = [x.label.lower() for x in all_browse_types]
@@ -1156,8 +1144,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 browse_type_s,
             )
             internal_error = False
-        except (KeyError,
-                simplejson.JSONDecodeError):
+        except (KeyError, simplejson.JSONDecodeError):
             objects = ''
             internal_error = True
 
@@ -1188,7 +1175,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         return TemplateResponse(request, template, context)
 
-    @ route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
+    @route(r'^list-browse/(?P<browse_name>[-\w]+/)(?P<pageno>[0-9]*/){0,1}$')
     def list_browse(self, request, *args, **kwargs):
         """
         Route for main list browse index.
@@ -1205,11 +1192,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_name = paginate_name[:-1]
 
-        all_browse_types = (
-            CollectionPageListBrowse
-            .objects
-            .filter(page=self)
-        )
+        all_browse_types = (CollectionPageListBrowse.objects.filter(page=self))
 
         names = [x.label.lower() for x in all_browse_types]
 
@@ -1229,8 +1212,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 browse_name,
             )
             internal_error = False
-        except (KeyError,
-                simplejson.JSONDecodeError):
+        except (KeyError, simplejson.JSONDecodeError):
             objects = ''
             internal_error = True
 
@@ -1248,12 +1230,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         current_browse = CollectionPageListBrowse.objects.filter(
-            label=unslugify_browse(browse_name), page=self).first()
+            label=unslugify_browse(browse_name), page=self
+        ).first()
 
         if current_browse:
             browse_title = CollectionPage.override(
                 current_browse.link_text_override,
-                "Browse by %s" % current_browse.label)
+                "Browse by %s" % current_browse.label
+            )
             collection_final_breadcrumb = CollectionPage.override(
                 current_browse.link_text_override,
                 unslugify_browse(final_crumb)
@@ -1720,8 +1704,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list('email',
-                                                           flat=True)[0]
+            email = librarian.staff_page_email.values_list(
+                'email', flat=True
+            )[0]
         except:
             email = ''
         phone_and_fac = tuple(
@@ -2030,6 +2015,16 @@ class ExhibitPage(PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
+    font_size = models.IntegerField(
+        default=1,
+        blank=True,
+        help_text='The multiplication factor of the default font size'  # reword?
+    )
+    font_kerning = models.IntegerField(
+        default=1,
+        blank=True,
+        help_text='The spacing between letters'  # reword?
+    )
 
     subpage_types = ['lib_collections.ExhibitChildPage']
 
@@ -2049,6 +2044,8 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('branding_color'),
                 FieldPanel('google_font_link'),
                 FieldPanel('font_family'),
+                FieldPanel('font_size'),
+                FieldPanel('font_kerning'),
             ],
             heading='Custom color and fonts'
         ),
@@ -2312,6 +2309,8 @@ class ExhibitPage(PublicBasePage):
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
         context['font_family'] = font
+        context['font_kerning'] = self.font_kerning
+        context['font_size'] = self.font_size
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
