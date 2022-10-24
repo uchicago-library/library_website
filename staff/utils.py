@@ -968,7 +968,7 @@ def node_content(dct):
     else:
         name = trim_parens(dct["name"])
         head = trim_parens(dct["head"])
-        output = "<br>%s<br>%s" % (name, head)
+        output = "%s<br>%s" % (name, head)
     return output
 
 def org_chart_link(dct):
@@ -1018,3 +1018,26 @@ def cache_lookup(unit):
 def update_org_chart_cache():
     for u in UnitPage.objects.live():
         cache_unit_json(unit)
+
+def depth(dct):
+    if dct["node_type"] != "person":
+        if dct["subunits"]:
+            return 1 + max([ depth(u) for u in dct["subunits"] ])
+        else:
+            return 0
+    else:
+        return 0
+
+def trim(dct, dpth):
+    if dct["node_type"] == "unit":
+        output
+    # if dpth == 0:
+    #     dct["subunits"] = []
+    # else:
+    #     if dct["node_type"] != "person":
+    #         dct["subunits"] = [ trim(u, dpth - 1) for u in dct["subunits"] ]
+    #     else:
+    #         pass
+        
+    
+    pass

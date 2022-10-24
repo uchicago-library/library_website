@@ -23,6 +23,7 @@ from results.views import results as results_view
 from search.views import loop_search as search_view, ebooks_search
 from staff.views import staff, staff_api
 from units.views import units as unit_view
+from units.views import org as org_view
 
 from .api import api_router
 
@@ -52,6 +53,7 @@ urlpatterns = [
         r'^about/directory/staff/$',
         RedirectView.as_view(url='/about/directory/?view=staff')
     ),
+    url(r'^org/$', org_view, name='org'),
     url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collex/$', collection_view, name='collection'),
     url(r'^citation_display$', citation_display, name='citation_display'),

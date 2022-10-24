@@ -1,6 +1,7 @@
 import re
 
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.shortcuts import render
 from openpyxl.writer.excel import save_virtual_workbook
 from wagtail.models import Site
@@ -229,10 +230,28 @@ def units(request):
             'alert_more_info': alert_data[1][2],
             'alert_link': alert_data[1][3],
             'unit_links' : unit_links,
-            'mermaid_picture' : mermaid_picture
+            'current_unit' : current_unit,
+            'mermaid_picture' : mermaid_picture,
         }
     )
 
+def org(request):
+    all_units = UnitPage.objects.first().get_parent().get_children().live()
+    title = 'Library Directory: Org Chart'
+    current_unit = UnitPage.objects.get(pk=request.GET["unit"])
+    cached = cache_lookup(current_unit)
+    if cached:
+        unit_dict = cached
+    else:
+        cache_unit_json(current_unit)
+        unit_dict = cache_lookup(current_unit)
+    unit_links = { unit.title : ("?view=org&unit=%s" % unit.id)
+                   for unit in all_units }
+    mermaid_picture = org_dict_to_mermaid(unit_dict)
+    context = { 'mermaid_picture' : mermaid_picture,
+                'unit_links' : unit_links }
+    template = "units/single_page_org_chart.html"
+    return TemplateResponse(request, template, context)
 
 def unit_reporting_admin_view(request):
     """

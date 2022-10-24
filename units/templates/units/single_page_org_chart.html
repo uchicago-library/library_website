@@ -1,0 +1,44 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+<h2>
+    Picture
+</h2>
+
+
+<center>
+
+    <script type="module">
+     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+     var config = {
+	 startOnLoad:true,
+	 flowchart:{
+	     useMaxWidth:false,
+	     htmlLabels:true,
+	     curve:'cardinal',
+	 },
+	 sequence:{ diagramMarginX:10 },
+     };
+     mermaid.initialize(config);
+    </script>
+
+    <div style="width:overflow-x:scroll">
+	<div class="mermaid" style=>
+	{{ mermaid_picture|safe }}
+	</div>
+    </div>
+
+</center>
+
+<p />
+
+<hr>
+
+<h2>
+    List of Units
+</h2>
+
+<br>
+
+{% for name, link in unit_links.items %}
+    <p><a href="{{ link }}">{{ name }}</a></p>
+{% endfor %}

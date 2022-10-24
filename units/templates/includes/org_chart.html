@@ -2,6 +2,7 @@
 
 <hr>
 
+
 <h2>
     List of Units
 </h2>
@@ -9,7 +10,7 @@
 <br>
 
 {% for name, link in unit_links.items %}
-    <p><a href="{{ link }}">{{ name }}</a></p>
+<p><a href="{{ link }}">{{ name }}</a></p>
 {% endfor %}
 
 <hr>
@@ -18,13 +19,13 @@
     Picture
 </h2>
 
+
 <center>
-    <div class="mermaid mermaidContainer" style="overflow:scroll;">
-	{{ mermaid_picture|safe }}
-    </div>
+
+    <iframe src="/org/?unit={{ current_unit }" width="750" height="600" allowfullscreen frameborder="0"></iframe>
+
 </center>
 
 <p />
 
 <hr>
-

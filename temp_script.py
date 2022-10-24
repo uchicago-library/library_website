@@ -7,7 +7,9 @@ from staff.utils import (print_org_dict,
                          org_dict_to_mermaid,
                          cache_unit_json,
                          cache_lookup,
-                         update_org_chart_cache
+                         update_org_chart_cache,
+                         depth,
+                         trim,
                          )
                          
 import json
