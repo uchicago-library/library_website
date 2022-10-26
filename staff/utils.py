@@ -894,6 +894,21 @@ def print_org_dict(dct, tab_level=0):
     except KeyError:
         pass
 
+def make_d3(dct, previous_parent):
+    output = {}
+    if dct["node_type"] == "person":
+        output["name"] = dct["name"]
+        output["parent"] = previous_parent
+    else:
+        output["name"] = dct["head"]
+        output["parent"] = previous_parent
+        if dct["subunits"] :
+            output["children"] = [ make_d3(u, output["name"])
+                                    for u in dct["subunits"] ]
+        else:
+            pass
+    return [output]
+
 # TODO: HTML code needs to be revised in light of changes to
 # make_org_dict
 

@@ -1,8 +1,34 @@
 {% extends "base/public_base.html" %}
+
+{% block styles %}
+ 
+ .node {
+     cursor: pointer;
+ }
+
+ .node circle {
+     fill: #fff;
+     stroke: steelblue;
+     stroke-width: 3px;
+ }
+
+ .node text {
+     font: 12px sans-serif;
+ }
+
+ .link {
+     fill: none;
+     stroke: #ccc;
+     stroke-width: 2px;
+ }
+ 
+{% endblock %}
+
 {% load cache %}
 {% load units_tags %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
