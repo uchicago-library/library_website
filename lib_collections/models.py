@@ -41,6 +41,7 @@ from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
+DEFAULT_WEB_EXHIBIT_FONT_KERNING = 1
 
 
 def get_current_exhibits():
@@ -2022,7 +2023,7 @@ class ExhibitPage(PublicBasePage):
         help_text='The multiplication factor of the default font size'  # reword?
     )
     font_kerning = models.IntegerField(
-        default=1,
+        null=True,
         blank=True,
         help_text='The spacing between letters'  # reword?
     )
@@ -2288,6 +2289,10 @@ class ExhibitPage(PublicBasePage):
         if self.font_scaler:
             font_size = self.font_scaler * font_size
 
+        font_kerning = DEFAULT_WEB_EXHIBIT_FONT_KERNING
+        if self.font_kerning:
+            font_kerning = self.font_kerning
+
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
         unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
@@ -2314,7 +2319,7 @@ class ExhibitPage(PublicBasePage):
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
         context['font_family'] = font
-        context['font_kerning'] = self.font_kerning
+        context['font_kerning'] = font_kerning
         context['font_size'] = font_size
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
