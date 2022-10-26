@@ -40,6 +40,7 @@ from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
 
 
 def get_current_exhibits():
@@ -2015,9 +2016,9 @@ class ExhibitPage(PublicBasePage):
         blank=True,
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
-    font_size = models.IntegerField(
-        default=1,
+    font_scaler = models.FloatField(
         blank=True,
+        null=True,
         help_text='The multiplication factor of the default font size'  # reword?
     )
     font_kerning = models.IntegerField(
@@ -2044,7 +2045,7 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('branding_color'),
                 FieldPanel('google_font_link'),
                 FieldPanel('font_family'),
-                FieldPanel('font_size'),
+                FieldPanel('font_scaler'),
                 FieldPanel('font_kerning'),
             ],
             heading='Custom color and fonts'
@@ -2283,6 +2284,10 @@ class ExhibitPage(PublicBasePage):
         if self.font_family:
             font = self.font_family
 
+        font_size = DEFAULT_WEB_EXHIBIT_FONT_SIZE
+        if self.font_scaler:
+            font_size = self.font_scaler * font_size
+
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
         unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
@@ -2310,7 +2315,7 @@ class ExhibitPage(PublicBasePage):
         context['branding_color'] = self.branding_color
         context['font_family'] = font
         context['font_kerning'] = self.font_kerning
-        context['font_size'] = self.font_size
+        context['font_size'] = font_size
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
