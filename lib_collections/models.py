@@ -41,7 +41,7 @@ from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
-DEFAULT_WEB_EXHIBIT_FONT_KERNING = 1
+DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
 
 
 def get_current_exhibits():
