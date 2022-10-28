@@ -2020,12 +2020,12 @@ class ExhibitPage(PublicBasePage):
     font_scaler = models.FloatField(
         blank=True,
         null=True,
-        help_text='The multiplication factor of the default font size, e.g. 0<x<1 makes the font smaller, and x>1 makes the font bigger'  # reword?
+        help_text='Enter a value between 0 and 1 for a smaller font. Enter a value greater than 1 for a larger font. e.g. 0.5, 1.5, or 2'
     )
     font_kerning = models.FloatField(
         null=True,
         blank=True,
-        help_text='A decimal value determining spacing between letters'  # reword?
+        help_text='Enter a positive number to increase spacing between letters, or a negative number to reduce spacing. Decimal values are okay. e.g. 2.5 or -1.25'
     )
 
     subpage_types = ['lib_collections.ExhibitChildPage']
