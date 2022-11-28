@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 from wagtail.search.backends import get_search_backend
 from wagtail.search.models import Query
 from wagtail.contrib.search_promotions.models import SearchPromotion

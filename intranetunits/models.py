@@ -1,10 +1,10 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.admin.panels import (
+    FieldPanel, InlinePanel, MultiFieldPanel
 )
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
@@ -135,12 +135,21 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         on_delete=models.SET_NULL
     )
 
-    intro = StreamField(DefaultBodyFields(), blank=True)
+    intro = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        use_json_field=True,
+    )
     internal_location = models.CharField(max_length=255, blank=True)
     internal_phone_number = models.CharField(max_length=255, blank=True)
     internal_email = models.EmailField(max_length=255, blank=True)
     staff_only_email = models.EmailField(max_length=254, blank=True)
-    body = StreamField(DefaultBodyFields(), null=True, blank=True)
+    body = StreamField(
+        DefaultBodyFields(),
+        null=True,
+        blank=True,
+        use_json_field=True,
+    )
     show_staff = models.BooleanField(default=False)
     show_departments = models.BooleanField(default=False)
 
@@ -359,7 +368,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
 
 IntranetUnitsPage.content_panels = Page.content_panels + [
-    StreamFieldPanel('intro'),
+    FieldPanel('intro'),
     FieldPanel('unit_page'),
     MultiFieldPanel(
         [
@@ -369,7 +378,7 @@ IntranetUnitsPage.content_panels = Page.content_panels + [
         ],
         heading="Staff-only Contact Information",
     ),
-    StreamFieldPanel('body')
+    FieldPanel('body')
 ] + BasePage.content_panels + [
     MultiFieldPanel(
         [

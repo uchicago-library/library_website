@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.views import get_staff_pages_for_unit
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.images.models import Image
 
 

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='askpage',
             name='rich_text',
-            field=wagtail.core.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
+            field=wagtail.fields.RichTextField(blank=True, help_text='Should be a bulleted list or combination of h3 elements and bulleted lists'),
         ),
         migrations.AddField(
             model_name='askpage',

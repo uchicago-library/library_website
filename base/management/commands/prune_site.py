@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from base.management.commands.get_pages_for_test_db import Command as GetPagesForTestDb
 from django.core.management.base import BaseCommand
-from wagtail.core.models import Page, PageRevision
+from wagtail.models import Page, Revision
 
 import ast
 import networkx
@@ -224,7 +224,7 @@ class Command (BaseCommand):
             all_pages.add(n)
 
         delete_pages = all_pages - save_pages
-        page_revisions = PageRevision.objects.all()
+        page_revisions = Revision.page_revisions.all()
         revisions_count = page_revisions.count()
 
         hostname = socket.gethostname()

@@ -6,8 +6,8 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.search.index
 
 
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='unitpage',
             name='body',
-            field=wagtail.core.fields.StreamField((('h2', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.core.blocks.RichTextBlock(icon='pilcrow')))),
+            field=wagtail.fields.StreamField((('h2', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.blocks.RichTextBlock(icon='pilcrow')))),
         ),
         migrations.AddField(
             model_name='unitpage',
@@ -125,7 +125,7 @@ class Migration(migrations.Migration):
             name='UnitIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('intro', wagtail.core.fields.RichTextField()),
+                ('intro', wagtail.fields.RichTextField()),
                 ('editor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='units_unitindexpage_editor', to='staff.StaffPage')),
                 ('last_reviewed', models.DateField(blank=True, null=True, verbose_name='Last Reviewed')),
                 ('page_maintainer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='units_unitindexpage_maintainer', to='staff.StaffPage')),

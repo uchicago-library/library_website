@@ -16,6 +16,11 @@
         {% endif %}
     {% endblock %} 
   </title>
+
+  {% if request.in_preview_panel %}
+    <base target="_blank">
+  {% endif %}
+
   <meta name="generator" content="Bootply" />
   <meta name="viewport" content="width=device-width, user-scalable=yes">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">

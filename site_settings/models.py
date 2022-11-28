@@ -1,10 +1,10 @@
 from django.db import models
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
 @register_setting(icon='warning')
-class EmergencyHours(BaseSetting):
+class EmergencyHours(BaseSiteSetting):
     enable = models.BooleanField(
         default=False,
         help_text='Checking this box will enable "Emergency Hours" and \

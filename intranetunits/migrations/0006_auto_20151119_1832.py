@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.core.fields
+import wagtail.fields
 import wagtail.images.blocks
-import wagtail.core.blocks
+import wagtail.blocks
 import base.models
 
 
@@ -18,6 +18,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='intranetunitspage',
             name='body',
-            field=wagtail.core.fields.StreamField((('h2', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h5', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('h6', wagtail.core.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.core.blocks.RichTextBlock(icon='pilcrow')), ('image', wagtail.core.blocks.StructBlock((('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', wagtail.core.blocks.RichTextBlock()), ('alignment', base.models.ImageFormatChoiceBlock())), label='Image', icon='image')), ('blockquote', wagtail.core.blocks.StructBlock((('quote', wagtail.core.blocks.TextBlock('quote title')), ('attribution', wagtail.core.blocks.CharBlock())))), ('ordered_list', wagtail.core.blocks.ListBlock(wagtail.core.blocks.RichTextBlock(), icon='list-ol')), ('unordered_list', wagtail.core.blocks.ListBlock(wagtail.core.blocks.RichTextBlock(), icon='list-ul'))), blank=True, null=True),
+            field=wagtail.fields.StreamField((('h2', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h3', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h4', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h5', wagtail.blocks.CharBlock(classname='title', icon='title')), ('h6', wagtail.blocks.CharBlock(classname='title', icon='title')), ('paragraph', wagtail.blocks.RichTextBlock(icon='pilcrow')), ('image', wagtail.blocks.StructBlock((('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', wagtail.blocks.RichTextBlock()), ('alignment', base.models.ImageFormatChoiceBlock())), label='Image', icon='image')), ('blockquote', wagtail.blocks.StructBlock((('quote', wagtail.blocks.TextBlock('quote title')), ('attribution', wagtail.blocks.CharBlock())))), ('ordered_list', wagtail.blocks.ListBlock(wagtail.blocks.RichTextBlock(), icon='list-ol')), ('unordered_list', wagtail.blocks.ListBlock(wagtail.blocks.RichTextBlock(), icon='list-ul'))), blank=True, null=True),
         ),
     ]

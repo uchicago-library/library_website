@@ -8,7 +8,7 @@ from django.core import management
 from django.http import HttpRequest
 from django.test import Client, TestCase
 from file_parsing import is_json
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 
 from base.models import BasePage, get_available_path_under
 from base.utils import get_hours_by_id, get_json_for_library
@@ -138,7 +138,7 @@ class TestUsersAndServingLivePages(TestCase):
     If you'd like to import the complete database and prune it down to a minimal set of pages for testing,
     you can do something like this:
 
-    from wagtail.core.models import Page
+    from wagtail.models import Page
     from ask_a_librarian.models import AskPage
     from staff.models import StaffPage
     from units.models import UnitPage
@@ -312,7 +312,7 @@ class TestPageModels(TestCase):
                 'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
                 'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
                 'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
-                'ProjectIndexPage', 'RedirectPage'
+                'ProjectIndexPage', 'RedirectPage', 'LoopRedirectPage'
             ]
         )
         no_search_fields = set([])

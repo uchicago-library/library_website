@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from file_parsing import is_int
 from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
 from openpyxl import Workbook
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 from xml.etree import ElementTree
 
 import csv

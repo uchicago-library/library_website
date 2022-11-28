@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -17,11 +17,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='standardpage',
             name='featured_library_expert_fallback',
-            field=wagtail.core.fields.StreamField((('person', wagtail.core.blocks.StructBlock((('library_expert', wagtail.core.blocks.PageChooserBlock(help_text='Be sure to select a StaffPage (not a StaffPublicPage)', required=False)), ('libguides', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock((('link_text', wagtail.core.blocks.CharBlock(max_length=255, required=False)), ('link_external', wagtail.core.blocks.URLBlock(required=False)), ('link_page', wagtail.core.blocks.PageChooserBlock(required=False)))), icon='link'))), icon='view', required=False, template='public/blocks/featured_library_expert.html')),), default=[]),
+            field=wagtail.fields.StreamField((('person', wagtail.blocks.StructBlock((('library_expert', wagtail.blocks.PageChooserBlock(help_text='Be sure to select a StaffPage (not a StaffPublicPage)', required=False)), ('libguides', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock((('link_text', wagtail.blocks.CharBlock(max_length=255, required=False)), ('link_external', wagtail.blocks.URLBlock(required=False)), ('link_page', wagtail.blocks.PageChooserBlock(required=False)))), icon='link'))), icon='view', required=False, template='public/blocks/featured_library_expert.html')),), default=[]),
         ),
         migrations.AlterField(
             model_name='standardpage',
             name='featured_library_experts',
-            field=wagtail.core.fields.StreamField((('person', wagtail.core.blocks.StructBlock((('library_expert', wagtail.core.blocks.PageChooserBlock(help_text='Be sure to select a StaffPage (not a StaffPublicPage)', required=False)), ('libguides', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock((('link_text', wagtail.core.blocks.CharBlock(max_length=255, required=False)), ('link_external', wagtail.core.blocks.URLBlock(required=False)), ('link_page', wagtail.core.blocks.PageChooserBlock(required=False)))), icon='link')), ('start_date', wagtail.core.blocks.DateBlock(blank=True, null=True)), ('end_date', wagtail.core.blocks.DateBlock(blank=True, null=True))), icon='view', required=False, template='public/blocks/featured_library_expert.html')),), default=[]),
+            field=wagtail.fields.StreamField((('person', wagtail.blocks.StructBlock((('library_expert', wagtail.blocks.PageChooserBlock(help_text='Be sure to select a StaffPage (not a StaffPublicPage)', required=False)), ('libguides', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock((('link_text', wagtail.blocks.CharBlock(max_length=255, required=False)), ('link_external', wagtail.blocks.URLBlock(required=False)), ('link_page', wagtail.blocks.PageChooserBlock(required=False)))), icon='link')), ('start_date', wagtail.blocks.DateBlock(blank=True, null=True)), ('end_date', wagtail.blocks.DateBlock(blank=True, null=True))), icon='view', required=False, template='public/blocks/featured_library_expert.html')),), default=[]),
         ),
     ]

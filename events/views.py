@@ -2,7 +2,7 @@ import calendar
 import datetime
 
 from django.shortcuts import render
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from alerts.utils import get_browse_alerts
 from ask_a_librarian.utils import (

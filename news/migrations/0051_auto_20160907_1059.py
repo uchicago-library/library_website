@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='newsemailaddition',
             name='extra_text',
-            field=wagtail.core.fields.RichTextField(help_text='Text to include in emails. This can include internal or external links.'),
+            field=wagtail.fields.RichTextField(help_text='Text to include in emails. This can include internal or external links.'),
         ),
         migrations.AlterField(
             model_name='newsemailaddition',

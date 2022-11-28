@@ -2,12 +2,12 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import wagtail.core.blocks
+import wagtail.blocks
 import wagtail.search.index
 import django.db.models.deletion
 import django.core.validators
 import modelcluster.fields
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):

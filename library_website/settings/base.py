@@ -16,6 +16,7 @@ import sys
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
+WAGTAILADMIN_BASE_URL = 'https://www.lib.uchicago.edu'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -23,6 +24,8 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 ALLOWED_HOSTS = ['*']
 
 # Application definition
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,7 +40,7 @@ INSTALLED_APPS = [
     'compressor',
     'modelcluster',
     'wagtailcache',
-    'wagtail.core',
+    'wagtail',
     'wagtail.admin',
     'wagtail.search',
     'wagtail.images',

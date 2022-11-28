@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from wagtail.core import models, Site
+from wagtail import models, Site
 from wagtail.search.models import Query
 
 

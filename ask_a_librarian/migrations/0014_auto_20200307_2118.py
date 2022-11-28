@@ -2,8 +2,8 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.snippets.blocks
 
 
@@ -17,12 +17,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='askpage',
             name='intro',
-            field=wagtail.core.fields.StreamField([('paragraph', wagtail.core.blocks.RichTextBlock()), ('reusable_content_block', wagtail.core.blocks.StructBlock([('content', wagtail.snippets.blocks.SnippetChooserBlock('reusable_content.ReusableContent'))])), ('html', wagtail.core.blocks.RawHTMLBlock())], blank=True, null=True),
+            field=wagtail.fields.StreamField([('paragraph', wagtail.blocks.RichTextBlock()), ('reusable_content_block', wagtail.blocks.StructBlock([('content', wagtail.snippets.blocks.SnippetChooserBlock('reusable_content.ReusableContent'))])), ('html', wagtail.blocks.RawHTMLBlock())], blank=True, null=True),
         ),
         migrations.AlterField(
             model_name='askpage',
             name='reference_resources',
-            field=wagtail.core.fields.RichTextField(blank=True, help_text='Links to guide links and other Ask pages. Make new sections with Header 3'),
+            field=wagtail.fields.RichTextField(blank=True, help_text='Links to guide links and other Ask pages. Make new sections with Header 3'),
         ),
         migrations.AlterField(
             model_name='askpage',

@@ -1,20 +1,20 @@
-import re
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
-from base.models import (AbstractReport, BasePage, DefaultBodyFields, Email,
-                         Report)
+from base.models import (
+    AbstractReport, BasePage, DefaultBodyFields, Email, Report
+)
 from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.fields import CharField
 from django.utils import timezone
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (FieldPanel, InlinePanel,
-                                         MultiFieldPanel, PageChooserPanel,
-                                         StreamFieldPanel)
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page
+from wagtail.admin.panels import (
+    FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel
+)
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
@@ -225,9 +225,16 @@ class GroupPage(BasePage, Email):
         null=True
     )
     meeting_frequency = CharField(blank=True, max_length=255)
-    intro = StreamField(DefaultBodyFields(), blank=True)
+    intro = StreamField(
+        DefaultBodyFields(),
+        blank=True,
+        use_json_field=True,
+    )
     is_active = models.BooleanField(default=True)
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
 
     content_panels = Page.content_panels + Email.content_panels + [
         MultiFieldPanel(
@@ -239,10 +246,10 @@ class GroupPage(BasePage, Email):
             ],
             heading='Meeting Information'
         ),
-        StreamFieldPanel('intro'),
+        FieldPanel('intro'),
         InlinePanel('group_members', label='Group Members'),
         FieldPanel('is_active'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + BasePage.content_panels
 
     search_fields = BasePage.search_fields + [

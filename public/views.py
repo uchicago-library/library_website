@@ -23,7 +23,7 @@ from public.utils import (
     doi_lookup, get_clean_params, get_features, get_first_param, has_feature,
     switchboard_url
 )
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.images.models import Image
 from wagtailcache.cache import cache_page
 

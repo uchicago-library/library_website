@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.core.validators
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):

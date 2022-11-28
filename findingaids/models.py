@@ -1,6 +1,6 @@
 from base.models import PublicBasePage
 from library_website.settings import MARKLOGIC_LDR_BASE, MARKLOGIC_FINDINGAIDS_PORT
-from wagtail.core.models import Page
+from wagtail.models import Page
 from xml.etree import ElementTree
 
 import re

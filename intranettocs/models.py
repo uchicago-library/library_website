@@ -1,24 +1,29 @@
-from django.db import models
-from wagtail.core.models import Page
-from wagtail.core.fields import StreamField
-from wagtail.core.blocks import CharBlock, ListBlock, RichTextBlock
 from base.models import BasePage
-from icon_list_boxes.models import IconListBlock, IconListCluster
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from icon_list_boxes.models import IconListCluster
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import StreamField
+from wagtail.models import Page
 from wagtail.search import index
+
 
 class TOCPage(BasePage):
     """
     Table of Contents Pages for the intranet.
     """
-    body = StreamField(IconListCluster())
+    body = StreamField(
+        IconListCluster(),
+        use_json_field=True,
+    )
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + BasePage.content_panels
 
-    subpage_types = ['base.IntranetIndexPage', 'base.IntranetPlainPage', 'intranettocs.TOCPage']
-    
+    subpage_types = [
+        'base.IntranetIndexPage', 'base.IntranetPlainPage',
+        'intranettocs.TOCPage'
+    ]
+
     search_fields = BasePage.search_fields + [
         index.SearchField('body'),
     ]

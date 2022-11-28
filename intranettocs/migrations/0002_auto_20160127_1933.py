@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='tocpage',
             name='body',
-            field=wagtail.core.fields.StreamField((('list_block', wagtail.core.blocks.StructBlock((('icon', wagtail.core.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.core.blocks.CharBlock()), ('text', wagtail.core.blocks.RichTextBlock())))), ('automatic_directory_list_block', wagtail.core.blocks.StructBlock((('icon', wagtail.core.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('starting_page', wagtail.core.blocks.PageChooserBlock())))))),
+            field=wagtail.fields.StreamField((('list_block', wagtail.blocks.StructBlock((('icon', wagtail.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('heading', wagtail.blocks.CharBlock()), ('text', wagtail.blocks.RichTextBlock())))), ('automatic_directory_list_block', wagtail.blocks.StructBlock((('icon', wagtail.blocks.CharBlock(help_text='Add a Font Awesome icon name here')), ('starting_page', wagtail.blocks.PageChooserBlock())))))),
         ),
     ]

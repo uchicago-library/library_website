@@ -1,11 +1,11 @@
-from wagtail.core.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock
 from django.core.validators import RegexValidator
 from django.db import models
-from wagtail.admin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, PageChooserPanel, StreamFieldPanel
+from wagtail.admin.panels import (
+    FieldPanel, MultiFieldPanel, PageChooserPanel
 )
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Page
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Page
 from wagtail.search import index
 
 from base.models import ContactFields, DefaultBodyFields, PublicBasePage, RawHTMLBlock, ReusableContentBlock
@@ -25,12 +25,16 @@ class AskPage(PublicBasePage, ContactFields):
         ],
         null=True,
         blank=True,
+        use_json_field=True,
     )
     ask_widget_name = models.CharField(max_length=100, blank=True)
-    body = StreamField(DefaultBodyFields(
-        null=True,
-        blank=True,
-    ))
+    body = StreamField(
+        DefaultBodyFields(
+            null=True,
+            blank=True,
+        ),
+        use_json_field=True,
+    )
     reference_resources = RichTextField(
         blank=True,
         help_text='Links to guide links and other \
@@ -63,9 +67,9 @@ class AskPage(PublicBasePage, ContactFields):
     subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('intro'),
+        FieldPanel('intro'),
         FieldPanel('ask_widget_name'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         MultiFieldPanel(
             [
                 FieldPanel('phone_number'),

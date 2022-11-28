@@ -4,7 +4,7 @@ from lib_news.models import LibNewsIndexPage, LibNewsPage, PublicNewsCategories
 from public.models import LocationPage
 from staff.models import StaffPage
 from units.models import UnitPage
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 
 
 class test_lib_news_pages_and_categories(TestCase):

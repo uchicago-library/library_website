@@ -1,13 +1,12 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.admin.panels import (
+    FieldPanel, InlinePanel, MultiFieldPanel
 )
 from wagtail.api import APIField
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable, Page, Site
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import StreamField
+from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 
 from base.models import (
@@ -120,13 +119,16 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     )
     secondary_registration_heading = models.CharField(max_length=40, blank=True)
     secondary_registration_description = models.TextField(blank=True)
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
 
     # Panels and subpage types
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
-                ImageChooserPanel('banner_image'),
+                FieldPanel('banner_image'),
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
             ],
@@ -136,7 +138,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
             [
                 FieldPanel('primary_branding_color'),
                 FieldPanel('secondary_branding_color'),
-                ImageChooserPanel('conference_logo'),
+                FieldPanel('conference_logo'),
             ],
             heading='Branding',
         ),
@@ -162,7 +164,7 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         ),
         InlinePanel('sponsors', label='Sponsors'),
         InlinePanel('organizers', label='Organizers'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + SocialMediaFields.panels + PublicBasePage.content_panels
 
     subpage_types = [
@@ -276,10 +278,13 @@ class ConferenceSubPage(PublicBasePage):
     most of their template "goodness" from
     parent ConferencePage.
     """
-    body = StreamField(DefaultBodyFields())
+    body = StreamField(
+        DefaultBodyFields(),
+        use_json_field=True,
+    )
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ] + PublicBasePage.content_panels
 
     subpage_types = ['conferences.ConferenceSubPage']

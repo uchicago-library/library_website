@@ -5,7 +5,7 @@ from django.core.paginator import EmptyPage
 from group.models import GroupIndexPage
 from intranetunits.models import IntranetUnitsIndexPage
 from news.models import NewsPage
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 
 class IntranetHomePage(BasePage):
