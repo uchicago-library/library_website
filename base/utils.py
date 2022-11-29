@@ -405,9 +405,11 @@ def get_doc_titles_for_indexing(id_field, iterable):
     """
     retval = ''
     for item in iterable:
-        if item[id_field]:
+        try:
             title = Document.objects.get(id=item[id_field]).title
             retval += ' %s' % (title,)
+        except (KeyError, Document.DoesNotExist):
+            pass
     return retval
 
 
