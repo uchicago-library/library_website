@@ -1,4 +1,5 @@
 {% extends extention %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-404{% endblock %}
 
@@ -8,6 +9,11 @@
     <p>You may have an outdated bookmark or we have a broken link.</p>
 
     <h2>We think we can help you</h2>
+    
+    {% if koala %}
+    	{% image koala width-400 %}
+    {% endif %}
+
     <p>Try one of the links below:</p>
 
     <ul>
@@ -17,6 +23,11 @@
     </ul>
 
     <h2>Help us help you</h2>
-    <p>{{ helptext }}</p>
+    {% if helptext_email %}
+    	<p>{{ helptext1 }}<a href="mailto:"{{ helptext_email }}> {{ helptext_email }}</a>{{ helptext2 }}</p>
+    {% else %}
+	<p>{{ helptext1 }}{{ helptext2 }}</p>
+    {% endif %}  
+
 </div>
 {% endblock %}

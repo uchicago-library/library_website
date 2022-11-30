@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render
+from wagtail.images.models import Image
 from wagtail.models import Site
 
 
@@ -29,21 +30,31 @@ def library_404_view(request, exception=Http404):
                     ),
                     Link("Library Homepage", "https://www.lib.uchicago.edu/")
                 ],
-                "helptext":
-                "Let us know that we have a missing page. We will do our best to rectify the issue."
+                "helptext1":
+                "Let us know that we have a missing page.",
+                "helptext2":
+                " We will do our best to rectify the issue."
             }
         else:
             return {
                 "extention":
                 "intranethome/intranet_home_page.html",
+                "koala":
+                Image.objects.get(title="Adventure Koala"),
                 "links": [
                     Link(
                         "Return to Loop Homepage",
                         "https://loop.lib.uchicago.edu/"
-                    )
+                    ),
+                    Link("Search loop", "https://loop.lib.uchicago/edu/"),
+                    Link("Search the puboic site", "https://lib.uchicago.edu/")
                 ],
-                "helptext":
-                "Let us know that we have a missing page. Contact intranet@lib.uchicago.edu and we will do our best to rectify the issue."
+                "helptext1":
+                "Let us know that we have a missing page. Contact ",
+                "helptext_email":
+                "intranet@lib.uchicago.edu",
+                "helptext2":
+                " and we will do our best to rectify the issue."
             }
 
     context = context_404(site_name)
