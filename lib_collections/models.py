@@ -6,7 +6,7 @@ import simplejson
 from base.models import DefaultBodyFields, PublicBasePage
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import EmptyPage, Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.core.validators import RegexValidator
 from django.db import models
 from django.http import Http404, HttpResponse
