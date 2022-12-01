@@ -9,7 +9,7 @@ from wagtail.models import Page
 from wagtail.search import index
 
 from base.models import ContactFields, DefaultBodyFields, PublicBasePage, RawHTMLBlock, ReusableContentBlock
-from library_website.settings import PHONE_ERROR_MSG, PHONE_FORMAT
+from library_website.settings import LIBCHAT_WIDGET_URL, PHONE_ERROR_MSG, PHONE_FORMAT
 
 
 class AskPage(PublicBasePage, ContactFields):
@@ -149,5 +149,6 @@ class AskPage(PublicBasePage, ContactFields):
     def get_context(self, request):
         context = super(AskPage, self).get_context(request)
         context['ask_pages'] = AskPage.objects.live()
+        context['libchat_widget_url'] = LIBCHAT_WIDGET_URL
 
         return context
