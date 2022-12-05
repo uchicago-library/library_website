@@ -460,8 +460,14 @@ CACHES = {
     }
 }
 
+# Base URL for LibAnswers services
+LIBANSWERS_BASE = 'https://uchicago.libanswers.com'
+
+# LibChat JavaScript for widgets
+LIBCHAT_WIDGET_URL = LIBANSWERS_BASE + '/load_chat.php?hash='
+
 # Base url for the LibChat status API
-LIBCHAT_STATUS_URL = 'https://uchicago.libanswers.com/1.0/chat/widgets/status/'
+LIBCHAT_STATUS_URL = LIBANSWERS_BASE + '/1.0/chat/widgets/status/'
 
 # Map LibraryH3lp chat widget names to LibChat widget IDs
 # Implemented to avoid changing function signatures and

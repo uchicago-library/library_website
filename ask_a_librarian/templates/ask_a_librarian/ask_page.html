@@ -6,13 +6,13 @@
 {% block content %}
     {{ self.intro }}
     {% if self.ask_widget_name == 'dissertation-office' %}
-        <script src="https://v2.libanswers.com/load_chat.php?hash=946689341a093741c4e12f427047faa2"></script>
+        <script src="{{libchat_widget_url}}946689341a093741c4e12f427047faa2"></script>
         <div id="libchat_946689341a093741c4e12f427047faa2"></div>
     {% elif self.ask_widget_name == 'law' %}
-        <script src="https://v2.libanswers.com/load_chat.php?hash=a4866467f8e4db1dd88568e7c8b01c05"></script>
+        <script src="{{libchat_widget_url}}a4866467f8e4db1dd88568e7c8b01c05"></script>
         <div id="libchat_a4866467f8e4db1dd88568e7c8b01c05"></div>
     {% else %}
-        <script src="https://v2.libanswers.com/load_chat.php?hash=7d40a704e1d39b1c6a20f5c35faf1aaf"></script>
+        <script src="{{libchat_widget_url}}7d40a704e1d39b1c6a20f5c35faf1aaf"></script>
         <div id="libchat_7d40a704e1d39b1c6a20f5c35faf1aaf"></div>
     {% endif %}
     {{ self.body }}
