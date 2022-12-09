@@ -147,6 +147,10 @@ TEMPLATES = [
     },
 ]
 
+WAGTAILMEDIA = {
+    "MEDIA_MODEL": "base.LocalMedia",
+}
+
 WSGI_APPLICATION = 'library_website.wsgi.application'
 
 # Database

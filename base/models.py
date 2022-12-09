@@ -31,6 +31,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
+from wagtailmedia.models import AbstractMedia
 
 from alerts.utils import get_alert
 from ask_a_librarian.utils import get_unit_chat_link
@@ -1009,6 +1010,27 @@ class ImageLink(StructBlock):
         template = 'base/blocks/image_link.html'
 
 
+class LocalMedia(AbstractMedia):
+    admin_form_fields = (
+        'title',
+        'file',
+        'collection',
+        'duration',
+        'width',
+        'height',
+        'thumbnail',
+        'tags',
+        'aria_label',
+    )
+    aria_label = models.CharField(
+        blank=True,
+        default='',
+        max_length=100,
+        help_text='Textual description of the audio or video \
+            for ADA purposes.'
+    )
+
+
 class LocalMediaBlock(AbstractMediaChooserBlock):
 
     def render_basic(self, value, context=None):
@@ -1018,21 +1040,21 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
         if value.type == 'video':
             player_code = '''
             <div>
-                <video width="320" height="240" controls>
+                <video width="320" height="240" aria-label="%s" controls>
                     <source src="{0}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
-            '''
+            ''' % (value.aria_label)
         else:
             player_code = '''
             <div>
-                <audio controls>
+                <audio aria-label="%s" controls>
                     <source src="{0}" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>
-            '''
+            ''' % (value.aria_label)
 
         return format_html(player_code, value.file.url)
 
