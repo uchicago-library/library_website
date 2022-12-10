@@ -50,6 +50,8 @@ class LoopRedirectPage(BasePage, LinkFields):
         )
     ] + BasePage.content_panels
 
+    search_fields = []
+
     def serve(self, request):
         """
         Override the serve method to create a redirect.
