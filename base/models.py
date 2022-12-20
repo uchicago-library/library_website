@@ -1,46 +1,49 @@
 import logging
 import urllib
 
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
 from django import forms
 from django.apps import apps
-from django.core.validators import RegexValidator
+from django.conf.global_settings import LANGUAGES
+from django.core.validators import FileExtensionValidator, RegexValidator
 from django.db import models
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
+from library_website.settings import (
+    CGI_MAIL_SERVICE, HOURS_PAGE, ITEM_SERVLET, LIBCAL_IID, PHONE_ERROR_MSG,
+    PHONE_FORMAT, POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT,
+    SPRINGSHARE_PRIVACY_POLICY
+)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
+from units.utils import get_default_unit
 from wagtail.admin.panels import (
     FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface
 )
-from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.blocks import (
     BooleanBlock, CharBlock, ChoiceBlock, ChooserBlock, FieldBlock, ListBlock,
     PageChooserBlock, RawHTMLBlock, RichTextBlock, StreamBlock, StructBlock,
     TextBlock, TimeBlock, URLBlock
 )
-from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Page, Site
+from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.models import Page, Site
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
+from wagtailmedia.models import ALLOWED_EXTENSIONS_THUMBNAIL, AbstractMedia
+from wagtailmedia.settings import wagtailmedia_settings
 
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
 from base.utils import get_hours_and_location
-from library_website.settings import (
-    CGI_MAIL_SERVICE, HOURS_PAGE, ITEM_SERVLET, LIBCAL_IID, PHONE_ERROR_MSG,
-    PHONE_FORMAT, POSTAL_CODE_ERROR_MSG, POSTAL_CODE_FORMAT, ROOT_UNIT,
-    SPRINGSHARE_PRIVACY_POLICY
-)
-from units.utils import get_default_unit
 
 # Helper functions and constants
 BUTTON_CHOICES = (
@@ -59,6 +62,11 @@ NEWS_CHOICES = (
 
 # Friendly names that need "an" instead of "a"
 UNFRIENDLY_ARTICLES = set(['SSA'])
+
+ENGLISH = 'en'
+LANG_DROP = sorted(
+    [lang for lang in LANGUAGES if len(lang[0]) < 3], key=lambda a: a[1]
+)
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
@@ -1009,30 +1017,118 @@ class ImageLink(StructBlock):
         template = 'base/blocks/image_link.html'
 
 
+class LocalMedia(AbstractMedia):
+    admin_form_fields = (
+        'title',
+        'file',
+        'collection',
+        'duration',
+        'width',
+        'height',
+        'thumbnail',
+        'tags',
+        'aria_label',
+        'captions',
+        'caption_language',
+        'text_alternative',
+    )
+    aria_label = models.CharField(
+        blank=True,
+        default='',
+        max_length=100,
+        help_text='Textual description of the audio or video \
+            for ADA purposes.'
+    )
+    captions = models.FileField(
+        upload_to="media_captions",
+        blank=True,
+    )
+    caption_language = models.CharField(
+        max_length=2,
+        choices=LANG_DROP,
+        default=ENGLISH,
+    )
+    text_alternative = RichTextField(
+        blank=True,
+        help_text="Alternative description of \
+        the audio or video for ADA purposes."
+    )
+
+    def clean(self, *args, **kwargs):
+        super().clean(*args, **kwargs)
+        if not self.duration:
+            self.duration = 0
+
+        if self.captions:
+            validate = FileExtensionValidator(['vtt'])
+            validate(self.captions)
+
+        if self.thumbnail:
+            validate = FileExtensionValidator(ALLOWED_EXTENSIONS_THUMBNAIL)
+            validate(self.thumbnail)
+
+        if self.type == "audio" and wagtailmedia_settings.AUDIO_EXTENSIONS:
+            validate = FileExtensionValidator(
+                wagtailmedia_settings.AUDIO_EXTENSIONS
+            )
+            validate(self.file)
+        elif self.type == "video" and wagtailmedia_settings.VIDEO_EXTENSIONS:
+            validate = FileExtensionValidator(
+                wagtailmedia_settings.VIDEO_EXTENSIONS
+            )
+            validate(self.file)
+
+
 class LocalMediaBlock(AbstractMediaChooserBlock):
 
     def render_basic(self, value, context=None):
+
         if not value:
             return ''
+
+        text_alt = ''
+        if strip_tags(value.text_alternative):
+            cid = 'c-' + str(value.id)
+            text_alt = '''
+            <div>
+              <a class="btn btn-primary" data-toggle="collapse" href="#%s" role="button" aria-expanded="false" aria-controls="%s">
+                Alternative description
+              </a>
+            </div>
+            <div class="collapse" id="%s">
+              <div class="card card-body">
+                %s
+              </div>
+            </div>
+            ''' % (cid, cid, cid, value.text_alternative)
+
+        track = ''
+        if value.captions:
+            track = '<track srclang="%s" kind="captions" src="%s" type="text/vtt" default=""></track>' % (
+                value.caption_language, value.captions.url
+            )
 
         if value.type == 'video':
             player_code = '''
             <div>
-                <video width="320" height="240" controls>
-                    <source src="{0}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+              <video width="320" height="240" aria-label="%s" controls>
+                <source src="{0}" type="video/mp4">
+                  %s
+                  Your browser does not support the video tag.
+              </video>
+              %s
             </div>
-            '''
+            ''' % (value.aria_label, track, text_alt)
         else:
             player_code = '''
             <div>
-                <audio controls>
-                    <source src="{0}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
+              <audio aria-label="%s" controls>
+                <source src="{0}" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+              %s
             </div>
-            '''
+            ''' % (value.aria_label, text_alt)
 
         return format_html(player_code, value.file.url)
 
@@ -1726,6 +1822,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             QuerySet
         """
         from lib_news.models import LibNewsPage
+
         # Bail immediately if we don't need news
         empty_qs = LibNewsPage.objects.none()
         if src == '':
