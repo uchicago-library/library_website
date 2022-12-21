@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import RedirectView
@@ -53,22 +54,28 @@ urlpatterns = [
         RedirectView.as_view(url='/about/directory/?view=staff')
     ),
     url(r'^about/news-events/events/$', events_view, name='events'),
-    url(r'^collex/$', collection_view, name='collection'),
     url(r'^citation_display$', citation_display, name='citation_display'),
-    url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
     url(
         r'^collex/exhibits/$',
         RedirectView.as_view(url='/collex/?view=exhibits')
     ),
     url(r'^workflowautomator/', include('workflowautomator.urls')),
     url(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
-    url(r'', include(wagtail_urls)),
+    # url(r'', include(wagtail_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Prepend the shibboleth logout url if the application
 # is configured for shibboleth
 # if settings.SHIBBOLETH_LOGOUT_URL:
 #    urlpatterns.insert(0, url(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
+
+# Multi-lingual support
+urlpatterns += i18n_patterns(
+    url(r'^collex/$', collection_view, name='collection'),
+    url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    url(r'', include(wagtail_urls)),
+    prefix_default_language=False,
+)
 
 if settings.DEBUG:
     from django.conf.urls.static import static
