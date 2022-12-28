@@ -3,6 +3,16 @@
 
 {% block body_class %}template-404{% endblock %}
 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
 {% block content %}
 <div class="col-xs-12 centermain" style="padding-top:2em;">
     <h1>Page not found</h1>
@@ -14,15 +24,44 @@
     	{% image koala width-400 %}
     {% endif %}
 
-    <p>Try one of the links below:</p>
+    {% if links|length > 1 %}
+    	<p>Try one of the links below:</p>
 
-    <ul>
-      {% for link in links %}
-      	<li><a href={{ link.url }} > {{ link.text }}</a></li>
-	{% endfor %}
+	<ul>
+	  {% for link in links %}
+      	  <li><a href={{ link.url }} > {{ link.text }}</a></li>
+	  {% endfor %}
+	</ul>
+ 
+     {% else %}
+
+	<p>Try the link  below:</p>
+
+	  {% for link in links %}
+      	  <a href={{ link.url }} > {{ link.text }}</a>
+	  {% endfor %}
+	  
+      {% endif %}
+
+    <h2>Try a Site-Wide Search</h2>
+
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="pill" href="#home">Loop</a></li>
+      <li><a data-toggle="pill" href="#menu1">Library Website</a></li>
     </ul>
+  
+    <div class="tab-content">
+      <div id="home" class="tab-pane fade in active">
+	<h3>HOME</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+    <div id="menu1" class="tab-pane fade">
+      <h3>Menu 1</h3>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+  </div>
 
-    <h2>Help us help you</h2>
+ <h2>Help us help you</h2>
     {% if helptext_email %}
     	<p>{{ helptext1 }}<a href="mailto:"{{ helptext_email }}> {{ helptext_email }}</a>{{ helptext2 }}</p>
     {% else %}
@@ -30,4 +69,6 @@
     {% endif %}  
 
 </div>
+
+</body>
 {% endblock %}

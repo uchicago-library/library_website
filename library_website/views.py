@@ -45,9 +45,7 @@ def library_404_view(request, exception=Http404):
                     Link(
                         "Return to Loop Homepage",
                         "https://loop.lib.uchicago.edu/"
-                    ),
-                    Link("Search loop", "https://loop.lib.uchicago/edu/"),
-                    Link("Search the puboic site", "https://lib.uchicago.edu/")
+                    )
                 ],
                 "helptext1":
                 "Let us know that we have a missing page. Contact ",
