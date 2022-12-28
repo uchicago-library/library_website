@@ -52,7 +52,9 @@ def library_404_view(request, exception=Http404):
                 "helptext_email":
                 "intranet@lib.uchicago.edu",
                 "helptext2":
-                " and we will do our best to rectify the issue."
+                " and we will do our best to rectify the issue.",
+                "tabs":
+                True,
             }
 
     context = context_404(site_name)
