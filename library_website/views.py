@@ -54,7 +54,7 @@ def library_404_view(request, exception=Http404):
                 "helptext2":
                 " and we will do our best to rectify the issue.",
                 "tabs":
-                True,
+                True
             }
 
     context = context_404(site_name)
