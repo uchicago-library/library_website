@@ -21,9 +21,11 @@
     <h2>We think we can help you</h2>
     
     {% if koala %}
+    <div class="block-image">
     	<figure class="imgcaption pull-right">
     	{% image koala width-400 %}
 	</figure>
+    </div>
     {% endif %}
 
     {% if links|length > 1 %}
