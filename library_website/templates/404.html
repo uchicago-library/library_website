@@ -17,8 +17,6 @@
 <div class="col-xs-12 centermain" style="padding-top:2em;">
     <h1>Page not found</h1>
     <p>You may have an outdated bookmark or we have a broken link.</p>
-
-    <h2>We think we can help you</h2>
     
     {% if koala %}
     <div class="block-image">
@@ -27,6 +25,10 @@
 	</figure>
     </div>
     {% endif %}
+
+<div class="block-h2">
+    <h2>We think we can help you</h2>
+</div>
 
     {% if links|length > 1 %}
     	<p>Try one of the links below:</p>
@@ -38,16 +40,18 @@
 	</ul>
  
      {% else %}
-
+	<div class="block-pagraph">
 	<p>Try the link  below:</p>
 
 	  {% for link in links %}
       	  <a href={{ link.url }} > {{ link.text }}</a>
 	  {% endfor %}
-	  
+	  </div>
       {% endif %}
+	
 
     <h2>Try a Sitewide Search</h2>
+
 
     {% if tabs %}
 
