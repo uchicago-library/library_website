@@ -21,7 +21,9 @@
     <h2>We think we can help you</h2>
     
     {% if koala %}
+    	<div class="thumbnail-mod col-xs-12 col-sm-4">
     	{% image koala width-400 %}
+	</div>
     {% endif %}
 
     {% if links|length > 1 %}
@@ -43,7 +45,7 @@
 	  
       {% endif %}
 
-    <h2>Try a Site-Wide Search</h2>
+    <h2>Try a Sitewide Search</h2>
 
     {% if tabs %}
 
