@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20220902.0.0"
+  config.vm.box_version = "20221219.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -63,7 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     MAKE IT SO!!!
     MSG
 
-config.vm.post_up_message = up_message
+    config.vm.post_up_message = up_message
   end
   #
   # View the documentation for the provider you are using for more
@@ -79,11 +79,28 @@ config.vm.post_up_message = up_message
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
+
+  # Some provisioning as the Vagrant user
+  config.vm.provision "shell", inline: <<-SHELL, privileged: false
+    # NVM and Node JS
+    echo ""
+    echo "============== Installing NVM and NodeJS =============="
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
+    source $HOME/.nvm/nvm.sh
+    nvm install --lts
+    npm install --save-dev eslint
+    npm i -D prettier eslint-plugin-prettier eslint-config-prettier
+    npm install eslint-config-airbnb --save-dev
+    npx install-peerdeps -y --dev eslint-config-airbnb
+  SHELL
+
+  # Normal provisioning
   config.vm.provision "shell", inline: <<-SHELL
 
     PROJECT_DIR=/vagrant
     VIRTUALENV_DIR=/home/vagrant/lw
     PYTHON=$VIRTUALENV_DIR/bin/python
+    VAGRANT_HOME=/home/vagrant
 
     # Silence "dpkg-preconfigure: unable to re-open stdin" warnings
     export DEBIAN_FRONTEND=noninteractive
@@ -114,10 +131,19 @@ config.vm.post_up_message = up_message
 
     # Install Wagtail dependencies and useful dev tools
     echo -e ""
-    echo "============== Installing Wagtail dependencies and useful dev tools =============="
+    echo "============== Installing Wagtail dependencies and setting up useful dev tools =============="
     apt-get install -y vim git curl gettext build-essential
+    mkdir -p $VAGRANT_HOME/.vim/pack/git-plugins/start
+    git clone --depth 1 https://github.com/dense-analysis/ale.git $VAGRANT_HOME/.vim/pack/git-plugins/start/ale
     apt-get install -y libjpeg-dev libtiff-dev zlib1g-dev libfreetype6-dev liblcms2-dev libllvm11
     apt-get install -y redis-server postgresql libpq-dev
+    touch $VAGRANT_HOME/.vimrc
+    echo "let g:ale_linters_explicit = 1" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_linters = { 'python': ['flake8'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_flake8_options = '--ignore=D100,D101,D202,D204,D205,D400,D401,E303,E501,W503,N805,N806'" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_black_options = '--skip-string-normalization'" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_isort_options = '--profile black'" >> $VAGRANT_HOME/.vimrc
 
     # Install UChicago dependencies
     echo ""
@@ -138,12 +164,6 @@ config.vm.post_up_message = up_message
     echo "============== Pip installing poetry, Fabric, and virtualenv =============="
     pip3 install poetry Fabric
     pip3 install virtualenv
-
-    # NVM and Node JS
-    echo ""
-    echo "============== Installing NVM and NodeJS =============="
-    su - vagrant -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash"
-    su - vagrant -c "export NVM_DIR=\$HOME/.nvm && \. \$NVM_DIR/nvm.sh && nvm install 12.16"
 
     # Create a Postgres user and database
     echo ""
@@ -181,6 +201,13 @@ config.vm.post_up_message = up_message
     systemctl enable elasticsearch
     systemctl start elasticsearch
 
+    # Make a static directory if one does not exist
+    echo ""
+    echo "============== Make static directories if needed =============="
+    echo "..."
+    mkdir -p static
+    mkdir -p library_website/static # I have no idea why this is needed. It shouldn't be.
+
     # Remove packages we don't need
     echo ""
     echo "============== Cleaning up =============="
@@ -216,5 +243,13 @@ config.vm.post_up_message = up_message
     echo "============== Fixing git permissions =============="
     echo "..."
     sudo chown -R vagrant /home/vagrant
+
+    # Add some dev sweetness
+    echo ""
+    echo "============== Simplicity for developers =============="
+    echo "..."
+    echo "source lw/bin/activate" >> /home/vagrant/.bashrc
+    echo "cd /vagrant/" >> /home/vagrant/.bashrc
+    echo "./manage.py runserver 0.0.0.0:8000" >> /home/vagrant/.bashrc
   SHELL
 end
