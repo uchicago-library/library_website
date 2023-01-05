@@ -12,17 +12,17 @@ from django.db import models
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
-from library_website.settings import (
-    COLLECTION_OBJECT_TRUNCATE, CRERAR_BUILDING_ID, CRERAR_EXHIBIT_FOOTER_IMG,
-    SCRC_BUILDING_ID, SCRC_EXHIBIT_FOOTER_IMG
-)
+from library_website.settings import (COLLECTION_OBJECT_TRUNCATE,
+                                      CRERAR_BUILDING_ID,
+                                      CRERAR_EXHIBIT_FOOTER_IMG,
+                                      SCRC_BUILDING_ID,
+                                      SCRC_EXHIBIT_FOOTER_IMG)
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
 from staff.models import StaffPage
-from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
-    TabbedInterface
-)
+from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
+                                  ObjectList, PageChooserPanel,
+                                  TabbedInterface)
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
@@ -31,11 +31,13 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import (
-    CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay, LBrowseURL
-)
+from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
+                    LBrowseURL)
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+
+DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
+DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
 
 
 def get_current_exhibits():
@@ -563,14 +565,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             lambda: self.staff_contact.staff_page_email.first().email, ''
         )
         staff_phone_number = default(
-            lambda:
-            (self.staff_contact.staff_page_phone_faculty_exchange.first()
-             ).phone_number, ''
+            lambda: (
+                self.staff_contact.staff_page_phone_faculty_exchange.first()
+            ).phone_number, ''
         )
         staff_faculty_exchange = default(
-            lambda:
-            (self.staff_contact.staff_page_phone_faculty_exchange.first()
-             ).faculty_exchange, ''
+            lambda: (
+                self.staff_contact.staff_page_phone_faculty_exchange.first()
+            ).faculty_exchange, ''
         )
         staff_url = default(
             lambda:
@@ -1300,7 +1302,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel(
             'supplementary_access_links', label='Supplementary Access Links'
         ),
-        InlinePanel('related_collection_placement', label='Related Collection'),
+        InlinePanel('related_collection_placement',
+                    label='Related Collection'),
         FieldPanel('collection_location'),
         InlinePanel('donor_page_list_placement', label='Donor'),
         MultiFieldPanel(
@@ -1517,7 +1520,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(
+        max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
@@ -1706,8 +1710,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list('email',
-                                                           flat=True)[0]
+            email = librarian.staff_page_email.values_list(
+                'email', flat=True
+            )[0]
         except:
             email = ''
         phone_and_fac = tuple(
@@ -1932,14 +1937,12 @@ class ExhibitPage(PublicBasePage):
     exhibit_open_date = models.DateField(
         blank=True,
         null=True,
-        help_text=
-        'Controls when an exhibit starts being featured as "current" in browse and widgets.'
+        help_text='Controls when an exhibit starts being featured as "current" in browse and widgets.'
     )
     exhibit_close_date = models.DateField(
         blank=True,
         null=True,
-        help_text=
-        'When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
+        help_text='When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
     )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -2024,6 +2027,17 @@ class ExhibitPage(PublicBasePage):
         help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
     )
 
+    font_scaler = models.FloatField(
+        blank=True,
+        null=True,
+        help_text='Enter a value between 0 and 1 for a smaller font. Enter a value greater than 1 for a larger font. e.g. 0.5, 1.5, or 2'
+    )
+    font_kerning = models.FloatField(
+        null=True,
+        blank=True,
+        help_text='Enter a positive number to increase spacing between letters, or a negative number to reduce spacing. Decimal values are okay. e.g. 2.5 or -1.25'
+    )
+
     subpage_types = ['lib_collections.ExhibitChildPage']
 
     web_exhibit_panels = [
@@ -2042,6 +2056,8 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('branding_color'),
                 FieldPanel('google_font_link'),
                 FieldPanel('font_family'),
+                FieldPanel('font_scaler'),
+                FieldPanel('font_kerning'),
             ],
             heading='Custom color and fonts'
         ),
@@ -2103,8 +2119,7 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('ordering_information'),
                 FieldPanel(
                     'publication_url',
-                    help_text=
-                    'If exhibit publication is hosted outside of Library site'
+                    help_text='If exhibit publication is hosted outside of Library site'
                 ),
                 FieldPanel(
                     'web_exhibit_url',
@@ -2280,6 +2295,14 @@ class ExhibitPage(PublicBasePage):
         if self.font_family:
             font = self.font_family
 
+        font_size = DEFAULT_WEB_EXHIBIT_FONT_SIZE
+        if self.font_scaler:
+            font_size = self.font_scaler * font_size
+
+        font_kerning = DEFAULT_WEB_EXHIBIT_FONT_KERNING
+        if self.font_kerning:
+            font_kerning = self.font_kerning
+
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
         unit_url = lazy_dotchain(lambda: self.unit.public_web_page.url, '')
         unit_email_label = lazy_dotchain(lambda: self.unit.email_label, '')
@@ -2306,6 +2329,8 @@ class ExhibitPage(PublicBasePage):
         context['staff_url'] = staff_url
         context['branding_color'] = self.branding_color
         context['font_family'] = font
+        context['font_kerning'] = font_kerning
+        context['font_size'] = font_size
         context['google_font_link'] = self.google_font_link
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
