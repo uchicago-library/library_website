@@ -97,6 +97,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Normal provisioning
   config.vm.provision "shell", inline: <<-SHELL
 
+    # Force the build to fail if a command fails
+    set -e
+
     PROJECT_DIR=/vagrant
     VIRTUALENV_DIR=/home/vagrant/lw
     PYTHON=$VIRTUALENV_DIR/bin/python
@@ -250,6 +253,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "..."
     echo "source lw/bin/activate" >> /home/vagrant/.bashrc
     echo "cd /vagrant/" >> /home/vagrant/.bashrc
-    echo "./manage.py runserver 0.0.0.0:8000" >> /home/vagrant/.bashrc
   SHELL
 end
