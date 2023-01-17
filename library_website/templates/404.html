@@ -1,18 +1,8 @@
-{% extends extention %}
+{% extends 404_page_template_switcher %}
 {% load wagtailimages_tags %}
 
 {% block body_class %}template-404{% endblock %}
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
-
-<body>
 {% block content %}
 <div class="col-xs-12 centermain" style="padding-top:2em;">
 
@@ -21,14 +11,14 @@
 
 
     {% if koala %}
-    <div class="block-image">
-    	<figure class="imgcaption pull-right">
-    	{% image koala width-200 %}
-	</figure>
-    </div>
+    	<div class="block-image">
+    	  <figure class="imgcaption pull-right">
+    	    {% image koala width-200 %}
+	  </figure>
+	</div>
     {% endif %}
     <div class="block-pagraph">
-    <p>You may have an outdated bookmark or we have a broken link.</p>
+      <p>You may have an outdated bookmark or we have a broken link.</p>
     </div>
     
 <div class="block-h2">
@@ -59,27 +49,18 @@
 
 
     {% if tabs %}
-   
     	<ul class="nav nav-pills">
-
 	  <li class="active"><a data-toggle="pill" href="#loop_website">Loop</a></li>
-
 	  <li><a data-toggle="pill" href="#library_website">Library Website</a></li>
-
 	</ul>
 
   
 	<div class="tab-content">
-	 
-
 	  <div id="loop_website" class="tab-pane fade in active">
-
 	    <br>
-
-
 	    <form action="{% url 'search' %}" method="">
 	      <div class="col-xs-9 col-sm-10 nopadding">
-		<input name="query" type="text" placeholder="search loop" aria-label="..." class="form-control" id="search_form5" onchange="propagate(this)">
+		<input name="query" type="text" placeholder="search loop" class="form-control" id="search_form5">
 		<input type="hidden" name="which-form" value="website">
 	{% csrf_token %}
 	      </div>
@@ -88,36 +69,29 @@
 		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
 	      </div>
 	    </form>
-
 	  </div>
 	 
 
 	  <div id="library_website" class="tab-pane fade">
-
-
 	    <br>
-
-
 	    <form action="/switchboard/" method="post">
 	      <div class="col-xs-9 col-sm-10 nopadding">
-		<input name="query" type="text" placeholder="search library website" aria-label="..." class="form-control" id="search_form5" onchange="propagate(this)">
+		<input name="query" type="text" placeholder="search library website" class="form-control" id="search_form5">
 		<input type="hidden" name="which-form" value="website">
 	{% csrf_token %}
 	      </div>
-                             
+                   
 	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
 		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
 	      </div>
 	    </form>
-
-
 	  </div>
 
      {% else %}
 
 	    <form action="/switchboard/" method="post">
 	      <div class="col-xs-9 col-sm-10 nopadding">
-		<input name="query" type="text" placeholder="search library website" aria-label="..." class="form-control" id="search_form5" onchange="propagate(this)">
+		<input name="query" type="text" placeholder="search library website" class="form-control" id="search_form5">
 		<input type="hidden" name="which-form" value="website">
 	{% csrf_token %}
 	      </div>
@@ -140,5 +114,4 @@
 
 </div>
 
-</body>
 {% endblock %}

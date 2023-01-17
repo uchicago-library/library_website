@@ -17,18 +17,12 @@ def library_404_view(request, exception=Http404):
     def context_404(site_name):
         if site_name == "Public":
             return {
-                "extention":
+                "404_page_template_switcher":
                 "base/public_base.html",
                 "links": [
-                    Link(
-                        "Ask a Librarian",
-                        "https://www.lib.uchicago.edu/research/help/ask-librarian/"
-                    ),
-                    Link(
-                        "Library Digital Collections",
-                        "https://www.lib.uchicago.edu/collex/"
-                    ),
-                    Link("Library Homepage", "https://www.lib.uchicago.edu/")
+                    Link("Ask a Librarian", "/ask-librarian/"),
+                    Link("Library Digital Collections", "/collex/"),
+                    Link("Library Homepage", "/")
                 ],
                 "helptext1":
                 "Let us know that we have a missing page.",
@@ -37,24 +31,15 @@ def library_404_view(request, exception=Http404):
             }
         else:
             return {
-                "extention":
+                "404_page_template_switcher":
                 "intranethome/intranet_home_page.html",
-                "koala":
-                Image.objects.get(title="Adventure Koala"),
-                "links": [
-                    Link(
-                        "Return to Loop Homepage",
-                        "https://loop.lib.uchicago.edu/"
-                    )
-                ],
+                "koala": Image.objects.get(title="Adventure Koala"),
+                "links": [Link("Return to Loop Homepage", "/")],
                 "helptext1":
                 "Let us know that we have a missing page. Contact ",
-                "helptext_email":
-                "intranet@lib.uchicago.edu",
-                "helptext2":
-                " and we will do our best to rectify the issue.",
-                "tabs":
-                True
+                "helptext_email": "intranet@lib.uchicago.edu",
+                "helptext2": " and we will do our best to rectify the issue.",
+                "tabs": True
             }
 
     context = context_404(site_name)
