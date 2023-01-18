@@ -1,6 +1,6 @@
-const path = require('path');
-const webpack = require('webpack');
-const BundleTracker = require('webpack-bundle-tracker');
+const path = require('path')
+const webpack = require('webpack')
+const BundleTracker = require('webpack-bundle-tracker')
 
 module.exports = {
   context: __dirname,
@@ -20,7 +20,12 @@ module.exports = {
     filename: '[name]-bundle.js',
   },
 
-  plugins: [new BundleTracker({ filename: './webpack-stats.json' })],
+  plugins: [
+    new BundleTracker({ filename: './webpack-stats.json' }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+  ],
   module: {
     rules: [
       {
@@ -32,5 +37,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['*', '.js', '.jsx'],
+    fallback: { util: require.resolve('util/'), stream: false },
   },
-};
+}

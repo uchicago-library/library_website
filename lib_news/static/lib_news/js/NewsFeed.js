@@ -1,31 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import slugify from 'react-slugify';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import PropTypes from 'prop-types'
+import slugify from 'react-slugify'
 
-const DOM_ELEMENT = document.getElementById('news-feed');
+const DOM_ELEMENT = document.getElementById('news-feed')
 
 const DEFAULT_VISIBLE = Math.trunc(
   DOM_ELEMENT.getAttribute('data-default-visible'),
-);
+)
 
 const INCREMENT_VISIBLE = Math.trunc(
   DOM_ELEMENT.getAttribute('data-increment-visible'),
-);
+)
 
-const API_URL = DOM_ELEMENT.getAttribute('data-api-url');
+const API_URL = DOM_ELEMENT.getAttribute('data-api-url')
 
-const CATEGORY = DOM_ELEMENT.getAttribute('data-category');
+const CATEGORY = DOM_ELEMENT.getAttribute('data-category')
 
-const FALLBACK_IMG = DOM_ELEMENT.getAttribute('data-fallback-img') || '';
+const FALLBACK_IMG = DOM_ELEMENT.getAttribute('data-fallback-img') || ''
 
-const FFID = Math.trunc(DOM_ELEMENT.getAttribute('data-first-feature-id'));
+const FFID = Math.trunc(DOM_ELEMENT.getAttribute('data-first-feature-id'))
 
-const filterItems = res => (CATEGORY
-  ? res.items.filter(i => i.categories.includes(CATEGORY))
-  : res.items.filter(i => i.id !== FFID));
+const filterItems = res =>
+  CATEGORY
+    ? res.items.filter(i => i.categories.includes(CATEGORY))
+    : res.items.filter(i => i.id !== FFID)
 
-const OFFSET_LIMIT = '34';
+const OFFSET_LIMIT = '34'
 
 const PreLoader = () => (
   <article>
@@ -36,7 +37,7 @@ const PreLoader = () => (
       </div>
     </span>
   </article>
-);
+)
 
 const Article = ({ item, category }) => (
   <article>
@@ -58,11 +59,11 @@ const Article = ({ item, category }) => (
       <h2>{item.title}</h2>
     </a>
   </article>
-);
+)
 
 Article.defaultProps = {
   category: '',
-};
+}
 
 Article.propTypes = {
   item: PropTypes.shape({
@@ -75,7 +76,7 @@ Article.propTypes = {
     tumbnail_alt_text: PropTypes.string,
   }).isRequired,
   category: PropTypes.string,
-};
+}
 
 const LoadMoreBtn = ({ loadMore }) => (
   <section className="load-footer">
@@ -83,65 +84,66 @@ const LoadMoreBtn = ({ loadMore }) => (
       Load more
     </button>
   </section>
-);
+)
 LoadMoreBtn.propTypes = {
   loadMore: PropTypes.func.isRequired,
-};
+}
 
 class NewsFeed extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       items: [],
       visible: DEFAULT_VISIBLE,
       isLoading: true,
-    };
+    }
 
-    this.loadMore = this.loadMore.bind(this);
+    this.loadMore = this.loadMore.bind(this)
   }
 
   componentDidMount() {
     fetch(`${API_URL}`)
       .then(res => res.json())
-      .then((res) => {
+      .then(res => {
         this.setState({
           items: filterItems(res),
           isLoading: false,
-        });
+        })
       })
-      .catch((error) => {
-        console.error(error); // eslint-disable-line no-console
-      });
+      .catch(error => {
+        console.error(error) // eslint-disable-line no-console
+      })
   }
 
   loadMore() {
-    this.setState(prev => ({ visible: prev.visible + INCREMENT_VISIBLE }));
+    this.setState(prev => ({ visible: prev.visible + INCREMENT_VISIBLE }))
   }
 
   render() {
-    const { visible } = this.state;
-    const { items } = this.state;
-    const { isLoading } = this.state;
+    const { visible } = this.state
+    const { items } = this.state
+    const { isLoading } = this.state
     return (
       <div>
         <section className="news-stories">
           {!isLoading
             ? items
-              .slice(0, visible)
-              .map(item => (
-                <Article
-                  item={item}
-                  category={item.categories[0] || ''}
-                  key={item.id}
-                />
-              ))
+                .slice(0, visible)
+                .map(item => (
+                  <Article
+                    item={item}
+                    category={item.categories[0] || ''}
+                    key={item.id}
+                  />
+                ))
             : [...Array(visible).keys()].map(() => <PreLoader />)}
         </section>
         {visible < items.length && <LoadMoreBtn loadMore={this.loadMore} />}
       </div>
-    );
+    )
   }
 }
 
-ReactDOM.render(<NewsFeed />, DOM_ELEMENT);
+const root = ReactDOM.createRoot(DOM_ELEMENT)
+root.render(<NewsFeed />)

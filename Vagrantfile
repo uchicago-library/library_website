@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20221219.0.0"
+  config.vm.box_version = "20230110.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -80,20 +80,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
 
-  # Some provisioning as the Vagrant user
-  config.vm.provision "shell", inline: <<-SHELL, privileged: false
-    # NVM and Node JS
-    echo ""
-    echo "============== Installing NVM and NodeJS =============="
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
-    source $HOME/.nvm/nvm.sh
-    nvm install --lts
-    npm install --save-dev eslint
-    npm i -D prettier eslint-plugin-prettier eslint-config-prettier
-    npm install eslint-config-airbnb --save-dev
-    npx install-peerdeps -y --dev eslint-config-airbnb
-  SHELL
-
   # Normal provisioning
   config.vm.provision "shell", inline: <<-SHELL
 
@@ -107,6 +93,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Silence "dpkg-preconfigure: unable to re-open stdin" warnings
     export DEBIAN_FRONTEND=noninteractive
+
+    echo "============== Installing NVM and NodeJS =============="
+    export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+    curl -sL https://deb.nodesource.com/setup_18.x | bash -
+    apt-get install -y nodejs
+    su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
+    npm install eslint
+    npm i prettier eslint-plugin-prettier eslint-config-prettier
+    npm install eslint-config-airbnb
+    npm install -g install-peerdeps -y
+    cd /vagrant/
+    npm install
 
     # Create the django error log
     echo "============== Creating /var/log/django-errors.log =============="
@@ -253,5 +251,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "..."
     echo "source lw/bin/activate" >> /home/vagrant/.bashrc
     echo "cd /vagrant/" >> /home/vagrant/.bashrc
+    echo "export PATH=\"/vagrant/node_modules/.bin:$PATH\"" >> /home/vagrant/.bashrc
   SHELL
 end
