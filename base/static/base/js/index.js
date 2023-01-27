@@ -1,9 +1,9 @@
 /* Global React components go here. */
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react'
+import PropTypes from 'prop-types'
 
-const Input = (props) => {
+const Input = props => {
   const {
     id,
     value,
@@ -13,7 +13,7 @@ const Input = (props) => {
     placeholder,
     ariaDescribedBy,
     required,
-  } = props;
+  } = props
   return (
     <input
       id={id}
@@ -26,8 +26,8 @@ const Input = (props) => {
       aria-describedby={ariaDescribedBy}
       className="form-control"
     />
-  );
-};
+  )
+}
 
 Input.defaultProps = {
   id: null,
@@ -38,7 +38,7 @@ Input.defaultProps = {
   placeholder: null,
   ariaDescribedBy: null,
   required: null,
-};
+}
 
 Input.propTypes = {
   id: PropTypes.string,
@@ -49,12 +49,10 @@ Input.propTypes = {
   placeholder: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
-};
+}
 
-const TextArea = (props) => {
-  const {
-    id, type, name, required, value, onChange, ariaDescribedBy,
-  } = props;
+const TextArea = props => {
+  const { id, type, name, required, value, onChange, ariaDescribedBy } = props
   return (
     <textarea
       id={id}
@@ -66,8 +64,8 @@ const TextArea = (props) => {
       required={required}
       value={value}
     />
-  );
-};
+  )
+}
 
 TextArea.defaultProps = {
   id: null,
@@ -77,7 +75,7 @@ TextArea.defaultProps = {
   name: null,
   ariaDescribedBy: null,
   required: null,
-};
+}
 
 TextArea.propTypes = {
   id: PropTypes.string,
@@ -87,44 +85,42 @@ TextArea.propTypes = {
   name: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
-};
+}
 
-const Option = (props) => {
-  const {
-    disabled, selected, value, text,
-  } = props;
+const Option = props => {
+  const { disabled, selected, value, text } = props
   return (
     <option disabled={disabled} selected={selected} value={value}>
       {text}
     </option>
-  );
-};
+  )
+}
 
 Option.defaultProps = {
   disabled: null,
   selected: null,
   value: null,
   text: null,
-};
+}
 
 Option.propTypes = {
   disabled: PropTypes.bool,
   selected: PropTypes.bool,
   value: PropTypes.string,
   text: PropTypes.string,
-};
+}
 
-const makeOption = (elm) => {
-  const disabled = elm.disabled || null;
-  const value = elm.value || '';
-  const selected = elm.selected || null;
-  const text = elm.text || null;
+const makeOption = elm => {
+  const disabled = elm.disabled || null
+  const value = elm.value || ''
+  const selected = elm.selected || null
+  const text = elm.text || null
   return (
     <Option disabled={disabled} value={value} selected={selected} text={text} />
-  );
-};
+  )
+}
 
-const Select = (props) => {
+const Select = props => {
   const {
     id,
     value,
@@ -134,7 +130,7 @@ const Select = (props) => {
     required,
     options,
     ariaDescribedBy,
-  } = props;
+  } = props
   return (
     <select
       className="form-control"
@@ -148,8 +144,8 @@ const Select = (props) => {
     >
       {options.map(e => makeOption(e))}
     </select>
-  );
-};
+  )
+}
 
 Select.defaultProps = {
   id: null,
@@ -159,7 +155,7 @@ Select.defaultProps = {
   name: null,
   ariaDescribedBy: null,
   required: null,
-};
+}
 
 Select.propTypes = {
   id: PropTypes.string,
@@ -170,62 +166,58 @@ Select.propTypes = {
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
+}
 
-const Label = (props) => {
-  const { htmlFor, text, required } = props;
+const Label = props => {
+  const { htmlFor, text, required } = props
   if (required) {
     return (
       <label htmlFor={htmlFor}>
-        {text}
-        {' '}
-        <abbr title="required">*</abbr>
+        {text} <abbr title="required">*</abbr>
       </label>
-    );
+    )
   }
-  return <label htmlFor={htmlFor}>{text}</label>;
-};
+  return <label htmlFor={htmlFor}>{text}</label>
+}
 
 Label.defaultProps = {
   required: null,
-};
+}
 
 Label.propTypes = {
   htmlFor: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   required: PropTypes.bool,
-};
+}
 
-const Legend = (props) => {
-  const { text } = props;
-  return <legend>{text}</legend>;
-};
+const Legend = props => {
+  const { text } = props
+  return <legend>{text}</legend>
+}
 
 Legend.propTypes = {
   text: PropTypes.string.isRequired,
-};
+}
 
 const RequiredFieldsText = () => (
   <p className="required-intro">
-    Required fields are followed by
-    {' '}
-    <abbr title="required">*</abbr>
+    Required fields are followed by <abbr title="required">*</abbr>
   </p>
-);
+)
 
-const FormFieldHelpText = (props) => {
-  const { id, text } = props;
+const FormFieldHelpText = props => {
+  const { id, text } = props
   return (
     <small id={id} className="form-text">
       {text}
     </small>
-  );
-};
+  )
+}
 
 FormFieldHelpText.propTypes = {
   id: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-};
+}
 
 export {
   Input,
@@ -235,4 +227,4 @@ export {
   Legend,
   RequiredFieldsText,
   FormFieldHelpText,
-};
+}

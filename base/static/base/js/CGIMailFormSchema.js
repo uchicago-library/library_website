@@ -47,6 +47,6 @@ const schema = {
       },
     },
   },
-};
+}
 
-export default schema;
+export default schema

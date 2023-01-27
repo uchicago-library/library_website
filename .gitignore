@@ -11,6 +11,7 @@
 node_modules/
 package.json
 package-lock.json
+base/static/bundles/*.LICENSE.txt
 
 django-errors.log
 library_website/settings/database.db

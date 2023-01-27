@@ -533,7 +533,7 @@ LIBCAL_CREDENTIALS = {
 
 # CGIMail Forms
 CGI_MAIL_SERVICE = '/cgi-bin/cgimail/cgimail'
-ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
+ITEM_SERVLET = '/item-servlet/?p=true'
 SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
 # Override settings in test
