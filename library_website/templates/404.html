@@ -1,21 +1,117 @@
-{% extends "base/public_base.html" %}
+{% extends 404_page_template_switcher %}
+{% load wagtailimages_tags %}
 
 {% block body_class %}template-404{% endblock %}
 
 {% block content %}
 <div class="col-xs-12 centermain" style="padding-top:2em;">
+
+   
     <h1>Page not found</h1>
-    <p>You may have an outdated bookmark or we have a broken link.</p>
 
+
+    {% if koala %}
+    	<div class="block-image">
+    	  <figure class="imgcaption pull-right">
+    	    {% image koala width-200 %}
+	  </figure>
+	</div>
+    {% endif %}
+    <div class="block-pagraph">
+      <p>You may have an outdated bookmark or we have a broken link.</p>
+    </div>
+    
+<div class="block-h2">
     <h2>We think we can help you</h2>
-    <p>Try one of the links below:</p>
-    <ul>
-    	<li><a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a></li>
-        <li><a href="https://www.lib.uchicago.edu/collex/">Library Digital Collections</a></li>
-    	<li><a href="https://www.lib.uchicago.edu/">Library Homepage</a></li>
-    </ul>
-
-    <h2>Help us help you</h2>
-    <p>Let us know that we have a missing page. We will do our best to rectify the issue.</p>
 </div>
+
+    {% if links|length > 1 %}
+    	<p>Try one of the links below:</p>
+
+	<ul>
+	  {% for link in links %}
+      	  <li><a href={{ link.url }} > {{ link.text }}</a></li>
+	  {% endfor %}
+	</ul>
+ 
+     {% else %}
+	<div class="block-pagraph">
+	<p>Try the link  below:</p>
+
+	  {% for link in links %}
+      	  <a href={{ link.url }} > {{ link.text }}</a>
+	  {% endfor %}
+	  </div>
+      {% endif %}
+	
+
+    <h2>Try a Sitewide Search</h2>
+
+
+    {% if tabs %}
+    	<ul class="nav nav-pills">
+	  <li class="active"><a data-toggle="pill" href="#loop_website">Loop</a></li>
+	  <li><a data-toggle="pill" href="#library_website">Library Website</a></li>
+	</ul>
+
+  
+	<div class="tab-content">
+	  <div id="loop_website" class="tab-pane fade in active">
+	    <br>
+	    <form action="{% url 'search' %}" method="">
+	      <div class="col-xs-9 col-sm-10 nopadding">
+		<input name="query" type="text" placeholder="search loop" class="form-control" id="search_form5">
+		<input type="hidden" name="which-form" value="website">
+	{% csrf_token %}
+	      </div>
+                             
+	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+	      </div>
+	    </form>
+	  </div>
+	 
+
+	  <div id="library_website" class="tab-pane fade">
+	    <br>
+	    <form action="/switchboard/" method="post">
+	      <div class="col-xs-9 col-sm-10 nopadding">
+		<input name="query" type="text" placeholder="search library website" class="form-control" id="search_form5">
+		<input type="hidden" name="which-form" value="website">
+	{% csrf_token %}
+	      </div>
+                   
+	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+	      </div>
+	    </form>
+	  </div>
+
+     {% else %}
+
+	    <form action="/switchboard/" method="post">
+	      <div class="col-xs-9 col-sm-10 nopadding">
+		<input name="query" type="text" placeholder="search library website" class="form-control" id="search_form5">
+		<input type="hidden" name="which-form" value="website">
+	{% csrf_token %}
+	      </div>
+                             
+	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+	      </div>
+	    </form>
+
+     {% endif %}
+
+	  <br>
+
+ <h2>Help us help you</h2>
+    {% if helptext_email %}
+    	<p>{{ helptext1 }}<a href="mailto:"{{ helptext_email }}> {{ helptext_email }}</a>{{ helptext2 }}</p>
+    {% else %}
+	<p>{{ helptext1 }}{{ helptext2 }}</p>
+    {% endif %}  
+
+</div>
+
 {% endblock %}
