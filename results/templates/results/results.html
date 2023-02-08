@@ -56,6 +56,17 @@
         {% elif search_query %}
             No results found
         {% endif %}
+	    <form action="/switchboard/" method="post">
+	      <div class="col-xs-9 col-sm-10 nopadding">
+		<input name="query" type="text" placeholder="search library website" class="form-control" id="search_form5">
+		<input type="hidden" name="which-form" value="website">
+	{% csrf_token %}
+	      </div>
+                             
+	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+	      </div>
+	    </form>
       </div>
     </div>
   </div>
