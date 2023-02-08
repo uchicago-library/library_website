@@ -64,7 +64,7 @@
 
 	    <form action="/switchboard/" method="post">
 	      <div class="col-xs-9 col-sm-10 nopadding">
-		<input name="query" type="text" placeholder={{search_query}} class="form-control" id="search_form5">
+		<input name="query" type="text" class="form-control" value={{search_query}} id="search_form5">
 		<input type="hidden" name="which-form" value="website">
 	{% csrf_token %}
 	      </div>
