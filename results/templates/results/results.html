@@ -7,9 +7,29 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
+
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-12 col-md-12">
+
+<br>
+
+ <form action="/switchboard/" method="post">
+	      <div class="col-xs-9 col-sm-5 nopadding">
+		<input name="query" type="text" class="form-control" value="{{search_query}}" id="search_form5">
+		<input type="hidden" name="which-form" value="website">
+	{% csrf_token %}
+	      </div>
+                             
+	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+	      </div>
+	    </form>
+
       <div class="search-results">
+
+<br>
+<br>
+
         {% if search_picks %}
              <ul>
                 {% for pick in search_picks %}
@@ -56,23 +76,7 @@
         {% elif search_query %}
             No results found
         {% endif %}
-		
-		<br>
-		<br>
 
- <h2>Try Searching Again</h2>
-
-	    <form action="/switchboard/" method="post">
-	      <div class="col-xs-9 col-sm-10 nopadding">
-		<input name="query" type="text" class="form-control" value={{search_query}} id="search_form5">
-		<input type="hidden" name="which-form" value="website">
-	{% csrf_token %}
-	      </div>
-                             
-	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
-	      </div>
-	    </form>
       </div>
     </div>
   </div>
