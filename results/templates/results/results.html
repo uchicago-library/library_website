@@ -74,7 +74,8 @@
                 <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
             {% endif %}
         {% elif search_query %}
-            No results found
+		<br>
+		No results found
         {% endif %}
 
       </div>
