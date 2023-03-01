@@ -18,8 +18,7 @@ def library_404_view(request, exception=Http404):
 
         if is_default:
             return {
-                "404_page_template_switcher":
-                "base/public_base.html",
+                "404_page_template_switcher":"base/public_base.html",
                 "links": [
                     Link("Ask a Librarian", "/research/help/ask-librarian/"),
                     Link("Library Digital Collections", "/collex/"),
@@ -32,8 +31,7 @@ def library_404_view(request, exception=Http404):
             }
         else:
             return {
-                "404_page_template_switcher":
-                "intranethome/intranet_home_page.html",
+                "404_page_template_switcher":"intranethome/intranet_home_page.html",
                 "koala": Image.objects.get(title="Adventure Koala"),
                 "links": [Link("Return to Loop Homepage", "/")],
                 "helptext1":

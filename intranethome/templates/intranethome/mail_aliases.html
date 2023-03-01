@@ -1,0 +1,17 @@
+{% extends "base/intranet_base.html" %}
+
+{% block body_class %}template-searchresults{% endblock %}
+
+{% block title %}Mail Aliases{% endblock %}
+
+{% block content %}
+
+{%for key, value in cleaned_data.items %}
+	{{key}} : 
+	{%for note_email in value %}
+	<br>
+		{{note_email}}
+	{%endfor %}
+	<br><br>
+{%endfor %}
+{% endblock %}
