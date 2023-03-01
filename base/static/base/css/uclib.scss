@@ -726,6 +726,9 @@ a.event-header {
   h3 {
     font-style: normal;
     padding: 0.75em 0 0.25em;
+    a {
+      color: #494949;
+    }
   }
   p {
     clear:both;
@@ -733,7 +736,7 @@ a.event-header {
   }
 }
 
-figure.embed {
+div.embed {
   width: 98%;
   display: inline-block;
   vertical-align: top;
@@ -757,7 +760,7 @@ figure.embed {
     width: auto\9; // ie8+9
     -ms-interpolation-mode: bicubic; // lt ie8
   }
-  figcaption {  //category tags on news images
+  div.capt {  //category tags on news images
     width: 100%;
     padding: 0.5em;
     background: rgba(50,50,50,0.7);
