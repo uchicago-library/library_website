@@ -63,7 +63,7 @@ const propagate = (element) => {
 
     // get all the forms on the search box page
     const form1 = document.getElementById("search_form1");
-    const form2 = document.getElementById("search_form2");
+    const form2 = document.getElementById("ebscohostsearchtext");
     const form3 = document.getElementById("search_form3");
     const form4 = document.getElementById("search_form4");
     const form5 = document.getElementById("search_form5");
