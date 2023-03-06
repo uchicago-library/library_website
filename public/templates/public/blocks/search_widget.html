@@ -14,10 +14,10 @@
             <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field -->
                 <div class="input-group"> <!-- Input Group -->
                     <label for="lookfor" class="visually-hidden">Search for </label>
-                    <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search for" class="form-control" id="search_form1" onchange="propagate(this)"/>
+                    <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search the library catalog" class="form-control" id="search_form1" onchange="propagate(this)"/>
                     <input type="hidden" name="which-form" value="catalog">
                     {% csrf_token %}
-                    <select class="selectpicker btn-searchtype" aria-label="Limit search to" name="type">
+                    <select class="selectpicker btn-searchtype" aria-label="Limit the library catalog search" name="type">
                         <option value="AllFields">All Fields</option>
                         <option value="Title">Title</option>
                         <option value="Subject">Subject</option>
@@ -144,7 +144,7 @@
         <h1 class="searchbox-header">Website Search</h1>
         <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Library Website &gt; Search">
             <div class="col-xs-9 col-sm-10 nopadding">
-                <input name="query" type="text" placeholder="lockers" aria-label="Search Library website" class="form-control" id="search_form5" onchange="propagate(this)">
+                <input name="query" type="text" placeholder="lockers" aria-label="Search the Library website" class="form-control" id="search_form5" onchange="propagate(this)">
                 <input type="hidden" name="which-form" value="website">
                 {% csrf_token %}
             </div>
