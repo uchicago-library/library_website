@@ -188,7 +188,7 @@ body.libnewsindexpage {
 		}
 	}
 
-	article {
+	article, div.article {
 	  .img-object {
 	    align-self: start;
 	    img, .preload {
@@ -203,12 +203,12 @@ body.libnewsindexpage {
 			object-fit: cover;
             height: 200px;
 			width: 100%;
-		  }
+		}
         .preload {
             background: $lightgray;
             text-align: center;
             padding: 60px 0 0 0;
-            i, span{
+            i, span {
                 color: darken($lightgray, 30%);
                 margin: 0 auto;
                 padding: 4px 0;
@@ -459,10 +459,14 @@ body.libnewsindexpage {
 			grid-column: span 3;
 			margin: 0;
 		}
-	 	a {
-		    font-size: 1.3em;
-		    font-weight: 200;
+        h3 {
+          margin: 0.5em 0;
+		  font-weight: 200;
+		  font-size: 1.3em;
+          a {
+            font-family: $base-font;
 		    color: $darkgray;
+          }
 		}
 		article {
 			@include respond-to(mobileonly) {
