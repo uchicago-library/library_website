@@ -235,7 +235,7 @@ i.ask-icon {
     font-size: $font-small;
     text-decoration: none;
     line-height: 2em;
-    &:hover {
+    &:hover, &:focus {
       color: #EDD4C1;
       text-decoration: underline;
     }
@@ -257,7 +257,7 @@ i.ask-icon {
       text-decoration: none;
       font-size: $font-small;
       margin-bottom: 12px;
-      &:hover {
+      &:hover, &:focus {
         color: #EDD4C1!important;
         background-color: transparent!important;
       }
