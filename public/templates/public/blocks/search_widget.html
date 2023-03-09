@@ -1,168 +1,168 @@
 <div class="tabs col-xs-12 nopadding main-search" role="search"> <!-- Search Tabs Wrapper -->
-  <nav class="transformer-tabs">
-    <ul>
-      <li><a class="active" href="#tab-1" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-1">Catalogs</a></li>
-      <li><a href="#tab-2" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-2"><span class="hidden-xs">Articles, Journals &amp; </span>Databases</a></li>
-      <li><a href="#tab-3" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-3">Website<span class="hidden-xs"> Search</span></a></li>
-    </ul>
-  </nav>
-                       
-  <!-- TAB 1 - Catalog Search -->
-  <div class="col-xs-12 active" id="tab-1">
-    <h1 class="searchbox-header">Library Catalog</h1>
-    <form action="/switchboard/" id="search_widget_catalog_search" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Catalogs &gt; Search">
-      <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field --> 
-        <div class="input-group"> <!-- Input Group -->
-	  <label for="lookfor" class="visually-hidden">Search for </label>
-          <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search for" class="form-control" id="search_form1" onchange="propagate(this)"/>
-	  <input type="hidden" name="which-form" value="catalog">
-	  {% csrf_token %}
-          <select class="selectpicker btn-searchtype" aria-label="Limit search to" name="type">
-	      <option value="AllFields">All Fields</option>
-	      <option value="Title">Title</option>
-	      <option value="Subject">Subject</option>
-	      <option value="Author">Author</option>
-	      <option value="JournalTitle">Journal Title</option>
-	      <option value="StandardNumbers">ISBN, ISSN, etc.</option>
-	      <option value="browse_title">Title begins with</option>
-	      <option value="browse_journal">Journal begins with</option>
-	      <option value="browse_lcc">Call Number begins with</option>
-          </select>
-        </div> <!-- // Input Group -->
-      </div> <!-- // Text Search Field --> 
-                           
-      <div class="col-xs-3 col-sm-2 search-btn-wrapper"> <!-- Search Button -->
-        <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
-      </div> <!-- // Search Button -->
+    <nav class="transformer-tabs">
+        <ul>
+            <li><a class="active" href="#tab-1" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-1">Catalogs</a></li>
+            <li><a href="#tab-2" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-2"><span class="hidden-xs">Articles, Journals &amp; </span>Databases</a></li>
+            <li><a href="#tab-3" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-3">Website<span class="hidden-xs"> Search</span></a></li>
+        </ul>
+    </nav>
 
-      <!-- Filter Search -->
-      <div class="col-xs-12 col-sm-9 eoptions" style="font-size: 1.5rem;">
-        <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks" aria-label="Limit to Ebooks" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Catalogs &gt; Limit to Ebooks &amp; Ejournals"/> 
-        Limit to Ebooks &amp; Ejournals<p></p>
-      </div> <!-- // eoptions -->
-    </form>
+    <!-- TAB 1 - Catalog Search -->
+    <div class="col-xs-12 active" id="tab-1">
+        <h1 class="searchbox-header">Library Catalog</h1>
+        <form action="/switchboard/" id="search_widget_catalog_search" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Catalogs &gt; Search">
+            <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field -->
+                <div class="input-group"> <!-- Input Group -->
+                    <label for="lookfor" class="visually-hidden">Search for </label>
+                    <input name="lookfor" type="text" placeholder="evolutionary biology" aria-label="Search the library catalog" class="form-control" id="search_form1" onchange="propagate(this)"/>
+                    <input type="hidden" name="which-form" value="catalog">
+                    {% csrf_token %}
+                    <select class="selectpicker btn-searchtype" aria-label="Limit the library catalog search" name="type">
+                        <option value="AllFields">All Fields</option>
+                        <option value="Title">Title</option>
+                        <option value="Subject">Subject</option>
+                        <option value="Author">Author</option>
+                        <option value="JournalTitle">Journal Title</option>
+                        <option value="StandardNumbers">ISBN, ISSN, etc.</option>
+                        <option value="browse_title">Title begins with</option>
+                        <option value="browse_journal">Journal begins with</option>
+                        <option value="browse_lcc">Call Number begins with</option>
+                    </select>
+                </div> <!-- // Input Group -->
+            </div> <!-- // Text Search Field -->
 
-    <div class="col-xs-12 col-sm-3 eoptions advanced">
-      <p><a href="https://catalog.lib.uchicago.edu/vufind/Search/Advanced" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; Advanced Search">Advanced Search</a></p>
-    </div>
-    <div class="col-xs-12 searchoptions">
-      <p>
-        <i aria-hidden="true" class="fa fa-info-circle"></i> 
-        <span class="hidden-xs">Get materials from other libraries:</span> &nbsp; 
-        <!--<a href="http://www.lib.uchicago.edu/h/ub" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; UBorrow">UBorrow</a> &nbsp; | &nbsp; 
+            <div class="col-xs-3 col-sm-2 search-btn-wrapper"> <!-- Search Button -->
+                <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+            </div> <!-- // Search Button -->
+
+            <!-- Filter Search -->
+            <div class="col-xs-12 col-sm-9 eoptions" style="font-size: 1.5rem;">
+                <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks" aria-label="Limit to Ebooks" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Catalogs &gt; Limit to Ebooks &amp; Ejournals"/>
+                Limit to Ebooks &amp; Ejournals<p></p>
+            </div> <!-- // eoptions -->
+        </form>
+
+        <div class="col-xs-12 col-sm-3 eoptions advanced">
+            <p><a href="https://catalog.lib.uchicago.edu/vufind/Search/Advanced" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; Advanced Search">Advanced Search</a></p>
+        </div>
+        <div class="col-xs-12 searchoptions">
+            <p>
+                <i aria-hidden="true" class="fa fa-info-circle"></i>
+                <span class="hidden-xs">Get materials from other libraries:</span> &nbsp;
+                <!--<a href="http://www.lib.uchicago.edu/h/ub" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; UBorrow">UBorrow</a> &nbsp; | &nbsp;
         <a href="http://www.lib.uchicago.edu/h/borrowdirect" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; BorrowDirect">BorrowDirect</a> &nbsp; |  &nbsp; --> 
-        <a href="http://proxy.uchicago.edu/login?url=http://newfirstsearch.oclc.org/dbname=WorldCat;done=referer;FSIP" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; WorldCat">WorldCat</a>
-      </p>
+                <a href="http://proxy.uchicago.edu/login?url=http://newfirstsearch.oclc.org/dbname=WorldCat;done=referer;FSIP" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Catalogs &gt; WorldCat">WorldCat</a>
+            </p>
+        </div>
+        <!-- // Filter Search -->
+    </div> <!-- // TAB 1 Catalog Search -->
+
+    <!-- TAB 2 - Article Search -->
+    <div class="col-xs-12" id="tab-2">
+        <form method="post" action="/switchboard/" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
+            <div data-radio-button-content-panel="articles-plus">
+                <h1 class="searchbox-header">Articles Plus</h1>
+                <div class="col-xs-9 col-sm-10 nopadding">
+                    <input type="text" name="ebscohostsearchtext" placeholder="evolutionary biology" aria-label="Search articles" id="ebscohostsearchtext" class="form-control" onchange="propagate(this)">
+                    <input type="hidden" name="which-form" value="articles">
+                    {% csrf_token %}
+                    <input type="hidden" value="0" name="ebscohostwindow" id="ebscohostwindow">
+                    <input type="hidden" value="http://proxy.uchicago.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=0&amp;mode=and&amp;cli0=FT1&amp;clv0=Yxb" name="ebscohosturl" id="ebscohosturl">
+                    <input type="hidden" value="db" name="ebscohostsearchsrc" id="ebscohostsearchsrc">
+                    <input type="hidden" value="+AND+" name="ebscohostsearchmode" id="ebscohostsearchmode">
+                    <input type="hidden" value="" name="ebscohostkeywords" id="ebscohostkeywords">
+                </div>
+
+                <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+                    <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+                </div>
+            </div><!-- /radio-button-content-panel -->
+        </form>
+
+        <!-- TAB 2 - Ejournals Search -->
+        <div data-radio-button-content-panel="ejournals">
+            <form action="/switchboard/" accept-charset="UTF-8" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
+                <h1 class="searchbox-header">Ejournals</h1>
+                <div class="col-xs-9 col-sm-10 nopadding">
+                    <input type="text" name="param_pattern_value" placeholder="journal of evolutionary biology" aria-label="Search journals" class="form-control" id="search_form3" onchange="propagate(this)">
+                    <input type="hidden" name="which-form" value="journals">
+                    {% csrf_token %}
+                </div>
+                <input type="hidden" value="1" name="param_chinese_checkbox_active"/>
+                <input type="hidden" value="0" id="param_chinese_checkbox_value" name="param_chinese_checkbox_value"/>
+                <input type="hidden" value="" name="param_jumpToPage_value"/>
+                <input type="hidden" value="searchTitle" name="param_perform_value"/>
+                <input type="hidden" value="startsWith" name="param_textSearchType_value"/>
+                <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+                    <button class="btn btn-search btn-default" type="submit"><span class="hidden-sm hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs">Search</span></button>
+                </div>
+            </form>
+        </div><!-- /radio-button-content-panel -->
+
+        <!-- TAB 3 - Database Finder -->
+        <div data-radio-button-content-panel="database-finder">
+            <h1 class="searchbox-header">Database Finder</h1>
+            <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
+                <div class="col-xs-9 col-sm-10 nopadding">
+                    <input type="text" name="q" placeholder="evolutionary biology database" aria-label="Search databases" class="form-control" id="search_form4" onchange="propagate(this)">
+                    <input type="hidden" name="which-form" value="databases">
+                    {% csrf_token %}
+                </div>
+
+                <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+                    <button class="btn btn-search btn-default " type="submit"><span class="hidden-sm hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs">Search</span></button>
+                </div>
+            </form>
+        </div><!-- /radio-button-content-panel -->
+
+        <!-- Filter Search -->
+        <div class="col-xs-12 col-sm-9 eoptions">
+            <p><strong class="hidden-xs">Searching for &nbsp;</strong>
+                <input checked="checked" name="searching_for" type="radio" value="articles" data-radio-button-controller="articles-plus" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Articles" aria-label="Articles">Articles &nbsp;
+                <input name="searching_for" type="radio" value="journals" data-radio-button-controller="ejournals" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Journals" aria-label="Journals">Journals &nbsp;
+                <input name="searching_for" type="radio" value="databases" data-radio-button-controller="database-finder" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Databases" aria-label="Databases">Databases
+            </p>
+        </div>
+
+        <div class="col-xs-12 searchoptions" data-radio-button-content-panel="articles-plus">
+            <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="http://guides.lib.uchicago.edu/c.php?g=297381" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; How Do I Find Articles?">How Do I Find Articles?</a> &nbsp; | &nbsp; <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals, &amp; Databases &gt; eResources Policy">eResources Policy</a></p>
+        </div> <!-- // searchoptions -->
+
+        <div class="col-xs-12 searchoptions" data-radio-button-content-panel="ejournals">
+            <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="http://guides.lib.uchicago.edu/journals" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; How Do I Find Journals?">How Do I Find Journals?</a> &nbsp; | &nbsp; <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="eResources Policy">eResources Policy</a></p>
+        </div> <!-- // searchoptions -->
+
+        <div class="col-xs-12 searchoptions" data-radio-button-content-panel="database-finder">
+            <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; eResources Policy">eResources Policy</a></p>
+        </div> <!-- // searchoptions -->
+
+        <!-- // Filter Search -->
+    </div> <!-- // TAB 2 - Article Search -->
+
+    <!-- TAB 3 - Website Search -->
+    <div class="col-xs-12" id="tab-3">
+        <h1 class="searchbox-header">Website Search</h1>
+        <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Library Website &gt; Search">
+            <div class="col-xs-9 col-sm-10 nopadding">
+                <input name="query" type="text" placeholder="lockers" aria-label="Search the Library website" class="form-control" id="search_form5" onchange="propagate(this)">
+                <input type="hidden" name="which-form" value="website">
+                {% csrf_token %}
+            </div>
+
+            <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+                <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+            </div>
+        </form>
+        <!-- Filter Search -->
+        <div style="padding-top:35px;" class="col-xs-12 searchoptions">
+            <p>
+                <i aria-hidden="true" class="fa fa-info-circle"></i>
+                <span class="hidden-xs"> Other Website Searches:</span> &nbsp;
+                <a href="http://guides.lib.uchicago.edu" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Subject Guides">Subject Guides</a> &nbsp; | &nbsp;
+                <a href="http://news.lib.uchicago.edu" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Library News">Library News</a> &nbsp; |  &nbsp;
+                <a href="/about/directory/?view=staff" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Staff Directory">Staff Directory</a>
+            </p>
+        </div>
+        <!-- // Filter Search -->
     </div>
-    <!-- // Filter Search -->
-  </div> <!-- // TAB 1 Catalog Search -->
-          
-  <!-- TAB 2 - Article Search -->
-  <div class="col-xs-12" id="tab-2">
-    <form method="post" action="/switchboard/" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
-      <div data-radio-button-content-panel="articles-plus">
-        <h1 class="searchbox-header">Articles Plus</h1>
-        <div class="col-xs-9 col-sm-10 nopadding">
-          <input type="text" id="search_form2" onchange="propagate(this)" name="ebscohostsearchtext" id="ebscohostsearchtext" placeholder="evolutionary biology" aria-label="..." class="form-control">
-	  <input type="hidden" name="which-form" value="articles">
-	  {% csrf_token %}
-	  <input type="hidden" value="0" name="ebscohostwindow" id="ebscohostwindow">
-          <input type="hidden" value="http://proxy.uchicago.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=0&amp;mode=and&amp;cli0=FT1&amp;clv0=Yxb" name="ebscohosturl" id="ebscohosturl">
-          <input type="hidden" value="db" name="ebscohostsearchsrc" id="ebscohostsearchsrc">
-          <input type="hidden" value="+AND+" name="ebscohostsearchmode" id="ebscohostsearchmode">
-          <input type="hidden" value="" name="ebscohostkeywords" id="ebscohostkeywords">
-        </div>
-                             
-        <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-          <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
-        </div>
-      </div><!-- /radio-button-content-panel -->
-    </form>
-
-    <!-- TAB 2 - Ejournals Search -->
-    <div data-radio-button-content-panel="ejournals">
-      <form action="/switchboard/" accept-charset="UTF-8" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
-        <h1 class="searchbox-header">Ejournals</h1>
-        <div class="col-xs-9 col-sm-10 nopadding">
-          <input type="text" name="param_pattern_value" placeholder="journal of evolutionary biology" aria-label="..." class="form-control" id="search_form3" onchange="propagate(this)">
-	  <input type="hidden" name="which-form" value="journals">
-	  {% csrf_token %}
-        </div>
-        <input type="hidden" value="1" name="param_chinese_checkbox_active"/>
-        <input type="hidden" value="0" id="param_chinese_checkbox_value" name="param_chinese_checkbox_value"/>
-        <input type="hidden" value="" name="param_jumpToPage_value"/>
-        <input type="hidden" value="searchTitle" name="param_perform_value"/>
-        <input type="hidden" value="startsWith" name="param_textSearchType_value"/>                   
-        <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-          <button class="btn btn-search btn-default" type="submit"><span class="hidden-sm hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs">Search</span></button>
-        </div>
-      </form>
-    </div><!-- /radio-button-content-panel -->
-
-    <!-- TAB 3 - Database Finder -->
-    <div data-radio-button-content-panel="database-finder">
-      <h1 class="searchbox-header">Database Finder</h1>
-      <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
-        <div class="col-xs-9 col-sm-10 nopadding">
-          <input name="q" type="text" placeholder="evolutionary biology database" aria-label="..." class="form-control" id="search_form4" onchange="propagate(this)">
-	  <input type="hidden" name="which-form" value="databases">
-	  {% csrf_token %}
-        </div>
-                   
-        <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-          <button class="btn btn-search btn-default " type="submit"><span class="hidden-sm hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs">Search</span></button>
-        </div>
-      </form>
-    </div><!-- /radio-button-content-panel -->
-                           
-    <!-- Filter Search -->
-    <div class="col-xs-12 col-sm-9 eoptions">
-      <p><strong class="hidden-xs">Searching for &nbsp;</strong>
-        <input checked="checked" name="searching_for" type="radio" value="articles" data-radio-button-controller="articles-plus" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Articles" aria-label="Articles">Articles &nbsp;
-        <input name="searching_for" type="radio" value="journals" data-radio-button-controller="ejournals" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Journals" aria-label="Journals">Journals &nbsp;
-        <input name="searching_for" type="radio" value="databases" data-radio-button-controller="database-finder" data-ga-category="search-widget" data-ga-action="change" data-ga-label="Articles, Journals &amp; Databases &gt; Databases" aria-label="Databases">Databases
-      </p>
-    </div>
-
-    <div class="col-xs-12 searchoptions" data-radio-button-content-panel="articles-plus">
-      <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="http://guides.lib.uchicago.edu/c.php?g=297381" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; How Do I Find Articles?">How Do I Find Articles?</a> &nbsp; | &nbsp; <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals, &amp; Databases &gt; eResources Policy">eResources Policy</a></p>
-    </div> <!-- // searchoptions -->
-
-    <div class="col-xs-12 searchoptions" data-radio-button-content-panel="ejournals">
-      <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="http://guides.lib.uchicago.edu/journals" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; How Do I Find Journals?">How Do I Find Journals?</a> &nbsp; | &nbsp; <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="eResources Policy">eResources Policy</a></p>
-    </div> <!-- // searchoptions -->
-
-    <div class="col-xs-12 searchoptions" data-radio-button-content-panel="database-finder">
-      <p><i aria-hidden="true" class="fa fa-info-circle"></i> <a href="/about/thelibrary/policies/eresources/" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Articles, Journals &amp; Databases &gt; eResources Policy">eResources Policy</a></p>
-    </div> <!-- // searchoptions -->
-
-    <!-- // Filter Search -->
-  </div> <!-- // TAB 2 - Article Search -->
-
-  <!-- TAB 3 - Website Search -->
-  <div class="col-xs-12" id="tab-3">
-    <h1 class="searchbox-header">Website Search</h1>
-    <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Library Website &gt; Search">
-      <div class="col-xs-9 col-sm-10 nopadding">
-        <input name="query" type="text" placeholder="lockers" aria-label="..." class="form-control" id="search_form5" onchange="propagate(this)">
-	<input type="hidden" name="which-form" value="website">
-	{% csrf_token %}
-      </div>
-                             
-      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-        <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
-      </div>
-    </form>
-    <!-- Filter Search -->
-    <div style="padding-top:35px;" class="col-xs-12 searchoptions">
-      <p>
-        <i aria-hidden="true" class="fa fa-info-circle"></i>
-        <span class="hidden-xs"> Other Website Searches:</span> &nbsp; 
-        <a href="http://guides.lib.uchicago.edu" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Subject Guides">Subject Guides</a> &nbsp; | &nbsp; 
-        <a href="http://news.lib.uchicago.edu" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Library News">Library News</a> &nbsp; |  &nbsp; 
-        <a href="/about/directory/?view=staff" data-ga-category="search-widget" data-ga-action="click" data-ga-label="Library Website &gt; Staff Directory">Staff Directory</a>
-      </p>
-    </div>
-    <!-- // Filter Search -->
-  </div>
 </div>
