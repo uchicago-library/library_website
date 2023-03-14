@@ -7,7 +7,6 @@
 from functools import reduce
 import requests
 
-
 class Result():
 
     class Ok():
@@ -70,7 +69,7 @@ class Result():
             val = Result.Validations.check_type(mx)
         else:
             val = mx
-        if Result.is_ok(val, check_type=check_type):
+        if Result.is_ok(val, check_type):
             (r, v) = val
             return kleisli(v)
         else:
@@ -91,46 +90,46 @@ class Result():
                 Exception("Result: invalid data formatting")
             )
 
-
     def kleisli_fish(mf, mg, check_type=True):
         def partial(x):
             return Result.bind(mf(x),
                                mg,
-                               check_type=check_type)
+                               check_type)
         return partial
 
     def multibind(mx, *kleislis, check_type=True):
-        if check_type:
-            return Result.bind(mx,
-                               reduce(Result.kleisli_fish,
-                                      kleislis),
-                               check_type=check_type)
-        else:
-            return Result.bind(mx,
-                               reduce(Result.kleisli_fish,
-                                      kleislis),
-                               check_type=check_type)
+        return Result.bind(mx,
+                           reduce(Result.kleisli_fish,
+                                  kleislis),
+                           check_type)
 
     def multimap(x, *kleislis, check_type=True):
         return Result.multibind(Result.pure(x),
                                 *kleislis,
-                                check_type=check_type)
+                                check_type)
 
     class Catch():
 
-        def catch(f, x):
+        def identity(x):
+            return x
+
+        def catch(f, x, handler=identity):
             try:
                 val = f(x)
                 return Result.ok(val)
             except Exception as e:
-                return Result.error(e)
+                return Result.error(handler(e))
 
-        def lookup(key, dct):
+        def catchc(f, x, c):
+            return catch(f, x, handler=(lambda y : c))
+        # let trapc c f x = trap (k c) f x
+
+        def lookup(key, dct, handler=id):
             def getter(key):
                 def partial(dct):
                     return dct[key]
                 return partial
-            return Result.Catch.catch(getter(key), dct)
+            return Result.Catch.catch(getter(key), dct, handler)
 
         def default(result, defval='', debug=False):
             (tag, val) = result
