@@ -13,9 +13,9 @@
             <h6>Ask {{self.library_expert}} about:</h6>
         {% endif %}
         <ul>
-            {% for guide in self.libguides %} 
+            {% for guide in self.libguides %}
                 <li><a href="{% firstof guide.link_external guide.link_page%}">{{guide.link_text}}</a></li>
-            {% endfor %} 
+            {% endfor %}
         </ul>
         <h6>Not sure where to start?</h6>
         {{self.url}}"
@@ -25,7 +25,7 @@
     </div>
     {% if profile_pic %}
         <div class="col-xs-4 home-profile">
-            <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
+            <img src="{{profile_pic.url}}" alt="{{profile_pic.alt}}" class="img-responsive" />
         </div>
     {% endif %}
 </div>
