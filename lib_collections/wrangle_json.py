@@ -72,16 +72,16 @@ class Api():
 
     class QueryStrings():
 
-        def getBrowseListContributors(collection):
+        def getBrowseListContributors(collection="mlc"):
             return { "collection" : collection }
 
-        def getBrowseListLocations(collection):
+        def getBrowseListLocations(collection="mlc"):
             return { "collection" : collection }
 
-        def getBrowseListLanguages(collection):
+        def getBrowseListLanguages(collection="mlc"):
             return { "collection" : collection }
 
-        def getBrowseListDates(collection):
+        def getBrowseListDates(collection="mlc"):
             return { "collection" : collection }
 
     class URLGet():
@@ -99,28 +99,28 @@ class Api():
     pull_from_url = URLGet.pull_from_url
     make_api_string = URLGet.make_api_string
 
-    def getBrowseListContributors(collection):
+    def getBrowseListContributors(collection="mlc"):
         params = Api.QueryStrings.getBrowseListContributors(collection)
         cleanup = CleanData.getBrowseListContributors
         url = Api.make_api_string("getBrowseListContributors", params)
         data = Api.pull_from_url(url, cleanup)
         return data
         
-    def getBrowseListLocations(collection):
+    def getBrowseListLocations(collection="mlc"):
         params = Api.QueryStrings.getBrowseListLocations(collection)
         cleanup = CleanData.getBrowseListLocations
         url = Api.make_api_string("getBrowseListLocations", params)
         data = Api.pull_from_url(url, cleanup)
         return data
 
-    def getBrowseListLanguages(collection):
+    def getBrowseListLanguages(collection="mlc"):
         params = Api.QueryStrings.getBrowseListLanguages(collection)
         cleanup = CleanData.getBrowseListLanguages
         url = Api.make_api_string("getBrowseListLanguages", params)
         data = Api.pull_from_url(url, cleanup)
         return data
 
-    def getBrowseListDates(collection):
+    def getBrowseListDates(collection="mlc"):
         params = Api.QueryStrings.getBrowseListDates(collection)
         cleanup = CleanData.getBrowseListDates
         url = Api.make_api_string("getBrowseListDates", params)
