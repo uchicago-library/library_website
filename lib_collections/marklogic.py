@@ -307,3 +307,13 @@ def get_record_for_display(manifid: str,
             return ''
     except (json.JSONDecodeError, simplejson.JSONDecodeError):
         return ''
+
+
+# MT : utility functions for dealing with the APIs, just temporary
+# while we're playing around.
+
+def getBrowseListContributors(data):
+    lst = data["results"]["bindings"]
+    def eachPair(so):
+        return (so["o"]["value"], so["s"]["value"])
+    return OrderedDict([ eachPair(pred) for pred in lst ])

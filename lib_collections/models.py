@@ -810,6 +810,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    @route(r'^series/(?P<manifid>\w+)/$')
+    def series(self, request, *args, **kwargs):
+        pass
+
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
