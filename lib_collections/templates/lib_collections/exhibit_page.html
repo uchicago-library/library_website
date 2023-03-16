@@ -7,7 +7,7 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block styles %}
     {% if google_font_link %}
-        <link href="{{google_font_link}}" rel="stylesheet"> 
+        <link href="{{google_font_link}}" rel="stylesheet">
     {% endif %}
     {% if branding_color %}
         <style>
@@ -22,45 +22,45 @@
                  */
 
                 @mixin respond-to($breakpoint) {
-                  // Extra small devices (phones, 544px and up)
-                  @if $breakpoint == "xsmall" {
-                    @media (min-width: 34em) {
-                      @content;
+                    // Extra small devices (phones, 544px and up)
+                    @if $breakpoint == "xsmall" {
+                        @media (min-width: 34em) {
+                            @content;
+                        }
                     }
-                  }
 
-                  // Small devices (landscape phones, 768px and up)
-                  @else if $breakpoint == "small" {
-                    @media (min-width: 48em) {
-                      @content;
+                    // Small devices (landscape phones, 768px and up)
+                    @else if $breakpoint == "small" {
+                        @media (min-width: 48em) {
+                            @content;
+                        }
                     }
-                  }
-                  // Medium devices (crappy laptops, tablets, 992px and up)
-                  @else if $breakpoint == "medium" {
-                    @media (min-width: 62em) {
-                      @content;
+                    // Medium devices (crappy laptops, tablets, 992px and up)
+                    @else if $breakpoint == "medium" {
+                        @media (min-width: 62em) {
+                            @content;
+                        }
                     }
-                  }
-                  // Large devices (desktops, 1200px and up)
-                  @else if $breakpoint == "large" {
-                    @media (min-width: 75em) {
-                      @content;
+                    // Large devices (desktops, 1200px and up)
+                    @else if $breakpoint == "large" {
+                        @media (min-width: 75em) {
+                            @content;
+                        }
                     }
-                  }
 
-                  //Extra large devices (large desktops, 1900px and up)
-                  @else if $breakpoint == "xlarge" {
-                    @media (min-width: 118em) {
-                      @content;
+                    //Extra large devices (large desktops, 1900px and up)
+                    @else if $breakpoint == "xlarge" {
+                        @media (min-width: 118em) {
+                            @content;
+                        }
                     }
-                  }
-                  
-                  // Short-cut to target extra small devices *only* (phones, 544px and up)
-                  @else if $breakpoint == "smallonly" {
-                    @media (max-width: 34em) {
-                      @content;
+
+                    // Short-cut to target extra small devices *only* (phones, 544px and up)
+                    @else if $breakpoint == "smallonly" {
+                        @media (max-width: 34em) {
+                            @content;
+                        }
                     }
-                  }
                 }
 
                 $darkgray: #767676;
@@ -71,536 +71,536 @@
                 $font-large: 2.5em;
                 $font-medium: 1.5em;
                 $font-small: 1.1em;
-                
-				.exhibitpage, .exhibitchildpage {
-				    .body-container {
-				    	h1, h2 {
-				        color: $base-color;
-				        font-family: $display-font;
-				        font-style: normal;
-				        font-size: $font-medium;
-				        font-weight: 400;
-					    }
-					
-					    h3 {
-					        color: lighten($base-color, 10%);
-					        font-style: normal;
-					        font-size: $font-small;
-					        font-weight: 600;
-					    }
-					
-					    h4 {
-					        color: $base-color;
-					        font-style: italic;
-					        font-size: $font-small;
-					        font-weight: 600;
-					    }
-					}
-				
-				    .jumbotron {
-				      min-height: 250px;
-				      overflow: hidden;
-				      padding-top: 0px;
-				      margin-bottom: 0;
-				      background-color: $darkred; //fallback if all else fails
-				      background-size: cover;
-				      h2 {
-				        color: #fff;
-				      }
-				      .container {
-				        padding: 0px;
-				        margin: 0px;
-				        position: relative;
-				        width: 100%;
-				      }
-				      .img-wrapper {
-				        display: none;
-				        @include respond-to(small) {
-				            display: block;
-				            width: 250px;
-				            overflow: hidden;
-				        }
-				        @include respond-to(medium) {
-				            width: 250px;
-				            overflow: hidden;
-				        }
-				        img {
-				            width: 200px;
-				            height: auto;
-				            @include respond-to(medium) {
-				                width: 250px;
-				            }
-				        }
-				        &+.overlaywrap {
-				            @include respond-to(small) {
-				                left: 200px;
-				            }
-				            @include respond-to(medium) {
-				                left: 250px;
-				            }
-				        }
-				      }
-				    }
-				
-				    .jumbotron .overlaywrap {
-				        background-color: rgba( $base-color, .9 );
-				        left: 0;
-				        top: 0;
-				        font-family: $display-font;
-				        padding: 0.5em 2em;
-	    				font-size: {{font_size}}px;
-					letter-spacing: {{font_kerning}}px;
-				        @include respond-to(small) {
-				                padding-right: 6em;
-				            }
-				        p {
-				            padding: 0;
-				            margin: 0;
-				            &:last-child {
-				                padding-bottom: 15px;
-				            }
-				        }
-				        h2 {
-				            font-weight: 100;
-				            font-size: $font-large*0.7;
-				            margin: 0;
-				            padding: 0px;
-				            letter-spacing: 0.03em;
-				            color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
-				            @include respond-to(small) {
-				                font-size: $font-large;
-				            }
-				        }
-				        .banner-subtitle {
-				            font-family: $display-font;
-				            color: lighten($base-color, 60%);
-				            font-size: $font-medium*0.8;
-				            padding-bottom:5px;
-				            @include respond-to(small) {
-				                font-size: $font-medium;
-				            }
-				        }
-				        .banner-loc, .banner-loc a, .banner-date {
-				            font-family: $display-font;
-				            color: #e0dddb;
-				            font-style: italic;
-				            font-size: $font-small*0.8;
-				        }
-				    }
-				
-				    .btn.webex-next {
-				        margin-top: 2em;
-				        background: transparent;
-				        border-color: $base-color;
-				        float: right;
-				        a & {
-				            color: $base-color;
-				        }
-				    }
-				
-				    .sidebar {
-				        background-color: #fff;
-				        border-right: 1px solid #ddd;
-				        @include respond-to(small) {    
-				            background-color: #fff;
-				            border-right: 1px dotted #767676;
-				        }
-				        h3 a {
-				            color: lighten($base-color, 20%);
-				        }
-				        > ul {
-				            > li { // Direct child page
-				                a {
-				                    font-weight: 200;
-				                    color: $base-color;
-				                    &:hover {
-				                        color: lighten($base-color, 25%);
-				                        text-decoration: none;
-				                    }
-				                }
-				                &.active { // Active direct child page
-				                    background-color: lighten($base-color, 75%);
-				                    margin-left: -2em; // Bleed background color past div
-				                    margin-right: -1em; // Bleed background color past div
-				                    padding: 0.5em 0.5em 0.5em 2em; // Fix text padding from bleeding background color past div
-				                    >a {
-				                        font-weight: 600;
-				                    }
-				                }
-				                > ul { // Grandchild page
-				                    padding-left: 1.5em;
-				                    border-left: 3px solid lighten($base-color, 75%);
-				                    li a {
-				                        font-style: italic;
-				                        color: lighten($base-color, 10%);
-				                    }
-				                }
-				            }
-				        }
-				    }
-				
-				    .coll-rightside {
-				        background-color: lighten($base-color, 75%);
-				        h3, h3 a {
-				            color: lighten($base-color, 10%);
-				            border-bottom-color: lighten($base-color, 10%);
-				        }
-				    }
-				} // End body.exhibitpage customizations
-				
-				.collex-loc {
-				    background-color: #eee;
-				    padding: 1.5em;
-				    display: flex;
-				    flex-wrap: wrap;
-				    & ~ #push {
-				        background-color: #eee;
-				    }
-				    .loc-title {
-				        margin-bottom: 0.5em;
-				        color: $base-color;
-				        font-weight: 600;
-				        font-size: 1em;
-				        a {
-				            font-weight: 400;   
-				            color: lighten($base-color, 15%);
-				        }
-				    }
-				    p, ul {
-				        font-size: 0.95em;
-				    }
-				    ul {
-				        list-style: none;
-				        padding-left: 0;
-				        & li {
-				            margin-bottom: 10px;
-				            .viewall {
-				                margin-top: 15px;
-				            }
-				        }
-				    }
-				}
-				
-				.loc-child {
-				    &+& {
-				        padding-top: 10px;
-				        border-top: 1px dotted #767676;
-				        @include respond-to(medium) {
-				            padding-top: initial;
-				            border-top: none;
-				        }
-				    }
-				    .loc-title~.loc-title {
-				        margin-top: 1.2em;
-				    }
-				}
-				
-				.collex-gallery {
-				    border-top: 1px dotted #767676;
-				}
-				
-				.collexbase {
-				    padding: 2em 1em;
-				    & figure {
-				       @include respond-to(medium) {
-				           display: flex;
-				       }
-				    }
-				}
-				
-				.collex-solo {
-				    @extend .collexbase;
-				    border-bottom: 1px dotted $darkgray;
-				    img {
-				        padding-bottom: 1em ;
-				        max-height: 40em;
-				        width: auto;
-				        @include respond-to(medium) {
-				        float: right;
-				            padding-bottom: 0;
-				        }
-				
-				    }
-				}
-				
-				.collex-solo, .collex-duo, .collex-trio, .collex-verso {
-				    img {
-				        border: 3px solid #c8c8c8;
-				    }
-				    .img-title {
-				        color: $base-color;
-				        font-size: $font-small;
-				        font-weight: 600;
-				    }
-				    .img-citation {
-				        color: darken($base-color, 10%);
-				        font-size: 0.95em;
-				    }
-				    .img-caption {
-				        color: #000;
-				        font-size: 1em;
-				    }
-				}
-				
-				.collex-verso {
-				    @extend .collex-solo;
-				    .modal.and.carousel {
-				      position: absolute; // Needed because the carousel overrides the position property
-				    }
-				}
-				
-				.duo-wrapper {
-				    display:flex;
-				    flex-wrap: wrap;
-				    padding: 1em;
-				    border-bottom: 1px dotted $darkgray;
-				}
-				
-				.collex-duo {
-				    padding: 0;
-				    text-align: center;
-				    & + & {
-				        border-top: 1px dotted $darkgray;
-				        @include respond-to(small) {
-				            border-top: none;
-				            border-left: 1px dotted $darkgray;
-				            padding-left: 1em;
-				        }
-				    }
-				    figure {
-				        display: inline-block;
-				        text-align: left;
-				        @include respond-to(small) {
-				            max-width: 90%;
-				        }
-				        @include respond-to(medium) {
-				            max-width: 80%;
-				        }
-				    }
-				    img {
-				        margin: 1.5em 1em 1.5em 0;
-				        @include respond-to(medium) {
-				            max-height: 30em;
-				            width: auto;
-				        }
-				    }
-				}
-				
-				.collex-trio {
-				    padding: 1em 0 2em 0;
-				    border-bottom: 1px dotted $darkgray;
-				    img {
-				        float: left;
-				        max-width: 28%;
-				        height: auto;
-				        margin: 1em;
-				        @include respond-to(large) {
-				            max-width: 25%;
-				        }
-				    }
-				    figcaption {
-				        clear: both;
-				    }
-				}
-				
-				#page-turn {
-				    position: absolute;
-				    width: 0;
-				    height: 0;
-				    right: 15px;
-				    border-top: 30px solid #fff;
-				    border-left: 30px solid #c0c0c0;
-				}
+
+                .exhibitpage, .exhibitchildpage {
+                    .body-container {
+                        h1, h2 {
+                            color: $base-color;
+                            font-family: $display-font;
+                            font-style: normal;
+                            font-size: $font-medium;
+                            font-weight: 400;
+                        }
+
+                        h3 {
+                            color: lighten($base-color, 10%);
+                            font-style: normal;
+                            font-size: $font-small;
+                            font-weight: 600;
+                        }
+
+                        h4 {
+                            color: $base-color;
+                            font-style: italic;
+                            font-size: $font-small;
+                            font-weight: 600;
+                        }
+                    }
+
+                    .jumbotron {
+                        min-height: 250px;
+                        overflow: hidden;
+                        padding-top: 0px;
+                        margin-bottom: 0;
+                        background-color: $darkred; //fallback if all else fails
+                        background-size: cover;
+                        h2 {
+                            color: #fff;
+                        }
+                        .container {
+                            padding: 0px;
+                            margin: 0px;
+                            position: relative;
+                            width: 100%;
+                        }
+                        .img-wrapper {
+                            display: none;
+                            @include respond-to(small) {
+                                display: block;
+                                width: 250px;
+                                overflow: hidden;
+                            }
+                            @include respond-to(medium) {
+                                width: 250px;
+                                overflow: hidden;
+                            }
+                            img {
+                                width: 200px;
+                                height: auto;
+                                @include respond-to(medium) {
+                                    width: 250px;
+                                }
+                            }
+                            &+.overlaywrap {
+                                @include respond-to(small) {
+                                    left: 200px;
+                                }
+                                @include respond-to(medium) {
+                                    left: 250px;
+                                }
+                            }
+                        }
+                    }
+
+                    .jumbotron .overlaywrap {
+                        background-color: rgba( $base-color, .9 );
+                        left: 0;
+                        top: 0;
+                        font-family: $display-font;
+                        padding: 0.5em 2em;
+                        font-size: {{font_size}}px;
+                        letter-spacing: {{font_kerning}}px;
+                        @include respond-to(small) {
+                            padding-right: 6em;
+                        }
+                        p {
+                            padding: 0;
+                            margin: 0;
+                            &:last-child {
+                                padding-bottom: 15px;
+                            }
+                        }
+                        h2 {
+                            font-weight: 100;
+                            font-size: $font-large*0.7;
+                            margin: 0;
+                            padding: 0px;
+                            letter-spacing: 0.03em;
+                            color: contrast-color($base-color, shade($base-color, 5%), tint($base-color, 90%), 80%);
+                            @include respond-to(small) {
+                                font-size: $font-large;
+                            }
+                        }
+                        .banner-subtitle {
+                            font-family: $display-font;
+                            color: lighten($base-color, 60%);
+                            font-size: $font-medium*0.8;
+                            padding-bottom:5px;
+                            @include respond-to(small) {
+                                font-size: $font-medium;
+                            }
+                        }
+                        .banner-loc, .banner-loc a, .banner-date {
+                            font-family: $display-font;
+                            color: #e0dddb;
+                            font-style: italic;
+                            font-size: $font-small*0.8;
+                        }
+                    }
+
+                    .btn.webex-next {
+                        margin-top: 2em;
+                        background: transparent;
+                        border-color: $base-color;
+                        float: right;
+                        a & {
+                            color: $base-color;
+                        }
+                    }
+
+                    .sidebar {
+                        background-color: #fff;
+                        border-right: 1px solid #ddd;
+                        @include respond-to(small) {
+                            background-color: #fff;
+                            border-right: 1px dotted #767676;
+                        }
+                        h3 a {
+                            color: lighten($base-color, 20%);
+                        }
+                        > ul {
+                            > li { // Direct child page
+                                a {
+                                    font-weight: 200;
+                                    color: $base-color;
+                                    &:hover {
+                                        color: lighten($base-color, 25%);
+                                        text-decoration: none;
+                                    }
+                                }
+                                &.active { // Active direct child page
+                                    background-color: lighten($base-color, 75%);
+                                    margin-left: -2em; // Bleed background color past div
+                                    margin-right: -1em; // Bleed background color past div
+                                    padding: 0.5em 0.5em 0.5em 2em; // Fix text padding from bleeding background color past div
+                                    >a {
+                                        font-weight: 600;
+                                    }
+                                }
+                                > ul { // Grandchild page
+                                    padding-left: 1.5em;
+                                    border-left: 3px solid lighten($base-color, 75%);
+                                    li a {
+                                        font-style: italic;
+                                        color: lighten($base-color, 10%);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .coll-rightside {
+                        background-color: lighten($base-color, 75%);
+                        h3, h3 a {
+                            color: lighten($base-color, 10%);
+                            border-bottom-color: lighten($base-color, 10%);
+                        }
+                    }
+                } // End body.exhibitpage customizations
+
+                .collex-loc {
+                    background-color: #eee;
+                    padding: 1.5em;
+                    display: flex;
+                    flex-wrap: wrap;
+                    & ~ #push {
+                        background-color: #eee;
+                    }
+                    .loc-title {
+                        margin-bottom: 0.5em;
+                        color: $base-color;
+                        font-weight: 600;
+                        font-size: 1em;
+                        a {
+                            font-weight: 400;
+                            color: lighten($base-color, 15%);
+                        }
+                    }
+                    p, ul {
+                        font-size: 0.95em;
+                    }
+                    ul {
+                        list-style: none;
+                        padding-left: 0;
+                        & li {
+                            margin-bottom: 10px;
+                            .viewall {
+                                margin-top: 15px;
+                            }
+                        }
+                    }
+                }
+
+                .loc-child {
+                    &+& {
+                        padding-top: 10px;
+                        border-top: 1px dotted #767676;
+                        @include respond-to(medium) {
+                            padding-top: initial;
+                            border-top: none;
+                        }
+                    }
+                    .loc-title~.loc-title {
+                        margin-top: 1.2em;
+                    }
+                }
+
+                .collex-gallery {
+                    border-top: 1px dotted #767676;
+                }
+
+                .collexbase {
+                    padding: 2em 1em;
+                    & figure {
+                        @include respond-to(medium) {
+                            display: flex;
+                        }
+                    }
+                }
+
+                .collex-solo {
+                    @extend .collexbase;
+                    border-bottom: 1px dotted $darkgray;
+                    img {
+                        padding-bottom: 1em ;
+                        max-height: 40em;
+                        width: auto;
+                        @include respond-to(medium) {
+                            float: right;
+                            padding-bottom: 0;
+                        }
+
+                    }
+                }
+
+                .collex-solo, .collex-duo, .collex-trio, .collex-verso {
+                    img {
+                        border: 3px solid #c8c8c8;
+                    }
+                    .img-title {
+                        color: $base-color;
+                        font-size: $font-small;
+                        font-weight: 600;
+                    }
+                    .img-citation {
+                        color: darken($base-color, 10%);
+                        font-size: 0.95em;
+                    }
+                    .img-caption {
+                        color: #000;
+                        font-size: 1em;
+                    }
+                }
+
+                .collex-verso {
+                    @extend .collex-solo;
+                    .modal.and.carousel {
+                        position: absolute; // Needed because the carousel overrides the position property
+                    }
+                }
+
+                .duo-wrapper {
+                    display:flex;
+                    flex-wrap: wrap;
+                    padding: 1em;
+                    border-bottom: 1px dotted $darkgray;
+                }
+
+                .collex-duo {
+                    padding: 0;
+                    text-align: center;
+                    & + & {
+                        border-top: 1px dotted $darkgray;
+                        @include respond-to(small) {
+                            border-top: none;
+                            border-left: 1px dotted $darkgray;
+                            padding-left: 1em;
+                        }
+                    }
+                    figure {
+                        display: inline-block;
+                        text-align: left;
+                        @include respond-to(small) {
+                            max-width: 90%;
+                        }
+                        @include respond-to(medium) {
+                            max-width: 80%;
+                        }
+                    }
+                    img {
+                        margin: 1.5em 1em 1.5em 0;
+                        @include respond-to(medium) {
+                            max-height: 30em;
+                            width: auto;
+                        }
+                    }
+                }
+
+                .collex-trio {
+                    padding: 1em 0 2em 0;
+                    border-bottom: 1px dotted $darkgray;
+                    img {
+                        float: left;
+                        max-width: 28%;
+                        height: auto;
+                        margin: 1em;
+                        @include respond-to(large) {
+                            max-width: 25%;
+                        }
+                    }
+                    figcaption {
+                        clear: both;
+                    }
+                }
+
+                #page-turn {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    right: 15px;
+                    border-top: 30px solid #fff;
+                    border-left: 30px solid #c0c0c0;
+                }
             {% endinlinecompile %}
         </style>
     {% endif %}
 {% endblock %}
 
 {% block content %}
-  <article>
-    <div class="row">
-      <div class="col-xs-12">
-        <p>{{ self.acknowledgements }}</p>
-      </div>
-    </div>
-    <div class="row">
-        {% if not self.is_web_exhibit %} 
-          <div class="col-xs-12 col-sm-3">
-            {% if self.thumbnail %}
-              <figure class="imgcaption">
-                {% image self.thumbnail width-200 class="img-responsive" %}
-                {% if self.thumbnail_caption %}
-                  <figcaption>
-                    <p>{{ self.thumbnail_caption }}</p>
-                  </figcaption>
-                {% endif %}
-              </figure>
-            {% else %}
-              <figure>
-                {% image default_image width-200 class="img-responsive" %}
-              </figure>
+    <article>
+        <div class="row">
+            <div class="col-xs-12">
+                <p>{{ self.acknowledgements }}</p>
+            </div>
+        </div>
+        <div class="row">
+            {% if not self.is_web_exhibit %}
+                <div class="col-xs-12 col-sm-3">
+                    {% if self.thumbnail %}
+                        <figure class="imgcaption">
+                            {% image self.thumbnail width-200 class="img-responsive" %}
+                            {% if self.thumbnail_caption %}
+                                <figcaption>
+                                    <p>{{ self.thumbnail_caption }}</p>
+                                </figcaption>
+                            {% endif %}
+                        </figure>
+                    {% else %}
+                        <figure>
+                            {% image default_image width-200 class="img-responsive" alt="" %}
+                        </figure>
+                    {% endif %}
+                </div>
             {% endif %}
-          </div>
-        {% endif %}
 
-      <div class="col-xs-12{% if not self.is_web_exhibit %} col-sm-9{% endif %}">
-        {% if self.acknowledgments %}
-          <p class="acknowledgments">{{ self.acknowledgments }}</p>
-        {% endif %}
+            <div class="col-xs-12{% if not self.is_web_exhibit %} col-sm-9{% endif %}">
+                {% if self.acknowledgments %}
+                    <p class="acknowledgments">{{ self.acknowledgments }}</p>
+                {% endif %}
 
-        {% for block in self.full_description %}
-          {{ block }}
-        {% endfor %}
-  
-        {% if self.web_exhibit_url %} 
-          <a role="button" class="btn btn-morecoll" href="{{ self.web_exhibit_url }}">View Web Exhibit</a>
-        {% endif %}
-       
-        {% if self.publication_description or self.exhibit_text_document or self.exhibit_text_link_external or self.exhibit_text_link_page or self.exhibit_checklist_document or self.exhibit_checklist_link_external or self.exhibit_checklist_link_page %}
-          <h2>Exhibit Publications &amp; Documents</h2>
-  
-          {% if self.publication_description %}
-            <p>
-              {% if self.publication_url %}
-                <a href="{{ self.publication_url }}" class="btn btn-morecoll">Online Exhibit Catalog</a><br>
-              {% endif %}
-              <em>{{ self.publication_description }}</em>{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
-              {% if self.ordering_information %}
-                <a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a><br/>
-              {% endif %}
-            </p>
-          {% endif %}
-  
-          {% if self.exhibit_text_document %}
-            <p><a href="{{ self.exhibit_text_document.file.url }}">Exhibit Text</a></p>
-          {% endif %}
-          {% if self.exhibit_text_link_external %}
-            <p><a href="{{ self.exhibit_text_link_external }}">Exhibit Text</a></p>
-          {% endif %}
-          {% if self.exhibit_text_link_page %}
-            <p><a href="{{ self.exhibit_text_link_page.url }}">Exhibit Text</a></p>
-          {% endif %}
-  
-          {% if self.exhibit_checklist_document %}
-            <p><a href="{{ self.exhibit_checklist_document.file.url }}">Exhibit Checklist</a></p>
-          {% endif %}
-          {% if self.exhibit_checklist_link_external %}
-            <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
-          {% endif %}
-          {% if self.exhibit_checklist_link_page %}
-            <p><a href="{{ self.exhibit_checklist_link_page.url }}">Exhibit Checklist</a></p>
-          {% endif %}
-        {% endif %}
-      </div>
-    </div>
-  </article>
+                {% for block in self.full_description %}
+                    {{ block }}
+                {% endfor %}
+
+                {% if self.web_exhibit_url %}
+                    <a role="button" class="btn btn-morecoll" href="{{ self.web_exhibit_url }}">View Web Exhibit</a>
+                {% endif %}
+
+                {% if self.publication_description or self.exhibit_text_document or self.exhibit_text_link_external or self.exhibit_text_link_page or self.exhibit_checklist_document or self.exhibit_checklist_link_external or self.exhibit_checklist_link_page %}
+                    <h2>Exhibit Publications &amp; Documents</h2>
+
+                    {% if self.publication_description %}
+                        <p>
+                            {% if self.publication_url %}
+                                <a href="{{ self.publication_url }}" class="btn btn-morecoll">Online Exhibit Catalog</a><br/>
+                            {% endif %}
+                            <em>{{ self.publication_description }}{% if self.publication_price %}, {{ self.publication_price }}{% endif %}</em><br/>
+                            {% if self.ordering_information %}
+                                <a href="/scrc/exhibits/ordering-special-collections-publications/">Ordering Information</a><br/>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                    {% if self.exhibit_text_document %}
+                        <p><a href="{{ self.exhibit_text_document.file.url }}">Exhibit Text</a></p>
+                    {% endif %}
+                    {% if self.exhibit_text_link_external %}
+                        <p><a href="{{ self.exhibit_text_link_external }}">Exhibit Text</a></p>
+                    {% endif %}
+                    {% if self.exhibit_text_link_page %}
+                        <p><a href="{{ self.exhibit_text_link_page.url }}">Exhibit Text</a></p>
+                    {% endif %}
+
+                    {% if self.exhibit_checklist_document %}
+                        <p><a href="{{ self.exhibit_checklist_document.file.url }}">Exhibit Checklist</a></p>
+                    {% endif %}
+                    {% if self.exhibit_checklist_link_external %}
+                        <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
+                    {% endif %}
+                    {% if self.exhibit_checklist_link_page %}
+                        <p><a href="{{ self.exhibit_checklist_link_page.url }}">Exhibit Checklist</a></p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </article>
 {% endblock %}
 
 {% block right_sidebar %}
-  {% if self.exhibit_open_date or self.exhibit_close_date or self.exhibit_daily_hours or self.exhibit_location or self.exhibit_cost or self.space_type %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Exhibit Details</h3>
-      <p>
-        {% if self.space_type %}
-          {{ self.space_type }} Exhibit<br/>
-        {% endif %}
+    {% if self.exhibit_open_date or self.exhibit_close_date or self.exhibit_daily_hours or self.exhibit_location or self.exhibit_cost or self.space_type %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h3>Exhibit Details</h3>
+            <p>
+                {% if self.space_type %}
+                    {{ self.space_type }} Exhibit<br/>
+                {% endif %}
 
-        {% if self.is_online_exhibit %}
-            From {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
-        {% else %}
-            {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
-            {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
-            {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
-        {% endif %}
-	        <br/>
+                {% if self.is_online_exhibit %}
+                    From {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+                {% else %}
+                    {% if self.exhibit_open_date %}{{ self.exhibit_open_date }}{% endif %}
+                    {% if self.exhibit_open_date and self.exhibit_close_date %}&ndash;{% endif %}
+                    {% if self.exhibit_close_date %}{{ self.exhibit_close_date }}{% endif %}
+                {% endif %}
+                <br/>
 
-        {% if self.exhibit_daily_hours %}
-          {{ self.exhibit_daily_hours }}<br/>
-        {% endif %}
+                {% if self.exhibit_daily_hours %}
+                    {{ self.exhibit_daily_hours }}<br/>
+                {% endif %}
 
-        {% if self.exhibit_location %}
-          <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
-        {% endif %}
+                {% if self.exhibit_location %}
+                    <a href="{{ self.exhibit_location.url }}">{{ self.exhibit_location.title }}</a><br/>
+                {% endif %}
 
-        {% if self.exhibit_cost %}
-          {{ self.exhibit_cost }}<br/>
-        {% endif %}
-      </p>
+                {% if self.exhibit_cost %}
+                    {{ self.exhibit_cost }}<br/>
+                {% endif %}
+            </p>
 
-  	{% if self.extra_exhibit_info %}
-        {{self.extra_exhibit_info|richtext}}
-	{% endif %}
-    </div>
-  {% endif %}
+            {% if self.extra_exhibit_info %}
+                {{self.extra_exhibit_info|richtext}}
+            {% endif %}
+        </div>
+    {% endif %}
 
 
-  {% if self.staff_contact or unit_contact%}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Contact</h3>
-      <p>
-        {% if self.staff_contact %}
-        <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
-        <em>{{ self.staff_contact.position_title }}</em><br>
-        <a href="mailto:{{ self.staff_contact.staff_page_email.first.email|urlencode }}">{{ self.staff_contact.staff_page_email.first.email }}</a><br>
-        {{ self.staff_contact.staff_page_phone_faculty_exchange.first.phone_number }}<br>
-        {{ self.staff_contact.staff_page_phone_faculty_exchange.first.faculty_exchange }}<br>
-        {% endif %}
+    {% if self.staff_contact or unit_contact%}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h3>Contact</h3>
+            <p>
+                {% if self.staff_contact %}
+                    <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
+                    <em>{{ self.staff_contact.position_title }}</em><br>
+                    <a href="mailto:{{ self.staff_contact.staff_page_email.first.email|urlencode }}">{{ self.staff_contact.staff_page_email.first.email }}</a><br>
+                    {{ self.staff_contact.staff_page_phone_faculty_exchange.first.phone_number }}<br>
+                    {{ self.staff_contact.staff_page_phone_faculty_exchange.first.faculty_exchange }}<br>
+                {% endif %}
 
-        {% if self.staff_contact and unit_contact%}
-          <br/>
-        {% endif %}
+                {% if self.staff_contact and unit_contact%}
+                    <br/>
+                {% endif %}
 
-        {% if unit_contact %}
-          {% if unit_url and unit_title%}
-            <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
-          {% else %}
-            {{ unit_title }}<br/>
-          {% endif %}
-          {% if unit_email %}
-            <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_phone_number %}
-            {% if unit_phone_label %}{{ unit_phone_label }}: {% endif %}{{ unit_phone_number }}<br/>
-          {% endif %}
-          {% if unit_fax_number %}
-            Fax: {{ unit_fax_number }}<br/>
-          {% endif %}
-          {% if unit_link_external %}
-            <a href="{{ unit_link_external }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_external }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_link_page %}
-            <a href="{{ unit_link_page }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
-          {% endif %}
-          {% if unit_link_document %}
-            <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
-          {% endif %}
-        {% endif %}
-      </p>
-    </div>
-  {% endif %}
+                {% if unit_contact %}
+                    {% if unit_url and unit_title%}
+                        <a href="{{ unit_url }}">{{ unit_title }}</a><br/>
+                    {% else %}
+                        {{ unit_title }}<br/>
+                    {% endif %}
+                    {% if unit_email %}
+                        <a href="mailto:{{ unit_email }}">{% if unit_email_label %}{{ unit_email_label }}{% else %}{{ unit_email }}{% endif %}</a><br/>
+                    {% endif %}
+                    {% if unit_phone_number %}
+                        {% if unit_phone_label %}{{ unit_phone_label }}: {% endif %}{{ unit_phone_number }}<br/>
+                    {% endif %}
+                    {% if unit_fax_number %}
+                        Fax: {{ unit_fax_number }}<br/>
+                    {% endif %}
+                    {% if unit_link_external %}
+                        <a href="{{ unit_link_external }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_external }}{% endif %}</a><br/>
+                    {% endif %}
+                    {% if unit_link_page %}
+                        <a href="{{ unit_link_page }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_page }}{% endif %}</a><br/>
+                    {% endif %}
+                    {% if unit_link_document %}
+                        <a href="{{ unit_link_document }}">{% if unit_link_text %}{{ unit_link_text }}{% else %}{{ unit_link_document }}{% endif %}</a><br/>
+                    {% endif %}
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
 
-  {% if self.exhibit_page_related_collection_placement.all or self.exhibit_subject_placements.all %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h3>Explore Related Content</h3>
-      {% if self.exhibit_page_related_collection_placement.all %}
-        <h4>Related Collections</h4>
-        <ul>
-          {% for c in self.exhibit_page_related_collection_placement.all %}
-            <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    
-      {% if self.exhibit_subject_placements.all %}
-        <h4>Exhibits by Subject</h4>
-        <ul>
-          {% for s in self.exhibit_subject_placements.all %}
-            <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    </div>
-  {% endif %}
+    {% if self.exhibit_page_related_collection_placement.all or self.exhibit_subject_placements.all %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h3>Explore Related Content</h3>
+            {% if self.exhibit_page_related_collection_placement.all %}
+                <h4>Related Collections</h4>
+                <ul>
+                    {% for c in self.exhibit_page_related_collection_placement.all %}
+                        <li><a href="{{ c.related_collection.url }}">{{ c.related_collection.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if self.exhibit_subject_placements.all %}
+                <h4>Exhibits by Subject</h4>
+                <ul>
+                    {% for s in self.exhibit_subject_placements.all %}
+                        <li><a href="/collex/?view=exhibits&amp;subject={{ s.subject.name|urlencode }}">{{ s.subject.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}
@@ -626,7 +626,7 @@
                             <p>When classes are in session.<br>
                             For holiday hours, please consult our <a href="{{hours_page_url}}">hours page</a>.</p>
                             -->
-            
+
                             <span class="loc-title">{{page_location}}</span>
                             <p>Please consult our <a href="{{hours_page_url}}">hours page</a>.</p>
                         </div>
