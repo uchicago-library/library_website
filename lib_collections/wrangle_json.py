@@ -45,24 +45,27 @@ class Api():
 
     ML_HOST = "http://marklogic.lib.uchicago.edu"
     ML_PORT = 8031
-    ML_PATH = "/mlc/mainQuery.xqy?query="
+    ML_PATH = "/mainQuery.xqy?query="
 
     class BaseURL():
         
-        def assemble_url_prefix_full(host, api_name, port, path):
+        def assemble_url_prefix_full(host, collection, api_name, port, path):
             parts = [
                 host,
                 ":",
                 str(port),
+                "/",
+                collection,
                 path,
                 api_name,
                 "&",
             ]
             return "".join(parts)
 
-        def assemble_url_prefix(api_name):
+        def assemble_url_prefix(collection, api_name):
             return Api.BaseURL.assemble_url_prefix_full(
                 Api.ML_HOST,
+                collection,
                 api_name,
                 Api.ML_PORT,
                 Api.ML_PATH
@@ -91,9 +94,9 @@ class Api():
             data = response.json()
             return func(data)
 
-        def make_api_string(api_name, params):
+        def make_api_string(collection, api_name, params):
             query_string = urllib.parse.urlencode(params)
-            url_prefix = Api.assemble_url_prefix(api_name)
+            url_prefix = Api.assemble_url_prefix(collection, api_name)
             return url_prefix + query_string
 
     pull_from_url = URLGet.pull_from_url
@@ -102,28 +105,28 @@ class Api():
     def getBrowseListContributors(collection="mlc"):
         params = Api.QueryStrings.getBrowseListContributors(collection)
         cleanup = CleanData.getBrowseListContributors
-        url = Api.make_api_string("getBrowseListContributors", params)
+        url = Api.make_api_string(collection, "getBrowseListContributors", params)
         data = Api.pull_from_url(url, cleanup)
         return data
         
     def getBrowseListLocations(collection="mlc"):
         params = Api.QueryStrings.getBrowseListLocations(collection)
         cleanup = CleanData.getBrowseListLocations
-        url = Api.make_api_string("getBrowseListLocations", params)
+        url = Api.make_api_string(collection, "getBrowseListLocations", params)
         data = Api.pull_from_url(url, cleanup)
         return data
 
     def getBrowseListLanguages(collection="mlc"):
         params = Api.QueryStrings.getBrowseListLanguages(collection)
         cleanup = CleanData.getBrowseListLanguages
-        url = Api.make_api_string("getBrowseListLanguages", params)
+        url = Api.make_api_string(collection, "getBrowseListLanguages", params)
         data = Api.pull_from_url(url, cleanup)
         return data
 
     def getBrowseListDates(collection="mlc"):
         params = Api.QueryStrings.getBrowseListDates(collection)
         cleanup = CleanData.getBrowseListDates
-        url = Api.make_api_string("getBrowseListDates", params)
+        url = Api.make_api_string(collection, "getBrowseListDates", params)
         data = Api.pull_from_url(url, cleanup)
         return data
 
