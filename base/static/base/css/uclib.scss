@@ -1871,20 +1871,15 @@ a.coll-access {
     &+article {
       border-top: 1px solid #D2CDCC;
     }
-    h3 {
-      font-family: $base-font;
-      font-size: 1.05em;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
     & p {
       max-width: 200px;
       @include respond-to(large) {
         max-width: unset;
       }
     }
-    h4 {
-      font-size: 1em; 
+    h3, h4 {
+      font-family: $base-font;
+      font-size: 1em !important; 
       color: darken($mid-dark, 10%);
       font-weight: 600;
       font-style: normal;

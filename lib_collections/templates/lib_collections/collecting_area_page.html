@@ -5,175 +5,175 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <article>
-    <div class="row">
-      <div class="col-xs-12">
+    <article>
+        <div class="row">
+            <div class="col-xs-12">
 
-      <figure class="imgcaption coll-thumb">
-        {% if self.thumbnail %}
-          {% image self.thumbnail width-200 class="img-responsive" %}
-          {% if self.thumbnail_caption %}
-            <figcaption>{{ self.thumbnail_caption }}</figcaption>
-          {% endif %}
-        {% else %}
-          {% if default_image %}
-            {% image default_image width-200 %}
-          {% endif %}
-        {% endif %}
-      </figure>
+                <figure class="imgcaption coll-thumb">
+                    {% if self.thumbnail %}
+                        {% image self.thumbnail width-200 class="img-responsive" %}
+                        {% if self.thumbnail_caption %}
+                            <figcaption>{{ self.thumbnail_caption }}</figcaption>
+                        {% endif %}
+                    {% else %}
+                        {% if default_image %}
+                            {% image default_image width-200 alt="" %}
+                        {% endif %}
+                    {% endif %}
+                </figure>
 
-        {{self.collecting_statement }}
+                {{self.collecting_statement }}
 
-        {% if self.policy_link_url and self.policy_link_text %}
-          <a role="button" class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</i></a>
-        {% endif %}
-
-
-        {% if lib_guides %}
-          <h2>Research Guides</h2>
-            <p>Find articles, online texts, and other resources.<br/>
-              {% for l in lib_guides %}
-                <a class="coll-access" href="{{ l.guide_link_url }}">{{ l.guide_link_text }}</a><br/>
-              {% endfor %}
-            </p>
-        {% endif %}
+                {% if self.policy_link_url and self.policy_link_text %}
+                    <a role="button" class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</a>
+                {% endif %}
 
 
-          {% if self.reference_materials %}
-          <h2>Reference Materials</h2>
-            {{ self.reference_materials|richtext }}
-          {% endif %}
+                {% if lib_guides %}
+                    <h2>Research Guides</h2>
+                    <p>Find articles, online texts, and other resources.<br/>
+                        {% for l in lib_guides %}
+                            <a class="coll-access" href="{{ l.guide_link_url }}">{{ l.guide_link_text }}</a><br/>
+                        {% endfor %}
+                    </p>
+                {% endif %}
 
-          {% if self.circulating_materials %}
-          <h2>Circulating Materials</h2>
-            {{ self.circulating_materials|richtext }}
-          {% endif %}
 
-          {% if self.archival_link_url and self.archival_link_text %}
-          <h2>Archival Materials</h2>
-            <p><a class="coll-access" href="{{ self.archival_link_url }}">{{ self.archival_link_text }}</a></p>
-          {% endif %}
+                {% if self.reference_materials %}
+                    <h2>Reference Materials</h2>
+                    {{ self.reference_materials|richtext }}
+                {% endif %}
 
-          {% if self.first_feature %}
-            <div class="home-modwrapper">
-              <h2>Featured Collections &amp; Exhibits</h2>
-              <div class="news-wrap">
-               {% for title, url, abstract, thumb in features %}
-                <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+                {% if self.circulating_materials %}
+                    <h2>Circulating Materials</h2>
+                    {{ self.circulating_materials|richtext }}
+                {% endif %}
 
-                  {% if thumb %}
-                    <figure class="embed">
-                      <div class="figure-wrap">
-                        <a href="{{url}}">
-                          {% if thumb %}
-                            {% image thumb width-200 class="img-responsive" %}
-                          {% endif %}
-                        </a>
-                      </div>
-                    </figure>
-                  {% endif %}
-                  <a href="{{url}}"><h3>{{title}}</h3></a>
-                  <p>{{abstract}}</p>
-                </div>
-              {% endfor %}
-              </div>
+                {% if self.archival_link_url and self.archival_link_text %}
+                    <h2>Archival Materials</h2>
+                    <p><a class="coll-access" href="{{ self.archival_link_url }}">{{ self.archival_link_text }}</a></p>
+                {% endif %}
+
+                {% if self.first_feature %}
+                    <div class="home-modwrapper">
+                        <h2>Featured Collections &amp; Exhibits</h2>
+                        <div class="news-wrap">
+                            {% for title, url, abstract, thumb in features %}
+                                <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+
+                                    {% if thumb %}
+                                        <figure class="embed">
+                                            <div class="figure-wrap">
+                                                <a href="{{url}}">
+                                                    {% if thumb %}
+                                                        {% image thumb width-200 class="img-responsive" %}
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                        </figure>
+                                    {% endif %}
+                                    <a href="{{url}}"><h3>{{title}}</h3></a>
+                                    <p>{{abstract}}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if self.supplementary_header and self.supplementary_text %}
+                    <h2>{{ self.supplementary_header }}</h2>
+                    <p>{{ self.supplementary_text|richtext }}</p>
+                {% endif %}
+
+
+                {% if regional_collections %}
+                    <h2>Other Local Collections</h2>
+                    <p>
+                        {% for coll in regional_collections %}
+                            <p><a href="{{ coll.regional_collection_url }}">{{ coll.regional_collection_name }}</a><br/>{{ coll.regional_collection_description }}</p>
+                        {% endfor %}
+                    </p>
+                {% endif %}
             </div>
-          {% endif %}
-
-        {% if self.supplementary_header and self.supplementary_text %}
-          <h2>{{ self.supplementary_header }}</h2>
-          <p>{{ self.supplementary_text|richtext }}</p>
-        {% endif %}
-     
-
-        {% if regional_collections %}
-        <h2>Other Local Collections</h2> 
-          <p>
-            {% for coll in regional_collections %}
-              <p><a href="{{ coll.regional_collection_url }}">{{ coll.regional_collection_name }}</a><br/>{{ coll.regional_collection_description }}</p>
-            {% endfor %}
-          </p>
-        {% endif %}
-      </div>
-    </div><!--/.row-->
-  </article>
+        </div><!--/.row-->
+    </article>
 {% endblock %}
 
 {% block right_sidebar %}
-{% if self.collection_location %}
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Access Location</h2>
-        <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
-  </div>
-{% endif %}
+    {% if self.collection_location %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h2>Access Location</h2>
+            <p><a href="{{ self.collection_location.url }}">{{ self.collection_location.title }}</a></p>
+        </div>
+    {% endif %}
 
-  {% if related_subject_specialists %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      {% for staff_title, staff_position_title, staff_url, staff_email, phone_and_fac, staff_thumb in related_subject_specialists %}
-        <h2>Subject Specialist</h2>
-        <p>
-          {% if staff_url and staff_title%}
-            <a href="{{ staff_url }}">{{ staff_title }}</a>
-          {% else %}
-            {{ staff_title }}
-          {% endif %}
+    {% if related_subject_specialists %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            {% for staff_title, staff_position_title, staff_url, staff_email, phone_and_fac, staff_thumb in related_subject_specialists %}
+                <h2>Subject Specialist</h2>
+                <p>
+                    {% if staff_url and staff_title%}
+                        <a href="{{ staff_url }}">{{ staff_title }}</a>
+                    {% else %}
+                        {{ staff_title }}
+                    {% endif %}
 
-          {% if staff_position_title %}
-            <br/><em>{{ staff_position_title }}</em><br/>
-          {% endif %}
+                    {% if staff_position_title %}
+                        <br/><em>{{ staff_position_title }}</em><br/>
+                    {% endif %}
 
-          {% if staff_email %}
-            <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
-          {% endif %}
+                    {% if staff_email %}
+                        <a href="mailto:{{ staff_email }}">{{ staff_email }}</a><br/>
+                    {% endif %}
 
-          {% for staff_phone, staff_fac in phone_and_fac %}
+                    {% for staff_phone, staff_fac in phone_and_fac %}
 
-            {% if staff_phone %}
-              {{ staff_phone }}<br/>
-            {% endif %}
+                        {% if staff_phone %}
+                            {{ staff_phone }}<br/>
+                        {% endif %}
 
-            {% if staff_facu %}
-              {{ staff_fac }}
-            {% endif %}
+                        {% if staff_facu %}
+                            {{ staff_fac }}
+                        {% endif %}
 
-          {% endfor %}
-        </p>
-      {% endfor %}
-    </div>
-  {% endif %}
+                    {% endfor %}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
 
 
-  {% if self.related_collecting_areas.all %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Related Collecting Area</h2>
-        {% for rca in self.related_collecting_areas.all %}
-            <p><a href="{% pageurl rca.related_collecting_area %}">{{ rca.related_collecting_area.title }}</a></p>
-        {% endfor %}
-    </div>
-  {% endif %}
-  
+    {% if self.related_collecting_areas.all %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h2>Related Collecting Area</h2>
+            {% for rca in self.related_collecting_areas.all %}
+                <p><a href="{% pageurl rca.related_collecting_area %}">{{ rca.related_collecting_area.title }}</a></p>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-  {% if related_collections %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h2>Related Collections</h2>
-      <ul>
-        {% for title, href in related_collections %}
-          <li><a href="{{href}}">{{title}}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
 
-  {% if related_exhibits %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h2>Related Exhibits</h2>
-        <ul>
-          {% for title, href in related_exhibits %}
-            <li><a href="{{href}}">{{title}}</a></li>
-          {% endfor %}
-        </ul>
-    </div>
-  {% endif %}
+    {% if related_collections %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h2>Related Collections</h2>
+            <ul>
+                {% for title, href in related_collections %}
+                    <li><a href="{{href}}">{{title}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if related_exhibits %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h2>Related Exhibits</h2>
+            <ul>
+                {% for title, href in related_exhibits %}
+                    <li><a href="{{href}}">{{title}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block right_sidebar_classes %}coll-rightside{% endblock %}

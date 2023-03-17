@@ -8,72 +8,72 @@
 
 {% block styles %}
     {% compress css %}
-	<link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+        <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
     {% endcompress %}
 {% endblock %}
 
 {% block content %}
     <article>
-	<div class="row">
-	    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
 
-		<figure class="imgcaption coll-thumb">
-		    {% if self.thumbnail %}
-			{% image self.thumbnail width-200 class="img-responsive" %}
-			{% if self.thumbnail_caption %}
-			    <figcaption>{{ self.thumbnail_caption }}</figcaption>
-			{% endif %}
-		    {% elif default_image %}
-			{% image default_image width-200 %}
-		    {% endif %}
-		</figure>
+                <figure class="imgcaption coll-thumb">
+                    {% if self.thumbnail %}
+                        {% image self.thumbnail width-200 class="img-responsive" %}
+                        {% if self.thumbnail_caption %}
+                            <figcaption>{{ self.thumbnail_caption }}</figcaption>
+                        {% endif %}
+                    {% elif default_image %}
+                        {% image default_image width-200 alt="" %}
+                    {% endif %}
+                </figure>
 
-		{% for block in self.full_description %}
-		    {{ block }}
-		{% endfor %}
+                {% for block in self.full_description %}
+                    {{ block }}
+                {% endfor %}
 
-		{% if self.primary_online_access_link_url and self.primary_online_access_link_label and show_external_link %}
-		    <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</i></a>
-		{% endif %}
-		
-		{% if self.access_instructions or supplementary_access_links %}
-		    <h3>Access Information</h3>
+                {% if self.primary_online_access_link_url and self.primary_online_access_link_label and show_external_link %}
+                    <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</a>
+                {% endif %}
 
-		    {% if supplementary_access_links %}
-			<p>
-			    {% for l in supplementary_access_links %}
-			        <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
-			    {% endfor %}
-			</p>
-		    {% endif %}
+                {% if self.access_instructions or supplementary_access_links %}
+                    <h3>Access Information</h3>
 
-		    {% if self.access_instructions %}
-			<p>{{ self.access_instructions }}</p>
-		    {% endif %}
-		{% endif %}
-	    </div>
-	</div><!--/.row-->
+                    {% if supplementary_access_links %}
+                        <p>
+                            {% for l in supplementary_access_links %}
+                                <a class="coll-access" href="{{ l.supplementary_access_link_url }}">{{ l.supplementary_access_link_label }}</a><br/>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    {% if self.access_instructions %}
+                        <p>{{ self.access_instructions }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div><!--/.row-->
     </article>
 
-{% if objects %}
-    <div class="home-module">
-      <h2 class="browse"> Collection Highlights </h2>
-      <span class="browse-links">
-	<span class="headline">Browse:&nbsp; </span>
-	{% for type, link in sidebar_browse_types.items %}
-	<a href="{{ link }}">
-	  {{ type }}
-	</a>
-	{% endfor %}
-      </span>
-    </div>
+    {% if objects %}
+        <div class="home-module">
+            <h2 class="browse"> Collection Highlights </h2>
+            <span class="browse-links">
+                <span class="headline">Browse:&nbsp; </span>
+                {% for type, link in sidebar_browse_types.items %}
+                    <a href="{{ link }}">
+                        {{ type }}
+                    </a>
+                {% endfor %}
+            </span>
+        </div>
 
-    <section class="browse-list">
-      {% include "includes/general_listing.html" %}
-    </section>
-{% else %}
-{% endif %}
-    
+        <section class="browse-list">
+            {% include "includes/general_listing.html" %}
+        </section>
+    {% else %}
+    {% endif %}
+
 {% endblock %}
 
 {% block right_sidebar %}

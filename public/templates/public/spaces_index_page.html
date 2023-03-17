@@ -6,85 +6,85 @@
 
 {% block content %}
     <article>
-          <div class="row">
+        <div class="row">
             <div class="col-xs-12 col-sm-6">
                 <div class="btn-group spaces-toggle" role="navigation" aria-label="Browse Space Type">
-                  <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" aria-selected="{% if space_type == 'is_study_space' %}true{% else %}false{% endif %}" href="?space_type=is_study_space">To Study</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_teaching_space' %}true{% else %}false{% endif %}" href="?space_type=is_teaching_space">To Teach</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_event_space' %}true{% else %}false{% endif %}" href="?space_type=is_event_space">For Events</a>
-                  <a class="btn btn-list-toggle{% if space_type == 'is_special_use' %} active {% endif %}" aria-selected="{% if space_type == 'is_special_use' %}true{% else %}false{% endif %}" href="?space_type=is_special_use">Special Use</a>
+                    <a class="btn btn-list-toggle{% if space_type == 'is_study_space' %} active{% endif %}" aria-selected="{% if space_type == 'is_study_space' %}true{% else %}false{% endif %}" href="?space_type=is_study_space">To Study</a>
+                    <a class="btn btn-list-toggle{% if space_type == 'is_teaching_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_teaching_space' %}true{% else %}false{% endif %}" href="?space_type=is_teaching_space">To Teach</a>
+                    <a class="btn btn-list-toggle{% if space_type == 'is_event_space' %} active {% endif %}" aria-selected="{% if space_type == 'is_event_space' %}true{% else %}false{% endif %}" href="?space_type=is_event_space">For Events</a>
+                    <a class="btn btn-list-toggle{% if space_type == 'is_special_use' %} active {% endif %}" aria-selected="{% if space_type == 'is_special_use' %}true{% else %}false{% endif %}" href="?space_type=is_special_use">Special Use</a>
                 </div>
             </div>
-        
+
             <div class="col-xs-12 col-sm-6 coll-dropdown" role="group" aria-label="Filter Results">
                 <span class="headline" id="filterBy">Filter by</span>
                 <div class="btn-group" aria-labelledby="filterBy">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button" aria-label="filtered to {{ building }}">
-                    {% if building %}
-                        {{ building }}
-                    {% else %}
-                        Library
-                    {% endif %}
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="listings-dropdown dropdown-menu">
-                    {% if building %}
-                       <li>
-                          <a href="?{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Buildings</a><br/>
-                       </li>
-                    {% endif %}
-                    {% for b in buildings %}
-                       <li>
-                          <a href="?building={{ b|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}" class="dropdown-item">{{ b }}</a>
-                       </li>
-                    {% endfor %}
-                  </ul>
+                    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button" aria-label="filtered to {{ building }}">
+                        {% if building %}
+                            {{ building }}
+                        {% else %}
+                            Library
+                        {% endif %}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="listings-dropdown dropdown-menu">
+                        {% if building %}
+                            <li>
+                                <a href="?{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Buildings</a><br/>
+                            </li>
+                        {% endif %}
+                        {% for b in buildings %}
+                            <li>
+                                <a href="?building={{ b|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}" class="dropdown-item">{{ b }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="btn-group">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not floors %} disabled="disabled"{% endif %}>
-                    {% if floor %}
-                        {{ floor }}
-                    {% else %}
-                        Floor 
-                    {% endif %}
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="listings-dropdown dropdown-menu">
-                    {% if floor %}
-                       <li>
-                          <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Floors</a><br/>
-                       </li>
-                    {% endif %}
-                    {% for f in floors %}
-                      <li>
-                        <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}floor={{ f|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
+                    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button"{% if not floors %} disabled="disabled"{% endif %}>
+                        {% if floor %}
+                            {{ floor }}
+                        {% else %}
+                            Floor
+                        {% endif %}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="listings-dropdown dropdown-menu">
+                        {% if floor %}
+                            <li>
+                                <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Floors</a><br/>
+                            </li>
+                        {% endif %}
+                        {% for f in floors %}
+                            <li>
+                                <a href="?building={{ building|urlencode }}&amp;{% if feature %}feature={{ feature|urlencode }}&amp;{% endif %}floor={{ f|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
 
                 <div class="btn-group">
-                  <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button">
-                    {% if feature %}
-                        {{ feature_label }}
-                    {% else %}
-                        Feature
-                    {% endif %}
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="listings-dropdown dropdown-menu">
-                    {% if feature %}
-                      <li>
-                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Features</a>
-                      </li>
-                    {% endif %}
-                    {% for f in features %}
-                      <li>
-                        <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}feature={{ f.0|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f.1 }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                </div>          
+                    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default btn-textonly dropdown-toggle" type="button">
+                        {% if feature %}
+                            {{ feature_label }}
+                        {% else %}
+                            Feature
+                        {% endif %}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="listings-dropdown dropdown-menu">
+                        {% if feature %}
+                            <li>
+                                <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}space_type={{ space_type|urlencode }}">All Features</a>
+                            </li>
+                        {% endif %}
+                        {% for f in features %}
+                            <li>
+                                <a href="?{% if building %}building={{ building|urlencode }}&amp;{% endif %}{% if floor %}floor={{ floor|urlencode }}&amp;{% endif %}feature={{ f.0|urlencode }}&amp;space_type={{ space_type|urlencode }}" class="dropdown-item">{{ f.1 }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="row sdir spacelist">
@@ -95,7 +95,7 @@
                 {% elif space_type == 'is_special_use' %}All Special Use Spaces
                 {% else %}Browse Spaces{% endif %}
             </h2>
-            {% for space in spaces %}                
+            {% for space in spaces %}
                 <article>
                     <div>
                         <h3><a href="{{ space.url }}">{{ space.title }}</a></h3>
@@ -115,8 +115,8 @@
                     </div>
                     <div>
                         {% autoescape off %}
-                        <h3 class="visually-hidden">features of {{ space.title }}</h3>
-                            {{space.features_html}} 
+                            <h3 class="visually-hidden">features of {{ space.title }}</h3>
+                            {{space.features_html}}
                         {% endautoescape %}
                     </div>
                     <div>
@@ -127,13 +127,14 @@
                         {% if space.location_photo %}
                             {% image space.location_photo width-100 %}
                         {% else %}
-                            {% image default_image width-100 %}
+                            {% image default_image width-100 alt="" %}
                         {% endif %}
                     </div>
                 </article>
-                {% empty %}
-                    <p class="empty-state">
-                      <span class="nothing">Sorry, no spaces available with these features</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.
-                    </p>
+            {% empty %}
+                <p class="empty-state">
+                    <span class="nothing">Sorry, no spaces available with these features</span>Need assistance? <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>.</p>
             {% endfor %}
+        </div>
+    </article>
 {% endblock %}
