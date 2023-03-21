@@ -11,15 +11,19 @@ def open_json(filepath):
 
 class CleanData():
 
+    def bindings(sparql):
+        return sparql["results"]["bindings"]
+
     class KeyValue():
 
         def adjacent_key_value(keyField, valField, data):
-            bindings = data["results"]["bindings"]
+            bs = CleanData.bindings(data)
             def each_pair(var):
                 return (var[keyField]["value"], var[valField]["value"])
-            return OrderedDict([ each_pair(pred) for pred in bindings ])
+            return OrderedDict([ each_pair(pred) for pred in bs ])
 
         def downward_key_value(data):
+            bs = CleanData.bindings(data)
             def each_pair(k,v):
                 return (k, v["value"].split("|"))
             def nonempty(data):
@@ -27,12 +31,14 @@ class CleanData():
                 unavailable = '(:unav)'
                 return v and v != unavailable
             def each_binding(dct):
-                return OrderedDict([ each_pair(k,v) for (k,v) in dct.items() if nonempty(v) ])
-            bindings = data["results"]["bindings"]
-            return [ each_binding(b) for b in bindings ]
+                return OrderedDict([ each_pair(k,v)
+                                     for (k,v)
+                                     in dct.items()
+                                     if nonempty(v) ])
+            return [ each_binding(b) for b in bs ]
 
     adjacent_key_value = KeyValue.adjacent_key_value
-    
+
     def getBrowseListContributors(data):
         return CleanData.adjacent_key_value("o", "s", data)
 
@@ -42,56 +48,80 @@ class CleanData():
     def getBrowseListLanguages(data):
         return CleanData.adjacent_key_value("code", "prefLabel", data)
 
+    downward_key_value = KeyValue.downward_key_value
+
+    def getItem(data):
+        return CleanData.downward_key_value(data)
+
     class StraightUpList():
 
         def straight_up_list(fieldName, data):
-            bindings = data["results"]["bindings"]
-            return [ x[fieldName]["value"] for x in bindings ]
+            bs = CleanData.bindings(data)
+            return [ b[fieldName]["value"] for b in bs ]
 
     straight_up_list = StraightUpList.straight_up_list
-
-    class CollectionObject():
-
-        def obj():
-            pass
 
     def getBrowseListDates(data):
         return CleanData.straight_up_list("date", data)
 
-itemStuff = open_json("./getItem.json")
-obj = CleanData.CollectionObject.obj
-
 class URLs():
 
-    ML_HOST = "http://marklogic.lib.uchicago.edu"
-    ML_PORT = 8031
-    ML_PATH = "/mainQuery.xqy?query="
-
     class BaseURL():
-        
-        def assemble_url_prefix_full(host, collection, api_name, port, path):
-            parts = [
-                host,
-                ":",
-                str(port),
-                "/",
-                collection,
-                path,
-                api_name,
-                "&",
-            ]
-            return "".join(parts)
 
-        def assemble_url_prefix(collection, api_name):
-            return URLs.BaseURL.assemble_url_prefix_full(
-                URLs.ML_HOST,
-                collection,
-                api_name,
-                URLs.ML_PORT,
-                URLs.ML_PATH
-            )
+        class MarkLogic():
 
-    assemble_url_prefix = BaseURL.assemble_url_prefix
+            ML_HOST = "http://marklogic.lib.uchicago.edu"
+            ML_PORT = 8031
+            ML_PATH = "mainQuery.xqy?query="
+
+            def assemble_url_prefix_full(host,
+                                         collection,
+                                         api_name, 
+                                         port,
+                                         path):
+                parts = [
+                    host,
+                    ":",
+                    str(port),
+                    "/",
+                    collection,
+                    path,
+                    api_name,
+                    "&",
+                ]
+                return "".join(parts)
+
+            def assemble_url_prefix(collection, api_name):
+                return URLs.BaseURL.assemble_url_prefix_full(
+                    ML_HOST,
+                    collection,
+                    api_name,
+                    ML_PORT,
+                    "/",
+                    ML_PATH
+                )
+            
+        class Ark():
+
+            ARK_HOST = "http://ark.lib.uchicago.edu"
+            ARK_PATH = "ark:61001"
+
+            def assemble_url_prefix(host, path):
+                def partial(noid):
+                    parts = [
+                        host,
+                        "/",
+                        path,
+                        "/",
+                        noid,
+                    ]
+                    return "".join(parts)
+                return partial
+
+            ark_base = assemble_url_prefix(ARK_HOST, ARK_PATH)
+
+    marklogic_base = BaseURL.MarkLogic.assemble_url_prefix
+    ark_base = BaseURL.Ark.ark_base
 
     class QueryStrings():
 
@@ -107,11 +137,21 @@ class URLs():
         def getBrowseListDates(collection="mlc"):
             return { "collection" : collection }
 
+        def getItem(collection="mlc", noid="b2k40qk4wc8h"):
+            return { "collection" : collection,
+                     "identifier" : ark_base(noid), }
+
+    getBrowseListContributors = QueryStrings.getBrowseListContributors
+    getBrowseListLocations = QueryStrings.getBrowseListLocations
+    getBrowseListLanguages = QueryStrings.getBrowseListLanguages
+    getBrowseListDates = QueryStrings.getBrowseListDates
+    getItem = QueryStrings.getItem
+
     class MakeURL():
 
         def make_api_string(collection, api_name, params):
             query_string = urllib.parse.urlencode(params)
-            url_prefix = URLs.assemble_url_prefix(collection, api_name)
+            url_prefix = URLs.marklogic_base(collection, api_name)
             return url_prefix + query_string
 
     make_api_string = MakeURL.make_api_string
@@ -155,7 +195,20 @@ class Api():
         data = Api.pull_from_url(url, cleanup)
         return data
 
-getBrowseListContributors = Api.getBrowseListContributors
-getBrowseListLocations = Api.getBrowseListLocations
-getBrowseListDates = Api.getBrowseListDates
-getBrowseListLanguages = Api.getBrowseListLanguages
+# getBrowseListContributors = Api.getBrowseListContributors
+# getBrowseListLocations = Api.getBrowseListLocations
+# getBrowseListDates = Api.getBrowseListDates
+# getBrowseListLanguages = Api.getBrowseListLanguages
+# getItem = Api.getItem
+
+getBrowseListContributors = CleanData.getBrowseListContributors
+getBrowseListLocations = CleanData.getBrowseListLocations
+getBrowseListDates = CleanData.getBrowseListDates
+getBrowseListLanguages = CleanData.getBrowseListLanguages
+getItem = CleanData.getItem
+
+# getBrowseListContributors = URLs.getBrowseListContributors
+# getBrowseListLocations = URLs.getBrowseListLocations
+# getBrowseListDates = URLs.getBrowseListDates
+# getBrowseListLanguages = URLs.getBrowseListLanguages
+# getItem = URLs.getItem
