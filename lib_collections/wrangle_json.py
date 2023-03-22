@@ -2,6 +2,7 @@ from collections import OrderedDict
 import json
 import requests
 import urllib
+import random
 
 def open_json(filepath):
     f = open(filepath, "r")
@@ -45,8 +46,6 @@ class CleanData():
         return CleanData.adjacent_key_value("o", "s", data)
 
     def getBrowseListLocations(data):
-
-
         return CleanData.adjacent_key_value("prefLabel", "spatial", data)
 
     def getBrowseListLanguages(data):
@@ -92,7 +91,6 @@ class URLs():
                     "/",
                     path,
                     api_name,
-                    "&",
                 ]
                 return "".join(parts)
 
@@ -107,17 +105,17 @@ class URLs():
             
         class Ark():
 
-            ARK_HOST = "http://ark.lib.uchicago.edu"
+            ARK_HOST = "https://ark.lib.uchicago.edu"
             ARK_PATH = "ark:61001"
 
             def assemble_url_prefix(host, path):
-                def partial(noid):
+                def partial(identifier):
                     parts = [
                         host,
                         "/",
                         path,
                         "/",
-                        noid,
+                        identifier,
                     ]
                     return "".join(parts)
                 return partial
@@ -127,7 +125,7 @@ class URLs():
     marklogic_base = BaseURL.MarkLogic.assemble_url_prefix
     ark_base = BaseURL.Ark.ark_base
 
-    class QueryStrings():
+    class QStrings():
 
         def getBrowseListContributors(collection="mlc"):
             return { "collection" : collection }
@@ -141,117 +139,153 @@ class URLs():
         def getBrowseListDates(collection="mlc"):
             return { "collection" : collection }
 
-        def getItem(collection="mlc", noid="b2k40qk4wc8h"):
+        def getItem(identifier="b2k40qk4wc8h", collection="mlc"):
             return { "collection" : collection,
-                     "identifier" : URLs.ark_base(noid), }
-
-    getBrowseListContributors = QueryStrings.getBrowseListContributors
-    getBrowseListLocations = QueryStrings.getBrowseListLocations
-    getBrowseListLanguages = QueryStrings.getBrowseListLanguages
-    getBrowseListDates = QueryStrings.getBrowseListDates
-    getItem = QueryStrings.getItem
+                     "identifier" : URLs.ark_base(identifier), }
 
     class MakeURL():
 
-        def make_api_string(collection, api_name, params):
-            query_string = urllib.parse.urlencode(params)
+        def make_api_string(collection, api_name, params, curl=True):
+            if curl:
+                query_string = "&" + urllib.parse.unquote(urllib.parse.urlencode(params))
+            else:
+                query_string = ""
             url_prefix = URLs.marklogic_base(collection, api_name)
             return url_prefix + query_string
 
     make_api_string = MakeURL.make_api_string
+
+    def getBrowseListContributors(collection="mlc", curl=True):
+        params = URLs.QStrings.getBrowseListContributors(collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListContributors",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListLocations(collection="mlc", curl=True):
+        params = URLs.QStrings.getBrowseListLocations(collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListLocations",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListLanguages(collection="mlc", curl=True):
+        params = URLs.QStrings.getBrowseListLanguages(collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListLanguages",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListDates(collection="mlc", curl=True):
+        params = URLs.QStrings.getBrowseListDates(collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListDates",
+                                   params,
+                                   curl)
+        return url
+
+    def getItem(identifier="b2k40qk4wc8h", collection="mlc", curl=True):
+        params = URLs.QStrings.getItem(identifier, collection)
+        url = URLs.make_api_string(collection, "getItem", params, curl)
+        return url
     
 class Api():
 
-    def lookup(collection="mlc", noid="b2k40qk4wc8h"):
+    def lookup(collection="mlc", identifier="b2k40qk4wc8h"):
         return {
             "getBrowseListContributors" : {
-                "params" : URLs.getBrowseListContributors(collection),
+                "url" : URLs.getBrowseListContributors(collection, curl=False),
+                "params" : URLs.QStrings.getBrowseListContributors(collection),
                 "cleanup" : CleanData.getBrowseListContributors,
             },
             "getBrowseListLocations" : {
-                "params" : URLs.getBrowseListLocations(collection),
+                "url" : URLs.getBrowseListLocations(collection, curl=False),
+                "params" : URLs.QStrings.getBrowseListLocations(collection),
                 "cleanup" : CleanData.getBrowseListLocations,
             },
             "getBrowseListLanguages" : {
-                "params" : URLs.getBrowseListLanguages(collection),
+                "url" : URLs.getBrowseListLanguages(collection, curl=False),
+                "params" : URLs.QStrings.getBrowseListLanguages(collection),
                 "cleanup" : CleanData.getBrowseListLanguages,
             },
             "getBrowseListDates" : {
-                "params" : URLs.getBrowseListDates(collection),
+                "url" : URLs.getBrowseListDates(collection, curl=False),
+                "params" : URLs.QStrings.getBrowseListDates(collection),
                 "cleanup" : CleanData.getBrowseListDates,
             },
             "getItem" : {
-                "params" : URLs.getItem(collection, noid),
+                "url" : URLs.getItem(identifier, collection, curl=False),
+                "params" : URLs.QStrings.getItem(identifier, collection),
                 "cleanup" : CleanData.getItem,
             },
         }
 
     class URLGet():
 
-        def pull_from_url(url, func):
-            response = requests.get(url)
+        def pull_from_url(url, func, params):
+            response = requests.get(url, params)
             data = response.json()
             return func(data)
 
-        def api_call(endpoint, collection="mlc", noid="b2k40qk4wc8h"):
-            params = Api.lookup(collection, noid)[endpoint]["params"]
-            cleanup = Api.lookup(collection, noid)[endpoint]["cleanup"]
-            url = URLs.make_api_string(collection, endpoint, params)
-            data = Api.pull_from_url(url, cleanup)
-            return url
-            # return data
+        def api_call(endpoint, collection="mlc", identifier="b2k40qk4wc8h"):
+            lookup = Api.lookup(collection, identifier)[endpoint]
+            params = lookup["params"]
+            cleanup = lookup["cleanup"]
+            url = lookup["url"]
+            data = Api.pull_from_url(url, cleanup, params)
+            return data
 
     pull_from_url = URLGet.pull_from_url
     api_call = URLGet.api_call
 
-    def getBrowseListContributors(collection="mlc", noid="b2k40qk4wc8h"):
-        return Api.api_call("getBrowseListContributors")
+    def getBrowseListContributors(collection="mlc"):
+        return Api.api_call("getBrowseListContributors", collection)
 
-    def getBrowseListLocations(collection="mlc", noid="b2k40qk4wc8h"):
-        return Api.api_call("getBrowseListLocations")
+    def getBrowseListLocations(collection="mlc"):
+        return Api.api_call("getBrowseListLocations", collection)
 
-    def getBrowseListLanguages(collection="mlc", noid="b2k40qk4wc8h"):
-        return Api.api_call("getBrowseListLanguages")
+    def getBrowseListLanguages(collection="mlc"):
+        return Api.api_call("getBrowseListLanguages", collection)
 
-    def getBrowseListDates(collection="mlc", noid="b2k40qk4wc8h"):
-        return Api.api_call("getBrowseListDates")
+    def getBrowseListDates(collection="mlc"):
+        return Api.api_call("getBrowseListDates", collection)
 
-    def getItem(collection="mlc", noid="b2k40qk4wc8h"):
-        return Api.api_call("getItem")
+    def getItem(identifier="b2k40qk4wc8h", collection="mlc"):
+        return Api.api_call("getItem", collection, identifier)
 
-    # def getBrowseListContributors(collection="mlc"):
-    #     params = URLs.getBrowseListContributors(collection)
-    #     cleanup = CleanData.getBrowseListContributors
-    #     url = URLs.make_api_string(collection, "getBrowseListContributors", params)
-    #     data = Api.pull_from_url(url, cleanup)
-    #     return data
+class Utils():
+
+    def gimme_all_noids(collection="mlc"):
+        host = URLs.BaseURL.MarkLogic.ML_HOST
+        port = URLs.BaseURL.MarkLogic.ML_PORT
+        path = "identifiers.xqy?query()"
+        parts = [
+            host,
+            ":",
+            str(port),
+            "/",
+            collection,
+            "/",
+            path,
+        ]
+        base_url = "".join(parts)
+        def cleanup(data):
+            bs = CleanData.bindings(data)
+            def each_url(url):
+                return url.split("/")[-1]
+            return [ each_url(x["identifier"]["value"]) for x in bs ]
+        return Api.URLGet.pull_from_url(base_url, cleanup, {})
+
+    def gimme_some_noids(collection="mlc"):
+        length = 70000
+        start = random.randrange(0, length)
+        end = start + 10
+        return Utils.gimme_all_noids(collection)[start:end]
+
         
-    # def getBrowseListLocations(collection="mlc"):
-    #     params = URLs.getBrowseListLocations(collection)
-    #     cleanup = CleanData.getBrowseListLocations
-    #     url = URLs.make_api_string(collection, "getBrowseListLocations", params)
-    #     data = Api.pull_from_url(url, cleanup)
-    #     return data
-
-    # def getBrowseListLanguages(collection="mlc"):
-    #     params = URLs.getBrowseListLanguages(collection)
-    #     cleanup = CleanData.getBrowseListLanguages
-    #     url = URLs.make_api_string(collection, "getBrowseListLanguages", params)
-    #     data = Api.pull_from_url(url, cleanup)
-    #     return data
-
-    # def getBrowseListDates(collection="mlc"):
-    #     params = URLs.getBrowseListDates(collection)
-    #     cleanup = CleanData.getBrowseListDates
-    #     url = URLs.make_api_string(collection, "getBrowseListDates", params)
-    #     data = Api.pull_from_url(url, cleanup)
-    #     return data
-
-getBrowseListContributors = Api.getBrowseListContributors
-getBrowseListLocations = Api.getBrowseListLocations
-getBrowseListDates = Api.getBrowseListDates
-getBrowseListLanguages = Api.getBrowseListLanguages
-getItem = Api.getItem
 
 # getBrowseListContributors = CleanData.getBrowseListContributors
 # getBrowseListLocations = CleanData.getBrowseListLocations
@@ -265,7 +299,15 @@ getItem = Api.getItem
 # getBrowseListLanguages = URLs.getBrowseListLanguages
 # getItem = URLs.getItem
 
-# make_api_string = URLs.MakeURL.make_api_string
-# marklogic_base = URLs.marklogic_base
-# ark_base = URLs.ark_base
-# params = URLs.getItem()
+# getBrowseListContributors = URLs.QStrings.getBrowseListContributors
+# getBrowseListLocations = URLs.QStrings.getBrowseListLocations
+# getBrowseListDates = URLs.QStrings.getBrowseListDates
+# getBrowseListLanguages = URLs.QStrings.getBrowseListLanguages
+# getItem = URLs.QStrings.getItem
+
+getBrowseListContributors = Api.getBrowseListContributors
+getBrowseListLocations = Api.getBrowseListLocations
+getBrowseListDates = Api.getBrowseListDates
+getBrowseListLanguages = Api.getBrowseListLanguages
+getItem = Api.getItem
+
