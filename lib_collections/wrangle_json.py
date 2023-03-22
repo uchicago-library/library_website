@@ -32,13 +32,11 @@ class CleanData():
                 return v and v != unavailable
             def each_binding(dct):
                 alist = [ each_pair(k,v)
-                          for (k,v)
-                          in dct.items()
+                          for (k,v) in dct.items()
                           if nonempty(v) ]
                 return OrderedDict(alist)
             return [ each_binding(b)
-                     for b
-                     in bs
+                     for b in bs
                      if each_binding(b) ]
 
     adjacent_key_value = KeyValue.adjacent_key_value
