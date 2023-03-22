@@ -58,14 +58,26 @@ class CleanData():
 
     class StraightUpList():
 
-        def straight_up_list(fieldName, data):
+        def straight_up_list(fieldName, data, cleanup=lambda x : x):
             bs = CleanData.bindings(data)
-            return [ b[fieldName]["value"] for b in bs ]
+            return [ cleanup(b[fieldName]["value"]) for b in bs ]
 
     straight_up_list = StraightUpList.straight_up_list
 
     def getBrowseListDates(data):
         return CleanData.straight_up_list("date", data)
+
+    class Ark():
+
+        def extract_noid(arkurl):
+            return arkurl.split("/")[-1]
+
+    def getResultsByCreator(data):
+        return CleanData.straight_up_list(
+            "resource",
+            data,
+            cleanup=CleanData.Ark.extract_noid
+        )
 
 class URLs():
 
@@ -143,11 +155,19 @@ class URLs():
             return { "collection" : collection,
                      "identifier" : URLs.ark_base(identifier), }
 
+        def getResultsByCreator(search="mcquown", collection="mlc"):
+            return { "collection" : collection,
+                     "search" : search, }
+
     class MakeURL():
 
         def make_api_string(collection, api_name, params, curl=True):
+            unquote = urllib.parse.unquote
+            urlencode = urllib.parse.urlencode
+            def serialize(params):
+                return unquote(urlencode(params))
             if curl:
-                query_string = "&" + urllib.parse.unquote(urllib.parse.urlencode(params))
+                query_string = "&" + serialize(params)
             else:
                 query_string = ""
             url_prefix = URLs.marklogic_base(collection, api_name)
@@ -191,10 +211,15 @@ class URLs():
         params = URLs.QStrings.getItem(identifier, collection)
         url = URLs.make_api_string(collection, "getItem", params, curl)
         return url
+
+    def getResultsByCreator(search="mcquown", collection="mlc", curl=True):
+        params = URLs.QStrings.getResultsByCreator(search, collection)
+        url = URLs.make_api_string(collection, "getResultsByCreator", params, curl)
+        return url
     
 class Api():
 
-    def lookup(collection="mlc", identifier="b2k40qk4wc8h"):
+    def lookup(collection="mlc", identifier="b2k40qk4wc8h", search="mcquown"):
         return {
             "getBrowseListContributors" : {
                 "url" : URLs.getBrowseListContributors(collection, curl=False),
@@ -221,6 +246,11 @@ class Api():
                 "params" : URLs.QStrings.getItem(identifier, collection),
                 "cleanup" : CleanData.getItem,
             },
+            "getResultsByCreator" : {
+                "url" : URLs.getResultsByCreator(search, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByCreator(search, collection),
+                "cleanup" : CleanData.getResultsByCreator,
+            },
         }
 
     class URLGet():
@@ -230,7 +260,7 @@ class Api():
             data = response.json()
             return func(data)
 
-        def api_call(endpoint, collection="mlc", identifier="b2k40qk4wc8h"):
+        def api_call(endpoint, collection="mlc", identifier="b2k40qk4wc8h", search="mcquown"):
             lookup = Api.lookup(collection, identifier)[endpoint]
             params = lookup["params"]
             cleanup = lookup["cleanup"]
@@ -255,6 +285,9 @@ class Api():
 
     def getItem(identifier="b2k40qk4wc8h", collection="mlc"):
         return Api.api_call("getItem", collection, identifier)
+
+    def getResultsByCreator(search="mcquown", collection="mlc"):
+        return Api.api_call("getResultsByCreator", collection, search)
 
 class Utils():
 
@@ -310,4 +343,5 @@ getBrowseListLocations = Api.getBrowseListLocations
 getBrowseListDates = Api.getBrowseListDates
 getBrowseListLanguages = Api.getBrowseListLanguages
 getItem = Api.getItem
+getResultsByCreator = Api.getResultsByCreator
 
