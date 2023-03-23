@@ -261,7 +261,7 @@ class Api():
             return func(data)
 
         def api_call(endpoint, collection="mlc", identifier="b2k40qk4wc8h", search="mcquown"):
-            lookup = Api.lookup(collection, identifier)[endpoint]
+            lookup = Api.lookup(collection, identifier, search)[endpoint]
             params = lookup["params"]
             cleanup = lookup["cleanup"]
             url = lookup["url"]
@@ -284,10 +284,10 @@ class Api():
         return Api.api_call("getBrowseListDates", collection)
 
     def getItem(identifier="b2k40qk4wc8h", collection="mlc"):
-        return Api.api_call("getItem", collection, identifier)
+        return Api.api_call("getItem", collection, identifier=identifier)
 
     def getResultsByCreator(search="mcquown", collection="mlc"):
-        return Api.api_call("getResultsByCreator", collection, search)
+        return Api.api_call("getResultsByCreator", collection, search=search)
 
 class Utils():
 
