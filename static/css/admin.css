@@ -1,1 +1,5 @@
 /* Add styles for overriding things in the admin. */
+
+.chooser__actions {
+    opacity: 100;
+}
