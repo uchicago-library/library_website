@@ -79,6 +79,10 @@ class CleanData():
             cleanup=CleanData.Ark.extract_noid
         )
 
+    def getResultsByDate(data):
+        # TODO: this is a stub
+        return data
+
 class URLs():
 
     class BaseURL():
@@ -159,6 +163,10 @@ class URLs():
             return { "collection" : collection,
                      "search" : search, }
 
+        def getResultsByDate(search="1971", collection="mlc"):
+            return { "collection" : collection,
+                     "search" : search, }
+
     class MakeURL():
 
         def make_api_string(collection, api_name, params, curl=True):
@@ -216,10 +224,16 @@ class URLs():
         params = URLs.QStrings.getResultsByCreator(search, collection)
         url = URLs.make_api_string(collection, "getResultsByCreator", params, curl)
         return url
+
+    def getResultsByDate(search="1971", collection="mlc", curl=True):
+        params = URLs.QStrings.getResultsByCreator(search, collection)
+        url = URLs.make_api_string(collection, "getResultsByDate", params, curl)
+        return url
+
     
 class Api():
 
-    def lookup(collection="mlc", identifier="b2k40qk4wc8h", search="mcquown"):
+    def lookup(collection="mlc", identifier="b2k40qk4wc8h", search=""):
         return {
             "getBrowseListContributors" : {
                 "url" : URLs.getBrowseListContributors(collection, curl=False),
@@ -250,6 +264,11 @@ class Api():
                 "url" : URLs.getResultsByCreator(search, collection, curl=False),
                 "params" : URLs.QStrings.getResultsByCreator(search, collection),
                 "cleanup" : CleanData.getResultsByCreator,
+            },
+            "getResultsByDate" : {
+                "url" : URLs.getResultsByDate(search, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByDate(search, collection),
+                "cleanup" : CleanData.getResultsByDate,
             },
         }
 
@@ -288,6 +307,10 @@ class Api():
 
     def getResultsByCreator(search="mcquown", collection="mlc"):
         return Api.api_call("getResultsByCreator", collection, search=search)
+
+    def getResultsByDate(search="1971", collection="mlc"):
+        return Api.api_call("getResultsByDate", collection, search=search)
+
 
 class Utils():
 
