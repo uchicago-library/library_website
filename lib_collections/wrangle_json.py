@@ -79,9 +79,25 @@ class CleanData():
             cleanup=CleanData.Ark.extract_noid
         )
 
-    def getResultsByDate(data):
-        # TODO: this is a stub
-        return data
+    getResultsByDate = getResultsByCreator
+    getResultsByKeyword = getResultsByCreator
+
+    # def getResultsByDate(data):
+    #     return CleanData.straight_up_list(
+    #         "resource",
+    #         data,
+    #         cleanup=CleanData.Ark.extract_noid
+    #     )
+    
+    def getResultsByIdentifier(data):
+        # TODO
+        raise Exception("matt hasn't implemented this yet")
+
+
+    # def getResultsByKeyword(data):
+    #     # TODO: stub
+    #     return data
+
 
 class URLs():
 
@@ -167,6 +183,14 @@ class URLs():
             return { "collection" : collection,
                      "search" : search, }
 
+        def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
+            # TODO
+            raise Exception("matt hasn't implemented this yet")
+
+        def getResultsByKeyword(search="andrade", collection="mlc"):
+            return { "collection" : collection,
+                     "search" : search, }
+
     class MakeURL():
 
         def make_api_string(collection, api_name, params, curl=True):
@@ -230,6 +254,15 @@ class URLs():
         url = URLs.make_api_string(collection, "getResultsByDate", params, curl)
         return url
 
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc", curl=True):
+        # TODO
+        raise Exception("matt hasn't implemented this yet")
+
+    def getResultsByKeyword(search="andrade", collection="mlc", curl=True):
+        params = URLs.QStrings.getResultsByKeyword(search, collection)
+        url = URLs.make_api_string(collection, "getResultsByKeyword", params, curl)
+        return url
+
     
 class Api():
 
@@ -270,6 +303,19 @@ class Api():
                 "params" : URLs.QStrings.getResultsByDate(search, collection),
                 "cleanup" : CleanData.getResultsByDate,
             },
+            "getResultsByIdentifier" : {
+                "url": "TODO",
+                "params": "TODO",
+                "cleanup": "TODO",
+                # "url" : URLs.getResultsByIdentifier(identifier, collection, curl=False),
+                # "params" : URLs.QStrings.getResultsByIdentifier(identifier, collection),
+                # "cleanup" : CleanData.getResultsByIdentifier,
+            },
+            "getResultsByKeyword" : {
+                "url" : URLs.getResultsByKeyword(search, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByKeyword(search, collection),
+                "cleanup" : CleanData.getResultsByKeyword,
+            },
         }
 
     class URLGet():
@@ -279,7 +325,10 @@ class Api():
             data = response.json()
             return func(data)
 
-        def api_call(endpoint, collection="mlc", identifier="b2k40qk4wc8h", search="mcquown"):
+        def api_call(endpoint,
+                     collection="mlc",
+                     identifier="b2k40qk4wc8h",
+                     search=""):
             lookup = Api.lookup(collection, identifier, search)[endpoint]
             params = lookup["params"]
             cleanup = lookup["cleanup"]
@@ -310,6 +359,13 @@ class Api():
 
     def getResultsByDate(search="1971", collection="mlc"):
         return Api.api_call("getResultsByDate", collection, search=search)
+
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
+        # TODO
+        raise Exception("matt hasn't implemented this yet")
+
+    def getResultsByKeyword(search="andrade", collection="mlc"):
+        return Api.api_call("getResultsByKeyword", collection, search=search)
 
 
 class Utils():
