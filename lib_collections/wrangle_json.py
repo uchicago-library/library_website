@@ -355,10 +355,14 @@ class Api():
         def api_call(endpoint,
                      collection="mlc",
                      identifier="b2k40qk4wc8h",
-                     search=""):
+                     search="",
+                     raw=False):
             lookup = Api.lookup(collection, identifier, search)[endpoint]
             params = lookup["params"]
-            cleanup = lookup["cleanup"]
+            if raw:
+                cleanup = lambda x : x
+            else:
+                cleanup = lookup["cleanup"]
             url = lookup["url"]
             data = Api.pull_from_url(url, cleanup, params)
             return data
@@ -404,7 +408,9 @@ class Api():
                            search=search,
                            raw=raw)
 
-    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc", raw=False):
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h",
+                               collection="mlc",
+                               raw=False):
         return Api.api_call("getResultsByIdentifier",
                             collection,
                             identifier=identifier,
@@ -426,7 +432,6 @@ class Api():
                             collection,
                             search=search,
                             raw=raw)
-
 
 class Utils():
 
