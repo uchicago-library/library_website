@@ -85,11 +85,19 @@ class CleanData():
     getResultsByLocation = getResultsByCreator
     
     def getResultsByIdentifier(data):
-        # TODO
-        raise Exception("matt hasn't implemented this yet")
-
-    
-
+        results = CleanData.downward_key_value(data)
+        def each_item(item):
+            full_ark = item["identifier"]
+            def clean_url(url):
+                return url.split("/")[-1]
+            cleaned = [ clean_url(u) for u in full_ark ]
+            if cleaned:
+                plucked = cleaned[0]
+            else:
+                plucked = []
+            item["identifier"] = plucked
+            return item
+        return [ each_item(r) for r in results ]
 
 class URLs():
 
@@ -176,8 +184,8 @@ class URLs():
                      "search" : search, }
 
         def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
-            # TODO
-            raise Exception("matt hasn't implemented this yet")
+            return { "collection" : collection,
+                     "identifier" : URLs.ark_base(identifier), }
 
         def getResultsByKeyword(search="andrade", collection="mlc"):
             return { "collection" : collection,
@@ -256,8 +264,9 @@ class URLs():
         return url
 
     def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc", curl=True):
-        # TODO
-        raise Exception("matt hasn't implemented this yet")
+        params = URLs.QStrings.getResultsByIdentifier(identifier, collection)
+        url = URLs.make_api_string(collection, "getResultsByIdentifier", params, curl)
+        return url
 
     def getResultsByKeyword(search="andrade", collection="mlc", curl=True):
         params = URLs.QStrings.getResultsByKeyword(search, collection)
@@ -314,12 +323,9 @@ class Api():
                 "cleanup" : CleanData.getResultsByDate,
             },
             "getResultsByIdentifier" : {
-                "url": "TODO",
-                "params": "TODO",
-                "cleanup": "TODO",
-                # "url" : URLs.getResultsByIdentifier(identifier, collection, curl=False),
-                # "params" : URLs.QStrings.getResultsByIdentifier(identifier, collection),
-                # "cleanup" : CleanData.getResultsByIdentifier,
+                "url" : URLs.getResultsByIdentifier(identifier, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByIdentifier(identifier, collection),
+                "cleanup" : CleanData.getResultsByIdentifier,
             },
             "getResultsByKeyword" : {
                 "url" : URLs.getResultsByKeyword(search, collection, curl=False),
@@ -381,8 +387,7 @@ class Api():
        return Api.api_call("getResultsByDate", collection, search=search)
 
     def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
-        # TODO
-        raise Exception("matt hasn't implemented this yet")
+        return Api.api_call("getResultsByIdentifier", collection, identifier=identifier)
 
     def getResultsByKeyword(search="andrade", collection="mlc"):
         return Api.api_call("getResultsByKeyword", collection, search=search)
@@ -422,31 +427,3 @@ class Utils():
         start = random.randrange(0, length)
         end = start + 10
         return Utils.gimme_all_noids(collection)[start:end]
-
-        
-
-# getBrowseListContributors = CleanData.getBrowseListContributors
-# getBrowseListLocations = CleanData.getBrowseListLocations
-# getBrowseListDates = CleanData.getBrowseListDates
-# getBrowseListLanguages = CleanData.getBrowseListLanguages
-# getItem = CleanData.getItem
-
-# getBrowseListContributors = URLs.getBrowseListContributors
-# getBrowseListLocations = URLs.getBrowseListLocations
-# getBrowseListDates = URLs.getBrowseListDates
-# getBrowseListLanguages = URLs.getBrowseListLanguages
-# getItem = URLs.getItem
-
-# getBrowseListContributors = URLs.QStrings.getBrowseListContributors
-# getBrowseListLocations = URLs.QStrings.getBrowseListLocations
-# getBrowseListDates = URLs.QStrings.getBrowseListDates
-# getBrowseListLanguages = URLs.QStrings.getBrowseListLanguages
-# getItem = URLs.QStrings.getItem
-
-getBrowseListContributors = Api.getBrowseListContributors
-getBrowseListLocations = Api.getBrowseListLocations
-getBrowseListDates = Api.getBrowseListDates
-getBrowseListLanguages = Api.getBrowseListLanguages
-getItem = Api.getItem
-getResultsByCreator = Api.getResultsByCreator
-
