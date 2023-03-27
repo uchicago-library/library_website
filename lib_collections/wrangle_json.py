@@ -103,6 +103,10 @@ class CleanData():
         # going to fold over this:
         # [('Primary', ['Spanish']), ('Subject', ['Yucatec Maya'])]
         # reducer function will append the next value if the key exists, otherwise add a new key
+
+        # probably also gonna need a function to split a list of
+        # dictionaries into those that contain "preflabel" and those
+        # that don't
         return CleanData.downward_key_value(data)
 
 class URLs():
