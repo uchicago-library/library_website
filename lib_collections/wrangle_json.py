@@ -81,22 +81,14 @@ class CleanData():
 
     getResultsByDate = getResultsByCreator
     getResultsByKeyword = getResultsByCreator
-
-    # def getResultsByDate(data):
-    #     return CleanData.straight_up_list(
-    #         "resource",
-    #         data,
-    #         cleanup=CleanData.Ark.extract_noid
-    #     )
+    getResultsByLanguage = getResultsByCreator
+    getResultsByLocation = getResultsByCreator
     
     def getResultsByIdentifier(data):
         # TODO
         raise Exception("matt hasn't implemented this yet")
 
-
-    # def getResultsByKeyword(data):
-    #     # TODO: stub
-    #     return data
+    
 
 
 class URLs():
@@ -191,6 +183,15 @@ class URLs():
             return { "collection" : collection,
                      "search" : search, }
 
+        def getResultsByLanguage(search="tzotzil", collection="mlc"):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getResultsByLocation(search="yucatan", collection="mlc"):
+            return { "collection" : collection,
+                     "search" : search, }
+
+
     class MakeURL():
 
         def make_api_string(collection, api_name, params, curl=True):
@@ -263,7 +264,16 @@ class URLs():
         url = URLs.make_api_string(collection, "getResultsByKeyword", params, curl)
         return url
 
-    
+    def getResultsByLanguage(search="tzotzil", collection="mlc", curl=True):
+        params = URLs.QStrings.getResultsByLanguage(search, collection)
+        url = URLs.make_api_string(collection, "getResultsByLanguage", params, curl)
+        return url
+
+    def getResultsByLocation(search="yucatan", collection="mlc", curl=True):
+        params = URLs.QStrings.getResultsByLocation(search, collection)
+        url = URLs.make_api_string(collection, "getResultsByLocation", params, curl)
+        return url
+
 class Api():
 
     def lookup(collection="mlc", identifier="b2k40qk4wc8h", search=""):
@@ -316,6 +326,16 @@ class Api():
                 "params" : URLs.QStrings.getResultsByKeyword(search, collection),
                 "cleanup" : CleanData.getResultsByKeyword,
             },
+            "getResultsByLanguage" : {
+                "url" : URLs.getResultsByLanguage(search, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByLanguage(search, collection),
+                "cleanup" : CleanData.getResultsByLanguage,
+            },
+            "getResultsByLocation" : {
+                "url" : URLs.getResultsByLocation(search, collection, curl=False),
+                "params" : URLs.QStrings.getResultsByLocation(search, collection),
+                "cleanup" : CleanData.getResultsByLocation,
+            },
         }
 
     class URLGet():
@@ -358,7 +378,7 @@ class Api():
         return Api.api_call("getResultsByCreator", collection, search=search)
 
     def getResultsByDate(search="1971", collection="mlc"):
-        return Api.api_call("getResultsByDate", collection, search=search)
+       return Api.api_call("getResultsByDate", collection, search=search)
 
     def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
         # TODO
@@ -366,6 +386,12 @@ class Api():
 
     def getResultsByKeyword(search="andrade", collection="mlc"):
         return Api.api_call("getResultsByKeyword", collection, search=search)
+
+    def getResultsByLanguage(search="tzotzil", collection="mlc"):
+        return Api.api_call("getResultsByLanguage", collection, search=search)
+
+    def getResultsByLocation(search="yucatan", collection="mlc"):
+        return Api.api_call("getResultsByLocation", collection, search=search)
 
 
 class Utils():
