@@ -92,7 +92,8 @@ class CleanData():
                 return url.split("/")[-1]
             cleaned = [ clean_url(u) for u in full_ark ]
             if cleaned:
-                plucked = cleaned[0]
+                # plucked = cleaned[0]
+                plucked = cleaned
             else:
                 plucked = []
             item["identifier"] = plucked
@@ -365,38 +366,66 @@ class Api():
     pull_from_url = URLGet.pull_from_url
     api_call = URLGet.api_call
 
-    def getBrowseListContributors(collection="mlc"):
-        return Api.api_call("getBrowseListContributors", collection)
+    def getBrowseListContributors(collection="mlc", raw=False):
+        return Api.api_call("getBrowseListContributors",
+                            collection,
+                            raw=raw)
 
-    def getBrowseListLocations(collection="mlc"):
-        return Api.api_call("getBrowseListLocations", collection)
+    def getBrowseListLocations(collection="mlc", raw=False):
+        return Api.api_call("getBrowseListLocations",
+                            collection,
+                            raw=raw)
 
-    def getBrowseListLanguages(collection="mlc"):
-        return Api.api_call("getBrowseListLanguages", collection)
+    def getBrowseListLanguages(collection="mlc", raw=False):
+        return Api.api_call("getBrowseListLanguages",
+                            collection,
+                            raw=raw)
 
-    def getBrowseListDates(collection="mlc"):
-        return Api.api_call("getBrowseListDates", collection)
+    def getBrowseListDates(collection="mlc", raw=False):
+        return Api.api_call("getBrowseListDates",
+                            collection,
+                            raw=raw)
 
-    def getItem(identifier="b2k40qk4wc8h", collection="mlc"):
-        return Api.api_call("getItem", collection, identifier=identifier)
+    def getItem(identifier="b2k40qk4wc8h", collection="mlc", raw=False):
+        return Api.api_call("getItem",
+                            collection,
+                            identifier=identifier,
+                            raw=raw)
 
-    def getResultsByCreator(search="mcquown", collection="mlc"):
-        return Api.api_call("getResultsByCreator", collection, search=search)
+    def getResultsByCreator(search="mcquown", collection="mlc", raw=False):
+        return Api.api_call("getResultsByCreator",
+                            collection,
+                            search=search,
+                            raw=raw)
 
-    def getResultsByDate(search="1971", collection="mlc"):
-       return Api.api_call("getResultsByDate", collection, search=search)
+    def getResultsByDate(search="1971", collection="mlc", raw=False):
+       return Api.api_call("getResultsByDate",
+                           collection,
+                           search=search,
+                           raw=raw)
 
-    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc"):
-        return Api.api_call("getResultsByIdentifier", collection, identifier=identifier)
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection="mlc", raw=False):
+        return Api.api_call("getResultsByIdentifier",
+                            collection,
+                            identifier=identifier,
+                            raw=raw)
 
-    def getResultsByKeyword(search="andrade", collection="mlc"):
-        return Api.api_call("getResultsByKeyword", collection, search=search)
+    def getResultsByKeyword(search="andrade", collection="mlc", raw=False):
+        return Api.api_call("getResultsByKeyword", collection,
+                            search=search,
+                            raw=raw)
 
-    def getResultsByLanguage(search="tzotzil", collection="mlc"):
-        return Api.api_call("getResultsByLanguage", collection, search=search)
+    def getResultsByLanguage(search="tzotzil", collection="mlc", raw=False):
+        return Api.api_call("getResultsByLanguage",
+                            collection,
+                            search=search,
+                            raw=raw)
 
-    def getResultsByLocation(search="yucatan", collection="mlc"):
-        return Api.api_call("getResultsByLocation", collection, search=search)
+    def getResultsByLocation(search="yucatan", collection="mlc", raw=False):
+        return Api.api_call("getResultsByLocation",
+                            collection,
+                            search=search,
+                            raw=raw)
 
 
 class Utils():
