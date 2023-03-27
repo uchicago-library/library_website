@@ -1,12 +1,12 @@
 {% load wagtailcore_tags %}
 
 {% if exhibits %}
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-  <h3>{% if exhibits.0.value.exhibit.web_exhibit is True %}Web {% endif %}Exhibit{% if contacts|length > 1 %}s{% endif %}</h3>
-  <div class="event-wrap">
-    {% for e in exhibits %}
-      {{ e }}
-    {% endfor %}
-  </div>
-  </div>
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+        <h2>{% if exhibits.0.value.exhibit.web_exhibit is True %}Web {% endif %}Exhibit{% if contacts|length > 1 %}s{% endif %}</h2>
+        <div class="event-wrap">
+            {% for e in exhibits %}
+                {{ e }}
+            {% endfor %}
+        </div>
+    </div>
 {% endif %}

@@ -243,11 +243,11 @@
                                 </div>
 
                                 {% if carousel_multi %}
-                                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
                                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                                         <span class="sr-only">Previous</span>
                                     </a>
-                                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
                                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                                         <span class="sr-only">Next</span>
                                     </a>
@@ -409,14 +409,14 @@
                                             {% endfor %}
                                         </div>
                                         {% if self.more_icons_link and self.more_icons_link_label %}
-                                            <p><a href="{{self.more_icons_link}}" class="btn btn-morelink" role="button">{{self.more_icons_link_label}}</a></p>
+                                            <p><a href="{{self.more_icons_link}}" class="btn btn-morelink">{{self.more_icons_link_label}}</a></p>
                                         {% endif %}
                                     </div>
                                 {% endif %}
 
                                 {% if self.has_find_spaces %}
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
-                                        <h3>Find Spaces</h3>
+                                        <h2>Find Spaces</h2>
                                         <div class="studymod col-xs-12 columns icon-widget">
                                             <div class="column">
                                                 <a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i>Quiet Study<span class="visually-hidden"> Spaces</span></a>
@@ -432,13 +432,13 @@
                                                 </div>
                                             {% endif %}
                                         </div>
-                                        <p><a href="{{all_spaces_link}}" class="btn btn-morelink" role="button" id="widget-spaces-view-all">View all {{self.friendly_name}} study spaces</a></p>
+                                        <p><a href="{{all_spaces_link}}" class="btn btn-morelink" id="widget-spaces-view-all">View all {{self.friendly_name}} study spaces</a></p>
                                     </div>
                                 {% endif %}
 
                                 {% if self.events_feed_url %}
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
-                                        <h3>Workshops &amp; Events</h3>
+                                        <h2>Workshops &amp; Events</h2>
                                         <div class="calledOnce">
                                             <!--<div class="jflatTimeline calledOnce">-->
                                             <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
@@ -446,7 +446,7 @@
                                                     <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
                                                     <span>Loading...</span>
                                                 </span>
-                                                <a class="btn btn-morelink" role="button" href="/about/news-events/events/" id="widget-workshops-and-events-view-all">View full calendar</a>
+                                                <a class="btn btn-morelink" href="/about/news-events/events/" id="widget-workshops-and-events-view-all">View full calendar</a>
                                             </div>
                                         </div>
                                     </div>
@@ -458,7 +458,7 @@
                                         <h3>Featured Collection</h3>
                                         <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
                                         <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
-                                        <a href="/collex/?view=collections" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                        <a href="/collex/?view=collections" class="btn btn-morelink">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
                                     </div>
                                 {% endif %}
 
@@ -496,7 +496,7 @@
 
                                 {% if libra %}
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                                        <h3>Print</h3>
+                                        <h2>Print</h2>
                                         <div class="libra-link-wrap">
                                             <p><a href="{% pageurl libra %}">{{libra}}</a></p>
                                         </div>
@@ -507,9 +507,9 @@
                                     {% list_contacts_in_sidebar contacts 'Media Contact' %}
                                 {% endif %}
                                 {% if self.category %}
-                                    <h3>
+                                    <h2>
                                         Subscribe to {{ self.category }} <br>
-                                    </h3>
+                                    </h2>
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                                         <a href="/rss/{{ self.slug }}/">
                                             <i class="fa fa-rss-square" aria-hidden="true"></i>
@@ -517,9 +517,9 @@
                                         </a>
                                     </div>
                                 {% elif self.news_feed_api %}
-                                    <h3>
+                                    <h2>
                                         Subscribe to all Library news <br>
-                                    </h3>
+                                    </h2>
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                                         <a href="/rss/news/">
                                             <i class="fa fa-rss-square" aria-hidden="true"></i>

@@ -33,7 +33,7 @@
                 {% endfor %}
 
                 {% if self.primary_online_access_link_url and self.primary_online_access_link_label and show_external_link %}
-                    <a role="button" class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</a>
+                    <a class="btn btn-morecoll" href="{{ self.primary_online_access_link_url }}">{{ self.primary_online_access_link_label }}</a>
                 {% endif %}
 
                 {% if self.access_instructions or supplementary_access_links %}
