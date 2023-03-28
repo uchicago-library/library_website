@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import reduce
 import json
 import requests
 import urllib
@@ -11,7 +12,7 @@ def open_json(filepath):
     f = open(filepath, "r")
     contents = f.read()
     f.close()
-    return json.loads(contents)
+    return json.loads(contents)    
 
 class CleanData():
 
@@ -38,6 +39,7 @@ class CleanData():
                 alist = [ each_pair(k,v)
                           for (k,v) in dct.items()
                           if nonempty(v) ]
+                # return dict(alist)
                 return OrderedDict(alist)
             return [ each_binding(b)
                      for b in bs
@@ -98,16 +100,47 @@ class CleanData():
             return item
         return [ each_item(r) for r in results ]
 
-    def getSeries(data):
-        # TODO for the next time:
-        # going to fold over this:
-        # [('Primary', ['Spanish']), ('Subject', ['Yucatec Maya'])]
-        # reducer function will append the next value if the key exists, otherwise add a new key
+    class Language():
 
-        # probably also gonna need a function to split a list of
-        # dictionaries into those that contain "preflabel" and those
-        # that don't
-        return CleanData.downward_key_value(data)
+        def contains_key(key):
+            def partial(dct):
+                return key in dct.keys()
+            return partial
+
+        def split_on(pred, lst):
+            left = [ y for y in lst if pred(y) ]
+            right = [ z for z in lst if not pred(z) ]
+            return (left, right)
+
+        # not using this yet, but I suspect we will need it
+        def alternative_union(dct1, dct2):
+            if dct1 == {}:
+                return dct2
+            elif dct2 == {}:
+                return dct1
+            else:
+                left_half = { k:v
+                              for (k,v) in dct1.items()
+                              if k not in dct2 }
+                intersection = { u:(dct1[u] + dct2[u])
+                                 for u in dct1
+                                 if u in dct2 }
+                right_half = { k:v
+                               for (k,v) in dct2.items()
+                               if k not in dct1 }
+                return OrderedDict({**left_half, **intersection, **right_half})
+
+    def getSeries(data):
+        contains_key = CleanData.contains_key
+        split_on = CleanData.Language.split_on
+        cleaned = CleanData.downward_key_value(data)
+        (prefs, entry) = split_on(contains_key("prefLabel"), cleaned)
+        def clean_prefs(lst):
+            cleaned = [ (d['languageRole'][0], d['prefLabel'])
+                        for d in lst ]
+            return dict(cleaned)
+        language = { "languageInfo" : clean_prefs(prefs) }
+        return OrderedDict({**entry[0], **language})
 
 class URLs():
 
