@@ -39,7 +39,6 @@ class CleanData():
                 alist = [ each_pair(k,v)
                           for (k,v) in dct.items()
                           if nonempty(v) ]
-                # return dict(alist)
                 return OrderedDict(alist)
             return [ each_binding(b)
                      for b in bs
