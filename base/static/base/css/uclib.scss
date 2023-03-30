@@ -2033,14 +2033,19 @@ body.staffpublicpage {
     padding: 1em;
     margin-bottom: 1em;
   }
-  h2 {
+  h2, section > fieldset:only-child > legend {
     color: $darkred;
     margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    font-weight: 600;
+    line-height: 1.4em;
+    border: 0;
   }
   label {
     padding-bottom: 0;
   }
-  fieldset {
+  section > fieldset:not(only-child) {
     & + & {
       margin-top: 1em;
     }

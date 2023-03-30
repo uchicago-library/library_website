@@ -236,6 +236,19 @@ const buildField = (elm, state, handleChange) => {
   return '[Unknown Field Type]'
 }
 
+const buildGroup = (elm, state, handleChange) => {
+  const len = elm.group.elements.length
+  const colNum = 12 / len
+  const divClassName = `col-sm-${String(colNum)}`
+  return (
+    <div className="form-group row">
+      {elm.group.elements.map(e => (
+        <div className={divClassName}>{buildField(e, state, handleChange)}</div>
+      ))}
+    </div>
+  )
+}
+
 const FormElements = props => {
   const { elements, handleChange, state } = props
   return elements.map(elm => {
@@ -243,23 +256,16 @@ const FormElements = props => {
       return (
         <fieldset>
           {getLegend(elm.fieldset)}
-          {elm.fieldset.elements.map(e => buildField(e, state, handleChange))}
+          {elm.fieldset.elements.map(e =>
+            Object.keys(e).includes('group')
+              ? buildGroup(e, state, handleChange)
+              : buildField(e, state, handleChange),
+          )}
         </fieldset>
       )
     }
     if (Object.keys(elm).includes('group')) {
-      const len = elm.group.elements.length
-      const colNum = 12 / len
-      const divClassName = `col-sm-${String(colNum)}`
-      return (
-        <div className="form-group row">
-          {elm.group.elements.map(e => (
-            <div className={divClassName}>
-              {buildField(e, state, handleChange)}
-            </div>
-          ))}
-        </div>
-      )
+      return buildGroup(elm, state, handleChange)
     }
     return buildField(elm, state, handleChange)
   })
@@ -283,7 +289,7 @@ const Section = props => {
   }
   return (
     <section>
-      <SectionTitle title={title} />
+      {title ? <SectionTitle title={title} /> : ''}
       {description ? <p>{description}</p> : ''}
       <FormElements
         elements={elements}
