@@ -445,7 +445,7 @@
           : '';
       var drop =
           '<div class="btn-group bootstrap-select' + showTick + inputGroup + '">' +
-          '<button type="button" class="' + this.options.styleBase + ' dropdown-toggle" data-toggle="dropdown"' + autofocus + '>' +
+          '<button id="dp1" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Limit the library catalog search" class="' + this.options.styleBase + ' dropdown-toggle" data-toggle="dropdown"' + autofocus + '>' +
           '<span class="filter-option pull-left"></span>&nbsp;' +
           '<span class="bs-caret">' +
           this.options.template.caret +
@@ -455,7 +455,7 @@
           header +
           searchbox +
           actionsbox +
-          '<ul class="dropdown-menu inner" role="menu">' +
+          '<ul class="dropdown-menu inner" role="menu" aria-labelledby="dp1">' +
           '</ul>' +
           donebutton +
           '</div>' +
