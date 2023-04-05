@@ -1,15 +1,16 @@
-<div class="tabs col-xs-12 nopadding main-search" role="search"> <!-- Search Tabs Wrapper -->
+<h2 class="sr-only" id="tablist-1">Search</h2>
+<div class="tabs col-xs-12 nopadding main-search" role="tablist" aria-labelledby="tablist-1"> <!-- Search Tabs Wrapper -->
     <nav class="transformer-tabs">
         <ul>
-            <li><a class="active" href="#tab-1" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-1">Catalogs</a></li>
-            <li><a href="#tab-2" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-2"><span class="hidden-xs">Articles, Journals &amp; </span>Databases</a></li>
-            <li><a href="#tab-3" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-3">Website<span class="hidden-xs"> Search</span></a></li>
+            <li><a id="t-1" class="active" href="#tab-1" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-1" role="tab" aria-selected="true" aria-controls="tab-1" tabindex="0">Catalogs</a></li>
+            <li><a id="t-2" href="#tab-2" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-2" role="tab" aria-selected="false" aria-controls="tab-2" tabindex="-1"><span class="hidden-xs">Articles, Journals &amp; </span>Databases</a></li>
+            <li><a id="t-3" href="#tab-3" data-ga-category="search-widget" data-ga-action="click" data-ga-label="tab-3" role="tab" aria-selected="false" aria-controls="tab-3" tabindex="-1">Website<span class="hidden-xs"> Search</span></a></li>
         </ul>
     </nav>
 
     <!-- TAB 1 - Catalog Search -->
-    <div class="col-xs-12 active" id="tab-1">
-        <h1 class="searchbox-header">Library Catalog</h1>
+    <div class="col-xs-12 active" id="tab-1" role="tabpanel" tabindex="0" aria-labelledby="t-1">
+        <h3 class="searchbox-header">Library Catalog</h3>
         <form action="/switchboard/" id="search_widget_catalog_search" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Catalogs &gt; Search">
             <div class="col-xs-9 col-sm-10 nopadding"> <!-- Text Search Field -->
                 <div class="input-group"> <!-- Input Group -->
@@ -58,10 +59,10 @@
     </div> <!-- // TAB 1 Catalog Search -->
 
     <!-- TAB 2 - Article Search -->
-    <div class="col-xs-12" id="tab-2">
+    <div class="col-xs-12" id="tab-2" role="tabpanel" tabindex="0" aria-labelledby="t-2">
         <form method="post" action="/switchboard/" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
             <div data-radio-button-content-panel="articles-plus">
-                <h1 class="searchbox-header">Articles Plus</h1>
+                <h3 class="searchbox-header">Articles Plus</h3>
                 <div class="col-xs-9 col-sm-10 nopadding">
                     <input type="text" name="ebscohostsearchtext" placeholder="evolutionary biology" aria-label="Search articles" id="ebscohostsearchtext" class="form-control" onchange="propagate(this)">
                     <input type="hidden" name="which-form" value="articles">
@@ -82,7 +83,7 @@
         <!-- TAB 2 - Ejournals Search -->
         <div data-radio-button-content-panel="ejournals">
             <form action="/switchboard/" accept-charset="UTF-8" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
-                <h1 class="searchbox-header">Ejournals</h1>
+                <h3 class="searchbox-header">Ejournals</h3>
                 <div class="col-xs-9 col-sm-10 nopadding">
                     <input type="text" name="param_pattern_value" placeholder="journal of evolutionary biology" aria-label="Search journals" class="form-control" id="search_form3" onchange="propagate(this)">
                     <input type="hidden" name="which-form" value="journals">
@@ -101,7 +102,7 @@
 
         <!-- TAB 3 - Database Finder -->
         <div data-radio-button-content-panel="database-finder">
-            <h1 class="searchbox-header">Database Finder</h1>
+            <h3 class="searchbox-header">Database Finder</h3>
             <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Articles, Journals &amp; Databases &gt; Search">
                 <div class="col-xs-9 col-sm-10 nopadding">
                     <input type="text" name="q" placeholder="evolutionary biology database" aria-label="Search databases" class="form-control" id="search_form4" onchange="propagate(this)">
@@ -140,8 +141,8 @@
     </div> <!-- // TAB 2 - Article Search -->
 
     <!-- TAB 3 - Website Search -->
-    <div class="col-xs-12" id="tab-3">
-        <h1 class="searchbox-header">Website Search</h1>
+    <div class="col-xs-12" id="tab-3" role="tabpanel" tabindex="0" aria-labelledby="t-3">
+        <h3 class="searchbox-header">Website Search</h3>
         <form action="/switchboard/" method="post" data-ga-category="search-widget" data-ga-action="submit" data-ga-label="Library Website &gt; Search">
             <div class="col-xs-9 col-sm-10 nopadding">
                 <input name="query" type="text" placeholder="lockers" aria-label="Search the Library website" class="form-control" id="search_form5" onchange="propagate(this)">
