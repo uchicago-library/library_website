@@ -3,10 +3,15 @@ var Tabs = {
   init: function() {
     this.bindUIfunctions();
     this.pageLoadCorrectTab();
+    this.firstTab = this.tabPrefix + "1";
+    this.lastTab = this.tabPrefix + "3";
   },
 
-  bindUIfunctions: function() {
+  index: 1,
 
+  tabPrefix: "#tab-",
+
+  bindUIfunctions: function() {
     // Delegation
     $(document)
       .on("click", ".transformer-tabs a[href^='#']:not('.active')", function(event) {
@@ -20,17 +25,68 @@ var Tabs = {
       .on("click", "#web-search a", function(event) {
         Tabs.changeTab(this.hash);
         event.preventDefault();
+      })
+      .keydown(function(event) {
+        switch (event.key) {
+          case 'ArrowRight':
+            Tabs.setSelectedToNextTab();
+            break;
+
+          case 'ArrowLeft':
+            Tabs.setSelectedToPrevTab();
+            break;
+
+          case "Home":
+            Tabs.changeTab(Tabs.firstTab);
+            break;
+
+          case "End":
+            Tabs.changeTab(Tabs.lastTab);
+            break;
+
+          default:
+            break;
+        }
       });
 
+  },
+
+  setSelectedToNextTab() {
+    var hash = this.tabPrefix + String(this.index);
+    if (hash === this.lastTab) {
+      this.index = 1;
+      this.changeTab(this.firstTab);
+    } else {
+      this.index += 1;
+      this.changeTab(this.tabPrefix + String(this.index));
+    }
+  },
+
+  setSelectedToPrevTab() {
+    var hash = this.tabPrefix + String(this.index);
+    if (hash === this.firstTab) {
+      this.index = 3;
+      this.changeTab(this.lastTab);
+    } else {
+      this.index -= 1;
+      this.changeTab(this.tabPrefix + String(this.index));
+    }
   },
 
   changeTab: function(hash) {
     if (hash) {
         var anchor = $("[href=" + hash + "]");
         var div = $(hash);
+        var anchor_siblings = anchor.parent().siblings().find("a");
 
         // activate correct anchor (visually)
-        anchor.addClass("active").parent().siblings().find("a").removeClass("active");
+        anchor.addClass("active");
+        anchor.attr("aria-selected", "true");
+        anchor.focus()
+        //anchor.removeAttr("tabindex");
+        anchor_siblings.removeClass("active");
+        anchor_siblings.attr("aria-selected", "false");
+        anchor_siblings.attr("tabindex", "-1");
 
         // activate correct div (visually)
         div.addClass("active").siblings().removeClass("active");
