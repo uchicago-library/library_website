@@ -95,6 +95,10 @@ class CleanData():
             def clean_url(url):
                 return url.split("/")[-1]
             cleaned = [ clean_url(u) for u in full_ark ]
+            if cleaned:
+                plucked = cleaned[0]
+            else:
+                plucked = []
             item["identifier"] = plucked
             return item
         return [ each_item(r) for r in results ]
