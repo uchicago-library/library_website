@@ -160,9 +160,10 @@ class URLs():
             ML_HOST = "http://marklogic.lib.uchicago.edu"
             ML_PORT = 8031
             ML_PATH = "mainQuery.xqy?query="
+            ML_GROUP = "dma"
 
             def assemble_url_prefix_full(host,
-                                         collection,
+                                         collection_group,
                                          api_name, 
                                          port,
                                          path):
@@ -171,17 +172,17 @@ class URLs():
                     ":",
                     str(port),
                     "/",
-                    collection,
+                    collection_group,
                     "/",
                     path,
                     api_name,
                 ]
                 return "".join(parts)
 
-            def assemble_url_prefix(collection, api_name):
+            def assemble_url_prefix(api_name):
                 return URLs.BaseURL.MarkLogic.assemble_url_prefix_full(
                     URLs.BaseURL.MarkLogic.ML_HOST,
-                    collection,
+                    URLs.BaseURL.MarkLogic.ML_GROUP,
                     api_name,
                     URLs.BaseURL.MarkLogic.ML_PORT,
                     URLs.BaseURL.MarkLogic.ML_PATH
@@ -252,7 +253,6 @@ class URLs():
                      "search" : search, }
 
         def getSeries(identifier="b20715n2p17r", collection=DEFAULT):
-            print("QStrings: ", identifier)
             return { "collection" : collection,
                      "identifier" : URLs.ark_base(identifier), }
 
@@ -270,7 +270,7 @@ class URLs():
                 query_string = "&" + serialize(params)
             else:
                 query_string = ""
-            url_prefix = URLs.marklogic_base(collection, api_name)
+            url_prefix = URLs.marklogic_base(api_name)
             return url_prefix + query_string
 
     make_api_string = MakeURL.make_api_string
@@ -343,9 +343,7 @@ class URLs():
         return url
 
     def getSeries(identifier="b20715n2p17r", collection=DEFAULT, curl=True):
-        print("URLs identifier: ", identifier)
         params = URLs.QStrings.getSeries(identifier=identifier, collection=collection)
-        print("URLS params: ", params)
         url = URLs.make_api_string(collection, "getSeries", params, curl)
         return url
 
@@ -432,7 +430,6 @@ class Api():
     class URLGet():
 
         def pull_from_url(url, func, params):
-            print("URLGet params: ", params)
             response = requests.get(url, params)
             data = response.json()
             return func(data)
@@ -442,7 +439,6 @@ class Api():
                      collection=DEFAULT,
                      search="",
                      raw=False):
-            print("api_call identifier: ", identifier)
             lookup = Api.lookup(collection, identifier, search)[endpoint]
             params = lookup["params"]
             if raw:
@@ -523,7 +519,6 @@ class Api():
     def getSeries(identifier="b20715n2p17r",
                   collection=DEFAULT,
                   raw=False):
-        print("Api identifier: ", identifier)
         return Api.api_call("getSeries",
                             collection=collection,
                             identifier=identifier,
