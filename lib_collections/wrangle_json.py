@@ -143,13 +143,13 @@ class CleanData():
         split_on = CleanData.Language.split_on
         cleaned = CleanData.downward_key_value(data)
         (prefs, entry) = split_on(contains_key("prefLabel"), cleaned)
-        # def clean_prefs(lst):
-        #     cleaned = [ (d['languageRole'][0], d['prefLabel'])
-        #                 for d in lst ]
-        #     return dict(cleaned)
-        # language = { "languageInfo" : clean_prefs(prefs) }
-        # return OrderedDict({**entry[0], **language})
-        return prefs
+        def clean_prefs(lst):
+            cleaned = [ (d['languageRole'][0], d['prefLabel'])
+                        for d in lst ]
+            return dict(cleaned)
+        language = { "languageInfo" : clean_prefs(prefs) }
+        return OrderedDict({**entry[0], **language})
+        # return prefs
 
 class URLs():
 
@@ -159,7 +159,7 @@ class URLs():
 
             ML_HOST = "http://marklogic.lib.uchicago.edu"
             ML_PORT = 8031
-            ML_PATH = "mainQuery.xqy?query="
+            ML_PATH = "main.xqy?query="
             ML_GROUP = "dma"
 
             def assemble_url_prefix_full(host,
@@ -350,77 +350,77 @@ class URLs():
 
 class Api():
 
-    def lookup(collection=DEFAULT, identifier="b2k40qk4wc8h", search=""):
+    def lookup(collection=DEFAULT, identifier="b2k40qk4wc8h", search="", curl=False):
         return {
 
             "getBrowseListContributors" : {
-                "url" : URLs.getBrowseListContributors(collection, curl=False),
+                "url" : URLs.getBrowseListContributors(collection, curl=curl),
                 "params" : URLs.QStrings.getBrowseListContributors(collection),
                 "cleanup" : CleanData.getBrowseListContributors,
             },
 
             "getBrowseListLocations" : {
-                "url" : URLs.getBrowseListLocations(collection, curl=False),
+                "url" : URLs.getBrowseListLocations(collection, curl=curl),
                 "params" : URLs.QStrings.getBrowseListLocations(collection),
                 "cleanup" : CleanData.getBrowseListLocations,
             },
 
             "getBrowseListLanguages" : {
-                "url" : URLs.getBrowseListLanguages(collection, curl=False),
+                "url" : URLs.getBrowseListLanguages(collection, curl=curl),
                 "params" : URLs.QStrings.getBrowseListLanguages(collection),
                 "cleanup" : CleanData.getBrowseListLanguages,
             },
 
             "getBrowseListDates" : {
-                "url" : URLs.getBrowseListDates(collection, curl=False),
+                "url" : URLs.getBrowseListDates(collection, curl=curl),
                 "params" : URLs.QStrings.getBrowseListDates(collection),
                 "cleanup" : CleanData.getBrowseListDates,
             },
 
             "getItem" : {
-                "url" : URLs.getItem(identifier, collection, curl=False),
+                "url" : URLs.getItem(identifier, collection, curl=curl),
                 "params" : URLs.QStrings.getItem(identifier, collection),
                 "cleanup" : CleanData.getItem,
             },
 
             "getResultsByCreator" : {
-                "url" : URLs.getResultsByCreator(search, collection, curl=False),
+                "url" : URLs.getResultsByCreator(search, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByCreator(search, collection),
                 "cleanup" : CleanData.getResultsByCreator,
             },
 
             "getResultsByDate" : {
-                "url" : URLs.getResultsByDate(search, collection, curl=False),
+                "url" : URLs.getResultsByDate(search, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByDate(search, collection),
                 "cleanup" : CleanData.getResultsByDate,
             },
 
             "getResultsByIdentifier" : {
-                "url" : URLs.getResultsByIdentifier(identifier, collection, curl=False),
+                "url" : URLs.getResultsByIdentifier(identifier, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByIdentifier(identifier, collection),
                 "cleanup" : CleanData.getResultsByIdentifier,
             },
 
             "getResultsByKeyword" : {
-                "url" : URLs.getResultsByKeyword(search, collection, curl=False),
+                "url" : URLs.getResultsByKeyword(search, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByKeyword(search, collection),
                 "cleanup" : CleanData.getResultsByKeyword,
             },
 
             "getResultsByLanguage" : {
-                "url" : URLs.getResultsByLanguage(search, collection, curl=False),
+                "url" : URLs.getResultsByLanguage(search, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByLanguage(search, collection),
                 "cleanup" : CleanData.getResultsByLanguage,
             },
 
             "getResultsByLocation" : {
-                "url" : URLs.getResultsByLocation(search, collection, curl=False),
+                "url" : URLs.getResultsByLocation(search, collection, curl=curl),
                 "params" : URLs.QStrings.getResultsByLocation(search, collection),
                 "cleanup" : CleanData.getResultsByLocation,
             },
 
             "getSeries" : {
-                "url" : URLs.getSeries(identifier, collection, curl=False),
+                "url" : URLs.getSeries(identifier, collection, curl=curl),
                 "params" : URLs.QStrings.getSeries(identifier, collection),
                 "cleanup" : CleanData.getSeries,
             },
@@ -438,8 +438,9 @@ class Api():
                      identifier="",
                      collection=DEFAULT,
                      search="",
-                     raw=False):
-            lookup = Api.lookup(collection, identifier, search)[endpoint]
+                     raw=False,
+                     curl=False):
+            lookup = Api.lookup(collection, identifier, search, curl)[endpoint]
             params = lookup["params"]
             if raw:
                 cleanup = lambda x : x
@@ -522,7 +523,8 @@ class Api():
         return Api.api_call("getSeries",
                             collection=collection,
                             identifier=identifier,
-                            raw=raw)
+                            raw=raw) 
+
 
 class Utils():
 
@@ -553,3 +555,6 @@ class Utils():
         end = start + 10
         return Utils.gimme_all_noids(collection)[start:end]
 
+
+def preview(x, amount=1500):
+    print(json.dumps(x, indent=4)[:amount])
