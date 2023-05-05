@@ -1,14 +1,23 @@
+import os
 import json
 import simplejson
 import re
 
 import requests
-from library_website.settings import (
-    MARKLOGIC_LDR_PASSWORD,
-    MARKLOGIC_LDR_USER,
-    MARKLOGIC_LDR_URL,
-    SPARQL_ROOT
-)
+
+try:
+    from library_website.settings import (
+        MARKLOGIC_LDR_PASSWORD,
+        MARKLOGIC_LDR_USER,
+        MARKLOGIC_LDR_URL,
+        SPARQL_ROOT
+    )
+except (ImportError):
+    MARKLOGIC_LDR_PASSWORD = os.environ['MARKLOGIC_LDR_PASSWORD']
+    MARKLOGIC_LDR_USER = os.environ['MARKLOGIC_LDR_USER']
+    MARKLOGIC_LDR_URL = os.environ['MARKLOGIC_LDR_URL']
+    SPARQL_ROOT = os.environ['SPARQL_ROOT']
+
 from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
 

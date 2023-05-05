@@ -228,27 +228,26 @@ class TestUsersAndServingLivePages(TestCase):
         page will return a 301 and some custom views return
         a 302. Nothing should return a 404.
         """
-        if 'TRAVIS' not in os.environ:
-            site = Site.objects.filter(site_name='Public')[0]
-            user = AnonymousUser()
-            user.client = Client()
-            pages = site.root_page.get_descendants().live()
-            possible = set([200, 301, 302])
+        site = Site.objects.filter(site_name='Public')[0]
+        user = AnonymousUser()
+        user.client = Client()
+        pages = site.root_page.get_descendants().live()
+        possible = set([200, 301, 302])
 
-            for page in pages:
-                try:
-                    response = user.client.get(
-                        page.url, HTTP_HOST=site.hostname
-                    )
-                    self.assertEqual(
-                        response.status_code in possible,
-                        True,
-                        msg=page.url + ' returned a ' +
-                        str(response.status_code)
-                    )
-                except:
-                    print(page.relative_url(site) + ' has a problem')
-                    raise
+        for page in pages:
+            try:
+                response = user.client.get(
+                    page.url, HTTP_HOST=site.hostname
+                )
+                self.assertEqual(
+                    response.status_code in possible,
+                    True,
+                    msg=page.url + ' returned a ' +
+                    str(response.status_code)
+                )
+            except:
+                print(page.relative_url(site) + ' has a problem')
+                raise
 
     # def test_loop_page_with_anonymous_user(self):
     #    """
