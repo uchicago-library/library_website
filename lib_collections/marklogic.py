@@ -13,6 +13,7 @@ from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
 import urllib
 from collections import OrderedDict
+from base.result import Result
 
 
 def sp_query(manifid: str) -> str:
@@ -321,13 +322,6 @@ DEFAULT = "mlc"
 DEFGRP = "dma"
 
 
-# def open_json(filepath):
-#     f = open(filepath, "r")
-#     contents = f.read()
-#     f.close()
-#     return json.loads(contents)
-
-
 class CleanData():
 
     def bindings(sparql):
@@ -339,25 +333,30 @@ class CleanData():
             bs = CleanData.bindings(data)
 
             def each_pair(var):
-                return (var[keyField]["value"], var[valField]["value"])
-            return OrderedDict([ each_pair(pred) for pred in bs ])
+                return (var[keyField]["value"],
+                        var[valField]["value"])
+            return OrderedDict([each_pair(pred) for pred in bs])
 
         def downward_key_value(data):
             bs = CleanData.bindings(data)
-            def each_pair(k,v):
+
+            def each_pair(k, v):
                 return (k, v["value"].split("|"))
+
             def nonempty(data):
                 v = data["value"]
                 unavailable = '(:unav)'
                 return v and v != unavailable
+
             def each_binding(dct):
-                alist = [ each_pair(k,v)
-                          for (k,v) in dct.items()
-                          if nonempty(v) ]
+                alist = [each_pair(k, v)
+                         for (k, v) in dct.items()
+                         if nonempty(v)]
                 return OrderedDict(alist)
-            return [ each_binding(b)
-                     for b in bs
-                     if each_binding(b) ]
+
+            return [each_binding(b)
+                    for b in bs
+                    if each_binding(b)]
 
     adjacent_key_value = KeyValue.adjacent_key_value
 
@@ -377,9 +376,9 @@ class CleanData():
 
     class StraightUpList():
 
-        def straight_up_list(fieldName, data, cleanup=lambda x : x):
+        def straight_up_list(fieldName, data, cleanup=lambda x: x):
             bs = CleanData.bindings(data)
-            return [ cleanup(b[fieldName]["value"]) for b in bs ]
+            return [cleanup(b[fieldName]["value"]) for b in bs]
 
     straight_up_list = StraightUpList.straight_up_list
 
@@ -402,21 +401,23 @@ class CleanData():
     getResultsByKeyword = getResultsByCreator
     getResultsByLanguage = getResultsByCreator
     getResultsByLocation = getResultsByCreator
-    
+
     def getResultsByIdentifier(data):
         results = CleanData.downward_key_value(data)
+
         def each_item(item):
             full_ark = item["identifier"]
+
             def clean_url(url):
                 return url.split("/")[-1]
-            cleaned = [ clean_url(u) for u in full_ark ]
+            cleaned = [clean_url(u) for u in full_ark]
             if cleaned:
                 plucked = cleaned[0]
             else:
                 plucked = []
             item["identifier"] = plucked
             return item
-        return [ each_item(r) for r in results ]
+        return [each_item(r) for r in results]
 
     class Language():
 
