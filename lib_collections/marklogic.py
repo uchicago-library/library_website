@@ -1,6 +1,7 @@
 import json
 import simplejson
 import re
+import random
 
 import requests
 from library_website.settings import (
@@ -798,9 +799,9 @@ class Api():
 
     def getResultsByDate(search="1971", collection=DEFAULT, raw=False):
         return Api.api_call("getResultsByDate",
-                           collection=collection,
-                           search=search,
-                           raw=raw)
+                            collection=collection,
+                            search=search,
+                            raw=raw)
 
     def getResultsByIdentifier(identifier="b2k40qk4wc8h",
                                collection=DEFAULT,
@@ -834,7 +835,7 @@ class Api():
         return Api.api_call("getSeries",
                             collection=collection,
                             identifier=identifier,
-                            raw=raw) 
+                            raw=raw)
 
 
 class Utils():
@@ -853,11 +854,13 @@ class Utils():
             path,
         ]
         base_url = "".join(parts)
+
         def cleanup(data):
             bs = CleanData.bindings(data)
+
             def each_url(url):
                 return url.split("/")[-1]
-            return [ each_url(x["identifier"]["value"]) for x in bs ]
+            return [each_url(x["identifier"]["value"]) for x in bs]
         return Api.URLGet.pull_from_url(base_url, cleanup, {})
 
     def gimme_some_noids(collection=DEFAULT):

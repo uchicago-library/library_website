@@ -810,6 +810,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    @route(r'^series/(?P<noid>\w+)/$')
+    def series(self, request, *args, **kwargs):
+        template = "lib_collections/collection_series_page.html"
+        context = {}
+        return TemplateResponse(request, template, context)
+
+
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
