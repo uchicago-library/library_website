@@ -838,6 +838,26 @@ class Api():
                             raw=raw)
 
 
+class Validation():
+
+    def injection_safe(id):
+        """
+        Check that URL route ends in a well-formed NOID.  This is mostly
+        just a simple safeguard against possible SparQL injection
+        attacks.
+
+        Args:
+            Candidate NOID
+
+        Returns:
+            Boolean
+
+        """
+        length_ok = len(id) >= 1 and len(id) <= 30
+        alphanum = id.isalnum()
+        return length_ok and alphanum
+
+
 class Utils():
 
     def gimme_all_noids(collection=DEFAULT):
@@ -872,3 +892,5 @@ class Utils():
 
 def preview(x, amount=1500):
     print(json.dumps(x, indent=4)[:amount])
+
+
