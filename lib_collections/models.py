@@ -30,7 +30,7 @@ from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-from .marklogic import get_record_for_display, get_record_no_parsing
+from .marklogic import get_record_for_display, get_record_no_parsing, Validation
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
@@ -39,6 +39,7 @@ DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
 DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
 
+injection_safe = Validation.injection_safe
 
 def get_current_exhibits():
     """
@@ -812,8 +813,176 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     @route(r'^series/(?P<noid>\w+)/$')
     def series(self, request, *args, **kwargs):
+        """
+        Route for digital collection object page.
+        """
         template = "lib_collections/collection_series_page.html"
-        context = {}
+
+        # list of metadata fields from Mark Logic to display in object page
+        field_names = self.metadata_field_names()
+
+        # object NOID
+        noid = kwargs["noid"]
+
+        # gather information for sidebar browse links
+        sidebar_browse_types = self.build_browse_types()
+
+        # query Mark Logic for object metadata
+        if injection_safe(noid):
+            # TODO: replace this with new Mark Logic API code
+            marklogic = get_record_for_display(
+                noid,
+                field_names,
+            )
+        else:
+            raise Http404
+
+        def truncate_crumb(crumb, length):
+            """
+            Truncate breadcrumb trail link text at a given number of
+            characters.
+
+            Args:
+                Link text, Max link text length
+
+            Returns:
+                New link text
+            """
+            if len(crumb) >= length:
+                return crumb[:length].rstrip() + ' ...'
+            else:
+                return crumb
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        # adjust value of final breadcrumb to show object title if possible
+        if not marklogic:
+            object_title = 'Object'
+            final_crumb = object_title
+        elif 'Title' in marklogic.keys():
+            object_title = marklogic['Title'].split(',')[0]
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
+        elif 'Description' in marklogic.keys():
+            object_title = marklogic['Description'].split(',')[0]
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
+        else:
+            object_title = 'Object'
+            final_crumb = object_title
+
+        def default(thunk, defval):
+            """
+            Abstraction over the repeated pattern of catching a KeyError
+            exception and returning a default value.
+
+            Args:
+                Dictionary lookup
+
+            Returns:
+                Value corresponding to the key (or the default in
+                case of a key error)
+            """
+            try:
+                return thunk()
+            except (KeyError, TypeError):
+                return defval
+
+        def callno_to_pi(callno):
+            return '-'.join(
+                callno.replace(':', ' ').replace('.', ' ').upper().split()
+            )
+
+        # get link to physical object in VuFind
+        physical_object = default(
+            lambda: get_record_no_parsing(noid, '')['Local'], ''
+        )
+        callno = default(
+            lambda: get_record_no_parsing(noid, '')['Classificationlcc'], ''
+        )
+
+        # get link to catalog call number for collection object
+
+        def linkify(service, pi):
+            """
+            Build BTAA/LUNA link.
+
+            Args:
+                External Service instance, Permanent Identifier string
+
+            Returns:
+                Dictionary containing information for BTAA/LUNA
+                links in object template
+            """
+            if service.get_service_display() == 'LUNA':
+                return {
+                    'service':
+                    'LUNA',
+                    'caption':
+                    'Assemble Slide Decks',
+                    'link': (
+                        'https://luna.lib.uchicago.edu/'
+                        'luna/servlet/view/search'
+                        '?q=_luna_media_exif_filename='
+                        '%s.tif'
+                    ) % pi,
+                }
+            elif service.get_service_display() == 'BTAA':
+                return {
+                    'service': 'BTAA Geoportal',
+                    'caption': 'Discover Maps & GIS Data',
+                    'link': service.identifier,
+                }
+            else:
+                return {}
+
+        # build BTAA/LUNA links
+        external_links = [
+            linkify(service, callno_to_pi(callno))
+            for service in self.col_external_service.all()
+        ]
+
+        # bring utility functions from DisplayBrowse into local namespace
+        get_viewer_url = IIIFDisplay.get_viewer_url
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        # URLs for social media sharing links
+        # share_url = request.build_absolute_uri()
+        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + noid
+        canonical_url = og_url
+
+        iiif_url = "https://www.lib.uchicago.edu/viewer?manifest=https://iiif-collection.lib.uchicago.edu/object/ark:/61001/b2q573m8n49s.json"
+        # get_viewer_url(noid)
+
+        internal_error = not marklogic and not iiif_url
+
+        # populate context
+
+        context = super().get_context(request)
+        context["noid"] = noid
+        context["iiif_url"] = iiif_url
+        # context["share_url"] = share_url
+        # context["slug"] = slug
+        context["internal_error"] = internal_error
+        context["marklogic"] = marklogic
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context["external_links"] = external_links
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+        context['object_title'] = object_title
+        context['physical_object'] = physical_object
+        context['callno'] = callno
+
+        context['og_url'] = og_url
+        context['canonical_url'] = canonical_url
+
+        # update context with staff info for sidebar
+        context.update(self.staff_context())
+
+        # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
 
@@ -835,22 +1004,22 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # gather information for sidebar browse links
         sidebar_browse_types = self.build_browse_types()
 
-        def injection_safe(id):
-            """
-            Check that URL route ends in a well-formed NOID.  This is mostly
-            just a simple safeguard against possible SparQL injection
-            attacks.
+        # def injection_safe(id):
+        #     """
+        #     Check that URL route ends in a well-formed NOID.  This is mostly
+        #     just a simple safeguard against possible SparQL injection
+        #     attacks.
 
-            Args:
-                Candidate NOID
+        #     Args:
+        #         Candidate NOID
 
-            Returns:
-                Boolean
+        #     Returns:
+        #         Boolean
 
-            """
-            length_ok = len(id) >= 1 and len(id) <= 30
-            alphanum = id.isalnum()
-            return length_ok and alphanum
+        #     """
+        #     length_ok = len(id) >= 1 and len(id) <= 30
+        #     alphanum = id.isalnum()
+        #     return length_ok and alphanum
 
         # query Mark Logic for object metadata
         if injection_safe(manifid):
