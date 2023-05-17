@@ -1,5 +1,5 @@
 import json
-import simplejson
+# import simplejson
 import re
 import random
 
@@ -309,7 +309,9 @@ def get_record_for_display(manifid: str,
             return main_output
         else:
             return ''
-    except (json.JSONDecodeError, simplejson.JSONDecodeError):
+    except (json.JSONDecodeError
+            # , simplejson.JSONDecodeError
+            ):
         return ''
 
 
@@ -428,8 +430,8 @@ class CleanData():
             return partial
 
         def split_on(pred, lst):
-            left = [ y for y in lst if pred(y) ]
-            right = [ z for z in lst if not pred(z) ]
+            left = [y for y in lst if pred(y)]
+            right = [z for z in lst if not pred(z)]
             return (left, right)
 
         # not using this yet, but I suspect we will need it
@@ -451,17 +453,29 @@ class CleanData():
                 return OrderedDict({**left_half, **intersection, **right_half})
 
     def getSeries(data):
-        contains_key = CleanData.Language.contains_key
-        split_on = CleanData.Language.split_on
         cleaned = CleanData.downward_key_value(data)
-        (prefs, entry) = split_on(contains_key("prefLabel"), cleaned)
-        def clean_prefs(lst):
-            cleaned = [ (d['languageRole'][0], d['prefLabel'])
-                        for d in lst ]
-            return dict(cleaned)
-        language = { "languageInfo" : clean_prefs(prefs) }
-        return OrderedDict({**entry[0], **language})
-        # return prefs
+        series = cleaned[0]
+
+        def prep_language(colon_str):
+            [k, v] = colon_str.split(':')
+            return (k.lower(), v)
+
+        prepped = [prep_language(s) for s in series["languages"]]
+        languages = dict(prepped)
+        series["languages"] = languages
+        series["language"] = languages["primary"]
+
+        return series
+
+
+    class Wagtail():
+        pass
+
+def split_on(pred, lst):
+    left = [y for y in lst if pred(y)]
+    right = [z for z in lst if not pred(z)]
+    return (left, right)
+
 
 class URLs():
 
@@ -829,9 +843,14 @@ class Api():
                             search=search,
                             raw=raw)
 
+    # TODO: currently throws an exception if you don't give it a
+    # proper series noid, should fix that
     def getSeries(identifier="b20715n2p17r",
                   collection=DEFAULT,
                   raw=False):
+        # print("Api.getSeries identifier:", identifier)
+        # print("Api.getSeries collection:", collection)
+        # print("Api.getSeries raw:", raw)
         return Api.api_call("getSeries",
                             collection=collection,
                             identifier=identifier,
@@ -892,5 +911,4 @@ class Utils():
 
 def preview(x, amount=1500):
     print(json.dumps(x, indent=4)[:amount])
-
 
