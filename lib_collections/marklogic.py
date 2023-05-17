@@ -320,6 +320,16 @@ def get_record_for_display(manifid: str,
 
 # default collection, for testing interactively
 DEFAULT = "mlc"
+DEFAULT_FIELDS = ['Title',
+                  'Description',
+                  'Creator',
+                  'Subject',
+                  'Publisher',
+                  'Type',
+                  'Spatial',
+                  'Rights',
+                  'Format',
+                  'Scope']
 
 # default collection group, for testing interactively
 DEFGRP = "dma"
@@ -467,9 +477,6 @@ class CleanData():
 
         return series
 
-
-    class Wagtail():
-        pass
 
 def split_on(pred, lst):
     left = [y for y in lst if pred(y)]
@@ -844,17 +851,37 @@ class Api():
                             raw=raw)
 
     # TODO: currently throws an exception if you don't give it a
-    # proper series noid, should fix that
+    # proper series noid; we should fix that
     def getSeries(identifier="b20715n2p17r",
                   collection=DEFAULT,
                   raw=False):
-        # print("Api.getSeries identifier:", identifier)
-        # print("Api.getSeries collection:", collection)
-        # print("Api.getSeries raw:", raw)
         return Api.api_call("getSeries",
                             collection=collection,
                             identifier=identifier,
                             raw=raw)
+
+
+class Wagtail():
+
+    def fix_language(dct, identifier="b20715n2p17r", collection=DEFAULT):
+        try:
+            code = dct["language"]
+            code_dictionary = Api.getBrowseListLanguages(
+                identifier=identifier,
+                collection=collection
+            )
+            language = code_dictionary[code]
+            return language
+        except KeyError:
+            return dct
+
+    def prepSeries(json_obj, field_names=DEFAULT_FIELDS):
+        if field_names:
+            alist = [(x, "".join(v))
+                     for x in field_names
+                     for (k, v) in json_obj.items()
+                     if (x.lower(), v) == (k, v)]
+        return OrderedDict(alist)
 
 
 class Validation():
