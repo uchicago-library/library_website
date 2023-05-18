@@ -15,7 +15,7 @@ from lib_collections.utils import GeneralPurpose
 import urllib
 from collections import OrderedDict
 from base.result import Result
-
+from base.utils import compose
 
 def sp_query(manifid: str) -> str:
     """
@@ -862,17 +862,17 @@ class Wagtail():
 
     class GetSeries():
 
-        def fix_language(dct, identifier="b20715n2p17r", collection=DEFAULT):
-            try:
-                code = dct["language"]
-                code_dictionary = Api.getBrowseListLanguages(
-                    collection=collection
-                )
-                language = code_dictionary[code]
-                dct["language"] = language
-                return dct
-            except KeyError:
-                return dct
+        def fix_language(dct):
+           try:
+               code = dct["language"]
+               code_dictionary = Api.getBrowseListLanguages(
+                   collection=collection
+               )
+               language = code_dictionary[code]
+               dct["language"] = language
+               return dct
+           except KeyError:
+               return dct
 
         def lowercase_first(string):
             if string:
@@ -880,38 +880,37 @@ class Wagtail():
             else:
                 string
 
-        def prepSeries(json_obj, field_names=DEFAULT_FIELDS):
-            lowercase_first = Wagtail.GetSeries.lowercase_first
-            if field_names:
-                alist = [(x, "".join(v))
-                         for x in field_names
-                         for k, v in json_obj.items()
-                         if (lowercase_first(x), v) == (k, v)]
-            return OrderedDict(alist)
+        def adjust_fields(field_names=DEFAULT_FIELDS):
+            def partial(json_obj):
+                lowercase_first = Wagtail.GetSeries.lowercase_first
+                if field_names:
+                    alist = [(x, "".join(v))
+                             for x in field_names
+                             for k, v in json_obj.items()
+                             if (lowercase_first(x), v) == (k, v)]
+                return OrderedDict(alist)
+            return partial
 
-        def getUnprepped(identifier="b20715n2p17r",
-                         field_names=DEFAULT_FIELDS,
-                         collection=DEFAULT,
-                         raw=False):
-            first_pass = Api.getSeries(identifier, collection, raw)
-            language_fixed = Wagtail.GetSeries.fix_language(
-                first_pass,
-                identifier=identifier,
-                collection=collection
+        # TODO: have this replace location atomic thingy number with actual location string
+        def fix_everything(dct, field_names=DEFAULT_FIELDS):
+            fix_language = Wagtail.GetSeries.fix_language
+            adjust_fields = Wagtail.GetSeries.adjust_fields
+            fix = compose(
+                fix_language,
+                adjust_fields(field_names),
             )
-            return language_fixed
+            return fix(dct)
+
+        extract_noid = CleanData.Ark.extract_noid
 
         def getSeries(identifier="b20715n2p17r",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
                       raw=False):
-            language_fixed = Wagtail.GetSeries.getUnprepped(identifier,
-                                                            field_names,
-                                                            collection,)
-            return Wagtail.GetSeries.prepSeries(
-                language_fixed,
-                field_names=field_names
-            )
+            fix_everything = Wagtail.GetSeries.fix_everything
+            first_pass = Api.getSeries(identifier, collection, raw)
+            fixed = fix_everything(first_pass, field_names=field_names)
+            return fixed
 
     getSeries = GetSeries.getSeries
 

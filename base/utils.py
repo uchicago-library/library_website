@@ -19,6 +19,7 @@ from library_website.settings import (
 )
 from wagtail.documents.models import Document
 from wagtail.models import Page
+from functools import reduce
 
 try:
     from library_website.settings.local import (
@@ -466,6 +467,15 @@ def unfold(step, initial):
 
     return [item for item in generator((None, initial))]
 
+
+def identity(x):
+    return x
+
+def compose(*funcs):
+    def single_compose(f,g):
+        return lambda x : f(g(x))
+    composition = reduce(single_compose, funcs, identity)
+    return composition
 
 def save_virtual_workbook(workbook):
     """
