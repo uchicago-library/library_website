@@ -30,7 +30,7 @@ from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-from .marklogic import get_record_for_display, get_record_no_parsing, Wagtail, Validation
+from .marklogic import get_record_for_display, get_record_no_parsing, Wagtail, Validation, DEFAULT_FIELDS
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
@@ -819,7 +819,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         template = "lib_collections/collection_series_page.html"
 
         # list of metadata fields from Mark Logic to display in object page
-        field_names = self.metadata_field_names()
+        field_names = DEFAULT_FIELDS
+        # field_names = self.metadata_field_names()
 
         # object NOID
         noid = kwargs["noid"]

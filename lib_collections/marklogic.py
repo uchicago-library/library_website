@@ -320,23 +320,17 @@ def get_record_for_display(manifid: str,
 
 # default collection, for testing interactively
 DEFAULT = "mlc"
-DEFAULT_FIELDS = ['Title',
-                  'Description',
-                  'Contributor',
+DEFAULT_FIELDS = ['Alternative',
+                  'DmaIdentifier',
+                  'Title',
                   'Creator',
-                  'Date',
-                  'Subject',
                   'Language',
-                  'Publisher',
-                  'Type',
                   'Spatial',
-                  'Rights',
-                  'Format',
-                  'Scope']
+                  'Date',
+                  'Description',]
 
 # default collection group, for testing interactively
 DEFGRP = "dma"
-
 
 class CleanData():
 
@@ -380,7 +374,7 @@ class CleanData():
         return CleanData.adjacent_key_value("o", "s", data)
 
     def getBrowseListLocations(data):
-        return CleanData.adjacent_key_value("prefLabel", "spatial", data)
+        return CleanData.adjacent_key_value("spatial", "prefLabel", data)
 
     def getBrowseListLanguages(data):
         return CleanData.adjacent_key_value("code", "prefLabel", data)
@@ -880,33 +874,46 @@ class Wagtail():
             except KeyError:
                 return dct
 
+        def lowercase_first(string):
+            if string:
+                return string[0].lower() + string[1:]
+            else:
+                string
+
         def prepSeries(json_obj, field_names=DEFAULT_FIELDS):
+            lowercase_first = Wagtail.GetSeries.lowercase_first
             if field_names:
                 alist = [(x, "".join(v))
                          for x in field_names
                          for k, v in json_obj.items()
-                         if (x.lower(), v) == (k, v)]
+                         if (lowercase_first(x), v) == (k, v)]
             return OrderedDict(alist)
 
-        def getSeries(identifier="b20715n2p17r",
-                      field_names=DEFAULT_FIELDS,
-                      collection=DEFAULT,
-                      raw=False):
-            # TODO: [0] is a kludge; find out why Api.getSeries returns a list
+        def getUnprepped(identifier="b20715n2p17r",
+                         field_names=DEFAULT_FIELDS,
+                         collection=DEFAULT,
+                         raw=False):
             first_pass = Api.getSeries(identifier, collection, raw)
             language_fixed = Wagtail.GetSeries.fix_language(
                 first_pass,
                 identifier=identifier,
                 collection=collection
             )
+            return language_fixed
+
+        def getSeries(identifier="b20715n2p17r",
+                      field_names=DEFAULT_FIELDS,
+                      collection=DEFAULT,
+                      raw=False):
+            language_fixed = Wagtail.GetSeries.getUnprepped(identifier,
+                                                            field_names,
+                                                            collection,)
             return Wagtail.GetSeries.prepSeries(
                 language_fixed,
                 field_names=field_names
             )
 
     getSeries = GetSeries.getSeries
-            
-    
 
 
 class Validation():
