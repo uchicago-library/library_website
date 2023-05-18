@@ -30,7 +30,7 @@ from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-from .marklogic import get_record_for_display, get_record_no_parsing, Validation
+from .marklogic import get_record_for_display, get_record_no_parsing, Wagtail, Validation
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
@@ -830,10 +830,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # query Mark Logic for object metadata
         if injection_safe(noid):
             # TODO: replace this with new Mark Logic API code
-            marklogic = get_record_for_display(
-                noid,
-                field_names,
-            )
+            marklogic = Wagtail.getSeries(field_names=field_names, identifier=noid)
         else:
             raise Http404
 

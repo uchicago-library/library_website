@@ -322,8 +322,11 @@ def get_record_for_display(manifid: str,
 DEFAULT = "mlc"
 DEFAULT_FIELDS = ['Title',
                   'Description',
+                  'Contributor',
                   'Creator',
+                  'Date',
                   'Subject',
+                  'Language',
                   'Publisher',
                   'Type',
                   'Spatial',
@@ -863,25 +866,47 @@ class Api():
 
 class Wagtail():
 
-    def fix_language(dct, identifier="b20715n2p17r", collection=DEFAULT):
-        try:
-            code = dct["language"]
-            code_dictionary = Api.getBrowseListLanguages(
+    class GetSeries():
+
+        def fix_language(dct, identifier="b20715n2p17r", collection=DEFAULT):
+            try:
+                code = dct["language"]
+                code_dictionary = Api.getBrowseListLanguages(
+                    collection=collection
+                )
+                language = code_dictionary[code]
+                dct["language"] = language
+                return dct
+            except KeyError:
+                return dct
+
+        def prepSeries(json_obj, field_names=DEFAULT_FIELDS):
+            if field_names:
+                alist = [(x, "".join(v))
+                         for x in field_names
+                         for k, v in json_obj.items()
+                         if (x.lower(), v) == (k, v)]
+            return OrderedDict(alist)
+
+        def getSeries(identifier="b20715n2p17r",
+                      field_names=DEFAULT_FIELDS,
+                      collection=DEFAULT,
+                      raw=False):
+            # TODO: [0] is a kludge; find out why Api.getSeries returns a list
+            first_pass = Api.getSeries(identifier, collection, raw)
+            language_fixed = Wagtail.GetSeries.fix_language(
+                first_pass,
                 identifier=identifier,
                 collection=collection
             )
-            language = code_dictionary[code]
-            return language
-        except KeyError:
-            return dct
+            return Wagtail.GetSeries.prepSeries(
+                language_fixed,
+                field_names=field_names
+            )
 
-    def prepSeries(json_obj, field_names=DEFAULT_FIELDS):
-        if field_names:
-            alist = [(x, "".join(v))
-                     for x in field_names
-                     for (k, v) in json_obj.items()
-                     if (x.lower(), v) == (k, v)]
-        return OrderedDict(alist)
+    getSeries = GetSeries.getSeries
+            
+    
 
 
 class Validation():
