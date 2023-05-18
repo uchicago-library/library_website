@@ -320,6 +320,7 @@ def get_record_for_display(manifid: str,
 
 # default collection, for testing interactively
 DEFAULT = "mlc"
+# default metadata fields to display; these are the ones for the MLC demo
 DEFAULT_FIELDS = ['Alternative',
                   'DmaIdentifier',
                   'Title',
@@ -862,6 +863,13 @@ class Wagtail():
 
     class GetSeries():
 
+        def rdf_map(field, f):
+            def partial(dct):
+                current = dct[field]
+                dct[field] = [ f(x) for x in current ]
+                return dct
+            return partial
+
         def fix_language(dct):
            try:
                code = dct["language"]
@@ -891,6 +899,8 @@ class Wagtail():
                 return OrderedDict(alist)
             return partial
 
+        extract_noid = CleanData.Ark.extract_noid
+
         # TODO: have this replace location atomic thingy number with actual location string
         def fix_everything(dct, field_names=DEFAULT_FIELDS):
             fix_language = Wagtail.GetSeries.fix_language
@@ -900,8 +910,6 @@ class Wagtail():
                 adjust_fields(field_names),
             )
             return fix(dct)
-
-        extract_noid = CleanData.Ark.extract_noid
 
         def getSeries(identifier="b20715n2p17r",
                       field_names=DEFAULT_FIELDS,
