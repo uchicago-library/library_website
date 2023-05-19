@@ -38,6 +38,20 @@ DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
 DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
+SERIES_ITEMS_TEST_STUB = {
+    14321: {"link_text":
+            "[01] Rodriguez no. 1 (Nahuala, Totonicapan)",
+            "link_url":
+            ("/collex/collections/social-scientists-map-chicago/"
+             "series/b20768d9894k/")
+            },
+    14322: {"link_text":
+            "[02] Rodriguez no. 2 (Nahuala, Chuculjuyuup, Totonicapan)",
+            "link_url":
+            ("/collex/collections/social-scientists-map-chicago/"
+             "series/b2kj8xr9z85f/")
+            },
+}
 
 injection_safe = Validation.injection_safe
 
@@ -831,7 +845,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # query Mark Logic for object metadata
         if injection_safe(noid):
             # TODO: replace this with new Mark Logic API code
-            marklogic = Wagtail.getSeries(field_names=field_names, identifier=noid)
+            marklogic = Wagtail.getSeries(field_names=field_names,
+                                          identifier=noid)
         else:
             raise Http404
 
@@ -871,6 +886,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         else:
             object_title = 'Object'
             final_crumb = object_title
+
+        series_items = SERIES_ITEMS_TEST_STUB
 
         def default(thunk, defval):
             """
@@ -944,7 +961,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         ]
 
         # bring utility functions from DisplayBrowse into local namespace
-        get_viewer_url = IIIFDisplay.get_viewer_url
+        # get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         # URLs for social media sharing links
@@ -952,7 +969,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         og_url = "http://www.lib.uchicago.edu/ark:/61001/" + noid
         canonical_url = og_url
 
-        iiif_url = "https://www.lib.uchicago.edu/viewer?manifest=https://iiif-collection.lib.uchicago.edu/object/ark:/61001/b2q573m8n49s.json"
+        iiif_url = ('https://www.lib.uchicago.edu/viewer?manifest='
+                    'https://iiif-collection.lib.uchicago.edu/'
+                    'object/ark:/61001/b2q573m8n49s.json')
         # get_viewer_url(noid)
 
         internal_error = not marklogic and not iiif_url
@@ -964,7 +983,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["iiif_url"] = iiif_url
         # context["share_url"] = share_url
         # context["slug"] = slug
-        context["internal_error"] = internal_error
+        # context["internal_error"] = internal_error
         context["marklogic"] = marklogic
         context["sidebar_browse_types"] = sidebar_browse_types
         context["external_links"] = external_links
@@ -976,13 +995,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         context['og_url'] = og_url
         context['canonical_url'] = canonical_url
+        context['series_items'] = series_items
 
         # update context with staff info for sidebar
         context.update(self.staff_context())
 
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
-
 
     @route(r'^object/(?P<manifid>\w+)/$')
     def object(self, request, *args, **kwargs):

@@ -727,33 +727,33 @@ class Api():
             },
 
             "getResultsByIdentifier" : {
-                "url" : URLs.getResultsByIdentifier(identifier, collection, curl=curl),
-                "params" : URLs.QStrings.getResultsByIdentifier(identifier, collection),
-                "cleanup" : CleanData.getResultsByIdentifier,
+                "url": URLs.getResultsByIdentifier(identifier, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByIdentifier(identifier, collection),
+                "cleanup": CleanData.getResultsByIdentifier,
             },
 
-            "getResultsByKeyword" : {
-                "url" : URLs.getResultsByKeyword(search, collection, curl=curl),
-                "params" : URLs.QStrings.getResultsByKeyword(search, collection),
-                "cleanup" : CleanData.getResultsByKeyword,
+            "getResultsByKeyword": {
+                "url": URLs.getResultsByKeyword(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByKeyword(search, collection),
+                "cleanup": CleanData.getResultsByKeyword,
             },
 
-            "getResultsByLanguage" : {
-                "url" : URLs.getResultsByLanguage(search, collection, curl=curl),
-                "params" : URLs.QStrings.getResultsByLanguage(search, collection),
-                "cleanup" : CleanData.getResultsByLanguage,
+            "getResultsByLanguage": {
+                "url": URLs.getResultsByLanguage(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByLanguage(search, collection),
+                "cleanup": CleanData.getResultsByLanguage,
             },
 
-            "getResultsByLocation" : {
-                "url" : URLs.getResultsByLocation(search, collection, curl=curl),
-                "params" : URLs.QStrings.getResultsByLocation(search, collection),
-                "cleanup" : CleanData.getResultsByLocation,
+            "getResultsByLocation": {
+                "url": URLs.getResultsByLocation(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByLocation(search, collection),
+                "cleanup": CleanData.getResultsByLocation,
             },
 
             "getSeries" : {
-                "url" : URLs.getSeries(identifier, collection, curl=curl),
-                "params" : URLs.QStrings.getSeries(identifier, collection),
-                "cleanup" : CleanData.getSeries,
+                "url": URLs.getSeries(identifier, collection, curl=curl),
+                "params": URLs.QStrings.getSeries(identifier, collection),
+                "cleanup": CleanData.getSeries,
             },
             
         }
@@ -774,7 +774,7 @@ class Api():
             lookup = Api.lookup(collection, identifier, search, curl)[endpoint]
             params = lookup["params"]
             if raw:
-                cleanup = lambda x : x
+                cleanup = lambda x: x
             else:
                 cleanup = lookup["cleanup"]
             url = lookup["url"]
@@ -866,21 +866,23 @@ class Wagtail():
         def rdf_map(field, f):
             def partial(dct):
                 current = dct[field]
-                dct[field] = [ f(x) for x in current ]
+                dct[field] = [f(x) for x in current]
                 return dct
             return partial
 
-        def fix_language(dct):
-           try:
-               code = dct["language"]
-               code_dictionary = Api.getBrowseListLanguages(
-                   collection=collection
-               )
-               language = code_dictionary[code]
-               dct["language"] = language
-               return dct
-           except KeyError:
-               return dct
+        def fix_language(collection):
+            def partial(dct):
+                try:
+                    code = dct["language"]
+                    code_dictionary = Api.getBrowseListLanguages(
+                        collection=collection
+                    )
+                    language = code_dictionary[code]
+                    dct["language"] = language
+                    return dct
+                except KeyError:
+                    return dct
+            return partial
 
         def lowercase_first(string):
             if string:
@@ -899,17 +901,25 @@ class Wagtail():
                 return OrderedDict(alist)
             return partial
 
-        extract_noid = CleanData.Ark.extract_noid
-
-        # TODO: have this replace location atomic thingy number with actual location string
-        def fix_everything(dct, field_names=DEFAULT_FIELDS):
+        # TODO: have this replace location atomic thingy number with
+        # actual location string
+        def fix_everything(dct, collection=DEFAULT,
+                           field_names=DEFAULT_FIELDS):
             fix_language = Wagtail.GetSeries.fix_language
             adjust_fields = Wagtail.GetSeries.adjust_fields
             fix = compose(
-                fix_language,
+                fix_language(collection),
                 adjust_fields(field_names),
             )
             return fix(dct)
+
+        # def apiResponseToItems(dct):
+        #     extract_noid = CleanData.Ark.extract_noid
+        #     try:
+        #         parts = dct["hasParts"]
+        #     except KeyError:
+        #         return dict
+        #     noids = [extract_noid(item) for item in parts]
 
         def getSeries(identifier="b20715n2p17r",
                       field_names=DEFAULT_FIELDS,
@@ -977,4 +987,3 @@ class Utils():
 
 def preview(x, amount=1500):
     print(json.dumps(x, indent=4)[:amount])
-

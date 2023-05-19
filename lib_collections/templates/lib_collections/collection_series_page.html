@@ -20,21 +20,38 @@
 {% block content %}
 
 
-
-<iframe src="https://www.lib.uchicago.edu/viewer?manifest=https://iiif-collection.lib.uchicago.edu/object/ark:/61001/b2q573m8n49s.json" width="750" height="600" allowfullscreen frameborder="0"></iframe>
-
-
+<!-- series-level Mark Logic metadata -->
 <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
     <dl>
-        {% for key, value in marklogic.items %}
+	{% for key, value in marklogic.items %}
+	<dt>
+	    {{ key }}
+	</dt>
+	<dd>
+	    {{ value }}
+	</dd>
+	{% endfor %}
+    </dl>
+</span> <!-- / schema.org wrapper -->
+
+
+<!-- listing of individual items in the series -->
+<h1>
+    Items in the series
+</h1>
+<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+    <dl>
+	<dt>
+	    DMA Item #
+	</dt>
+	<dd>
+	</dd>
+        {% for key, value in series_items.items %}
         <dt>
             {{ key }}
         </dt>
-        <!-- TODO: add SCHEMA.ORG property as itemprop in dd tag -->
-        <!-- TODO: add handling for if an item has multiple value fields -->
-        <!-- to-do: need to add better CSS handling for multiple value fields (multiple lines) -->
         <dd>
-            {{ value }}
+            <a href ="{{ value.link_url }}">{{ value.link_text }}</a>
         </dd>
         {% endfor %}
     </dl>
