@@ -755,7 +755,7 @@ class Api():
                 "params": URLs.QStrings.getSeries(identifier, collection),
                 "cleanup": CleanData.getSeries,
             },
-            
+
         }
 
     class URLGet():

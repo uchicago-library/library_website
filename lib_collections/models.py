@@ -921,45 +921,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # get link to catalog call number for collection object
 
-        def linkify(service, pi):
-            """
-            Build BTAA/LUNA link.
-
-            Args:
-                External Service instance, Permanent Identifier string
-
-            Returns:
-                Dictionary containing information for BTAA/LUNA
-                links in object template
-            """
-            if service.get_service_display() == 'LUNA':
-                return {
-                    'service':
-                    'LUNA',
-                    'caption':
-                    'Assemble Slide Decks',
-                    'link': (
-                        'https://luna.lib.uchicago.edu/'
-                        'luna/servlet/view/search'
-                        '?q=_luna_media_exif_filename='
-                        '%s.tif'
-                    ) % pi,
-                }
-            elif service.get_service_display() == 'BTAA':
-                return {
-                    'service': 'BTAA Geoportal',
-                    'caption': 'Discover Maps & GIS Data',
-                    'link': service.identifier,
-                }
-            else:
-                return {}
-
-        # build BTAA/LUNA links
-        external_links = [
-            linkify(service, callno_to_pi(callno))
-            for service in self.col_external_service.all()
-        ]
-
         # bring utility functions from DisplayBrowse into local namespace
         # get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
@@ -981,12 +942,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context = super().get_context(request)
         context["noid"] = noid
         context["iiif_url"] = iiif_url
-        # context["share_url"] = share_url
-        # context["slug"] = slug
-        # context["internal_error"] = internal_error
         context["marklogic"] = marklogic
         context["sidebar_browse_types"] = sidebar_browse_types
-        context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
         context['object_title'] = object_title
@@ -1020,23 +977,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # gather information for sidebar browse links
         sidebar_browse_types = self.build_browse_types()
-
-        # def injection_safe(id):
-        #     """
-        #     Check that URL route ends in a well-formed NOID.  This is mostly
-        #     just a simple safeguard against possible SparQL injection
-        #     attacks.
-
-        #     Args:
-        #         Candidate NOID
-
-        #     Returns:
-        #         Boolean
-
-        #     """
-        #     length_ok = len(id) >= 1 and len(id) <= 30
-        #     alphanum = id.isalnum()
-        #     return length_ok and alphanum
 
         # query Mark Logic for object metadata
         if injection_safe(manifid):
