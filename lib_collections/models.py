@@ -30,7 +30,11 @@ from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-from .marklogic import get_record_for_display, get_record_no_parsing, Wagtail, Validation, DEFAULT_FIELDS
+from .marklogic import (get_record_for_display,
+                        get_record_no_parsing,
+                        Wagtail,
+                        Validation,
+                        DEFAULT_FIELDS)
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
@@ -54,6 +58,7 @@ SERIES_ITEMS_TEST_STUB = {
 }
 
 injection_safe = Validation.injection_safe
+
 
 def get_current_exhibits():
     """
@@ -388,7 +393,7 @@ class CBrowse(models.Model):
     """
     Class for cluster browses within a Collection Page.
     """
-    label = models.CharField(max_length=255, blank=True)
+    endpoint_name = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
         help_text=(
@@ -396,15 +401,13 @@ class CBrowse(models.Model):
             (Featured browse)'
         )
     )
-    iiif_location = models.URLField(max_length=255, blank=True)
     link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('label'),
+                FieldPanel('endpoint_name'),
                 FieldPanel('include'),
-                FieldPanel('iiif_location'),
                 FieldPanel('link_text_override'),
             ]
         ),
@@ -468,7 +471,17 @@ class CSearch(models.Model):
     """
     Class for searches within a Collection Page.
     """
-    label = models.CharField(max_length=255, blank=True)
+    api_endpoint = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("Name of the Mark Logic API "
+                   "endpoint for the search")
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="The name of the search as displayed to the user"
+    )
     include = models.BooleanField(
         default=False, help_text='Include in sidebar?'
     )
@@ -479,8 +492,6 @@ class CSearch(models.Model):
             first one selected will be the default.)'
         )
     )
-    mark_logic_parameter = models.CharField(max_length=255, blank=True)
-    search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
         default=False, help_text='Do the searchable objects have OCR?'
     )
@@ -488,11 +499,10 @@ class CSearch(models.Model):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('label'),
+                FieldPanel('api_endpoint'),
+                FieldPanel('display_name'),
                 FieldPanel('include'),
                 FieldPanel('default'),
-                FieldPanel('mark_logic_parameter'),
-                FieldPanel('search_handler_location'),
                 FieldPanel('includes_ocr'),
             ]
         ),
@@ -591,7 +601,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         staff_url = default(
             lambda:
-            (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
+            (StaffPublicPage.objects.get(cnetid=self
+                                         .staff_contact
+                                         .cnetid).url),
             ''
         )
 
@@ -744,6 +756,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
 
     # Main Admin Panel Fields
+    collection_group = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("API endpoint name for collection group, e.g. "
+                   "the group for \"mlc\" is \"dma\""),
+    )
+
+    short_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("API endpoint name for collection, e.g. "
+                   "\"Mesoamerican Languages Collection\" is \"mlc\""),
+    )
+
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = StreamField(
@@ -1459,24 +1485,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     # panels within the 'Collection' tab in the admin interface
     collection_panels = [
-        # FieldPanel('digital_collection'),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('banner_image'),
-        #         FieldPanel('banner_feature'),
-        #         FieldPanel('banner_title'),
-        #         FieldPanel('banner_subtitle'),
-        #     ],
-        #     heading='Banner'
-        # ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('branding_color'),
-        #         FieldPanel('google_font_link'),
-        #         FieldPanel('font_family'),
-        #     ],
-        #     heading='Branding'
-        # ),
+        FieldPanel('collection_group'),
+        FieldPanel('short_name'),
         FieldPanel('highlighted_records'),
         FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
