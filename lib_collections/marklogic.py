@@ -333,6 +333,7 @@ DEFAULT_FIELDS = ['Alternative',
 # default collection group, for testing interactively
 DEFGRP = "dma"
 
+
 class CleanData():
 
     def bindings(sparql):
@@ -449,31 +450,37 @@ class CleanData():
             elif dct2 == {}:
                 return dct1
             else:
-                left_half = { k:v
-                              for (k, v) in dct1.items()
-                              if k not in dct2}
-                intersection = { u:(dct1[u] + dct2[u])
-                                 for u in dct1
-                                 if u in dct2 }
-                right_half = { k:v
-                               for (k,v) in dct2.items()
-                               if k not in dct1 }
+                left_half = {k: v
+                             for (k, v) in dct1.items()
+                             if k not in dct2}
+                intersection = {u: (dct1[u] + dct2[u])
+                                for u in dct1
+                                if u in dct2}
+                right_half = {k: v
+                              for (k, v) in dct2.items()
+                              if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
 
     def getSeries(data):
-        cleaned = CleanData.downward_key_value(data)
+        cleaned = CleanData.downward_key_value(data) 
         series = cleaned[0]
 
-        def prep_language(colon_str):
+        def adjust_metadata_key(string):
+            if string.lower() == "primary":
+                return "primaryLanguage"
+            elif string.lower() == "subject":
+                return "subjectLanguage"
+            else:
+                return string
+        
+        def each_language(colon_str):
             [k, v] = colon_str.split(':')
-            return (k.lower(), v)
+            new_k = adjust_metadata_key(k.lower())
+            return (new_k, [v])
 
-        prepped = [prep_language(s) for s in series["languages"]]
-        languages = dict(prepped)
-        series["languages"] = languages
-        series["language"] = languages["primary"]
-
-        return series
+        languages = series["languages"]
+        alist = [each_language(l) for l in languages ]
+        return OrderedDict(series, **dict(alist))
 
 
 def split_on(pred, lst):
