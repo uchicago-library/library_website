@@ -947,8 +947,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # query Mark Logic for object metadata
         if injection_safe(noid):
             # TODO: replace this with new Mark Logic API code
-            marklogic = Wagtail.getSeries(field_names=field_names,
-                                          identifier=noid)
+            (marklogic, series_items) = (
+                Wagtail.getSeries(field_names=field_names,
+                                  identifier=noid)
+                )
         else:
             raise Http404
 
@@ -989,7 +991,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             object_title = 'Object'
             final_crumb = object_title
 
-        series_items = SERIES_ITEMS_TEST_STUB
+        # series_items = SERIES_ITEMS_TEST_STUB
 
         def default(thunk, defval):
             """
@@ -1037,7 +1039,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                     'object/ark:/61001/b2q573m8n49s.json')
         # get_viewer_url(noid)
 
-        internal_error = not marklogic and not iiif_url
+        # internal_error = not marklogic and not iiif_url
 
         # populate context
 

@@ -14,7 +14,7 @@ from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
 import urllib
 from collections import OrderedDict
-from base.utils import compose
+from base.utils import compose, concat, const
 
 
 def sp_query(manifid: str) -> str:
@@ -461,6 +461,7 @@ class CleanData():
                               if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
 
+
     def getSeries(data):
         cleaned = CleanData.downward_key_value(data) 
         series = cleaned[0]
@@ -481,6 +482,13 @@ class CleanData():
         languages = series["languages"]
         alist = [each_language(l) for l in languages ]
         return OrderedDict(series, **dict(alist))
+        # languages = dict(prepped)
+        # series["languages"] = languages
+        # series["language"] = languages["primary"]
+
+        # return series
+
+    # getSeries = getSeries_pipe
 
 
 def split_on(pred, lst):
@@ -590,7 +598,7 @@ class URLs():
             return { "collection" : collection,
                      "search" : search, }
 
-        def getSeries(identifier="b20715n2p17r", collection=DEFAULT):
+        def getSeries(identifier="b2pz3jc17901", collection=DEFAULT):
             return { "collection" : collection,
                      "identifier" : URLs.ark_base(identifier), }
 
@@ -680,7 +688,7 @@ class URLs():
         url = URLs.make_api_string(collection, "getResultsByLocation", params, curl)
         return url
 
-    def getSeries(identifier="b20715n2p17r", collection=DEFAULT, curl=True):
+    def getSeries(identifier="b2pz3jc17901", collection=DEFAULT, curl=True):
         params = URLs.QStrings.getSeries(identifier=identifier, collection=collection)
         url = URLs.make_api_string(collection, "getSeries", params, curl)
         return url
@@ -857,7 +865,7 @@ class Api():
 
     # TODO: currently throws an exception if you don't give it a
     # proper series noid; we should fix that
-    def getSeries(identifier="b20715n2p17r",
+    def getSeries(identifier="b2pz3jc17901",
                   collection=DEFAULT,
                   raw=False):
         return Api.api_call("getSeries",
@@ -920,25 +928,31 @@ class Wagtail():
             )
             return fix(dct)
 
-        # def apiResponseToItems(dct):
-        #     extract_noid = CleanData.Ark.extract_noid
-        #     try:
-        #         parts = dct["hasParts"]
-        #     except KeyError:
-        #         return dict
-        #     noids = [extract_noid(item) for item in parts]
+        class ItemListing():
 
-        def getSeries(identifier="b20715n2p17r",
+            def build_item_listing(parts):
+                extract_noid = CleanData.Ark.extract_noid
+                noids = [extract_noid(n) for n in parts]
+                raw_items = concat([Api.getItem(i) for i in noids])
+                descriptions = concat([i["description"] for i in raw_items])
+                items = list(map(lambda d: ("", d), descriptions))
+                return items
+
+        def getSeries(identifier="b2pz3jc17901",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
                       raw=False):
             fix_everything = Wagtail.GetSeries.fix_everything
+            build_item_listing = (Wagtail
+                                  .GetSeries
+                                  .ItemListing.build_item_listing)
             first_pass = Api.getSeries(identifier, collection, raw)
-            fixed = fix_everything(first_pass, field_names=field_names)
-            return fixed
+            series = fix_everything(first_pass, field_names=field_names)
+            parts = first_pass["hasParts"]
+            items = build_item_listing(parts)
+            return (series, items)
 
     getSeries = GetSeries.getSeries
-
 
 class Validation():
 

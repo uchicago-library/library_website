@@ -471,11 +471,27 @@ def unfold(step, initial):
 def identity(x):
     return x
 
+
+def const(x):
+    def partial(f):
+        return f(x)
+    return partial
+
+
+def concat(lst):
+    return [item for sublist in lst for item in sublist]
+
+
 def compose(*funcs):
-    def single_compose(f,g):
-        return lambda x : f(g(x))
+    def single_compose(f, g):
+        return lambda x: f(g(x))
     composition = reduce(single_compose, funcs, identity)
     return composition
+
+
+def jprint(j):
+    print(json.dumps(j, indent=4))
+
 
 def save_virtual_workbook(workbook):
     """
