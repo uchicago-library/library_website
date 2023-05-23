@@ -14,8 +14,8 @@ from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
 import urllib
 from collections import OrderedDict
-from base.result import Result
 from base.utils import compose
+
 
 def sp_query(manifid: str) -> str:
     """

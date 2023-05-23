@@ -281,6 +281,53 @@ class CollectionPageExternalService(Orderable, ExternalService):
     )
 
 
+class SeriesMetadata(models.Model):
+    """
+    Class for metadata fields to display on the series page.
+    """
+    MENU_OPTIONS = [
+        (1, "go to a results page for the selected item"),
+        (2, "link to a related item in the collection"),
+    ]
+    edm_field_label = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Mark Logic name for this metadata field"
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="User-facing name for this metadata field"
+    )
+    link_target = models.IntegerField(
+        choices=MENU_OPTIONS,
+        default=1,
+        help_text=(
+            'How do you want the link to behave? \
+            (Required for hotlinked)'
+        )
+    )
+
+    panels = [
+        FieldPanel('edm_field_label'),
+        FieldPanel('display_name'),
+        FieldPanel('link_target'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageSeriesMetadata(Orderable, SeriesMetadata):
+    """
+    Intermediate class for metadata fields in a series page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_series_metadata"
+    )
+
+
 class ObjectMetadata(models.Model):
     """
     Class for metadata fields to display in search results.
@@ -289,7 +336,16 @@ class ObjectMetadata(models.Model):
         (1, "go to a results page for the selected item"),
         (2, "link to a related item in the collection"),
     ]
-    edm_field_label = models.CharField(max_length=255, blank=True)
+    edm_field_label = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Mark Logic name for this metadata field"
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="User-facing name for this metadata field"
+    )
     multiple_values = models.BooleanField(
         default=False, help_text='Are there multiple values within the field?'
     )
@@ -308,6 +364,7 @@ class ObjectMetadata(models.Model):
 
     panels = [
         FieldPanel('edm_field_label'),
+        FieldPanel('display_name'),
         FieldPanel('hotlinked'),
         FieldPanel('multiple_values'),
         FieldPanel('link_target'),
@@ -394,6 +451,7 @@ class CBrowse(models.Model):
     Class for cluster browses within a Collection Page.
     """
     endpoint_name = models.CharField(max_length=255, blank=True)
+    display_name = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
         help_text=(
@@ -401,14 +459,13 @@ class CBrowse(models.Model):
             (Featured browse)'
         )
     )
-    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
             [
                 FieldPanel('endpoint_name'),
+                FieldPanel('display_name'),
                 FieldPanel('include'),
-                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -548,6 +605,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             page_id=self.id
         )
         query_set = metadata_fields.values_list('edm_field_label')
+        return [field[0] for field in query_set]
+
+    def get_series_metadata(self):
+        metadata = CollectionPageSeriesMetadata.objects.filter(
+            page_id=self.id
+        )
+        query_set = metadata.values_list('edm_field_label')
         return [field[0] for field in query_set]
 
     def staff_context(self):
@@ -770,6 +834,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                    "\"Mesoamerican Languages Collection\" is \"mlc\""),
     )
 
+    universal_viewer = models.BooleanField(default=False)
+
+    panopto = models.BooleanField(default=False)
+
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = StreamField(
@@ -831,6 +899,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         ),
         verbose_name="Citation Configuration",
     )
+
     highlighted_records = models.URLField(
         blank=True,
         help_text=(
@@ -839,6 +908,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    highlighted_records_api = models.URLField(
+        blank=True,
+        help_text=(
+            'Mark Logic API endpoint for highlighted '
+            'records on the landing page'
+        )
+    )
     # TODO: eventually this will contain instructions for generating a
     # link to the library catalog or other kinds of specialized links
 
@@ -859,8 +935,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         template = "lib_collections/collection_series_page.html"
 
         # list of metadata fields from Mark Logic to display in object page
-        field_names = DEFAULT_FIELDS
-        # field_names = self.metadata_field_names()
+        # field_names = DEFAULT_FIELDS
+        field_names = self.get_series_metadata()
 
         # object NOID
         noid = kwargs["noid"]
@@ -1487,7 +1563,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     collection_panels = [
         FieldPanel('collection_group'),
         FieldPanel('short_name'),
+        MultiFieldPanel(
+            [FieldPanel('universal_viewer'),
+             FieldPanel('panopto')],
+            heading='Media Player For Object Page'
+        ),
         FieldPanel('highlighted_records'),
+        FieldPanel('highlighted_records_api'),
         FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
@@ -1495,6 +1577,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_facet', label='Facets'),
         InlinePanel('col_result', label='Additional Fields in Results'),
         InlinePanel('col_obj_metadata', label='Object Metadata'),
+        InlinePanel('col_series_metadata', label='Series Metadata'),
         InlinePanel('col_external_service', label='Link to External Service'),
     ]
 
