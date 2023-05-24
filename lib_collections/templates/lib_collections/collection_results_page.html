@@ -1,0 +1,50 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
+{% load wagtailimages_tags %}
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+
+{% block styles %}
+{% compress css %}
+<link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+{% endcompress %}
+{% endblock %}
+
+
+{% block content %}
+
+<h2>
+Search Results
+</h2>
+
+<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+    <dl>
+	
+	<dt>
+	    Dude
+	</dt>
+	<dd>
+	    Dudette
+	</dd>
+
+	<dt>
+	    Other Dude
+	</dt>
+	<dd>
+	    Other Dudette
+	</dd>
+
+    </dl>
+</span> <!-- / schema.org wrapper -->
+
+
+{% endblock %}
+{% block right_sidebar %}
+{% include "includes/sidebar.html" %}
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+

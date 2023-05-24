@@ -927,10 +927,19 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    @route(r'^results/$')
+    def results(self, request, *args, **kwargs):
+        """
+        Route for digital collection results page.
+        """
+        template = "lib_collections/collection_results_page.html"
+        context = super().get_context(request)
+        return TemplateResponse(request, template, context)
+
     @route(r'^series/(?P<noid>\w+)/$')
     def series(self, request, *args, **kwargs):
         """
-        Route for digital collection object page.
+        Route for digital collection series page.
         """
         template = "lib_collections/collection_series_page.html"
 
