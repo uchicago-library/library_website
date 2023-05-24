@@ -33,8 +33,7 @@ from wagtail.snippets.models import register_snippet
 from .marklogic import (get_record_for_display,
                         get_record_no_parsing,
                         Wagtail,
-                        Validation,
-                        DEFAULT_FIELDS)
+                        Validation,)
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL)
 
@@ -946,7 +945,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # query Mark Logic for object metadata
         if injection_safe(noid):
-            # TODO: replace this with new Mark Logic API code
+            # TODO: populate all optional parameters, e.g. collection name
             (marklogic, series_items) = (
                 Wagtail.getSeries(field_names=field_names,
                                   identifier=noid)

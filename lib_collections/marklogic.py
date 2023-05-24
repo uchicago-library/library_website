@@ -320,6 +320,7 @@ def get_record_for_display(manifid: str,
 
 # default collection, for testing interactively
 DEFAULT = "mlc"
+DEFAULT_SLUG = "mesoamerican-languages-collection"
 # default metadata fields to display; these are the ones for the MLC demo
 DEFAULT_FIELDS = ['Alternative',
                   'DmaIdentifier',
@@ -930,17 +931,36 @@ class Wagtail():
 
         class ItemListing():
 
-            def build_item_listing(parts):
+            def build_item_listing(parts, collection_slug):
                 extract_noid = CleanData.Ark.extract_noid
                 noids = [extract_noid(n) for n in parts]
                 raw_items = concat([Api.getItem(i) for i in noids])
-                descriptions = concat([i["description"] for i in raw_items])
-                items = list(map(lambda d: ("", d), descriptions))
-                return items
+                noids_and_items = list(zip(noids, raw_items))
+                noids_and_descriptions = [(noid, "".join(item["description"]))
+                                          for (noid, item)
+                                          in noids_and_items]
+
+                def mk_link(noid):
+                    base_url = ("/collex/collections/"
+                                + collection_slug
+                                + "/object/"
+                                + noid)
+                    return base_url
+
+                def mk_linked_item(noid, description):
+                    return OrderedDict({"link_url": mk_link(noid),
+                                        "link_text": description})
+
+                listing = [("", mk_linked_item(noid, desc))
+                           for noid, desc
+                           in noids_and_descriptions]
+
+                return listing
 
         def getSeries(identifier="b2pz3jc17901",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG,
                       raw=False):
             fix_everything = Wagtail.GetSeries.fix_everything
             build_item_listing = (Wagtail
@@ -949,10 +969,11 @@ class Wagtail():
             first_pass = Api.getSeries(identifier, collection, raw)
             series = fix_everything(first_pass, field_names=field_names)
             parts = first_pass["hasParts"]
-            items = build_item_listing(parts)
+            items = build_item_listing(parts, collection_slug)
             return (series, items)
 
     getSeries = GetSeries.getSeries
+
 
 class Validation():
 
