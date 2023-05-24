@@ -998,6 +998,27 @@ class Wagtail():
 
     getSeries = GetSeries.getSeries
 
+    class GetResultsByKeyword():
+        # TODO: make this process the series NOIDs output by getResultsByKeyword
+
+        # >>> s = Api.getSeries(noid)
+        # >>> seriesTitle = s["title"]
+        # >>> contributor = s["contributor"]
+        # >>> try:
+        # ...   indigenousLanguage = s["subjectLanguage"]
+        # ... except KeyError:
+        # ...   indigenousLanguage = ""
+        # ... 
+        # >>> location = s["spatial"]
+        # >>> location
+        # ['7005580']
+        # >>> date = s["date"]
+        # >>> date
+        # ['1972/2012']
+        # >>> resourceType = "Spoken Word"
+
+        pass
+
 
 class Utils():
 
