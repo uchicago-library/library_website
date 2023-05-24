@@ -893,7 +893,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         help_text=(
             'INI-style configuration for Citation service, saying which'
             ' metadata fields to pull from the Turtle data on the object; '
-            'see https://github.com/uchicago-library/uchicago-library.github.io '
+            'see https://github.com/uchicago-library/'
+            'uchicago-library.github.io '
             'for more info on how to edit/construct one of these'
         ),
         verbose_name="Citation Configuration",
@@ -943,12 +944,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # gather information for sidebar browse links
         sidebar_browse_types = self.build_browse_types()
 
+        short_name = self.short_name
+
+        # TODO: actually use collection_group; currently not being used
+        # collection_group = self.collection_group
+        slug = self.slug
+
         # query Mark Logic for object metadata
         if injection_safe(noid):
-            # TODO: populate all optional parameters, e.g. collection name
             (marklogic, series_items) = (
-                Wagtail.getSeries(field_names=field_names,
-                                  identifier=noid)
+                Wagtail.getSeries(identifier=noid,
+                                  field_names=field_names,
+                                  collection=short_name,
+                                  collection_slug=slug,
+                                  raw=False)
                 )
         else:
             raise Http404
@@ -977,12 +986,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             object_title = 'Object'
             final_crumb = object_title
         elif 'Title' in marklogic.keys():
-            object_title = marklogic['Title'].split(',')[0]
+            object_title = marklogic['Title']
             final_crumb = truncate_crumb(
                 object_title, COLLECTION_OBJECT_TRUNCATE
             )
         elif 'Description' in marklogic.keys():
-            object_title = marklogic['Description'].split(',')[0]
+            object_title = marklogic['Description']
             final_crumb = truncate_crumb(
                 object_title, COLLECTION_OBJECT_TRUNCATE
             )
@@ -1025,26 +1034,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get link to catalog call number for collection object
 
         # bring utility functions from DisplayBrowse into local namespace
-        # get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
         # URLs for social media sharing links
-        # share_url = request.build_absolute_uri()
         og_url = "http://www.lib.uchicago.edu/ark:/61001/" + noid
         canonical_url = og_url
-
-        iiif_url = ('https://www.lib.uchicago.edu/viewer?manifest='
-                    'https://iiif-collection.lib.uchicago.edu/'
-                    'object/ark:/61001/b2q573m8n49s.json')
-        # get_viewer_url(noid)
-
-        # internal_error = not marklogic and not iiif_url
 
         # populate context
 
         context = super().get_context(request)
         context["noid"] = noid
-        context["iiif_url"] = iiif_url
+        # context["iiif_url"] = iiif_url
         context["marklogic"] = marklogic
         context["sidebar_browse_types"] = sidebar_browse_types
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)

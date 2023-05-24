@@ -315,6 +315,27 @@ def get_record_for_display(manifid: str,
         return ''
 
 
+class Validation():
+
+    def injection_safe(id):
+        """
+        Check that URL route ends in a well-formed NOID.  This is mostly
+        just a simple safeguard against possible SparQL injection
+        attacks.
+
+        Args:
+            Candidate NOID
+
+        Returns:
+            Boolean
+
+        """
+        length_ok = len(id) >= 1 and len(id) <= 30
+        alphanum = id.isalnum()
+        return length_ok and alphanum
+
+
+
 # BEGIN WRANGLE_JSON CODE (MT May 2023)
 
 
@@ -936,9 +957,12 @@ class Wagtail():
                 noids = [extract_noid(n) for n in parts]
                 raw_items = concat([Api.getItem(i) for i in noids])
                 noids_and_items = list(zip(noids, raw_items))
-                noids_and_descriptions = [(noid, "".join(item["description"]))
-                                          for (noid, item)
-                                          in noids_and_items]
+                try:
+                    noids_and_descriptions = [(noid, "".join(item["description"]))
+                                              for (noid, item)
+                                              in noids_and_items]
+                except KeyError:
+                    noids_and_descriptions = []
 
                 def mk_link(noid):
                     base_url = ("/collex/collections/"
@@ -973,26 +997,6 @@ class Wagtail():
             return (series, items)
 
     getSeries = GetSeries.getSeries
-
-
-class Validation():
-
-    def injection_safe(id):
-        """
-        Check that URL route ends in a well-formed NOID.  This is mostly
-        just a simple safeguard against possible SparQL injection
-        attacks.
-
-        Args:
-            Candidate NOID
-
-        Returns:
-            Boolean
-
-        """
-        length_ok = len(id) >= 1 and len(id) <= 30
-        alphanum = id.isalnum()
-        return length_ok and alphanum
 
 
 class Utils():

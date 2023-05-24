@@ -7,7 +7,6 @@ from __future__ import (
 )
 
 import json
-import os
 import re
 from urllib.parse import urlencode
 
@@ -26,7 +25,6 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
-from collections import OrderedDict
 
 
 class GeneralPurpose():
