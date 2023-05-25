@@ -890,11 +890,14 @@ class Api():
     def getSeries(identifier="b2pz3jc17901",
                   collection=DEFAULT,
                   raw=False):
-        return Api.api_call("getSeries",
-                            collection=collection,
-                            identifier=identifier,
-                            raw=raw)
-
+        try:
+            output = Api.api_call("getSeries",
+                                  collection=collection,
+                                  identifier=identifier,
+                                  raw=raw)
+        except IndexError:
+            output = []
+        return output
 
 class Wagtail():
 
@@ -999,6 +1002,17 @@ class Wagtail():
     getSeries = GetSeries.getSeries
 
     class GetResultsByKeyword():
+
+        def qs_to_response(query_string, collection=DEFAULT):
+            try:
+                search_term = query_string["keyword"]
+                noids = Api.getResultsByKeyword(search=search_term,
+                                                collection=collection,)
+            except KeyError:
+                return []
+            return noids
+
+
         # TODO: make this process the series NOIDs output by getResultsByKeyword
 
         # >>> s = Api.getSeries(noid)
