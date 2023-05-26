@@ -343,9 +343,9 @@ class Validation():
 DEFAULT = "mlc"
 DEFAULT_SLUG = "mesoamerican-languages-collection"
 # default metadata fields to display; these are the ones for the MLC demo
-DEFAULT_FIELDS = ['Alternative',
+DEFAULT_FIELDS = ['Title',
+                  'Alternative',
                   'DmaIdentifier',
-                  'Title',
                   'Creator',
                   'Language',
                   'Spatial',
@@ -899,6 +899,7 @@ class Api():
             output = []
         return output
 
+
 class Wagtail():
 
     class GetSeries():
@@ -961,9 +962,11 @@ class Wagtail():
                 raw_items = concat([Api.getItem(i) for i in noids])
                 noids_and_items = list(zip(noids, raw_items))
                 try:
-                    noids_and_descriptions = [(noid, "".join(item["description"]))
-                                              for (noid, item)
-                                              in noids_and_items]
+                    noids_and_descriptions = (
+                        [(noid, "".join(item["description"]))
+                         for (noid, item)
+                         in noids_and_items]
+                    )
                 except KeyError:
                     noids_and_descriptions = []
 
@@ -984,18 +987,37 @@ class Wagtail():
 
                 return listing
 
+        def getSeriesOnly(identifier="b2pz3jc17901",
+                          field_names=DEFAULT_FIELDS,
+                          collection=DEFAULT,
+                          collection_slug=DEFAULT_SLUG,
+                          raw=False):
+            fix_everything = Wagtail.GetSeries.fix_everything
+            # build_item_listing = (Wagtail
+            #                       .GetSeries
+            #                       .ItemListing.build_item_listing)
+            first_pass = Api.getSeries(identifier, collection, raw)
+            series = fix_everything(first_pass, field_names=field_names)
+            return series
+
         def getSeries(identifier="b2pz3jc17901",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
                       collection_slug=DEFAULT_SLUG,
                       raw=False):
-            fix_everything = Wagtail.GetSeries.fix_everything
             build_item_listing = (Wagtail
                                   .GetSeries
                                   .ItemListing.build_item_listing)
-            first_pass = Api.getSeries(identifier, collection, raw)
-            series = fix_everything(first_pass, field_names=field_names)
-            parts = first_pass["hasParts"]
+            getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
+            series = getSeriesOnly(identifier=identifier,
+                                   field_names=field_names,
+                                   collection=collection,
+                                   collection_slug=collection_slug,
+                                   raw=raw)
+            try:
+                parts = series["hasParts"]
+            except KeyError:
+                parts = []
             items = build_item_listing(parts, collection_slug)
             return (series, items)
 
@@ -1003,35 +1025,73 @@ class Wagtail():
 
     class GetResultsByKeyword():
 
-        def qs_to_response(query_string, collection=DEFAULT):
+        def getSeries(identifier="b2pz3jc17901",
+                      field_names=DEFAULT_FIELDS,
+                      collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG,
+                      raw=False):
+            getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
             try:
-                search_term = query_string["keyword"]
+                series = getSeriesOnly(identifier=identifier,
+                                       field_names=field_names,
+                                       collection=collection,
+                                       collection_slug=collection_slug,
+                                       raw=False)
+            except AttributeError:
+                series = {}
+            return series
+
+        def qs_to_noids(query_string, collection=DEFAULT):
+            try:
+                search_term = query_string["keyword"][0]
                 noids = Api.getResultsByKeyword(search=search_term,
                                                 collection=collection,)
             except KeyError:
                 return []
             return noids
 
+        def getResultsByKeyword(qs={"keyword": "andrade"},
+                                collection=DEFAULT,
+                                raw=False):
+            getSeries = (Wagtail
+                         .GetResultsByKeyword
+                         .getSeries)
+            def get(noid):
+                return getSeries(identifier=noid,
+                                 collection=collection,
+                                 raw=False):
+            qs_to_noids = (Wagtail
+                           .GetResultsByKeyword
+                           .qs_to_noids)
+            noids = qs_to_noids(qs)
+            # TODO: fix the slowness involved with evalutating get(n) twice
+            output = [get(n) for n in noids if get(n)]
+            return output
 
-        # TODO: make this process the series NOIDs output by getResultsByKeyword
+    getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
 
-        # >>> s = Api.getSeries(noid)
-        # >>> seriesTitle = s["title"]
-        # >>> contributor = s["contributor"]
-        # >>> try:
-        # ...   indigenousLanguage = s["subjectLanguage"]
-        # ... except KeyError:
-        # ...   indigenousLanguage = ""
-        # ... 
-        # >>> location = s["spatial"]
-        # >>> location
-        # ['7005580']
-        # >>> date = s["date"]
-        # >>> date
-        # ['1972/2012']
-        # >>> resourceType = "Spoken Word"
+    # def linkify(series):
+    #     try:
+    #         _ = series["Title"]
+    #     except KeyError:
 
-        pass
+    # TODO: make this process the series NOIDs output by getResultsByKeyword
+
+    # >>> s = Api.getSeries(noid)
+    # >>> seriesTitle = s["title"]
+    # >>> contributor = s["contributor"]
+    # >>> try:
+    # ...   indigenousLanguage = s["subjectLanguage"]
+    # ... except KeyError:
+    # ...   indigenousLanguage = ""
+    # ... 
+    # >>> location = s["spatial"]
+    # >>> location
+    # ['7005580']
+    # >>> date = s["date"]
+    # >>> date
+    # ['1972/2012']
+    # >>> resourceType = "Spoken Word"
 
 
 class Utils():

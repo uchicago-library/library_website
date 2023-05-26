@@ -932,21 +932,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         """
         Route for digital collection results page.
         """
-        
+
         # abbreviated collection name for Mark Logic API
         short_name = self.short_name
 
         # TODO: actually use collection_group; currently not being used
         # collection_group = self.collection_group
 
-        qs_to_response = (Wagtail
-                          .GetResultsByKeyword
-                          .qs_to_response)
+        # qs_to_noids = (Wagtail
+        #                .GetResultsByKeyword
+        #                .qs_to_noids)
+        getResultsByKeyword = (Wagtail
+                               .GetResultsByKeyword
+                               .getResultsByKeyword)
         qs = request.GET
-        thing = qs_to_response(qs, collection=short_name)
+        results = getResultsByKeyword(qs, collection=short_name)
         template = "lib_collections/collection_results_page.html"
         context = super().get_context(request)
-        context["thing"] = thing
+        context["results"] = results
         return TemplateResponse(request, template, context)
 
     @route(r'^series/(?P<noid>\w+)/$')

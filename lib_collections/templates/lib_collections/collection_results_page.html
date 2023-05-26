@@ -20,30 +20,20 @@
     Search Results
 </h2>
 
-<h1>
-    Thing: {{ thing }}
-</h1>
-
+{% for result in results %}
 <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
     <dl>
-
+	{% for field, value in result.items %}
 	<dt>
-	    Dude
+	    {{ field }}
 	</dt>
 	<dd>
-	    Dudette
+	    {{ value }}
 	</dd>
-
-	<dt>
-	    Other Dude
-	</dt>
-	<dd>
-	    Other Dudette
-	</dd>
-
+	{% endfor %}
     </dl>
 </span> <!-- / schema.org wrapper -->
-
+{% endfor %}
 
 {% endblock %}
 {% block right_sidebar %}
