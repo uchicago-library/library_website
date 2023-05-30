@@ -24,6 +24,7 @@ from lib_collections.utils import GeneralPurpose
 import urllib
 from collections import OrderedDict
 from base.utils import compose, concat, const
+from multiprocessing.pool import ThreadPool
 
 
 def sp_query(manifid: str) -> str:
@@ -1050,15 +1051,6 @@ class Wagtail():
                 series = {}
             return series
 
-        # def search_to_noids(query_string, collection=DEFAULT):
-        #     try:
-        #         search_term = query_string["keyword"]
-        #         noids = Api.getResultsByKeyword(search=search_term,
-        #                                         collection=collection,)
-        #     except KeyError:
-        #         return []
-        #     return noids
-
         def getResultsByKeyword(search="andrade",
                                 collection=DEFAULT,
                                 raw=False):
@@ -1078,35 +1070,13 @@ class Wagtail():
 
             # noids = getResultsByKeyword(search)
             # TODO: fix the slowness involved with evalutating get(n) twice
-            series_data = [get(n) for n in noids]
-            output = list(filter(lambda s: s != {}, series_data))
+
+            series_data = ThreadPool(4).imap(getSeries, noids)
+            output = (n for n in series_data if n)
+            # output = list(filter(lambda s: s != {}, series_data))
             return output
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
-
-    # def linkify(series):
-    #     try:
-    #         _ = series["Title"]
-    #     except KeyError:
-
-    # TODO: make this process the series NOIDs output by getResultsByKeyword
-
-    # >>> s = Api.getSeries(noid)
-    # >>> seriesTitle = s["title"]
-    # >>> contributor = s["contributor"]
-    # >>> try:
-    # ...   indigenousLanguage = s["subjectLanguage"]
-    # ... except KeyError:
-    # ...   indigenousLanguage = ""
-    # ... 
-    # >>> location = s["spatial"]
-    # >>> location
-    # ['7005580']
-    # >>> date = s["date"]
-    # >>> date
-    # ['1972/2012']
-    # >>> resourceType = "Spoken Word"
-
 
 class Utils():
 

@@ -28,12 +28,14 @@
 	<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
 	    <dl>
 		{% for field, value in result.items %}
-		<dt>
-		    {{ field }}
-		</dt>
-		<dd>
-		    {{ value }}
-		</dd>
+
+		    <dt>
+			{{ field }}
+		    </dt>
+		    <dd>
+			{{ value }}
+		    </dd>
+
 		{% endfor %}
 	    </dl>
 	</span> <!-- / schema.org wrapper -->
