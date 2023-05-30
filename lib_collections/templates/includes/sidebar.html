@@ -1,13 +1,69 @@
 {% if sidebar_browse_types %}
-    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Browse Collection:</h2>
-	<ul class="no-indent">
-	    {% for browse_type, link in sidebar_browse_types.items %}
-	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
-	    {% endfor %}
-	</ul>
-    </div>
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Browse Collection:</h2>
+    <ul class="no-indent">
+	{% for browse_type, link in sidebar_browse_types.items %}
+	<li><a href="{{ link }}">{{ browse_type }}</a></li>
+	{% endfor %}
+    </ul>
+</div>
 {% endif %}
+
+<!-- TODO: the 'facets' code isn't being used yet; populate it dynamically -->
+{% if facets %}
+
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Narrow Search</h2>
+
+    <h3>Language</h3>
+    <ul>
+        <li>Mam <span>26</span></li>
+    </ul>
+
+    <h3>Location</h3>
+    <ul>
+        <li>Guatemala <span>10</span></li>
+    </ul>
+</div>
+
+{% else %}
+{% endif %}
+
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Search &amp; Browse</h2>
+
+    <form method="GET" class="searchbox" action="/collex/collections/{{ self.slug }}/results/">
+        <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="keyword" aria-label="search collections" placeholder="Search collections">
+
+        <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
+            <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;">
+        </span>
+    </form>
+    <p>Search language, location, people, etc.</p>
+</div>
+
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Browse by:</h2>
+    <ul>
+        <li><a href="#">Languages</a></li>
+        <li><a href="#">Locations</a></li>
+        <li><a href="#">Contributors</a></li>
+        <li><a href="#">Dates</a></li>
+    </ul>
+</div>
+
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Access</h2>
+    <p><a href="#">Login</a></p>
+    <p><a href="#">Request research access</a></p> <!-- this doesn't appear on all pages? --> 
+</div>
+
+<div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+    <h2>Feedback</h2>
+    <p><a href="#">Suggest Corrections <!-- external symbol --></a></p>
+</div>
+
+
 
 
 <!-- FOR OBJECT PAGE ONLY dev-note: Luna and BTAA link section -->

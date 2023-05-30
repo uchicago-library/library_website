@@ -1078,6 +1078,7 @@ class Wagtail():
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
 
+
 class Utils():
 
     def gimme_all_noids(collection=DEFAULT):
