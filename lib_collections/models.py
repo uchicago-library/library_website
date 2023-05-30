@@ -927,10 +927,42 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    @route(r'^results/$')
+    def results(self, request, *args, **kwargs):
+        """
+        Route for digital collection results page.
+        """
+
+        # abbreviated collection name for Mark Logic API
+        short_name = self.short_name
+
+        # TODO: actually use collection_group; currently not being used
+        # collection_group = self.collection_group
+
+        # qs_to_noids = (Wagtail
+        #                .GetResultsByKeyword
+        #                .qs_to_noids)
+        qs = request.GET
+
+        try:
+            search_term = qs["keyword"]
+            results = Wagtail.getResultsByKeyword(
+                search=search_term, collection=short_name
+            )
+        except KeyError:
+            search_term = "Error: SEARCH TERM MISSING."
+            results = []
+
+        template = "lib_collections/collection_results_page.html"
+        context = super().get_context(request)
+        context["results"] = results
+        context["search_term"] = qs["keyword"]
+        return TemplateResponse(request, template, context)
+
     @route(r'^series/(?P<noid>\w+)/$')
     def series(self, request, *args, **kwargs):
         """
-        Route for digital collection object page.
+        Route for digital collection series page.
         """
         template = "lib_collections/collection_series_page.html"
 
