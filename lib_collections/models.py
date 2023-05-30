@@ -946,10 +946,20 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                                .GetResultsByKeyword
                                .getResultsByKeyword)
         qs = request.GET
-        results = getResultsByKeyword(qs, collection=short_name)
+
+        try:
+            search_term = qs["keyword"]
+            results = getResultsByKeyword(
+                search=search_term, collection=short_name
+            )
+        except KeyError:
+            search_term = "Error: SEARCH TERM MISSING."
+            results = []
+
         template = "lib_collections/collection_results_page.html"
         context = super().get_context(request)
         context["results"] = results
+        context["search_term"] = qs["keyword"]
         return TemplateResponse(request, template, context)
 
     @route(r'^series/(?P<noid>\w+)/$')

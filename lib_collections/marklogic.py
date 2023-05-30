@@ -1041,31 +1041,36 @@ class Wagtail():
                 series = {}
             return series
 
-        def qs_to_noids(query_string, collection=DEFAULT):
-            try:
-                search_term = query_string["keyword"][0]
-                noids = Api.getResultsByKeyword(search=search_term,
-                                                collection=collection,)
-            except KeyError:
-                return []
-            return noids
+        # def search_to_noids(query_string, collection=DEFAULT):
+        #     try:
+        #         search_term = query_string["keyword"]
+        #         noids = Api.getResultsByKeyword(search=search_term,
+        #                                         collection=collection,)
+        #     except KeyError:
+        #         return []
+        #     return noids
 
-        def getResultsByKeyword(qs={"keyword": "andrade"},
+        def getResultsByKeyword(search="andrade",
                                 collection=DEFAULT,
                                 raw=False):
             getSeries = (Wagtail
                          .GetResultsByKeyword
                          .getSeries)
+
+            noids = (
+                Api.getResultsByKeyword(search=search,
+                                        collection=collection)
+            )
+
             def get(noid):
                 return getSeries(identifier=noid,
                                  collection=collection,
-                                 raw=False):
-            qs_to_noids = (Wagtail
-                           .GetResultsByKeyword
-                           .qs_to_noids)
-            noids = qs_to_noids(qs)
+                                 raw=False)
+
+            # noids = getResultsByKeyword(search)
             # TODO: fix the slowness involved with evalutating get(n) twice
-            output = [get(n) for n in noids if get(n)]
+            series_data = [get(n) for n in noids]
+            output = list(filter(lambda s: s != {}, series_data))
             return output
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
