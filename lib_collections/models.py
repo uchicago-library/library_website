@@ -942,14 +942,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # qs_to_noids = (Wagtail
         #                .GetResultsByKeyword
         #                .qs_to_noids)
-        getResultsByKeyword = (Wagtail
-                               .GetResultsByKeyword
-                               .getResultsByKeyword)
         qs = request.GET
 
         try:
             search_term = qs["keyword"]
-            results = getResultsByKeyword(
+            results = Wagtail.getResultsByKeyword(
                 search=search_term, collection=short_name
             )
         except KeyError:

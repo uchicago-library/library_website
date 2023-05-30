@@ -17,37 +17,36 @@
 {% block content %}
 
 
-{% if result %}
-
-{% for result in results %}
+{% if results %}
 
     <h2>
 	Search Results for: {{search_term}}
     </h2>
 
-    <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
-	<dl>
-	    {% for field, value in result.items %}
-	    <dt>
-		{{ field }}
-	    </dt>
-	    <dd>
-		{{ value }}
-	    </dd>
-	    {% endfor %}
-	</dl>
-    </span> <!-- / schema.org wrapper -->
+    {% for result in results %}
+
+	<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+	    <dl>
+		{% for field, value in result.items %}
+		<dt>
+		    {{ field }}
+		</dt>
+		<dd>
+		    {{ value }}
+		</dd>
+		{% endfor %}
+	    </dl>
+	</span> <!-- / schema.org wrapper -->
 
 {% endfor %}
 
 {% else %}
 
     <h2>
-	No results for: {{search_term}}
+	No search results for: {{search_term}}
     </h2>
 
 {% endif %}
-
 
 {% endblock %}
 {% block right_sidebar %}
