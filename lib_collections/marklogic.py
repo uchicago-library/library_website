@@ -1039,12 +1039,14 @@ class Wagtail():
                       collection_slug=DEFAULT_SLUG,
                       raw=False):
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
+
             try:
                 series = getSeriesOnly(identifier=identifier,
-                                       field_names=field_names,
-                                       collection=collection,
-                                       collection_slug=collection_slug,
-                                       raw=False)
+                                         field_names=field_names,
+                                         collection=collection,
+                                         collection_slug=collection_slug,
+                                         raw=False)
+
             except AttributeError:
                 series = {}
             return series
@@ -1066,16 +1068,22 @@ class Wagtail():
                                  collection=collection,
                                  raw=False)
 
-            # noids = getResultsByKeyword(search)
-            # TODO: fix the slowness involved with evalutating get(n) twice
-
             series_data = ThreadPool(4).imap(getSeries, noids)
             output = (n for n in series_data if n)
-            # output = list(filter(lambda s: s != {}, series_data))
             return output
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
 
+
+    class GetItem():
+
+        def getItem(identifier="b2k40qk4wc8h",
+                    collection=DEFAULT,
+                    raw=False):
+            item_data = Api.getItem(identifier=identifier,
+                                    collection=collection,
+                                    raw=raw)
+            return OrderedDict([(k,v) for k,v in item_data.items()])
 
 class Utils():
 

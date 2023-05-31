@@ -17,8 +17,30 @@
 {% block content %}
 
 
-<!-- <iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f8bed2c9-bfb2-41e8-968b-acd2013ac871&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"> -->
+<iframe src="https://uchicago.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=f8bed2c9-bfb2-41e8-968b-acd2013ac871&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all" height="100" width="720" style="border: 1px solid #464646;" allowfullscreen allow="autoplay"></iframe>
 
+<style>
+ div.centermain > dl {
+     display: grid;
+     grid-template-columns: min-content auto;
+ }     
+ div.centermain > dl > dd {
+     border-bottom: 1px dotted rgb(107, 107, 107);
+     padding: 12.5px 0; 
+ }     
+ div.centermain > dl > dt {
+     border-bottom: 1px dotted rgb(107, 107, 107);
+     padding: 12.5px 1em 12.5px 0; 
+ }     
+</style>
+<dl>
+    <dt>Item Identifier</dt>
+    <dd>https://n2t.net/ark:61001/b2630sz6x44s</dd>
+    <dt>Date(s)</dt>
+    <dd>2016-11-29<br>2016</dd>
+    <dt>Description</dt>
+    <dd>Contents=Track 1 of the tape</dd>
+</dl>   
 
 {% endblock %}
 {% block right_sidebar %}

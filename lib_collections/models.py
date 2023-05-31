@@ -37,6 +37,7 @@ from .marklogic import (get_record_for_display,
                         Validation,)
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
                     LBrowseURL, Permissions)
+from lib_collections.panopto import Player
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -968,7 +969,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         template = "lib_collections/collection_series_page.html"
 
         # list of metadata fields from Mark Logic to display in object page
-        # field_names = DEFAULT_FIELDS
         field_names = self.get_series_metadata()
 
         # series NOID
@@ -1031,8 +1031,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         else:
             object_title = 'Object'
             final_crumb = object_title
-
-        # series_items = SERIES_ITEMS_TEST_STUB
 
         def default(thunk, defval):
             """
@@ -1347,6 +1345,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         ark_link = 'https://ark.lib.uchicago.edu/ark:61001/b25m5d94m413'
 
+        panopto_id = Player.ark_to_panopto(ark_link)
+
+        object_metadata = Wagtail.GetItem.getItem(identifier=noid,
+                                                  collection=slug,
+                                                  raw=False)
+
         context = super().get_context(request)
         context["noid"] = noid
         context["slug"] = slug
@@ -1357,7 +1361,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['collection_breadcrumb'] = breads
         context['object_title'] = object_title
 
+
+        context['object_metadata'] = object_metadata
         context['ark_link'] = ark_link
+        context['panopto_id'] = panopto_id
 
         context["audio_id"] = 1
         context["display_player"] = display_player
