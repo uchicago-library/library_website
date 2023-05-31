@@ -970,7 +970,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # field_names = DEFAULT_FIELDS
         field_names = self.get_series_metadata()
 
-        # object NOID
+        # series NOID
         noid = kwargs["noid"]
 
         # gather information for sidebar browse links
@@ -1095,7 +1095,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
-    @route(r'^object/(?P<manifid>\w+)/$')
+    @route(r'^object/(?P<noid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
         Route for digital collection object page.
@@ -1106,7 +1106,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         field_names = self.metadata_field_names()
 
         # object NOID
-        manifid = kwargs["manifid"]
+        noid = kwargs["noid"]
 
         slug = self.slug
 
@@ -1114,9 +1114,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         sidebar_browse_types = self.build_browse_types()
 
         # query Mark Logic for object metadata
-        if injection_safe(manifid):
+        if injection_safe(noid):
             marklogic = get_record_for_display(
-                manifid,
+                noid,
                 field_names,
             )
         else:
@@ -1183,10 +1183,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # get link to physical object in VuFind
         physical_object = default(
-            lambda: get_record_no_parsing(manifid, '')['Local'], ''
+            lambda: get_record_no_parsing(noid, '')['Local'], ''
         )
         callno = default(
-            lambda: get_record_no_parsing(manifid, '')['Classificationlcc'], ''
+            lambda: get_record_no_parsing(noid, '')['Classificationlcc'], ''
         )
 
         # get link to catalog call number for collection object
@@ -1234,45 +1234,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        # bring utility functions from CitationInfo into local namespace
-
-        # MT 3/23/2021: commented out temporarily while we overhaul
-        # the citation service
-
-        # get_turtle_data = CitationInfo.get_turtle_data
-        # get_csl = CitationInfo.get_csl
-        # get_bibtex = CitationInfo.get_bibtex
-        # get_ris = CitationInfo.get_ris
-        # get_zotero = CitationInfo.get_zotero
-        # csl_json_to_html = CitationInfo.csl_json_to_html
-        # config = self.citation_config
-
-        # get Turtle data for collection object
-        # turtle_data = get_turtle_data(manifid)
-
-        # get CSL-JSON data
-        # csl = get_csl(
-        #     turtle_data,
-        #     config,
-        # )
-
-        # get CSL files for Chicago, MLA, and APA styles off disk
-
-        # chicago = csl_json_to_html(csl, CHICAGO_PATH)
-        # mla = csl_json_to_html(csl, MLA_PATH)
-        # apa = csl_json_to_html(csl, APA_PATH)
-
-        # get Bibtex, RIS, and Zotero harvesting citation info
-        # bibtex_link = get_bibtex(turtle_data, config)
-        # endnote_link = get_ris(turtle_data, config)
-        # zotero = str(get_zotero(turtle_data, config))
-
-        # URLs for social media sharing links
-        share_url = request.build_absolute_uri()
-        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + manifid
-        canonical_url = og_url
-
-        iiif_url = get_viewer_url(manifid)
+        iiif_url = get_viewer_url(noid)
 
         internal_error = not marklogic and not iiif_url
 
@@ -1282,29 +1244,17 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # above note
 
         context = super().get_context(request)
-        context["manifid"] = manifid
-        context["iiif_url"] = iiif_url
-        context["share_url"] = share_url
+        context["noid"] = noid
         context["slug"] = slug
         context["internal_error"] = internal_error
         context["marklogic"] = marklogic
-        context["sidebar_browse_types"] = sidebar_browse_types
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
         context['object_title'] = object_title
-        context['physical_object'] = physical_object
-        context['callno'] = callno
 
-        # context['chicago'] = chicago
-        # context['mla'] = mla
-        # context['apa'] = apa
-        # context['bibtex_link'] = bibtex_link
-        # context['endnote_link'] = endnote_link
-        # context['zotero'] = zotero
-
-        context['og_url'] = og_url
-        context['canonical_url'] = canonical_url
+        # context['og_url'] = og_url
+        # context['canonical_url'] = canonical_url
 
         # update context with staff info for sidebar
         context.update(self.staff_context())

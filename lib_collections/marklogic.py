@@ -1003,9 +1003,6 @@ class Wagtail():
                           collection_slug=DEFAULT_SLUG,
                           raw=False):
             fix_everything = Wagtail.GetSeries.fix_everything
-            # build_item_listing = (Wagtail
-            #                       .GetSeries
-            #                       .ItemListing.build_item_listing)
             first_pass = Api.getSeries(identifier, collection, raw)
             series = fix_everything(first_pass, field_names=field_names)
             return series
@@ -1018,19 +1015,17 @@ class Wagtail():
             build_item_listing = (Wagtail
                                   .GetSeries
                                   .ItemListing.build_item_listing)
-            getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
+            fix_everything = Wagtail.GetSeries.fix_everything
             try:
-                series = getSeriesOnly(identifier=identifier,
-                                       field_names=field_names,
-                                       collection=collection,
-                                       collection_slug=collection_slug,
-                                       raw=raw)
+                first_pass = Api.getSeries(identifier, collection, raw)
+                series = fix_everything(first_pass, field_names=field_names)
             except AttributeError:
+                first_pass = []
                 series = []
             try:
-                parts = series["hasParts"]
+                parts = first_pass["hasParts"]
                 items = build_item_listing(parts, collection_slug)
-            except KeyError:
+            except (KeyError, TypeError):
                 items = ""
             return (series, items)
 
