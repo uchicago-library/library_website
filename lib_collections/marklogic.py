@@ -1033,6 +1033,24 @@ class Wagtail():
 
     class GetResultsByKeyword():
 
+        # def getSeries(identifier="b2pz3jc17901",
+        #               field_names=DEFAULT_FIELDS,
+        #               collection=DEFAULT,
+        #               collection_slug=DEFAULT_SLUG,
+        #               raw=False):
+        #     getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
+
+        #     try:
+        #         series = getSeriesOnly(identifier=identifier,
+        #                                  field_names=field_names,
+        #                                  collection=collection,
+        #                                  collection_slug=collection_slug,
+        #                                  raw=False)
+
+        #     except AttributeError:
+        #         series = {}
+        #     return series
+
         def getSeries(identifier="b2pz3jc17901",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
@@ -1040,16 +1058,33 @@ class Wagtail():
                       raw=False):
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
 
+            def mk_link(k, v):
+                if k.lower() == "title":
+                    route = "/collex/collections/%s/object/%s" % (
+                        collection_slug,
+                        identifier,
+                    )
+
+                else:
+                    route = ""
+                output = {"link_text": v,
+                          "link_url": route,}
+                return output
+
             try:
-                series = getSeriesOnly(identifier=identifier,
+                metadata = getSeriesOnly(identifier=identifier,
                                          field_names=field_names,
                                          collection=collection,
                                          collection_slug=collection_slug,
                                          raw=False)
+                series = OrderedDict([(k, mk_link(k, v))
+                                      for k, v
+                                      in metadata.items()])
 
-            except AttributeError:
+            except (AttributeError, KeyError):
                 series = {}
             return series
+
 
         def getResultsByKeyword(search="andrade",
                                 collection=DEFAULT,
@@ -1083,7 +1118,8 @@ class Wagtail():
             item_data = Api.getItem(identifier=identifier,
                                     collection=collection,
                                     raw=raw)
-            return OrderedDict([(k,v) for k,v in item_data.items()])
+            return item_data[0]
+
 
 class Utils():
 

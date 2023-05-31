@@ -1101,6 +1101,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         """
         template = "lib_collections/collection_object_page.html"
 
+        short_name = self.short_name
+
         # list of metadata fields from Mark Logic to display in object page
         field_names = self.metadata_field_names()
 
@@ -1348,7 +1350,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         panopto_id = Player.ark_to_panopto(ark_link)
 
         object_metadata = Wagtail.GetItem.getItem(identifier=noid,
-                                                  collection=slug,
+                                                  collection=short_name,
                                                   raw=False)
 
         context = super().get_context(request)

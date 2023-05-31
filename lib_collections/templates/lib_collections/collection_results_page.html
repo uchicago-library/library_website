@@ -40,29 +40,33 @@
 
 {% if results %}
 
-    <h2>
-	Search Results for: {{search_term}}
-    </h2>
+  <h2>
+      Search Results for: {{search_term}}
+  </h2>
 
-    {% for result in results %}
+  {% for result in results %}
 
-	<div itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
-        <div><img src=""/></div>
-	    <dl>
-		{% for field, value in result.items %}
+  <div itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+      <div><img src=""/></div>
+      <dl>
+	  {% for field, value in result.items %}
 
-		    <dt>
-			{{ field }}
-		    </dt>
-		    <dd>
-			{{ value }}
-		    </dd>
+	  <dt>
+	      {{ field }}
+	  </dt>
+	  <dd>
+	      {% if value.link_url %}
+	      <a href="{{ value.link_url }}">{{ value.link_text }}</a>
+	      {% else %}
+	      {{ value.link_text }}
+	      {% endif %}
+	  </dd>
 
-		{% endfor %}
-	    </dl>
-	</div> <!-- / schema.org wrapper -->
+	  {% endfor %}
+      </dl>
+  </div> <!-- / schema.org wrapper -->
 
-{% endfor %}
+  {% endfor %}
 
 {% else %}
 
