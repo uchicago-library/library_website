@@ -1095,6 +1095,119 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
+
+    @route(r'^mockdmaobject/$')
+    def mockdmaobject(self, request, *args, **kwargs):
+
+        template = "lib_collections/mockdma_object_page.html"
+
+        apache_env = request.environ
+        query_string = request.GET
+
+        lookup = Result.lookup
+        default = Result.default
+
+        users_ip = Permissions.get_users_ip(request)
+        user_cnetid = Permissions.shibbed_cnetid(request)
+
+        def string_to_bool(string):
+            if string.lower() == 'true':
+                return True
+            else:
+                return False
+
+        override_reality = default(
+            lookup("override_reality", query_string)) == 'true'
+
+        item_permission = default(
+            lookup("item_permission", query_string))
+
+        on_campus = default(lookup("on_campus", query_string)) == 'true'
+
+        shibbed_in = default(lookup("shibbed_in", query_string)) == 'true'
+
+        # query string spec
+
+        # override_reality -> pretend we're in situation described by query string
+        # item_permission -> 1 is world, 2 is campus, 3 is restricted
+        # example = 1 is world, 2 is campus, 3 is restricted
+        # on_campus -> boolean
+        # shibbed_in -> boolean
+
+        overriding_reality = all([
+            query_string,
+            override_reality,
+            # item_permission,
+            default(lookup("on_campus", query_string)),
+            default(lookup("shibbed_in", query_string)),
+        ])
+
+        def num_to_perm(n):
+            if n == '1':
+                return "Open"
+            elif n == '2':
+                return "Campus"
+            elif n == '3':
+                return "Restricted"
+            else:
+                return ''
+
+        perm = num_to_perm(item_permission)
+
+        if overriding_reality:
+
+            show_player = ((perm == "Open")
+                           or (perm == "Campus" and on_campus))
+
+            display_player = {
+                "OpenShowPlayer": perm == "Open",
+                "CampusShowPlayer": perm == "Campus" and (on_campus or shibbed_in),
+                "CampusCrossOutPlayer": perm == "Campus" and (not (on_campus or shibbed_in)),
+                "RestrictedPlayer": perm == "Restricted",
+            }
+
+        else:
+
+            display_player = {
+                "OpenShowPlayer": Permissions.open_show_player(perm, request),
+                "CampusShowPlayer": Permissions.campus_show_player(perm, request),
+                "CampusCrossOutPlayer":
+                Permissions.campus_crossout_player(perm, request),
+                "RestrictedPlayer":
+                Permissions.restricted_player(perm, request),
+            }
+
+            # raise Exception("AAAAH")
+            # on_campus = Permissions.on_campus(users_ip)
+            shibbed_in = Permissions.shibbed_in(request)
+
+        def perm_to_panopto_id(perm):
+            if perm == "Open":
+                return "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+            elif perm == "Campus":
+                return "22c97e79-3920-49c3-a1ac-ad3a011985ec"
+            elif perm == "Restricted":
+                return "3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a"
+            elif perm == '':
+                return ''
+            else:
+                raise Exception(
+                    "Permission must be Open, Campus, or Restricted")
+
+        context = super().get_context(request)
+        context["audio_id"] = perm_to_panopto_id(perm)
+        context["display_player"] = display_player
+        context["perm"] = perm
+        context["on_campus"] = on_campus
+        context["shibbed_in"] = shibbed_in
+        context["overriding_reality"] = overriding_reality
+        context["users_ip"] = users_ip
+        context["user_cnetid"] = user_cnetid
+
+        return TemplateResponse(request, template, context)
+
+
+
     @route(r'^object/(?P<noid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
