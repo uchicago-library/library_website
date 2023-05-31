@@ -16,6 +16,27 @@
 
 {% block content %}
 
+  <style>
+    div.centermain > div {
+      border-bottom: 1px dotted rgb(107, 107, 107);
+      display: flex;
+    }
+    div.centermain > div > div {
+      margin: 12.5px 1em 0 0;
+    }
+    div.centermain > div > dl {
+      display: grid;
+      grid-template-columns: max-content auto;
+      margin: 10px 0;
+    }
+    div.centermain > div > dl > dd {
+      margin: 2.5px 0;
+    }
+    div.centermain > div > dl > dt {
+      padding-right: 1em;
+      margin: 2.5px 0;
+    }
+  </style>
 
 {% if results %}
 
@@ -25,7 +46,8 @@
 
     {% for result in results %}
 
-	<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+	<div itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+        <div><img src=""/></div>
 	    <dl>
 		{% for field, value in result.items %}
 
@@ -38,7 +60,7 @@
 
 		{% endfor %}
 	    </dl>
-	</span> <!-- / schema.org wrapper -->
+	</div> <!-- / schema.org wrapper -->
 
 {% endfor %}
 

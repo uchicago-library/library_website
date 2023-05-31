@@ -8,14 +8,10 @@ from __future__ import (
 
 import json
 import re
+import ipaddress
 from urllib.parse import urlencode
 
 import requests
-# from citeproc import (
-#     Citation, CitationItem, CitationStylesBibliography, CitationStylesStyle,
-#     formatter
-# )
-# from citeproc.source.json import CiteProcJSON
 from django.utils.text import slugify
 from library_website.settings import (
     IIIF_PREFIX,
@@ -25,6 +21,7 @@ from library_website.settings import (
     CITATION_ROOT,
     TURTLE_ROOT
 )
+from base.result import Result
 
 
 class GeneralPurpose():
@@ -965,21 +962,28 @@ class Testing():
         '@prefix ore: <http://www.openarchives.org/ore/terms/> .\n'
         '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
         '\n'
-        '</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
+        '</digital_collections/IIIF_Files/social_scientists_maps/'
+        'G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
         '    dc:format "application/xml" ;\n'
-        '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
-        '    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/'
+        'G4104-C6-2W9-1920z-U5> ;\n'
+        '    ore:proxyIn </aggregation/digital_collections/'
+        'IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
         '\n'
-        '</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
+        '</rem/digital_collections/IIIF_Files/maps/chisoc/'
+        'G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
         '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
         '    dcterms:creator <http://library.uchicago.edu> ;\n'
         '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        '    ore:describes </aggregation/digital_collections/IIIF_Files/'
+        'maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
         '\n'
         '<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>'
-        'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
+        'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/'
+        'G4104-C6-2W9-1920z-U5> .\n'
         '\n'
-        '</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
+        '</aggregation/digital_collections/IIIF_Files/maps/chisoc/'
+        'G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
         '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
         '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
         '    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
@@ -1094,3 +1098,71 @@ class Testing():
     empty_sparql = GeneralPurpose.k(
         {'head': {'vars': []}, 'results': {'bindings': []}}
     )
+
+
+class Permissions():
+    """
+    Namespace class containing helper functions for determining
+    permissions in a collection page.
+    """
+
+    def get_users_ip(request):
+        return Result.default(
+            Result.lookup("REMOTE_ADDR", request.environ))
+
+    def shibbed_cnetid(request):
+        return Result.default(
+            Result.lookup("REMOTE_USER", request.environ))
+
+    def shibbed_in(request):
+        return bool(Permissions.shibbed_cnetid(request))
+
+    CAMPUS_SUBNETS = [
+        "128.135.43.0/24",
+        "128.135.53.0/24",
+        "128.135.55.0/24",
+        "128.135.153.0/24",
+        "128.135.159.0/24",
+
+        "128.135.0.0/16",
+        "205.208.0.0/17",
+        "165.68.0.0/16",
+        "192.170.192.0/19",
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16",
+
+        "165.68.0.0/16",
+        "64.107.48.0/23",
+    ]
+
+    def in_subnet(ip_string, subnet_string):
+        input_ip = ipaddress.ip_address(ip_string)
+        subnet = ipaddress.ip_network(subnet_string)
+        return input_ip in subnet
+
+    def on_campus(ip_string, subnets=CAMPUS_SUBNETS):
+        the_possibilities = [Permissions.in_subnet(ip_string, x)
+                             for x in subnets]
+        return any(the_possibilities)
+
+    def open_show_player(perm, request):
+        return perm == "Open"
+
+    def campus_show_player(perm, request):
+        perm_is_campus = perm == "Campus"
+        user_ip = Permissions.get_users_ip(request)
+        user_on_campus = Permissions.on_campus(user_ip)
+        user_shibbed = Permissions.shibbed_cnetid(request)
+        return perm_is_campus and (user_on_campus or user_shibbed)
+
+    def campus_crossout_player(perm, request):
+        perm_is_campus = perm == "Campus"
+        user_ip = Permissions.get_users_ip(request)
+        user_on_campus = Permissions.on_campus(user_ip)
+        user_shibbed = Permissions.shibbed_cnetid(request)
+        return (perm_is_campus and
+                ((not user_on_campus) and (not user_shibbed)))
+
+    def restricted_player(perm, request):
+        return perm == "Restricted"
