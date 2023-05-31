@@ -1060,7 +1060,7 @@ class Wagtail():
 
             def mk_link(k, v):
                 if k.lower() == "title":
-                    route = "/collex/collections/%s/object/%s" % (
+                    route = "/collex/collections/%s/series/%s" % (
                         collection_slug,
                         identifier,
                     )
