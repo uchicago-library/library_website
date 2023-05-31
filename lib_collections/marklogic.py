@@ -1019,16 +1019,19 @@ class Wagtail():
                                   .GetSeries
                                   .ItemListing.build_item_listing)
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
-            series = getSeriesOnly(identifier=identifier,
-                                   field_names=field_names,
-                                   collection=collection,
-                                   collection_slug=collection_slug,
-                                   raw=raw)
+            try:
+                series = getSeriesOnly(identifier=identifier,
+                                       field_names=field_names,
+                                       collection=collection,
+                                       collection_slug=collection_slug,
+                                       raw=raw)
+            except AttributeError:
+                series = []
             try:
                 parts = series["hasParts"]
+                items = build_item_listing(parts, collection_slug)
             except KeyError:
-                parts = []
-            items = build_item_listing(parts, collection_slug)
+                items = ""
             return (series, items)
 
     getSeries = GetSeries.getSeries
