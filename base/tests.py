@@ -1,25 +1,30 @@
 import json
-import os
 import sys
+from datetime import datetime, timedelta
 from io import StringIO
 
+import pandas as pd
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import management
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import Client, TestCase
 from file_parsing import is_json
-from wagtail.models import Page, Site
-
-from base.models import BasePage, get_available_path_under
-from base.utils import get_hours_by_id, get_json_for_library
 from news.models import NewsPage
 from public.models import StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
+from wagtail.core.blocks.stream_block import StreamValue
+from wagtail.documents.models import Document
+from wagtail.models import Page, Site
+
+from base.models import BasePage, LinkQueueSpreadsheetBlock, get_available_path_under
+from base.utils import get_hours_by_id, get_json_for_library
 
 GENERIC_REQUEST_HEADERS = [
-    ('HTTP_HOST', 'foobartest.com'), ('SERVER_PORT', '80'),
-    ('SERVER_NAME', 'dungeon')
+    ('HTTP_HOST', 'foobartest.com'),
+    ('SERVER_PORT', '80'),
+    ('SERVER_NAME', 'dungeon'),
 ]
 
 
@@ -37,9 +42,7 @@ def add_generic_request_meta_fields(request):
         request.META[key] = value
 
 
-def create_user_with_privileges(
-    username, password, first_name, last_name, email
-):
+def create_user_with_privileges(username, password, first_name, last_name, email):
     """
     Create a user that belongs to the proper groups
     to access the intranet.
@@ -63,7 +66,7 @@ def create_user_with_privileges(
         password=password,
         first_name=first_name,
         last_name=last_name,
-        email=email
+        email=email,
     )
     user.save()
 
@@ -166,15 +169,18 @@ class TestUsersAndServingLivePages(TestCase):
         # in sync by the Site.save logic, but this is bypassed when the database is
         # rolled back between tests using transactions.
         from django.core.cache import cache
+
         cache.delete('wagtail_site_root_paths')
 
         # also need to clear urlresolver caches before/after tests, because we override
         # ROOT_URLCONF in some tests here
         from django.urls import clear_url_caches
+
         clear_url_caches()
 
     def tearDown(self):
         from django.urls import clear_url_caches
+
         clear_url_caches()
 
     def test_random_news_page(self):
@@ -187,9 +193,7 @@ class TestUsersAndServingLivePages(TestCase):
         news_page = NewsPage.objects.live().first()
         request = HttpRequest()
         add_generic_request_meta_fields(request)
-        request.user = User.objects.all().filter(
-            is_staff=True, is_active=True
-        ).first()
+        request.user = User.objects.all().filter(is_staff=True, is_active=True).first()
         request.site = Site.objects.filter(hostname=hostname)
         response = news_page.serve(request)
         self.assertEqual(response.status_code, 200)
@@ -219,9 +223,7 @@ class TestUsersAndServingLivePages(TestCase):
     #        response = user.client.get(page.url, HTTP_HOST=site.hostname)
     #        self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
 
-    def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(
-        self
-    ):
+    def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(self):
         """
         Test all live public pages with an anonymous user.
         Most pages should return a 200, however, the redirect
@@ -236,14 +238,11 @@ class TestUsersAndServingLivePages(TestCase):
 
         for page in pages:
             try:
-                response = user.client.get(
-                    page.url, HTTP_HOST=site.hostname
-                )
+                response = user.client.get(page.url, HTTP_HOST=site.hostname)
                 self.assertEqual(
                     response.status_code in possible,
                     True,
-                    msg=page.url + ' returned a ' +
-                    str(response.status_code)
+                    msg=page.url + ' returned a ' + str(response.status_code),
                 )
             except:
                 print(page.relative_url(site) + ' has a problem')
@@ -287,9 +286,10 @@ class TestPageModels(TestCase):
                 no_subpagetypes.add(page_type.__name__)
 
         self.assertEqual(
-            len(no_subpagetypes), 0,
+            len(no_subpagetypes),
+            0,
             'The following content types don\'t have a subpages_type declaration: '
-            + str(no_subpagetypes)
+            + str(no_subpagetypes),
         )
 
     def test_page_models_have_search_fields(self):
@@ -302,29 +302,37 @@ class TestPageModels(TestCase):
         content_types = Page.allowed_subpage_models()[1:]
         page_search_fields = Page.search_fields
         base_page_search_fields = BasePage.search_fields
-        default_search_fields = set(
-            page_search_fields + base_page_search_fields
-        )
+        default_search_fields = set(page_search_fields + base_page_search_fields)
         ignore = set(
             [
-                'AlertPage', 'AlertIndexPage', 'ConferenceIndexPage',
-                'FindingAidsPage', 'GroupMeetingMinutesIndexPage',
-                'GroupReportsIndexPage', 'HomePage', 'IntranetFormPage',
-                'IntranetHomePage', 'IntranetUnitsReportsIndexPage',
-                'ProjectIndexPage', 'RedirectPage', 'LoopRedirectPage'
+                'AlertPage',
+                'AlertIndexPage',
+                'ConferenceIndexPage',
+                'FindingAidsPage',
+                'GroupMeetingMinutesIndexPage',
+                'GroupReportsIndexPage',
+                'HomePage',
+                'IntranetFormPage',
+                'IntranetHomePage',
+                'IntranetUnitsReportsIndexPage',
+                'ProjectIndexPage',
+                'RedirectPage',
+                'LoopRedirectPage',
             ]
         )
         no_search_fields = set([])
         for page_type in content_types:
-            if not len(set(page_type.search_fields)) > len(
-                default_search_fields
-            ) and page_type.__name__ not in ignore:
+            if (
+                not len(set(page_type.search_fields)) > len(default_search_fields)
+                and page_type.__name__ not in ignore
+            ):
                 no_search_fields.add(page_type.__name__)
 
         self.assertEqual(
-            len(no_search_fields), 0,
+            len(no_search_fields),
+            0,
             'The following content types don\'t have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: '
-            + str(no_search_fields)
+            + str(no_search_fields),
         )
 
 
@@ -350,7 +358,7 @@ class TestStreamFields(TestCase):
             depth=staff_index_page.depth + 1,
             path=get_available_path_under(staff_index_page.path),
             slug='ignatius-reilly',
-            title='Ignatius Reilly'
+            title='Ignatius Reilly',
         )
 
         # build a streamfield by hand for testing.
@@ -362,8 +370,8 @@ class TestStreamFields(TestCase):
                         "staff_listing": [staff_page.id],
                         "show_photos": False,
                         "show_contact_info": False,
-                        "show_subject_specialties": False
-                    }
+                        "show_subject_specialties": False,
+                    },
                 }
             ]
         )
@@ -383,7 +391,7 @@ class TestStreamFields(TestCase):
             path=get_available_path_under(home_page.path),
             slug="a-standard-page",
             title="A Standard Page",
-            unit=UnitPage.objects.get(title="Library")
+            unit=UnitPage.objects.get(title="Library"),
         )
 
         # retrieve the StandardPage and make sure the status code is 200.
@@ -421,12 +429,10 @@ class TestUtilityFunctions(TestCase):
         """
         crerar = 1373
         self.assertEqual(
-            is_json(json.dumps(get_json_for_library(crerar))), True,
-            'Not valid json'
+            is_json(json.dumps(get_json_for_library(crerar))), True, 'Not valid json'
         )
         self.assertEqual(
-            json.dumps(get_json_for_library(999)), 'null',
-            'Should be a null json value'
+            json.dumps(get_json_for_library(999)), 'null', 'Should be a null json value'
         )
 
     def test_get_hours_by_id(self):
@@ -434,7 +440,7 @@ class TestUtilityFunctions(TestCase):
         Very basic test, needs more.
         """
         crerar = 1373
-        assert (len(get_hours_by_id(crerar)) > 1)
+        assert len(get_hours_by_id(crerar)) > 1
         self.assertEqual(get_hours_by_id(999), 'Unavailable')
 
 
@@ -442,6 +448,7 @@ class TestAssignUnitLocationCommand(TestCase):
     """
     Test cases for the assign_unit_location manage command.
     """
+
     fixtures = ['test.json']
 
     def test_assign_unit_location(self):
@@ -460,6 +467,7 @@ class TestPageOwnerReports(TestCase):
     Test cases for the page owner reports command and
     associated views.
     """
+
     fixtures = ['test.json']
 
     def setUp(self):
@@ -486,17 +494,24 @@ class TestPageOwnerReports(TestCase):
         self.assertEqual(self.c._get_attr(self.ship, 'romulans'), '')
 
     def test_get_pages_return_correct_number_of_pages(self):
-        num_pages_loop = Page.objects.get(sites_rooted_here=self.loop
-                                          ).get_descendants().live().count() + 1
-        num_pages_public = Page.objects.get(
-            sites_rooted_here=self.public
-        ).get_descendants().live().count() + 1
-        get_loop_pages_count = sum(
-            1 for p in self.c._get_pages(None, 'Loop', None)
-        ) - 1
-        get_public_pages_count = sum(
-            1 for p in self.c._get_pages(None, 'Public', None)
-        ) - 1
+        num_pages_loop = (
+            Page.objects.get(sites_rooted_here=self.loop)
+            .get_descendants()
+            .live()
+            .count()
+            + 1
+        )
+        num_pages_public = (
+            Page.objects.get(sites_rooted_here=self.public)
+            .get_descendants()
+            .live()
+            .count()
+            + 1
+        )
+        get_loop_pages_count = sum(1 for p in self.c._get_pages(None, 'Loop', None)) - 1
+        get_public_pages_count = (
+            sum(1 for p in self.c._get_pages(None, 'Public', None)) - 1
+        )
         self.assertEqual(get_loop_pages_count, num_pages_loop)
         self.assertEqual(get_public_pages_count, num_pages_public)
 
@@ -508,9 +523,9 @@ class TestPageOwnerReports(TestCase):
         he is a page_maintainor on some, editor on others and
         content_specialist others.
         """
-        get_locutus_pages_count = sum(
-            1 for p in self.c._get_pages('locutus', None, None)
-        ) - 1
+        get_locutus_pages_count = (
+            sum(1 for p in self.c._get_pages('locutus', None, None)) - 1
+        )
         self.assertEqual(get_locutus_pages_count, 6)
 
     def test_get_pages_with_cnetid_and_role(self):
@@ -524,22 +539,20 @@ class TestPageOwnerReports(TestCase):
         editor: 1 page
         content_specialist: 2 pages
         """
-        page_maintainer_in_scope = sum(
-            1 for p in self.c._get_pages('locutus', None, 'page_maintainer')
-        ) - 1
-        editor_in_scope = sum(
-            1 for p in self.c._get_pages('locutus', None, 'editor')
-        ) - 1
-        content_specialist_in_scope = sum(
-            1 for p in self.c._get_pages('locutus', None, 'content_specialist')
-        ) - 1
+        page_maintainer_in_scope = (
+            sum(1 for p in self.c._get_pages('locutus', None, 'page_maintainer')) - 1
+        )
+        editor_in_scope = (
+            sum(1 for p in self.c._get_pages('locutus', None, 'editor')) - 1
+        )
+        content_specialist_in_scope = (
+            sum(1 for p in self.c._get_pages('locutus', None, 'content_specialist')) - 1
+        )
         self.assertEqual(page_maintainer_in_scope, 3)
         self.assertEqual(editor_in_scope, 1)
         self.assertEqual(content_specialist_in_scope, 2)
 
-    def test_get_pages_without_cnet_site_or_role_returns_any_and_all_pages(
-        self
-    ):
+    def test_get_pages_without_cnet_site_or_role_returns_any_and_all_pages(self):
         all_pages_count = self.all_live_pages.count()
         num_pages = sum(1 for p in self.c._get_pages(None, None, None)) - 1
         self.assertEqual(num_pages, all_pages_count)
@@ -562,6 +575,7 @@ class TestUpdateSiteDataCommand(TestCase):
     """
     Test cases for the update_site_data manage command.
     """
+
     fixtures = ['test.json']
 
     def test_changing_port_alone(self):
@@ -576,9 +590,7 @@ class TestUpdateSiteDataCommand(TestCase):
         """
         Change the site hostname to a new one
         """
-        management.call_command(
-            'update_site_data', 'loopdev', '--new_host=lcars'
-        )
+        management.call_command('update_site_data', 'loopdev', '--new_host=lcars')
         site_obj = Site.objects.get(hostname='lcars')
         self.assertEqual('lcars', site_obj.hostname)
 
@@ -598,6 +610,158 @@ class TestUpdateSiteDataCommand(TestCase):
         Test what happens when a non-numeric port is given
         """
         self.assertRaises(
-            ValueError, management.call_command, 'update_site_data', 'loopdev',
-            '--port=borg'
+            ValueError,
+            management.call_command,
+            'update_site_data',
+            'loopdev',
+            '--port=borg',
         )
+
+
+class LinkQueueSpreadsheetBlockTestCase(TestCase):
+    def setUp(self):
+        # Create the homepage
+        root = Page.objects.get(path='0001')
+        self.homepage = Page(
+            slug='starfleet-welcome', title='Welcome to the Federation'
+        )
+        root.add_child(instance=self.homepage)
+
+        # Create a site and associate the homepage with it
+        self.site = Site.objects.create(
+            hostname='final-frontier',
+            is_default_site=True,
+            port=80,
+            root_page=self.homepage,
+            site_name='test site',
+        )
+
+        # Necessary pages
+        self.staff = StaffPage(
+            title='Jean-Luc Picard',
+            cnetid='picard',
+            position_title='Captain of the USS Enterprise',
+        )
+        self.homepage.add_child(instance=self.staff)
+
+        self.unit = UnitPage(
+            title='USS Enterprise (NCC-1701-D)',
+            page_maintainer=self.staff,
+            editor=self.staff,
+            display_in_dropdown=True,
+        )
+        self.homepage.add_child(instance=self.unit)
+
+        self.page = StandardPage(
+            title='Link Queue Test',
+            page_maintainer=self.staff,
+            editor=self.staff,
+            content_specialist=self.staff,
+            unit=self.unit,
+        )
+        self.homepage.add_child(instance=self.page)
+
+    def test_clean_invalid_file_extension(self):
+        file_path = 'documents/invalid_file.doc'
+        block = LinkQueueSpreadsheetBlock()
+        invalid_document = Document.objects.create(
+            title="Wrong File Extension", file=file_path
+        )
+        invalid_document.save()
+        sv = StreamValue(
+            stream_block=block,
+            stream_data=[
+                {
+                    'type': 'linkqueuespreadsheetblock',
+                    'value': [{'type': 'spreadsheet', 'value': invalid_document.id}],
+                }
+            ],
+            is_lazy=True,
+        )
+        sv.filename = file_path
+
+        # Assertion should be raised on files that aren't .xlsx
+        with self.assertRaises(ValidationError) as cm:
+            block.clean(sv)
+        ex = cm.exception
+        self.assertEqual(ex.messages[0], 'Your spreadsheet file must be an .xlsx')
+
+    def test_clean_invalid_spreadsheet_headers(self):
+        filename = 'documents/test.xlsx'
+        block = LinkQueueSpreadsheetBlock()
+        data = {
+            'Test1': ['', '', ''],
+            'Test2': ['', '', ''],
+            'Test3': ['', '', ''],
+            'Test4': ['', '', ''],
+        }
+        df = pd.DataFrame(data)
+        df.to_excel('media/' + filename, index=False)
+
+        invalid_document = Document.objects.create(
+            title="Bad Spreadsheet Headers", file='media/' + filename
+        )
+        invalid_document.save()
+
+        sv = StreamValue(
+            stream_block=block,
+            stream_data=[
+                {
+                    'type': 'linkqueuespreadsheetblock',
+                    'value': [{'type': 'spreadsheet', 'value': invalid_document.id}],
+                }
+            ],
+            is_lazy=True,
+        )
+        sv.filename = filename
+        sv.file = filename
+
+        # Assertion should be raised on spreadsheets that don't have the required headers
+        with self.assertRaises(ValidationError) as cm:
+            block.clean(sv)
+        ex = cm.exception
+        self.assertEqual(
+            ex.messages[0],
+            'Your spreadsheet file must have "Start Date", "End Date", "Link Text", and "URL" column headers',
+        )
+
+    def test_get_link_queue(self):
+        filename = 'documents/test_get_link_queue.xlsx'
+        now = datetime.now()
+        later = now + timedelta(days=5)
+        sformat = '%m/%d/%Y'
+        now_string = now.strftime(sformat)
+        later_string = later.strftime(sformat)
+        data = {
+            'Start Date': ['05/1/2021', later_string, now_string],
+            'End Date': ['06/3/2021', now_string, later_string],
+            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
+            'URL': [
+                'https://foobar.com',
+                'https://test.com',
+                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+            ],
+        }
+        df = pd.DataFrame(data)
+        df.to_excel('media/' + filename, index=False)
+
+        document = Document.objects.create(
+            title="The Rules of Acquisition", file=filename
+        )
+        document.save()
+
+        self.page.link_queue = json.dumps(
+            [{'type': 'spreadsheet', 'value': document.id}]
+        )
+        self.page.save()
+
+        q = self.page.get_link_queue()
+        expected_val = {
+            'The Rules of Acquisition': [
+                (
+                    'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+                    'A deal is a deal',
+                )
+            ]
+        }
+        self.assertEqual(q, expected_val)
