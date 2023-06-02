@@ -27,7 +27,55 @@
 
 {% if browse_is_ready %}
     <section class="browse-list">
-	{% include "includes/general_listing.html" %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">A-C</a></li>
+                <li class="page-item"><a class="page-link" href="#">D-F</a></li>
+                <li class="page-item"><a class="page-link" href="#">G-K</a></li>
+                <li class="page-item"><a class="page-link" href="#">L-N</a></li>
+                <li class="page-item"><a class="page-link" href="#">O-Z</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <ul>
+            <li>
+                <a href="#">Abaza</a>
+            </li>
+            <li>
+                <a href="#">Ainu (Japan)</a>
+            </li>
+        </ul>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">A-C</a></li>
+                <li class="page-item"><a class="page-link" href="#">D-F</a></li>
+                <li class="page-item"><a class="page-link" href="#">G-K</a></li>
+                <li class="page-item"><a class="page-link" href="#">L-N</a></li>
+                <li class="page-item"><a class="page-link" href="#">O-Z</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
     </section>
 {% elif internal_error %}
     <h4>
