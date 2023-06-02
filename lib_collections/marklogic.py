@@ -21,9 +21,10 @@ except (ImportError):
 
 from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
+from lib_collections.panopto import Player
 import urllib
 from collections import OrderedDict
-from base.utils import compose, concat, const
+from base.utils import compose, concat
 from multiprocessing.pool import ThreadPool
 
 
@@ -1112,7 +1113,7 @@ class Wagtail():
 
     class GetItem():
 
-        def getItem(identifier="b2k40qk4wc8h",
+        def getItem(identifier="b2st3v29dq2h",
                     collection=DEFAULT,
                     raw=False):
             item_data = Api.getItem(identifier=identifier,
@@ -1122,6 +1123,18 @@ class Wagtail():
                 [(k, ",".join(v)) for k, v in item_data[0].items()]
             )
 
+
+        def item_to_panopto(metadata):
+            try:
+                ark_link = metadata["soundFile"]
+                panopto_id = Player.ark_to_panopto(ark_link)
+            except KeyError:
+                panopto_id = ""
+
+            return panopto_id
+
+
+    getItem = GetItem.getItem
 
 class Utils():
 

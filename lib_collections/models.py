@@ -1345,13 +1345,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 raise Exception(
                     "Permission must be Open, Campus, or Restricted")
 
-        ark_link = 'https://ark.lib.uchicago.edu/ark:61001/b25m5d94m413'
-
-        panopto_id = Player.ark_to_panopto(ark_link)
-
         object_metadata = Wagtail.GetItem.getItem(identifier=noid,
                                                   collection=short_name,
                                                   raw=False)
+
+        panopto_id = Wagtail.GetItem.item_to_panopto(object_metadata)
 
         context = super().get_context(request)
         context["noid"] = noid
@@ -1363,9 +1361,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context['collection_breadcrumb'] = breads
         context['object_title'] = object_title
 
-
         context['object_metadata'] = object_metadata
-        context['ark_link'] = ark_link
         context['panopto_id'] = panopto_id
 
         context["audio_id"] = 1
