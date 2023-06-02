@@ -1118,7 +1118,9 @@ class Wagtail():
             item_data = Api.getItem(identifier=identifier,
                                     collection=collection,
                                     raw=raw)
-            return item_data[0]
+            return OrderedDict(
+                [(k, ",".join(v)) for k, v in item_data[0].items()]
+            )
 
 
 class Utils():
