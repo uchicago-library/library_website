@@ -1383,79 +1383,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
-    def cluster_browse_list(self, request, *args, **kwargs):
-        """
-        Route for listing of multiple cluster browses.  For example: the
-        list of all Subject browses.
-        """
-
-        template = "lib_collections/collection_browse.html"
-
-        slug = self.slug
-
-        # bring DisplayBrowse functions into local namespace
-        get_iiif_labels = DisplayBrowse.get_iiif_labels
-        unslugify_browse = DisplayBrowse.unslugify_browse
-
-        # construct browse type links for sidebar
-        sidebar_browse_types = self.build_browse_types()
-
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
-
-        try:
-            browse_type = kwargs["browse_type"]
-        except KeyError:
-            browse_type = ''
-
-        if not browse_type:
-            # default to subject browses if no browse type is specified in
-            # route
-            default_browse = all_browse_types.first()
-            default = default_browse.label.lower()
-            browse_type = default
-            browse_title = unslugify_browse(browse_type)
-        else:
-            # otherwise, get the browse type from the route
-            browse_type = kwargs["browse_type"][:-1]
-            browse_title = unslugify_browse(browse_type)
-
-        # construct breadcrumb trail
-        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
-
-        # bring CBrowseURL function into local namespace
-        mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
-
-        names = [x.label.lower() for x in all_browse_types]
-
-        try:
-            browses = get_iiif_labels(
-                mk_cbrowse_type_url_iiif(slug, browse_type),
-                browse_type,
-                slug,
-            )
-            internal_error = False
-        except (KeyError, simplejson.JSONDecodeError):
-            browses = ''
-            internal_error = True
-
-        browse_is_ready = browse_type in names and browses
-
-        # populate context
-        context = super().get_context(request)
-        context["sidebar_browse_types"] = sidebar_browse_types
-        context["browses"] = browses
-        context["browse_title"] = browse_title
-        context["browse_is_ready"] = browse_is_ready
-        context["internal_error"] = internal_error
-        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
-        context['collection_breadcrumb'] = breads
-
-        return TemplateResponse(request, template, context)
-
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>\w+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1464,10 +1392,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse.html"
 
+        short_name=self.short_name
+
         slug = self.slug
 
         # pull browse information from URL
-        browse_s = kwargs['browse']
         browse_type_s = kwargs['browse_type']
 
         all_browse_types = (
@@ -1479,39 +1408,32 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # construct browse type dictionary for sidebar
         sidebar_browse_types = self.build_browse_types()
 
-        try:
-            objects = DisplayBrowse.get_cbrowse_items(
-                slug,
-                browse_s,
-                browse_type_s,
-            )
-            internal_error = False
-        except (KeyError, simplejson.JSONDecodeError):
-            objects = ''
-            internal_error = True
-
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
 
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        browse_is_ready = browse_type_s in names and objects
+        browse_is_ready = browse_type_s in names
+        # and objects
 
         # convert browse and browse type slugs into something suitable for
         # display
-        browse = unslugify_browse(browse_s)
         browse_type = unslugify_browse(browse_type_s)
+
+        browses = Wagtail.getBrowseListLanguages(collection=short_name,
+                                                 collection_slug=slug,)
 
         # construct context
         context = super().get_context(request)
-        context["browse_title"] = browse
+        context["browse_title"] = "Language"
         context["browse_type"] = browse_type
         context["sidebar_browse_types"] = sidebar_browse_types
         context["slug"] = slug
-        context["objects"] = objects
-        context["internal_error"] = internal_error
+        # context["objects"] = objects
+        # context["internal_error"] = internal_error
         context["browse_is_ready"] = browse_is_ready
+        context["browses"] = browses
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 

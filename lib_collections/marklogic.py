@@ -1110,6 +1110,23 @@ class Wagtail():
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
 
+    class GetBrowseListLanguages():
+
+        def getBrowseListLanguages(collection=DEFAULT,
+                                   collection_slug=DEFAULT_SLUG):
+            result = Api.getBrowseListLanguages(collection=collection,
+                                                raw=False)
+            language_list = [tup[1] for tup in result.items()]
+
+            def mk_link(language, slug):
+                quoted = urllib.parse.quote(language)
+                link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
+                return (language, link)
+
+            link_alist = [mk_link(l, collection_slug) for l in language_list]
+            return OrderedDict(link_alist)
+
+    getBrowseListLanguages = GetBrowseListLanguages.getBrowseListLanguages
 
     class GetItem():
 

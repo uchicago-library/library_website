@@ -25,27 +25,48 @@
     {% endif %}
 </div>
 
+{% if browses %}
+
+<div id="accordion" role="tablist" aria-multiselectable="true">
+    {% for browse, link in browses.items %}
+    <div class="card">
+        <div class="card-header" role="tab" id="{{ browse }}">
+            <h3 class="mb-0">
+		<a href="{{ link }}"
+		   aria-expanded="false"
+		   aria-controls="{{ subject }}">
+		    <i class="fa" aria-hidden="true"></i> {{ browse }}
+		</a>
+            </h3>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+<!-- we aren't currently using this part, but we might later -->
 {% if browse_is_ready %}
     <section class="browse-list">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">A-C</a></li>
-                <li class="page-item"><a class="page-link" href="#">D-F</a></li>
-                <li class="page-item"><a class="page-link" href="#">G-K</a></li>
-                <li class="page-item"><a class="page-link" href="#">L-N</a></li>
-                <li class="page-item"><a class="page-link" href="#">O-Z</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <!-- <nav aria-label="Page navigation example">
+             <ul class="pagination">
+             <li class="page-item disabled">
+             <a class="page-link" href="#" aria-label="Previous">
+             <span aria-hidden="true">&laquo;</span>
+             </a>
+             </li>
+             <li class="page-item active"><a class="page-link" href="#">A-C</a></li>
+             <li class="page-item"><a class="page-link" href="#">D-F</a></li>
+             <li class="page-item"><a class="page-link" href="#">G-K</a></li>
+             <li class="page-item"><a class="page-link" href="#">L-N</a></li>
+             <li class="page-item"><a class="page-link" href="#">O-Z</a></li>
+             <li class="page-item">
+             <a class="page-link" href="#" aria-label="Next">
+             <span aria-hidden="true">&raquo;</span>
+             </a>
+             </li>
+             </ul>
+             </nav> -->
 
         <ul>
             <li>
@@ -81,10 +102,6 @@
     <h4>
 	<p>We are experiencing an error with this browse listing.</p>
 	<p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
-    </h4>
-{% else %}
-    <h4>
-	<p>Not found. Are you sure you typed the URL correctly?</p>
     </h4>
 {% endif %}
 
