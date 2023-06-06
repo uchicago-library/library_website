@@ -365,6 +365,7 @@ DEFAULT_FIELDS = ['Title',
 
 # default collection group, for testing interactively
 DEFGRP = "dma"
+DEFAULT_ENDPOINT = "getBrowseListLanguages"
 
 
 class CleanData():
@@ -406,7 +407,7 @@ class CleanData():
     adjacent_key_value = KeyValue.adjacent_key_value
 
     def getBrowseListContributors(data):
-        return CleanData.adjacent_key_value("o", "s", data)
+        return CleanData.adjacent_key_value("s", "o", data)
 
     def getBrowseListLocations(data):
         return CleanData.adjacent_key_value("spatial", "prefLabel", data)
@@ -1110,24 +1111,6 @@ class Wagtail():
 
     getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
 
-    class GetBrowseListLanguages():
-
-        def getBrowseListLanguages(collection=DEFAULT,
-                                   collection_slug=DEFAULT_SLUG):
-            result = Api.getBrowseListLanguages(collection=collection,
-                                                raw=False)
-            language_list = [tup[1] for tup in result.items()]
-
-            def mk_link(language, slug):
-                quoted = urllib.parse.quote(language)
-                link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
-                return (language, link)
-
-            link_alist = [mk_link(l, collection_slug) for l in language_list]
-            return OrderedDict(link_alist)
-
-    getBrowseListLanguages = GetBrowseListLanguages.getBrowseListLanguages
-
     class GetItem():
 
         def getItem(identifier="b2st3v29dq2h",
@@ -1150,9 +1133,47 @@ class Wagtail():
 
             return panopto_id
 
-
     getItem = GetItem.getItem
 
+    class GetBrowseListLanguages():
+
+        def getBrowseListLanguages(collection=DEFAULT,
+                                   collection_slug=DEFAULT_SLUG):
+            result = Api.getBrowseListLanguages(collection=collection,
+                                                raw=False)
+            language_list = list({tup[1] for tup in result.items()})
+
+            def mk_link(language, slug):
+                quoted = urllib.parse.quote(language)
+                link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
+                return (language, link)
+
+            link_alist = [mk_link(l, collection_slug) for l in language_list]
+            return OrderedDict(link_alist)
+
+    getBrowseListLanguages = GetBrowseListLanguages.getBrowseListLanguages
+
+    class GetBrowse():
+
+        # TODO: this doesn't work, due to "multiple values for argument" problem
+        def getBrowse(endpoint,
+                      collection=DEFAULT,):
+            result = Api.api_call(endpoint, collection=collection,)
+            # TODO: dedupe this list
+            language_list = [tup[1] for tup in result.items()]
+
+            # def mk_link(language, slug):
+            #     quoted = urllib.parse.quote(language)
+            #     link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
+            #     return (language, link)
+
+            # link_alist = [mk_link(l, collection_slug) for l in language_list]
+            # return OrderedDict(link_alist)
+
+            return language_list
+
+    getBrowse = GetBrowseListLanguages.getBrowseListLanguages
+            
 class Utils():
 
     def gimme_all_noids(collection=DEFAULT):

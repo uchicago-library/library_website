@@ -33,6 +33,7 @@ from wagtail.snippets.models import register_snippet
 
 from .marklogic import (get_record_for_display,
                         get_record_no_parsing,
+                        Api,
                         Wagtail,
                         Validation,)
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
@@ -615,6 +616,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         query_set = metadata.values_list('edm_field_label')
         return [field[0] for field in query_set]
 
+    def build_browse_dict(self):
+        browse_objects = CollectionPageClusterBrowse.objects.filter(
+            page_id=self.id
+        )
+        browse_dicts = browse_objects.values()
+        output = [ (dct["display_name"], dct["endpoint_name"])
+                   for dct in browse_dicts ]
+        return OrderedDict(output)
+
     def staff_context(self):
         """
         Create context dictionary containing information about the staff
@@ -805,20 +815,24 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
-        return OrderedDict(
-            [
-                (
-                    CollectionPage.override(x.link_text_override, x.label),
-                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
-                )
-                for x in CollectionPageClusterBrowse.objects.filter(page=self)
-            ] + [
-                (
-                    CollectionPage.override(x.link_text_override, x.label),
-                    mk_lbrowse_url_wagtail(slug, slugify(x.label))
-                ) for x in CollectionPageListBrowse.objects.filter(page=self)
-            ]
-        )
+        return OrderedDict([])
+        #     [
+        #         (
+        #             CollectionPage.override(x.link_text_override, x.label),
+        #             mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
+        #         )
+        #         for x in CollectionPageClusterBrowse.objects.filter(page=self)
+        #     ] + [
+        #         (
+        #             CollectionPage.override(x.link_text_override, x.label),
+        #             mk_lbrowse_url_wagtail(slug, slugify(x.label))
+        #         ) for x in CollectionPageListBrowse.objects.filter(page=self)
+        #     ]
+        # )
+
+    def browse_scratchpad(self):
+
+        pass
 
     # Main Admin Panel Fields
     collection_group = models.CharField(
@@ -1399,11 +1413,11 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # pull browse information from URL
         browse_type_s = kwargs['browse_type']
 
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
+        # all_browse_types = (
+        #     CollectionPageClusterBrowse.objects.filter(page=self)
+        # )
 
-        names = [x.label.lower() for x in all_browse_types]
+        # names = [x.label.lower() for x in all_browse_types]
 
         # construct browse type dictionary for sidebar
         sidebar_browse_types = self.build_browse_types()
@@ -1414,28 +1428,27 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        browse_is_ready = browse_type_s in names
+        # browse_is_ready = browse_type_s in names
         # and objects
 
         # convert browse and browse type slugs into something suitable for
         # display
-        browse_type = unslugify_browse(browse_type_s)
+        # browse_type = unslugify_browse(browse_type_s)
 
-        browses = Wagtail.getBrowseListLanguages(collection=short_name,
-                                                 collection_slug=slug,)
+        # TODO: change this to Wagtail.getBrowse
+        browses = Api.api_call("getBrowseListLanguages",
+                                    collection="mlc",)
+
+        browse_api_lookup = self.build_browse_dict()
 
         # construct context
         context = super().get_context(request)
-        context["browse_title"] = "Language"
-        context["browse_type"] = browse_type
         context["sidebar_browse_types"] = sidebar_browse_types
         context["slug"] = slug
-        # context["objects"] = objects
-        # context["internal_error"] = internal_error
-        context["browse_is_ready"] = browse_is_ready
         context["browses"] = browses
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
+        context['lookup'] = browse_api_lookup
 
         return TemplateResponse(request, template, context)
 
