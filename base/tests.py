@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from io import StringIO
 
 import pandas as pd
+from ask_a_librarian.models import AskPage
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import management
 from django.core.exceptions import ValidationError
@@ -11,7 +12,7 @@ from django.http import HttpRequest
 from django.test import Client, TestCase
 from file_parsing import is_json
 from news.models import NewsPage
-from public.models import StandardPage
+from public.models import LocationPage, StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
 from wagtail.core.blocks.stream_block import StreamValue
@@ -619,21 +620,26 @@ class TestUpdateSiteDataCommand(TestCase):
 
 
 class LinkQueueSpreadsheetBlockTestCase(TestCase):
+    def makeTestingSpreadsheet(self, path_to_file, data, title):
+        df = pd.DataFrame(data)
+        df.to_excel('media/' + path_to_file, index=False)
+        return Document.objects.create(title=title, file=path_to_file)
+
     def setUp(self):
         # Create the homepage
         root = Page.objects.get(path='0001')
         self.homepage = Page(
-            slug='starfleet-welcome', title='Welcome to the Federation'
+            slug='starfleet-academy', title='Welcome to Starfleet Academy'
         )
         root.add_child(instance=self.homepage)
 
         # Create a site and associate the homepage with it
         self.site = Site.objects.create(
-            hostname='final-frontier',
+            hostname='starfleet-academy',
             is_default_site=True,
             port=80,
             root_page=self.homepage,
-            site_name='test site',
+            site_name='test federation site',
         )
 
         # Necessary pages
@@ -652,14 +658,86 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         )
         self.homepage.add_child(instance=self.unit)
 
+        self.ask_page = AskPage(
+            title='Ask a Betazoid (or don\'t)',
+            page_maintainer=self.staff,
+            editor=self.staff,
+            content_specialist=self.staff,
+            unit=self.unit,
+        )
+        self.homepage.add_child(instance=self.ask_page)
+
+        self.building = LocationPage(
+            title='Deep Space 9',
+            is_building=True,
+            short_description='A space station orbiting Bajor.',
+            long_description='A space station orbiting Bajor\
+            that was called Terok Nor during the occupation.',
+            page_maintainer=self.staff,
+            editor=self.staff,
+            content_specialist=self.staff,
+            libcal_library_id=1357,
+            unit=self.unit,
+        )
+        self.homepage.add_child(instance=self.building)
+
+        # Set location property on UnitPage already created
+        self.unit.location = self.building
+        self.unit.save()
+
         self.page = StandardPage(
             title='Link Queue Test',
             page_maintainer=self.staff,
             editor=self.staff,
             content_specialist=self.staff,
             unit=self.unit,
+            slug='link-queue-test',
+            rich_text='Fallback text.',
+            rich_text_heading='Explore',
+            rich_text_external_link='https://something.com',
         )
         self.homepage.add_child(instance=self.page)
+
+        # Documents
+        # Good data, current links
+        now = datetime.now()
+        later = now + timedelta(days=5)
+        sformat = '%m/%d/%Y'
+        now_string = now.strftime(sformat)
+        later_string = later.strftime(sformat)
+        data = {
+            'Start Date': ['05/1/2021', later_string, now_string],
+            'End Date': ['06/3/2021', now_string, later_string],
+            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
+            'URL': [
+                'https://foobar.com',
+                'https://test.com',
+                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+            ],
+        }
+        self.good_document = self.makeTestingSpreadsheet(
+            'documents/test_get_link_queue.xlsx', data, 'The Rules of Acquisition'
+        )
+        self.good_document.save()
+
+        # Old dates, no current links
+        data = {
+            'Start Date': ['05/1/2021', '06/2/2021', '07/3/2021'],
+            'End Date': ['06/3/2021', '07/4/2021', '08/5/2021'],
+            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
+            'URL': [
+                'https://foobar.com',
+                'https://test.com',
+                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+            ],
+        }
+        self.document_expired = self.makeTestingSpreadsheet(
+            'documents/test_link_queue_fallback.xlsx', data, 'The Rules of Acquisition'
+        )
+        self.document_expired.save()
+
+    def tearDown(self):
+        self.site.delete()
 
     def test_clean_invalid_file_extension(self):
         file_path = 'documents/invalid_file.doc'
@@ -687,7 +765,7 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         self.assertEqual(ex.messages[0], 'Your spreadsheet file must be an .xlsx')
 
     def test_clean_invalid_spreadsheet_headers(self):
-        filename = 'documents/test.xlsx'
+        path_to_file = 'documents/test.xlsx'
         block = LinkQueueSpreadsheetBlock()
         data = {
             'Test1': ['', '', ''],
@@ -695,11 +773,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             'Test3': ['', '', ''],
             'Test4': ['', '', ''],
         }
-        df = pd.DataFrame(data)
-        df.to_excel('media/' + filename, index=False)
-
-        invalid_document = Document.objects.create(
-            title="Bad Spreadsheet Headers", file='media/' + filename
+        invalid_document = self.makeTestingSpreadsheet(
+            path_to_file, data, 'Bad Spreadsheet Headers'
         )
         invalid_document.save()
 
@@ -713,8 +788,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             ],
             is_lazy=True,
         )
-        sv.filename = filename
-        sv.file = filename
+        sv.filename = path_to_file
+        sv.file = path_to_file
 
         # Assertion should be raised on spreadsheets that don't have the required headers
         with self.assertRaises(ValidationError) as cm:
@@ -726,32 +801,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         )
 
     def test_get_link_queue(self):
-        filename = 'documents/test_get_link_queue.xlsx'
-        now = datetime.now()
-        later = now + timedelta(days=5)
-        sformat = '%m/%d/%Y'
-        now_string = now.strftime(sformat)
-        later_string = later.strftime(sformat)
-        data = {
-            'Start Date': ['05/1/2021', later_string, now_string],
-            'End Date': ['06/3/2021', now_string, later_string],
-            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
-            'URL': [
-                'https://foobar.com',
-                'https://test.com',
-                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
-            ],
-        }
-        df = pd.DataFrame(data)
-        df.to_excel('media/' + filename, index=False)
-
-        document = Document.objects.create(
-            title="The Rules of Acquisition", file=filename
-        )
-        document.save()
-
         self.page.link_queue = json.dumps(
-            [{'type': 'spreadsheet', 'value': document.id}]
+            [{'type': 'spreadsheet', 'value': self.good_document.id}]
         )
         self.page.save()
 
@@ -765,3 +816,33 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             ]
         }
         self.assertEqual(q, expected_val)
+
+    def test_link_queue_rich_text_fallback(self):
+        fallback_text = 'Fallback text.'
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+
+        # Should have fallback text when link queue has not been set
+        self.assertContains(response, fallback_text)
+
+        # Should have fallback text when a link queue is set but the dates are old
+        self.page.link_queue = json.dumps(
+            [{'type': 'spreadsheet', 'value': self.document_expired.id}]
+        )
+        self.page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertContains(response, fallback_text)
+
+        # Should not have fallback text when a link queue is set and the dates are current
+        self.page.link_queue = json.dumps(
+            [{'type': 'spreadsheet', 'value': self.good_document.id}]
+        )
+        self.page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertNotContains(response, fallback_text)
+        self.assertContains(response, 'A deal is a deal')
