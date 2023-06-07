@@ -47,16 +47,31 @@
 
 {% block content %}
 
-{%for key, value in cleaned_data.items %}
-<button class="accordion">{{key}}</button>
-<div class="panel">
-	{%for note_email in value %}
-	<br>
-		{{note_email}}
-	{%endfor %}
-<br><br>
-</div>
-{%endfor %}
+    {%for key, value in cleaned_data.items %}
+    <button class="accordion">{{key}}</button>
+    <div class="panel">
+        {%for note_email in value %}
+        <br>
+          {%if note_email.note%}
+            note: {{note_email.note}}
+
+          {%elif note_email.triangle_brackets%}
+            <a href="mailto:{{note_email.triangle_brackets.1}}">{{note_email.triangle_brackets.0}}</a>: {{note_email.triangle_brackets.2}}
+            
+          {%elif note_email.parentheses%}
+            <a href="mailto:{{note_email.parentheses.1}}">{{note_email.parentheses.0}}</a>: {{note_email.parentheses.2}}
+
+          {%elif note_email.plain_email%}
+            <a href="mailto:{{note_email.plain_email}}">{{note_email.plain_email}}</a>
+            
+          {%else%}
+            {{note_email.local}}
+          {%endif %}
+
+        {%endfor %}
+    <br><br>
+    </div>
+    {%endfor %}
 
 <script>
 var acc = document.getElementsByClassName("accordion");
