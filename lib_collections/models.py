@@ -4,6 +4,7 @@ from collections import OrderedDict
 import requests
 import simplejson
 from base.models import DefaultBodyFields, PublicBasePage
+from base.utils import capitalize
 from base.result import Result
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
@@ -44,20 +45,6 @@ DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
 DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
-SERIES_ITEMS_TEST_STUB = {
-    14321: {"link_text":
-            "[01] Rodriguez no. 1 (Nahuala, Totonicapan)",
-            "link_url":
-            ("/collex/collections/social-scientists-map-chicago/"
-             "series/b20768d9894k/")
-            },
-    14322: {"link_text":
-            "[02] Rodriguez no. 2 (Nahuala, Chuculjuyuup, Totonicapan)",
-            "link_url":
-            ("/collex/collections/social-scientists-map-chicago/"
-             "series/b2kj8xr9z85f/")
-            },
-}
 
 injection_safe = Validation.injection_safe
 
@@ -621,7 +608,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             page_id=self.id
         )
         browse_dicts = browse_objects.values()
-        output = [ (dct["display_name"], dct["endpoint_name"])
+        output = [ (dct["display_name"].lower(), dct["endpoint_name"])
                    for dct in browse_dicts ]
         return OrderedDict(output)
 
@@ -1387,7 +1374,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["users_ip"] = users_ip
         context["user_cnetid"] = user_cnetid
 
-
         # context['og_url'] = og_url
         # context['canonical_url'] = canonical_url
 
@@ -1406,18 +1392,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse.html"
 
-        short_name=self.short_name
+        short_name = self.short_name
 
         slug = self.slug
 
         # pull browse information from URL
         browse_type_s = kwargs['browse_type']
-
-        # all_browse_types = (
-        #     CollectionPageClusterBrowse.objects.filter(page=self)
-        # )
-
-        # names = [x.label.lower() for x in all_browse_types]
 
         # construct browse type dictionary for sidebar
         sidebar_browse_types = self.build_browse_types()
@@ -1428,27 +1408,27 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        # browse_is_ready = browse_type_s in names
-        # and objects
-
-        # convert browse and browse type slugs into something suitable for
-        # display
-        # browse_type = unslugify_browse(browse_type_s)
-
-        # TODO: change this to Wagtail.getBrowse
-        browses = Api.api_call("getBrowseListLanguages",
-                                    collection="mlc",)
-
         browse_api_lookup = self.build_browse_dict()
+
+        try:
+            browse = browse_api_lookup[browse_type_s]
+        except KeyError:
+            return Http404
+
+        browses = Wagtail.getBrowse(browse,
+                                    collection=short_name,
+                                    collection_slug=slug)
+
+        browse_display_name = capitalize(browse_type_s)
 
         # construct context
         context = super().get_context(request)
         context["sidebar_browse_types"] = sidebar_browse_types
         context["slug"] = slug
         context["browses"] = browses
+        context["browse_display_name"] = browse_display_name
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
-        context['lookup'] = browse_api_lookup
 
         return TemplateResponse(request, template, context)
 

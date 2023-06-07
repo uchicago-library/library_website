@@ -24,7 +24,7 @@ from lib_collections.utils import GeneralPurpose
 from lib_collections.panopto import Player
 import urllib
 from collections import OrderedDict
-from base.utils import compose, concat
+from base.utils import compose, concat, Gensym
 from multiprocessing.pool import ThreadPool
 
 
@@ -381,7 +381,7 @@ class CleanData():
             def each_pair(var):
                 return (var[keyField]["value"],
                         var[valField]["value"])
-            return OrderedDict([each_pair(pred) for pred in bs])
+            return [each_pair(pred) for pred in bs]
 
         def downward_key_value(data):
             bs = CleanData.bindings(data)
@@ -429,7 +429,11 @@ class CleanData():
     straight_up_list = StraightUpList.straight_up_list
 
     def getBrowseListDates(data):
-        return CleanData.straight_up_list("date", data)
+        g = Gensym()
+        c = CleanData.bindings(data)
+        dates = sorted([x["date"]["value"] for x in c])
+        output = [(g.gen(), d) for d in dates]
+        return output
 
     class Ark():
 
@@ -494,7 +498,6 @@ class CleanData():
                               for (k, v) in dct2.items()
                               if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
-
 
     def getSeries(data):
         cleaned = CleanData.downward_key_value(data) 
@@ -1141,39 +1144,45 @@ class Wagtail():
                                    collection_slug=DEFAULT_SLUG):
             result = Api.getBrowseListLanguages(collection=collection,
                                                 raw=False)
-            language_list = list({tup[1] for tup in result.items()})
+            language_list = sorted(list({tup[1] for tup in result}))
 
             def mk_link(language, slug):
                 quoted = urllib.parse.quote(language)
-                link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
+                link = ("/collex/collections/%s/results?keyword=%s"
+                        %
+                        (slug, quoted))
                 return (language, link)
 
-            link_alist = [mk_link(l, collection_slug) for l in language_list]
+            link_alist = [mk_link(link, collection_slug)
+                          for link in language_list]
             return OrderedDict(link_alist)
 
     getBrowseListLanguages = GetBrowseListLanguages.getBrowseListLanguages
 
     class GetBrowse():
 
-        # TODO: this doesn't work, due to "multiple values for argument" problem
+        # TODO: this doesn't work, due to "multiple values for
+        # argument" problem
         def getBrowse(endpoint,
-                      collection=DEFAULT,):
+                      collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG):
             result = Api.api_call(endpoint, collection=collection,)
-            # TODO: dedupe this list
-            language_list = [tup[1] for tup in result.items()]
+            language_list = sorted(list({tup[1] for tup in result}))
 
-            # def mk_link(language, slug):
-            #     quoted = urllib.parse.quote(language)
-            #     link = ("/collex/collections/%s/results?keyword=%s" % (slug, quoted))
-            #     return (language, link)
+            def mk_link(language, slug):
+                quoted = urllib.parse.quote(language)
+                link = ("/collex/collections/%s/results?keyword=%s"
+                        %
+                        (slug, quoted))
+                return (language, link)
 
-            # link_alist = [mk_link(l, collection_slug) for l in language_list]
-            # return OrderedDict(link_alist)
+            link_alist = [mk_link(link, collection_slug)
+                          for link in language_list]
+            return OrderedDict(link_alist)
 
-            return language_list
+    getBrowse = GetBrowse.getBrowse
 
-    getBrowse = GetBrowseListLanguages.getBrowseListLanguages
-            
+
 class Utils():
 
     def gimme_all_noids(collection=DEFAULT):

@@ -19,13 +19,17 @@
 <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
 
 <div class="results">
+    <h2>
+	Browse by {{ browse_display_name }}:
+    </h2>
+</div>
+
+<div class="results">
     {% if browse_title %}
 	<h2>{{ browse_title }}</h2>
     {% else %}
     {% endif %}
 </div>
-
-{{ lookup }}
 
 {% if browses %}
 

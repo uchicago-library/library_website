@@ -489,6 +489,17 @@ def compose(*funcs):
     return composition
 
 
+class Gensym():
+
+    def __init__(self, name="gensym"):
+        self.counter = 0
+        self.name = name
+
+    def gen(self):
+        self.counter = self.counter + 1
+        return self.name + str(self.counter)
+
+
 def jprint(j):
     print(json.dumps(j, indent=4))
 
@@ -509,3 +520,10 @@ def save_virtual_workbook(workbook):
         tmp.seek(0)
         stream = tmp.read()
         return stream
+
+
+def capitalize(str):
+    if str:
+        return str[0].upper() + str[1:]
+    else:
+        return str

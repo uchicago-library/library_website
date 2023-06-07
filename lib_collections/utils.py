@@ -1166,3 +1166,4 @@ class Permissions():
 
     def restricted_player(perm, request):
         return perm == "Restricted"
+
