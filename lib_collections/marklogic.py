@@ -510,15 +510,26 @@ class CleanData():
                 return "subjectLanguage"
             else:
                 return string
-        
+
         def each_language(colon_str):
             [k, v] = colon_str.split(':')
             new_k = adjust_metadata_key(k.lower())
             return (new_k, [v])
 
+        def expand_both(alist):
+            dct = dict(alist)
+            if "both" in [p[0] for p in alist]:
+                output = [("primaryLanguage", dct["both"]),
+                          ("subjectLanguage", dct["both"])]
+            else:
+                output = []
+            return output
+
         languages = series["languages"]
-        alist = [each_language(l) for l in languages ]
-        return OrderedDict(series, **dict(alist))
+        alist = [each_language(lang) for lang in languages]
+        output_alist = alist + expand_both(alist)
+        
+        return OrderedDict(series, **dict(output_alist))
         # languages = dict(prepped)
         # series["languages"] = languages
         # series["language"] = languages["primary"]
