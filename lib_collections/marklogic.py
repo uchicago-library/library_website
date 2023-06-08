@@ -499,8 +499,8 @@ class CleanData():
                               if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
 
-    def getSeries(data):
-        cleaned = CleanData.downward_key_value(data) 
+    def getSeries(data, language_dict={}, spatial_dict={}):
+        cleaned = CleanData.downward_key_value(data)
         series = cleaned[0]
 
         def adjust_metadata_key(string):
@@ -511,10 +511,14 @@ class CleanData():
             else:
                 return string
 
-        def each_language(colon_str):
+        def each_language(colon_str, language_dict):
             [k, v] = colon_str.split(':')
             new_k = adjust_metadata_key(k.lower())
-            return (new_k, [v])
+            try:
+                new_v = [language_dict[v]]
+            except KeyError:
+                new_v = [v]
+            return (new_k, new_v)
 
         def expand_both(alist):
             dct = dict(alist)
@@ -526,9 +530,11 @@ class CleanData():
             return output
 
         languages = series["languages"]
-        alist = [each_language(lang) for lang in languages]
+        alist = [each_language(lang, language_dict)
+                 for lang
+                 in languages]
         output_alist = alist + expand_both(alist)
-        
+
         return OrderedDict(series, **dict(output_alist))
         # languages = dict(prepped)
         # series["languages"] = languages
@@ -744,7 +750,12 @@ class URLs():
 
 class Api():
 
-    def lookup(collection=DEFAULT, identifier="b2k40qk4wc8h", search="", curl=False):
+    def lookup(collection=DEFAULT,
+               identifier="b2k40qk4wc8h",
+               search="",
+               curl=False,
+               language_dict={},
+               spatial_dict={}):
         return {
 
             "getBrowseListContributors" : {
@@ -816,7 +827,9 @@ class Api():
             "getSeries" : {
                 "url": URLs.getSeries(identifier, collection, curl=curl),
                 "params": URLs.QStrings.getSeries(identifier, collection),
-                "cleanup": CleanData.getSeries,
+                "cleanup": lambda data: CleanData.getSeries(data,
+                                                            language_dict=language_dict,
+                                                            spatial_dict=spatial_dict,)
             },
 
         }
@@ -833,8 +846,15 @@ class Api():
                      collection=DEFAULT,
                      search="",
                      raw=False,
-                     curl=False):
-            lookup = Api.lookup(collection, identifier, search, curl)[endpoint]
+                     curl=False,
+                     language_dict={},
+                     spatial_dict={},):
+            lookup = Api.lookup(collection,
+                                identifier,
+                                search,
+                                curl,
+                                language_dict,
+                                spatial_dict)[endpoint]
             params = lookup["params"]
             if raw:
                 cleanup = lambda x: x
@@ -915,12 +935,16 @@ class Api():
     # proper series noid; we should fix that
     def getSeries(identifier="b2pz3jc17901",
                   collection=DEFAULT,
-                  raw=False):
+                  raw=False,
+                  language_dict={},
+                  spatial_dict={},):
         try:
             output = Api.api_call("getSeries",
                                   collection=collection,
                                   identifier=identifier,
-                                  raw=raw)
+                                  raw=raw,
+                                  language_dict=language_dict,
+                                  spatial_dict=spatial_dict,)
         except IndexError:
             output = []
         return output
@@ -1017,7 +1041,9 @@ class Wagtail():
                           field_names=DEFAULT_FIELDS,
                           collection=DEFAULT,
                           collection_slug=DEFAULT_SLUG,
-                          raw=False):
+                          raw=False,
+                          language_dict={},
+                          spatial_dict={},):
             fix_everything = Wagtail.GetSeries.fix_everything
             first_pass = Api.getSeries(identifier, collection, raw)
             series = fix_everything(first_pass, field_names=field_names)
@@ -1027,13 +1053,19 @@ class Wagtail():
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
                       collection_slug=DEFAULT_SLUG,
-                      raw=False):
+                      raw=False,
+                      language_dict={},
+                      spatial_dict={},):
             build_item_listing = (Wagtail
                                   .GetSeries
                                   .ItemListing.build_item_listing)
             fix_everything = Wagtail.GetSeries.fix_everything
             try:
-                first_pass = Api.getSeries(identifier, collection, raw)
+                first_pass = Api.getSeries(identifier,
+                                           collection,
+                                           raw,
+                                           language_dict,
+                                           spatial_dict,)
                 series = fix_everything(first_pass, field_names=field_names)
             except AttributeError:
                 first_pass = []
@@ -1071,7 +1103,9 @@ class Wagtail():
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
                       collection_slug=DEFAULT_SLUG,
-                      raw=False):
+                      raw=False,
+                      language_dict={},
+                      spatial_dict={}):
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
 
             def mk_link(k, v):
@@ -1092,7 +1126,9 @@ class Wagtail():
                                          field_names=field_names,
                                          collection=collection,
                                          collection_slug=collection_slug,
-                                         raw=False)
+                                         raw=False,
+                                         language_dict=language_dict,
+                                         spatial_dict=spatial_dict,)
                 series = OrderedDict([(k, mk_link(k, v))
                                       for k, v
                                       in metadata.items()])
@@ -1225,6 +1261,3 @@ class Utils():
         end = start + 10
         return Utils.gimme_all_noids(collection)[start:end]
 
-
-def preview(x, amount=1500):
-    print(json.dumps(x, indent=4)[:amount])
