@@ -612,6 +612,14 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                    for dct in browse_dicts ]
         return OrderedDict(output)
 
+    def get_language_dict(self):
+        collection = self.short_name
+        return dict(Api.getBrowseListLanguages(collection=collection))
+
+    def get_spatial_dict(self):
+        collection = self.short_name
+        return dict(Api.getBrowseListLocations(collection=collection))
+
     def staff_context(self):
         """
         Create context dictionary containing information about the staff
@@ -984,6 +992,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # collection_group = self.collection_group
         slug = self.slug
 
+        language_dict = self.get_language_dict()
+        spatial_dict = self.get_spatial_dict()
+
         # query Mark Logic for object metadata
         if injection_safe(noid):
             (marklogic, series_items) = (
@@ -991,7 +1002,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                                   field_names=field_names,
                                   collection=short_name,
                                   collection_slug=slug,
-                                  raw=False)
+                                  raw=False,
+                                  language_dict=language_dict,
+                                  spatial_dict=spatial_dict,)
                 )
         else:
             raise Http404

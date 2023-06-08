@@ -499,6 +499,17 @@ class CleanData():
                               if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
 
+    class Spatial():
+
+        def fix_spatial(input_dict, spatial_dict):
+            try:
+                spatial = input_dict["spatial"]
+                new_spatial = [spatial_dict[x] for x in spatial]
+                input_dict["spatial"] = new_spatial
+                return input_dict
+            except KeyError:
+                return input_dict
+
     def getSeries(data, language_dict={}, spatial_dict={}):
         cleaned = CleanData.downward_key_value(data)
         series = cleaned[0]
@@ -533,9 +544,13 @@ class CleanData():
         alist = [each_language(lang, language_dict)
                  for lang
                  in languages]
-        output_alist = alist + expand_both(alist)
 
-        return OrderedDict(series, **dict(output_alist))
+        fixed_language_alist = OrderedDict(alist + expand_both(alist))
+
+        fix_spatial = CleanData.Spatial.fix_spatial
+
+        return OrderedDict(fix_spatial(series, spatial_dict),
+                           **dict(fixed_language_alist))
         # languages = dict(prepped)
         # series["languages"] = languages
         # series["language"] = languages["primary"]
