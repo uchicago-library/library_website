@@ -1147,26 +1147,23 @@ class Wagtail():
                                 language_dict={},
                                 spatial_dict={},):
             print("Wagtail.GetResultsByKeyword.getResultsByKeyword: ", spatial_dict)
-            getSeries = (lambda noid:
-                         (Wagtail
-                          .GetResultsByKeyword
-                          .getSeries(identifier=noid,
-                                     collection=collection,
-                                     raw=raw,
-                                     language_dict=language_dict,
-                                     spatial_dict=spatial_dict,)))
+            getSeries = (Wagtail
+                         .GetResultsByKeyword
+                         .getSeries)
 
             noids = (
                 Api.getResultsByKeyword(search=search,
                                         collection=collection)
             )
 
-            # def get(noid):
-            #     return getSeries(identifier=noid,
-            #                      collection=collection,
-            #                      raw=False)
+            def get(noid):
+                return getSeries(identifier=noid,
+                                 collection=collection,
+                                 raw=raw,
+                                 language_dict=language_dict,
+                                 spatial_dict=spatial_dict,)
 
-            series_data = ThreadPool(4).imap(getSeries, noids)
+            series_data = ThreadPool(4).imap(get, noids)
             output = (n for n in series_data if n)
             return output
 

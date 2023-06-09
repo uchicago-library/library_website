@@ -947,12 +947,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # abbreviated collection name for Mark Logic API
         short_name = self.short_name
 
-        # TODO: actually use collection_group; currently not being used
-        # collection_group = self.collection_group
-
-        # qs_to_noids = (Wagtail
-        #                .GetResultsByKeyword
-        #                .qs_to_noids)
         qs = request.GET
 
         language_dict = self.get_language_dict()
