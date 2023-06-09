@@ -440,6 +440,19 @@ class CleanData():
         def extract_noid(arkurl):
             return arkurl.split("/")[-1]
 
+    class Spatial():
+
+        def fix_spatial(input_dict, spatial_dict):
+            try:
+                spatial = input_dict["spatial"]
+                new_spatial = [spatial_dict[x] for x in spatial]
+                input_dict["spatial"] = new_spatial
+                return input_dict
+            except KeyError:
+                return input_dict
+
+    # TODO for Matt tomorrow: propagate language_dict and spatial_dict
+    # parameters back up the call stack
     def getResultsByCreator(data):
         return CleanData.straight_up_list(
             "resource",
@@ -498,17 +511,6 @@ class CleanData():
                               for (k, v) in dct2.items()
                               if k not in dct1}
                 return OrderedDict({**left_half, **intersection, **right_half})
-
-    class Spatial():
-
-        def fix_spatial(input_dict, spatial_dict):
-            try:
-                spatial = input_dict["spatial"]
-                new_spatial = [spatial_dict[x] for x in spatial]
-                input_dict["spatial"] = new_spatial
-                return input_dict
-            except KeyError:
-                return input_dict
 
     def getSeries(data, language_dict={}, spatial_dict={}):
         cleaned = CleanData.downward_key_value(data)
@@ -946,8 +948,6 @@ class Api():
                             search=search,
                             raw=raw)
 
-    # TODO: currently throws an exception if you don't give it a
-    # proper series noid; we should fix that
     def getSeries(identifier="b2pz3jc17901",
                   collection=DEFAULT,
                   raw=False,
@@ -1060,7 +1060,12 @@ class Wagtail():
                           language_dict={},
                           spatial_dict={},):
             fix_everything = Wagtail.GetSeries.fix_everything
-            first_pass = Api.getSeries(identifier, collection, raw)
+            first_pass = Api.getSeries(identifier,
+                                       collection,
+                                       raw,
+                                       language_dict,
+                                       spatial_dict)
+            print("Wagtail.GetSeries.getSeriesOnly: ", spatial_dict)
             series = fix_everything(first_pass, field_names=field_names)
             return series
 
@@ -1096,24 +1101,6 @@ class Wagtail():
 
     class GetResultsByKeyword():
 
-        # def getSeries(identifier="b2pz3jc17901",
-        #               field_names=DEFAULT_FIELDS,
-        #               collection=DEFAULT,
-        #               collection_slug=DEFAULT_SLUG,
-        #               raw=False):
-        #     getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
-
-        #     try:
-        #         series = getSeriesOnly(identifier=identifier,
-        #                                  field_names=field_names,
-        #                                  collection=collection,
-        #                                  collection_slug=collection_slug,
-        #                                  raw=False)
-
-        #     except AttributeError:
-        #         series = {}
-        #     return series
-
         def getSeries(identifier="b2pz3jc17901",
                       field_names=DEFAULT_FIELDS,
                       collection=DEFAULT,
@@ -1121,6 +1108,7 @@ class Wagtail():
                       raw=False,
                       language_dict={},
                       spatial_dict={}):
+            print("Wagtail.GetResultsByKeyword.getSeries: ", spatial_dict)
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
 
             def mk_link(k, v):
@@ -1155,20 +1143,28 @@ class Wagtail():
 
         def getResultsByKeyword(search="andrade",
                                 collection=DEFAULT,
-                                raw=False):
-            getSeries = (Wagtail
-                         .GetResultsByKeyword
-                         .getSeries)
+                                raw=False,
+                                language_dict={},
+                                spatial_dict={},):
+            print("Wagtail.GetResultsByKeyword.getResultsByKeyword: ", spatial_dict)
+            getSeries = (lambda noid:
+                         (Wagtail
+                          .GetResultsByKeyword
+                          .getSeries(identifier=noid,
+                                     collection=collection,
+                                     raw=raw,
+                                     language_dict=language_dict,
+                                     spatial_dict=spatial_dict,)))
 
             noids = (
                 Api.getResultsByKeyword(search=search,
                                         collection=collection)
             )
 
-            def get(noid):
-                return getSeries(identifier=noid,
-                                 collection=collection,
-                                 raw=False)
+            # def get(noid):
+            #     return getSeries(identifier=noid,
+            #                      collection=collection,
+            #                      raw=False)
 
             series_data = ThreadPool(4).imap(getSeries, noids)
             output = (n for n in series_data if n)

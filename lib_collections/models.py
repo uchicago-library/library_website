@@ -955,10 +955,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         #                .qs_to_noids)
         qs = request.GET
 
+        language_dict = self.get_language_dict()
+        spatial_dict = self.get_spatial_dict()
+
         try:
             search_term = qs["keyword"]
             results = Wagtail.getResultsByKeyword(
-                search=search_term, collection=short_name
+                search=search_term,
+                collection=short_name,
+                language_dict=language_dict,
+                spatial_dict=spatial_dict,
             )
         except KeyError:
             search_term = "Error: SEARCH TERM MISSING."
