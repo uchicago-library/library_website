@@ -367,6 +367,16 @@ DEFAULT_FIELDS = ['Title',
 DEFGRP = "dma"
 DEFAULT_ENDPOINT = "getBrowseListLanguages"
 
+def is_english(pred):
+    try:
+        no_xml = "xml:lang" not in pred["prefLabel"]
+        xml_is_english = pred["prefLabel"]["xml:lang"] == "en"
+        xml_is_spanish = pred["prefLabel"]["xml:lang"] == "es"
+        # return True
+        return any([no_xml, xml_is_english, xml_is_spanish])
+    except KeyError:
+        return False
+
 
 class CleanData():
 
@@ -375,13 +385,34 @@ class CleanData():
 
     class KeyValue():
 
-        def adjacent_key_value(keyField, valField, data):
-            bs = CleanData.bindings(data)
-
+        def adjacent_key_value_(keyField, valField, bindings):
             def each_pair(var):
                 return (var[keyField]["value"],
                         var[valField]["value"])
-            return [each_pair(pred) for pred in bs]
+
+            def is_english(pred):
+                if "prefLabel" not in pred:
+                    return True
+                else:
+                    no_xml = "xml:lang" not in pred["prefLabel"]
+                    try:
+                        xml_is_english = pred["prefLabel"]["xml:lang"] == "en"
+                        xml_is_spanish = pred["prefLabel"]["xml:lang"] == "es"
+                    except KeyError:
+                        xml_is_english = False
+                        xml_is_spanish = False
+                    return any([no_xml, xml_is_english, xml_is_spanish])
+
+            return [each_pair(pred)
+                    for pred
+                    in bindings
+                    if is_english(pred)]
+
+        def adjacent_key_value(keyField, valField, data):
+            bs = CleanData.bindings(data)
+            adjacent_key_value_ = CleanData.KeyValue.adjacent_key_value_
+            # return ""
+            return adjacent_key_value_(keyField, valField, bs)
 
         def downward_key_value(data):
             bs = CleanData.bindings(data)
