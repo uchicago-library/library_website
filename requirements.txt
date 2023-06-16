@@ -21,6 +21,7 @@ networkx
 openpyxl>=3.1.0,<3.2.0
 -e git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 -e git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
+pandas>=2,<3
 pocli==0.1.10
 psycopg2
 Pygments==2.7.4
