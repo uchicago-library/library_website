@@ -24,7 +24,7 @@ from lib_collections.utils import GeneralPurpose
 from lib_collections.panopto import Player
 import urllib
 from collections import OrderedDict
-from base.utils import compose, concat, Gensym
+from base.utils import compose, concat, identity, Gensym
 from multiprocessing.pool import ThreadPool
 
 
@@ -354,14 +354,16 @@ class Validation():
 DEFAULT = "mlc"
 DEFAULT_SLUG = "mesoamerican-languages-collection"
 # default metadata fields to display; these are the ones for the MLC demo
-DEFAULT_FIELDS = ['Title',
-                  'Alternative',
-                  'DmaIdentifier',
-                  'Creator',
-                  'Language',
-                  'Spatial',
-                  'Date',
-                  'Description',]
+DEFAULT_FIELDS = OrderedDict([
+    ('Alternative', 'Alternative Series Title'),
+    ('DmaIdentifier', 'Series Identifier'),
+    ('Title', 'Title'), ('Creator', 'Creator'),
+    ('Spatial', 'Location Where Indigenous Language Is Spoken'),
+    ('Date', 'Date'),
+    ('PrimaryLanguage', 'Language'),
+    ('SubjectLanguage', 'Indigenous Language'),
+    ('Description', 'Description')
+])
 
 # default collection group, for testing interactively
 DEFGRP = "dma"
@@ -1029,25 +1031,44 @@ class Wagtail():
 
         def adjust_fields(field_names=DEFAULT_FIELDS):
             def partial(json_obj):
+                def lookup(marklogic_name):
+                    print("FN: ", field_names)
+                    print("MN: ", marklogic_name)
+                    print("output: ", field_names[marklogic_name])
+                    try:
+                        output = field_names[marklogic_name]
+                    except KeyError:
+                        output = marklogic_name
+                    return output
+                def capitalize(field):
+                    if field:
+                        return field[0].upper() + field[1:]
+                    else:
+                        field
                 lowercase_first = Wagtail.GetSeries.lowercase_first
                 if field_names:
-                    alist = [(x, "".join(v))
-                             for x in field_names
-                             for k, v in json_obj.items()
-                             if (lowercase_first(x), v) == (k, v)]
-                return OrderedDict(alist)
+                    alist = [(lookup(x), "".join(v)) for x in field_names for k, v in json_obj.items() if lowercase_first(x) == k]
+                    # alist = [(lookup(capitalize(x)), "".join(v))
+                    #          for x in field_names.values()
+                    #          for k, v in json_obj.items()
+                    #          if (lowercase_first(x), v) == (k, v)]
+                    return OrderedDict(alist)
+                else:
+                    return json_obj
             return partial
 
         # TODO: have this replace location atomic thingy number with
         # actual location string
         def fix_everything(dct, collection=DEFAULT,
                            field_names=DEFAULT_FIELDS):
-            fix_language = Wagtail.GetSeries.fix_language
+            # fix_language = Wagtail.GetSeries.fix_language
+            # fix_language = identity
             adjust_fields = Wagtail.GetSeries.adjust_fields
-            fix = compose(
-                fix_language(collection),
-                adjust_fields(field_names),
-            )
+            fix = adjust_fields(field_names)
+            # fix = compose(
+            #     fix_language(collection),
+            #     adjust_fields(field_names),
+            # )
             return fix(dct)
 
         class ItemListing():
@@ -1090,14 +1111,13 @@ class Wagtail():
                           raw=False,
                           language_dict={},
                           spatial_dict={},):
-            fix_everything = Wagtail.GetSeries.fix_everything
+            # fix_everything = Wagtail.GetSeries.fix_everything
             first_pass = Api.getSeries(identifier,
                                        collection,
                                        raw,
                                        language_dict,
                                        spatial_dict)
-            print("Wagtail.GetSeries.getSeriesOnly: ", spatial_dict)
-            series = fix_everything(first_pass, field_names=field_names)
+            series = Wagtail.GetSeries.adjust_fields(field_names)(first_pass)
             return series
 
         def getSeries(identifier="b2pz3jc17901",
@@ -1117,7 +1137,9 @@ class Wagtail():
                                            raw,
                                            language_dict,
                                            spatial_dict,)
-                series = fix_everything(first_pass, field_names=field_names)
+                series = fix_everything(first_pass,
+                                        collection=collection,
+                                        field_names=field_names)
             except AttributeError:
                 first_pass = []
                 series = []
@@ -1139,7 +1161,6 @@ class Wagtail():
                       raw=False,
                       language_dict={},
                       spatial_dict={}):
-            print("Wagtail.GetResultsByKeyword.getSeries: ", spatial_dict)
             getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
 
             def mk_link(k, v):
@@ -1173,11 +1194,11 @@ class Wagtail():
 
 
         def getResultsByKeyword(search="andrade",
+                                field_names=DEFAULT_FIELDS,
                                 collection=DEFAULT,
                                 raw=False,
                                 language_dict={},
                                 spatial_dict={},):
-            print("Wagtail.GetResultsByKeyword.getResultsByKeyword: ", spatial_dict)
             getSeries = (Wagtail
                          .GetResultsByKeyword
                          .getSeries)
@@ -1189,6 +1210,7 @@ class Wagtail():
 
             def get(noid):
                 return getSeries(identifier=noid,
+                                 field_names=field_names,
                                  collection=collection,
                                  raw=raw,
                                  language_dict=language_dict,
@@ -1299,4 +1321,3 @@ class Utils():
         start = random.randrange(0, length)
         end = start + 10
         return Utils.gimme_all_noids(collection)[start:end]
-

@@ -594,6 +594,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             page_id=self.id
         )
         query_set = metadata_fields.values_list('edm_field_label')
+
         return [field[0] for field in query_set]
 
     def get_series_metadata(self):
@@ -601,7 +602,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             page_id=self.id
         )
         query_set = metadata.values_list('edm_field_label')
-        return [field[0] for field in query_set]
+        alist = [(f["edm_field_label"], f["display_name"])
+                 for f
+                 in metadata.values()]
+        return OrderedDict(alist)
 
     def build_browse_dict(self):
         browse_objects = CollectionPageClusterBrowse.objects.filter(
@@ -952,10 +956,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         language_dict = self.get_language_dict()
         spatial_dict = self.get_spatial_dict()
 
+        field_names = self.get_series_metadata()
+
         try:
             search_term = qs["keyword"]
             results = Wagtail.getResultsByKeyword(
                 search=search_term,
+                field_names=field_names,
                 collection=short_name,
                 language_dict=language_dict,
                 spatial_dict=spatial_dict,
