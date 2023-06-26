@@ -1025,11 +1025,16 @@ class LinkQueueSpreadsheetBlock(DocumentChooserBlock):
 
         if extension == expected:
             df = pd.read_excel(BASE_DIR + MEDIA_URL + str(value.file))
-            df.columns = df.columns.str.lower()
-            required_headers = ['start date', 'end date', 'link text', 'url']
-            msg = 'Your spreadsheet file must have "Start Date", "End Date", "Link Text", and "URL" column headers'
-            if not set(required_headers).issubset(df.columns):
-                errors['required_headers'] = ErrorList([msg])
+            if df.empty:
+                errors['empty_spreadsheet'] = ErrorList(
+                    ['Empty spreadsheets are not allowed']
+                )
+            if not df.empty:
+                df.columns = df.columns.str.lower()
+                required_headers = ['start date', 'end date', 'link text', 'url']
+                msg = 'Your spreadsheet file must have "Start Date", "End Date", "Link Text", and "URL" column headers'
+                if not set(required_headers).issubset(df.columns):
+                    errors['required_headers'] = ErrorList([msg])
         if errors:
             raise ValidationError(errors)
 
@@ -1971,23 +1976,29 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
              ]
             }
         """
+        df = pd.DataFrame()
         current_page = self
         blocks = current_page.link_queue.blocks_by_name('spreadsheet')
         links = {}
         for block in blocks:
-            title = str(block.value)
-            df = pd.read_excel(BASE_DIR + MEDIA_URL + str(block.value.file))
-            df.columns = df.columns.str.lower()
-            df['start date'] = pd.to_datetime(df['start date'])
-            df['end date'] = pd.to_datetime(df['end date'])
-            now = datetime.now()
-            filtered_df = df[(df['start date'] <= now) & (df['end date'] >= now)]
-            if len(filtered_df) > 0:
-                links[title] = []
-            for i, row in filtered_df.iterrows():
-                link_text = row['link text']
-                link_url = row['url']
-                links[title].append((link_url, link_text))
+            if block.value:
+                title = str(block.value)
+                df = pd.read_excel(BASE_DIR + MEDIA_URL + str(block.value.file))
+
+                if not df.empty:
+                    df.columns = df.columns.str.lower()
+                    df['start date'] = pd.to_datetime(df['start date'])
+                    df['end date'] = pd.to_datetime(df['end date'])
+                    now = datetime.now()
+                    filtered_df = df[
+                        (df['start date'] <= now) & (df['end date'] >= now)
+                    ]
+                    if len(filtered_df) > 0:
+                        links[title] = []
+                    for i, row in filtered_df.iterrows():
+                        link_text = row['link text']
+                        link_url = row['url']
+                        links[title].append((link_url, link_text))
         return links
 
     def get_context(self, request):

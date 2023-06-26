@@ -736,6 +736,15 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         )
         self.document_expired.save()
 
+        # Empty spreadsheet
+        self.path_to_empty_doc = 'documents/test_empty.xlsx'
+        df = pd.DataFrame()
+        df.to_excel('media/' + self.path_to_empty_doc, index=False)
+        self.empty_document = Document.objects.create(
+            title='Empty Spreadsheet', file=self.path_to_empty_doc
+        )
+        self.empty_document.save()
+
     def tearDown(self):
         self.site.delete()
 
@@ -768,10 +777,10 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         path_to_file = 'documents/test.xlsx'
         block = LinkQueueSpreadsheetBlock()
         data = {
-            'Test1': ['', '', ''],
-            'Test2': ['', '', ''],
-            'Test3': ['', '', ''],
-            'Test4': ['', '', ''],
+            'Test1': ['Foo', 'Foo', 'Foo'],
+            'Test2': ['Foo', 'Foo', 'Foo'],
+            'Test3': ['Foo', 'Foo', 'Foo'],
+            'Test4': ['Foo', 'Foo', 'Foo'],
         }
         invalid_document = self.makeTestingSpreadsheet(
             path_to_file, data, 'Bad Spreadsheet Headers'
@@ -798,6 +807,30 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         self.assertEqual(
             ex.messages[0],
             'Your spreadsheet file must have "Start Date", "End Date", "Link Text", and "URL" column headers',
+        )
+
+    def test_clean_empty_spreadsheet(self):
+        block = LinkQueueSpreadsheetBlock()
+        sv = StreamValue(
+            stream_block=block,
+            stream_data=[
+                {
+                    'type': 'linkqueuespreadsheetblock',
+                    'value': [{'type': 'spreadsheet', 'value': self.empty_document.id}],
+                }
+            ],
+            is_lazy=True,
+        )
+        sv.filename = self.path_to_empty_doc
+        sv.file = self.path_to_empty_doc
+
+        # Assertion should be raised on spreadsheets that don't have the required headers
+        with self.assertRaises(ValidationError) as cm:
+            block.clean(sv)
+        ex = cm.exception
+        self.assertEqual(
+            ex.messages[0],
+            'Empty spreadsheets are not allowed',
         )
 
     def test_get_link_queue(self):
@@ -846,3 +879,23 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         response = self.page.serve(request)
         self.assertNotContains(response, fallback_text)
         self.assertContains(response, 'A deal is a deal')
+
+    def test_empty_spreadsheet_does_not_break_page(self):
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+
+        # Pages with an empty document should still return a 200
+        self.page.link_queue = json.dumps(
+            [{'type': 'spreadsheet', 'value': self.empty_document.id}]
+        )
+        self.page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertEqual(response.status_code, 200)
+
+        # Pages with a document deleted should still return a 200
+        self.empty_document.delete()
+        response = self.page.serve(request)
+        self.assertEqual(response.status_code, 200)
