@@ -1,40 +1,37 @@
 <style>
-.accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-  transition: 0.4s;
-}
-
-.active, .accordion:hover {
-  background-color: #ccc;
-}
-
-.accordion:after {
-  content: '\002B';
-  color: #777;
-  font-weight: bold;
-  float: right;
-  margin-left: 5px;
-}
-
-.active:after {
-  content: "\2212";
-}
-
-.panel {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-}
+      .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }
+    
+      .active, .accordion:hover {
+        background-color: #ccc;
+        }
+    
+      .accordion:after {
+        content: '\002B';
+        color: #777;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+        }
+    
+      .active:after {
+        content: "\2212";
+        }
+    
+      .panel {
+        padding: 0 18px;
+        background-color: white;
+        overflow: hidden;
+        }
 </style>
 
 <body>
@@ -47,48 +44,130 @@
 
 {% block content %}
 
+<h1>Mail Aliases Page</h1>
+
+<button class="btn btn-default" onclick="expandAll()">Expand All</button>
+<button class="btn btn-default" onclick="contractAll()">Contract All</button>
+
+<h3>
+<a href="/mailaliases/">All</a> &nbsp; 
+<a href="/mailaliases/a/">A</a> &nbsp; 
+<a href="/mailaliases/b/">B</a> &nbsp; 
+<a href="/mailaliases/c/">C</a> &nbsp; 
+<a href="/mailaliases/d/">D</a> &nbsp; 
+<a href="/mailaliases/e/">E</a> &nbsp; 
+<a href="/mailaliases/f/">F</a> &nbsp; 
+<a href="/mailaliases/g/">G</a> &nbsp; 
+<a href="/mailaliases/h/">H</a> &nbsp; 
+<a href="/mailaliases/i/">I</a> &nbsp; 
+<a href="/mailaliases/j/">J</a> &nbsp; 
+<a href="/mailaliases/k/">K</a> &nbsp; 
+<a href="/mailaliases/l/">L</a> &nbsp; 
+<a href="/mailaliases/m/">M</a> &nbsp; 
+<a href="/mailaliases/n/">N</a> &nbsp; 
+<a href="/mailaliases/o/">O</a> &nbsp; 
+<a href="/mailaliases/p/">P</a> &nbsp; 
+<a href="/mailaliases/q/">Q</a> &nbsp; 
+<a href="/mailaliases/r/">R</a> &nbsp; 
+<a href="/mailaliases/s/">S</a> &nbsp; 
+<a href="/mailaliases/t/">T</a> &nbsp; 
+<a href="/mailaliases/u/">U</a> &nbsp; 
+<a href="/mailaliases/v/">V</a> &nbsp; 
+<a href="/mailaliases/w/">W</a> &nbsp; 
+<a href="/mailaliases/x/">X</a> &nbsp; 
+<a href="/mailaliases/y/">Y</a> &nbsp; 
+<a href="/mailaliases/z/">Z</a> &nbsp; 
+<a href="/mailaliases/number/">#</a>
+</h3>
+
     {%for key, value in cleaned_data.items %}
+
     <button class="accordion">{{key}}</button>
     <div class="panel">
+      <table class="table">
+	<br>
         {%for note_email in value %}
-        <br>
           {%if note_email.note%}
-            note: {{note_email.note}}
+        	<tbody>
+		  <td> note: {{note_email.note}} </td>
+		</tbody>
 
           {%elif note_email.triangle_brackets%}
-            <a href="mailto:{{note_email.triangle_brackets.1}}">{{note_email.triangle_brackets.0}}</a>: {{note_email.triangle_brackets.2}}
-            
-          {%elif note_email.parentheses%}
-            <a href="mailto:{{note_email.parentheses.1}}">{{note_email.parentheses.0}}</a>: {{note_email.parentheses.2}}
+		  <tbody>
+                    <td><a href="mailto:{{note_email.triangle_brackets.1}}">{{note_email.triangle_brackets.0}}</a></td>
+                    <td>{{note_email.triangle_brackets.2}}</td>
+		  </tbody>
 
-          {%elif note_email.plain_email%}
-            <a href="mailto:{{note_email.plain_email}}">{{note_email.plain_email}}</a>
+          {%elif note_email.parentheses%}
+		  <tbody>
+                    <td><a href="mailto:{{note_email.parentheses.1}}">{{note_email.parentheses.0}}</a></td>
+                    <td>{{note_email.parentheses.2}}</td>
+		  </tbody>
+         
+	  {%elif note_email.plain_email%}
+		<tbody>
+		    <td><a href="mailto:{{note_email.plain_email}}">{{note_email.plain_email}}</a></td>
+		</tbody>
             
           {%else%}
-            {{note_email.local}}
+		<tbody>
+		  <td>{{note_email.local}}</td>
+		</tbody>
           {%endif %}
 
         {%endfor %}
-    <br><br>
+	</table>
+      	<br>
     </div>
     {%endfor %}
 
 <script>
-var acc = document.getElementsByClassName("accordion");
-var i;
+    
+    function singleAccordionToggle() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = 0;
+        } 
+      }
+      
+    function enableButtonListening(){
+      const accordionElements = document.getElementsByClassName("accordion");
+      var i;
+    
+      for (i = 0; i < accordionElements.length; i++) {
+        accordionElements[i].addEventListener("click", singleAccordionToggle);
+      }
+    }
 
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    } 
-  });
-}
-</script>
+    function expandAll(){
+      const accordionElements = document.getElementsByClassName("accordion");
+      var i;
+
+      for (i = 0; i < accordionElements.length; i++) {
+        accordionElements[i].classList.toggle("active");
+        var panel = accordionElements[i].nextElementSibling;
+        panel.style.maxHeight = null;
+      }
+    }
+
+    function contractAll(){
+      const accordionElements = document.getElementsByClassName("accordion");
+      var i;
+
+      for (i = 0; i < accordionElements.length; i++) {
+        accordionElements[i].classList.toggle("active");
+        var panel = accordionElements[i].nextElementSibling;
+        panel.style.maxHeight = 0;
+      }
+    }
+
+    enableButtonListening();
+    contractAll();
+
+    </script>
 
 </body>
 {% endblock %}
