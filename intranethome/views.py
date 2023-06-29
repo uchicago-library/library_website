@@ -182,7 +182,7 @@ def mail_aliases_view(request):
     
     # pulls *the_filter_value* out
     try:
-        my_filter = re.search("\/mailaliases\/([a-zA-Z]*)\/?", url)[1]
+        my_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
     except:
         my_filter = ""
 
