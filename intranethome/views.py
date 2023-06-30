@@ -175,7 +175,7 @@ def format_splitting(email):
 
 def mail_aliases_view(request):
 
-    file_data = reading_and_converting("intranethome/aliases.json")
+    file_data = reading_and_converting("/data/web/aliases/aliases.json")
 
     # grabs /mailaliases/*the_filter_value*
     url = request.get_full_path()
