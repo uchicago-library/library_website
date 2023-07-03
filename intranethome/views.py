@@ -2,7 +2,9 @@ from django.shortcuts import render
 import json
 import re
 from django.http import Http404
-#from wagtail.models import Site
+from wagtail.models import Site
+from base.wagtail_hooks import (get_required_groups, has_permission, redirect_users_without_permissions
+)
 
 
 # purpose of function: reading json text and converting to python
@@ -176,11 +178,11 @@ def format_splitting(email):
 
 def mail_aliases_view(request):
 
-    #loop_homepage = Site.objects.get(site_name='Loop').root_page
-    #if not has_permission(request.user, get_required_groups(loop_homepage)):
-        #return redirect_users_without_permissions(
-            #loop_homepage, request, None, None
-        #)
+    loop_homepage = Site.objects.get(site_name='Loop').root_page
+    if not has_permission(request.user, get_required_groups(loop_homepage)):
+        return redirect_users_without_permissions(
+            loop_homepage, request, None, None
+        )
 
     file_data = reading_and_converting("/data/web/aliases/aliases.json")
 
