@@ -184,8 +184,12 @@ def mail_aliases_view(request):
         return redirect_users_without_permissions(
             loop_homepage, request, None, None
         )
-
-    file_data = reading_and_converting(MATH_ALIASES_PATH)
+    
+    try:
+        file_data = reading_and_converting(MAIL_ALIASES_PATH)
+    except:
+        file_data = ""
+        error = "bad_link"
 
     # grabs /mailaliases/*the_filter_value*
     url = request.get_full_path()
@@ -237,5 +241,5 @@ def mail_aliases_view(request):
             cleaned_data[alias] = final_list_of_notes_and_emails
 
     context = {'cleaned_data' : cleaned_data,
-               'url':filter}
+               'error':error}
     return render(request, 'intranethome/mail_aliases.html', context)
