@@ -12,4 +12,3 @@ except ImportError:
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-MAIL_ALIASES_PATH = '/data/web/aliases/aliases.json'
