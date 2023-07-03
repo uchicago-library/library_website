@@ -5,7 +5,7 @@ from django.http import Http404
 from wagtail.models import Site
 from base.wagtail_hooks import (get_required_groups, has_permission, redirect_users_without_permissions
 )
-from library_website.settings import MAIL_ALIASES_PATH
+#from library_website.settings import MAIL_ALIASES_PATH
 
 
 # purpose of function: reading json text and converting to python
@@ -185,11 +185,14 @@ def mail_aliases_view(request):
             loop_homepage, request, None, None
         )
     
-    try:
-        file_data = reading_and_converting(MAIL_ALIASES_PATH)
-    except:
-        file_data = ""
-        error = "bad_link"
+    #try:
+        #file_data = reading_and_converting(MAIL_ALIASES_PATH)
+    #except:
+        #file_data = ""
+        #error = "bad_link"
+
+    file_data = reading_and_converting('/data/web/aliases/aliases.json')
+    error = "PLEASE WORK"
 
     # grabs /mailaliases/*the_filter_value*
     url = request.get_full_path()
