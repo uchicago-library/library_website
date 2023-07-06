@@ -184,35 +184,28 @@ def mail_aliases_view(request):
         return redirect_users_without_permissions(
             loop_homepage, request, None, None
         )
-    
-    #try:
-        #file_data = reading_and_converting(MAIL_ALIASES_PATH)
-    #except:
-        #file_data = ""
-        #error = "bad_link"
 
-    file_data = reading_and_converting('/data/web/aliases/aliases.json')
-    error = MAIL_ALIASES_PATH
+    file_data = reading_and_converting(MAIL_ALIASES_PATH)
 
     # grabs /mailaliases/*the_filter_value*
     url = request.get_full_path()
     
     # pulls *the_filter_value* out
     try:
-        my_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
+        alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
     except:
-        my_filter = ""
+        alias_filter = ""
 
     # returns a 404 if the filter is not either
     #   1. nothing (indicating no filter) 
     #   2. "number" (indicating aliases starting with a number)
     #   3. any single letter indicating aliases starting with that letter
-    if my_filter!="" and my_filter!="number" and (len(my_filter) !=1 or  my_filter not in "abcdefghijklmnopqrstuvwxyz"):
+    if alias_filter!="" and alias_filter!="number" and (len(alias_filter) !=1 or  alias_filter not in "abcdefghijklmnopqrstuvwxyz"):
         raise Http404
 
     aliases = get_list_of_aliases(file_data)
 
-    filtered_aliases = filter_by_value(aliases, my_filter)
+    filtered_aliases = filter_by_value(aliases, alias_filter)
 
     cleaned_data = {}
 
@@ -243,6 +236,5 @@ def mail_aliases_view(request):
         if final_list_of_notes_and_emails != []:
             cleaned_data[alias] = final_list_of_notes_and_emails
 
-    context = {'cleaned_data' : cleaned_data,
-               'error':error}
+    context = {'cleaned_data' : cleaned_data}
     return render(request, 'intranethome/mail_aliases.html', context)
