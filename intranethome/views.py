@@ -15,8 +15,10 @@ def reading_and_converting(name_of_file):
     try:
         f = open(name_of_file, "r")
     except FileNotFoundError:
+        #todo: log this error
         return {"error":"error"} 
     except IOError:
+        #todo: log this error
         return {"error":"error"} 
     else:
         json_text = f.read()
@@ -44,7 +46,7 @@ def helper_function_order_number_aliases_last(all_aliases):
 # purpose of function: pulling the aliases of the data and creating an organized list
 # input: the python data from the file
 # output: a sorted list of the aliases
-def get_list_of_aliases(data_from_file):
+def get_list_of_sorted_aliases(data_from_file):
     aliases = list({ k for (k,v) in data_from_file.items() })
     aliases.sort(key=str.lower)
 
@@ -79,7 +81,7 @@ def filter_by_value(original_alias_list, filter_value):
 # purpose of function: formatting the different types of data into lists of dictionaries
 # input: each individual dictionary
 # output: a formatted dictionary
-def uniforming_into_list_of_dict(notes_and_emails):
+def uniforming_into_list_of_dict(note_or_email):
     
     # option 1: single key dictionary with key = 'email' and value with a local or gobal email
     #   {'email': 'postmaster'}
@@ -93,7 +95,7 @@ def uniforming_into_list_of_dict(notes_and_emails):
     #   {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}
 
     # selecting for option 1 or 3 in order to put them into both into lists
-        if(type(notes_and_emails) == dict):
+        if(type(note_or_email) == dict):
 
             # putting each dictionary inside of a list
             # email version:
@@ -102,11 +104,11 @@ def uniforming_into_list_of_dict(notes_and_emails):
             # note version:
             # i.e. {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'} ->
                 # [{'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}]
-            return [({ k:v for (k,v) in notes_and_emails.items() })]
+            return [({ k:v for (k,v) in note_or_email.items() })]
         
         # selecting for option 2 to return the input as is
         else:
-            return notes_and_emails
+            return note_or_email
 
 # purpose: formatting option 1
 # input: an unformatted option 1
@@ -124,7 +126,7 @@ def helper_function_triangle_brackets(triangle_brackets_email):
 def helper_function_parentheses(parentheses_email):
     formatted_parentheses_email = []
     formatted_parentheses_email.append(parentheses_email[2])
-    formatted_parentheses_email.append(parentheses_email[1])
+    formatted_parentheses_email.append(parentheses_email[1].strip())
     formatted_parentheses_email.append(parentheses_email[0])
     return formatted_parentheses_email
 
@@ -139,7 +141,7 @@ def format_splitting(email):
 
     # option 2: parentheses
     #   'hartj@uchicago.edu (Jenny Hart)' ->
-    #   {'parentheses': ['Jenny Hart', 'hartj@uchicago.edu ', 'hartj@uchicago.edu (Jenny Hart)']}
+    #   {'parentheses': ['Jenny Hart', 'hartj@uchicago.edu', 'hartj@uchicago.edu (Jenny Hart)']}
 
     # option 3: plain email
     #   'lhauglan@midway.uchicago.edu' ->
@@ -216,7 +218,7 @@ def mail_aliases_view(request):
         if alias_filter!="" and alias_filter!="number" and (len(alias_filter) !=1 or  alias_filter not in "abcdefghijklmnopqrstuvwxyz"):
             raise Http404
 
-        aliases = get_list_of_aliases(file_data)
+        aliases = get_list_of_sorted_aliases(file_data)
 
         filtered_aliases = filter_by_value(aliases, alias_filter)
 
