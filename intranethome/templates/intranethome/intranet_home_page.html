@@ -5,122 +5,123 @@
 {% load wagtailimages_tags %}
 
 {% block content %}
-  <div class="row-fluid "> <!-- Main Row -->
-    <div class="col-xs-12 col-md-9 swnews" role="main">
-      <h1><a href="{{ news_link }}">News</a></h1>
-        {% for sticky_page in sticky_pages %}
-          <div class="sticky">
-            <div class="media">
-              {% if sticky_page.thumbnail %}
-                <div class="media-left">
-                  {% image sticky_page.thumbnail fill-150x150 class="media-object" %}
+    <div class="row-fluid "> <!-- Main Row -->
+        <div class="col-xs-12 col-md-9 swnews" role="main">
+            <h1><a href="{{ news_link }}">News</a></h1>
+            {% for sticky_page in sticky_pages %}
+                <div class="sticky">
+                    <div class="media">
+                        {% if sticky_page.thumbnail %}
+                            <div class="media-left">
+                                {% image sticky_page.thumbnail fill-150x150 class="media-object" %}
+                            </div>
+                        {% endif %}
+                        <div class="media-body">
+                            <span class="date">{{ sticky_page.story_date|date:'F jS' }}</span>
+                            <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
+                            {% news_author sticky_page %}
+                            {% news_excerpt sticky_page %}
+                        </div>
+                    </div>
                 </div>
-              {% endif %}
-              <div class="media-body">
-                <span class="date">{{ sticky_page.story_date|date:'F jS' }}</span>
-                <h2 class="media-heading"><a href="{{ sticky_page.url }}">{{ sticky_page.title }}</a></h2>
-                {% news_author sticky_page %}
-                {% news_excerpt sticky_page %}
-              </div>
+                <hr/>
+            {% endfor %}
+            {% for news_page in news_pages %}
+                <div class="media">
+                    {% if news_page.thumbnail %}
+                        <div class="media-left">
+                            {% image news_page.thumbnail fill-150x150 class="media-object" %}
+                        </div>
+                    {% endif %}
+                    <div class="media-body">
+                        <span class="date">{{ news_page.story_date|date:'F jS' }}</span>
+                        <h2><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
+                        {% news_author news_page %}
+                        {% news_excerpt news_page %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if prev_link or next_link %}
+                <p>
+                    {% if prev_link %}
+                        <a href="{{ prev_link }}">Newer Stories</a>
+                    {% endif %}
+                    {% if prev_link and next_link %}
+                        |
+                    {% endif %}
+                    {% if next_link %}
+                        <a href="{{ next_link }}">Older Stories</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="col-xs-12 col-md-3 swside-home" role="complementary"> <!-- Right Sidebar -->
+
+            <div class="row-fluid"> <!-- Quicklinks Row -->
+                <h2>Quicklinks</h2>
+                <ul>
+                    <!-- <li><a style="color: #800000;" href="https://loop.lib.uchicago.edu/covid-19-information-staff/">COVID-19 Updates <i class="fa fa-angle-double-right"></i></a></li> -->
+                    <li><a href="https://humanresources.uchicago.edu/benefits/">Benefits</a></li>
+                    <li><a href="https://uchicago.app.box.com">Box</a></li>
+                    <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/">Email Aliases</a></li>
+                    <li><a href="https://uchicago.libapps.com">LibApps</a></li>
+                    <li><a href="https://uchicago.folio.indexdata.com">FOLIO</a></li>
+                    <li><a href="https://outlook.office.com/owa/?realm=ad.uchicago.edu">Outlook</a></li>
+                    <li><a href="/staff/">Staff Directory</a></li>
+                    <li><a href="https://workday.uchicago.edu/">WorkDay</a></li>
+                </ul>
+            </div> <!-- / Quicklinks Row -->
+
+            <hr/>
+
+            <div class="row-fluid" style="padding: 5px 0 20px 0;"> <!-- Bugzilla Row --> <!-- Dev note: Remove styling for production? -->
+                <h1>Report a Computer Problem</h1>
+                <a href="http://trouble.lib.uchicago.edu" class="btn btn-bugzilla" aria-label="Bugzilla">Bugzilla</a>
+            </div><!-- // Bugzilla Row -->
+
+            <hr/>
+
+            <div class="row-fluid"><!-- Community -->
+                <h2>Our Community</h2>
+                <ul>
+                    <li><a href="/departments/dean/">Dean's Office</a></li>
+                    <li><a href="/departments/dean/message-of-the-week/">Message of the Week</a></li>
+                    <li><a href="/groups/staff-meeting/">All Staff Meeting</a></li>
+                    <!-- <li><a href="https://loop.lib.uchicago.edu/library-community/water-cooler/">Water Cooler (Archive)</a></li> -->
+                    <li><a href="https://loop.lib.uchicago.edu/library-community/library-staff-kudos/">Library Staff Kudos</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="https://loop.lib.uchicago.edu/admin/pages/587/">Write a Loop News Post</a></li>
+                    <li role="separator" class="divider"></li>
+                    <a href="/documentation/loop-box-documentation/loop-news-best-practices/">How to: Loop News post</a>
+                    <li><a href="/documentation/loop-box-documentation/loop-guidelines-policies-tutorials/adding-meeting-minutes/">How to: Meeting Minutes</a></li>
+                </ul>
             </div>
-          </div>
-          <hr/>
-        {% endfor %}
-        {% for news_page in news_pages %}
-          <div class="media">
-            {% if news_page.thumbnail %}
-              <div class="media-left">
-                {% image news_page.thumbnail fill-150x150 class="media-object" %}
-              </div>
-            {% endif %}
-            <div class="media-body">
-              <span class="date">{{ news_page.story_date|date:'F jS' }}</span>
-              <h2><a href="{{ news_page.url }}">{{ news_page.title }}</a></h2>
-              {% news_author news_page %}
-              {% news_excerpt news_page %}
-            </div>
-          </div>
-        {% endfor %}
 
-        {% if prev_link or next_link %}
-          <p>
-            {% if prev_link %}
-              <a href="{{ prev_link }}">Newer Stories</a>
-            {% endif %}
-            {% if prev_link and next_link %}
-              |
-            {% endif %}
-            {% if next_link %}
-              <a href="{{ next_link }}">Older Stories</a>
-            {% endif %}
-          </p>
-        {% endif %}
-    </div>
+            <hr>
 
-  <div class="col-xs-12 col-md-3 swside-home" role="complementary"> <!-- Right Sidebar -->
-
-    <div class="row-fluid"> <!-- Quicklinks Row -->
-      <h2>Quicklinks</h2>
-      <ul>
-        <!-- <li><a style="color: #800000;" href="https://loop.lib.uchicago.edu/covid-19-information-staff/">COVID-19 Updates <i class="fa fa-angle-double-right"></i></a></li> -->
-        <li><a href="https://humanresources.uchicago.edu/benefits/">Benefits</a></li>
-        <li><a href="https://uchicago.app.box.com">Box</a></li>
-        <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/">Email Aliases</a></li>
-        <li><a href="https://uchicago.libapps.com">LibApps</a></li>
-        <li><a href="https://uchicago.folio.indexdata.com">FOLIO</a></li>
-        <li><a href="https://outlook.office.com/owa/?realm=ad.uchicago.edu">Outlook</a></li>
-        <li><a href="/staff/">Staff Directory</a></li>
-        <li><a href="https://workday.uchicago.edu/">WorkDay</a></li>
-      </ul>
-    </div> <!-- / Quicklinks Row -->
-
-    <hr/>
-
-    <div class="row-fluid" style="padding: 5px 0 20px 0;"> <!-- Bugzilla Row --> <!-- Dev note: Remove styling for production? -->
-      <h1>Report a Computer Problem</h1>
-      <a href="http://trouble.lib.uchicago.edu" class="btn btn-bugzilla" aria-label="Bugzilla" role="button">Bugzilla</a>
-    </div><!-- // Bugzilla Row -->
-
-    <hr/>
-
-    <div class="row-fluid"><!-- Community -->
-        <h2>Our Community</h2>
-        <ul>
-          <li><a href="/departments/administration/deans-office/">Dean's Page</a></li>
-          <li><a href="/groups/staff-meeting/">All Staff Meeting</a></li>
-          <!-- <li><a href="https://loop.lib.uchicago.edu/library-community/water-cooler/">Water Cooler (Archive)</a></li> -->
-          <li><a href="https://loop.lib.uchicago.edu/library-community/library-staff-kudos/">Library Staff Kudos</a></li>   
-          <li role="separator" class="divider"></li>     
-          <li><a href="https://loop.lib.uchicago.edu/admin/pages/587/">Write a Loop News Post</a></li>
-          <li role="separator" class="divider"></li>
-          <a href="/documentation/loop-box-documentation/loop-news-best-practices/">How to: Loop News post</a>
-          <li><a href="/documentation/loop-box-documentation/loop-guidelines-policies-tutorials/adding-meeting-minutes/">How to: Meeting Minutes</a></li>
-        </ul>
-    </div>
-
-    <hr>
-    
-    <div class="row-fluid"><!-- Work/Life -->
-      <h2>Community Links</h2>
-<!--       <h2>Food</h2>
+            <div class="row-fluid"><!-- Work/Life -->
+                <h2>Community Links</h2>
+                <!--       <h2>Food</h2>
       <ul>
         <li><a href="https://dining.uchicago.edu/page/locations-hours">Campus Dining: locations &amp; hours</a></li>
         <li><a href="https://twitter.com/exlibtoaster">ExLibris Toaster</a></li>
       </ul>
 
       <h2>Interests &amp; Resources</h2> -->
-        <ul>
-	  <li><a href="https://goforward.uchicago.edu/">Go Forward</a></li>
-          <li><a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a></li>
-          <li><a href="https://voices.uchicago.edu/equity/">Equal Opportunity Programs</a></li>
-          <li><a href="https://grad.uchicago.edu/life-at-uchicago/family-resources/">Family Resource Center</a></li>
-          <li><a href="https://loop.lib.uchicago.edu/library-social-media/">Library Social Media</a></li>
-          <li><a href="http://arts.uchicago.edu/">UChicago Arts</a></li>
-          <li><a href="http://chicagopresents.uchicago.edu/">UChicago Presents</a></li>
-          <li><a href="https://wellness.uchicago.edu">Wellness at UChicago</a></li>
-        </ul>
-    </div> <!-- // Work/Life -->
-           
- </div><!-- // Right Sidebar -->
-</div> <!-- // Main row -->
+                <ul>
+                    <li><a href="https://goforward.uchicago.edu/">Go Forward</a></li>
+                    <li><a href="http://athletics.uchicago.edu/facilities/index">Campus Gyms</a></li>
+                    <li><a href="https://voices.uchicago.edu/equity/">Equal Opportunity Programs</a></li>
+                    <li><a href="https://grad.uchicago.edu/life-at-uchicago/family-resources/">Family Resource Center</a></li>
+                    <li><a href="https://loop.lib.uchicago.edu/library-social-media/">Library Social Media</a></li>
+                    <li><a href="http://arts.uchicago.edu/">UChicago Arts</a></li>
+                    <li><a href="http://chicagopresents.uchicago.edu/">UChicago Presents</a></li>
+                    <li><a href="https://wellness.uchicago.edu">Wellness at UChicago</a></li>
+                </ul>
+            </div> <!-- // Work/Life -->
+
+        </div><!-- // Right Sidebar -->
+    </div> <!-- // Main row -->
 {% endblock %}

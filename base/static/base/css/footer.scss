@@ -66,15 +66,18 @@ Pleeb Footer Code
   color: #fff;
   line-height: 1.7em;
     &:hover, &:focus {
-    	color: $hoveraccent;
+      color: #000;
       text-decoration: none;
     }
-	}
+  }
   h5 {
     margin-bottom: 0px;
   }
-  .footer-heading {
+  h2.footer-heading {
+    color: #e2ddd7;
     font-weight: 600;
+    font-size: 14px;
+    margin: 0;
   }
   .col-footer {
       border-top: 1px solid #5e5e5e;

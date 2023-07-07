@@ -4,19 +4,23 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	<article>
+    <article>
         <h1>{{ self.title }}</h1>
         {% with table=self.get_reports_grouped_by_date %}
             <dl>
                 {% for date, items in table.items %}
-                  <dt>{{date}}</dt>
-                  {% for item in items %}
-                    <dd>
-                      <a href="{{item.url}}">{{item.summary}}</a>
-                    </dd>
-                  {% endfor %}
+                    <dt>{{date}}</dt>
+                    {% for item in items %}
+                        <dd>
+                            {% if item.url %}
+                                <a href="{{item.url}}">{{item.summary}}</a>
+                            {% else %}
+                                {{item.summary}}
+                            {% endif %}
+                        </dd>
+                    {% endfor %}
                 {% endfor %}
             </dl>
         {% endwith %}
-	</article>
+    </article>
 {% endblock %}

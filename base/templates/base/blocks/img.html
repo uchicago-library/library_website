@@ -2,20 +2,20 @@
 {% image value.image original as original %}
 
 {% if value.alignment == 'fullwidth' %}
-   {% image value.image width-800 as tmp_img %}
+    {% image value.image width-800 as tmp_img %}
 {% else %}
     {% image value.image width-400 as tmp_img %}
 {% endif %}
 
 <figure class="imgcaption {{ value.alignment }}">
     {% if value.lightbox %}
-        <a href="{{ original.url }}" data-toggle="lightbox" aria-label="larger view of {{value.image}}">
+        <a href="{{ original.url }}" data-toggle="lightbox">
             <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
         </a>
     {% else %}
         <img src="{{ tmp_img.url }}" alt="{% firstof value.alt_text value.image %}" class="img-responsive" />
     {% endif %}
-   
+
     {% if value.title or value.citation or value.caption %}
         <figcaption>
             {% if value.title %}
@@ -25,7 +25,7 @@
                 <span class="img-citation">{{value.citation}}</span><br/>
             {% endif %}
             {% if value.caption %}
-                <span class="img-caption">{{value.caption}}<span></br/>
+                <span class="img-caption">{{value.caption}}</span><br/>
             {% endif %}
             {% if value.source %}
                 <a class="img-src" href="{{value.source}}">{{value.source}}</a>

@@ -39,7 +39,8 @@ def get_auth():
         }
     except (
         requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-        requests.exceptions.ConnectionError
+        requests.exceptions.ConnectionError,
+        requests.exceptions.MissingSchema
     ):
         pass
     return data

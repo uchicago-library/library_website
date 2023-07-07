@@ -265,6 +265,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
                 PageChooserPanel('rich_text_link'),
                 FieldPanel('rich_text_external_link'),
                 FieldPanel('rich_text_link_text'),
+                FieldPanel('link_queue'),
             ],
             heading='Rich Text'
         ),

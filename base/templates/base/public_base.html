@@ -8,663 +8,675 @@
 {% load staff_tags %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>
-        {% block title %}
-            {% if self.seo_title %}
-                {{self.seo_title}}
-            {% else %} 
-                {{ self.title }}
-            {% endif %}
-        {% endblock %} 
-        {% block title_suffix %} 
-            {% if has_banner %} 
-                {% if branch_title %}
-                    - {{branch_title}} 
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <title>
+            {% block title %}
+                {% if self.seo_title %}
+                    {{self.seo_title}}
+                {% else %}
+                    {{ self.title }}
                 {% endif %}
-            {% endif %}
-        {% endblock %} 
-        - The University of Chicago Library
-    </title>
-
-    {% if request.in_preview_panel %}
-      <base target="_blank">
-    {% endif %}
-
-    <meta name="generator" content="Bootply"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google-site-verification" content="MVKdj1ykLrwrN01_2Y85qg78KiUxrdRYTSFc6TyBkNY" />
-    <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Library",
-          "url": "{{request.scheme}}://{{request.get_host}}",
-          "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
-          "name": "{{page_location|escapejs}}",
-          "address": "{{address}}",
-          {% if self.unit.location.location_photo %}
-            {% image self.unit.location.location_photo fill-1000x750-c75 as loc_pic %}
-            "image": "{{self.get_site.root_url}}{{loc_pic.url}}",
-          {% endif %}
-          {% if self.unit.location.phone_number %}
-            "telephone": "{{self.unit.location.phone_number}}",
-          {% endif %}
-          "parentOrganization": "The University of Chicago"
-        }
-    </script>
-    {% block meta %}{% endblock %}
-    <link href="{% static "base/css/normalize.css" %}" rel="stylesheet"/>
-    <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />
-    <link href="{% static "base/css/iconfont/material-icons.css" %}" rel="stylesheet"/>
-    <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet"/>
-    <link rel="stylesheet" href="{% static "base/css/ekko-lightbox.min.css" %}"/>
-
-    {% compress css %}
-    {# SCSS compilation relies on django compressor #}
-        <link href="{% static "base/css/uclib_print.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/uclib.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/uclib-search.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/navigation.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/base.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/footer.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/global.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <link href="{% static "base/css/sidebars.scss" %}" rel="stylesheet" type="text/x-scss"/>
-        <!-- Boostrap-select -->
-        <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
-    {% endcompress %}
-    {# Jquery must be loaded in the header on the hours page #}
-    {% if is_hours_page %}
-        <script src="{% static "base/js/jquery.min.js" %}"></script>
-        <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
-        <script src="https://api3.libcal.com/js/hours_today.js"></script>
-    {% endif %}
-    {% block styles %}{% endblock %}
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EWT5B3NZ15"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-EWT5B3NZ15');
-        gtag('set', 'content_group', 'public site');
-    </script>
-</head>
-
-<body id="p-{{self.id}}" class="{{page_type|slugify}}">
-{% wagtailuserbar %}
-    <div id="skip">
-        <a href="#content">Skip to Main Content</a>
-        <a href="#global-navbar">Skip to Main Navigation</a>
-        {% if has_left_sidebar %}
-            <a href="#sidebar">Skip to Side Bar</a>
-        {% endif %}
-        <a href="#footer">Skip to Footer</a>
-    </div>
-    <div id="body-wrap">
-        {% if has_alert %}
-            <div class="alert {{alert_level}}" role="alert">
-                {{alert_message|richtext}}
-                {% if alert_more_info|striptags %}
-                   <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
+            {% endblock %}
+            {% block title_suffix %}
+                {% if has_banner %}
+                    {% if branch_title %}
+                        - {{branch_title}}
+                    {% endif %}
                 {% endif %}
-            </div>
+            {% endblock %}
+            - The University of Chicago Library
+        </title>
+
+        {% if request.in_preview_panel %}
+            <base target="_blank">
         {% endif %}
 
-        {# Main navigation #}
-        {% include "base/includes/header.html" %}
+        <meta name="generator" content="Bootply"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-site-verification" content="MVKdj1ykLrwrN01_2Y85qg78KiUxrdRYTSFc6TyBkNY" />
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "Library",
+                "url": "{{request.scheme}}://{{request.get_host}}",
+                "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
+                "name": "{{page_location|escapejs}}",
+                "address": "{{address}}",
+                {% if self.unit.location.location_photo %}
+                    {% image self.unit.location.location_photo fill-1000x750-c75 as loc_pic %}
+                    "image": "{{self.get_site.root_url}}{{loc_pic.url}}",
+                {% endif %}
+                {% if self.unit.location.phone_number %}
+                    "telephone": "{{self.unit.location.phone_number}}",
+                {% endif %}
+                "parentOrganization": "The University of Chicago"
+            }
+        </script>
+        {% block meta %}{% endblock %}
+        <link href="{% static "base/css/normalize.css" %}" rel="stylesheet"/>
+        <link rel="stylesheet" href="{% static "base/css/font-awesome-4.6.3/css/font-awesome.min.css" %}" />
+        <link href="{% static "base/css/iconfont/material-icons.css" %}" rel="stylesheet"/>
+        <link href="{% static "base/css/bootstrap.min.css" %}" rel="stylesheet"/>
+        <link rel="stylesheet" href="{% static "base/css/ekko-lightbox.min.css" %}"/>
 
-         {% if has_banner %}
-            <div class="jumbotron" style="background-image: url({{banner.url}});">
-              <div class="container">
-                {% if banner_feature %}
-                    <div class="img-wrapper">
-                        <img src="{{banner_feature.url}}" alt="{{self.banner_feature.title}}"/>
+        {% compress css %}
+            {# SCSS compilation relies on django compressor #}
+            <link href="{% static "base/css/uclib_print.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/uclib.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/uclib-search.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/navigation.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/base.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/footer.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/global.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <link href="{% static "base/css/sidebars.scss" %}" rel="stylesheet" type="text/x-scss"/>
+            <!-- Boostrap-select -->
+            <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
+        {% endcompress %}
+        {# Jquery must be loaded in the header on the hours page #}
+        {% if is_hours_page %}
+            <script src="{% static "base/js/jquery.min.js" %}"></script>
+            <script src="https://api3.libcal.com/js/hours_grid.js?002"></script>
+            <script src="https://api3.libcal.com/js/hours_today.js"></script>
+        {% endif %}
+        {% block styles %}{% endblock %}
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-EWT5B3NZ15"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EWT5B3NZ15');
+            gtag('set', 'content_group', 'public site');
+        </script>
+    </head>
+
+    <body id="p-{{self.id}}" class="{{page_type|slugify}}">
+        {% wagtailuserbar %}
+        <div id="skip">
+            <a href="#content">Skip to Main Content</a>
+            <a href="#global-navbar">Skip to Main Navigation</a>
+            {% if has_left_sidebar %}
+                <a href="#sidebar">Skip to Side Bar</a>
+            {% endif %}
+            <a href="#footer">Skip to Footer</a>
+        </div>
+        <div id="body-wrap">
+            {% if has_alert %}
+                <div class="alert {{alert_level}}" role="alert">
+                    {{alert_message|richtext}}
+                    {% if alert_more_info|striptags %}
+                        <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {# Main navigation #}
+            {% include "base/includes/header.html" %}
+
+            {% if has_banner %}
+                <div class="jumbotron" style="background-image: url({{banner.url}});">
+                    <div class="container">
+                        {% if banner_feature %}
+                            <div class="img-wrapper">
+                                <img src="{{banner_feature.url}}" alt="{{self.banner_feature.title}}"/>
+                            </div>
+                        {% endif %}
+                        <div class="overlaywrap {{branch_lib_css}}">
+                            <a href="{{banner_url}}">
+                                <p class="h2">{{banner_title}}</p>
+                                {% if banner_subtitle %}
+                                    <p class="banner-subtitle">{{banner_subtitle}}</p>
+                                {% endif %}
+                            </a>
+                            {% if exhibit_open_date or exhibit_close_date %}
+                                <p class="banner-date">Exhibition on view from
+                                    {% if exhibit_open_date %}{{ exhibit_open_date }}{% endif %}
+                                    {% if exhibit_open_date and exhibit_close_date %}&ndash;{% endif %}
+                                    {% if exhibit_close_date %}{{ exhibit_close_date }}{% endif %}
+                                </p>
+                            {% endif %}
+                            {% if exhibit_location %}
+                                <p class="banner-loc">
+                                    <a href="{{ exhibit_location.url }}">{{ exhibit_location.title }}</a><br/>
+                                </p>
+                            {% endif %}
+                        </div>
                     </div>
-                {% endif %}
-                <div class="overlaywrap {{branch_lib_css}}">
-                    <a href="{{banner_url}}">
-                    <p class="h2">{{banner_title}}</p>
-                    {% if banner_subtitle %}
-                        <p class="banner-subtitle">{{banner_subtitle}}</p>
-                    {% endif %}
-                    </a>
-                    {% if exhibit_open_date or exhibit_close_date %}
-                      <p class="banner-date">Exhibition on view from 
-                        {% if exhibit_open_date %}{{ exhibit_open_date }}{% endif %}
-                        {% if exhibit_open_date and exhibit_close_date %}&ndash;{% endif %}
-                        {% if exhibit_close_date %}{{ exhibit_close_date }}{% endif %}
-                      </p>
-                    {% endif %}
-                    {% if exhibit_location %}
-                      <p class="banner-loc">
-                        <a href="{{ exhibit_location.url }}">{{ exhibit_location.title }}</a><br/>
-                      </p>
-                    {% endif %}
-                </div>  
-              </div> 
-            </div> 
-        {% endif %}
+                </div>
+            {% endif %}
 
-        <!-- Awesome Page Content -->
-        <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
-            <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row --> 
+            <!-- Awesome Page Content -->
+            <div class="container-fluid main-container"> <!-- Main Container Wrapper -->
+                <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
 
-        {% if has_left_sidebar %}
-            <nav role="navigation" aria-label="Secondary menu">
-                <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
-                    {% if sidebartitle %}
-                        <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
-                    {% endif %}
-                    {% if sidebar %}
-                        <ul>
-                            {% for child in sidebar %}
-                                <li><a href="{{child.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{child.title}}">{{child.title}}</a>
-                                {% if child.children %}
+                    {% if has_left_sidebar %}
+                        <nav role="navigation" aria-label="Secondary menu">
+                            <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
+                                {% if sidebartitle %}
+                                    <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
+                                {% endif %}
+                                {% if sidebar %}
                                     <ul>
-                                        {% for grandchild in child.children %}
-                                            <li><a href="{{grandchild.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{grandchild.title}}">{{grandchild.title}}</a></li>
+                                        {% for child in sidebar %}
+                                            <li><a href="{{child.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{child.title}}">{{child.title}}</a>
+                                                {% if child.children %}
+                                                    <ul>
+                                                        {% for grandchild in child.children %}
+                                                            <li><a href="{{grandchild.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{grandchild.title}}">{{grandchild.title}}</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
+                                {% block left_sidebar_extras %}{% endblock %}
+                            </div>
+                        </nav>
                     {% endif %}
-                    {% block left_sidebar_extras %}{% endblock %}
-                </div>
-            </nav>
-        {% endif %}
-        <!-- // Left Sidebar -->
+                    <!-- // Left Sidebar -->
 
-        <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
-            {% include "base/includes/public_site_breadcrumbs.html" %}
-        </div>
-        {% block above_main_content %}{% endblock %}
-        <div class="{{content_div_css}}" id="content" role="main">
-            {% if object_title %}
-                <h1>{{object_title}}</h1>
-            {% elif page_type|slugify != 'libnewspage' %}
-                <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
-            {% endif %}
-            {% block under_h1 %}{% endblock %}
-            {% if has_left_sidebar %}
-                <!-- Off-Canvas Toggle Button -->
-                <div class="row visible-xs visible-sm toggle-side">
-                    <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
-                </div>
-                <!-- // End Off-Canvas Toggle Button -->
-            {% endif %}
-
-            <!-- Main Content -->
-            {% if self.has_right_sidebar %}
-            <div class="row">
-            <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-            {% endif %}
-
-                {% if carousel_items %}
-                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
-
-                        {% if carousel_multi %} 
-                            <ol class="carousel-indicators">
-                                {% for i in carousel_items %}
-                                    <li data-target="#carousel-example-generic" data-slide-to="{{forloop.counter0}}" {% if forloop.first %}class="active"{% endif %}></li>
-                                {% endfor %}
-                            </ol>
+                    <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
+                        {% include "base/includes/public_site_breadcrumbs.html" %}
+                    </div>
+                    {% block above_main_content %}{% endblock %}
+                    <div class="{{content_div_css}}" id="content" role="main">
+                        {% if object_title %}
+                            <h1>{{object_title}}</h1>
+                        {% elif page_type|slugify != 'libnewspage' %}
+                            <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
+                        {% endif %}
+                        {% block under_h1 %}{% endblock %}
+                        {% if has_left_sidebar %}
+                            <!-- Off-Canvas Toggle Button -->
+                            <div class="row visible-xs visible-sm toggle-side">
+                                <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
+                            </div>
+                            <!-- // End Off-Canvas Toggle Button -->
                         {% endif %}
 
-                        <div class="carousel-inner">
-                            {% for item in carousel_items %}
-                                {% image item.image original as nifty %}
-                                {% if nifty %} 
-                                    <article class="item {% if forloop.first %}active{% endif %}">
-                                        {% if item.link %}
-                                            <a href="{{item.link}}">
+                        <!-- Main Content -->
+                        {% if self.has_right_sidebar %}
+                            <div class="row">
+                                <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
+                        {% endif %}
+
+                        {% if carousel_items %}
+                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
+
+                                {% if carousel_multi %}
+                                    <ol class="carousel-indicators">
+                                        {% for i in carousel_items %}
+                                            <li data-target="#carousel-example-generic" data-slide-to="{{forloop.counter0}}" {% if forloop.first %}class="active"{% endif %}></li>
+                                        {% endfor %}
+                                    </ol>
+                                {% endif %}
+
+                                <div class="carousel-inner">
+                                    {% for item in carousel_items %}
+                                        {% image item.image original as nifty %}
+                                        {% if nifty %}
+                                            <article class="item {% if forloop.first %}active{% endif %}">
+                                                {% if item.link %}
+                                                    <a href="{{item.link}}">
+                                                {% endif %}
+                                                <div class="hero-image">
+                                                    <img alt="" src="{{nifty.url}}"/></div>
+                                                <div class="carousel-caption">
+                                                    {% if item.image_title or item.image_subtitle %}
+                                                        {% if item.image_title %}
+                                                            <span class="image-title">{{item.image_title}}</span>
+                                                        {% endif %}
+                                                        {% if item.image_subtitle %}
+                                                            <span class="image-subtitle">{{item.image_subtitle}}</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                                {% if item.link %}
+                                                    </a>
+                                                {% endif %}
+                                            </article>
                                         {% endif %}
-                                        <div class="hero-image">
-                                        <img alt="" src="{{nifty.url}}"/></div>
-                                        <div class="carousel-caption">
-                                            {% if item.image_title or item.image_subtitle %}
-                                                {% if item.image_title %}
-                                                    <span class="image-title">{{item.image_title}}</span>
-                                                {% endif %}
-                                                {% if item.image_subtitle %}
-                                                    <span class="image-subtitle">{{item.image_subtitle}}</span>
-                                                {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                {% if carousel_multi %}
+                                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% block content %}
+                            {% for block in self.body %}
+                                {{ block }}
+                            {% endfor %}
+                        {% endblock %}
+
+                        {% autoescape off %}
+                            {{index_pages_html}}
+                        {% endautoescape %}
+
+                        {% if self.cgi_mail_form %}
+                            <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
+                            {% render_bundle 'CGIMailForm' %}
+                        {% endif %}
+
+                        {% if self.has_richtext_widget %}
+                            <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
+                                <div class="home-module">
+                                    <h2>{{self.rich_text_heading}}</h2>
+                                    {% if self.rt_link and self.rich_text_link_text %}
+                                        <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12">
+                                    {% if link_queue %}
+                                        {% for key, val in link_queue.items %}
+                                            <h3>{{key}}</h3>
+                                            {% if val %}
+                                                <ul>
+                                                    {% for link_url, link_text in val %}
+                                                        <li><a href="{{link_url}}">{{link_text}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% elif self.rich_text %}
+                                        {{self.rich_text|richtext}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if has_featured_lib_expert %}
+                            <div class="row">
+                                {% if has_featured_lib_expert %}
+                                    {% image featured_lib_expert_image fill-200x200 as profile_pic %}
+                                    {#featured_lib_expert.block.library_expert #}
+                                    <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert">
+                                        <div class="home-module">
+                                            <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{ self.expert_link }}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
+                                        </div>
+                                        <div class="home-expert-info">
+                                            {% if featured_lib_expert_profile %}
+                                                <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
+                                            {% else %}
+                                                <h3>Ask {{featured_lib_expert_name}} about:</h3>
+                                            {% endif %}
+                                            <ul>
+                                                {% for link in featured_lib_expert_links %}
+                                                    <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h3>Not sure where to start?</h3>
+                                            <ul>
+                                                <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="home-profile">
+                                            <img src="{{profile_pic.url}}" alt="{{profile_pic.alt}}" class="img-responsive" />
+                                            {% if has_libcal_schedule %}
+                                                {% libcal_button staff_page email %}
                                             {% endif %}
                                         </div>
-                                        {% if item.link %}
-                                            </a>
-                                        {% endif %}
-                                    </article>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        {% if carousel_multi %} 
-                            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-
-                {% block content %}
-                    {% for block in self.body %}
-                        {{ block }}
-                    {% endfor %}
-                {% endblock %}
-
-                {% autoescape off %}
-                    {{index_pages_html}}
-                {% endautoescape %}
-
-                {% if self.cgi_mail_form %}
-                    <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
-                    {% render_bundle 'CGIMailForm' %}
-                {% endif %}
-
-                {% if self.has_richtext_widget %}
-                    <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
-                        <div class="home-module">
-                            <h2>{{self.rich_text_heading}}</h2>
-                            {% if self.rt_link and self.rich_text_link_text %}
-                                <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-12">
-                            {{self.rich_text|richtext}}
-                        </div>
-                    </div> 
-                {% endif %}
-
-                {% if has_featured_lib_expert %}
-                   <div class="row">
-                        {% if has_featured_lib_expert %}
-                            {% image featured_lib_expert_image fill-200x200 as profile_pic %}
-                            {#featured_lib_expert.block.library_expert #}
-                            <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert">
-                                <div class="home-module">
-                                    <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{ self.expert_link }}" id="widget-featured-library-expert-view-all"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
-                                </div>
-                                <div class="home-expert-info">
-                                    {% if featured_lib_expert_profile %}
-                                    <h3>Ask <a href="{{featured_lib_expert_profile}}">{{featured_lib_expert_name}}</a> about:</h3>
-                                    {% else %}
-                					<h3>Ask {{featured_lib_expert_name}} about:</h3>
-                                    {% endif %} 
-                                    <ul>
-                                        {% for link in featured_lib_expert_links %}
-                                            <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    <h3>Not sure where to start?</h3>
-                                    <ul>
-                                        <li><a href="{{chat_url}}">Ask a {{self.friendly_name}} Librarian</a></li>
-                                    </ul>
-                                </div>
-			        <div class="home-profile">
-				    <img src="{{profile_pic.url}}" alt="{{profile_pic.title}}" class="img-responsive" />
-				    {% if has_libcal_schedule %}
-				    {% libcal_button staff_page email %}
-				    {% endif %}
-				</div>
-                            </div>
-                        {% endif %}
-                   </div> <!-- // row -->
-                {% endif %}
-
-                {% if self.news_feed_source %}
-                    <div class="home-modwrapper" id="widget-news">
-                        <div id="news-header" class="home-module">
-                            <h2>News</h2>
-                            {% if news_page %}
-                                <a class="viewall" href="{{news_page}}" id="widget-news-view-all">View all</a>
-                            {% endif %}
-                        </div>
-                        <div class="news-wrap">
-                            {% if news_feed %}
-                                {% for story in news_feed %}
-                                    <div class="newsblock col-xs-12 col-sm-6 col-md-3">
-                                        <figure class="embed">
-                                            <div class="figure-wrap">
-                                                <a href="{% pageurl story %}" data-ga-tracked="on">
-                                                    {% image story.thumbnail fill-273x125 class="img-responsive" %}
-                                                </a>
-                                            </div>
-                                            {% with first_category=story.get_categories|first %}
-                                                <figcaption class="news-category {{first_category|slugify}}">{{first_category}}</figcaption>
-                                            {% endwith %}
-                                        </figure>
-                                        <a href="{% pageurl story %}" data-ga-tracked="on">
-                                            <h3>{{story.title}}</h3>
-                                        </a>
-                                        <p>
-                                            {{story.excerpt|richtext|striptags}}<br/>
-                                            <a href="{% pageurl story %}" data-ga-tracked="on">Read more...</a>
-                                        </p>
                                     </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% if self.has_right_sidebar %}
-            </div> <!-- // Center Content -->
-            {% endif %}
+                                {% endif %}
+                            </div> <!-- // row -->
+                        {% endif %}
 
-            {% if self.has_right_sidebar %}
-                <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
-
-                    {% if reusable_content %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
-                            {% for widget in reusable_content %}
-                                <div class="widget-reusable-content-block {{widget.content.style_type}}">
-                                    {% if widget.content.sidebar_heading %}
-                                        <h3>{{widget.content.sidebar_heading}}</h3>
+                        {% if self.news_feed_source %}
+                            <div class="home-modwrapper" id="widget-news">
+                                <div id="news-header" class="home-module">
+                                    <h2>News</h2>
+                                    {% if news_page %}
+                                        <a class="viewall" href="{{news_page}}" id="widget-news-view-all">View all</a>
                                     {% endif %}
-                                    {{widget.content.content|richtext}}
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    {% block right_sidebar %}{% endblock %}
-        
-                    {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}
-                        {# Quicklinks Widget A.K.A. Richtext Widget #}
-                        {% include "base/includes/quicklinks.html" %}
-                    {% endif %}
-
-                    {% if self.has_granular_hours %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h3>Hours Today</h3>
-                            <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required 'script' moved to footer #}
-                            <a href="/libraries/libraries-hours/" class="viewall">View all library hours</a>
-                        </div> 
-                    {% endif %}
-
-                    {% if self.has_icon_link_items %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            {% if self.widget_title %}
-                                <h3>{{self.widget_title}}</h3>
-                            {% endif %}
-                            <div class="col-xs-12 columns icon-widget">
-                                {% for item in self.icon_link_items.all %}
-                                    <div class="column">
-                                        {% if item.link %}
-                                            <a href="{{item.link}}">
-                                        {% endif %}
-                                            <i class="fa {{item.icon}}"></i>
-                                            {{item.link_label}}
-                                        {% if item.link %}
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
+                                <div class="news-wrap">
+                                    {% if news_feed %}
+                                        {% for story in news_feed %}
+                                            <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+                                                <div class="embed">
+                                                    <div class="figure-wrap">
+                                                        <a href="{% pageurl story %}" data-ga-tracked="on">
+                                                            {% image story.thumbnail fill-273x125 as tnt %}
+                                                            <img src="{{tnt.url}}" width="{{tnt.width}}" height="{{tnt.height}}" alt="{{tnt.alt}} from {{story.title}}" class="img-responsive"/>
+                                                        </a>
+                                                    </div>
+                                                    {% with first_category=story.get_categories|first %}
+                                                        <div class="capt news-category {{first_category|slugify}}">{{first_category}}</div>
+                                                    {% endwith %}
+                                                </div>
+                                                <h3><a href="{% pageurl story %}" data-ga-tracked="on">{{story.title}}</a></h3>
+                                                <p>
+                                                    {{story.excerpt|richtext|striptags}}<br/>
+                                                    <a aria-label="Read more about {{story.title}}"href="{% pageurl story %}" data-ga-tracked="on">Read more...</a>
+                                                </p>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
-                            {% if self.more_icons_link and self.more_icons_link_label %}
-                                <p><a href="{{self.more_icons_link}}" class="btn btn-morelink" role="button">{{self.more_icons_link_label}}</a></p>
-                            {% endif %}
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                        {% if self.has_right_sidebar %}
+                            </div> <!-- // Center Content -->
+                        {% endif %}
 
-                    {% if self.has_find_spaces %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
-                            <h3>Find Spaces</h3>
-                            <div class="studymod col-xs-12 columns icon-widget">
-                                <div class="column">
-                                    <a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i>Quiet Study<span class="visually-hidden"> Spaces</span></a>
-                                </div>
-                                <div class="column">
-                                    <a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i>Collaboration<span class="visually-hidden"> Spaces</span></a>
-                                </div>
-                                {% if self.book_a_room_link %}
-                                    <div class="column">
-                                        <a href="{{self.book_a_room_link}}">
-                                        <i class="fa fa-calendar-plus-o fa-lg" aria-hidden="true"></i>
-                                        Reserve<span class="visually-hidden"> a Space</span></a>
+                        {% if self.has_right_sidebar %}
+                            <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
+
+                                {% if reusable_content %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
+                                        {% for widget in reusable_content %}
+                                            <div class="widget-reusable-content-block {{widget.content.style_type}}">
+                                                {% if widget.content.sidebar_heading %}
+                                                    <h3>{{widget.content.sidebar_heading}}</h3>
+                                                {% endif %}
+                                                {{widget.content.content|richtext}}
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 {% endif %}
+
+                                {% block right_sidebar %}{% endblock %}
+
+                                {% if self.quicklinks and self.specific.content_type.model != 'libnewspage' %}
+                                    {# Quicklinks Widget A.K.A. Richtext Widget #}
+                                    {% include "base/includes/quicklinks.html" %}
+                                {% endif %}
+
+                                {% if self.has_granular_hours %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        <h3>Hours Today</h3>
+                                        <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required 'script' moved to footer #}
+                                        <a href="/libraries/libraries-hours/" class="viewall">View all library hours</a>
+                                    </div>
+                                {% endif %}
+
+                                {% if self.has_icon_link_items %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        {% if self.widget_title %}
+                                            <h3>{{self.widget_title}}</h3>
+                                        {% endif %}
+                                        <div class="col-xs-12 columns icon-widget">
+                                            {% for item in self.icon_link_items.all %}
+                                                <div class="column">
+                                                    {% if item.link %}
+                                                        <a href="{{item.link}}">
+                                                    {% endif %}
+                                                    <i class="fa {{item.icon}}"></i>
+                                                    {{item.link_label}}
+                                                    {% if item.link %}
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% if self.more_icons_link and self.more_icons_link_label %}
+                                            <p><a href="{{self.more_icons_link}}" class="btn btn-morelink">{{self.more_icons_link_label}}</a></p>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if self.has_find_spaces %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
+                                        <h2>Find Spaces</h2>
+                                        <div class="studymod col-xs-12 columns icon-widget">
+                                            <div class="column">
+                                                <a href="{{quiet_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">local_library</i>Quiet Study<span class="visually-hidden"> Spaces</span></a>
+                                            </div>
+                                            <div class="column">
+                                                <a href="{{collaborative_spaces_link}}"><i class="material-icons" aria-hidden="true" aria-role="presentation">people</i>Collaboration<span class="visually-hidden"> Spaces</span></a>
+                                            </div>
+                                            {% if self.book_a_room_link %}
+                                                <div class="column">
+                                                    <a href="{{self.book_a_room_link}}">
+                                                        <i class="fa fa-calendar-plus-o fa-lg" aria-hidden="true"></i>
+                                                        Reserve<span class="visually-hidden"> a Space</span></a>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <p><a href="{{all_spaces_link}}" class="btn btn-morelink" id="widget-spaces-view-all">View all {{self.friendly_name}} study spaces</a></p>
+                                    </div>
+                                {% endif %}
+
+                                {% if self.events_feed_url %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
+                                        <h2>Workshops &amp; Events</h2>
+                                        <div class="calledOnce">
+                                            <!--<div class="jflatTimeline calledOnce">-->
+                                            <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
+                                                <span id="events-target">
+                                                    <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
+                                                    <span>Loading...</span>
+                                                </span>
+                                                <a class="btn btn-morelink" href="/about/news-events/events/" id="widget-workshops-and-events-view-all">View full calendar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {% if self.collection_page %}
+                                    {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        <h3>Featured Collection</h3>
+                                        <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
+                                        <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
+                                        <a href="/collex/?view=collections" class="btn btn-morelink">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                    </div>
+                                {% endif %}
+
+                                {% if self.has_social_media %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media">
+                                        <h3>{{self.friendly_name}}Social Media</h3>
+                                        <ul>
+                                            {% if self.twitter_page %}
+                                                <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a></li>
+                                            {% endif %}
+                                            {% if self.facebook_page %}
+                                                <li><a href="{{self.facebook_page}}"><i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a></li>
+                                            {% endif %}
+                                            {% if self.hashtag_page and self.hashtag %}
+                                                <li><a href="{{self.hashtag_page}}"><strong>{{self.hashtag}}</strong></a></li>
+                                            {% endif %}
+                                            {% if self.instagram_page %}
+                                                <li><a href="{{self.instagram_page}}"><i class="fa fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+                                            {% endif %}
+                                            {% if self.youtube_page %}
+                                                <li><a href="{{self.youtube_page}}"><i class="fa fa-youtube-square" aria-hidden="true"></i> YouTube</a></li>
+                                            {% endif %}
+                                            {% if self.blog_page %}
+                                                <li><a href="{{self.blog_page}}"><i class="fa fa-rss" aria-hidden="true"></i> Blog</a></li>
+                                            {% endif %}
+                                            {% if self.tumblr_page %}
+                                                <li><a href="{{self.tumblr_page}}"><i class="fa fa-tumblr-square" aria-hidden="true"></i> Tumblr</a></li>
+                                            {% endif %}
+                                            {% if self.snapchat_page %}
+                                                <li><a href="{{self.snapchat_page}}"><i class="fa fa-snapchat" aria-hidden="true"></i> Snapchat</a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                {% if libra %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        <h2>Print</h2>
+                                        <div class="libra-link-wrap">
+                                            <p><a href="{% pageurl libra %}">{{libra}}</a></p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                {% if contacts %}
+                                    {% list_contacts_in_sidebar contacts 'Media Contact' %}
+                                {% endif %}
+                                {% if self.category %}
+                                    <h2>
+                                        Subscribe to {{ self.category }} <br>
+                                    </h2>
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        <a href="/rss/{{ self.slug }}/">
+                                            <i class="fa fa-rss-square" aria-hidden="true"></i>
+                                            RSS feed
+                                        </a>
+                                    </div>
+                                {% elif self.news_feed_api %}
+                                    <h2>
+                                        Subscribe to all Library news <br>
+                                    </h2>
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                        <a href="/rss/news/">
+                                            <i class="fa fa-rss-square" aria-hidden="true"></i>
+                                            RSS feed
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div style="display: none;">
+                                        noop
+                                    </div>
+                                {% endif %}
                             </div>
-                            <p><a href="{{all_spaces_link}}" class="btn btn-morelink" role="button" id="widget-spaces-view-all">View all {{self.friendly_name}} study spaces</a></p>
+                            <!-- // Right Sidebar Content -->
+
+                            </div><!--// .row -->
+                        {% endif %}
+
+                        {# This is needed for Ask a Librarian pages#}
+                        <div class="col-xs-12 col-sm-12 askoptions">
+                            {% block btm_content %}
+                            {% endblock %}
                         </div>
-                    {% endif %}
+                    </div> <!-- // Content Container -->
+                </div> <!-- // Off Canvas Wrapper Row -->
+            </div> <!-- // Main Container Wrapper -->
+            <!-- // Awesome Page Content -->
+            {% block optional_footer %}{% endblock %}
+            <div id="push"></div>
+        </div><!--// #body-wrap-->
 
-                    {% if self.events_feed_url %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
-                            <h3>Workshops &amp; Events</h3>
-                            <div class="calledOnce">
-                            <!--<div class="jflatTimeline calledOnce">-->
-                                <div id="events" class="event-wrap" data-events="{% autoescape off %}{{events_feed}}{% endautoescape %}">
-                                    <span id="events-target">
-                                        <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
-                                        <span>Loading...</span>
-                                    </span>
-                                    <a class="btn btn-morelink" role="button" href="/about/news-events/events/" id="widget-workshops-and-events-view-all">View full calendar</a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    
-                    {% if self.collection_page %}
-                        {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h3>Featured Collection</h3>
-                            <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
-                            <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
-                            <a href="/collex/?view=collections" class="btn btn-morelink" role="button">View all collections <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
-                        </div>
-                    {% endif %}  
+        {# Footer #}
+        {% include "base/includes/footer.html" %}
 
-                    {% if self.has_social_media %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media">
-                            <h3>{{self.friendly_name}}Social Media</h3>
-                            <ul>
-                                {% if self.twitter_page %}
-                                <li><a href="{{self.twitter_page}}"><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a></li>
-                                {% endif %}
-                                {% if self.facebook_page %}
-                                <li><a href="{{self.facebook_page}}"><i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</a></li>
-                                {% endif %}
-                                {% if self.hashtag_page and self.hashtag %}
-                                <li><a href="{{self.hashtag_page}}"><strong>{{self.hashtag}}</strong></a></li>
-                                {% endif %}
-                                {% if self.instagram_page %}
-                                <li><a href="{{self.instagram_page}}"><i class="fa fa-instagram" aria-hidden="true"></i> Instagram</a></li>
-                                {% endif %}
-                                {% if self.youtube_page %}
-                                <li><a href="{{self.youtube_page}}"><i class="fa fa-youtube-square" aria-hidden="true"></i> YouTube</a></li>
-                                {% endif %}
-                                {% if self.blog_page %}
-                                <li><a href="{{self.blog_page}}"><i class="fa fa-rss" aria-hidden="true"></i> Blog</a></li>
-                                {% endif %}
-                                {% if self.tumblr_page %}
-                                <li><a href="{{self.tumblr_page}}"><i class="fa fa-tumblr-square" aria-hidden="true"></i> Tumblr</a></li>
-                                {% endif %}
-                                {% if self.snapchat_page %}
-                                <li><a href="{{self.snapchat_page}}"><i class="fa fa-snapchat" aria-hidden="true"></i> Snapchat</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-		    {% endif %}
+        <!-- Scripts -->
 
-		    {% if libra %}
-                        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-                            <h3>Print</h3>
-                            <div class="libra-link-wrap">
-                                <p><a href="{% pageurl libra %}">{{libra}}</a></p>
-                            </div>
-                        </div>
-		    {% endif %}
+        <!-- Placed at the end of the document so the pages load faster -->
+        {# Unfortunately we have to load jquery in the header on the hours page#}
+        {% if not is_hours_page %}
+            <script src="{% static "base/js/jquery.min.js" %}"></script>
+        {% endif %}
+        <script src="{% static "base/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "base/js/transformer-tabs.js" %}"></script>
+        <script src="{% static "public/js/bootstrap-select.js" %}"></script>
+        {% if has_search_widget %}
+            <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
+            <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
+        {% endif %}
+        <script type="text/javascript" src="{% static "base/js/ekko-lightbox.min.js" %}"></script>
 
-		    {% if contacts %}
-                        {% list_contacts_in_sidebar contacts 'Media Contact' %}
-		    {% endif %}
-			{% if self.category %}
-			    <h3>
-				Subscribe to {{ self.category }} <br>
-			    </h3>
-			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-				<a href="/rss/{{ self.slug }}/">
-				    <i class="fa fa-rss-square" aria-hidden="true"></i>
-				    RSS feed
-				</a>
-			    </div>
-			{% elif self.news_feed_api %}
-			    <h3>
-				Subscribe to all Library news <br>
-			    </h3>
-			    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-				<a href="/rss/news/">
-				    <i class="fa fa-rss-square" aria-hidden="true"></i>
-				    RSS feed
-				</a>
-			    </div>
-			{% else %}
-			    <div style="display: none;">
-				noop
-			    </div>
-			{% endif %}
-                </div>
-                <!-- // Right Sidebar Content -->
+        {% if self.events_feed_url %}
+            <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
+        {% endif %}
 
-            </div><!--// .row -->
-            {% endif %}
+        {% if self.has_granular_hours %}
+            <script src="https://api3.libcal.com/api_hours_today.php?iid={{libcaliid}}&lid={{granular_libcalid}}&format=js&context=object"> </script>
+        {% endif %}
 
-            {# This is needed for Ask a Librarian pages#}
-            <div class="col-xs-12 col-sm-12 askoptions">
-                {% block btm_content %}
-                {% endblock %}
-            </div>
-            </div> <!-- // Content Container -->
-        </div> <!-- // Off Canvas Wrapper Row -->
-    </div> <!-- // Main Container Wrapper -->
-    <!-- // Awesome Page Content -->
-    {% block optional_footer %}{% endblock %}
-    <div id="push"></div>
-</div><!--// #body-wrap-->
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
 
-    {# Footer #}
-    {% include "base/includes/footer.html" %}
+        <script src="{% static "base/js/offcanvas.js" %}"></script>
+        <script src="{% static "base/js/library_website.js" %}"></script>
+        <script src="{% static "base/js/render_hours.js" %}"></script>
+        <script src='/static/base/js/jquery.track-everything.js'></script>
+        <script src='/static/base/js/ga.public.js'></script>
+        <script src='https://www.lib.uchicago.edu/clickheat/js/clickheat.js'></script>
+        <script src='/static/base/js/clickheat-config.js'></script>
 
-    <!-- Scripts -->
-
-    <!-- Placed at the end of the document so the pages load faster -->
-    {# Unfortunately we have to load jquery in the header on the hours page#}
-    {% if not is_hours_page %}
-        <script src="{% static "base/js/jquery.min.js" %}"></script>
-    {% endif %}
-    <script src="{% static "base/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "base/js/transformer-tabs.js" %}"></script>
-    <script src="{% static "public/js/bootstrap-select.js" %}"></script>
-    {% if has_search_widget %}
-        <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
-        <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
-    {% endif %}
-    <script type="text/javascript" src="{% static "base/js/ekko-lightbox.min.js" %}"></script>
-
-    {% if self.events_feed_url %}
-        <script type="text/javascript" src="{% static "base/css/calendar/res-timeline.js" %}"></script>
-    {% endif %}
-
-    {% if self.has_granular_hours %}
-        <script src="https://api3.libcal.com/api_hours_today.php?iid={{libcaliid}}&lid={{granular_libcalid}}&format=js&context=object"> </script>
-    {% endif %}
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
-
-    <script src="{% static "base/js/offcanvas.js" %}"></script>
-    <script src="{% static "base/js/library_website.js" %}"></script>
-    <script src="{% static "base/js/render_hours.js" %}"></script>
-    <script src='/static/base/js/jquery.track-everything.js'></script>
-    <script src='/static/base/js/ga.public.js'></script>
-    <script src='https://www.lib.uchicago.edu/clickheat/js/clickheat.js'></script>
-    <script src='/static/base/js/clickheat-config.js'></script>
- 
-    {% block extra_scripts %}{% endblock %}
-    {% if is_hours_page %}
-        <script>
-        // >> Crerar << //
-            // Desktop
-            $(function(){ 
-                var week1373 = new $.LibCalWeeklyGrid( $("#s-lc-whw1373"), { iid: 482, lid: 1373,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-            var s_lc_tdh_482_1373 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1373"), { iid: 482, lid: 1373, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+        {% block extra_scripts %}{% endblock %}
+        {% if is_hours_page %}
+            <script>
+                // >> Crerar << //
+                // Desktop
+                $(function(){
+                    var week1373 = new $.LibCalWeeklyGrid( $("#s-lc-whw1373"), { iid: 482, lid: 1373,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1373 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1373"), { iid: 482, lid: 1373, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
 
-        // >> Law << //
-            // Desktop
-            $(function(){ 
-                var week1378 = new $.LibCalWeeklyGrid( $("#s-lc-whw1378"), { iid: 482, lid: 1378,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_1378 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1378"), { iid: 482, lid: 1378, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+                // >> Law << //
+                // Desktop
+                $(function(){
+                    var week1378 = new $.LibCalWeeklyGrid( $("#s-lc-whw1378"), { iid: 482, lid: 1378,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1378 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1378"), { iid: 482, lid: 1378, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
-        // >> Eckhart << //
-            // Desktop
-            $(function(){ 
-                var week1377 = new $.LibCalWeeklyGrid( $("#s-lc-whw1377"), { iid: 482, lid: 1377,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_1377 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1377"), { iid: 482, lid: 1377, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+                // >> Eckhart << //
+                // Desktop
+                $(function(){
+                    var week1377 = new $.LibCalWeeklyGrid( $("#s-lc-whw1377"), { iid: 482, lid: 1377,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1377 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1377"), { iid: 482, lid: 1377, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
-        // >> Mansueto << //
-            // Desktop
-            $(function(){ 
-                var week1379 = new $.LibCalWeeklyGrid( $("#s-lc-whw1379"), { iid: 482, lid: 1379,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_1379 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1379"), { iid: 482, lid: 1379, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+                // >> Mansueto << //
+                // Desktop
+                $(function(){
+                    var week1379 = new $.LibCalWeeklyGrid( $("#s-lc-whw1379"), { iid: 482, lid: 1379,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1379 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1379"), { iid: 482, lid: 1379, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
-        // >> Regenstein << //
-            // Desktop
-            $(function(){ 
-                var week1357 = new $.LibCalWeeklyGrid( $("#s-lc-whw1357"), { iid: 482, lid: 1357,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_1357 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1357"), { iid: 482, lid: 1357, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+                // >> Regenstein << //
+                // Desktop
+                $(function(){
+                    var week1357 = new $.LibCalWeeklyGrid( $("#s-lc-whw1357"), { iid: 482, lid: 1357,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1357 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1357"), { iid: 482, lid: 1357, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
-        // >> SCRC << //
-            // Desktop
-            $(function(){ 
-                var week2449 = new $.LibCalWeeklyGrid( $("#s-lc-whw2449"), { iid: 482, lid: 2449,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_2449 = new $.LibCalTodayHours( $("#s_lc_tdh_482_2449"), { iid: 482, lid: 2449, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
+                // >> SCRC << //
+                // Desktop
+                $(function(){
+                    var week2449 = new $.LibCalWeeklyGrid( $("#s-lc-whw2449"), { iid: 482, lid: 2449,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_2449 = new $.LibCalTodayHours( $("#s_lc_tdh_482_2449"), { iid: 482, lid: 2449, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
 
-        // >> SSA << //
-            // Desktop
-            $(function(){ 
-                var week1380 = new $.LibCalWeeklyGrid( $("#s-lc-whw1380"), { iid: 482, lid: 1380,  weeks: 16 }); 
-            });
-            //Mobile
-            $(function(){ 
-                var s_lc_tdh_482_1380 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1380"), { iid: 482, lid: 1380, key: "0eb942bbee8ca664cb411ee87f61f3ed" }); 
-            });
-        </script>
-    {% endif %}
-    {% block js %}{% endblock %}
-<!-- // Scripts -->
-</body>
+                // >> SSA << //
+                // Desktop
+                $(function(){
+                    var week1380 = new $.LibCalWeeklyGrid( $("#s-lc-whw1380"), { iid: 482, lid: 1380,  weeks: 16 });
+                });
+                //Mobile
+                $(function(){
+                    var s_lc_tdh_482_1380 = new $.LibCalTodayHours( $("#s_lc_tdh_482_1380"), { iid: 482, lid: 1380, key: "0eb942bbee8ca664cb411ee87f61f3ed" });
+                });
+            </script>
+        {% endif %}
+        {% block js %}{% endblock %}
+        <!-- // Scripts -->
+    </body>
 </html>

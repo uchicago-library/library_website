@@ -8,80 +8,80 @@
 
 {% block under_h1 %}
     {% if staff_page.pronouns %}
-      <span class="pronouns">{{ staff_page.pronouns }}</span>
+        <span class="pronouns">{{ staff_page.pronouns }}</span>
     {% endif %}
     <h2 class="position-title">{{ positiontitle }}</h2>
 {% endblock %}
 
 {% block content %}
-  <div class="col-xs-12 col-sm-3">
-    {% if profile_picture %}
-        {% image profile_picture width-200 class="img-responsive" %}
-    {% else %}
-        {% image default_image width-200 class="img-responsive" %}
-    {% endif %}
-  </div>
+    <div class="col-xs-12 col-sm-3">
+        {% if profile_picture %}
+            {% image profile_picture width-200 class="img-responsive" %}
+        {% else %}
+            {% image default_image width-200 class="img-responsive" alt="" %}
+        {% endif %}
+    </div>
 
-  <div class="col-xs-12 col-sm-9">
-    {{bio}}
-    {% if orcid %}
-        <h3>Publications</h3>
-        <p><a href="http://orcid.org/{{ orcid }}">View Works List On ORCID</a></p>
-    {% endif %}
+    <div class="col-xs-12 col-sm-9">
+        {{bio}}
+        {% if orcid %}
+            <h3>Publications</h3>
+            <p><a href="http://orcid.org/{{ orcid }}">View Works List On ORCID</a></p>
+        {% endif %}
 
-    {% if cv %}
-        <a role="button" class="btn btn-primary" href="{{ cv }}">View CV</a>
-    {% endif %}
-  </div>
+        {% if cv %}
+            <a class="btn btn-primary" href="{{ cv }}">View CV</a>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block right_sidebar %}
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h4>Contact</h4>
-    <p>
-      {% if email %}
-        <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
-	{% endif %}
-	{% staff_faculty_exchanges_phone_numbers staff_page %}
-	{% libcal_button staff_page email %}
-    </p>
-  </div>
-
-  <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    <h4>Department</h4>
-      {% if parent_units %}
-        {% for unit, link in parent_units.items %}
-          <a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a><br>
-        {% endfor %}
-      {% endif %}
-  </div>
-
-  {% if subjects or libguide_url %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h4>Subject Specialties</h4>
-      <p style="line-height: 1.7em;">
-        {% if subjects %}
-            {% autoescape off %}
-                {{subjects}}
-            {% endautoescape %}
-        {% endif %}
-      </p>
-      {% if libguide_url %}
+        <h4>Contact</h4>
         <p>
-          <a role="button" class="btn btn-morelink" href="{{ libguide_url }}">View Research Guides </a>
+            {% if email %}
+                <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
+            {% endif %}
+            {% staff_faculty_exchanges_phone_numbers staff_page %}
+            {% libcal_button staff_page email %}
         </p>
-      {% endif %}
     </div>
-  {% endif %}
 
-  {% if expertises %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-      <h4>Expertise</h4>
-      <p style="line-height: 1.7em;">
-        {% for expertise in expertises %}
-          {{ expertise }}<br/>
-        {% endfor %}
-      </p>
+        <h4>Department</h4>
+        {% if parent_units %}
+            {% for unit, link in parent_units.items %}
+                <a href="/about/directory/?view=staff&amp;department={{ link }}">{{ unit }}</a><br>
+            {% endfor %}
+        {% endif %}
     </div>
-  {% endif %}
+
+    {% if subjects or libguide_url %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h4>Subject Specialties</h4>
+            <p style="line-height: 1.7em;">
+                {% if subjects %}
+                    {% autoescape off %}
+                        {{subjects}}
+                    {% endautoescape %}
+                {% endif %}
+            </p>
+            {% if libguide_url %}
+                <p>
+                    <a class="btn btn-morelink" href="{{ libguide_url }}">View Research Guides </a>
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if expertises %}
+        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+            <h4>Expertise</h4>
+            <p style="line-height: 1.7em;">
+                {% for expertise in expertises %}
+                    {{ expertise }}<br/>
+                {% endfor %}
+            </p>
+        </div>
+    {% endif %}
 {% endblock %}
