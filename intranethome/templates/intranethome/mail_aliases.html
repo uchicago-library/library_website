@@ -46,6 +46,10 @@
 
 <h1>Mail Aliases Page</h1>
 
+{%if error%}
+	There has been an error displaying the mailaliases page. Please contact <a href "mailto:intranet@lib.uchicago.edu">intranet@lib.uchicago.edu</a> and we will do our best to rectify the issue.
+{%else%}
+
 <button class="btn btn-default" onclick="expandAll()">Expand All</button>
 <button class="btn btn-default" onclick="contractAll()">Contract All</button>
 
@@ -80,13 +84,13 @@
 <a href="/mailaliases/number/">#</a>
 </h3>
 
-    {%for key, value in cleaned_data.items %}
+    {%for key, value in cleaned_data.items%}
 
     <button class="accordion">{{key}}</button>
     <div class="panel">
       <table class="table">
 	<br>
-        {%for note_email in value %}
+        {%for note_email in value%}
           {%if note_email.note%}
         	<tbody>
 		  <td> note: {{note_email.note}} </td>
@@ -113,13 +117,14 @@
 		<tbody>
 		  <td>{{note_email.local}}</td>
 		</tbody>
-          {%endif %}
+          {%endif%}
 
-        {%endfor %}
+        {%endfor%}
 	</table>
       	<br>
     </div>
-    {%endfor %}
+    {%endfor%}
+{%endif%}
 
 <script>
     

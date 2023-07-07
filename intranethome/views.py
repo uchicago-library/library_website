@@ -12,12 +12,18 @@ from library_website.settings import MAIL_ALIASES_PATH
 # input: name of file
 # output: python text from the read in file
 def reading_and_converting(name_of_file):
-    f = open(name_of_file, "r")
-    json_text = f.read()
-    f.close()
+    try:
+        f = open(name_of_file, "r")
+    except FileNotFoundError:
+        return {"error":"error"} 
+    except IOError:
+        return {"error":"error"} 
+    else:
+        json_text = f.read()
+        f.close()
     
-    data_from_file = json.loads(json_text)
-    return data_from_file
+        data_from_file = json.loads(json_text)
+        return data_from_file
 
 # purpose of function: helper function for get_list_of_aliases to move numbers to the end
 # input: the list of aliases in the original order with numbers in front
@@ -178,6 +184,8 @@ def format_splitting(email):
     return parsed_email
 
 def mail_aliases_view(request):
+    error = {}
+    cleaned_data = {}
 
     loop_homepage = Site.objects.get(site_name='Loop').root_page
     if not has_permission(request.user, get_required_groups(loop_homepage)):
@@ -186,55 +194,59 @@ def mail_aliases_view(request):
         )
 
     file_data = reading_and_converting(MAIL_ALIASES_PATH)
-
-    # grabs /mailaliases/*the_filter_value*
-    url = request.get_full_path()
     
-    # pulls *the_filter_value* out
-    try:
-        alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
-    except:
-        alias_filter = ""
+    if "error" in file_data:
+        error = file_data
 
-    # returns a 404 if the filter is not either
-    #   1. nothing (indicating no filter) 
-    #   2. "number" (indicating aliases starting with a number)
-    #   3. any single letter indicating aliases starting with that letter
-    if alias_filter!="" and alias_filter!="number" and (len(alias_filter) !=1 or  alias_filter not in "abcdefghijklmnopqrstuvwxyz"):
-        raise Http404
+    else:
 
-    aliases = get_list_of_aliases(file_data)
+        # grabs /mailaliases/*the_filter_value*
+        url = request.get_full_path()
 
-    filtered_aliases = filter_by_value(aliases, alias_filter)
+        # pulls *the_filter_value* out
+        try:
+            alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
+        except:
+            alias_filter = ""
 
-    cleaned_data = {}
+        # returns a 404 if the filter is not either
+        #   1. nothing (indicating no filter) 
+        #   2. "number" (indicating aliases starting with a number)
+        #   3. any single letter indicating aliases starting with that letter
+        if alias_filter!="" and alias_filter!="number" and (len(alias_filter) !=1 or  alias_filter not in "abcdefghijklmnopqrstuvwxyz"):
+            raise Http404
 
-    for alias in filtered_aliases:
+        aliases = get_list_of_aliases(file_data)
 
-        final_list_of_notes_and_emails = []
+        filtered_aliases = filter_by_value(aliases, alias_filter)
 
-        file_data[alias][0] = uniforming_into_list_of_dict(file_data[alias][0])
+        for alias in filtered_aliases:
 
-        # variable indicating the location within the list
-        for email_or_note in file_data[alias][0]:
+            final_list_of_notes_and_emails = []
 
-            # bypassing the 'email' key in all of the dictionaries and just using the value
-            # i.e {'email': 'postmaster'} ->
-            #     'postmaster'
-            if 'email' in email_or_note:      
+            file_data[alias][0] = uniforming_into_list_of_dict(file_data[alias][0])
 
-                email_after_parsing = format_splitting(email_or_note['email'])
+            # variable indicating the location within the list
+            for email_or_note in file_data[alias][0]:
 
-                # if distro is not  present
-                if email_after_parsing != -1:
-                    final_list_of_notes_and_emails.append(email_after_parsing)          
-            
-            if 'note' in email_or_note:     
-                final_list_of_notes_and_emails.append(email_or_note)
+                # bypassing the 'email' key in all of the dictionaries and just using the value
+                # i.e {'email': 'postmaster'} ->
+                #     'postmaster'
+                if 'email' in email_or_note:      
 
-        # in case distro was the only value, this removes the associated alias
-        if final_list_of_notes_and_emails != []:
-            cleaned_data[alias] = final_list_of_notes_and_emails
+                    email_after_parsing = format_splitting(email_or_note['email'])
 
-    context = {'cleaned_data' : cleaned_data}
+                    # if distro is not  present
+                    if email_after_parsing != -1:
+                        final_list_of_notes_and_emails.append(email_after_parsing)          
+
+                if 'note' in email_or_note:     
+                    final_list_of_notes_and_emails.append(email_or_note)
+
+            # in case distro was the only value, this removes the associated alias
+            if final_list_of_notes_and_emails != []:
+                cleaned_data[alias] = final_list_of_notes_and_emails
+
+    context = {'cleaned_data' : cleaned_data,
+               'error' : error}
     return render(request, 'intranethome/mail_aliases.html', context)
