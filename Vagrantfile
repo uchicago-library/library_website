@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20230110.0.0"
+  config.vm.box_version = "20230524.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

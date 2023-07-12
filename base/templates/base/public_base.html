@@ -279,7 +279,20 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-md-12">
-                                    {{self.rich_text|richtext}}
+                                    {% if link_queue %}
+                                        {% for key, val in link_queue.items %}
+                                            <h3>{{key}}</h3>
+                                            {% if val %}
+                                                <ul>
+                                                    {% for link_url, link_text in val %}
+                                                        <li><a href="{{link_url}}">{{link_text}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% elif self.rich_text %}
+                                        {{self.rich_text|richtext}}
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endif %}

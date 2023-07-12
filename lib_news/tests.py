@@ -136,4 +136,4 @@ class test_lib_news_pages_and_categories(TestCase):
     def test_404_response(self):
         url = '/starfleet-news/adsfasdf/'
         response = self.client.get(url)
-        self.assertContains(response, '<h2>We think we can help you</h2>')
+        self.assertEqual(response.status_code, 404)
