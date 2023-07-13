@@ -19,6 +19,7 @@ from library_website.settings import (
 )
 from wagtail.documents.models import Document
 from wagtail.models import Page
+from functools import reduce
 
 try:
     from library_website.settings.local import (
@@ -467,6 +468,42 @@ def unfold(step, initial):
     return [item for item in generator((None, initial))]
 
 
+def identity(x):
+    return x
+
+
+def const(x):
+    def partial(f):
+        return f(x)
+    return partial
+
+
+def concat(lst):
+    return [item for sublist in lst for item in sublist]
+
+
+def compose(*funcs):
+    def single_compose(f, g):
+        return lambda x: f(g(x))
+    composition = reduce(single_compose, funcs, identity)
+    return composition
+
+
+class Gensym():
+
+    def __init__(self, name="gensym"):
+        self.counter = 0
+        self.name = name
+
+    def gen(self):
+        self.counter = self.counter + 1
+        return self.name + str(self.counter)
+
+
+def jprint(j):
+    print(json.dumps(j, indent=4))
+
+
 def save_virtual_workbook(workbook):
     """
     Return an in-memory workbook, suitable for a Django response.
@@ -483,3 +520,10 @@ def save_virtual_workbook(workbook):
         tmp.seek(0)
         stream = tmp.read()
         return stream
+
+
+def capitalize(str):
+    if str:
+        return str[0].upper() + str[1:]
+    else:
+        return str

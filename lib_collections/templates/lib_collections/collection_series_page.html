@@ -1,0 +1,66 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
+{% load wagtailimages_tags %}
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+<!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
+
+
+
+{% block styles %}
+{% compress css %}
+<link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+{% endcompress %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- series-level Mark Logic metadata -->
+<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+    <dl>
+	{% for key, value in marklogic.items %}
+	<dt>
+	    {{ key }}
+	</dt>
+	<dd>
+	    {{ value }}
+	</dd>
+	{% endfor %}
+    </dl>
+</span> <!-- / schema.org wrapper -->
+
+
+<!-- listing of individual items in the series -->
+<h1>
+    Items in the series
+</h1>
+<span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+    <dl>
+	<dt>
+	    DMA Item #
+	</dt>
+	<dd>
+	</dd>
+        {% for key, value in series_items %}
+        <dt>
+            {{ key }}
+        </dt>
+        <dd>
+            <a href ="{{ value.link_url }}">{{ value.link_text }}</a>
+        </dd>
+        {% endfor %}
+    </dl>
+</span> <!-- / schema.org wrapper -->
+
+{% endblock %}
+{% block right_sidebar %}
+{% include "includes/sidebar.html" %}
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+

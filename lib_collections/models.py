@@ -4,6 +4,8 @@ from collections import OrderedDict
 import requests
 import simplejson
 from base.models import DefaultBodyFields, PublicBasePage
+from base.utils import capitalize
+from base.result import Result
 from diablo_utils import lazy_dotchain
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -30,14 +32,21 @@ from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-from .marklogic import get_record_for_display, get_record_no_parsing
+from .marklogic import (get_record_for_display,
+                        get_record_no_parsing,
+                        Api,
+                        Wagtail,
+                        Validation,)
 from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
-                    LBrowseURL)
+                    LBrowseURL, Permissions)
+from lib_collections.panopto import Player
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 DEFAULT_WEB_EXHIBIT_FONT_SIZE = 16.8
 DEFAULT_WEB_EXHIBIT_FONT_KERNING = 0
+
+injection_safe = Validation.injection_safe
 
 
 def get_current_exhibits():
@@ -261,6 +270,53 @@ class CollectionPageExternalService(Orderable, ExternalService):
     )
 
 
+class SeriesMetadata(models.Model):
+    """
+    Class for metadata fields to display on the series page.
+    """
+    MENU_OPTIONS = [
+        (1, "go to a results page for the selected item"),
+        (2, "link to a related item in the collection"),
+    ]
+    edm_field_label = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Mark Logic name for this metadata field"
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="User-facing name for this metadata field"
+    )
+    link_target = models.IntegerField(
+        choices=MENU_OPTIONS,
+        default=1,
+        help_text=(
+            'How do you want the link to behave? \
+            (Required for hotlinked)'
+        )
+    )
+
+    panels = [
+        FieldPanel('edm_field_label'),
+        FieldPanel('display_name'),
+        FieldPanel('link_target'),
+    ]
+
+    class Meta:
+        abstract = True
+
+
+class CollectionPageSeriesMetadata(Orderable, SeriesMetadata):
+    """
+    Intermediate class for metadata fields in a series page.
+    (needed to create an InlinePanel)
+    """
+    page = ParentalKey(
+        'lib_collections.CollectionPage', related_name="col_series_metadata"
+    )
+
+
 class ObjectMetadata(models.Model):
     """
     Class for metadata fields to display in search results.
@@ -269,7 +325,16 @@ class ObjectMetadata(models.Model):
         (1, "go to a results page for the selected item"),
         (2, "link to a related item in the collection"),
     ]
-    edm_field_label = models.CharField(max_length=255, blank=True)
+    edm_field_label = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Mark Logic name for this metadata field"
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="User-facing name for this metadata field"
+    )
     multiple_values = models.BooleanField(
         default=False, help_text='Are there multiple values within the field?'
     )
@@ -288,6 +353,7 @@ class ObjectMetadata(models.Model):
 
     panels = [
         FieldPanel('edm_field_label'),
+        FieldPanel('display_name'),
         FieldPanel('hotlinked'),
         FieldPanel('multiple_values'),
         FieldPanel('link_target'),
@@ -373,7 +439,8 @@ class CBrowse(models.Model):
     """
     Class for cluster browses within a Collection Page.
     """
-    label = models.CharField(max_length=255, blank=True)
+    endpoint_name = models.CharField(max_length=255, blank=True)
+    display_name = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
         help_text=(
@@ -381,16 +448,13 @@ class CBrowse(models.Model):
             (Featured browse)'
         )
     )
-    iiif_location = models.URLField(max_length=255, blank=True)
-    link_text_override = models.CharField(max_length=255, blank=True)
 
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('label'),
+                FieldPanel('endpoint_name'),
+                FieldPanel('display_name'),
                 FieldPanel('include'),
-                FieldPanel('iiif_location'),
-                FieldPanel('link_text_override'),
             ]
         ),
     ]
@@ -453,7 +517,17 @@ class CSearch(models.Model):
     """
     Class for searches within a Collection Page.
     """
-    label = models.CharField(max_length=255, blank=True)
+    api_endpoint = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("Name of the Mark Logic API "
+                   "endpoint for the search")
+    )
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="The name of the search as displayed to the user"
+    )
     include = models.BooleanField(
         default=False, help_text='Include in sidebar?'
     )
@@ -464,8 +538,6 @@ class CSearch(models.Model):
             first one selected will be the default.)'
         )
     )
-    mark_logic_parameter = models.CharField(max_length=255, blank=True)
-    search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
         default=False, help_text='Do the searchable objects have OCR?'
     )
@@ -473,11 +545,10 @@ class CSearch(models.Model):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('label'),
+                FieldPanel('api_endpoint'),
+                FieldPanel('display_name'),
                 FieldPanel('include'),
                 FieldPanel('default'),
-                FieldPanel('mark_logic_parameter'),
-                FieldPanel('search_handler_location'),
                 FieldPanel('includes_ocr'),
             ]
         ),
@@ -523,7 +594,35 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             page_id=self.id
         )
         query_set = metadata_fields.values_list('edm_field_label')
+
         return [field[0] for field in query_set]
+
+    def get_series_metadata(self):
+        metadata = CollectionPageSeriesMetadata.objects.filter(
+            page_id=self.id
+        )
+        query_set = metadata.values_list('edm_field_label')
+        alist = [(f["edm_field_label"], f["display_name"])
+                 for f
+                 in metadata.values()]
+        return OrderedDict(alist)
+
+    def build_browse_dict(self):
+        browse_objects = CollectionPageClusterBrowse.objects.filter(
+            page_id=self.id
+        )
+        browse_dicts = browse_objects.values()
+        output = [ (dct["display_name"].lower(), dct["endpoint_name"])
+                   for dct in browse_dicts ]
+        return OrderedDict(output)
+
+    def get_language_dict(self):
+        collection = self.short_name
+        return dict(Api.getBrowseListLanguages(collection=collection))
+
+    def get_spatial_dict(self):
+        collection = self.short_name
+        return dict(Api.getBrowseListLocations(collection=collection))
 
     def staff_context(self):
         """
@@ -576,7 +675,9 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
         staff_url = default(
             lambda:
-            (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
+            (StaffPublicPage.objects.get(cnetid=self
+                                         .staff_contact
+                                         .cnetid).url),
             ''
         )
 
@@ -713,22 +814,44 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         mk_cbrowse_type_url_wagtail = CBrowseURL.mk_cbrowse_type_url_wagtail
         mk_lbrowse_url_wagtail = LBrowseURL.mk_lbrowse_url_wagtail
 
-        return OrderedDict(
-            [
-                (
-                    CollectionPage.override(x.link_text_override, x.label),
-                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
-                )
-                for x in CollectionPageClusterBrowse.objects.filter(page=self)
-            ] + [
-                (
-                    CollectionPage.override(x.link_text_override, x.label),
-                    mk_lbrowse_url_wagtail(slug, slugify(x.label))
-                ) for x in CollectionPageListBrowse.objects.filter(page=self)
-            ]
-        )
+        return OrderedDict([])
+        #     [
+        #         (
+        #             CollectionPage.override(x.link_text_override, x.label),
+        #             mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
+        #         )
+        #         for x in CollectionPageClusterBrowse.objects.filter(page=self)
+        #     ] + [
+        #         (
+        #             CollectionPage.override(x.link_text_override, x.label),
+        #             mk_lbrowse_url_wagtail(slug, slugify(x.label))
+        #         ) for x in CollectionPageListBrowse.objects.filter(page=self)
+        #     ]
+        # )
+
+    def browse_scratchpad(self):
+
+        pass
 
     # Main Admin Panel Fields
+    collection_group = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("API endpoint name for collection group, e.g. "
+                   "the group for \"mlc\" is \"dma\""),
+    )
+
+    short_name = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text=("API endpoint name for collection, e.g. "
+                   "\"Mesoamerican Languages Collection\" is \"mlc\""),
+    )
+
+    universal_viewer = models.BooleanField(default=False)
+
+    panopto = models.BooleanField(default=False)
+
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(null=False, blank=False, default='')
     full_description = StreamField(
@@ -785,11 +908,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         help_text=(
             'INI-style configuration for Citation service, saying which'
             ' metadata fields to pull from the Turtle data on the object; '
-            'see https://github.com/uchicago-library/uchicago-library.github.io '
+            'see https://github.com/uchicago-library/'
+            'uchicago-library.github.io '
             'for more info on how to edit/construct one of these'
         ),
         verbose_name="Citation Configuration",
     )
+
     highlighted_records = models.URLField(
         blank=True,
         help_text=(
@@ -798,6 +923,13 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
+    highlighted_records_api = models.URLField(
+        blank=True,
+        help_text=(
+            'Mark Logic API endpoint for highlighted '
+            'records on the landing page'
+        )
+    )
     # TODO: eventually this will contain instructions for generating a
     # link to the library catalog or other kinds of specialized links
 
@@ -810,45 +942,203 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         )
     )
 
-    @route(r'^object/(?P<manifid>\w+)/$')
+    @route(r'^results/$')
+    def results(self, request, *args, **kwargs):
+        """
+        Route for digital collection results page.
+        """
+
+        # abbreviated collection name for Mark Logic API
+        short_name = self.short_name
+
+        qs = request.GET
+
+        language_dict = self.get_language_dict()
+        spatial_dict = self.get_spatial_dict()
+
+        field_names = self.get_series_metadata()
+
+        try:
+            search_term = qs["keyword"]
+            results = Wagtail.getResultsByKeyword(
+                search=search_term,
+                field_names=field_names,
+                collection=short_name,
+                language_dict=language_dict,
+                spatial_dict=spatial_dict,
+            )
+        except KeyError:
+            search_term = "Error: SEARCH TERM MISSING."
+            results = []
+
+        template = "lib_collections/collection_results_page.html"
+        context = super().get_context(request)
+        context["results"] = results
+        context["search_term"] = qs["keyword"]
+        return TemplateResponse(request, template, context)
+
+    @route(r'^series/(?P<noid>\w+)/$')
+    def series(self, request, *args, **kwargs):
+        """
+        Route for digital collection series page.
+        """
+        template = "lib_collections/collection_series_page.html"
+
+        # list of metadata fields from Mark Logic to display in object page
+        field_names = self.get_series_metadata()
+
+        # series NOID
+        noid = kwargs["noid"]
+
+        # gather information for sidebar browse links
+        sidebar_browse_types = self.build_browse_types()
+
+        short_name = self.short_name
+
+        # TODO: actually use collection_group; currently not being used
+        # collection_group = self.collection_group
+        slug = self.slug
+
+        language_dict = self.get_language_dict()
+        spatial_dict = self.get_spatial_dict()
+
+        # query Mark Logic for object metadata
+        if injection_safe(noid):
+            (marklogic, series_items) = (
+                Wagtail.getSeries(identifier=noid,
+                                  field_names=field_names,
+                                  collection=short_name,
+                                  collection_slug=slug,
+                                  raw=False,
+                                  language_dict=language_dict,
+                                  spatial_dict=spatial_dict,)
+                )
+        else:
+            raise Http404
+
+        def truncate_crumb(crumb, length):
+            """
+            Truncate breadcrumb trail link text at a given number of
+            characters.
+
+            Args:
+                Link text, Max link text length
+
+            Returns:
+                New link text
+            """
+            if len(crumb) >= length:
+                return crumb[:length].rstrip() + ' ...'
+            else:
+                return crumb
+
+        # construct breadcrumb trail
+        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
+
+        # adjust value of final breadcrumb to show object title if possible
+        if not marklogic:
+            object_title = 'Object'
+            final_crumb = object_title
+        elif 'Title' in marklogic.keys():
+            object_title = marklogic['Title']
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
+        elif 'Description' in marklogic.keys():
+            object_title = marklogic['Description']
+            final_crumb = truncate_crumb(
+                object_title, COLLECTION_OBJECT_TRUNCATE
+            )
+        else:
+            object_title = 'Object'
+            final_crumb = object_title
+
+        def default(thunk, defval):
+            """
+            Abstraction over the repeated pattern of catching a KeyError
+            exception and returning a default value.
+
+            Args:
+                Dictionary lookup
+
+            Returns:
+                Value corresponding to the key (or the default in
+                case of a key error)
+            """
+            try:
+                return thunk()
+            except (KeyError, TypeError):
+                return defval
+
+        def callno_to_pi(callno):
+            return '-'.join(
+                callno.replace(':', ' ').replace('.', ' ').upper().split()
+            )
+
+        # get link to physical object in VuFind
+        physical_object = default(
+            lambda: get_record_no_parsing(noid, '')['Local'], ''
+        )
+        callno = default(
+            lambda: get_record_no_parsing(noid, '')['Classificationlcc'], ''
+        )
+
+        # get link to catalog call number for collection object
+
+        # bring utility functions from DisplayBrowse into local namespace
+        unslugify_browse = DisplayBrowse.unslugify_browse
+
+        # URLs for social media sharing links
+        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + noid
+        canonical_url = og_url
+
+        # populate context
+
+        context = super().get_context(request)
+        context["noid"] = noid
+        # context["iiif_url"] = iiif_url
+        context["marklogic"] = marklogic
+        context["sidebar_browse_types"] = sidebar_browse_types
+        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
+        context['collection_breadcrumb'] = breads
+        context['object_title'] = object_title
+        context['physical_object'] = physical_object
+        context['callno'] = callno
+
+        context['og_url'] = og_url
+        context['canonical_url'] = canonical_url
+        context['series_items'] = series_items
+
+        # update context with staff info for sidebar
+        context.update(self.staff_context())
+
+        # at long last, we are done defining this route
+        return TemplateResponse(request, template, context)
+
+    @route(r'^object/(?P<noid>\w+)/$')
     def object(self, request, *args, **kwargs):
         """
         Route for digital collection object page.
         """
         template = "lib_collections/collection_object_page.html"
 
+        short_name = self.short_name
+
         # list of metadata fields from Mark Logic to display in object page
         field_names = self.metadata_field_names()
 
         # object NOID
-        manifid = kwargs["manifid"]
+        noid = kwargs["noid"]
 
         slug = self.slug
 
         # gather information for sidebar browse links
-        sidebar_browse_types = self.build_browse_types()
-
-        def injection_safe(id):
-            """
-            Check that URL route ends in a well-formed NOID.  This is mostly
-            just a simple safeguard against possible SparQL injection
-            attacks.
-
-            Args:
-                Candidate NOID
-
-            Returns:
-                Boolean
-
-            """
-            length_ok = len(id) >= 1 and len(id) <= 30
-            alphanum = id.isalnum()
-            return length_ok and alphanum
+        # sidebar_browse_types = self.build_browse_types()
 
         # query Mark Logic for object metadata
-        if injection_safe(manifid):
+        if injection_safe(noid):
             marklogic = get_record_for_display(
-                manifid,
+                noid,
                 field_names,
             )
         else:
@@ -915,10 +1205,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         # get link to physical object in VuFind
         physical_object = default(
-            lambda: get_record_no_parsing(manifid, '')['Local'], ''
+            lambda: get_record_no_parsing(noid, '')['Local'], ''
         )
         callno = default(
-            lambda: get_record_no_parsing(manifid, '')['Classificationlcc'], ''
+            lambda: get_record_no_parsing(noid, '')['Classificationlcc'], ''
         )
 
         # get link to catalog call number for collection object
@@ -966,45 +1256,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         get_viewer_url = IIIFDisplay.get_viewer_url
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        # bring utility functions from CitationInfo into local namespace
-
-        # MT 3/23/2021: commented out temporarily while we overhaul
-        # the citation service
-
-        # get_turtle_data = CitationInfo.get_turtle_data
-        # get_csl = CitationInfo.get_csl
-        # get_bibtex = CitationInfo.get_bibtex
-        # get_ris = CitationInfo.get_ris
-        # get_zotero = CitationInfo.get_zotero
-        # csl_json_to_html = CitationInfo.csl_json_to_html
-        # config = self.citation_config
-
-        # get Turtle data for collection object
-        # turtle_data = get_turtle_data(manifid)
-
-        # get CSL-JSON data
-        # csl = get_csl(
-        #     turtle_data,
-        #     config,
-        # )
-
-        # get CSL files for Chicago, MLA, and APA styles off disk
-
-        # chicago = csl_json_to_html(csl, CHICAGO_PATH)
-        # mla = csl_json_to_html(csl, MLA_PATH)
-        # apa = csl_json_to_html(csl, APA_PATH)
-
-        # get Bibtex, RIS, and Zotero harvesting citation info
-        # bibtex_link = get_bibtex(turtle_data, config)
-        # endnote_link = get_ris(turtle_data, config)
-        # zotero = str(get_zotero(turtle_data, config))
-
-        # URLs for social media sharing links
-        share_url = request.build_absolute_uri()
-        og_url = "http://www.lib.uchicago.edu/ark:/61001/" + manifid
-        canonical_url = og_url
-
-        iiif_url = get_viewer_url(manifid)
+        iiif_url = get_viewer_url(noid)
 
         internal_error = not marklogic and not iiif_url
 
@@ -1013,30 +1265,137 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # MT: citation-related stuff temprarily commented out: see
         # above note
 
+
+        apache_env = request.environ
+        query_string = request.GET
+
+        lookup = Result.lookup
+        default = Result.default
+
+        users_ip = Permissions.get_users_ip(request)
+        user_cnetid = Permissions.shibbed_cnetid(request)
+
+        def string_to_bool(string):
+            if string.lower() == 'true':
+                return True
+            else:
+                return False
+
+        override_reality = default(
+            lookup("override_reality", query_string)) == 'true'
+
+        item_permission = default(
+            lookup("item_permission", query_string))
+
+        on_campus = default(lookup("on_campus", query_string)) == 'true'
+
+        shibbed_in = default(lookup("shibbed_in", query_string)) == 'true'
+
+        # query string spec
+
+        # override_reality -> pretend we're in situation described by query string
+        # item_permission -> 1 is world, 2 is campus, 3 is restricted
+        # example = 1 is world, 2 is campus, 3 is restricted
+        # on_campus -> boolean
+        # shibbed_in -> boolean
+
+        overriding_reality = all([
+            query_string,
+            override_reality,
+            # item_permission,
+            default(lookup("on_campus", query_string)),
+            default(lookup("shibbed_in", query_string)),
+        ])
+
+        def num_to_perm(n):
+            if n == '1':
+                return "Open"
+            elif n == '2':
+                return "Campus"
+            elif n == '3':
+                return "Restricted"
+            else:
+                return ''
+
+        perm = num_to_perm(item_permission)
+
+        if overriding_reality:
+
+            # show_player = ((perm == "Open")
+            #                or (perm == "Campus"
+            #                    and on_campus))
+
+            display_player = {
+                "OpenShowPlayer": perm == "Open",
+                "CampusShowPlayer": (perm == "Campus"
+                                     and (on_campus
+                                          or shibbed_in)),
+                "CampusCrossOutPlayer": (perm == "Campus"
+                                         and (not (on_campus
+                                                   or shibbed_in))),
+                "RestrictedPlayer": perm == "Restricted",
+            }
+
+        else:
+
+            display_player = {
+                "OpenShowPlayer": Permissions.open_show_player(perm, request),
+                "CampusShowPlayer": Permissions.campus_show_player(
+                    perm, request
+                ),
+                "CampusCrossOutPlayer":
+                Permissions.campus_crossout_player(perm, request),
+                "RestrictedPlayer":
+                Permissions.restricted_player(perm, request),
+            }
+
+            # raise Exception("AAAAH")
+            # on_campus = Permissions.on_campus(users_ip)
+            shibbed_in = Permissions.shibbed_in(request)
+
+        def perm_to_panopto_id(perm):
+            if perm == "Open":
+                return "f8bed2c9-bfb2-41e8-968b-acd2013ac871"
+            elif perm == "Campus":
+                return "22c97e79-3920-49c3-a1ac-ad3a011985ec"
+            elif perm == "Restricted":
+                return "3a50d5ff-cbad-4e9d-b51d-ad3a0118bb2a"
+            elif perm == '':
+                return ''
+            else:
+                raise Exception(
+                    "Permission must be Open, Campus, or Restricted")
+
+        object_metadata = Wagtail.GetItem.getItem(identifier=noid,
+                                                  collection=short_name,
+                                                  raw=False)
+
+        panopto_id = Wagtail.GetItem.item_to_panopto(object_metadata)
+
         context = super().get_context(request)
-        context["manifid"] = manifid
-        context["iiif_url"] = iiif_url
-        context["share_url"] = share_url
+        context["noid"] = noid
         context["slug"] = slug
         context["internal_error"] = internal_error
         context["marklogic"] = marklogic
-        context["sidebar_browse_types"] = sidebar_browse_types
         context["external_links"] = external_links
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
         context['object_title'] = object_title
-        context['physical_object'] = physical_object
-        context['callno'] = callno
 
-        # context['chicago'] = chicago
-        # context['mla'] = mla
-        # context['apa'] = apa
-        # context['bibtex_link'] = bibtex_link
-        # context['endnote_link'] = endnote_link
-        # context['zotero'] = zotero
+        context['object_metadata'] = object_metadata
+        context['panopto_id'] = panopto_id
 
-        context['og_url'] = og_url
-        context['canonical_url'] = canonical_url
+        context["audio_id"] = 1
+        context["display_player"] = display_player
+        context["perm"] = perm
+        context["on_campus"] = on_campus
+        context["shibbed_in"] = shibbed_in
+        context["overriding_reality"] = overriding_reality
+        context["users_ip"] = users_ip
+        context["user_cnetid"] = user_cnetid
+
+        # context['og_url'] = og_url
+        # context['canonical_url'] = canonical_url
 
         # update context with staff info for sidebar
         context.update(self.staff_context())
@@ -1044,79 +1403,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # at long last, we are done defining this route
         return TemplateResponse(request, template, context)
 
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+/){0,1}$')
-    def cluster_browse_list(self, request, *args, **kwargs):
-        """
-        Route for listing of multiple cluster browses.  For example: the
-        list of all Subject browses.
-        """
-
-        template = "lib_collections/collection_browse.html"
-
-        slug = self.slug
-
-        # bring DisplayBrowse functions into local namespace
-        get_iiif_labels = DisplayBrowse.get_iiif_labels
-        unslugify_browse = DisplayBrowse.unslugify_browse
-
-        # construct browse type links for sidebar
-        sidebar_browse_types = self.build_browse_types()
-
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
-
-        try:
-            browse_type = kwargs["browse_type"]
-        except KeyError:
-            browse_type = ''
-
-        if not browse_type:
-            # default to subject browses if no browse type is specified in
-            # route
-            default_browse = all_browse_types.first()
-            default = default_browse.label.lower()
-            browse_type = default
-            browse_title = unslugify_browse(browse_type)
-        else:
-            # otherwise, get the browse type from the route
-            browse_type = kwargs["browse_type"][:-1]
-            browse_title = unslugify_browse(browse_type)
-
-        # construct breadcrumb trail
-        breads, final_crumb = CollectionPage.build_breadcrumbs(request)
-
-        # bring CBrowseURL function into local namespace
-        mk_cbrowse_type_url_iiif = CBrowseURL.mk_cbrowse_type_url_iiif
-
-        names = [x.label.lower() for x in all_browse_types]
-
-        try:
-            browses = get_iiif_labels(
-                mk_cbrowse_type_url_iiif(slug, browse_type),
-                browse_type,
-                slug,
-            )
-            internal_error = False
-        except (KeyError, simplejson.JSONDecodeError):
-            browses = ''
-            internal_error = True
-
-        browse_is_ready = browse_type in names and browses
-
-        # populate context
-        context = super().get_context(request)
-        context["sidebar_browse_types"] = sidebar_browse_types
-        context["browses"] = browses
-        context["browse_title"] = browse_title
-        context["browse_is_ready"] = browse_is_ready
-        context["internal_error"] = internal_error
-        context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
-        context['collection_breadcrumb'] = breads
-
-        return TemplateResponse(request, template, context)
-
-    @route(r'^cluster-browse/(?P<browse_type>[-\w]+)/(?P<browse>[-\w]+)/$')
+    @route(r'^cluster-browse/(?P<browse_type>\w+)/$')
     def cluster_browse(self, request, *args, **kwargs):
         """
         Route for listing a particular cluster browse.  For example: the
@@ -1125,31 +1412,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         template = "lib_collections/collection_browse.html"
 
+        short_name = self.short_name
+
         slug = self.slug
 
         # pull browse information from URL
-        browse_s = kwargs['browse']
         browse_type_s = kwargs['browse_type']
-
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
-
-        names = [x.label.lower() for x in all_browse_types]
 
         # construct browse type dictionary for sidebar
         sidebar_browse_types = self.build_browse_types()
-
-        try:
-            objects = DisplayBrowse.get_cbrowse_items(
-                slug,
-                browse_s,
-                browse_type_s,
-            )
-            internal_error = False
-        except (KeyError, simplejson.JSONDecodeError):
-            objects = ''
-            internal_error = True
 
         # construct breadcrumb trail
         breads, final_crumb = CollectionPage.build_breadcrumbs(request)
@@ -1157,22 +1428,25 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # get DisplayBrowse helper function into local namespace
         unslugify_browse = DisplayBrowse.unslugify_browse
 
-        browse_is_ready = browse_type_s in names and objects
+        browse_api_lookup = self.build_browse_dict()
 
-        # convert browse and browse type slugs into something suitable for
-        # display
-        browse = unslugify_browse(browse_s)
-        browse_type = unslugify_browse(browse_type_s)
+        try:
+            browse = browse_api_lookup[browse_type_s]
+        except KeyError:
+            return Http404
+
+        browses = Wagtail.getBrowse(browse,
+                                    collection=short_name,
+                                    collection_slug=slug)
+
+        browse_display_name = capitalize(browse_type_s)
 
         # construct context
         context = super().get_context(request)
-        context["browse_title"] = browse
-        context["browse_type"] = browse_type
         context["sidebar_browse_types"] = sidebar_browse_types
         context["slug"] = slug
-        context["objects"] = objects
-        context["internal_error"] = internal_error
-        context["browse_is_ready"] = browse_is_ready
+        context["browses"] = browses
+        context["browse_display_name"] = browse_display_name
         context['collection_final_breadcrumb'] = unslugify_browse(final_crumb)
         context['collection_breadcrumb'] = breads
 
@@ -1326,25 +1600,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     # panels within the 'Collection' tab in the admin interface
     collection_panels = [
-        # FieldPanel('digital_collection'),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('banner_image'),
-        #         FieldPanel('banner_feature'),
-        #         FieldPanel('banner_title'),
-        #         FieldPanel('banner_subtitle'),
-        #     ],
-        #     heading='Banner'
-        # ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('branding_color'),
-        #         FieldPanel('google_font_link'),
-        #         FieldPanel('font_family'),
-        #     ],
-        #     heading='Branding'
-        # ),
+        FieldPanel('collection_group'),
+        FieldPanel('short_name'),
+        MultiFieldPanel(
+            [FieldPanel('universal_viewer'),
+             FieldPanel('panopto')],
+            heading='Media Player For Object Page'
+        ),
         FieldPanel('highlighted_records'),
+        FieldPanel('highlighted_records_api'),
         FieldPanel('citation_config'),
         InlinePanel('col_search', label='Searches'),
         InlinePanel('col_lbrowse', label='List Browses'),
@@ -1352,6 +1616,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         InlinePanel('col_facet', label='Facets'),
         InlinePanel('col_result', label='Additional Fields in Results'),
         InlinePanel('col_obj_metadata', label='Object Metadata'),
+        InlinePanel('col_series_metadata', label='Series Metadata'),
         InlinePanel('col_external_service', label='Link to External Service'),
     ]
 

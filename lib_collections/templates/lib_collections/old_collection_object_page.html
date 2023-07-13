@@ -1,0 +1,179 @@
+{% extends "base/public_base.html" %}
+{% load compress static %}
+{% load compile_static %}
+{% load wagtailcore_tags %}
+{% load wagtailroutablepage_tags %}
+{% load wagtailimages_tags %}
+{% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
+
+<!--  dev-note: h1 is within public_base from name of page - need to verify it pulls in the object name -->
+
+
+
+{% block styles %}
+    {% compress css %}
+        <link href="{% static "/base/css/collex-digital.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
+
+{% block meta %}
+    {% if zotero %}
+        {{ zotero|safe }}
+    {% else %}
+    {% endif %}
+    <meta property="og:url" content="{{ og_url }}" />
+    <link rel="canonical" href="{{ canonical_url }}" />
+{% endblock %}
+
+
+{% block content %}
+
+    <!--   to-do: [ phase 2 ] add if statement for non-Universal viewer objects (eg: DMA) -->
+
+    <!-- @todo Figure out responsive iFrame. Oddness happening with UV iFrame when rendered in browser.
+               Ideal code:
+               <div class="embed-responsive embed-responsive-16by9">
+               <iframe class="embed-responsive-item" src="{{ iiif_url }}" allowfullscreen></iframe>
+               </div> -->
+
+    <script type="text/javascript">
+        const updateCitation = (elemValue) => {
+            const c = "{{ chicago|safe }}";1
+            const a = "{{ apa|safe }}";
+            const m = "{{ mla|safe }}";
+            if (elemValue == "chicago") {
+                document.getElementById("citationDisplay").innerHTML = c;
+            } else if (elemValue == "apa") {
+                document.getElementById("citationDisplay").innerHTML = a;
+            } else if (elemValue == "mla") {
+                document.getElementById("citationDisplay").innerHTML = m;
+            } else {
+                () => {};
+            }
+        }
+    </script>
+
+    {% if internal_error %}
+        <h4>
+            <p>Not found. Are you sure you typed the URL correctly?</p>
+        </h4>
+    {% elif iiif_url %}
+        <iframe src="{{ iiif_url }}" width="750" height="600" allowfullscreen frameborder="0"></iframe>
+
+        <!-- MT 3/16/21 we're temporarily taking the citation service out to get the display
+	       of the citations to look more like how they look in the catalog.  Once that's done,
+	       the plan is to uncomment this part. -->
+
+        <div class="col-xs-12 coll-dropdown">
+            {% if chicago and mla and apa %}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-textonly dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" id="dropdownMenuButton">
+                        Cite this <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu listings-dropdown" aria-labelledby="dropdownMenuButton">
+                        <div class="col-xs-12" id="hiddenCitation">
+                            <div class="col-sm-3 citationradios">
+                                <form>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="chicago" name="styleButton" checked="true" value="chicago" onchange="updateCitation(this.value)">
+                                        <label class="form-check-label" for="chi">Chicago Style</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="apa" name="styleButton" value="apa" onchange="updateCitation(this.value)">
+                                        <label class="form-check-label" for="apa">APA</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="mla" name="styleButton" value="mla" onchange="updateCitation(this.value)">
+                                        <label class="form-check-label" for="mla">MLA</label>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--  dev-note: UnsUre if we want these hardwired into the html or to do a for loop and put the logic elsewhere -->
+
+                            <div class="col-sm-9">
+                                <div id="citationDisplay">
+                                    {{ mla|safe }}
+                                </div>
+                                <div class="save-to-link">
+                                    {% if bibtex_link %}
+                                        <a href="{{ bibtex_link }}">Save to BibTeX</a>
+                                    {% else %}
+                                    {% endif %}
+                                    {% if endnote_link %}
+                                        <a href="{{ endnote_link }}">Save to Endnote</a>
+                                    {% else %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div> <!-- // END citation-drop -->
+                    </div> <!-- // END dropdown-menu -->
+                </div>  <!-- // END button group -->
+            {% else %}
+            {% endif %}
+
+            <div class="btn-group">
+                <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i> Share this <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu listings-dropdown">
+                    <li>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{og_url|urlencode}}" class="btn-floating" type="button" aria-label="share story on Facebook">Facebook &nbsp;<i aria-hidden="true" class="fa fa-facebook-f"></i></a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/intent/tweet?url={{og_url|urlencode}}&text={{self.title|urlencode|truncatechars:254}}" class="btn-floating" type="button" aria-label="Share story on Twitter">Twitter &nbsp;<i aria-hidden="true" class="fa fa-twitter"></i></a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{og_url|urlencode}}&title={{self.title|urlencode}}&summary={{self.short_abstract|urlencode|truncatechars:50}}&source=lib.uchicago.edu" class="btn-floating" type="button" aria-label="Share story on Linkedin">LinkedIn &nbsp;<i aria-hidden="true" class="fa fa-linkedin"></i></a>
+                    </li>
+                    <li>
+                        <!-- TODO: neither does this -->
+                        <a href="https://pinterest.com/pin/create/button/?url={{og_url|urlencode}}&description={{self.short_abstract|urlencode|truncatechars:250}}" class="btn-floating" type="button" aria-label="Share story on Pinterest">Pinterest &nbsp;<i aria-hidden="true" class="fa fa-pinterest"></i></a>
+                    </li>
+                    <li>
+                        <!-- TODO: not sure whether this works yet -->
+                        <a href="https://www.reddit.com/submit?url={{og_url|urlencode}}&title={{self.title|urlencode}}" class="btn-floating" type="button" aria-label="Share story on Reddit">Reddit &nbsp;<i aria-hidden="true" class="fa fa-reddit-alien"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <h4>
+            <p>We are temporarily unable to display the viewer for this object.</p>
+            <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+        </h4>
+    {% endif %}
+
+    {% if marklogic %}
+        <span itemscope itemtype="http://schema.org/CreativeWork"> <!-- schema.org wrapper -->
+            <dl>
+                {% for key, value in marklogic.items %}
+                    <dt>
+                        {{ key }}
+                    </dt>
+                    <!-- TODO: add SCHEMA.ORG property as itemprop in dd tag -->
+                    <!-- TODO: add handling for if an item has multiple value fields -->
+                    <!-- to-do: need to add better CSS handling for multiple value fields (multiple lines) -->
+                    <dd>
+                        {{ value }}
+                    </dd>
+                {% endfor %}
+            </dl>
+        </span> <!-- / schema.org wrapper -->
+    {% elif not internal_error %}
+        <h4>
+            <p>One of our servers is temporarily down.</p>
+            <p>Please <a href="https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/">contact us</a> to let us know this happened.</p>
+        </h4>
+    {% else %}
+    {% endif %}
+
+{% endblock %}
+
+{% block right_sidebar %}
+    {% include "includes/sidebar.html" %}
+{% endblock %}
+
+{% block right_sidebar_classes %}coll-rightside{% endblock %}
+

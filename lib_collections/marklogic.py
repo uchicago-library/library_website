@@ -1,7 +1,8 @@
 import os
 import json
-import simplejson
+# import simplejson
 import re
+import random
 
 import requests
 
@@ -20,6 +21,11 @@ except (ImportError):
 
 from requests.auth import HTTPBasicAuth
 from lib_collections.utils import GeneralPurpose
+from lib_collections.panopto import Player
+import urllib
+from collections import OrderedDict
+from base.utils import compose, concat, identity, Gensym
+from multiprocessing.pool import ThreadPool
 
 
 def sp_query(manifid: str) -> str:
@@ -314,5 +320,1004 @@ def get_record_for_display(manifid: str,
             return main_output
         else:
             return ''
-    except (json.JSONDecodeError, simplejson.JSONDecodeError):
+    except (json.JSONDecodeError
+            # , simplejson.JSONDecodeError
+            ):
         return ''
+
+
+class Validation():
+
+    def injection_safe(id):
+        """
+        Check that URL route ends in a well-formed NOID.  This is mostly
+        just a simple safeguard against possible SparQL injection
+        attacks.
+
+        Args:
+            Candidate NOID
+
+        Returns:
+            Boolean
+
+        """
+        length_ok = len(id) >= 1 and len(id) <= 30
+        alphanum = id.isalnum()
+        return length_ok and alphanum
+
+
+
+# BEGIN WRANGLE_JSON CODE (MT May 2023)
+
+
+# default collection, for testing interactively
+DEFAULT = "mlc"
+DEFAULT_SLUG = "mesoamerican-languages-collection"
+# default metadata fields to display; these are the ones for the MLC demo
+DEFAULT_FIELDS = OrderedDict([
+    ('Alternative', 'Alternative Series Title'),
+    ('DmaIdentifier', 'Series Identifier'),
+    ('Title', 'Title'), ('Creator', 'Creator'),
+    ('Spatial', 'Location Where Indigenous Language Is Spoken'),
+    ('Date', 'Date'),
+    ('PrimaryLanguage', 'Language'),
+    ('SubjectLanguage', 'Indigenous Language'),
+    ('Description', 'Description')
+])
+
+# default collection group, for testing interactively
+DEFGRP = "dma"
+DEFAULT_ENDPOINT = "getBrowseListLanguages"
+
+def is_english(pred):
+    try:
+        no_xml = "xml:lang" not in pred["prefLabel"]
+        xml_is_english = pred["prefLabel"]["xml:lang"] == "en"
+        xml_is_spanish = pred["prefLabel"]["xml:lang"] == "es"
+        # return True
+        return any([no_xml, xml_is_english, xml_is_spanish])
+    except KeyError:
+        return False
+
+
+class CleanData():
+
+    def bindings(sparql):
+        return sparql["results"]["bindings"]
+
+    class KeyValue():
+
+        def adjacent_key_value_(keyField, valField, bindings):
+            def each_pair(var):
+                return (var[keyField]["value"],
+                        var[valField]["value"])
+
+            def is_english(pred):
+                if "prefLabel" not in pred:
+                    return True
+                else:
+                    no_xml = "xml:lang" not in pred["prefLabel"]
+                    try:
+                        xml_is_english = pred["prefLabel"]["xml:lang"] == "en"
+                        xml_is_spanish = pred["prefLabel"]["xml:lang"] == "es"
+                    except KeyError:
+                        xml_is_english = False
+                        xml_is_spanish = False
+                    return any([no_xml, xml_is_english, xml_is_spanish])
+
+            return [each_pair(pred)
+                    for pred
+                    in bindings
+                    if is_english(pred)]
+
+        def adjacent_key_value(keyField, valField, data):
+            bs = CleanData.bindings(data)
+            adjacent_key_value_ = CleanData.KeyValue.adjacent_key_value_
+            # return ""
+            return adjacent_key_value_(keyField, valField, bs)
+
+        def downward_key_value(data):
+            bs = CleanData.bindings(data)
+
+            def each_pair(k, v):
+                return (k, v["value"].split("|"))
+
+            def nonempty(data):
+                v = data["value"]
+                unavailable = '(:unav)'
+                return v and v != unavailable
+
+            def each_binding(dct):
+                alist = [each_pair(k, v)
+                         for (k, v) in dct.items()
+                         if nonempty(v)]
+                return OrderedDict(alist)
+
+            return [each_binding(b)
+                    for b in bs
+                    if each_binding(b)]
+
+    adjacent_key_value = KeyValue.adjacent_key_value
+
+    def getBrowseListContributors(data):
+        return CleanData.adjacent_key_value("s", "o", data)
+
+    def getBrowseListLocations(data):
+        return CleanData.adjacent_key_value("spatial", "prefLabel", data)
+
+    def getBrowseListLanguages(data):
+        return CleanData.adjacent_key_value("code", "prefLabel", data)
+
+    downward_key_value = KeyValue.downward_key_value
+
+    def getItem(data):
+        return CleanData.downward_key_value(data)
+
+    class StraightUpList():
+
+        def straight_up_list(fieldName, data, cleanup=lambda x: x):
+            bs = CleanData.bindings(data)
+            return [cleanup(b[fieldName]["value"]) for b in bs]
+
+    straight_up_list = StraightUpList.straight_up_list
+
+    def getBrowseListDates(data):
+        g = Gensym()
+        c = CleanData.bindings(data)
+        dates = sorted([x["date"]["value"] for x in c])
+        output = [(g.gen(), d) for d in dates]
+        return output
+
+    class Ark():
+
+        def extract_noid(arkurl):
+            return arkurl.split("/")[-1]
+
+    class Spatial():
+
+        def fix_spatial(input_dict, spatial_dict):
+            try:
+                spatial = input_dict["spatial"]
+                new_spatial = [spatial_dict[x] for x in spatial]
+                input_dict["spatial"] = new_spatial
+                return input_dict
+            except KeyError:
+                return input_dict
+
+    # TODO for Matt tomorrow: propagate language_dict and spatial_dict
+    # parameters back up the call stack
+    def getResultsByCreator(data):
+        return CleanData.straight_up_list(
+            "resource",
+            data,
+            cleanup=CleanData.Ark.extract_noid
+        )
+
+    getResultsByDate = getResultsByCreator
+    getResultsByKeyword = getResultsByCreator
+    getResultsByLanguage = getResultsByCreator
+    getResultsByLocation = getResultsByCreator
+
+    def getResultsByIdentifier(data):
+        results = CleanData.downward_key_value(data)
+
+        def each_item(item):
+            full_ark = item["identifier"]
+
+            def clean_url(url):
+                return url.split("/")[-1]
+            cleaned = [clean_url(u) for u in full_ark]
+            if cleaned:
+                plucked = cleaned[0]
+            else:
+                plucked = []
+            item["identifier"] = plucked
+            return item
+        return [each_item(r) for r in results]
+
+    class Language():
+
+        def contains_key(key):
+            def partial(dct):
+                return key in dct.keys()
+            return partial
+
+        def split_on(pred, lst):
+            left = [y for y in lst if pred(y)]
+            right = [z for z in lst if not pred(z)]
+            return (left, right)
+
+        # not using this yet, but I suspect we will need it
+        def alternative_union(dct1, dct2):
+            if dct1 == {}:
+                return dct2
+            elif dct2 == {}:
+                return dct1
+            else:
+                left_half = {k: v
+                             for (k, v) in dct1.items()
+                             if k not in dct2}
+                intersection = {u: (dct1[u] + dct2[u])
+                                for u in dct1
+                                if u in dct2}
+                right_half = {k: v
+                              for (k, v) in dct2.items()
+                              if k not in dct1}
+                return OrderedDict({**left_half, **intersection, **right_half})
+
+    def getSeries(data, language_dict={}, spatial_dict={}):
+        cleaned = CleanData.downward_key_value(data)
+        series = cleaned[0]
+
+        def adjust_metadata_key(string):
+            if string.lower() == "primary":
+                return "primaryLanguage"
+            elif string.lower() == "subject":
+                return "subjectLanguage"
+            else:
+                return string
+
+        def each_language(colon_str, language_dict):
+            [k, v] = colon_str.split(':')
+            new_k = adjust_metadata_key(k.lower())
+            try:
+                new_v = [language_dict[v]]
+            except KeyError:
+                new_v = [v]
+            return (new_k, new_v)
+
+        def expand_both(alist):
+            dct = dict(alist)
+            if "both" in [p[0] for p in alist]:
+                output = [("primaryLanguage", dct["both"]),
+                          ("subjectLanguage", dct["both"])]
+            else:
+                output = []
+            return output
+
+        languages = series["languages"]
+        alist = [each_language(lang, language_dict)
+                 for lang
+                 in languages]
+
+        fixed_language_alist = OrderedDict(alist + expand_both(alist))
+
+        fix_spatial = CleanData.Spatial.fix_spatial
+
+        return OrderedDict(fix_spatial(series, spatial_dict),
+                           **dict(fixed_language_alist))
+        # languages = dict(prepped)
+        # series["languages"] = languages
+        # series["language"] = languages["primary"]
+
+        # return series
+
+    # getSeries = getSeries_pipe
+
+
+def split_on(pred, lst):
+    left = [y for y in lst if pred(y)]
+    right = [z for z in lst if not pred(z)]
+    return (left, right)
+
+
+class URLs():
+
+    class BaseURL():
+
+        class MarkLogic():
+
+            ML_HOST = "http://marklogic.lib.uchicago.edu"
+            ML_PORT = 8031
+            ML_PATH = "main.xqy?query="
+            ML_GROUP = "dma"
+
+            def assemble_url_prefix_full(host,
+                                         collection_group,
+                                         api_name, 
+                                         port,
+                                         path):
+                parts = [
+                    host,
+                    ":",
+                    str(port),
+                    "/",
+                    collection_group,
+                    "/",
+                    path,
+                    api_name,
+                ]
+                return "".join(parts)
+
+            def assemble_url_prefix(api_name):
+                return URLs.BaseURL.MarkLogic.assemble_url_prefix_full(
+                    URLs.BaseURL.MarkLogic.ML_HOST,
+                    URLs.BaseURL.MarkLogic.ML_GROUP,
+                    api_name,
+                    URLs.BaseURL.MarkLogic.ML_PORT,
+                    URLs.BaseURL.MarkLogic.ML_PATH
+                )
+            
+        class Ark():
+
+            ARK_HOST = "https://ark.lib.uchicago.edu"
+            ARK_PATH = "ark:61001"
+
+            def assemble_url_prefix(host, path):
+                def partial(identifier):
+                    parts = [
+                        host,
+                        "/",
+                        path,
+                        "/",
+                        identifier,
+                    ]
+                    return "".join(parts)
+                return partial
+
+            ark_base = assemble_url_prefix(ARK_HOST, ARK_PATH)
+
+    marklogic_base = BaseURL.MarkLogic.assemble_url_prefix
+    ark_base = BaseURL.Ark.ark_base
+
+    class QStrings():
+
+        def getBrowseListContributors(collection=DEFAULT):
+            return { "collection" : collection }
+
+        def getBrowseListLocations(collection=DEFAULT):
+            return { "collection" : collection }
+
+        def getBrowseListLanguages(collection=DEFAULT):
+            return { "collection" : collection }
+
+        def getBrowseListDates(collection=DEFAULT):
+            return { "collection" : collection }
+
+        def getItem(identifier="b2k40qk4wc8h", collection=DEFAULT):
+            return { "collection" : collection,
+                     "identifier" : URLs.ark_base(identifier), }
+
+        def getResultsByCreator(search="mcquown", collection=DEFAULT):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getResultsByDate(search="1971", collection=DEFAULT):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection=DEFAULT):
+            return { "collection" : collection,
+                     "identifier" : URLs.ark_base(identifier), }
+
+        def getResultsByKeyword(search="andrade", collection=DEFAULT):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getResultsByLanguage(search="tzotzil", collection=DEFAULT):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getResultsByLocation(search="yucatan", collection=DEFAULT):
+            return { "collection" : collection,
+                     "search" : search, }
+
+        def getSeries(identifier="b2pz3jc17901", collection=DEFAULT):
+            return { "collection" : collection,
+                     "identifier" : URLs.ark_base(identifier), }
+
+
+    class MakeURL():
+
+        def make_api_string(collection, api_name, params, curl=True):
+            unquote = urllib.parse.unquote
+            urlencode = urllib.parse.urlencode
+            def serialize(params):
+                return urlencode(params)
+                # toggle this for debugging
+                # return unquote(urlencode(params))
+            if curl:
+                query_string = "&" + serialize(params)
+            else:
+                query_string = ""
+            url_prefix = URLs.marklogic_base(api_name)
+            return url_prefix + query_string
+
+    make_api_string = MakeURL.make_api_string
+
+    def getBrowseListContributors(collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getBrowseListContributors(collection=collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListContributors",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListLocations(collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getBrowseListLocations(collection=collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListLocations",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListLanguages(collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getBrowseListLanguages(collection=collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListLanguages",
+                                   params,
+                                   curl)
+        return url
+
+    def getBrowseListDates(collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getBrowseListDates(collection=collection)
+        url = URLs.make_api_string(collection,
+                                   "getBrowseListDates",
+                                   params,
+                                   curl)
+        return url
+
+    def getItem(identifier="b2k40qk4wc8h", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getItem(identifier=identifier, collection=collection)
+        url = URLs.make_api_string(collection, "getItem", params, curl)
+        return url
+
+    def getResultsByCreator(search="mcquown", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByCreator(search=search, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByCreator", params, curl)
+        return url
+
+    def getResultsByDate(search="1971", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByCreator(search=search, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByDate", params, curl)
+        return url
+
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByIdentifier(identifier=identifier, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByIdentifier", params, curl)
+        return url
+
+    def getResultsByKeyword(search="andrade", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByKeyword(search=search, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByKeyword", params, curl)
+        return url
+
+    def getResultsByLanguage(search="tzotzil", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByLanguage(search=search, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByLanguage", params, curl)
+        return url
+
+    def getResultsByLocation(search="yucatan", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getResultsByLocation(search=search, collection=collection)
+        url = URLs.make_api_string(collection, "getResultsByLocation", params, curl)
+        return url
+
+    def getSeries(identifier="b2pz3jc17901", collection=DEFAULT, curl=True):
+        params = URLs.QStrings.getSeries(identifier=identifier, collection=collection)
+        url = URLs.make_api_string(collection, "getSeries", params, curl)
+        return url
+
+
+class Api():
+
+    def lookup(collection=DEFAULT,
+               identifier="b2k40qk4wc8h",
+               search="",
+               curl=False,
+               language_dict={},
+               spatial_dict={}):
+        return {
+
+            "getBrowseListContributors" : {
+                "url" : URLs.getBrowseListContributors(collection, curl=curl),
+                "params" : URLs.QStrings.getBrowseListContributors(collection),
+                "cleanup" : CleanData.getBrowseListContributors,
+            },
+
+            "getBrowseListLocations" : {
+                "url" : URLs.getBrowseListLocations(collection, curl=curl),
+                "params" : URLs.QStrings.getBrowseListLocations(collection),
+                "cleanup" : CleanData.getBrowseListLocations,
+            },
+
+            "getBrowseListLanguages" : {
+                "url" : URLs.getBrowseListLanguages(collection, curl=curl),
+                "params" : URLs.QStrings.getBrowseListLanguages(collection),
+                "cleanup" : CleanData.getBrowseListLanguages,
+            },
+
+            "getBrowseListDates" : {
+                "url" : URLs.getBrowseListDates(collection, curl=curl),
+                "params" : URLs.QStrings.getBrowseListDates(collection),
+                "cleanup" : CleanData.getBrowseListDates,
+            },
+
+            "getItem" : {
+                "url" : URLs.getItem(identifier, collection, curl=curl),
+                "params" : URLs.QStrings.getItem(identifier, collection),
+                "cleanup" : CleanData.getItem,
+            },
+
+            "getResultsByCreator" : {
+                "url" : URLs.getResultsByCreator(search, collection, curl=curl),
+                "params" : URLs.QStrings.getResultsByCreator(search, collection),
+                "cleanup" : CleanData.getResultsByCreator,
+            },
+
+            "getResultsByDate" : {
+                "url" : URLs.getResultsByDate(search, collection, curl=curl),
+                "params" : URLs.QStrings.getResultsByDate(search, collection),
+                "cleanup" : CleanData.getResultsByDate,
+            },
+
+            "getResultsByIdentifier" : {
+                "url": URLs.getResultsByIdentifier(identifier, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByIdentifier(identifier, collection),
+                "cleanup": CleanData.getResultsByIdentifier,
+            },
+
+            "getResultsByKeyword": {
+                "url": URLs.getResultsByKeyword(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByKeyword(search, collection),
+                "cleanup": CleanData.getResultsByKeyword,
+            },
+
+            "getResultsByLanguage": {
+                "url": URLs.getResultsByLanguage(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByLanguage(search, collection),
+                "cleanup": CleanData.getResultsByLanguage,
+            },
+
+            "getResultsByLocation": {
+                "url": URLs.getResultsByLocation(search, collection, curl=curl),
+                "params": URLs.QStrings.getResultsByLocation(search, collection),
+                "cleanup": CleanData.getResultsByLocation,
+            },
+
+            "getSeries" : {
+                "url": URLs.getSeries(identifier, collection, curl=curl),
+                "params": URLs.QStrings.getSeries(identifier, collection),
+                "cleanup": lambda data: CleanData.getSeries(data,
+                                                            language_dict=language_dict,
+                                                            spatial_dict=spatial_dict,)
+            },
+
+        }
+
+    class URLGet():
+
+        def pull_from_url(url, func, params):
+            response = requests.get(url, params)
+            data = response.json()
+            return func(data)
+
+        def api_call(endpoint,
+                     identifier="",
+                     collection=DEFAULT,
+                     search="",
+                     raw=False,
+                     curl=False,
+                     language_dict={},
+                     spatial_dict={},):
+            lookup = Api.lookup(collection,
+                                identifier,
+                                search,
+                                curl,
+                                language_dict,
+                                spatial_dict)[endpoint]
+            params = lookup["params"]
+            if raw:
+                cleanup = lambda x: x
+            else:
+                cleanup = lookup["cleanup"]
+            url = lookup["url"]
+            data = Api.pull_from_url(url, cleanup, params)
+            return data
+
+    pull_from_url = URLGet.pull_from_url
+    api_call = URLGet.api_call
+
+    def getBrowseListContributors(collection=DEFAULT, raw=False):
+        return Api.api_call("getBrowseListContributors",
+                            collection=collection,
+                            raw=raw)
+
+    def getBrowseListLocations(collection=DEFAULT, raw=False):
+        return Api.api_call("getBrowseListLocations",
+                            collection=collection,
+                            raw=raw)
+
+    def getBrowseListLanguages(collection=DEFAULT, raw=False):
+        return Api.api_call("getBrowseListLanguages",
+                            collection=collection,
+                            raw=raw)
+
+    def getBrowseListDates(collection=DEFAULT, raw=False):
+        return Api.api_call("getBrowseListDates",
+                            collection=collection,
+                            raw=raw)
+
+    def getItem(identifier="b2k40qk4wc8h", collection=DEFAULT, raw=False):
+        return Api.api_call("getItem",
+                            collection=collection,
+                            identifier=identifier,
+                            raw=raw)
+
+    def getResultsByCreator(search="mcquown", collection=DEFAULT, raw=False):
+        return Api.api_call("getResultsByCreator",
+                            collection=collection,
+                            search=search,
+                            raw=raw)
+
+    def getResultsByDate(search="1971", collection=DEFAULT, raw=False):
+        return Api.api_call("getResultsByDate",
+                            collection=collection,
+                            search=search,
+                            raw=raw)
+
+    def getResultsByIdentifier(identifier="b2k40qk4wc8h",
+                               collection=DEFAULT,
+                               raw=False):
+        return Api.api_call("getResultsByIdentifier",
+                            collection=collection,
+                            identifier=identifier,
+                            raw=raw)
+
+    def getResultsByKeyword(search="andrade", collection=DEFAULT, raw=False):
+        return Api.api_call("getResultsByKeyword",
+                            collection=collection,
+                            search=search,
+                            raw=raw)
+
+    def getResultsByLanguage(search="tzotzil", collection=DEFAULT, raw=False):
+        return Api.api_call("getResultsByLanguage",
+                            collection=collection,
+                            search=search,
+                            raw=raw)
+
+    def getResultsByLocation(search="yucatan", collection=DEFAULT, raw=False):
+        return Api.api_call("getResultsByLocation",
+                            collection=collection,
+                            search=search,
+                            raw=raw)
+
+    def getSeries(identifier="b2pz3jc17901",
+                  collection=DEFAULT,
+                  raw=False,
+                  language_dict={},
+                  spatial_dict={},):
+        try:
+            output = Api.api_call("getSeries",
+                                  collection=collection,
+                                  identifier=identifier,
+                                  raw=raw,
+                                  language_dict=language_dict,
+                                  spatial_dict=spatial_dict,)
+        except IndexError:
+            output = []
+        return output
+
+
+class Wagtail():
+
+    class GetSeries():
+
+        def rdf_map(field, f):
+            def partial(dct):
+                current = dct[field]
+                dct[field] = [f(x) for x in current]
+                return dct
+            return partial
+
+        def fix_language(collection):
+            def partial(dct):
+                try:
+                    code = dct["language"]
+                    code_dictionary = Api.getBrowseListLanguages(
+                        collection=collection
+                    )
+                    language = code_dictionary[code]
+                    dct["language"] = language
+                    return dct
+                except KeyError:
+                    return dct
+            return partial
+
+        def lowercase_first(string):
+            if string:
+                return string[0].lower() + string[1:]
+            else:
+                string
+
+        def adjust_fields(field_names=DEFAULT_FIELDS):
+            def partial(json_obj):
+                def lookup(marklogic_name):
+                    print("FN: ", field_names)
+                    print("MN: ", marklogic_name)
+                    print("output: ", field_names[marklogic_name])
+                    try:
+                        output = field_names[marklogic_name]
+                    except KeyError:
+                        output = marklogic_name
+                    return output
+                def capitalize(field):
+                    if field:
+                        return field[0].upper() + field[1:]
+                    else:
+                        field
+                lowercase_first = Wagtail.GetSeries.lowercase_first
+                if field_names:
+                    alist = [(lookup(x), "".join(v)) for x in field_names for k, v in json_obj.items() if lowercase_first(x) == k]
+                    # alist = [(lookup(capitalize(x)), "".join(v))
+                    #          for x in field_names.values()
+                    #          for k, v in json_obj.items()
+                    #          if (lowercase_first(x), v) == (k, v)]
+                    return OrderedDict(alist)
+                else:
+                    return json_obj
+            return partial
+
+        # TODO: have this replace location atomic thingy number with
+        # actual location string
+        def fix_everything(dct, collection=DEFAULT,
+                           field_names=DEFAULT_FIELDS):
+            # fix_language = Wagtail.GetSeries.fix_language
+            # fix_language = identity
+            adjust_fields = Wagtail.GetSeries.adjust_fields
+            fix = adjust_fields(field_names)
+            # fix = compose(
+            #     fix_language(collection),
+            #     adjust_fields(field_names),
+            # )
+            return fix(dct)
+
+        class ItemListing():
+
+            def build_item_listing(parts, collection_slug):
+                extract_noid = CleanData.Ark.extract_noid
+                noids = [extract_noid(n) for n in parts]
+                raw_items = concat([Api.getItem(i) for i in noids])
+                noids_and_items = list(zip(noids, raw_items))
+                try:
+                    noids_and_descriptions = (
+                        [(noid, "".join(item["description"]))
+                         for (noid, item)
+                         in noids_and_items]
+                    )
+                except KeyError:
+                    noids_and_descriptions = []
+
+                def mk_link(noid):
+                    base_url = ("/collex/collections/"
+                                + collection_slug
+                                + "/object/"
+                                + noid)
+                    return base_url
+
+                def mk_linked_item(noid, description):
+                    return OrderedDict({"link_url": mk_link(noid),
+                                        "link_text": description})
+
+                listing = [("", mk_linked_item(noid, desc))
+                           for noid, desc
+                           in noids_and_descriptions]
+
+                return listing
+
+        def getSeriesOnly(identifier="b2pz3jc17901",
+                          field_names=DEFAULT_FIELDS,
+                          collection=DEFAULT,
+                          collection_slug=DEFAULT_SLUG,
+                          raw=False,
+                          language_dict={},
+                          spatial_dict={},):
+            # fix_everything = Wagtail.GetSeries.fix_everything
+            first_pass = Api.getSeries(identifier,
+                                       collection,
+                                       raw,
+                                       language_dict,
+                                       spatial_dict)
+            series = Wagtail.GetSeries.adjust_fields(field_names)(first_pass)
+            return series
+
+        def getSeries(identifier="b2pz3jc17901",
+                      field_names=DEFAULT_FIELDS,
+                      collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG,
+                      raw=False,
+                      language_dict={},
+                      spatial_dict={},):
+            build_item_listing = (Wagtail
+                                  .GetSeries
+                                  .ItemListing.build_item_listing)
+            fix_everything = Wagtail.GetSeries.fix_everything
+            try:
+                first_pass = Api.getSeries(identifier,
+                                           collection,
+                                           raw,
+                                           language_dict,
+                                           spatial_dict,)
+                series = fix_everything(first_pass,
+                                        collection=collection,
+                                        field_names=field_names)
+            except AttributeError:
+                first_pass = []
+                series = []
+            try:
+                parts = first_pass["hasParts"]
+                items = build_item_listing(parts, collection_slug)
+            except (KeyError, TypeError):
+                items = ""
+            return (series, items)
+
+    getSeries = GetSeries.getSeries
+
+    class GetResultsByKeyword():
+
+        def getSeries(identifier="b2pz3jc17901",
+                      field_names=DEFAULT_FIELDS,
+                      collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG,
+                      raw=False,
+                      language_dict={},
+                      spatial_dict={}):
+            getSeriesOnly = Wagtail.GetSeries.getSeriesOnly
+
+            def mk_link(k, v):
+                if k.lower() == "title":
+                    route = "/collex/collections/%s/series/%s" % (
+                        collection_slug,
+                        identifier,
+                    )
+
+                else:
+                    route = ""
+                output = {"link_text": v,
+                          "link_url": route,}
+                return output
+
+            try:
+                metadata = getSeriesOnly(identifier=identifier,
+                                         field_names=field_names,
+                                         collection=collection,
+                                         collection_slug=collection_slug,
+                                         raw=False,
+                                         language_dict=language_dict,
+                                         spatial_dict=spatial_dict,)
+                series = OrderedDict([(k, mk_link(k, v))
+                                      for k, v
+                                      in metadata.items()])
+
+            except (AttributeError, KeyError):
+                series = {}
+            return series
+
+
+        def getResultsByKeyword(search="andrade",
+                                field_names=DEFAULT_FIELDS,
+                                collection=DEFAULT,
+                                raw=False,
+                                language_dict={},
+                                spatial_dict={},):
+            getSeries = (Wagtail
+                         .GetResultsByKeyword
+                         .getSeries)
+
+            noids = (
+                Api.getResultsByKeyword(search=search,
+                                        collection=collection)
+            )
+
+            def get(noid):
+                return getSeries(identifier=noid,
+                                 field_names=field_names,
+                                 collection=collection,
+                                 raw=raw,
+                                 language_dict=language_dict,
+                                 spatial_dict=spatial_dict,)
+
+            series_data = ThreadPool(4).imap(get, noids)
+            output = (n for n in series_data if n)
+            return output
+
+    getResultsByKeyword = GetResultsByKeyword.getResultsByKeyword
+
+    class GetItem():
+
+        def getItem(identifier="b2st3v29dq2h",
+                    collection=DEFAULT,
+                    raw=False):
+            item_data = Api.getItem(identifier=identifier,
+                                    collection=collection,
+                                    raw=raw)
+            return OrderedDict(
+                [(k, ",".join(v)) for k, v in item_data[0].items()]
+            )
+
+
+        def item_to_panopto(metadata):
+            try:
+                ark_link = metadata["soundFile"]
+                panopto_id = Player.ark_to_panopto(ark_link)
+            except KeyError:
+                panopto_id = ""
+
+            return panopto_id
+
+    getItem = GetItem.getItem
+
+    class GetBrowseListLanguages():
+
+        def getBrowseListLanguages(collection=DEFAULT,
+                                   collection_slug=DEFAULT_SLUG):
+            result = Api.getBrowseListLanguages(collection=collection,
+                                                raw=False)
+            language_list = sorted(list({tup[1] for tup in result}))
+
+            def mk_link(language, slug):
+                quoted = urllib.parse.quote(language)
+                link = ("/collex/collections/%s/results?keyword=%s"
+                        %
+                        (slug, quoted))
+                return (language, link)
+
+            link_alist = [mk_link(link, collection_slug)
+                          for link in language_list]
+            return OrderedDict(link_alist)
+
+    getBrowseListLanguages = GetBrowseListLanguages.getBrowseListLanguages
+
+    class GetBrowse():
+
+        # TODO: this doesn't work, due to "multiple values for
+        # argument" problem
+        def getBrowse(endpoint,
+                      collection=DEFAULT,
+                      collection_slug=DEFAULT_SLUG):
+            result = Api.api_call(endpoint, collection=collection,)
+            language_list = sorted(list({tup[1] for tup in result}))
+
+            def mk_link(language, slug):
+                quoted = urllib.parse.quote(language)
+                link = ("/collex/collections/%s/results?keyword=%s"
+                        %
+                        (slug, quoted))
+                return (language, link)
+
+            link_alist = [mk_link(link, collection_slug)
+                          for link in language_list]
+            return OrderedDict(link_alist)
+
+    getBrowse = GetBrowse.getBrowse
+
+
+class Utils():
+
+    def gimme_all_noids(collection=DEFAULT):
+        host = URLs.BaseURL.MarkLogic.ML_HOST
+        port = URLs.BaseURL.MarkLogic.ML_PORT
+        path = "identifiers.xqy?query()"
+        parts = [
+            host,
+            ":",
+            str(port),
+            "/",
+            collection,
+            "/",
+            path,
+        ]
+        base_url = "".join(parts)
+
+        def cleanup(data):
+            bs = CleanData.bindings(data)
+
+            def each_url(url):
+                return url.split("/")[-1]
+            return [each_url(x["identifier"]["value"]) for x in bs]
+        return Api.URLGet.pull_from_url(base_url, cleanup, {})
+
+    def gimme_some_noids(collection=DEFAULT):
+        length = 70000
+        start = random.randrange(0, length)
+        end = start + 10
+        return Utils.gimme_all_noids(collection)[start:end]
