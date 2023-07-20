@@ -195,7 +195,7 @@ def mail_aliases_view(request):
             loop_homepage, request, None, None
         )
 
-    file_data = reading_and_converting(this_file.json)
+    file_data = reading_and_converting(MAIL_ALIASES_PATH)
     
     if "error" in file_data:
         error = file_data
