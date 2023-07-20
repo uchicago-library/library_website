@@ -1,5 +1,5 @@
 from django.test import SimpleTestCase
-from intranethome.views import uniforming_into_list_of_dict, format_splitting
+from intranethome.views import reading_and_converting, uniforming_into_list_of_dict, format_splitting
 # Create your tests here.
 
 class test_mail_aliases_view(SimpleTestCase):
@@ -29,4 +29,9 @@ class test_mail_aliases_view(SimpleTestCase):
         self.assertEqual(format_splitting(option4_local),
                          {'local': option4_local})
         self.assertEqual(format_splitting(option5_distro), -1)
+
+    def test_reading_and_converting_error_case(self):
+        incorrect_file_url = '/intranethome/alias.json'
+        self.assertEqual(reading_and_converting(incorrect_file_url), {'error':'error'})
+        
         

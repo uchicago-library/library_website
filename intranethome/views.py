@@ -196,7 +196,7 @@ def mail_aliases_view(request):
         )
 
     file_data = reading_and_converting(MAIL_ALIASES_PATH)
-    
+        
     if "error" in file_data:
         error = file_data
 
