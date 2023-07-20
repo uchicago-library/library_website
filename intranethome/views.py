@@ -132,20 +132,20 @@ def uniforming_into_list_of_dict(notes_or_emails):
     #   {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}
 
     # selecting for option 1 or 3 in order to put them into both into lists
-        if(type(notes_or_emails) == dict):
+    if(type(notes_or_emails) == dict):
 
-            # putting each dictionary inside of a list
-            # email version:
-            # i.e. {'email': 'postmaster'} ->
-            #      [{'email': 'postmaster'}]
-            # note version:
-            # i.e. {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'} ->
-                # [{'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}]
-            return [({ k:v for (k,v) in notes_or_emails.items() })]
+    # putting each dictionary inside of a list
+    # email version:
+    # i.e. {'email': 'postmaster'} ->
+    #      [{'email': 'postmaster'}]
+    # note version:
+    # i.e. {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'} ->
+    # [{'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}]
+        return [({ k:v for (k,v) in notes_or_emails.items() })]
         
-        # selecting for option 2 to return the input as is
-        else:
-            return notes_or_emails
+    # selecting for option 2 to return the input as is
+    else:
+        return notes_or_emails
     
 def helper_function_triangle_brackets(triangle_brackets_email):
     """
