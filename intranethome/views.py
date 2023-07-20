@@ -7,11 +7,19 @@ from base.wagtail_hooks import (get_required_groups, has_permission, redirect_us
 )
 from library_website.settings import MAIL_ALIASES_PATH
 
-
-# purpose of function: reading json text and converting to python
-# input: name of file
-# output: python text from the read in file
 def reading_and_converting(name_of_file):
+    """
+    Reads json text and converts it to python
+
+    Args:
+        name_of_file: the path to the file that contains the json
+
+    Returns:
+        the json data converted to a python dictionary
+          OR
+        a dictionary in the format {'error':'error'} to indiate that the file was not found
+    """
+
     try:
         f = open(name_of_file, "r")
     except FileNotFoundError:
@@ -27,10 +35,17 @@ def reading_and_converting(name_of_file):
         data_from_file = json.loads(json_text)
         return data_from_file
 
-# purpose of function: helper function for get_list_of_aliases to move numbers to the end
-# input: the list of aliases in the original order with numbers in front
-# output: the re-ordered list of aliases
 def helper_function_order_number_aliases_last(all_aliases):
+    """
+    A helper function for the function below  which ensures that numerical aliases are ordered least to greatest at the end of the data, and the rest is sorted in abc
+
+    Args:
+        all_aliases: the unordered list of all of the aliases in the data
+
+    Returns:
+        an ordered list of the aliases
+    """
+
     list_of_numbers = []
 
     for alias in all_aliases:
@@ -43,10 +58,17 @@ def helper_function_order_number_aliases_last(all_aliases):
 
     return all_aliases
 
-# purpose of function: pulling the aliases of the data and creating an organized list
-# input: the python data from the file
-# output: a sorted list of the aliases
 def get_list_of_sorted_aliases(data_from_file):
+    """
+    The function that selects for the alias values and sorts them while ignoring capitalization
+
+    Args:
+       data_from_file: all of the data that is pulled from the json file and converted to python  
+
+    Returns:
+       a list of the fully ordered aliases after further being sorted by the helper function above
+    """
+
     aliases = list({ k for (k,v) in data_from_file.items() })
     aliases.sort(key=str.lower)
 
@@ -54,10 +76,19 @@ def get_list_of_sorted_aliases(data_from_file):
 
     return aliases
 
-# purpose of function: filtering the alias values to only return a subset of them based on user input
-# input: the full list of aliases and the value which they are filtered by
-# output: a subset of the aliases based on the filter
 def filter_by_value(original_alias_list, filter_value): 
+    """
+    Filters the complete list of aliases by letter or number based on user input
+
+    Args:
+       original_alias_list: the full value of aliases that will filtered from
+       
+       filter_value: the value that is being used as the filter (e.g. a letter like 'c', 'number' for all numerical aliases or '' to display all)
+
+    Returns:
+       a list of the filtered aliases      
+    """
+
     filtered_alias_list = []
     
     for alias in original_alias_list:
@@ -78,10 +109,16 @@ def filter_by_value(original_alias_list, filter_value):
         
     return filtered_alias_list
 
-# purpose of function: formatting the different types of data into lists of dictionaries
-# input: each individual dictionary
-# output: a formatted dictionary
-def uniforming_into_list_of_dict(note_or_email):
+def uniforming_into_list_of_dict(notes_or_emails):
+    """
+    Converts all of the emails and notes into the same format (lists of dictionaries) in order to be able to work with the data more easiily
+
+    Args:
+       notes_or_emails: a single note or email dictionary (option 1 or 3) or a list of notes and emails (option 2) that will be converted into the correct format
+
+    Returns:
+       the properly formatted list of dictionaries
+    """
     
     # option 1: single key dictionary with key = 'email' and value with a local or gobal email
     #   {'email': 'postmaster'}
@@ -95,7 +132,7 @@ def uniforming_into_list_of_dict(note_or_email):
     #   {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}
 
     # selecting for option 1 or 3 in order to put them into both into lists
-        if(type(note_or_email) == dict):
+        if(type(notes_or_emails) == dict):
 
             # putting each dictionary inside of a list
             # email version:
@@ -104,36 +141,56 @@ def uniforming_into_list_of_dict(note_or_email):
             # note version:
             # i.e. {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'} ->
                 # [{'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}]
-            return [({ k:v for (k,v) in note_or_email.items() })]
+            return [({ k:v for (k,v) in notes_or_emails.items() })]
         
         # selecting for option 2 to return the input as is
         else:
-            return note_or_email
-
-# purpose: formatting option 1
-# input: an unformatted option 1
-# output: a formatted option 1     
+            return notes_or_emails
+    
 def helper_function_triangle_brackets(triangle_brackets_email):
+    """
+    A helper function that formats trinagle brackets
+
+    Args:
+       triangle_brackets_email: an email in the format of triangle brackets
+
+    Returns:
+       a formatted dicionary of a list of the data in the triangle brackets email
+    """
+
     formatted_triangle_bracket_list = []
     formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
     formatted_triangle_bracket_list.append(triangle_brackets_email[2])
     formatted_triangle_bracket_list.append(triangle_brackets_email[0])
     return formatted_triangle_bracket_list
 
-# purpose: formatting option 2
-# input: an unformatted option 2
-# output: a formatted option 2
 def helper_function_parentheses(parentheses_email):
+    """
+    A helper function that formats parentheses emails
+
+    Args:
+       parenthese_email: an email in the format of parentheses
+
+    Returns:
+       a formatted dicionary of a list of the data in the parentheses email
+    """
+
     formatted_parentheses_email = []
     formatted_parentheses_email.append(parentheses_email[2])
     formatted_parentheses_email.append(parentheses_email[1].strip())
     formatted_parentheses_email.append(parentheses_email[0])
     return formatted_parentheses_email
 
-# purpose: coverting the formatted emails into dictionaries keyed by type with a list of values
-# input: the actual email value
-# output: a dictionary of a list of the email format
 def format_splitting(email):
+    """
+    A function that formats all of the emails in order for them to be easier to represent in the template and removes all values with 'distro-6052'
+
+    Args:
+       email: the unformatted email string
+
+    Returns:
+       a dictionary that is formatted by option 1, 2, 3, or 4 depending on the type of email it was
+    """
     
     # option 1: triangle brackets
     #   'Ariel Erbacher\t\t<aaescotese@uchicago.edu>' ->
