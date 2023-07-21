@@ -1,56 +1,17 @@
-<style>
-      .accordion {
-        background-color: #eee;
-        color: #444;
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 15px;
-        }
-    
-      .active, .accordion:hover {
-        background-color: #ccc;
-        }
-    
-      .accordion:after {
-        content: '\002B';
-        color: #777;
-        font-weight: bold;
-        float: right;
-        margin-left: 5px;
-        }
-    
-      .active:after {
-        content: "\2212";
-        }
-    
-      .panel {
-        padding: 0 18px;
-        background-color: white;
-        overflow: hidden;
-        }
-
-      ul.no-bullets {
-	  list-style-type: none;
-	  margin-top: 20px;
-	  padding: 0px;
-	  }
-
-      li.inline {  	  
-	  display: inline;
-	  margin: 5px;
-	  font-size: 18px;
-      }
-	  
-</style>
-
 <body>
 
-{% extends "base/intranet_base.html" %}
+    {% extends "base/intranet_base.html" %}
 
+    {% load static %}
+
+    {% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'intranethome/css/style.css' %}" type="text/css" />
+    
+    {{ example_form.media.css }}
+{% endblock %}
+    
 {% block body_class %}template-searchresults{% endblock %}
 
 {% block title %}Mail Aliases{% endblock %}
@@ -67,6 +28,9 @@ git{% block content %}
 
 <button class="btn btn-default" onclick="expandAll()">Expand All</button>
 <button class="btn btn-default" onclick="contractAll()">Contract All</button>
+
+<br>
+<br>
 
 <ul class="no-bullets">
 <li class="inline"><a href="/mailaliases/">All</a></li>

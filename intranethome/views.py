@@ -252,7 +252,7 @@ def mail_aliases_view(request):
             loop_homepage, request, None, None
         )
 
-    file_data = reading_and_converting(MAIL_ALIASES_PATH)
+    file_data = reading_and_converting('intranethome/aliases.json')
         
     if "error" in file_data:
         error = file_data
