@@ -22,6 +22,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
+from intranethome.views import mail_aliases_view
 
 from .api import api_router
 
@@ -53,6 +54,7 @@ urlpatterns = [
     ),
     url(r'^about/news-events/events/$', events_view, name='events'),
     url(r'^collex/$', collection_view, name='collection'),
+    url(r'^mailaliases/', mail_aliases_view, name='mail_aliases'),
     url(r'^citation_display$', citation_display, name='citation_display'),
     url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
     url(
