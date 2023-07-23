@@ -125,16 +125,18 @@ def uniforming_into_list_of_dict(notes_or_emails):
     Args:
        notes_or_emails: a single note or email dictionary (option 1 or 3) or a list of notes and emails (option 2) that will be converted into the correct format
 
-        # option 1: single key dictionary with key = 'email' and value with a local or gobal email
-        #   {'email': 'postmaster'}
+       Possible Inputs:
 
-        # option 2: list of single dictionaries with  key = 'email' and value with a single local or global email, in one of 3 formats
-        #   [{'email': 'lhauglan@midway.uchicago.edu'}, ..., {'email': 'd-larsen@uchicago.edu'}]
-        #   [{'email': 'fierrom@uchicago.edu (Maria Fierro)'}, ..., {'email': 'hartj@uchicago.edu (Jenny Hart)'}]
-        #   [{'email': 'Ariel Erbacher\t\t<aaescotese@uchicago.edu>'}, ..., {'email': 'Amy Boucher\t\t<aebouch@emory.edu>'}]
+          option 1: single key dictionary with key = 'email' and value with a local or gobal email
+            {'email': 'postmaster'}
 
-        # option 3: dictionary with key = 'note'
-        #   {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}
+          option 2: list of single dictionaries with  key = 'email' and value with a single local or global email, in one of 3 formats
+            [{'email': 'lhauglan@midway.uchicago.edu'}, ..., {'email': 'd-larsen@uchicago.edu'}]
+            [{'email': 'fierrom@uchicago.edu (Maria Fierro)'}, ..., {'email': 'hartj@uchicago.edu (Jenny Hart)'}]
+            [{'email': 'Ariel Erbacher\t\t<aaescotese@uchicago.edu>'}, ..., {'email': 'Amy Boucher\t\t<aebouch@emory.edu>'}]
+
+          option 3: dictionary with key = 'note'
+            {'note': 'emails go to command: "|/usr/local/mailman/mail/mailman post access-ip'}
 
     Returns:
        the properly formatted list of dictionaries
@@ -200,21 +202,23 @@ def format_splitting(email):
     Args:
        email: the unformatted email string
 
-       # option 1: triangle brackets
-       #   'Ariel Erbacher\t\t<aaescotese@uchicago.edu>' ->
-       #   {'triangle_brackets': ['Ariel Erbacher', 'aaescotese@uchicago.edu', 'Ariel Erbacher\t\t<aaescotese@uchicago.edu>']}
+       Possible Inputs:
 
-       # option 2: parentheses
-       #   'hartj@uchicago.edu (Jenny Hart)' ->
-       #   {'parentheses': ['Jenny Hart', 'hartj@uchicago.edu', 'hartj@uchicago.edu (Jenny Hart)']}
+         option 1: triangle brackets
+           'Ariel Erbacher\t\t<aaescotese@uchicago.edu>' ->
+           {'triangle_brackets': ['Ariel Erbacher', 'aaescotese@uchicago.edu', 'Ariel Erbacher\t\t<aaescotese@uchicago.edu>']}
 
-       # option 3: plain email
-       #   'lhauglan@midway.uchicago.edu' ->
-       #   {'plain_email': 'lhauglan@midway.uchicago.edu'}
+         option 2: parentheses
+           'hartj@uchicago.edu (Jenny Hart)' ->
+           {'parentheses': ['Jenny Hart', 'hartj@uchicago.edu', 'hartj@uchicago.edu (Jenny Hart)']}
 
-       # option 4: local email
-       #   'postmaster' ->
-       #   {'local': 'postmaster'}
+         option 3: plain email
+           'lhauglan@midway.uchicago.edu' ->
+           {'plain_email': 'lhauglan@midway.uchicago.edu'}
+
+         option 4: local email
+           'postmaster' ->
+           {'local': 'postmaster'}
 
     Returns:
        a dictionary that is formatted by option 1, 2, 3, or 4 depending on the type of email it was
