@@ -6,9 +6,6 @@ from intranethome.views import (
     uniforming_into_list_of_dict,
 )
 
-# Create your tests here.
-
-
 class test_mail_aliases_view(SimpleTestCase):
     def test_uniforming_into_list_of_dict(self):
         option1 = {"email": "email@email.uchicago.edu"}
