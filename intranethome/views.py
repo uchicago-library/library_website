@@ -28,6 +28,10 @@ def reading_and_converting(name_of_file):
 
     try:
         f = open(name_of_file, "r")
+        json_text = f.read()
+        f.close()    
+        data_from_file = json.loads(json_text)
+        return data_from_file
     except FileNotFoundError as e:
         logging.log(str(e))
         return {"error": "error"}
@@ -37,12 +41,6 @@ def reading_and_converting(name_of_file):
     except JSONDecodeError as e:
         logging.log(str(e))
         return {"error": "error"}
-    else:
-        json_text = f.read()
-        f.close()    
-        data_from_file = json.loads(json_text)
-        return data_from_file
-
 
 def helper_function_order_number_aliases_last(all_aliases):
     """
