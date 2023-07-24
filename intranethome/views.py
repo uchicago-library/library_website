@@ -38,7 +38,7 @@ def reading_and_converting(name_of_file):
     except IOError as e:
         logging.log(str(e))
         return {"error": "error"}
-    except JSONDecodeError as e:
+    except json.JSONDecodeError as e:
         logging.log(str(e))
         return {"error": "error"}
 
