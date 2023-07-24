@@ -11,7 +11,7 @@ from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from wagtail.models import Site
 import logging
-
+logging.basicConfig(level=logging.ERROR)
 
 def reading_and_converting(name_of_file):
     """
