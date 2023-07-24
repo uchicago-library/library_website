@@ -6,6 +6,7 @@ from intranethome.views import (
     uniforming_into_list_of_dict,
 )
 
+
 class test_mail_aliases_view(SimpleTestCase):
     def test_uniforming_into_list_of_dict(self):
         option1 = {"email": "email@email.uchicago.edu"}
@@ -46,14 +47,11 @@ class test_mail_aliases_view(SimpleTestCase):
             },
         )
         self.assertEqual(
-            format_splitting(option3_plain_email), {
-                "plain_email": option3_plain_email}
+            format_splitting(option3_plain_email), {"plain_email": option3_plain_email}
         )
-        self.assertEqual(format_splitting(option4_local),
-                         {"local": option4_local})
+        self.assertEqual(format_splitting(option4_local), {"local": option4_local})
         self.assertEqual(format_splitting(option5_distro), -1)
 
     def test_reading_and_converting_error_case(self):
         incorrect_file_url = "/intranethome/alias.json"
-        self.assertEqual(reading_and_converting(
-            incorrect_file_url), {"error": "error"})
+        self.assertEqual(reading_and_converting(incorrect_file_url), {"error": "error"})
