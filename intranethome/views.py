@@ -11,7 +11,7 @@ from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from wagtail.models import Site
 import logging
-logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 def reading_and_converting(name_of_file):
     """
@@ -33,13 +33,13 @@ def reading_and_converting(name_of_file):
         data_from_file = json.loads(json_text)
         return data_from_file
     except FileNotFoundError as e:
-        logging.error(str(e))
+        logger.error(str(e))
         return {"error": "error"}
     except IOError as e:
-        logging.error(str(e))
+        logger.error(str(e))
         return {"error": "error"}
     except json.JSONDecodeError as e:
-        logging.error(str(e))
+        logger.error(str(e))
         return {"error": "error"}
 
 def helper_function_order_number_aliases_last(all_aliases):
