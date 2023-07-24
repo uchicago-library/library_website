@@ -289,10 +289,10 @@ def mail_aliases_view(request):
         url = request.get_full_path()
 
         # pulls *the_filter_value* out
-        try:
-            alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
-        except None:
-            alias_filter = ""
+        # try:
+        alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
+        # except None:
+        # alias_filter = ""
 
         # returns a 404 if the filter is not either
         #   1. nothing (indicating no filter)
