@@ -25,20 +25,19 @@ def reading_and_converting(name_of_file):
         a dictionary in the format {'error':'error'} to indiate that the file was not found
     """
 
-    try:
-        f = open(name_of_file, "r")
-    except FileNotFoundError:
+    #try:
+    f = open(name_of_file, "r")
+   # except FileNotFoundError:
         # todo: log this error
-        return {"error": "error"}
-    except IOError:
+    #    return {"error": "error"}
+    #except IOError:
         # todo: log this error
-        return {"error": "error"}
-    else:
-        json_text = f.read()
-        f.close()
-
-        data_from_file = json.loads(json_text)
-        return data_from_file
+     #   return {"error": "error"}
+    #else:
+    json_text = f.read()
+    f.close()    
+    data_from_file = json.loads(json_text)
+    return data_from_file
 
 
 def helper_function_order_number_aliases_last(all_aliases):
@@ -289,10 +288,7 @@ def mail_aliases_view(request):
         url = request.get_full_path()
 
         # pulls *the_filter_value* out
-        # try:
         alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
-        # except None:
-        # alias_filter = ""
 
         # returns a 404 if the filter is not either
         #   1. nothing (indicating no filter)
