@@ -39,7 +39,7 @@ def reading_and_converting(name_of_file):
         logging.log(str(e))
         return {"error": "error"}
     except json.JSONDecodeError as e:
-        logging.log(str(e))
+        logging.log(1, str(e))
         return {"error": "error"}
 
 def helper_function_order_number_aliases_last(all_aliases):
