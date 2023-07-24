@@ -278,7 +278,7 @@ def mail_aliases_view(request):
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
 
-    file_data = reading_and_converting(MAIL_ALIASES_PATH)
+    file_data = reading_and_converting('chicken.json')
 
     if "error" in file_data:
         error = file_data
