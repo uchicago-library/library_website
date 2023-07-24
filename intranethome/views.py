@@ -10,8 +10,6 @@ from django.http import Http404
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from wagtail.models import Site
-import logging
-logger = logging.getLogger(__name__)
 
 def reading_and_converting(name_of_file):
     """
@@ -32,14 +30,14 @@ def reading_and_converting(name_of_file):
         f.close()    
         data_from_file = json.loads(json_text)
         return data_from_file
-    except FileNotFoundError as e:
-        logger.error(str(e))
+    except FileNotFoundError:
+        #todo logging
         return {"error": "error"}
-    except IOError as e:
-        logger.error(str(e))
+    except IOError:
+        #todo logging
         return {"error": "error"}
-    except json.JSONDecodeError as e:
-        logger.error(str(e))
+    except json.JSONDecodeError:
+        #todo logging
         return {"error": "error"}
 
 def helper_function_order_number_aliases_last(all_aliases):
@@ -279,7 +277,7 @@ def mail_aliases_view(request):
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
 
-    file_data = reading_and_converting('/tmp/chicken.json')
+    file_data = reading_and_converting(MAIL_ALIASES_PATH)
 
     if "error" in file_data:
         error = file_data
