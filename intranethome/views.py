@@ -10,6 +10,7 @@ from django.http import Http404
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from wagtail.models import Site
+import logging
 
 
 def reading_and_converting(name_of_file):
@@ -25,19 +26,22 @@ def reading_and_converting(name_of_file):
         a dictionary in the format {'error':'error'} to indiate that the file was not found
     """
 
-    #try:
-    f = open(name_of_file, "r")
-   # except FileNotFoundError:
-        # todo: log this error
-    #    return {"error": "error"}
-    #except IOError:
-        # todo: log this error
-     #   return {"error": "error"}
-    #else:
-    json_text = f.read()
-    f.close()    
-    data_from_file = json.loads(json_text)
-    return data_from_file
+    try:
+        f = open(name_of_file, "r")
+    except FileNotFoundError as e:
+        logging.log(str(e))
+        return {"error": "error"}
+    except IOError as e:
+        logging.log(str(e))
+        return {"error": "error"}
+    except JSONDecodeError as e:
+        logging.log(str(e))
+        return {"error": "error"}
+    else:
+        json_text = f.read()
+        f.close()    
+        data_from_file = json.loads(json_text)
+        return data_from_file
 
 
 def helper_function_order_number_aliases_last(all_aliases):
