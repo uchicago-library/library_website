@@ -21,6 +21,8 @@ WAGTAILADMIN_BASE_URL = 'https://www.lib.uchicago.edu'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
+WAGTAIL_ENABLE_UPDATE_CHECK = 'lts'
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition

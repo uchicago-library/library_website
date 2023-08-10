@@ -1,9 +1,8 @@
 from base.views import chat_status, external_include, json_events, json_hours
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
 from django.views.generic.base import RedirectView
 from events.views import events as events_view
 from item_servlet.views import item_servlet
@@ -27,43 +26,43 @@ from intranethome.views import mail_aliases_view
 from .api import api_router
 
 urlpatterns = [
-    url(r'^django-admin/', admin.site.urls),
-    url(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
-    url(r'^admin/', include(wagtailadmin_urls)),
-    url(r'^documents/', include(wagtaildocs_urls)),
-    url(r'^navigation-elements/', navigation_view, name='navigation-view'),
-    url(r'^json-hours/', json_hours, name='json-hours'),
-    url(r'^json-events/', json_events, name='json-events'),
-    url(r'^external-include/', external_include, name='external-include'),
-    url(r'^chat-status/', chat_status, name='chat-status'),
-    url(r'^item-servlet/', item_servlet, name='item-servlet'),
-    url(r'^results/$', results_view, name='results'),
-    url(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
-    url(r'^loop-search/$', search_view, name='search'),
-    url(r'^ebooks-search/$', ebooks_search, name='ebooks'),
-    url(r'^api/v2/', api_router.urls),
-    url('^inventory\.xml$', sitemap),
-    url(r'^spaces/$', spaces_view, name='spaces'),
-    url(r'^staff/$', staff, name='staff'),
-    url(r'^staff_api/$', staff_api, name='staff_api'),
-    url(r'^about/directory/$', unit_view, name='unit'),
-    url(r'^switchboard/$', switchboard, name='switchboard'),
-    url(
+    re_path(r'^django-admin/', admin.site.urls),
+    re_path(r'^shib/', include('shibboleth.urls', namespace='shibboleth')),
+    re_path(r'^admin/', include(wagtailadmin_urls)),
+    re_path(r'^documents/', include(wagtaildocs_urls)),
+    re_path(r'^navigation-elements/', navigation_view, name='navigation-view'),
+    re_path(r'^json-hours/', json_hours, name='json-hours'),
+    re_path(r'^json-events/', json_events, name='json-events'),
+    re_path(r'^external-include/', external_include, name='external-include'),
+    re_path(r'^chat-status/', chat_status, name='chat-status'),
+    re_path(r'^item-servlet/', item_servlet, name='item-servlet'),
+    re_path(r'^results/$', results_view, name='results'),
+    re_path(r'^ltdrfr/$', ltdrfr, name='ltdrfr'),
+    re_path(r'^loop-search/$', search_view, name='search'),
+    re_path(r'^ebooks-search/$', ebooks_search, name='ebooks'),
+    re_path(r'^api/v2/', api_router.urls),
+    re_path('^inventory\.xml$', sitemap),
+    re_path(r'^spaces/$', spaces_view, name='spaces'),
+    re_path(r'^staff/$', staff, name='staff'),
+    re_path(r'^staff_api/$', staff_api, name='staff_api'),
+    re_path(r'^about/directory/$', unit_view, name='unit'),
+    re_path(r'^switchboard/$', switchboard, name='switchboard'),
+    re_path(
         r'^about/directory/staff/$',
         RedirectView.as_view(url='/about/directory/?view=staff')
     ),
-    url(r'^about/news-events/events/$', events_view, name='events'),
-    url(r'^collex/$', collection_view, name='collection'),
-    url(r'^mailaliases/', mail_aliases_view, name='mail_aliases'),
-    url(r'^citation_display$', citation_display, name='citation_display'),
-    url(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
-    url(
+    re_path(r'^about/news-events/events/$', events_view, name='events'),
+    re_path(r'^collex/$', collection_view, name='collection'),
+    re_path(r'^mailaliases/', mail_aliases_view, name='mail_aliases'),
+    re_path(r'^citation_display$', citation_display, name='citation_display'),
+    re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    re_path(
         r'^collex/exhibits/$',
         RedirectView.as_view(url='/collex/?view=exhibits')
     ),
-    url(r'^workflowautomator/', include('workflowautomator.urls')),
-    url(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
-    url(r'', include(wagtail_urls)),
+    re_path(r'^workflowautomator/', include('workflowautomator.urls')),
+    re_path(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
+    re_path(r'', include(wagtail_urls)),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )
@@ -71,7 +70,7 @@ urlpatterns = [
 # Prepend the shibboleth logout url if the application
 # is configured for shibboleth
 # if settings.SHIBBOLETH_LOGOUT_URL:
-#    urlpatterns.insert(0, url(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
+#    urlpatterns.insert(0, re_path(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
 
 if settings.DEBUG:
     from django.conf.urls.static import static

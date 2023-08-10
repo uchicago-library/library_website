@@ -19,3 +19,5 @@ library_website/settings/database.db
 
 .vagrant/
 /.vagrant/
+
+src

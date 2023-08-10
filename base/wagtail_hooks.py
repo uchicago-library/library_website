@@ -1,11 +1,10 @@
 import csv
 
 from django.conf import settings
-from django.conf.urls import url
 from django.templatetags.static import static
 from django.http import StreamingHttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.urls import reverse, re_path
 from django.utils.html import format_html
 from wagtail.admin.menu import MenuItem
 from wagtail import hooks
@@ -132,7 +131,7 @@ def admin_view(request):
 @hooks.register('register_admin_urls')
 def urlconf_time():
     return [
-        url(r'^page_owners_report/$', admin_view, name='page_owners_report')
+        re_path(r'^page_owners_report/$', admin_view, name='page_owners_report')
     ]
 
 

@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20230524.0.0"
+  config.vm.box_version = "20230720.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -52,6 +52,55 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.cpus = 8
 
     up_message = <<-MSG
+
+    Linting for Python and React
+    ============================
+
+    Lint Python files with isort, autopep8, and black. Lint React Javascript
+    using eslint. This can be done here using Vim or in your editor of choice.
+    Look at ~/.vimrc to see relevant settings (you will need to configure your
+    editor in a similar way). Linting can also be done on the command line:
+
+    isort path/to/source_file.py
+    autopep8 --in-place path/to/source_file.py
+    black path/to/source_file.py
+
+    Linting HTML files and Wagtail / Django templates
+    =================================================
+
+    Template files should be linted with curlyling and djhtml. Curlylint catches
+    syntax errors but does not automatically fix them. You will need to do that.
+    Djhtml applies indentation.
+
+    curlylint --parse-only path/to/template_file.html
+    djhtml -i path/to/template_file.html
+
+    Generating fixtures
+    ===================
+
+    If you make changes to the dev database that you'd like to preseve, this can
+    be done by generating fixtures:
+
+    ./manage.py dumpdata --natural-foreign --natural-primary --exclude wagtailcore.GroupCollectionPermission > base/fixtures/test.json
+
+    The file will need to be saved and checked into version control.
+
+    Run unit tests
+    ==============
+
+    ./manage.py test --parallel
+
+    Run the dev server
+    ==================
+
+    ./manage.py runserver 0.0.0.0:8000
+
+    If you add these lines to the /etc/hosts file on your host machine, you can
+    see the site at http://wwwdev:8000/ (and loopdev respectively). This is
+    useful for distinguising between loop and the public site in dev:
+
+    127.0.0.1 wwwdev
+    127.0.0.1 loopdev
 
     WRITE SOME CODE!!!
          ___________________________            ____

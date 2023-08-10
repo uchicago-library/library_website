@@ -2,16 +2,16 @@ bleach==3.3.0
 DateTime>=4,<5
 defusedxml
 -e git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python
-Django==3.2.15
+Django==4.1.10
 django-appconf==1.0.4
 django-bleach==0.6.1
-django-compressor==2.4
-django-cors-headers==3.2.1
+django-compressor>=4.0,<5.0
+django-cors-headers>=4.2,<5
 django-libsass
-django-localflavor==1.2
+django-localflavor>=4.0,<5.0.0
 django-macros==0.4.0
 django-redis
--e git+https://github.com/Brown-University-Library/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
+-e git+https://github.com/rev138/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
 django-static-precompiler
 django-webpack-loader==1.8.0
 elasticsearch>=6.4.0,<7.0.0
@@ -26,12 +26,11 @@ pocli==0.1.10
 psycopg2
 Pygments==2.7.4
 python-dateutil
-rjsmin==1.1.0
 simplejson==3.11.1
 sqlparse==0.3.1
 Unidecode==1.1.1
 urllib3==1.26.5
-wagtail==4.0.2
+wagtail==4.1.6
 wagtailmedia==0.11.0
 wagtail-cache==2.2.0
 wheel==0.24.0
