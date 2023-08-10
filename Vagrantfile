@@ -59,7 +59,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     Lint Python files with isort, autopep8, and black. Lint React Javascript
     using eslint. This can be done here using Vim or in your editor of choice.
     Look at ~/.vimrc to see relevant settings (you will need to configure your
-    editor in a similar way).
+    editor in a similar way). Linting can also be done on the command line:
+
+    isort path/to/source_file.py
+    autopep8 --in-place path/to/source_file.py
+    black path/to/source_file.py
 
     Linting HTML files and Wagtail / Django templates
     =================================================
