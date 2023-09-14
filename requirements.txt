@@ -14,7 +14,7 @@ django-redis
 -e git+https://github.com/rev138/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
 django-static-precompiler
 django-webpack-loader==1.8.0
-elasticsearch>=6.4.0,<7.0.0
+elasticsearch>=7.0.0,<8.0.0
 libsass
 lxml
 networkx
