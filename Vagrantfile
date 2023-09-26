@@ -144,9 +144,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     export DEBIAN_FRONTEND=noninteractive
 
     echo "============== Installing NVM and NodeJS =============="
-    export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-    curl -sL https://deb.nodesource.com/setup_18.x | bash -
-    apt-get install -y nodejs
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    NODE_MAJOR=18
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+    apt-get update
+    apt-get install nodejs -y
     su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
     npm install eslint
     npm i prettier eslint-plugin-prettier eslint-config-prettier
@@ -225,11 +227,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Elasticsearch
     echo ""
     echo "============== Downloading Elasticsearch =============="
-    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.8.23.deb
-    dpkg -i elasticsearch-6.8.23.deb
+    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb
+    dpkg -i elasticsearch-7.17.13-amd64.deb
     # reduce JVM heap size from 2g to 512m
     sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
-    rm elasticsearch-6.8.23.deb
+    rm elasticsearch-7.17.13-amd64.deb
 
     # Create a Python virtualenv
     echo ""
