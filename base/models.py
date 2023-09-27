@@ -44,6 +44,7 @@ from wagtail.admin.panels import (
     PageChooserPanel,
     TabbedInterface,
 )
+from wagtail.api import APIField
 from wagtail.blocks import (
     BooleanBlock,
     CharBlock,
@@ -1452,6 +1453,10 @@ class BasePage(BasePageWithoutStaffPageForeignKeys, StaffPageForeignKeys):
         BasePageWithoutStaffPageForeignKeys.content_panels
         + StaffPageForeignKeys.content_panels
     )
+
+    api_fields = [
+        APIField('body'),
+    ]
 
     class Meta:
         abstract = True
