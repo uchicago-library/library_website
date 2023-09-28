@@ -1454,9 +1454,7 @@ class BasePage(BasePageWithoutStaffPageForeignKeys, StaffPageForeignKeys):
         + StaffPageForeignKeys.content_panels
     )
 
-    api_fields = [
-        APIField('body'),
-    ]
+    api_fields = []
 
     class Meta:
         abstract = True
@@ -1610,6 +1608,11 @@ follow a strict schema. Contact DLDC for help with this',
             ],
             heading='Page Management',
         ),
+    ]
+
+    api_fields = BasePage.api_fields + [
+        APIField('quicklinks_title'),
+        APIField('quicklinks'),
     ]
 
     left_sidebar_panels = BasePage.left_sidebar_panels
