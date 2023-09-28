@@ -232,6 +232,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # reduce JVM heap size from 2g to 512m
     sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
     rm elasticsearch-7.17.13-amd64.deb
+    echo "xpack.security.enabled: false" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 
     # Create a Python virtualenv
     echo ""
