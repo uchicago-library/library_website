@@ -44,6 +44,7 @@ from wagtail.admin.panels import (
     PageChooserPanel,
     TabbedInterface,
 )
+from wagtail.api import APIField
 from wagtail.blocks import (
     BooleanBlock,
     CharBlock,
@@ -1453,6 +1454,8 @@ class BasePage(BasePageWithoutStaffPageForeignKeys, StaffPageForeignKeys):
         + StaffPageForeignKeys.content_panels
     )
 
+    api_fields = []
+
     class Meta:
         abstract = True
 
@@ -1605,6 +1608,11 @@ follow a strict schema. Contact DLDC for help with this',
             ],
             heading='Page Management',
         ),
+    ]
+
+    api_fields = BasePage.api_fields + [
+        APIField('quicklinks_title'),
+        APIField('quicklinks'),
     ]
 
     left_sidebar_panels = BasePage.left_sidebar_panels
