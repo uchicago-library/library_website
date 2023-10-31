@@ -115,7 +115,7 @@ and run `./manage.py wagtail_update_image_renditions`.
 
 ## Pushing to Production
 - ssh to motacilla
-- `cd /data/motacilla/ ; source venv3.7/bin/activate ; cd sites/library_website`
+- `cd /data/motacilla/ ; source venv3.9/bin/activate ; cd sites/library_website`
 - `git remote update`
 - `git status`
 - `git pull origin master`
