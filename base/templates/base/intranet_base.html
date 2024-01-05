@@ -17,6 +17,15 @@
     {% endblock %} 
   </title>
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7CS8BD4F7F"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7CS8BD4F7F ');
+  </script>
+
   {% if request.in_preview_panel %}
     <base target="_blank">
   {% endif %}
@@ -151,7 +160,7 @@
   <footer class="container-fluid footer" role="contentinfo"> 
     <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="/static/base/images/color-logo.png" alt="Loop logo"></a></span>
       <ul>
-        <li><a href="http://www.lib.uchicago.edu/cgi-bin/mail-aliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
+        <li><a href="/mailaliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
         <li><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>
         <!--<li class="divider-vertical"><a href="#"><span class="hidden-xs">Library Building </span>Addresses</a></li>-->
         <li><a href="mailto:intranet@lib.uchicago.edu">Contact <span class="hidden-xs">Site Maintainer</span></a></li>

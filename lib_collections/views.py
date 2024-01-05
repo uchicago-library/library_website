@@ -101,7 +101,7 @@ def collections(request):
             **filter_arguments
         ).distinct().select_related('thumbnail').prefetch_related(
             'collection_subject_placements'
-        )
+        ).reverse()
 
         # sort browses by title, omitting leading articles.
         if not search:

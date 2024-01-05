@@ -3,3 +3,8 @@
 .hallotoolbar button[title="Embed"]  { 
     display: none; 
 }
+
+/* Prevent location booleans from running off the screen*/
+.location-booleans .w-field-row {
+    display: flex;
+}

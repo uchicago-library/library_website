@@ -200,7 +200,7 @@ html, body {
             margin-top: 5px;
             a {
                 color: #725663;
-                font-family: 'ProximaNova-Semibold';
+                font-family: Helvetica, Arial, sans-serif; 
                 font-size: 1.1em;
             }
             &>ul>li {
@@ -208,7 +208,7 @@ html, body {
                 margin-bottom: 1em;
                 a {
                     color: #5b5b5b;
-                    font-family: 'ProximaNova-Regular';
+                    font-family: Helvetica, Arial, sans-serif; 
                     font-size: 1em;
                 }
                 &:last-child {

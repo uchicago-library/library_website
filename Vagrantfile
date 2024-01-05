@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20220902.0.0"
+  config.vm.box_version = "20230720.0.0"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -53,6 +53,55 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     up_message = <<-MSG
 
+    Linting for Python and React
+    ============================
+
+    Lint Python files with isort, autopep8, and black. Lint React Javascript
+    using eslint. This can be done here using Vim or in your editor of choice.
+    Look at ~/.vimrc to see relevant settings (you will need to configure your
+    editor in a similar way). Linting can also be done on the command line:
+
+    isort path/to/source_file.py
+    autopep8 --in-place path/to/source_file.py
+    black path/to/source_file.py
+
+    Linting HTML files and Wagtail / Django templates
+    =================================================
+
+    Template files should be linted with curlyling and djhtml. Curlylint catches
+    syntax errors but does not automatically fix them. You will need to do that.
+    Djhtml applies indentation.
+
+    curlylint --parse-only path/to/template_file.html
+    djhtml -i path/to/template_file.html
+
+    Generating fixtures
+    ===================
+
+    If you make changes to the dev database that you'd like to preseve, this can
+    be done by generating fixtures:
+
+    ./manage.py dumpdata --natural-foreign --natural-primary --exclude wagtailcore.GroupCollectionPermission > base/fixtures/test.json
+
+    The file will need to be saved and checked into version control.
+
+    Run unit tests
+    ==============
+
+    ./manage.py test --parallel
+
+    Run the dev server
+    ==================
+
+    ./manage.py runserver 0.0.0.0:8000
+
+    If you add these lines to the /etc/hosts file on your host machine, you can
+    see the site at http://wwwdev:8000/ (and loopdev respectively). This is
+    useful for distinguising between loop and the public site in dev:
+
+    127.0.0.1 wwwdev
+    127.0.0.1 loopdev
+
     WRITE SOME CODE!!!
          ___________________________            ____
     ...  \____DLDC_220_________|_// __=*=__.--"----"--._________
@@ -63,7 +112,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     MAKE IT SO!!!
     MSG
 
-config.vm.post_up_message = up_message
+    config.vm.post_up_message = up_message
   end
   #
   # View the documentation for the provider you are using for more
@@ -79,14 +128,34 @@ config.vm.post_up_message = up_message
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
+
+  # Normal provisioning
   config.vm.provision "shell", inline: <<-SHELL
+
+    # Force the build to fail if a command fails
+    set -e
 
     PROJECT_DIR=/vagrant
     VIRTUALENV_DIR=/home/vagrant/lw
     PYTHON=$VIRTUALENV_DIR/bin/python
+    VAGRANT_HOME=/home/vagrant
 
     # Silence "dpkg-preconfigure: unable to re-open stdin" warnings
     export DEBIAN_FRONTEND=noninteractive
+
+    echo "============== Installing NVM and NodeJS =============="
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    NODE_MAJOR=18
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+    apt-get update
+    apt-get install nodejs -y
+    su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
+    npm install eslint
+    npm i prettier eslint-plugin-prettier eslint-config-prettier
+    npm install eslint-config-airbnb
+    npm install -g install-peerdeps -y
+    cd /vagrant/
+    npm install
 
     # Create the django error log
     echo "============== Creating /var/log/django-errors.log =============="
@@ -114,10 +183,19 @@ config.vm.post_up_message = up_message
 
     # Install Wagtail dependencies and useful dev tools
     echo -e ""
-    echo "============== Installing Wagtail dependencies and useful dev tools =============="
+    echo "============== Installing Wagtail dependencies and setting up useful dev tools =============="
     apt-get install -y vim git curl gettext build-essential
+    mkdir -p $VAGRANT_HOME/.vim/pack/git-plugins/start
+    git clone --depth 1 https://github.com/dense-analysis/ale.git $VAGRANT_HOME/.vim/pack/git-plugins/start/ale
     apt-get install -y libjpeg-dev libtiff-dev zlib1g-dev libfreetype6-dev liblcms2-dev libllvm11
     apt-get install -y redis-server postgresql libpq-dev
+    touch $VAGRANT_HOME/.vimrc
+    echo "let g:ale_linters_explicit = 1" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_linters = { 'python': ['flake8'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_flake8_options = '--ignore=D100,D101,D202,D204,D205,D400,D401,E303,E501,W503,N805,N806'" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_black_options = '--skip-string-normalization'" >> $VAGRANT_HOME/.vimrc
+    echo "let g:ale_python_isort_options = '--profile black'" >> $VAGRANT_HOME/.vimrc
 
     # Install UChicago dependencies
     echo ""
@@ -139,12 +217,6 @@ config.vm.post_up_message = up_message
     pip3 install poetry Fabric
     pip3 install virtualenv
 
-    # NVM and Node JS
-    echo ""
-    echo "============== Installing NVM and NodeJS =============="
-    su - vagrant -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash"
-    su - vagrant -c "export NVM_DIR=\$HOME/.nvm && \. \$NVM_DIR/nvm.sh && nvm install 12.16"
-
     # Create a Postgres user and database
     echo ""
     echo "============== Creating Postgres user and database =============="
@@ -155,11 +227,12 @@ config.vm.post_up_message = up_message
     # Elasticsearch
     echo ""
     echo "============== Downloading Elasticsearch =============="
-    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.8.23.deb
-    dpkg -i elasticsearch-6.8.23.deb
+    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb
+    dpkg -i elasticsearch-7.17.13-amd64.deb
     # reduce JVM heap size from 2g to 512m
     sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
-    rm elasticsearch-6.8.23.deb
+    rm elasticsearch-7.17.13-amd64.deb
+    echo "xpack.security.enabled: false" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 
     # Create a Python virtualenv
     echo ""
@@ -180,6 +253,13 @@ config.vm.post_up_message = up_message
     echo "============== Starting Elasticsearch =============="
     systemctl enable elasticsearch
     systemctl start elasticsearch
+
+    # Make a static directory if one does not exist
+    echo ""
+    echo "============== Make static directories if needed =============="
+    echo "..."
+    mkdir -p static
+    mkdir -p library_website/static # I have no idea why this is needed. It shouldn't be.
 
     # Remove packages we don't need
     echo ""
@@ -216,5 +296,13 @@ config.vm.post_up_message = up_message
     echo "============== Fixing git permissions =============="
     echo "..."
     sudo chown -R vagrant /home/vagrant
+
+    # Add some dev sweetness
+    echo ""
+    echo "============== Simplicity for developers =============="
+    echo "..."
+    echo "source lw/bin/activate" >> /home/vagrant/.bashrc
+    echo "cd /vagrant/" >> /home/vagrant/.bashrc
+    echo "export PATH=\"/vagrant/node_modules/.bin:$PATH\"" >> /home/vagrant/.bashrc
   SHELL
 end

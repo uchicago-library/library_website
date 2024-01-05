@@ -1,23 +1,34 @@
 import base64
 import json
 from http.client import HTTPSConnection
+from tempfile import NamedTemporaryFile
 
 import requests
 from django.utils.text import slugify
 from library_website.settings import (
-    ADDRESS_TEMPLATE, CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE,
-    HOURS_PAGE, HOURS_TEMPLATE, LIBCAL_IID, MANSUETO_HOMEPAGE, SCRC_HOMEPAGE,
-    SSA_HOMEPAGE
+    ADDRESS_TEMPLATE,
+    CRERAR_HOMEPAGE,
+    DANGELO_HOMEPAGE,
+    ECKHART_HOMEPAGE,
+    HOURS_PAGE,
+    HOURS_TEMPLATE,
+    LIBCAL_IID,
+    MANSUETO_HOMEPAGE,
+    SCRC_HOMEPAGE,
+    SSA_HOMEPAGE,
 )
-from wagtail.models import Page
 from wagtail.documents.models import Document
+from wagtail.models import Page
 
 try:
     from library_website.settings.local import (
-        DIRECTORY_PASSWORD, DIRECTORY_USERNAME, DIRECTORY_WEB_SERVICE
+        DIRECTORY_PASSWORD,
+        DIRECTORY_USERNAME,
+        DIRECTORY_WEB_SERVICE,
     )
 except (ImportError):
     import os
+
     DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
     DIRECTORY_WEB_SERVICE = os.environ['DIRECTORY_WEB_SERVICE']
     DIRECTORY_PASSWORD = os.environ['DIRECTORY_PASSWORD']
@@ -51,8 +62,11 @@ def get_json_for_library(lid):
         string, json
     """
     json = requests.get(
-        'https://api3.libcal.com/api_hours_today.php?iid=' + str(LIBCAL_IID) +
-        '&lid=' + str(lid) + '&format=json'
+        'https://api3.libcal.com/api_hours_today.php?iid='
+        + str(LIBCAL_IID)
+        + '&lid='
+        + str(lid)
+        + '&format=json'
     ).json()
 
     if json:
@@ -74,8 +88,13 @@ def get_json_for_libraries(lids):
         dict, json data
     """
     lids = ','.join([str(i) for i in lids])
-    url = 'https://api3.libcal.com/api_hours_today.php?iid=' + \
-        str(LIBCAL_IID) + '&lids=' + str(lids) + '&format=json'
+    url = (
+        'https://api3.libcal.com/api_hours_today.php?iid='
+        + str(LIBCAL_IID)
+        + '&lids='
+        + str(lids)
+        + '&format=json'
+    )
 
     try:
         jdict = requests.get(url, timeout=12).json()
@@ -131,14 +150,13 @@ def get_all_building_hours():
         list of strings.
     """
     from public.models import LocationPage
+
     buildings = list(
         (str(p), p.libcal_library_id)
         for p in LocationPage.objects.live().filter(is_building=True)
         if p.libcal_library_id is not None
     )
-    return list(
-        HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings
-    )
+    return list(HOURS_TEMPLATE % (b[0], get_hours_by_id(b[1])) for b in buildings)
 
 
 # def get_building_hours_and_lid_DEPRECATED():
@@ -197,6 +215,7 @@ def get_building_hours_and_lid(current_site):
         hours and locations page.
     """
     from public.models import LocationPage
+
     buildings = []
     llids = []
     library_data = {}
@@ -216,9 +235,7 @@ def get_building_hours_and_lid(current_site):
     for page in library_hours['locations']:
         llid = int(page['lid'])
         if llid in llids:
-            hours = HOURS_TEMPLATE % (
-                page['name'], process_hours(page['rendered'])
-            )
+            hours = HOURS_TEMPLATE % (page['name'], process_hours(page['rendered']))
             buildings.append((str(llid), str(hours), library_data[llid]['url']))
     return buildings
 
@@ -291,6 +308,7 @@ def get_hours_and_location(obj):
         # hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
     except (AttributeError):
         from units.utils import get_default_unit
+
         unit = get_default_unit()
         location = fallback = unit.location
         libcalid = fallback.libcal_library_id
@@ -304,16 +322,12 @@ def get_hours_and_location(obj):
 
     # Return everything at once
     return {
-        'page_location':
-        location,
-        'page_unit':
-        unit,
+        'page_location': location,
+        'page_unit': unit,
         # 'hours': hours,
-        'libcalid':
-        libcalid,
-        'address':
-        ADDRESS_TEMPLATE %
-        (address, location.city, location.state, str(location.postal_code))
+        'libcalid': libcalid,
+        'address': ADDRESS_TEMPLATE
+        % (address, location.city, location.state, str(location.postal_code)),
     }
 
 
@@ -334,8 +348,7 @@ def get_specific_page_data(idnum, key):
         Mixed output, objects and strings returned from the
         get_hours_and_location data structure.
     """
-    return get_hours_and_location(Page.objects.live().get(id=idnum).specific
-                                  )[key]
+    return get_hours_and_location(Page.objects.live().get(id=idnum).specific)[key]
 
 
 def sort_buildings(spaces):
@@ -349,7 +362,15 @@ def sort_buildings(spaces):
     from public.models import LocationPage, StandardPage
 
     # LocationPage Object ids
-    REG, SSA, MANSUETO, CRERAR, ECKHART, DANGELO, SCRC = 1797, 1798, 1816, 2713, 2714, 3393, 2971
+    REG, SSA, MANSUETO, CRERAR, ECKHART, DANGELO, SCRC = (
+        1797,
+        1798,
+        1816,
+        2713,
+        2714,
+        3393,
+        2971,
+    )
     new_list = []
     pages = StandardPage.objects.live()
     id_list = spaces.values_list('parent_building', flat=True)
@@ -444,3 +465,21 @@ def unfold(step, initial):
                 yield tup[0]
 
     return [item for item in generator((None, initial))]
+
+
+def save_virtual_workbook(workbook):
+    """
+    Return an in-memory workbook, suitable for a Django response.
+    Replacement for deprecated function by the same name in openpyxl:
+
+    Args:
+        workbook: openpyxl workbook object
+
+    Returns:
+        generator, stream
+    """
+    with NamedTemporaryFile() as tmp:
+        workbook.save(tmp.name)
+        tmp.seek(0)
+        stream = tmp.read()
+        return stream

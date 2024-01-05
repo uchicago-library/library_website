@@ -1,0 +1,110 @@
+
+
+{% extends "base/intranet_base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    {{ block.super }}
+
+    <link rel="stylesheet" href="{% static 'intranethome/css/style.css' %}" type="text/css" />
+
+    {{ example_form.media.css }}
+{% endblock %}
+
+{% block body_class %}template-searchresults{% endblock %}
+
+{% block title %}Mail Aliases{% endblock %}
+
+{% block content %}
+
+    <h1>Mail Aliases Page</h1>
+
+    {%if error%}
+        <div class="alert alert-danger" role="alert">
+            There has been an error displaying the mailaliases page. Please contact <a href="mailto:intranet@lib.uchicago.edu" class="alert-link">intranet@lib.uchicago.edu</a> and we will do our best to rectify the issue.
+        </div>
+    {%else%}
+
+        <button class="btn btn-default" onclick="expandAll()">Expand All</button>
+        <button class="btn btn-default" onclick="contractAll()">Contract All</button>
+
+        <br>
+        <br>
+
+        <ul class="no-bullets">
+            <li class="inline"><a href="/mailaliases/">All</a></li>
+            <li class="inline"><a href="/mailaliases/a/">A</a></li>
+            <li class="inline"><a href="/mailaliases/b/">B</a></li>
+            <li class="inline"><a href="/mailaliases/c/">C</a></li>
+            <li class="inline"><a href="/mailaliases/d/">D</a></li>
+            <li class="inline"><a href="/mailaliases/e/">E</a></li>
+            <li class="inline"><a href="/mailaliases/f/">F</a></li>
+            <li class="inline"><a href="/mailaliases/g/">G</a></li>
+            <li class="inline"><a href="/mailaliases/h/">H</a></li>
+            <li class="inline"><a href="/mailaliases/i/">I</a></li>
+            <li class="inline"><a href="/mailaliases/j/">J</a></li>
+            <li class="inline"><a href="/mailaliases/k/">K</a></li>
+            <li class="inline"><a href="/mailaliases/l/">L</a></li>
+            <li class="inline"><a href="/mailaliases/m/">M</a></li>
+            <li class="inline"><a href="/mailaliases/n/">N</a></li>
+            <li class="inline"><a href="/mailaliases/o/">O</a></li>
+            <li class="inline"><a href="/mailaliases/p/">P</a></li>
+            <li class="inline"><a href="/mailaliases/q/">Q</a></li>
+            <li class="inline"><a href="/mailaliases/r/">R</a></li>
+            <li class="inline"><a href="/mailaliases/s/">S</a></li>
+            <li class="inline"><a href="/mailaliases/t/">T</a></li>
+            <li class="inline"><a href="/mailaliases/u/">U</a></li>
+            <li class="inline"><a href="/mailaliases/v/">V</a></li>
+            <li class="inline"><a href="/mailaliases/w/">W</a></li>
+            <li class="inline"><a href="/mailaliases/x/">X</a></li>
+            <li class="inline"><a href="/mailaliases/y/">Y</a></li>
+            <li class="inline"><a href="/mailaliases/z/">Z</a></li>
+            <li class="inline"><a href="/mailaliases/number/">#</a></li>
+        </ul>
+
+        {%for key, value in cleaned_data.items%}
+
+            <button class="accordion">{{key}}</button>
+            <div class="panel">
+                <table class="table">
+                    <br>
+                    {%for note_email in value%}
+                        {%if note_email.note%}
+                            <tbody>
+                                <td> note: {{note_email.note}} </td>
+                            </tbody>
+
+                        {%elif note_email.triangle_brackets%}
+                            <tbody>
+                                <td><a href="mailto:{{note_email.triangle_brackets.1}}">{{note_email.triangle_brackets.0}}</a></td>
+                                <td>{{note_email.triangle_brackets.2}}</td>
+                            </tbody>
+
+                        {%elif note_email.parentheses%}
+                            <tbody>
+                                <td><a href="mailto:{{note_email.parentheses.1}}">{{note_email.parentheses.0}}</a></td>
+                                <td>{{note_email.parentheses.2}}</td>
+                            </tbody>
+
+                        {%elif note_email.plain_email%}
+                            <tbody>
+                                <td><a href="mailto:{{note_email.plain_email}}">{{note_email.plain_email}}</a></td>
+                            </tbody>
+
+                        {%else%}
+                            <tbody>
+                                <td>{{note_email.local}}</td>
+                            </tbody>
+                        {%endif%}
+
+                    {%endfor%}
+                </table>
+                <br>
+            </div>
+        {%endfor%}
+    {%endif%}
+
+    <script src="{% static 'intranethome/js/accordion.js' %}"></script>
+
+{% endblock %}

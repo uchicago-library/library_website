@@ -7,9 +7,9 @@
 ## Running an Instance of the Site
 *If you haven't run Vagrant yet, see the 'Setting up for Development' section below.*
 1. Start the dev environment from the root of the project directory: `vagrant up`
-5. ssh to the guest machine: `vagrant ssh`
-6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
-7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+2. ssh to the guest machine: `vagrant ssh`
+3. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
+4. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
 
 ### Vagrant Troubleshooting
 If you have issues loading your local instance, try:
@@ -115,7 +115,7 @@ and run `./manage.py wagtail_update_image_renditions`.
 
 ## Pushing to Production
 - ssh to motacilla
-- `cd /data/motacilla/ ; source venv3.7/bin/activate ; cd sites/library_website`
+- `cd /data/motacilla/ ; source venv3.9/bin/activate ; cd sites/library_website`
 - `git remote update`
 - `git status`
 - `git pull origin master`

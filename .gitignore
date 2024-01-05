@@ -1,6 +1,7 @@
 .DS_Store
 *.pyc
 *.swp
+*.env
 .sass-cache
 
 /library_website/settings/local.py
@@ -11,9 +12,12 @@
 node_modules/
 package.json
 package-lock.json
+base/static/bundles/*.LICENSE.txt
 
 django-errors.log
 library_website/settings/database.db
 
 .vagrant/
 /.vagrant/
+
+src

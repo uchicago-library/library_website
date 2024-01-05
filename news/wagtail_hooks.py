@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.urls import reverse
+from django.urls import reverse, re_path
 from django.http import HttpResponse
 from django.shortcuts import render
 from wagtail.admin.menu import MenuItem
@@ -34,7 +33,7 @@ def admin_view(request):
 @hooks.register('register_admin_urls')
 def urlconf_time():
     return [
-        url(r'^loopnotifications/$', admin_view, name='loopnotifications')
+        re_path(r'^loopnotifications/$', admin_view, name='loopnotifications')
     ]
 
 @hooks.register('register_settings_menu_item')

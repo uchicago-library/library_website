@@ -1,4 +1,5 @@
 from .base import *
+import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -22,8 +23,8 @@ try:
 except ImportError:
     pass
 
-# Travis CI specific settings
-if 'TRAVIS' in os.environ:
+# Specific settings for GitHub Workflow Actions
+if 'GITHUB' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

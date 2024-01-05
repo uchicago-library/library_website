@@ -76,7 +76,7 @@ class RSSFeeds(Feed):
 
             return partial_application
 
-        stories = LibNewsPage.objects.order_by('-published_at')
+        stories = LibNewsPage.objects.live().order_by('-published_at')
 
         if obj:
             c = obj.text

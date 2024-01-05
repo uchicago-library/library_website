@@ -20,10 +20,13 @@ Other Search Row
  * --------------------------------------------------
  */
 
-h1.searchbox-header {
+h3.searchbox-header {
   font-size: $font-small;
+  font-family: $base-font;
   color: $darkred;
-  margin: 10px 0 10px 5px;
+  margin: 12px 0 10px 5px;
+  padding-bottom: 3px;
+  line-height: 1.1em;
   font-weight: 600;
   border: none;
 }

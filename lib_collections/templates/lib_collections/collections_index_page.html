@@ -6,244 +6,243 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <article>
-  <div class="row">
-  {% if view == 'collections' %}
-    {% include 'lib_collections/header_collections.html' %}
-    <div class="col-xs-12">
-      <table class="table table-striped coll-list">
-        <thead>
-          <tr class="etable-header">
-            {% if search %}
-              <th colspan="4">Search Results for "{{ search }}"</th>
-            {% else %}
-              <th colspan="4">Collections</th>
+    <article>
+        <div class="row">
+            {% if view == 'collections' %}
+                {% include 'lib_collections/header_collections.html' %}
+                <div class="col-xs-12">
+                    <table class="table table-striped coll-list">
+                        <thead>
+                            <tr class="etable-header">
+                                {% if search %}
+                                    <th colspan="4">Search Results for "{{ search }}"</th>
+                                {% else %}
+                                    <th colspan="4">Collections</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="visually-hidden">
+                                <th scope="col">Collection Thumbnail</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Formats</th>
+                                <th scope="col">Subjects</th>
+                            </tr>
+                            {% for collection_page in collections %}
+                                <tr>
+                                    <td scope="row">
+                                        {% if collection_page.thumbnail %}
+                                            {% image collection_page.thumbnail fill-100x100 %}
+                                        {% else %}
+                                            {% if default_image %}
+                                                {% image default_image fill-100x100 alt="" %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td><strong><a href="{{ collection_page.url }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
+                                    <td><strong>Formats</strong><br/>{% collections_formats collection_page %}</td>
+                                    <td>
+                                        <strong>Subjects</strong><br/>
+                                        {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
+                                            <a href=".?view=collections&amp;subject={{ collection_subject_placement.subject|urlencode }}">{{ collection_subject_placement.subject }}</a><br/>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% if search and not collections %}
+                                <tr>
+                                    <td colspan="4">There were no results for your search.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
             {% endif %}
-          </tr>
-          </thead>
-          <tbody>
-          <tr class="visually-hidden">
-            <th scope="col">Collection Thumbnail</th>
-            <th scope="col">Title</th>
-            <th scope="col">Formats</th>
-            <th scope="col">Subjects</th>
-          </tr>
-          {% for collection_page in collections %}
-            <tr>
-              <td scope="row">
-                {% if collection_page.thumbnail %}
-                  {% image collection_page.thumbnail fill-100x100 %}
-                {% else %}
-                  {% if default_image %}
-                    {% image default_image fill-100x100 %}
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td><strong><a href="{{ collection_page.url }}">{{ collection_page.title }}</a></strong><br/>{{ collection_page.short_abstract }}</td>
-              <td><strong>Formats</strong><br/>{% collections_formats collection_page %}</td>
-              <td>
-                <strong>Subjects</strong><br/>
-                {% for collection_subject_placement in collection_page.collection_subject_placements.all %}
-                  <a href=".?view=collections&amp;subject={{ collection_subject_placement.subject|urlencode }}">{{ collection_subject_placement.subject }}</a><br/>
-                {% endfor %}
-              </td>
-            </tr>
-          {% endfor %}
-          {% if search and not collections %}
-            <tr>
-              <td colspan="4">There were no results for your search.</td>
-            </tr>
-          {% endif %}
-        </tbody>
-      </table>
-    </div>
-  {% endif %}
-  {% if view == 'exhibits' %}
-    {% include 'lib_collections/header_exhibits.html' %}
-    <div class="col-xs-12">
-      <table class="table table-striped coll-list">
-      {% if exhibits_current %}
-        <thead>
-          <tr class="etable-header">
-              <th colspan="4">Current Exhibits</th>
-            </tr>
-          </thead>
-          {% endif %}
-          <tbody>
-          <tr class="visually-hidden">
-            <th scope="col">Exhibit Thumbnail</th>
-            <th scope="col">Title</th>
-            <th scope="col">Locations</th>
-            <th scope="col">Subjects</th>
-          </tr>  
-          {% for exhibit in exhibits_current %}
-            <tr>
-              <td scope="row">
-                {% if exhibit.thumbnail %}
-                  {% image exhibit.thumbnail fill-100x100 %}
-                {% else %}
-                  {% if default_image %}
-                    {% image default_image fill-100x100 %}
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td>
-                <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
-                <br/>
-                {{ exhibit.short_abstract }}
-              </td>
-              <td>
-                {% if exhibit.exhibit_location %}
-                  <strong>Locations</strong><br/>
-                  <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
-                {% endif %}
-                {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
-                  {% if exhibit.is_online_exhibit %}
-                    <em>From {{ exhibit.exhibit_open_date|date:"N j" }}</em><br/>
-                  {% else %}
-                    <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
-                {% endif %}
-                {% endif %}
-                {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
-                  {% if exhibit.web_exhibit %}
-                    <a class="viewall" href="{{ exhibit.url }}">View web exhibit</a><br/>
-                  {% else %}
-                    <a class="viewall" href="{{ exhibit.web_exhibit_url }}">View web exhibit</a><br/>
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td>
-                {% if exhibit.exhibit_subject_placements.all %}
-                  <strong>Subjects</strong>
-                  <br/>
-                  {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a><br/>
-                  {% endfor %}
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-          {% if exhibits %}
-            <tr class="etable-header">
-              <th colspan="4">Exhibits</th>
-            </tr>
-          {% endif %}
-          {% for exhibit in exhibits %}
-            <tr>
-              <td scope="row">
-                {% if exhibit.thumbnail %}
-                  {% image exhibit.thumbnail fill-100x100 %}
-                {% else %}
-                  {% if default_image %}
-                    {% image default_image fill-100x100 %}
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td>
-                <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
-                <br/>
-                {{ exhibit.short_abstract }}
-              </td>
-              <td>
-                {% if exhibit.exhibit_location %}
-                  <strong>Locations</strong>
-                  <br/>
-                  <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
-                {% endif %}
-                {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
-                  <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
-                {% endif %}
-                {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
-                  {% if exhibit.web_exhibit %}
-                    <a href="{{ exhibit.url }}">View web exhibit &gt;&gt;</a>
-                  {% else %}
-                    <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td>
-                {% if exhibit.exhibit_subject_placements.all %}
-                  <strong>Subjects</strong>
-                  <br/>
-                  {% for subject_placement in exhibit.exhibit_subject_placements.all %}
-                    <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a></br/>
-                  {% endfor %}
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-          
-        </tbody>
-      </table>
-    </div>
-  {% endif %}
-  {% if view == 'subjects' %}
-    {% include 'lib_collections/header_subject.html' %}
-      <div class="col-xs-12">
-        <table class="table table-striped coll-list">
-          <thead>
-            <tr class="etable-header">
-              <th colspan="4">Subjects</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="visually-hidden">
-              <th scope="col">Subject</th>
-              <th scope="col">Available Resources</th>
-              <th scope="col">Parent Subject</th>
-            </tr> 
-            {% for s in subjects %}
-              {% if s.see_also %}
-                <tr class="seealso">
-                  <td><strong>{{ s.name }}</strong></td>
-                  <td>See: <a href=".?view=subjects#{{ s.see_also|urlencode }}"><span class="visually-hidden">{{ s.name }} is classified under</span> {{ s.see_also }}</a></td>
-                  <td></td>
-                </tr>
-              {% else %}
-                <tr id="{{ s.name }}">
-                  <td scope="row"><strong>{{ s.name }}</strong>
-                    {% if s.has_collecting_area %}<br/>
-                      <a href="{{ s.collecting_area_url }}"><i class="material-icons" aria-hidden="true">style</i>View Collecting Area Page<span class="visually-hidden"> for {{ s.name }} </span></a><br/>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if s.has_subject_specialists %}
-                      <a href="/about/directory/?view=staff&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">supervisor_account</i>
-                      <span class="visually-hidden">{{ s.name }} </span>Subject Specialists</a><br/>
-                    {% endif %}
-                    {% if s.has_exhibits %}
-                      <a href=".?view=exhibits&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">insert_photo</i>
-                      <span class="visually-hidden">{{ s.name }} </span>Exhibits</a><br/>
-                    {% endif %}
-                    {% if s.has_collections %}
-                      <a href=".?view=collections&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">filter</i>
-                      <span class="visually-hidden">{{ s.name }} </span>Collections</a><br/>
-                    {% endif %}
-                    {% if s.libguide_url %}
-                      <a href="{{ s.libguide_url }}"><i class="material-icons" aria-hidden="true">recent_actors</i>
-                      <span class="visually-hidden">{{ s.name }} </span>Subject Guide</a><br/>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if s.parents %}
-                      <em>Part of:</em><br/>
-                      {% for p in s.parents %}
-                        <a href="#{{ p|urlencode }}"><span class="visually-hidden">{{ s.name }} is part of </span>{{ p }}</a><br/>
-                      {% endfor %}
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endif %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% endif %}
-    {% if view == 'subjecttree' %}
-       {{ subjecttree|safe }}
-    {% endif %}
-  </div>
-  </article>
+            {% if view == 'exhibits' %}
+                {% include 'lib_collections/header_exhibits.html' %}
+                <div class="col-xs-12">
+                    <table class="table table-striped coll-list">
+                        {% if exhibits_current %}
+                            <thead>
+                                <tr class="etable-header">
+                                    <th colspan="4">Current Exhibits</th>
+                                </tr>
+                            </thead>
+                        {% endif %}
+                        <tbody>
+                            <tr class="visually-hidden">
+                                <th scope="col">Exhibit Thumbnail</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Locations</th>
+                                <th scope="col">Subjects</th>
+                            </tr>
+                            {% for exhibit in exhibits_current %}
+                                <tr>
+                                    <td scope="row">
+                                        {% if exhibit.thumbnail %}
+                                            {% image exhibit.thumbnail fill-100x100 %}
+                                        {% else %}
+                                            {% if default_image %}
+                                                {% image default_image fill-100x100 alt="" %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
+                                        <br/>
+                                        {{ exhibit.short_abstract }}
+                                    </td>
+                                    <td>
+                                        {% if exhibit.exhibit_location %}
+                                            <strong>Locations</strong><br/>
+                                            <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                                        {% endif %}
+                                        {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
+                                            {% if exhibit.is_online_exhibit %}
+                                                <em>From {{ exhibit.exhibit_open_date|date:"N j" }}</em><br/>
+                                            {% else %}
+                                                <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
+                                            {% if exhibit.web_exhibit %}
+                                                <a class="viewall" href="{{ exhibit.url }}">View web exhibit</a><br/>
+                                            {% else %}
+                                                <a class="viewall" href="{{ exhibit.web_exhibit_url }}">View web exhibit</a><br/>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if exhibit.exhibit_subject_placements.all %}
+                                            <strong>Subjects</strong>
+                                            <br/>
+                                            {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                                                <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a><br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {% if exhibits %}
+                                <tr class="etable-header">
+                                    <th colspan="4">Exhibits</th>
+                                </tr>
+                            {% endif %}
+                            {% for exhibit in exhibits %}
+                                <tr>
+                                    <td scope="row">
+                                        {% if exhibit.thumbnail %}
+                                            {% image exhibit.thumbnail fill-100x100 %}
+                                        {% else %}
+                                            {% if default_image %}
+                                                {% image default_image fill-100x100 alt="" %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ exhibit.url }}"><strong>{{ exhibit.title }}</strong></a>
+                                        <br/>
+                                        {{ exhibit.short_abstract }}
+                                    </td>
+                                    <td>
+                                        {% if exhibit.exhibit_location %}
+                                            <strong>Locations</strong>
+                                            <br/>
+                                            <a href="{{ exhibit.exhibit_location.url }}">{{ exhibit.exhibit_location.title }}</a><br/>
+                                        {% endif %}
+                                        {% if exhibit.exhibit_open_date and exhibit.exhibit_close_date %}
+                                            <em>{{ exhibit.exhibit_open_date|date:"N j" }} &#8212; {{ exhibit.exhibit_close_date }}</em><br/>
+                                        {% endif %}
+                                        {% if exhibit.web_exhibit or exhibit.web_exhibit_url %}
+                                            {% if exhibit.web_exhibit %}
+                                                <a href="{{ exhibit.url }}">View web exhibit &gt;&gt;</a>
+                                            {% else %}
+                                                <a href="{{ exhibit.web_exhibit_url }}">View web exhibit &gt;&gt;</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if exhibit.exhibit_subject_placements.all %}
+                                            <strong>Subjects</strong>
+                                            <br/>
+                                            {% for subject_placement in exhibit.exhibit_subject_placements.all %}
+                                                <a href=".?view=exhibits&amp;subject={{ subject_placement.subject.name|urlencode }}">{{ subject_placement.subject.name }}</a><br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            {% if view == 'subjects' %}
+                {% include 'lib_collections/header_subject.html' %}
+                <div class="col-xs-12">
+                    <table class="table table-striped coll-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="4">Subjects</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="visually-hidden">
+                                <th scope="col">Subject</th>
+                                <th scope="col">Available Resources</th>
+                                <th scope="col">Parent Subject</th>
+                            </tr>
+                            {% for s in subjects %}
+                                {% if s.see_also %}
+                                    <tr class="seealso">
+                                        <td><strong>{{ s.name }}</strong></td>
+                                        <td>See: <a href=".?view=subjects#{{ s.see_also|urlencode }}"><span class="visually-hidden">{{ s.name }} is classified under</span> {{ s.see_also }}</a></td>
+                                        <td></td>
+                                    </tr>
+                                {% else %}
+                                    <tr id="{{ s.name }}">
+                                        <td scope="row"><strong>{{ s.name }}</strong>
+                                            {% if s.has_collecting_area %}<br/>
+                                                <a href="{{ s.collecting_area_url }}"><i class="material-icons" aria-hidden="true">style</i>View Collecting Area Page<span class="visually-hidden"> for {{ s.name }} </span></a><br/>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if s.has_subject_specialists %}
+                                                <a href="/about/directory/?view=staff&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">supervisor_account</i>
+                                                    <span class="visually-hidden">{{ s.name }} </span>Subject Specialists</a><br/>
+                                            {% endif %}
+                                            {% if s.has_exhibits %}
+                                                <a href=".?view=exhibits&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">insert_photo</i>
+                                                    <span class="visually-hidden">{{ s.name }} </span>Exhibits</a><br/>
+                                            {% endif %}
+                                            {% if s.has_collections %}
+                                                <a href=".?view=collections&amp;subject={{ s.name|urlencode }}"><i class="material-icons" aria-hidden="true">filter</i>
+                                                    <span class="visually-hidden">{{ s.name }} </span>Collections</a><br/>
+                                            {% endif %}
+                                            {% if s.libguide_url %}
+                                                <a href="{{ s.libguide_url }}"><i class="material-icons" aria-hidden="true">recent_actors</i>
+                                                    <span class="visually-hidden">{{ s.name }} </span>Subject Guide</a><br/>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if s.parents %}
+                                                <em>Part of:</em><br/>
+                                                {% for p in s.parents %}
+                                                    <a href="#{{ p|urlencode }}"><span class="visually-hidden">{{ s.name }} is part of </span>{{ p }}</a><br/>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            {% if view == 'subjecttree' %}
+                {{ subjecttree|safe }}
+            {% endif %}
+        </div>
+    </article>
 {% endblock %}
 

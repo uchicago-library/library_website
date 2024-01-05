@@ -21,6 +21,8 @@ WAGTAILADMIN_BASE_URL = 'https://www.lib.uchicago.edu'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
+WAGTAIL_ENABLE_UPDATE_CHECK = 'lts'
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -236,7 +238,7 @@ WAGTAIL_SITE_NAME = "library_website"
 
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.search.backends.elasticsearch6',
+        'BACKEND': 'wagtail.search.backends.elasticsearch7',
         'URLS': ['http://localhost:9200'],
         'INDEX': 'wagtail',
         'TIMEOUT': 5,
@@ -259,8 +261,8 @@ WAGTAILSEARCH_BACKENDS = {
 # Settings for cross origin requests
 # Documentation and settings:
 # https://github.com/OttoYiu/django-cors-headers
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = (
     'https://catalog.lib.uchicago.edu',
     'https://catalogtest.lib.uchicago.edu',
     'https://dldc1.lib.uchicago.edu',
@@ -549,7 +551,7 @@ LIBCAL_CREDENTIALS = {
 
 # CGIMail Forms
 CGI_MAIL_SERVICE = '/cgi-bin/cgimail/cgimail'
-ITEM_SERVLET = 'https://forms2.lib.uchicago.edu/lib/searchform/itemServlet.php?format=json'
+ITEM_SERVLET = '/item-servlet/?p=true'
 SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
 
 # Override settings in test
@@ -628,3 +630,4 @@ FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 # we wish to keep out of sync. People listed here will not show
 # up in the "out of sync staff members" email report.
 DO_NOT_SYNC = []
+MAIL_ALIASES_PATH = '/data/web/aliases/aliases.json'

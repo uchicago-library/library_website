@@ -133,7 +133,7 @@ class test_lib_news_pages_and_categories(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_non_existing_sub_url_on_article_page(self):
+    def test_404_response(self):
         url = '/starfleet-news/adsfasdf/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
