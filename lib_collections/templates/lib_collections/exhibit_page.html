@@ -1,4 +1,5 @@
 {% extends "base/public_base.html" %}
+{% load i18n %}
 {% load compress static %}
 {% load compile_static %}
 {% load wagtailcore_tags %}
@@ -499,7 +500,7 @@
 {% block right_sidebar %}
     {% if self.exhibit_open_date or self.exhibit_close_date or self.exhibit_daily_hours or self.exhibit_location or self.exhibit_cost or self.space_type %}
         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-            <h3>Exhibit Details</h3>
+            <h3>{% translate "Exhibit Details" %}</h3>
             <p>
                 {% if self.space_type %}
                     {{ self.space_type }} Exhibit<br/>
@@ -536,7 +537,7 @@
 
     {% if self.staff_contact or unit_contact%}
         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-            <h3>Contact</h3>
+            <h3>{% translate "Contact" %}</h3>
             <p>
                 {% if self.staff_contact %}
                     <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>

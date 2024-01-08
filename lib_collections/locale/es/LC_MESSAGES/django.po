@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-10 19:08+0000\n"
+"POT-Creation-Date: 2024-01-05 21:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,3 +25,11 @@ msgstr "Busca por colección"
 #: templates/includes/sidebar.html:31
 msgid "Access Location"
 msgstr "Acceso"
+
+#: templates/lib_collections/exhibit_page.html:503
+msgid "Exhibit Details"
+msgstr "Información de la Exhibición"
+
+#: templates/lib_collections/exhibit_page.html:540
+msgid "Contact"
+msgstr "Contacto"

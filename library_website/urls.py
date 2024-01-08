@@ -53,10 +53,10 @@ urlpatterns = [
         RedirectView.as_view(url='/about/directory/?view=staff')
     ),
     re_path(r'^about/news-events/events/$', events_view, name='events'),
-    re_path(r'^collex/$', collection_view, name='collection'),
+    # re_path(r'^collex/$', collection_view, name='collection'),
     re_path(r'^mailaliases/', mail_aliases_view, name='mail_aliases'),
     re_path(r'^citation_display$', citation_display, name='citation_display'),
-    re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    # re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
     # re_path(
     #    r'^collex/exhibits/$',
     #    RedirectView.as_view(url='/collex/?view=exhibits')
