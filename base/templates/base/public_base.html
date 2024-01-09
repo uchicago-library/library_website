@@ -131,7 +131,7 @@
                                 {% endif %}
                             </a>
                             {% if exhibit_open_date or exhibit_close_date %}
-                                <p class="banner-date">Exhibition on view from
+                                <p class="banner-date">{% translate "Exhibition on view from" %}
                                     {% if exhibit_open_date %}{{ exhibit_open_date }}{% endif %}
                                     {% if exhibit_open_date and exhibit_close_date %}&ndash;{% endif %}
                                     {% if exhibit_close_date %}{{ exhibit_close_date }}{% endif %}

@@ -458,7 +458,7 @@
                 {% endif %}
 
                 {% if self.publication_description or self.exhibit_text_document or self.exhibit_text_link_external or self.exhibit_text_link_page or self.exhibit_checklist_document or self.exhibit_checklist_link_external or self.exhibit_checklist_link_page %}
-                    <h2>Exhibit Publications &amp; Documents</h2>
+                    <h2>{% translate "Exhibit Publications & Documents" %}</h2>
 
                     {% if self.publication_description %}
                         <p>
@@ -483,7 +483,7 @@
                     {% endif %}
 
                     {% if self.exhibit_checklist_document %}
-                        <p><a href="{{ self.exhibit_checklist_document.file.url }}">Exhibit Checklist</a></p>
+                        <p><a href="{{ self.exhibit_checklist_document.file.url }}">{% translate "Exhibit Checklist" %}</a></p>
                     {% endif %}
                     {% if self.exhibit_checklist_link_external %}
                         <p><a href="{{ self.exhibit_checklist_link_external }}">Exhibit Checklist</a></p>
@@ -629,7 +629,7 @@
                             -->
 
                             <span class="loc-title">{{page_location}}</span>
-                            <p>Please consult our <a href="{{hours_page_url}}">hours page</a>.</p>
+                            <p>{% translate "Please consult our" %} <a href="{{hours_page_url}}">{% translate "hours page" %}</a>.</p>
                         </div>
                     </div>
                 </div>

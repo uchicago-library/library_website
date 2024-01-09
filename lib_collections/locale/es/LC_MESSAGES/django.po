@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 21:40+0000\n"
+"POT-Creation-Date: 2024-01-09 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,16 @@ msgstr "Busca por colección"
 msgid "Access Location"
 msgstr "Acceso"
 
+#: templates/lib_collections/exhibit_page.html:461
+msgid "Exhibit Publications & Documents"
+msgstr "Exhibición publicaciones y documentos"
+
+#: templates/lib_collections/exhibit_page.html:486
+#, fuzzy
+#| msgid "Exhibit Details"
+msgid "Exhibit Checklist"
+msgstr "Información de la Exhibición"
+
 #: templates/lib_collections/exhibit_page.html:503
 msgid "Exhibit Details"
 msgstr "Información de la Exhibición"
@@ -33,3 +43,11 @@ msgstr "Información de la Exhibición"
 #: templates/lib_collections/exhibit_page.html:540
 msgid "Contact"
 msgstr "Contacto"
+
+#: templates/lib_collections/exhibit_page.html:632
+msgid "Please consult our"
+msgstr "Consulta nuestra"
+
+#: templates/lib_collections/exhibit_page.html:632
+msgid "hours page"
+msgstr "página de horas"
