@@ -22,8 +22,7 @@ def get_xml_from_feed(feed):
 
 def get_entries_from_events_uchicago(x):
     entries = []
-    from lxml import etree
-    for entry in x.find('channel').findall('item'):
+    for entry in x.find('channel').find('div').findall('item'):
         content = ''
         html = entry.find('description').itertext()
         for tag in html:
