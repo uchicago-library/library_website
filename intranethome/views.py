@@ -155,9 +155,6 @@ def formatting(list):
         elif plain_email:
             parsed_email["plain_email"] = plain_email[0]
 
-        #elif email == "note":
-            #parsed_email["note"] = {"note" : whatever.value}
-
         # selecting for option 4
         else:
             parsed_email["local"] = email
@@ -196,8 +193,6 @@ def filter_by_value(original_alias_list, filter_value):
 
     return filtered_alias_list
 
-
-
 def mail_aliases_view(request):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
     aliases = get_sorted_aliases(parsed_file)
@@ -231,42 +226,4 @@ def mail_aliases_view(request):
       
 
     context = {'final_data': final_data}
-    # f = open("/Users/irina1/tmp/dude", "w")
-    # f.write(json.dumps(final_data))
-    # f.close()
     return render(request, 'intranethome/mail_aliases.html', context)
-
-
-
-# def matts_function(json):
-#     return [each_list(l) for l in json]
-
-
-#[ {k:v for k,v in dct.items()} for dct in p ]
-#[ {alias:[e_dict for e_dict in emails] for alias,emails in alias_dict.items()} for alias_dict in p ]
-
-
-# define this function:
-
-# it makes this:
-
-# [{'email': 'larisa walsh\t<walshl@uchicago.edu>'},
-#  {'email': 'Kristin Martin\t<kmarti@uchicago.edu>'}]
-
-# into this:
-
-# ['larisa walsh\t<walshl@uchicago.edu>', 'Kristin Martin\t<kmarti@uchicago.edu>']
-
-# and it makes this:
-
-# [{'note' : 'this is a note'}]
-
-# into this:
-
-# ['note: this is a note']
-
-# def adjust_emails(list_of_email_dicts):
-#     pass
-
-# [ {alias:[e_dict for e_dict in emails] for alias,emails in alias_dict.items()} for alias_dict in p ]
-# [ {alias:(adjust_emails(emails)) for alias,emails in alias_dict.items()} for alias_dict in p ]
