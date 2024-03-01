@@ -614,4 +614,4 @@ FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 # we wish to keep out of sync. People listed here will not show
 # up in the "out of sync staff members" email report.
 DO_NOT_SYNC = []
-MAIL_ALIASES_PATH = '/data/web/aliases/aliases.json'
+MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
