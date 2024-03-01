@@ -418,6 +418,13 @@
 {% endblock %}
 
 {% block content %}
+    {% if page %}
+        {% for translation in page.get_translations %}
+            <p><a href="{% pageurl translation %}" rel="alternate" hreflang="{{ translation.locale.language_code }}">
+                {{ translation.locale.language_code|upper }}
+            </a></p>
+        {% endfor %}
+    {% endif %}
     <article>
         <div class="row">
             <div class="col-xs-12">
