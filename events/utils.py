@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from http.client import HTTPConnection, HTTPSConnection
 from urllib.parse import parse_qs, urlparse
 from xml.etree import ElementTree
+from library_website.settings import UC_EVENTS_BASE
 
 import itertools
 import re
@@ -61,7 +62,7 @@ def get_entries_from_events_uchicago(x):
             'end_date_short_form': end_date_short_form,
             'end_time': end_time,
             'guid': guid,
-            'link': entry.find('link').text,
+            'link': f"{UC_EVENTS_BASE}{entry.find('link').text}",
             'sortable_date': sortable_date,
             'sortable_date_label': start_date,
             'sortable_datetime': sortable_datetime,
