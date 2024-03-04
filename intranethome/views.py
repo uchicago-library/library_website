@@ -1,5 +1,10 @@
 from argparse import REMAINDER
 from ast import Name, alias
+from base.wagtail_hooks import (
+    get_required_groups,
+    has_permission,
+    redirect_users_without_permissions,
+)
 from multiprocessing import process
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -196,6 +201,10 @@ def filter_by_value(original_alias_list, filter_value):
 def mail_aliases_view(request):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
     aliases = get_sorted_aliases(parsed_file)
+
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    if not has_permission(request.user, get_required_groups(loop_homepage)):
+        return redirect_users_without_permissions(loop_homepage, request, None, None)
     
     # grabs /mailaliases/*the_filter_value*
     url = request.get_full_path()
