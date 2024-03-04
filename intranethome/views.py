@@ -12,6 +12,7 @@ from functools import cmp_to_key
 from library_website.settings import MAIL_ALIASES_PATH
 import json
 import re
+from wagtail.models import Site
 
 def parse_file(filepath):
     '''
