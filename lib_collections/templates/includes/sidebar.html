@@ -1,6 +1,7 @@
+{% load i18n %} 
 {% if sidebar_browse_types %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h2>Browse Collection:</h2>
+	<h2>{% translate "Browse Collection" %}:</h2>
 	<ul class="no-indent">
 	    {% for browse_type, link in sidebar_browse_types.items %}
 	        <li><a href="{{ link }}">{{ browse_type }}</a></li>
@@ -27,7 +28,7 @@
     
 {% if access_location %}
     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-	<h3>Access Location</h3>
+	<h3>{% translate "Access Location" %}</h3>
 	<p><a href="{{ access_location.url }}">{{ access_location.title }}</a></p>
 	{% if physical_object and callno %}
 	    Call Number:<br/>{{ callno }}<br/>

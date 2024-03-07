@@ -1,6 +1,7 @@
 from base.views import chat_status, external_include, json_events, json_hours
 from django.conf import settings
 from django.urls import include, re_path
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import RedirectView
@@ -52,17 +53,17 @@ urlpatterns = [
         RedirectView.as_view(url='/about/directory/?view=staff')
     ),
     re_path(r'^about/news-events/events/$', events_view, name='events'),
-    re_path(r'^collex/$', collection_view, name='collection'),
+    # re_path(r'^collex/$', collection_view, name='collection'),
     re_path(r'^mailaliases/', mail_aliases_view, name='mail_aliases'),
     re_path(r'^citation_display$', citation_display, name='citation_display'),
-    re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
-    re_path(
-        r'^collex/exhibits/$',
-        RedirectView.as_view(url='/collex/?view=exhibits')
-    ),
+    # re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    # re_path(
+    #    r'^collex/exhibits/$',
+    #    RedirectView.as_view(url='/collex/?view=exhibits')
+    # ),
     re_path(r'^workflowautomator/', include('workflowautomator.urls')),
     re_path(r'rss/(?P<slug>[-\w]+)/$', RSSFeeds()),
-    re_path(r'', include(wagtail_urls)),
+    # re_path(r'', include(wagtail_urls)),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )
@@ -71,6 +72,18 @@ urlpatterns = [
 # is configured for shibboleth
 # if settings.SHIBBOLETH_LOGOUT_URL:
 #    urlpatterns.insert(0, re_path(r'^admin/logout/$', RedirectView.as_view(url='/shib/logout/?target=%s', permanent=True), name='logout'), )
+
+# Multi-lingual support
+urlpatterns += i18n_patterns(
+    re_path(
+        r'^collex/exhibits/$',
+        RedirectView.as_view(url='/collex/?view=exhibits')
+    ),
+    re_path(r'^collex/$', collection_view, name='collection'),
+    re_path(r'^collex/collections/$', RedirectView.as_view(url='/collex/')),
+    re_path(r'', include(wagtail_urls)),
+    prefix_default_language=False,
+)
 
 if settings.DEBUG:
     from django.conf.urls.static import static

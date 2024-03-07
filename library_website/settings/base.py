@@ -61,6 +61,10 @@ INSTALLED_APPS = [
     'wagtail.contrib.settings',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
+    # 'wagtail.locales',
+    # 'wagtail.contrib.simple_translation',
+    'wagtail_localize',
+    'wagtail_localize.locales',  # This replaces wagtail.locales
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -107,6 +111,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -162,15 +167,26 @@ WSGI_APPLICATION = 'library_website.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'America/Chicago'
 
-USE_I18N = False
+USE_I18N = True
+
+WAGTAIL_I18N_ENABLED = True
 
 USE_L10N = True
 
 USE_TZ = True
+
+WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
+    ('en', "English"),
+    ('es', "Spanish"),
+]
+
+LOCALE_PATHS = (
+    os.path.join(os.path.dirname(__file__), "locale"),
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
