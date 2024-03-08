@@ -36,7 +36,7 @@ Navigation Drop Downs
   font-size: 1em;
   padding-right: 1.5em;
   &>li>a {
-      color: #f9f9f9;
+      color: black;
       text-decoration: none;
       &:hover {
       	color:#E4E4E4;
@@ -103,17 +103,17 @@ i.ask-icon {
     padding-top: 5px;
   }
   @include respond-to(medium) {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 10px 30px;
   }
 }
 
 .navbar-default {
   border: 0px;
   margin-bottom:0px;
-  background-image: url("../images/warm_grey_reddish.jpg");
-  background-repeat: repeat;
-  background-color: $mid-dark; //back-up
+  background-color: $ncs-brick;
+  background-color: $ncs-maroon;
+  background-color: $ncs-dark-brick;
+  background-color: white;
   z-index: 10;
   border-radius: 0;
   .navbar-nav {
@@ -150,7 +150,9 @@ i.ask-icon {
 }
 
 #global-navbar {
-  background-color: $mid-dark;
+  background-color: $ncs-brick;
+  background-color: $ncs-dark-brick;
+  background-color: $ncs-maroon;
   font-size: $font-small;
   padding-left:0.5em;
   &.navbar-nav>li>a:focus {
@@ -162,7 +164,6 @@ i.ask-icon {
     background-color: $maroon;
   }
   @include respond-to(small)  {
-    box-shadow: 0 1px 7px #414141;
     margin-top: 70px;
     .navbar-nav>li>a {
       padding-top: 7px;
