@@ -2,21 +2,23 @@
 {% load wagtailcore_tags %}
 
 {% if exhibits %}
-    <h2>{{ sect_title }}</h2>
-    <div class="event-wrap">
-        {% for e in exhibits %}
-            <p>
-                <a class="event-header" href="{% pageurl e %}">{{ e.title }}</a>
-                {% if e.is_physical_exhibit and e.exhibit_close_date %}
-                    <br/>Until {{e.exhibit_close_date}}
-                    {% if e.exhibit_location %}
-                        <br/>{{ e.exhibit_location }}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-current-exhibits">
+        <h2>{{ sect_title }}</h2>
+        <div class="event-wrap">
+            {% for e in exhibits %}
+                <p>
+                    <a class="event-header" href="{% pageurl e %}">{{ e.title }}</a>
+                    {% if e.is_physical_exhibit and e.exhibit_close_date %}
+                        <br/>Until {{e.exhibit_close_date}}
+                        {% if e.exhibit_location %}
+                            <br/>{{ e.exhibit_location }}
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-                {% if e.is_online_exhibit %}
-                    <br/>Online exhibit
-                {% endif %}
-            </p>
-        {% endfor %}
+                    {% if e.is_online_exhibit %}
+                        <br/>Online exhibit
+                    {% endif %}
+                </p>
+            {% endfor %}
+        </div>
     </div>
 {% endif %}
