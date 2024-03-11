@@ -90,6 +90,7 @@
             gtag('config', 'G-EWT5B3NZ15');
             gtag('set', 'content_group', 'public site');
         </script>
+        <link rel="stylesheet" href="{% static "base/css/temp-vmg.css" %}"/>
     </head>
 
     <body id="p-{{self.id}}" class="{{page_type|slugify}}">
@@ -103,7 +104,7 @@
             <a href="#footer">Skip to Footer</a>
         </div>
         <div id="body-wrap">
-            {% if has_alert %}
+            {% if False %}
                 <div class="alert {{alert_level}}" role="alert">
                     {{alert_message|richtext}}
                     {% if alert_more_info|striptags %}
@@ -255,30 +256,32 @@
                             </div>
                         {% endif %}
 
-                        {% block content %}
-                            {% for block in self.body %}
-                                {{ block }}
-                            {% endfor %}
-                        {% endblock %}
+                        <div class="">
+                            {% block content %}
+                                {% for block in self.body %}
+                                    {{ block }}
+                                {% endfor %}
+                            {% endblock %}
 
-                        {% autoescape off %}
-                            {{index_pages_html}}
-                        {% endautoescape %}
+                            {% autoescape off %}
+                                {{index_pages_html}}
+                            {% endautoescape %}
 
-                        {% if self.cgi_mail_form %}
-                            <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
-                            {% render_bundle 'CGIMailForm' %}
-                        {% endif %}
+                            {% if self.cgi_mail_form %}
+                                <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
+                                {% render_bundle 'CGIMailForm' %}
+                            {% endif %}
+                        </div>
 
-                        {% if self.has_richtext_widget %}
-                            <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
-                                <div class="home-module">
-                                    <h2>{{self.rich_text_heading}}</h2>
-                                    {% if self.rt_link and self.rich_text_link_text %}
-                                        <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-12">
+                        <div class="row">
+                            {% if self.has_richtext_widget %}
+                                <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
+                                    <div class="home-module">
+                                        <h2>{{self.rich_text_heading}}</h2>
+                                        {% if self.rt_link and self.rich_text_link_text %}
+                                            <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
+                                        {% endif %}
+                                    </div>
                                     {% if link_queue %}
                                         {% for key, val in link_queue.items %}
                                             <h3>{{key}}</h3>
@@ -294,11 +297,9 @@
                                         {{self.rich_text|richtext}}
                                     {% endif %}
                                 </div>
-                            </div>
-                        {% endif %}
+                            {% endif %}
 
-                        {% if has_featured_lib_expert %}
-                            <div class="row">
+                            {% if has_featured_lib_expert %}
                                 {% if has_featured_lib_expert %}
                                     {% image featured_lib_expert_image fill-200x200 as profile_pic %}
                                     {#featured_lib_expert.block.library_expert #}
@@ -330,8 +331,9 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            </div> <!-- // row -->
-                        {% endif %}
+                            {% endif %}
+                        </div>
+
 
                         {% if self.news_feed_source %}
                             <div class="home-modwrapper" id="widget-news">
