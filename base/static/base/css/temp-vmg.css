@@ -147,6 +147,9 @@ body:after{
 .flex-sidebar hr{
   margin: .5em 0;
 }
+.distinct-rightside i, .rightside.coll-rightside i, .coll-rightside.flex-sidebar i{
+  padding: 0;
+}
 
 
 
