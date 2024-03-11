@@ -220,9 +220,9 @@ body.libnewsindexpage {
 
 	.news-category {
 		color: #fff;
-	    display: block;
-	    padding: 0.5em 1em;
-	    background: darken($darkgray, 30%);
+    display: block;
+    padding: 0.5em 1em;
+    background: darken($darkgray, 30%);
 		@include news-category-colors; // located in _variables.scss
 	}
 

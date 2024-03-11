@@ -61,6 +61,7 @@ $ncs-dark-greystone: #737373;
 $ncs-dark-greystone-rgb: rgb(115, 115, 115);
 // Primary-accessory
 $ncs-dark-maroon: #570000;
+$ncs-darker-brick: #592628;
 $ncs-lighter-greystone: #f2f2f2;
 $ncs-lighter-greystone-rgb: rgb(242, 242, 242);
 
@@ -114,13 +115,17 @@ $ncs-dark-brick-rgb: rgb(100, 51, 53);
 
 $darkgray: #767676;
 $lightgray: #D6D6CE;
-$darkred: #642822;
+$darkred: $ncs-darker-brick; // #642822;
 $maroon: #800000;
-$crerarblue: #0F425C;
-$eckhartpurple: #350E20;
-$mansuetogreen: #3E3E23;
-$reggreen:  #616530;
-$ssaorange: #9A5324;
+
+$crerarblue: $ncs-lake; //#0F425C;
+$eckhartpurple: $ncs-violet; //#350E20;
+$mansuetogreen: $ncs-forest; // #3E3E23;
+$reggreen: $ncs-ivy; //#616530; ??? no banner
+$ssaorange: $ncs-goldenrod; // #9A5324; ??? what is this for?
+// DAngelo
+// Social Work
+// Special Collections
 
 
 // Palette Variations
@@ -139,18 +144,18 @@ $active-hover: #664d59; //#725663
 
 
 // Opacity Fun Times
-
-$transparent: rgba(67, 67, 67, 0.95);
-$trans-red: rgba(109, 50, 39,0.8);
-$trans-blue: rgba(21, 95, 131, 0.8);
-$trans-purple: rgba(53, 14, 32, 0.8);
-$trans-darkgreen: rgba(70, 71, 51, 0.8);
-$trans-lightgreen: rgba(101, 105, 51, 0.8);
-$trans-orange: rgba(154, 83, 46, 0.8);
+$ncs-transp: 0.8;
+$transparent:       rgba($ncs-dark-greystone,  $ncs-transp); // rgba(67, 67, 67, 0.95);
+$trans-red:         rgba($ncs-maroon,          $ncs-transp); // rgba(109, 50, 39, 0.8);
+$trans-blue:        rgba($crerarblue,          $ncs-transp); // rgba(21, 95, 131, 0.8);
+$trans-purple:      rgba($eckhartpurple,       $ncs-transp); // rgba(53, 14, 32, 0.8);
+$trans-darkgreen:   rgba($mansuetogreen,       $ncs-transp); // rgba(70, 71, 51, 0.8);
+$trans-lightgreen:  rgba($reggreen,            $ncs-transp); // rgba(101, 105, 51, 0.8);
+$trans-orange:      rgba($ssaorange,           $ncs-transp); // rgba(154, 83, 46, 0.8);
 
 // Table Color Scheme
 
-$table-main: #ADB17D;
+$table-main: $ncs-light-ivy; //#ADB17D;
 //$table-accent: ;
 
 
@@ -242,60 +247,27 @@ $divider: 1px solid $darkgray;
  */
 
 @mixin news-category-colors { // Using the UChicago colors
-  &.business-economics {
-    background: #155F83; // light blue
-  }
-  &.digital-scholarship {
-    background: #8F3931; // light red
-  }
-  &.exhibits {
-    background: $eckhartpurple;
-  }
-  &.events {
-    background: $active-hover; // light purple
-  }
-  &.from-the-director {
-    background: #8F3931; // light red
-  }
-  &.hours-access {
-    background: $maroon;
-  }
-  &.humanities-social-sciences {
-    background: $mansuetogreen;
-  }
-  &.law {
-    background: $darkred;
-  }
-  &.library-in-the-news {
-    background: #9E6819; // dark yellow
-    font-weight: 600;
-  }
-  &.people {
-    background: #7b421c;
-  }
-  &.research {
-    background: $crerarblue;
-  }
-  &.resources {
-    background: $mansuetogreen;
-  }
-  &.science {
-    background: $crerarblue;
-  }
-  &.spaces {
-    background: #606430;
-    font-weight: 600;
-  }
-  &.special-collections {
-    background: $eckhartpurple;
-  }
-  &.spotlight {
-    background: #9E6819; // dark yellow
-    font-weight: 600;
-  }
-  &.teaching {
-    background: #155F83; // light blue
-  }
+  &.from-the-director {           background: $ncs-maroon;           }
+  &.spotlight {                   background: $ncs-brick;            }
+  &.people {                      background: $ncs-dark-brick;       }
+
+  &.special-collections {         background: $ncs-light-terracotta; }           
+  &.exhibits {                    background: $ncs-terracotta;        }
+  &.library-in-the-news {         background: $ncs-dark-goldenrod;   }
+  &.events {                      background: $ncs-dark-terracotta;  }
+
+  &.digital-scholarship {         background: $ncs-violet;           }
+  &.teaching {                    background: $ncs-dark-violet;      }
+  &.research {                    background: $ncs-light-violet;     }
+
+  &.law {                         background: $ncs-dark-brick;       }
+  &.business-economics {          background: $ncs-dark-lake;        }
+  &.humanities-social-sciences {  background: $ncs-dark-forest;      }
+  &.science {                     background: $ncs-lake;             }
+
+  &.hours-access {                background: $ncs-forest            }
+  &.spaces {                      background: $ncs-ivy               }
+  &.resources {                   background: $ncs-dark-ivy;         }
 }
 
 
