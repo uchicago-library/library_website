@@ -223,6 +223,11 @@ $divider: 1px solid $darkgray;
  */
 
 @mixin news-category-colors { // Using the UChicago colors
+  padding: 0.5em 1em;
+  background: #494949; /* $ncs-darker-greystone; */
+  color: #fff;
+  font-weight: 600;
+
   &.from-the-director {           background: $ncs-maroon;           }
   &.spotlight {                   background: $ncs-brick;            }
   &.people {                      background: $ncs-dark-brick;       }
