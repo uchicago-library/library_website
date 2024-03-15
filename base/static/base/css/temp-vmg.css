@@ -1,29 +1,35 @@
-/*
-body:before{
-  content: '';
-  display: block;
-  position: fixed;
-  top: 0;
-  right: 15px;
-  width: 1px;
-  opacity: .5;
-  background: rgb(0,255,0);
-  z-index: 999999999999999999999999;
-  height: 100vh;
+
+/* ===================== BUTTONS */
+.rightside a.btn-morelink, 
+.rightside a.btn-morecoll, 
+.rightside a.btn-primary{
+  font-size: 1em;
+  border-radius: 4px; /* undo override BS defaults */
+  font-weight: 600;
+  color: #800000; /* $ncs-maroon */
+  background: white;
+  border: 1.5px solid #800000; /* $ncs-maroon */
 }
-body:after{
-  content: '';
-  display: block;
-  position: fixed;
-  top: 0;
-  right: 30px;
-  width: 1px;
-  opacity: .5;
-  background: rgb(0,0,255);
-  z-index: 999999999999999999999999;
-  height: 100vh;
+.rightside a.btn-morelink:hover, 
+.rightside a.btn-morecoll:hover, 
+.rightside a.btn-primary:hover{
+  background: #F2F2F2; /* $ncs-light-grestone */
 }
-*/
+.btn-search{
+  background-color: #800000; /* $ncs-maroon; */
+} 
+.btn-searchtype>button.btn.dropdown-toggle.btn-default{
+  color: #494949; /* $ncs-darker-greystone */
+  background: white;
+  font-weight: 600;
+  border: 1.5px solid #d9d9d9; /* $ncs-light-greystone; */
+}
+button[id^='mysched']{
+  color: #494949; /* $ncs-darker-greystone */
+  background: white;
+  border: 1.5px solid #494949; /* $ncs-darker-greystone */
+  font-weight: 600;
+}
 
 /* ===================== HOME LAYOUT */
 #widget-explore-research-guides{
@@ -97,22 +103,6 @@ body:after{
 }
 
 
-/* ===================== BUTTONS */
-.btn-morelink, 
-.btn-morecoll, 
-.btn-primary{
-  color: #800000; /* $ncs-maroon; */
-  background: #f2f2f2; /* $ncs-lighter-greystone; */
-  border: 1px solid #800000; /* $ncs-maroon */
-
-  font-size: 1em;
-  border-radius: 4px; /* undo override BS defaults */
-}
-.btn-morelink:hover, 
-.btn-morecoll:hover, 
-.btn-primary:hover{
-  background: white;
-}
 
 /* ===================== Rightside Bar*/
 .rightside{
@@ -120,7 +110,7 @@ body:after{
 }
 .rightside a, 
 .flex-sidebar a{
-  color: #570000 !important; /* $ncs-dark-maroon */
+  color: #570000; /* $ncs-dark-maroon */
   text-decoration: none;
 }
 .rightside a:hover, .flex-sidebar a:hover, .rightside a:focus, .flex-sidebar a:focus{
@@ -157,6 +147,9 @@ body:after{
 .tabs.main-search{
   background: #f2f2f2; /* $ncs-lighter-greystone; */
 }
+.transformer-tabs ul{
+  border-color: #d9d9d9; /* $ncs-light-greystone; */
+}
 .transformer-tabs li a{
   padding: .3em 15px;
 }
@@ -171,9 +164,6 @@ body:after{
 .searchbox-header{
   color: #800000 !important; /* $ncs-maroon; */
   margin-left: .3em !important;
-}
-.btn-search{
-  background-color: #800000; /* $ncs-maroon; */
 }
 .btn-search:hover,
 .btn-search:active,
@@ -231,3 +221,31 @@ i.ask-icon{
 .twocol-drop a{
   color: inherit;
 }
+
+
+/* GUIDELINES
+  body:before{
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 15px;
+    width: 1px;
+    opacity: .5;
+    background: rgb(0,255,0);
+    z-index: 999999999999999999999999;
+    height: 100vh;
+  }
+  body:after{
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 30px;
+    width: 1px;
+    opacity: .5;
+    background: rgb(0,0,255);
+    z-index: 999999999999999999999999;
+    height: 100vh;
+  }
+*/
