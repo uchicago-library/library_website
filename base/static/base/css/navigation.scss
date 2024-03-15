@@ -37,6 +37,8 @@ Navigation Drop Downs
   padding-right: 1.5em;
   &>li>a {
       color: black;
+      color: #494949; /* $ncs-darker-greystone */
+      color: #570000; /* $ncs-dark-maroon */
       text-decoration: none;
       &:hover {
       	color:#E4E4E4;
