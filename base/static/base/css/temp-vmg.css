@@ -112,10 +112,10 @@ div.embed div.capt {
     bottom: 0px;
 }*/
 .news-category{
-  padding: 0.5em 1em !important;
-  background: #494949 !important; /* $ncs-darker-greystone; */
-  color: #fff !important;
-  font-weight: 600 !important;
+  padding: 0.5em 1em;
+  background: #494949; /* $ncs-darker-greystone; */
+  color: #fff;
+  font-weight: 600;
 }
 
 
@@ -201,6 +201,9 @@ div.embed div.capt {
   color: #570000; /* $ncs-dark-maroon */
   text-decoration: none;
 }
+.call-out a{
+  color: white;
+}
 .rightside a:hover, .flex-sidebar a:hover, .rightside a:focus, .flex-sidebar a:focus{
   text-decoration-style: solid;
 }
@@ -228,7 +231,10 @@ div.embed div.capt {
 .distinct-rightside i, .rightside.coll-rightside i, .coll-rightside.flex-sidebar i{
   padding: 0;
 }
-
+#widget-social-media ul{
+  text-indent: 0;
+  padding-left: 0;
+}
 
 
 /* ===================== Search Tab Panel */
@@ -303,10 +309,15 @@ i.ask-icon{
 .twocol-drop a:focus{
   color:inherit;
 }
+.onecol-drop,
 .twocol-head{
   color: #a6a6a6; /* gresytone */
 }
-.twocol-drop a{
+.onecol-drop>a,
+.twocol-drop a,
+.onecol-drop>a:hover,
+.onecol-drop>a:focus,
+.twocol-drop a:hover{
   color: inherit;
 }
 
