@@ -16,6 +16,7 @@ h1, h2, h3, h4, h5, h6{
 h1{
   font-size: 3.5rem !important;
   padding-left: 0;
+  color: #737373; /* $ncs-dark-greystone */
 }
 body.libnewspage section.story-page h2, 
 body.libnewsindexpage section.story-page h2,
