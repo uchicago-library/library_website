@@ -382,12 +382,12 @@ i.ask-icon{
 .twocol-head{
   color: #a6a6a6; /* gresytone */
 }
-.onecol-drop>a,
+.onecol-drop>li a,
 .twocol-drop a,
-.onecol-drop>a:hover,
-.onecol-drop>a:focus,
+.onecol-drop>li a:hover,
+.onecol-drop>li a:focus,
 .twocol-drop a:hover{
-  color: inherit;
+  color: white;
 }
 
 
