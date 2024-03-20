@@ -7,16 +7,23 @@ p{
 h1, h2, h3, h4, h5, h6{
   color: #570000; /* $ncs-dark-maroon */
   color: #800000; /* $ncs-maroon */
+  font-style: normal;
+}
+/* this might not be a good idea but it enforces consistency */
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6,
+h2>b,
+h3>b,
+h4>b{
   font-weight: 600;
   font-weight: 500;
   font-weight: 400;
-  font-style: normal;
 }
 .h1,
 h1{
   font-size: 3.5rem !important;
   padding-left: 0;
-  color: #737373; /* $ncs-dark-greystone */
+  color: #494949; /* $ncs-darker-greystone */
 }
 body.libnewspage section.story-page h2, 
 body.libnewsindexpage section.story-page h2,
