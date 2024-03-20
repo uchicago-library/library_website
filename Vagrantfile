@@ -171,15 +171,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     apt-get update -y -o Acquire::CompressionTypes::Order::=gz
     #apt-get update -y
 
-    # Jammy ships wih Python 10. We need Python 9.
-    # Remove this to go to Python 10 in the future.
     echo ""
-    echo "============== Downgrading to Python 3.9 =============="
+    echo "============== Install Python dev tools =============="
     apt-get install -y software-properties-common
-    add-apt-repository ppa:deadsnakes/ppa
-    apt-get install -y python3.9
-    apt-get -y install python3.9-distutils
-    apt-get install -y python3-pip python3.9-dev python3.9-venv
+    apt-get -y install python3-distutils
+    apt-get install -y python3-pip python3-dev python3-venv
 
     # Install Wagtail dependencies and useful dev tools
     echo -e ""
@@ -238,7 +234,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo ""
     echo "============== Creating a Python virtualenv =============="
     echo "..."
-    cd /home/vagrant && python3.9 -m venv lw
+    cd /home/vagrant && python3 -m venv lw
 
     # Pip install project dependencies
     echo ""
