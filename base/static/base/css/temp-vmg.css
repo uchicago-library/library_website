@@ -389,6 +389,10 @@ i.ask-icon{
 .twocol-drop a:hover{
   color: white;
 }
+.navbar-default .navbar-nav li.dropdown {
+    padding-left: 15px;
+    padding-right: 15px;
+}
 
 
 /* GUIDELINES
