@@ -120,14 +120,18 @@ $active-hover: #664d59; //#725663
 
 
 // Opacity Fun Times
-$ncs-transp: 0.8;
+$ncs-transp: 0.7;
 $transparent:       rgba($ncs-dark-greystone,  $ncs-transp); // rgba(67, 67, 67, 0.95);
 $trans-red:         rgba($ncs-maroon,          $ncs-transp); // rgba(109, 50, 39, 0.8);
+$trans-red:         rgba($ncs-dark-maroon,     $ncs-transp); // rgba(109, 50, 39, 0.8);
 $trans-blue:        rgba($crerarblue,          $ncs-transp); // rgba(21, 95, 131, 0.8);
 $trans-purple:      rgba($eckhartpurple,       $ncs-transp); // rgba(53, 14, 32, 0.8);
 $trans-darkgreen:   rgba($mansuetogreen,       $ncs-transp); // rgba(70, 71, 51, 0.8);
 $trans-lightgreen:  rgba($reggreen,            $ncs-transp); // rgba(101, 105, 51, 0.8);
 $trans-orange:      rgba($ssaorange,           $ncs-transp); // rgba(154, 83, 46, 0.8);
+
+// Elements colors
+$ncs-links: $ncs-lake;
 
 // Table Color Scheme
 
@@ -151,7 +155,7 @@ $divider: 1px solid $darkgray;
 
 .btn-morelink {  // "View more ..." link for sidebar
   font-size: 0.9em;
-  color: $crerarblue;
+  color: $ncs-lake;
   background: $lightneutral;
   border: 1px solid $lightgray;
   border-radius: 0;

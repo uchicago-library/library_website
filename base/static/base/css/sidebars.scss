@@ -82,21 +82,21 @@ Right Sidebar: Widget Items
   }
 
   // Library specific colors
-  &.crerar>ul>li>a {
-    color: $crerarblue;
-  }
-  &.eckhart>ul>li>a {
-    color: $eckhartpurple;
-  }
-  &.mansueto>ul>li>a {
-    color: $mansuetogreen;
-  }
-  &.reg>ul>li>a {
-    color: $reggreen;
-  }
-  &.ssa>ul>li>a {
-    color: $ssaorange;
-  }
+  // &.crerar>ul>li>a {
+  //   color: $crerarblue;
+  // }
+  // &.eckhart>ul>li>a {
+  //   color: $eckhartpurple;
+  // }
+  // &.mansueto>ul>li>a {
+  //   color: $mansuetogreen;
+  // }
+  // &.reg>ul>li>a {
+  //   color: $reggreen;
+  // }
+  // &.ssa>ul>li>a {
+  //   color: $ssaorange;
+  // }
   // END Library specific colors
 
   >ul {
@@ -131,6 +131,7 @@ Right Sidebar: Widget Items
     font-size: 1em;
     font-weight: 600;
     color: $darkred;
+    color: $ncs-dark-maroon;
     font-style: italic;
   } 
 } // END Sidebar nesting

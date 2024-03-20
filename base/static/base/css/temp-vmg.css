@@ -1,31 +1,39 @@
 
 /* ===================== TYPOGRAPHY */
-.h3, .h4, .h5, .h6, 
-h3, h4, h5, h6{
+p{
+  font-size: 1.5rem;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6{
   color: #570000; /* $ncs-dark-maroon */
+  color: #800000; /* $ncs-maroon */
+  font-weight: 600;
+  font-weight: 500;
+  font-weight: 400;
+  font-style: normal;
 }
 .h1,
 h1{
-  font-size: 3.4rem;
-  color: #494949; /* $ncs-darker-greystone; */
+  font-size: 3.5rem !important;
+  padding-left: 0;
 }
 body.libnewspage section.story-page h2, 
 body.libnewsindexpage section.story-page h2,
 .h2,
 h2{
-  font-size: 2.8rem;
-/*  font-weight: 500;*/
-  color: #800000; /* $ncs-maroon */
+  font-size: 3rem;
 }
 .h3,
 h3{
-  font-size: 2.3rem;
-  font-weight: 500;
+  font-size: 2.2rem;
+  font-style: italic;
+  font-style: normal;
 }
 .h4,
 h4{
-  font-size: 1.8rem;
-  font-weight: 500;
+  font-size: 1.7rem;
+  font-weight: 600;
+  font-weight: 400;
 }
 
 /* needs to be tested
@@ -56,15 +64,59 @@ p{
   font-size: 1rem !important;
 }*/
 
+/* ===================== MISC */
+.searchbox-input{
+  background: #D9D9D9; /* $ncs-light-grestone */
+  background: #f2f2f2; /* $ncs-lighter-greystone; */
+}
+.searchbox-icon i{
+  color: white;
+}
+.sdir article h3 a:focus,
+.sdir article h4 a:focus,
+.btn-obvious,
+.btn-list-toggle:focus,
+.searchbox-input:focus{
+  box-shadow: 0 4px 5px rgb(0 0 0 / 22%);
+}
+.searchbox-input:focus{
+  background: white;
+}
+.btn-list-toggle.active{
+  background: #800000; /* $ncs-maroon */
+}
+.menu-marker, 
+.btn-list-toggle.active:after{
+  border-top-color: #800000; /* $ncs-maroon */
+}
 /* ===================== BUTTONS */
-.rightside a.btn-morelink, 
-.rightside a.btn-morecoll, 
-.rightside a.btn-primary{
+.btn.btn-primary{
   font-size: 1em;
   border-radius: 4px; /* undo override BS defaults */
   /*  font-weight: 600;*/
   background: white;
   background: #f2f2f2; /* $ncs-lighter-greystone; */
+  background: #800000; /* $ncs-maroon */
+  color: #800000; /* $ncs-maroon */
+  color: #570000; /* $ncs-dark-maroon */
+  color: white;
+  border: 1.5px solid #800000; /* $ncs-maroon */
+  border: 1px solid #570000; /* $ncs-dark-maroon */
+  border: none;
+}
+.btn.btn-primary:hover{
+  background: #570000; /* $ncs-dark-maroon */
+}
+
+.rightside a.btn-morelink, 
+.rightside a.btn-morecoll, 
+.rightside a.btn-primary{
+  font-size: 1em;
+  border-radius: 4px; /* undo override BS defaults */
+  font-weight: 600;
+  font-weight: 400;
+  background: #f2f2f2; /* $ncs-lighter-greystone; */
+  background: white;
   color: #800000; /* $ncs-maroon */
   color: #570000; /* $ncs-dark-maroon */
   border: 1.5px solid #800000; /* $ncs-maroon */
@@ -73,7 +125,8 @@ p{
 .rightside a.btn-morelink:hover, 
 .rightside a.btn-morecoll:hover, 
 .rightside a.btn-primary:hover{
-  background: #F2F2F2; /* $ncs-light-grestone */
+  background: #D9D9D9; /* $ncs-light-grestone */
+  background: #f2f2f2; /* $ncs-lighter-greystone; */
 }
 .btn-search{
   background-color: #800000; /* $ncs-maroon; */
@@ -187,12 +240,18 @@ div.embed div.capt {
 
 /* ===================== Footer */
 #footer{
-  background: #570000; /* $ncs-dark-maroon */
+  background: #800000; /* $ncs-maroon */
 }
 
 
 
-/* ===================== Rightside Bar*/
+/* ===================== Sidebar */
+.sidebar{
+  background: #f2f2f2; /* $ncs-lighter-greystone; */
+}
+
+
+/* ===================== Right Sidebar */
 .rightside{
   color: black;
 }
@@ -201,7 +260,9 @@ div.embed div.capt {
   color: #570000; /* $ncs-dark-maroon */
   text-decoration: none;
 }
-.call-out a{
+.call-out a,
+.call-out a:focus,
+.call-out a:hover{
   color: white;
 }
 .rightside a:hover, .flex-sidebar a:hover, .rightside a:focus, .flex-sidebar a:focus{
