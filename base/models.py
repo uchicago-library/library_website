@@ -1472,6 +1472,9 @@ class PublicBasePage(BasePage):
     #    null=True, blank=True, on_delete=models.SET_NULL, limit_choices_to={'is_building': True},
     #    related_name='%(app_label)s_%(class)s_related')
 
+    # Table of Content field
+    enable_toc = models.BooleanField(default=False)
+
     # Quicklinks fields
     quicklinks = RichTextField(blank=True)
     quicklinks_title = models.CharField(max_length=100, blank=True)

@@ -204,7 +204,10 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
                         {% endif %}
-
+                        <!-- Talbe of Contents -->
+                        {% if self.enable_toc %}
+                            {% include "base/includes/toc.html" %}
+                        {% endif %}
                         {% if carousel_items %}
                             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
 
