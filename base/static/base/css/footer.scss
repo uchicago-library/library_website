@@ -45,16 +45,15 @@ Pleeb Footer Code
  */
 
 .footer {
-  color: #e2ddd7;
+  color: #fff;
   width: 100%;
-  background: $mid-dark; // fallback
-  background-image: url("../images/warm_grey_reddish.jpg");
-  background-repeat: repeat;
+  background: $ncs-dark-maroon;
   padding-top: 20px;
   padding-bottom: 20px;
   ul {
     list-style:none;
     padding-left: 0;
+    margin-bottom: 12px;
   }
   &>hr {
     border-top: 1px solid $mid-dark;
@@ -65,19 +64,21 @@ Pleeb Footer Code
   & a {
   color: #fff;
   line-height: 1.7em;
+  text-decoration: none;
     &:hover, &:focus {
-      color: #000;
-      text-decoration: none;
+      color: #fff;
+      text-decoration: underline;
     }
   }
   h5 {
     margin-bottom: 0px;
   }
   h2.footer-heading {
-    color: #e2ddd7;
+    color: #fff;
+    color: rgba(255, 255, 255, .75);
     font-weight: 600;
-    font-size: 14px;
-    margin: 0;
+    font-size: 16px;
+    margin: 0 0 6px;
   }
   .col-footer {
       border-top: 1px solid #5e5e5e;

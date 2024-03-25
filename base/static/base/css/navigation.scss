@@ -25,34 +25,43 @@ Navigation Drop Downs
   text-align: center;
   border-bottom: 1px solid $mid-dark;
   background-color: rgba(67, 67, 67, 0.7);
-  padding: 0.5em 0;
-      a {
-      color: #fff;
-      padding: 0 1.5em;
+  padding: 0 15px;
+  display: flex;
+  a {
+    color: #fff;
+    flex-grow: 1;
+    padding: .5em 0;
+  }
+  @include respond-to(small) {
+    padding: 0 30px;
+  }
+  @include respond-to(medium) {
+    display: none;
   }
 }
 
 #navbar-right {
   font-size: 1em;
-  padding-right: 1.5em;
+  padding-right: 30px;
   &>li>a {
-      color: #f9f9f9;
-      text-decoration: none;
-      &:hover {
-      	color:#E4E4E4;
-        background-color: $transparent;
-        text-decoration: underline;
-      }
-      &:focus {
-        background-color: $transparent;
-        outline-offset: 1px;
-        text-decoration: underline;
-      }
+    color: $ncs-maroon;
+    &:hover, 
+    &:focus {
+      background: $ncs-lighter-greystone;
+      text-decoration: underline;
     }
+    i.ask-icon{
+      color: inherit !important;
+    }
+  }
   &>li>.dropdown-menu {
-      color: #fff;
-      text-align: right;
-      background-color: $transparent;
+    color: inherit;
+    text-align: right;
+    background: $ncs-lighter-greystone;
+    li>a,
+    li>a:hover{
+      color: inherit !important;
+    }
   }
   @include respond-to(xlarge) {
       padding-right: 15em;
@@ -87,7 +96,7 @@ i.ask-icon {
  */
 
 .fluid-top {
-  box-shadow: 0 1px 7px #462b28; // Puts drop shadow on alert banners, if active
+  box-shadow: $box-shadow-header;
   @include respond-to(small) {
     padding: 0px;
   }
@@ -95,23 +104,27 @@ i.ask-icon {
 
 .navbar-brand {
   max-width: 175px;
-  padding: 5px 15px 15px 15px;
+  padding: 9px 0 6px 30px;
+  margin: 0;
+  height: unset;
+  &>img{
+    max-width: 120px;
+  }
   @include respond-to(small) {
     max-width: 225px;
-    padding-left: 35px;
-    padding-top: 5px;
+    padding-left: 45px;
+    padding-top: 15px;
   }
   @include respond-to(medium) {
-    padding-top: 10px;
+    max-width: 225px;
+    padding-top: 15px;
   }
 }
 
 .navbar-default {
   border: 0px;
   margin-bottom:0px;
-  background-image: url("../images/warm_grey_reddish.jpg");
-  background-repeat: repeat;
-  background-color: $mid-dark; //back-up
+  background-color: white;
   z-index: 10;
   border-radius: 0;
   .navbar-nav {
@@ -148,24 +161,36 @@ i.ask-icon {
 }
 
 #global-navbar {
-  background-color: $mid-dark;
+  background-color: $ncs-maroon;
   font-size: $font-small;
-  padding-left:0.5em;
-  &.navbar-nav>li>a:focus {
-    color: #fff;
-    outline-offset: 1px;
-    text-decoration: underline;
+  padding-left: 15px;
+  padding: 0;
+  & .navbar-nav>li>a:hover,
+  & .navbar-nav>li>a:focus{
+    text-decoration: none;
   }
-  &.navbar-nav>.open>a:focus {
-    background-color: $maroon;
+  & .navbar-nav>li>a:hover,
+  & .navbar-nav>li>a:focus,
+  & .navbar-nav>.open>a,
+  & .navbar-nav>.open>a:hover,
+  & .navbar-nav>.open>a:focus,
+  & .navbar-nav>.open .dropdown-menu,
+  & .navbar-nav>.open .dropdown-menu a,
+  & .navbar-nav>.open .dropdown-menu a:hover,
+  & .navbar-nav>.open .dropdown-menu a:focus {
+    background: $ncs-dark-maroon;
+    color: white;
   }
   @include respond-to(small)  {
-    box-shadow: 0 1px 7px #414141;
-    margin-top: 70px;
+    margin-top: 60px;
+    padding: 0 15px;
     .navbar-nav>li>a {
       padding-top: 7px;
       padding-bottom: 7px;
     }
+  }
+  @include respond-to(medium)  {
+    padding-left: 15px;
   }
 }
 
@@ -218,7 +243,7 @@ i.ask-icon {
 // }
 
 .twocol-head { // Headers for mega drop downs
-  color: #e7d5d3;
+  color: $ncs-greystone;
   font-size: .8em;
   line-height: 2.4em;
   text-transform: uppercase;
@@ -258,8 +283,8 @@ i.ask-icon {
       font-size: $font-small;
       margin-bottom: 12px;
       &:hover, &:focus {
-        color: #EDD4C1!important;
-        background-color: transparent!important;
+        color: #EDD4C1;
+        background-color: transparent;
       }
     }
   }
