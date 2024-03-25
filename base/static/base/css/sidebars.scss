@@ -57,7 +57,11 @@ Right Sidebar: Widget Items
   }
 
   .toggle-side {
-      padding-bottom: 5px;
+    position: absolute;
+    padding-bottom: 0;
+    top: 0;
+    left: 0;
+    z-index: 9;
   }
 }
 
@@ -68,7 +72,7 @@ Right Sidebar: Widget Items
  */
 
 .sidebar {
-  background-color: rgba(210,205,204,0.6);
+  background: $ncs-lighter-greystone;
   padding: 1em 1em 1em 2em;
   @include respond-to(medium) {
     padding-left: 1em;
@@ -126,31 +130,31 @@ Right Sidebar: Widget Items
       }
     }
   }
-  h2, h2 a {
+  h2, h2 a, h3{
     margin-bottom: 3px;
     font-size: 1em;
+    color: $ncs-maroon; 
+    border-color: $ncs-maroon; 
     font-weight: 600;
-    color: $darkred;
-    color: $ncs-dark-maroon;
-    font-style: italic;
   } 
 } // END Sidebar nesting
 
 .btn-sidebar {  // Toggle button for mobile view
-  background: #ddd;
-  color: $darkgray;
-  position: absolute;
+  background: $ncs-darker-greystone;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  margin-left: 0;
+  margin-top: 0;
+
+  background: $ncs-light-greystone;
+  color: $ncs-darker-greystone;
+  box-shadow: none;
   left: 0;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
   margin-left: 0;
-  margin-top: -2em;
-  z-index: 1000;
-  background-color: rgba(210,205,204, 0.9);
-  box-shadow: 0px 2px 7px $darkgray;
-  & a {
-    color: $darkgray;
-  }
+  margin-top: 0;
+  padding: 6px 12px;
 }
 
 
@@ -167,24 +171,24 @@ Right Sidebar: Widget Items
   border-left: 0;
   margin: 10px 0;
   padding: 20px 15px 0px 15px;
+  color: black;
   a {
-    color:  $active-hover;
+    color:  $ncs-links-rightsidebar;
+    text-decoration: none;
     &:hover, &:focus {
-      color: $default-link;
-      outline-offset: 1px;
-      text-decoration: underline;
-      text-decoration-style: dotted;
+      color: $ncs-links-rightsidebar-hover;
+      text-decoration: underline; 
     }
   }
   h2, h3 {
-    font-weight: 400;
-    font-size:$font-small;
+    font-weight: 600;
+    font-size: $font-small;
     font-family: $base-font;
     margin: 5px 0 10px 0;
     padding-bottom: 5px;
-    color: $brightpurple;
+    color: $ncs-maroon; 
     font-style: normal;
-    border-bottom: 2px solid $brightpurple;
+    border-bottom: 2px solid $ncs-maroon; 
     &:first-child {
       margin-top: 5px;
     }
@@ -203,7 +207,10 @@ Right Sidebar: Widget Items
     max-width: 30em;
   }
   .btn-morelink {
-    margin: 2em 0 0;
+    margin: .5em 0 0;
+  }
+  hr{
+    margin: .5em 0;
   }
 }
 
@@ -218,6 +225,10 @@ Right Sidebar: Widget Items
   }
   & a {
     color: #fff;
+    &:focus,
+    &:hover{
+      color: white;
+    }
   }
 }
 
@@ -250,19 +261,13 @@ Right Sidebar: Widget Items
 }
 
 .home-module {
-  border-bottom: 1px solid $darkgray;
-  padding: 0px 0px 10px 15px;
+  border-bottom: 1px solid $ncs-darker-greystone;
+  padding: 0 0 .5em;
   margin-bottom: 15px;
   a {
     color: $mid-dark;
     display: inline;
     text-decoration: none;
-    &.viewall {
-        &:before {
-        content: "\0020|\0020";
-        margin: 0 0.5em;
-      }
-    }
     &:hover, &:focus {
       color: #2A5DB0;
       text-decoration: underline;
@@ -311,10 +316,16 @@ Right Sidebar: Widget Items
 }
 
 a.viewall {
+  display: block;
   &:after {
     content: "\0020\f101";
     font-family: FontAwesome;
   }
+}
+
+#widget-social-media ul{
+  text-indent: 0;
+  padding-left: 0;
 }
 
 .flex-sidebar {  // right sidebar that has push/pull div properties

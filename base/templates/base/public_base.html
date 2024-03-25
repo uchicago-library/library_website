@@ -73,7 +73,6 @@
             <!-- Boostrap-select -->
             <link rel="stylesheet" href="{% static "public/css/bootstrap-select.min.css" %}">
         {% endcompress %}
-        <link rel="icon" type="image/x-icon" href="{% static "base/images/favicon.ico" %}">
         {# Jquery must be loaded in the header on the hours page #}
         {% if is_hours_page %}
             <script src="{% static "base/js/jquery.min.js" %}"></script>
@@ -91,6 +90,7 @@
             gtag('config', 'G-EWT5B3NZ15');
             gtag('set', 'content_group', 'public site');
         </script>
+        {# <link rel="stylesheet" href="{% static "base/css/temp-vmg-old.css" %}"/> #}
         <link rel="stylesheet" href="{% static "base/css/temp-vmg.css" %}"/>
     </head>
 
@@ -185,19 +185,19 @@
                     </div>
                     {% block above_main_content %}{% endblock %}
                     <div class="{{content_div_css}}" id="content" role="main">
+                        {% if has_left_sidebar %}
+                            <!-- Off-Canvas Toggle Button -->
+                            <div class="visible-xs visible-sm toggle-side">
+                                <button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button>
+                            </div>
+                            <!-- // End Off-Canvas Toggle Button -->
+                        {% endif %}
                         {% if object_title %}
                             <h1>{{object_title}}</h1>
                         {% elif page_type|slugify != 'libnewspage' %}
                             <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
                         {% endif %}
                         {% block under_h1 %}{% endblock %}
-                        {% if has_left_sidebar %}
-                            <!-- Off-Canvas Toggle Button -->
-                            <div class="row visible-xs visible-sm toggle-side">
-                                <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
-                            </div>
-                            <!-- // End Off-Canvas Toggle Button -->
-                        {% endif %}
 
                         <!-- Main Content -->
                         {% if self.has_right_sidebar %}
@@ -347,7 +347,7 @@
                                 <div class="news-wrap">
                                     {% if news_feed %}
                                         {% for story in news_feed %}
-                                            <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+                                            <div class="newsblock col-xs-12 col-sm-6 col-lg-3">
                                                 <div class="embed">
                                                     <div class="figure-wrap">
                                                         <a href="{% pageurl story %}" data-ga-tracked="on">

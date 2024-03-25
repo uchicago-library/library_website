@@ -1,4 +1,4 @@
-// Search box on sub-pages, such as direcotry and collections.
+// Search box on sub-pages, such as directory and collections.
 
 
 @import "variables.scss";
@@ -55,12 +55,8 @@
     line-height:30px;
     text-align:center;
     cursor:pointer;
-    color:#ddd;
+    color:#fff;
     background:$maroon;
-    @include respond-to(small) {
-        color: #fff;
-        background: $darkgray;
-    }
 }
 
 .searchbox-open{

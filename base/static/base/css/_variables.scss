@@ -56,11 +56,6 @@ $ncs-maroon: #800000;
 $ncs-greystone: #A6A6A6;
 $ncs-light-greystone: #D9D9D9;
 $ncs-dark-greystone: #737373;
-// Primary-accessory
-$ncs-dark-maroon: #570000;
-$ncs-darker-brick: #592628;
-$ncs-lighter-greystone: #f2f2f2;
-$ncs-darker-greystone: #494949;
 
 // Secondary
 $ncs-goldenrod: #EAAA00;
@@ -85,6 +80,14 @@ $ncs-brick: #A4343A;
 $ncs-light-brick: #B46A55;
 $ncs-dark-brick: #643335;
 
+// Primary-accessory
+$ncs-dark-maroon: #570000;
+$ncs-darker-brick: #592628;
+$ncs-lighter-greystone: #f2f2f2;
+$ncs-darker-greystone: #494949;
+// Secondary Accessory
+$ncs-bright-violet: #662f6f; 
+
 
 
 // Unv Color Palette
@@ -94,11 +97,12 @@ $lightgray: #D6D6CE;
 $darkred: $ncs-darker-brick; // #642822;
 $maroon: #800000;
 
+// Building-specific colors have been abandoned. Kept here for legacy during transition.
 $crerarblue: $ncs-lake; //#0F425C;
 $eckhartpurple: $ncs-violet; //#350E20;
 $mansuetogreen: $ncs-forest; // #3E3E23;
 $reggreen: $ncs-ivy; //#616530; ??? no banner
-$ssaorange: $ncs-goldenrod; // #9A5324; ??? what is this for?
+$ssaorange: $ncs-goldenrod; // #9A5324; 
 // DAngelo
 // Social Work
 // Special Collections
@@ -106,17 +110,17 @@ $ssaorange: $ncs-goldenrod; // #9A5324; ??? what is this for?
 
 // Palette Variations
 
-$mid-dark: #494949; //#525252
-$darkneutral: #7B4943;
-$midneutral: #D2CDCC;
-$neutral: #e2ddd7;
-$lightneutral: #f0eeef;
-$brightpurple: #6d2f6a;
-$hoveraccent: #D49464;
-$hovercalm: #eeefe5; //#e0e5e2
-$hovercalmlight: #f6f7f2;
-$active: #8A9045;
-$active-hover: #664d59; //#725663
+$mid-dark: $ncs-darker-greystone;
+$darkneutral: $ncs-light-brick;
+$midneutral:     $ncs-light-greystone;
+$neutral:        $ncs-light-greystone;
+$lightneutral:   $ncs-light-greystone;
+$hovercalm:      $ncs-light-greystone;
+$hovercalmlight: $ncs-light-greystone;
+$brightpurple: $ncs-bright-violet;
+$hoveraccent: $ncs-light-terracotta;
+$active: $ncs-maroon; // #8A9045;
+$active-hover: $ncs-dark-maroon; // #664d59; // #725663
 
 
 // Opacity Fun Times
@@ -132,10 +136,13 @@ $trans-orange:      rgba($ssaorange,           $ncs-transp); // rgba(154, 83, 46
 
 // Elements colors
 $ncs-links: $ncs-lake;
+$ncs-links-hover: $ncs-lake;
+$ncs-links-rightsidebar: $ncs-dark-maroon;
+$ncs-links-rightsidebar-hover: $ncs-maroon;
 
 // Table Color Scheme
 
-$table-main: $ncs-light-ivy; //#ADB17D;
+$table-main: $ncs-maroon; //#ADB17D;
 //$table-accent: ;
 
 
@@ -145,6 +152,8 @@ $table-main: $ncs-light-ivy; //#ADB17D;
  */
 
 $divider: 1px solid $darkgray;
+$box-shadow-header: 0 2px 8px 0px rgba(0, 0, 0, .33);
+$box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
 
 .nopadding {  // For use when do not want to wrap in row 
    padding-right: 0;
@@ -153,22 +162,37 @@ $divider: 1px solid $darkgray;
    margin-left: 0;
 }
 
-.btn-morelink {  // "View more ..." link for sidebar
-  font-size: 0.9em;
-  color: $ncs-lake;
-  background: $lightneutral;
-  border: 1px solid $lightgray;
-  border-radius: 0;
-  padding: 6px 12px;
-  margin-bottom: 10px;
-  text-decoration: none;
-  &:after {
-    content: "\0020\f101";
-    font-family: FontAwesome;
+.btn-primary{
+  font-size: 1em;
+  border-radius: 4px; /* undo override BS defaults */
+  background: $ncs-maroon;
+  color: $ncs-dark-maroon;
+  color: white;
+  // border: 1px solid $ncs-dark-maroon;
+  border: none;
+  &:hover{
+    background: $ncs-dark-maroon;
   }
-  &:hover {
-    background: #d8b9b7;
-    color: $maroon; 
+}
+.btn-secondary{
+  background: white;
+  color: $ncs-darker-greystone;
+  border: 1.5px solid $ncs-darker-greystone;
+  border-radius: 4px; /* undo override BS defaults */
+  &:hover{
+    background: $ncs-lighter-greystone;
+  }
+}
+
+.btn-tertiary{
+  font-size: 1em;
+  border-radius: 4px; /* undo override BS defaults */
+  font-weight: 400;
+  background: white;
+  color: $ncs-dark-maroon;
+  border: 1px solid $ncs-dark-maroon;
+  &:hover{
+    background: $ncs-lighter-greystone;
   }
 }
 
@@ -184,7 +208,7 @@ $divider: 1px solid $darkgray;
   color: $brightpurple;
   }
   i {
-    padding-left: 1em;
+    padding: 0;
   }
   a {
     color: $brightpurple;
@@ -212,7 +236,7 @@ $divider: 1px solid $darkgray;
   position: absolute;
   width: 0;
   height: 0;
-  border-color: $darkred transparent transparent;
+  border-color: $ncs-maroon transparent transparent;
   border-style: solid;
   border-width: 11px;
   left: 50%;

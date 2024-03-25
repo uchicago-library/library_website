@@ -40,27 +40,24 @@ html, body {
 }
 
 .valid {
-  color: #089e00; }
+  color: $ncs-ivy; }
 
 .error {
   color: red; }
 
 .warning {
-  color: #fff664; }
+  color: $ncs-goldenrod; }
 
 .information {
-  color: #000db5; }
+  color: $ncs-lake; }
 
 /* Links */
 a {
-  color: $default-link;
+  color: $ncs-links;
   outline: 0;
   text-decoration: underline;
     &:hover, &:focus {
-      color: #487286;
-      outline-offset: 1px;
-      text-decoration: underline;
-      text-decoration-style: dotted;
+      color: $ncs-links-hover;
     }
   &.social {
     color: #767676;
@@ -75,12 +72,24 @@ a {
  h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, a:empty, p:empty, ul:empty {
     display: none; // ADA: Hides empty header tags
 }
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6{
+  color: $ncs-maroon; 
+  font-style: normal;
+}
+/* this might not be a good idea but it enforces consistency 
+*  some wagtail posts have a bold styling applied to a heading. */
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6,
+h2>b,
+h3>b,
+h4>b{
+  font-weight: 400;
+}
 
- h1 {
-  font-size: 1.4em;
-  color: #800000;
-  font-weight: 300;
-  padding-left: 1em;
+h1 {
+  font-size: 3.5rem;
+  color: $ncs-darker-greystone;
   padding-bottom: 5px;
   border-bottom: 1px solid $lightgray;
   margin: 0 0 0.2em 0;
@@ -90,9 +99,7 @@ a {
 }
 
 h2 {
-  font-size: 1.2em;
-  color: #800000;
-  font-weight: 600;
+  font-size: 3rem;
   line-height: 1.4em;
   .contentalert {
     line-height: 1.3em;
@@ -105,9 +112,8 @@ h2 {
 
 h3 {
   font-family: $accent-font;
-  font-size: 1.25em;
-  color: $mid-dark;
-  font-weight: 600;
+  font-size: 2.2rem;
+  font-style: normal;
   line-height: 1.4em;
   &+h4 {
     margin-top: 0;
@@ -115,10 +121,7 @@ h3 {
 }
 
 h4 {
-  font-weight: 600;
-  font-size:1.1em;
-  color: #6d2f6a;
-  font-style: italic;
+  font-size:1.7rem;
   line-height: 1.4em;
   .newsblock & {
     margin-bottom: 3px;
@@ -148,6 +151,7 @@ h6 {
 
 
 p {
+  font-size: 1.5rem;
   margin-bottom: 1em;
   line-height: 1.5em;
     small {

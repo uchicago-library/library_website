@@ -23,8 +23,8 @@ Other Search Row
 h3.searchbox-header {
   font-size: $font-small;
   font-family: $base-font;
-  color: $darkred;
-  margin: 12px 0 10px 5px;
+  color: $ncs-maroon;
+  margin: 12px 0 10px .3em;
   padding-bottom: 3px;
   line-height: 1.1em;
   font-weight: 600;
@@ -33,16 +33,16 @@ h3.searchbox-header {
 
 .transformer-tabs {
   .main-search & {
-    background-color: #fff;
+    background: #fff;
   }
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    border-bottom: 3px solid $lightgray;
+    border-bottom: 3px solid $ncs-light-greystone;
     @include respond-to(smallonly) {
-      color: #fff;
       display: flex;
+      flex-wrap: wrap;
     }
   }
   li {
@@ -53,28 +53,21 @@ h3.searchbox-header {
       display: inline-block;
       color: #525252;
       text-decoration: none;
-      padding: 0.3em 1.5em;
+      padding: .3em 15px;
       font-weight: 600;
+      &:hover,
       &.active {
-        color: lighten($darkred, 20%);
-        border-bottom: 3px solid transparent;
-        border-bottom-color: $darkred;
+        color: $ncs-maroon;
+        border-bottom: 3px solid $ncs-maroon;
         position: relative;
         bottom: -3px;
-        &:after {
-          @extend .menu-marker;
-        }
-        @include respond-to(smallonly) {
-          color: $darkred;
-          display: flex;
-          padding-top: 0;
-        }
       }
-      &:hover {
-        color: #C16622;
-        border-bottom: 3px solid #C16622;
-        position: relative;
-        bottom: -3px;
+      &.active:after {
+        @extend .menu-marker;
+        border-top-color: $ncs-maroon; 
+      }
+      @include respond-to(smallonly) {
+        padding-top: 0;
       }
     }
   }
@@ -86,11 +79,7 @@ h3.searchbox-header {
     padding: 1em;
   }
   &.main-search {
-    background: rgba(210,205,204, 0.5);
-    background: -moz-linear-gradient(top,  rgba(214,214,206, 0.7) 20%, rgba(226,221,215, 0.6) 99%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top,  rgba(214,214,206, 0.7) 20%,rgba(226,221,215, 0.6) 99%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom,  rgba(214,214,206, 0.7) 20%,rgba(226,221,215, 0.6) 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(214,214,206, 0.5)', endColorstr='rgba(226,221,215, 0.5)',GradientType=0 ); /* IE6-9 */
+    background:  $ncs-lighter-greystone;
     margin-bottom: 10px;
 
   }
@@ -135,7 +124,7 @@ h3.searchbox-header {
 }
 
 .btn-searchtype>.dropdown-menu { //ALTS to work with javascript translation
-  background-color: #5e5e5e;
+  background-color: $ncs-dark-greystone;
   color: #fff;
   margin-top: -1px;
   border: none;
@@ -143,10 +132,9 @@ h3.searchbox-header {
   & > ul {
     background-color: transparent;
     & > li > a {
-      color: #fff;
+      color: inherit;
       &:hover, &:focus {
-        color: $maroon;
-        background-color: rgba(210, 205, 204, 0.95); //#f7f1f0
+        background-color: $ncs-darker-greystone;
         text-decoration: none;
       }
     }
@@ -156,21 +144,31 @@ h3.searchbox-header {
 .btn-search {
   background-color: $ncs-maroon;
   color: #fff;
+  border: 1px solid $ncs-maroon;
   width: 100%;
   font-size: $font-small;
   padding: 0.6em;
   line-height: 0.45em;
   margin-top: 0;
-  border: none;
   @include respond-to(medium) {
     padding: 0.8em;
   }
 }
 
-.btn-search:hover, .btn-search:focus, .btn-search:active, .btn-searchtype>button:hover, .btn-searchtype>button:focus, .btn-searchtype>button:active, .btn-searchtype>button.btn.dropdown-toggle.btn-default {
-    color: #fff;
-    background-color: #5e5e5e;
-  }
+.btn-search:hover, 
+.btn-search:focus, 
+.btn-search:active{
+  background-color: $ncs-dark-maroon;
+}
+
+.btn-searchtype>button:hover, 
+.btn-searchtype>button:focus, 
+.btn-searchtype>button:active, 
+.btn-searchtype>button.btn.dropdown-toggle.btn-default {
+  color: $ncs-darker-greystone;
+  background: white;
+  border: 1px solid $ncs-light-greystone;
+}
 
 .dropdown-menu-right {
   margin: 0px;

@@ -47,6 +47,7 @@ Forms (CGI)
 
 .body-container {
   padding: 30px;
+  padding-top: 42px;
   max-width: 1200px;
   #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 &, &.directory {  // Exception for Home pages and directory pages
     max-width: 2000px;
@@ -161,13 +162,12 @@ body.libnewsindexpage article .img-object .preload span {
 
 .breadcrumbs {
   padding-top: 5px;
-  padding-left: 20px;
+  padding-left: 30px;
   font-size: 85%;
  }
 
 
 .centermain {
-  padding: 0;
   max-width: 900px;
   display: block;
   margin-left: auto;
@@ -606,7 +606,6 @@ figure.coll-thumb {
     &:hover {
       color: $default-link;
       text-decoration: underline;
-      font-weight: 600;
     }
     &:focus {
       outline: 2px dashed $ncs-links;
@@ -635,7 +634,7 @@ figure.coll-thumb {
 }
 
 #widget-explore-research-guides {
-  padding-left: 0;
+  padding-left: 15px; /* undo BS override */
 }
 
 // featured expert homepage module
@@ -713,11 +712,13 @@ a.event-header {
  * --------------------------------------------------
  */
 
- .news-wrap {
+.news-wrap {
   display: flex;
   flex-wrap: wrap;
   display: -webkit-flex;  // Safari fix
   -webkit-flex-wrap: wrap;  // Safari fix
+  margin-left: -5px;
+  margin-right: -5px;
 }
 
 .newsblock {
@@ -737,7 +738,7 @@ a.event-header {
 }
 
 div.embed {
-  width: 98%;
+  width: 100%;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -803,8 +804,15 @@ div.embed {
   }
 }
 
-.btn-primary {
-  @extend .btn-morelink;
+.btn-morecoll {
+  @extend .btn-tertiary;
+}
+.btn-morelink {  // "View more ..." link for sidebar
+  @extend .btn-tertiary;
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
 }
 
 .spaces-toggle {
@@ -822,9 +830,9 @@ div.embed {
   border-radius: 0;
   &.active {
     color: white;
-    background-color: $darkred;
-    border-top: 2px solid $maroon;
-    border-bottom: 2px solid $maroon;
+    background-color: $ncs-maroon;
+    border-top: 2px solid $ncs-maroon;
+    border-bottom: 2px solid $ncs-maroon;
     -webkit-box-shadow: none;
     box-shadow: none;   
     &:after {
@@ -838,7 +846,7 @@ div.embed {
     box-shadow: none; 
   }
   &:focus {
-    box-shadow: 2px 2px 10px $ncs-links;
+    box-shadow: $box-shadow-focus;
     border-top: 2px solid $maroon;
     border-bottom: 2px solid $maroon;
   }
@@ -962,12 +970,11 @@ tbody a {
 
 tr.etable-header>th, th.etable-header, table.etable thead {
   border-top: none!important;
-  border-bottom: 2px solid $table-main;
-  font-family: $accent-font;
+  border-bottom: 2px solid $ncs-maroon;
   font-size: 1.1em;
-  color: darken($table-main, 27%);
+  color: $ncs-maroon;
   font-weight: 600;
-  background: lighten($table-main, 35%)!important;
+  background: $ncs-lighter-greystone;
   @include respond-to(smallonly) {
     display: inline-block;
     width: inherit;
@@ -1081,7 +1088,7 @@ table.etable>tbody>tr {
   right:0;
   border:0;
   outline:0;
-  background:#dcddd8;
+  background: $ncs-lighter-greystone;
   width:100%;
   height:30px;
   margin:0;
@@ -1089,7 +1096,8 @@ table.etable>tbody>tr {
   font-size:1em;
   color:$maroon;
   &:focus {
-    box-shadow: 2px 2px 10px $ncs-links;
+    box-shadow: $box-shadow-focus;
+    background: white;
   }
 }
 
@@ -1112,14 +1120,14 @@ table.etable>tbody>tr {
   line-height:30px;
   text-align:center;
   cursor:pointer;
-  color:#ddd;
-  background:$maroon;
+  color:#fff;
+  background: $ncs-maroon;
   &:hover {
     color: black;
     background-color: $hovercalmlight;
   }
   &:focus {
-    box-shadow: 0px 1px 5px $ncs-links;
+    box-shadow: $box-shadow-focus;
     color: black;
     background-color: $hovercalmlight;
   }
@@ -1694,7 +1702,7 @@ h2.spaces {
     background-color: $hovercalmlight;
   }
   &:focus {
-    box-shadow: 0px 1px 5px $ncs-links;
+    box-shadow: $box-shadow-focus;
     background-color: $hovercalmlight;
   }
  }
@@ -1730,11 +1738,6 @@ padding: 10px 0px 0px 15px;
   }
 }
 
-.btn-morecoll {
-  @extend .btn-morelink;
-  background: $hovercalm;
-  border-color: #a0a282;
-}
 
 .btn-coll-link {
   font-size: 0.9em;
@@ -1961,21 +1964,10 @@ a.coll-access {
  */
 
 button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
-  color: #ffffff;
-  background: #6e7337;
+  @extend .btn-secondary;
   margin-top: 0.5em;
-  border: none;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  &:hover, &:focus {
-    color: #2A5DB0;
-    background: transparent;
-    border: 1px solid #2A5DB0;
-  }
+  font-weight: 600;
 }
-
 
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {

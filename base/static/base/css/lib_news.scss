@@ -220,6 +220,10 @@ body.libnewsindexpage {
 
 	.news-category {
     display: block;
+	  padding: 0.5em 1em;
+	  background: $ncs-darker-greystone;
+	  color: #fff;
+	  font-weight: 600;
 		@include news-category-colors; // located in _variables.scss
 	}
 
