@@ -1352,9 +1352,8 @@ a.btn-ask {
   width: 100%;
   margin-bottom: 20px;
     & thead {
-    background-color: lighten($table-main, 15%);
-    color: #323232;
-    font-style: italic;
+    background-color: $table-main;
+    color: white;
     &>tr>th {
       vertical-align: middle;
       border-bottom: 2px solid $table-main;
@@ -1881,7 +1880,6 @@ a.coll-access {
     h3, h4 {
       font-family: $base-font;
       font-size: 1em !important; 
-      color: darken($mid-dark, 10%);
       font-weight: 600;
       font-style: normal;
       display: block;
