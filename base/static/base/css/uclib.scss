@@ -1094,7 +1094,7 @@ table.etable>tbody>tr {
   margin:0;
   padding:0px 55px 0px 20px;
   font-size:1em;
-  color:$maroon;
+  color: black;
   &:focus {
     box-shadow: $box-shadow-focus;
     background: white;
@@ -1275,9 +1275,8 @@ a.btn-ask {
   border-collapse: collapse;
   border-spacing: 0;
   & thead {
-    background-color: lighten($table-main, 15%);;
-    color: #323232;
-    font-style: italic;
+    background-color: $table-main;
+    color: white;
     &>tr>th {
       vertical-align: bottom;
       border-bottom: 2px solid $table-main;
@@ -1306,7 +1305,7 @@ a.btn-ask {
       }
     }
     &:nth-of-type(even) {
-      background-color: #f9f9f9;
+      background-color: $ncs-lighter-greystone;
     }
     &:last-child {
       border-bottom:2px solid $table-main;
@@ -1316,18 +1315,16 @@ a.btn-ask {
 
 // Highlights "Today" column
 .s-lc-whw-head-date {
-  color: #4c4c4c;
   font-size: 0.9em;
 }
 
-.s-lc-whw-today-h, .s-lc-whw-today-h>.s-lc-whw-head-date {
-  color: #000;
-  background-color: $table-main;
-  font-style: normal;
+// .s-lc-whw-today-h>.s-lc-whw-head-date,
+.s-lc-whw-today-h{
+  background-color: $table-accent;
 }
 
 .s-lc-whw-today {
-  background-color: lighten($table-main, 32%);
+  background-color: $ncs-light-greystone;
   font-weight: 600;
 }
 
@@ -1457,9 +1454,9 @@ a.btn-ask {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 3px;
-  color: #333;
-  background-color: #fff;
-  border-color: #ccc;
+  background-color: $ncs-light-brick;
+  color: #fff;
+  border-color: $ncs-brick;
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -1472,7 +1469,7 @@ a.btn-ask {
 }
 
 .s-lc-whw-pr:disabled, .s-lc-whw-ne:disabled {
-  background-color: #efefef;
+  background-color: $ncs-dark-brick;
 }
 
 
@@ -1840,15 +1837,15 @@ a.coll-access {
   margin: 2em 0 0.25em 0;
   padding-left: 0;
   h2 {
-    color: $darkred;
     color: $ncs-maroon;
     font-size: 1.15em;
     padding-left: 15px;
     margin-right: 2em;
     margin-bottom: 0.25em;
-    border-bottom: 2px solid #ddd;
-      a, a:active, a:focus, a:hover {
-      color: $mid-dark;
+    border-bottom: 2px solid $ncs-maroon;
+    font-weight: 600;
+    a, a:active, a:focus, a:hover {
+      color: $ncs-dark-maroon;
       text-decoration: none;
     }
   }
