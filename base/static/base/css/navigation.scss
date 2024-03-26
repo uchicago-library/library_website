@@ -265,6 +265,11 @@ i.ask-icon {
       text-decoration: underline;
     }
   }
+  & li.col-sm-7,
+  & li.col-sm-6:nth-child(2){
+    border-left: 1.2px solid #767676;
+    margin-left: -1px;
+  }
 }
 
 .onecol-drop {
@@ -297,7 +302,7 @@ i.ask-icon {
   padding-bottom: 1.5em;
   @include respond-to(small) {
     padding-bottom: 0px;
-    border-right: 1px solid $darkgray;
+    border-right: 1.2px solid $darkgray;
   }
 }
 
