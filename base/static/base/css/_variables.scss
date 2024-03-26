@@ -256,12 +256,13 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
   color: #fff;
   font-weight: 600;
 
-  &.from-the-director {           background: $ncs-maroon;           }
+  &.from-the-dean {               background: $ncs-maroon;           }
   &.spotlight {                   background: $ncs-brick;            }
   &.people {                      background: $ncs-dark-brick;       }
 
-  &.special-collections {         background: $ncs-light-terracotta; }           
-  &.exhibits {                    background: $ncs-terracotta;        }
+  &.special-collections {         background: $ncs-dark-maroon;      } 
+
+  &.exhibit-news, &.exhibits,
   &.library-in-the-news {         background: $ncs-dark-goldenrod;   }
   &.events {                      background: $ncs-dark-terracotta;  }
 
