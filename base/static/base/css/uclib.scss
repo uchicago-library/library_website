@@ -1454,9 +1454,9 @@ a.btn-ask {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 3px;
-  background-color: $ncs-light-brick;
+  background-color: $ncs-maroon;
   color: #fff;
-  border-color: $ncs-brick;
+  border: 1px solid white;
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -1464,8 +1464,11 @@ a.btn-ask {
   vertical-align: middle;
   cursor: pointer;
   background-image: none;
-  border: 1px solid transparent;
   white-space: nowrap;
+}
+.s-lc-whw-pr:hover, .s-lc-whw-ne:hover {
+  background-color: $ncs-light-brick;
+  color: white;
 }
 
 .s-lc-whw-pr:disabled, .s-lc-whw-ne:disabled {
