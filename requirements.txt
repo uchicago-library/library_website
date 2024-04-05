@@ -27,7 +27,7 @@ psycopg2
 Pygments==2.15.0
 python-dateutil
 simplejson==3.11.1
-sqlparse==0.3.1
+sqlparse==0.4.4
 Unidecode==1.1.1
 urllib3==1.26.18
 wagtail==4.1.6
