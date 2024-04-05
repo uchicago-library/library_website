@@ -1,5 +1,5 @@
 autopep8==2.0.1
-black==22.12.0
+black==24.3.0
 curlylint==0.13.1
 djhtml==1.5.2
 flake8==6.0.0
