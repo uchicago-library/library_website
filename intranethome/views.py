@@ -190,7 +190,7 @@ def filter_by_value(original_alias_list, filter_value):
 
         # if the filter is a single letter
         elif filter_value != "":
-            if alias[0] == filter_value:
+            if alias.lower()[0] == filter_value:
                 filtered_alias_list.append(alias)
 
         # if the filter is nothing, indicating that all values should be displayed
