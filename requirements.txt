@@ -24,7 +24,7 @@ openpyxl>=3.1.0,<3.2.0
 pandas>=2,<3
 pocli==0.1.10
 psycopg2
-Pygments==2.7.4
+Pygments==2.15.0
 python-dateutil
 simplejson==3.11.1
 sqlparse==0.3.1
