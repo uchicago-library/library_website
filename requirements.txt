@@ -30,7 +30,7 @@ simplejson==3.11.1
 sqlparse==0.3.1
 Unidecode==1.1.1
 urllib3==1.26.18
-wagtail==4.1.6
+wagtail==4.1.9
 wagtailmedia==0.11.0
 wagtail-cache==2.2.0
 wheel==0.38.1
