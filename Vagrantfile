@@ -150,7 +150,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     apt-get update
     apt-get install nodejs -y
     su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
-    npm install eslint
+    npm install eslint@8.57.0
     npm i prettier eslint-plugin-prettier eslint-config-prettier
     npm install eslint-config-airbnb
     npm install -g install-peerdeps -y
