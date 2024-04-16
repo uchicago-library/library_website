@@ -25,9 +25,13 @@ def parse_file(filepath):
         output: dictionary that contains all of the converted json data
     '''
 
-    with open(filepath) as f:
-        contents = f.read()
-        return json.loads(contents)
+    try:
+        with open(filepath) as f:
+            contents = f.read()
+    except:
+        return -1
+    
+    return json.loads(contents)
 
 def each_list(list_of_dicts, alias_value):
     # run this inside of each mail alias
@@ -201,6 +205,9 @@ def filter_by_value(original_alias_list, filter_value):
 
 def mail_aliases_view(request):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
+    if parsed_file == -1:
+        context = {'parsed_file':parsed_file,'error': "Unfortunately no mail alias file was found."}
+        return render(request, 'intranethome/mail_aliases.html', context)
     aliases = get_sorted_aliases(parsed_file)
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page

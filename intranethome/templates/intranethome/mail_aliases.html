@@ -19,6 +19,10 @@
 
     <h1>Mail Aliases Page</h1> 
 
+    {% if 'error'%}
+        {{error}}
+
+    {% else %}
     <button class="btn btn-default" onclick="expandAll()">Expand All</button>
     <button class="btn btn-default" onclick="contractAll()">Contract All</button>
 
@@ -89,5 +93,5 @@
       {% endfor %}
 
     <script src="{% static 'intranethome/js/accordion.js' %}"></script>
-
+    {% endif %}
 {% endblock %}

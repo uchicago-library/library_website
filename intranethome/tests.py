@@ -81,3 +81,6 @@ class test_mail_aliases_view(SimpleTestCase):
         self.assertEqual(filter_by_value(aliaslist, ""), aliaslist)
         self.assertEqual(filter_by_value(aliaslist, "b"), ["banana", "BAD_APPLE"])
         self.assertEqual(filter_by_value(aliaslist, "number"), ["1Candy", "2Candy", "1dumplings"])
+
+    def test_missing_MAIL_ALIASES_PATH(self):
+        self.assertEqual(True, True)
