@@ -297,32 +297,30 @@ thead th {
 
 ul.index-list {
   list-style: none;
+    padding-left: 0;
   &>li {
     margin: 1em 0;
-    padding-left: 0;
     a {
       font-weight: 600;
-      color: $ssaorange;
     }
-    &>ul.index-list>li { // 2nd Level
-      margin: 5px 0;
-      padding-left: 0;
-      a {
-        font-weight: 400;
-        color:$darkgray;
-      }
-      &>ul.index-list>li { // 3rd Level
+    &>ul.index-list{ // 2nd Level & beyond
+      padding-inline-start: 15px;
+      border-left: 1px solid $ncs-light-greystone;
+      &>li {
         a {
-          font-weight: 300;
-          color: $reggreen;
+          font-weight: 400;
         }
-        &>ul.index-list>li { // 4th Level
-          a {
-            font-weight: 300;
-            color:$darkgray;
-            font-style: italic;
-          }
-        }
+        // &>ul.index-list>li { // 3rd Level
+        //   a {
+        //     // font-weight: 300;
+        //   }
+        //   &>ul.index-list>li { // 4th Level
+        //     a {
+        //       // font-weight: 300;
+        //       // font-style: italic;
+        //     }
+        //   }
+        // }
       }
     }
   }
