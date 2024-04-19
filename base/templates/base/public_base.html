@@ -105,13 +105,15 @@
             <a href="#footer">Skip to Footer</a>
         </div>
         <div id="body-wrap">
-            <div class="alert {{alert_level}}" role="alert">
-                {{alert_message|richtext}}
-                {% if alert_more_info|striptags %}
-                    <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
-                {% endif %}
-            </div>
-
+            {% if has_alert %}
+                <div class="alert {{alert_level}}" role="alert">
+                    {{alert_message|richtext}}
+                    {% if alert_more_info|striptags %}
+                        <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="alert-banner" data-ga-action="click" data-ga-label="Alert Banner More Info">More info...</a></span>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
             {# Main navigation #}
             {% include "base/includes/header.html" %}
 
