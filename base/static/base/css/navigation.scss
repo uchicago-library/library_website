@@ -104,7 +104,7 @@ i.ask-icon {
 
 .navbar-brand {
   max-width: 175px;
-  padding: 9px 0 6px 30px;
+  padding: 9px 0 6px 15px;
   margin: 0;
   height: unset;
   &>img{
@@ -164,7 +164,6 @@ i.ask-icon {
   background-color: $ncs-maroon;
   font-size: $font-small;
   padding-left: 15px;
-  padding: 0;
   & .navbar-nav>li>a:hover,
   & .navbar-nav>li>a:focus{
     text-decoration: none;

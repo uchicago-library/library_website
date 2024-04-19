@@ -46,7 +46,7 @@ Forms (CGI)
 }
 
 .body-container {
-  padding: 30px;
+  padding: 30px 15px;
   padding-top: 42px;
   max-width: 1200px;
   #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 &, &.directory {  // Exception for Home pages and directory pages
@@ -56,6 +56,10 @@ Forms (CGI)
     @include respond-to(medium) {
       padding-left: 45px;
     }
+  }
+
+  @include respond-to(small) {
+    padding: 30px;
   }
 }
 
