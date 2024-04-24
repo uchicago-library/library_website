@@ -29,6 +29,29 @@ def parse_file(filepath):
         contents = f.read()
         return json.loads(contents)
 
+def get_first_key(dct):
+    key = ""
+    for k,v in dct.items():
+        key = k
+        break
+    return key
+
+def convert_list_to_dict(aliases_json):
+    def alias(dct):
+        return list(dct.keys())[0]
+
+    return {alias(dct):dct[alias(dct)] for dct in aliases_json}
+
+def categorize_entry(dct):
+    if dct[0]
+
+# categories:
+# local
+# plain_email
+# parentheses
+# triangle_brackets
+# note
+
 def each_list(list_of_dicts, alias_value):
     # run this inside of each mail alias
     i = 0
@@ -132,11 +155,11 @@ def helper_function_parentheses(parentheses_email):
     formatted_parentheses_email.append(parentheses_email[0])
     return formatted_parentheses_email
 
-def formatting(list):
-    if len(list) == 0:
+def formatting(lst):
+    if len(lst) == 0:
         return -1
     new_list = []
-    for email in list:
+    for email in lst:
         parsed_email = {}
 
         # selecting for option 1
@@ -199,11 +222,34 @@ def filter_by_value(original_alias_list, filter_value):
 
     return filtered_alias_list
 
+mini_json = [
+  {
+    "systems": [
+      {
+        "note": "emails go to command: \"|/usr/local/mailman/mail/mailman post systems"
+      }
+    ]
+  },
+  {
+    "sysheads": [
+      {
+        "email": "David Farley\u0009<d-farley@uchicago.edu>"
+      },
+      {
+        "email": "Tod Olson\u0009<tod@uchicago.edu>"
+      },
+      {
+        "email": "Charles Blair\u0009<chas@uchicago.edu>"
+      }
+    ]
+  },
+]
+
 def mail_aliases_view(request):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
-    aliases = get_sorted_aliases(parsed_file)
+    aliases = get_sorted_aliases(parsed_file) # ['sysheads', 'systems']
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    loop_homepage = Site.objects.get(site_name="Loop").root_page # <Page: Loop>
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     
@@ -234,6 +280,9 @@ def mail_aliases_view(request):
         if alias_data != -1:
             final_data[alias] = alias_data
       
-
+    with open("./processed.json", "w") as f:
+        processed = str(json.dumps(final_data))
+        f.write(processed)
+        
     context = {'final_data': final_data}
     return render(request, 'intranethome/mail_aliases.html', context)
