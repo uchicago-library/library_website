@@ -30,20 +30,35 @@ def parse_file(filepath):
         return json.loads(contents)
 
 def get_first_key(dct):
-    key = ""
-    for k,v in dct.items():
-        key = k
-        break
-    return key
+    if dct:
+        key = ""
+        for k,v in dct.items():
+            key = k
+            break
+        return key
+    else:
+        return ""
 
 def convert_list_to_dict(aliases_json):
-    def alias(dct):
-        return list(dct.keys())[0]
+    def values(alias_dct):
+        return alias_dct[get_first_key(alias_dct)]
 
-    return {alias(dct):dct[alias(dct)] for dct in aliases_json}
+    return {get_first_key(dct): values(dct)
+            for dct
+            in aliases_json}
+
+def figure_out_email(dct):
+    # put triangle vs. parens vs. plain email vs. local logic in here
+    return dct
 
 def categorize_entry(dct):
-    if dct[0]
+    first = get_first_key(dct)
+    if first == "note":
+        return dct
+    elif first == "email":
+        return figure_out_email(dct)
+    else:
+        return {}
 
 # categories:
 # local
