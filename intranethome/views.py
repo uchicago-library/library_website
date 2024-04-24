@@ -30,14 +30,12 @@ def parse_file(filepath):
         return json.loads(contents)
 
 def get_first_key(dct):
-    if dct:
-        key = ""
-        for k,v in dct.items():
-            key = k
-            break
-        return key
-    else:
-        return ""
+    key = ""
+    for k,v in dct.items():
+        key = k
+        break
+    return key
+
 
 def convert_list_to_dict(aliases_json):
     def values(alias_dct):
