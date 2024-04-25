@@ -363,6 +363,7 @@ class LibNewsPage(PublicBasePage):
     law_kiosk = models.BooleanField(default=False)
     sciences_kiosk = models.BooleanField(default=False)
     scrc_kiosk = models.BooleanField(default=False)
+    cds_kiosk = models.BooleanField(default=False)
     treat_as_webpage = models.BooleanField(
         default=False,
         help_text='Functionally converts this page to a standard page. \
@@ -478,6 +479,7 @@ class LibNewsPage(PublicBasePage):
                         FieldPanel('sciences_kiosk', classname=ROW_CLASS),
                         FieldPanel('scrc_kiosk', classname=ROW_CLASS),
                         FieldPanel('library_kiosk', classname=ROW_CLASS),
+                        FieldPanel('cds_kiosk', classname=ROW_CLASS),
                     ]
                 )
             ],
