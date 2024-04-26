@@ -20,7 +20,6 @@ Right Sidebar: Widget Items
  * Off Canvas (Sidebar Mobile Toggle)
  * --------------------------------------------------
  */
-
 @media screen and (max-width: 986px) { // Keep as @media (instead of @include) for stability
  .row-offcanvas {
     position: relative;
@@ -44,6 +43,7 @@ Right Sidebar: Widget Items
     min-height: 900px; // fix to sidebar overlapping footer in mobile.
       .sidebar-offcanvas {
         left: -50%; /* 6 columns */
+        z-index: 1;
     }
     &.active {
         left: 50%; /* 6 columns */
