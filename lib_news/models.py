@@ -362,8 +362,8 @@ class LibNewsPage(PublicBasePage):
     library_kiosk = models.BooleanField(default=False)
     law_kiosk = models.BooleanField(default=False)
     sciences_kiosk = models.BooleanField(default=False)
-    scrc_kiosk = models.BooleanField(default=False)
-    cds_kiosk = models.BooleanField(default=False)
+    scrc_kiosk = models.BooleanField(default=False, verbose_name='SCRC kiosk')
+    cds_kiosk = models.BooleanField(default=False, verbose_name='CDS kiosk')
     treat_as_webpage = models.BooleanField(
         default=False,
         help_text='Functionally converts this page to a standard page. \
