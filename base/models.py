@@ -88,6 +88,7 @@ NEWS_CHOICES = (
     ('law_kiosk', 'Law'),
     ('sciences_kiosk', 'Sciences'),
     ('scrc_kiosk', 'SCRC'),
+    ('cds_kiosk', 'CDS'),
 )
 
 # Friendly names that need "an" instead of "a"
@@ -1959,6 +1960,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             return qs.filter(sciences_kiosk=True)[:n]
         elif src == 'scrc_kiosk':
             return qs.filter(scrc_kiosk=True)[:n]
+        elif src == 'cds_kiosk':
+            return qs.filter(cds_kiosk=True)[:n]
 
         # This should never happen but just in case
         return empty_qs
