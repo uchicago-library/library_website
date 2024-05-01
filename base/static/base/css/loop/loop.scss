@@ -315,8 +315,18 @@ figure {
  * --------------------------------------------------
  */
 
+
 .block-paragraph {
-    max-width: 46em;
+  max-width: 46em;
+  p,
+  a,
+  li {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  a{
+    overflow-wrap: break-word;
+  }
 }
 
 .sw-toc {

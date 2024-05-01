@@ -129,8 +129,7 @@ h1 + h2, h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
  */
 p {
   font-size: 1.1em;
-  line-height: 1.7em;
-  max-width: 46em;
+  line-height: 1.7em;  
   margin-bottom: 0.5em; }
 
 .template-news-page .rich-text {
@@ -268,6 +267,20 @@ figure.center-block {
  *  Content
  * --------------------------------------------------
  */
+
+.block-paragraph {
+  max-width: 46em;
+}
+.block-paragraph p,
+.block-paragraph a,
+.block-paragraph li {
+  font-size: 16px;
+  line-height: 22px;
+}
+.block-paragraph a{
+  overflow-wrap: break-word;
+}
+
 .sw-toc {
   display: flex;
   flex-wrap: wrap;
