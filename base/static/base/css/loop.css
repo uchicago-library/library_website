@@ -267,17 +267,16 @@ figure.center-block {
  *  Content
  * --------------------------------------------------
  */
-
-.block-paragraph {
+    
+.block-paragraph,
+.media-body{
   max-width: 46em;
 }
-.block-paragraph p,
-.block-paragraph a,
-.block-paragraph li {
-  font-size: 16px;
+[data-block-key]{
+  font-size: 15px;
   line-height: 22px;
 }
-.block-paragraph a{
+[data-block-key] a{
   overflow-wrap: break-word;
 }
 
