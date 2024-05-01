@@ -267,12 +267,15 @@ figure.center-block {
  *  Content
  * --------------------------------------------------
  */
-    
+
 .block-paragraph,
 .media-body{
   max-width: 46em;
 }
-[data-block-key]{
+.block-paragraph p,
+.block-paragraph li,
+.media-body p,
+.media-body li{
   font-size: 15px;
   line-height: 22px;
 }
