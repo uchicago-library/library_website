@@ -139,7 +139,6 @@ h1+h2, h2+h3, h3+h4, h4+h5, h5+h6 {
 p {
   font-size: 1.1em;
   line-height: 1.7em;
-  max-width: 46em;
   margin-bottom: 0.5em;
 }
 
@@ -315,6 +314,20 @@ figure {
  *  Content
  * --------------------------------------------------
  */
+
+
+.block-paragraph {
+  max-width: 46em;
+  p,
+  a,
+  li {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  a{
+    overflow-wrap: break-word;
+  }
+}
 
 .sw-toc {
     display: flex;
