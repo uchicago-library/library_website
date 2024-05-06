@@ -36,7 +36,6 @@ def get_first_key(dct):
         break
     return key
 
-
 def convert_list_to_dict(aliases_json):
     def values(alias_dct):
         return alias_dct[get_first_key(alias_dct)]
@@ -45,18 +44,99 @@ def convert_list_to_dict(aliases_json):
             for dct
             in aliases_json}
 
-def figure_out_email(dct):
+def helper_triangle_brackets(triangle_brackets_email):
+    """
+    A helper function that formats triangle brackets
+    Args:
+       a regular expression match object
+    Returns:
+       a list consisting of the name, the email address, and the original string
+    """
+    formatted_triangle_bracket_list = []
+    formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
+    formatted_triangle_bracket_list.append(triangle_brackets_email[2])
+    formatted_triangle_bracket_list.append(triangle_brackets_email[0])
+    return formatted_triangle_bracket_list
+
+def helper_parentheses(parentheses_email):
+    """
+    A helper function that formats parentheses emails
+    Args:
+       parenthese_email: an email in the format of parentheses
+    Returns:
+       a formatted dicionary of a list of the data in the parentheses email
+    """
+
+    formatted_parentheses_email = []
+    formatted_parentheses_email.append(parentheses_email[2])
+    formatted_parentheses_email.append(parentheses_email[1].strip())
+    formatted_parentheses_email.append(parentheses_email[0])
+    return formatted_parentheses_email
+
+def figure_out_email(unparsed_email):
     # put triangle vs. parens vs. plain email vs. local logic in here
-    return dct
+    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
+    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
+    bare_email_match = re.search(".*@.*", unparsed_email)
+
+    if triangle_match:
+        return { "triangle_brackets" : helper_triangle_brackets(triangle_match) }
+    elif paren_match:
+        return { "parentheses" : helper_parentheses(paren_match) }
+    elif bare_email_match:
+        return { "plain_email" : unparsed_email }
+    else:
+        return { "local" : unparsed_email }
+
+
+def comparison2(tup1, tup2):
+    '''
+    Lemma function for get_sorted_aliases to know where an alias
+    should be sorted relative to another alias
+
+    Args:
+        str1: one alias
+        str2: another alias
+
+    Returns:
+        integer: a value that tells the get_sorted_alias function, which alias
+        is "smaller" and should go first
+    '''
+    str1 = tup1[0]
+    str2 = tup2[0]
+
+    def cmp(a, b):
+        return (a > b) - (a < b)
+
+    def starts_with_number(string):
+        return string[0].isnumeric()
+
+    if starts_with_number(str1.lower()) and not(starts_with_number(str2.lower())):
+        return 1
+    elif not(starts_with_number(str1.lower())) and starts_with_number(str2.lower()):
+        return -1
+    else:
+        return cmp(str1.lower(), str2.lower())
+
+
+def sort_aliases(js):
+    return dict(sorted(js.items(), key=cmp_to_key(comparison2)))
+
 
 def categorize_entry(dct):
     first = get_first_key(dct)
     if first == "note":
         return dct
     elif first == "email":
-        return figure_out_email(dct)
+        return figure_out_email(dct["email"])
     else:
         return {}
+
+def categorize_everything(json):
+    dct = convert_list_to_dict(json)
+    return sort_aliases({ k : [categorize_entry(entry)
+                               for entry in v]
+                          for k,v in dct.items() })
 
 # categories:
 # local
@@ -64,6 +144,7 @@ def categorize_entry(dct):
 # parentheses
 # triangle_brackets
 # note
+
 
 def each_list(list_of_dicts, alias_value):
     # run this inside of each mail alias
@@ -80,6 +161,7 @@ def each_list(list_of_dicts, alias_value):
             return sum([email_or_note(x) for x in list_of_dicts[i][alias_value]],[])
         i+=1
 
+
 def flatten(xss):
     '''
     Flattens multiple layers of lists into a single list
@@ -92,54 +174,32 @@ def flatten(xss):
     '''
     return [x for xs in xss for x in xs]
 
-def starts_with_number(string):
+def comparison(str1, str2):
     '''
-    Checks if the first position in a string is a number
-
-    Args:
-        string: string that needs to be checked
-
-    Returns:
-        boolean: true if the string starts with a number and false otherwise
-    '''
-    return string[0].isnumeric()
-
-def cmp(a, b):
-    return (a > b) - (a < b)
-
-def comparison(str1, str2):    
-    '''
-    Lemma function for get_sorted_aliases to know where an alias should be sorted relative to another alias
+    Lemma function for get_sorted_aliases to know where an alias
+    should be sorted relative to another alias
 
     Args:
         str1: one alias
         str2: another alias
 
     Returns:
-        integer: a value that tells the get_sorted_alias function, which alias is "smaller" and should go first
+        integer: a value that tells the get_sorted_alias function, which alias
+        is "smaller" and should go first
     '''
+    def cmp(a, b):
+        return (a > b) - (a < b)
+
+    def starts_with_number(string):
+        return string[0].isnumeric()
+
     if starts_with_number(str1.lower()) and not(starts_with_number(str2.lower())):
         return 1
     elif not(starts_with_number(str1.lower())) and starts_with_number(str2.lower()):
         return -1
     else:
         return cmp(str1.lower(), str2.lower())
-    
 
-def helper_function_triangle_brackets(triangle_brackets_email):
-    """
-    A helper function that formats trinagle brackets
-    Args:
-       triangle_brackets_email: an email in the format of triangle brackets
-    Returns:
-       a formatted dicionary of a list of the data in the triangle brackets email
-    """
-
-    formatted_triangle_bracket_list = []
-    formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
-    formatted_triangle_bracket_list.append(triangle_brackets_email[2])
-    formatted_triangle_bracket_list.append(triangle_brackets_email[0])
-    return formatted_triangle_bracket_list
 
 def get_sorted_aliases(parsed_data):
     '''
@@ -152,21 +212,6 @@ def get_sorted_aliases(parsed_data):
         list: the sorted aliases
     '''
     return sorted(flatten([list(x.keys()) for x in parsed_data]), key=cmp_to_key(comparison))
-
-def helper_function_parentheses(parentheses_email):
-    """
-    A helper function that formats parentheses emails
-    Args:
-       parenthese_email: an email in the format of parentheses
-    Returns:
-       a formatted dicionary of a list of the data in the parentheses email
-    """
-
-    formatted_parentheses_email = []
-    formatted_parentheses_email.append(parentheses_email[2])
-    formatted_parentheses_email.append(parentheses_email[1].strip())
-    formatted_parentheses_email.append(parentheses_email[0])
-    return formatted_parentheses_email
 
 def formatting(lst):
     if len(lst) == 0:
@@ -187,11 +232,11 @@ def formatting(lst):
 
         # selectig for option 1
         if triangle_brackets:
-            parsed_email["triangle_brackets"] = helper_function_triangle_brackets(triangle_brackets)
+            parsed_email["triangle_brackets"] = helper_triangle_brackets(triangle_brackets)
 
         # secting for option 2
         elif parentheses:
-            parsed_email["parentheses"] = helper_function_parentheses(parentheses)
+            parsed_email["parentheses"] = helper_parentheses(parentheses)
 
         # selecting for option 3
         elif plain_email:
@@ -294,8 +339,15 @@ def mail_aliases_view(request):
             final_data[alias] = alias_data
       
     with open("./processed.json", "w") as f:
-        processed = str(json.dumps(final_data))
+        processed = json.dumps(final_data, indent=4)
         f.write(processed)
+        
+    with open("./processed2.json", "w") as f:
+        js = parse_file("./data.json")
+        # s = dict(sorted((categorize_everything(js).items())))
+        # s = sort_aliases(js)
+        # f.write(json.dumps(s, indent=4))
+        f.write(json.dumps(categorize_everything(js), indent=4))
         
     context = {'final_data': final_data}
     return render(request, 'intranethome/mail_aliases.html', context)
