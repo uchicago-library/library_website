@@ -132,11 +132,12 @@ def categorize_entry(dct):
     else:
         return {}
 
+
 def categorize_everything(json):
     dct = convert_list_to_dict(json)
     return sort_aliases({ k : [categorize_entry(entry)
                                for entry in v]
-                          for k,v in dct.items() })
+                          for k,v in dct.items() if v })
 
 # categories:
 # local
