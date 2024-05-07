@@ -77,6 +77,11 @@
                 <td><a href="mailto:{{email.plain_email}}">{{email.plain_email}}</a></td>
             </tbody>
 
+        {% elif email.note %}
+            <tbody>
+                <td>{{email.note}}</td>
+            </tbody>
+
         {% else %}
             <tbody>
                 <td>{{email.local}}</td>
