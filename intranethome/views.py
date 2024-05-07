@@ -74,10 +74,8 @@ def convert_list_to_dict(aliases_json, filt=[]):
         else:
             return cmp(str1, str2)
 
-
     def sort_aliases(js):
         return dict(sorted(js.items(), key=cmp_to_key(comparison2)))
-
 
     def figure_out_email(unparsed_email):
         # put triangle vs. parens vs. plain email vs. local logic in here
@@ -88,10 +86,13 @@ def convert_list_to_dict(aliases_json, filt=[]):
         def helper_triangle_brackets(triangle_brackets_email):
             """
             A helper function that formats triangle brackets
+
             Args:
                a regular expression match object
             Returns:
-               a list consisting of the name, the email address, and the original string
+               a list consisting of the name, the email address, and the
+               original string
+
             """
             formatted_triangle_bracket_list = []
             formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
@@ -136,7 +137,7 @@ def convert_list_to_dict(aliases_json, filt=[]):
         if filt == "number":
             return alias[0].isdigit()
         elif filt.isalpha() and len(filt) == 1:
-            return alias[0] == filt
+            return alias[0].lower() == filt.lower()
         else:
             return True
 
