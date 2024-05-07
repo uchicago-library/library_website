@@ -39,90 +39,93 @@ def get_first_key(dct):
     return key
 
 
+def comparison2(tup1, tup2):
+    '''
+    Lemma function for get_sorted_aliases to know where an alias
+    should be sorted relative to another alias
+
+    Args:
+        str1: one alias
+        str2: another alias
+
+    Returns:
+        integer: a value that tells the get_sorted_alias function, which
+        alias is "smaller" and should go first
+
+    '''
+    str1 = tup1[0].lower()
+    str2 = tup2[0].lower()
+
+    def cmp(a, b):
+        return (a > b) - (a < b)
+
+    def starts_with_number(string):
+        return string[0].isnumeric()
+
+    if starts_with_number(str1) and not (starts_with_number(str2)):
+        return 1
+    elif not (starts_with_number(str1)) and starts_with_number(str2):
+        return -1
+    else:
+        return cmp(str1, str2)
+
+
+def figure_out_email(unparsed_email):
+    # put triangle vs. parens vs. plain email vs. local logic in here
+    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
+    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
+    bare_email_match = re.search(".*@.*", unparsed_email)
+
+    def helper_triangle_brackets(triangle_brackets_email):
+        """
+        A helper function that formats triangle brackets
+
+        Args:
+           a regular expression match object
+        Returns:
+           a list consisting of the name, the email address, and the
+           original string
+
+        """
+        tb_list = []
+        tb_list.append(triangle_brackets_email[1].strip())
+        tb_list.append(triangle_brackets_email[2])
+        tb_list.append(triangle_brackets_email[0])
+        return tb_list
+
+    def helper_parentheses(parentheses_email):
+        """
+        A helper function that formats parentheses emails
+        Args:
+           parenthese_email: an email in the format of parentheses
+        Returns:
+           a formatted dicionary of a list of the data in the parentheses email
+        """
+
+        formatted_parentheses_email = []
+        formatted_parentheses_email.append(parentheses_email[2])
+        formatted_parentheses_email.append(parentheses_email[1].strip())
+        formatted_parentheses_email.append(parentheses_email[0])
+        return formatted_parentheses_email
+
+    if triangle_match:
+        return {"triangle_brackets":
+                helper_triangle_brackets(triangle_match)}
+    elif paren_match:
+        return {"parentheses": helper_parentheses(paren_match)}
+    elif bare_email_match:
+        return {"plain_email": unparsed_email}
+    else:
+        return {"local": unparsed_email}
+
+
 def convert_list_to_dict(aliases_json, filt=[]):
 
     def values(alias_dct):
         return alias_dct[get_first_key(alias_dct)]
 
-    def comparison2(tup1, tup2):
-        '''
-        Lemma function for get_sorted_aliases to know where an alias
-        should be sorted relative to another alias
-
-        Args:
-            str1: one alias
-            str2: another alias
-
-        Returns:
-            integer: a value that tells the get_sorted_alias function, which
-            alias is "smaller" and should go first
-
-        '''
-        str1 = tup1[0].lower()
-        str2 = tup2[0].lower()
-
-        def cmp(a, b):
-            return (a > b) - (a < b)
-
-        def starts_with_number(string):
-            return string[0].isnumeric()
-
-        if starts_with_number(str1) and not (starts_with_number(str2)):
-            return 1
-        elif not (starts_with_number(str1)) and starts_with_number(str2):
-            return -1
-        else:
-            return cmp(str1, str2)
-
     def sort_aliases(js):
         return dict(sorted(js.items(), key=cmp_to_key(comparison2)))
-
-    def figure_out_email(unparsed_email):
-        # put triangle vs. parens vs. plain email vs. local logic in here
-        triangle_match = re.search("(.*)<(.*)>", unparsed_email)
-        paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
-        bare_email_match = re.search(".*@.*", unparsed_email)
-
-        def helper_triangle_brackets(triangle_brackets_email):
-            """
-            A helper function that formats triangle brackets
-
-            Args:
-               a regular expression match object
-            Returns:
-               a list consisting of the name, the email address, and the
-               original string
-
-            """
-            formatted_triangle_bracket_list = []
-            formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
-            formatted_triangle_bracket_list.append(triangle_brackets_email[2])
-            formatted_triangle_bracket_list.append(triangle_brackets_email[0])
-            return formatted_triangle_bracket_list
-
-        def helper_parentheses(parentheses_email):
-            """
-            A helper function that formats parentheses emails
-            Args:
-               parenthese_email: an email in the format of parentheses
-            Returns:
-               a formatted dicionary of a list of the data in the parentheses email
-            """
-
-            formatted_parentheses_email = []
-            formatted_parentheses_email.append(parentheses_email[2])
-            formatted_parentheses_email.append(parentheses_email[1].strip())
-            formatted_parentheses_email.append(parentheses_email[0])
-            return formatted_parentheses_email
-
-        if triangle_match:
-            return { "triangle_brackets" : helper_triangle_brackets(triangle_match) }
-        elif paren_match:
-            return { "parentheses" : helper_parentheses(paren_match) }
-        elif bare_email_match:
-            return { "plain_email" : unparsed_email }
-        else:
-            return { "local" : unparsed_email }
 
     def categorize_entry(dct):
         first = get_first_key(dct)
@@ -157,9 +160,16 @@ def convert_list_to_dict(aliases_json, filt=[]):
 def mail_aliases_view(request, *args, **kwargs):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page # <Page: Loop>
+    # <Page: Loop>
+    loop_homepage = (
+        Site.objects.get(site_name="Loop").root_page
+    )
+
     if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
+        return redirect_users_without_permissions(loop_homepage,
+                                                  request,
+                                                  None,
+                                                  None)
 
     try:
         alias_filter = kwargs["alias_filter"].lower()
