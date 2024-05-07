@@ -71,10 +71,6 @@ def comparison2(tup1, tup2):
 
 
 def figure_out_email(unparsed_email):
-    # put triangle vs. parens vs. plain email vs. local logic in here
-    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
-    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
-    bare_email_match = re.search(".*@.*", unparsed_email)
 
     def helper_triangle_brackets(triangle_brackets_email):
         """
@@ -107,6 +103,10 @@ def figure_out_email(unparsed_email):
         formatted_parentheses_email.append(parentheses_email[1].strip())
         formatted_parentheses_email.append(parentheses_email[0])
         return formatted_parentheses_email
+
+    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
+    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
+    bare_email_match = re.search(".*@.*", unparsed_email)
 
     if triangle_match:
         return {"triangle_brackets":
