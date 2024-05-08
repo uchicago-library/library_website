@@ -28,7 +28,7 @@ def parse_file(filepath):
     try:
         with open(filepath) as f:
             contents = f.read()
-    except:
+    except (FileNotFoundError, PermissionError):
         return -1
     
     return json.loads(contents)
@@ -206,7 +206,7 @@ def filter_by_value(original_alias_list, filter_value):
 def mail_aliases_view(request):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
     if parsed_file == -1:
-        context = {'parsed_file':parsed_file,'error': "Unfortunately no mail alias file was found."}
+        context = {'error': "Unfortunately no mail alias file was found."}
         return render(request, 'intranethome/mail_aliases.html', context)
     else:
         aliases = get_sorted_aliases(parsed_file)
@@ -243,5 +243,5 @@ def mail_aliases_view(request):
                 final_data[alias] = alias_data
       
 
-        context = {'error': 0, 'final_data': final_data}
+        context = {'final_data': final_data}
         return render(request, 'intranethome/mail_aliases.html', context)

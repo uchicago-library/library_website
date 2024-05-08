@@ -7,6 +7,7 @@ from intranethome.views import (
     get_sorted_aliases,
     formatting,
     filter_by_value,
+    parse_file,
 )
 
 class test_mail_aliases_view(SimpleTestCase):
@@ -83,4 +84,5 @@ class test_mail_aliases_view(SimpleTestCase):
         self.assertEqual(filter_by_value(aliaslist, "number"), ["1Candy", "2Candy", "1dumplings"])
 
     def test_missing_MAIL_ALIASES_PATH(self):
-        self.assertEqual(True, True)
+        path = "bad_path.json"
+        self.assertEqual(parse_file(path), -1)
