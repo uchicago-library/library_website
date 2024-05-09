@@ -16,7 +16,7 @@ from wagtail.models import Site
 
 
 def parse_file(filepath):
-    '''
+    """
     Opens and reads the json data and converts it into python
 
     Args:
@@ -24,7 +24,7 @@ def parse_file(filepath):
 
     Returns:
         output: dictionary that contains all of the converted json data
-    '''
+    """
 
     with open(filepath) as f:
         contents = f.read()
@@ -39,8 +39,8 @@ def get_first_key(dct):
     return key
 
 
-def comparison2(tup1, tup2):
-    '''
+def comparison(tup1, tup2):
+    """
     Lemma function for get_sorted_aliases to know where an alias
     should be sorted relative to another alias
 
@@ -51,8 +51,7 @@ def comparison2(tup1, tup2):
     Returns:
         integer: a value that tells the get_sorted_alias function, which
         alias is "smaller" and should go first
-
-    '''
+    """
     str1 = tup1[0].lower()
     str2 = tup2[0].lower()
 
@@ -70,6 +69,10 @@ def comparison2(tup1, tup2):
         return cmp(str1, str2)
 
 
+def sort_aliases(js):
+    return dict(sorted(js.items(), key=cmp_to_key(comparison)))
+
+
 def figure_out_email(unparsed_email):
 
     def helper_triangle_brackets(triangle_brackets_email):
@@ -81,7 +84,6 @@ def figure_out_email(unparsed_email):
         Returns:
            a list consisting of the name, the email address, and the
            original string
-
         """
         tb_list = []
         tb_list.append(triangle_brackets_email[1].strip())
@@ -119,13 +121,61 @@ def figure_out_email(unparsed_email):
         return {"local": unparsed_email}
 
 
+example = {"banana": [{"email": "banana@uchicago.edu"}],
+           "APPLE": [{"email": "APPLE@uchicago.edu"},
+                     {"note": "APPLES ARE GOOD"}],
+           "1Candy": [{"email": "1Candy@uchicago.edu"}],
+           "2Candy": [{"email": "2Candy@uchicago.edu"},
+                      {"email": "1_plus_1_Candy@uchicago.edu"}],
+           "1dumplings": [{"note": "1 dumplings are good"}]}
+
+
+raw = [
+    {
+        "triangle_brackets": [
+            {
+                "email": ("I Am Triangle Brackets\u0009",
+                          "<i_am_triangle_brackets@lib.uchicago.edu>")
+            },
+        ]
+    },
+    {
+        "parentheses": [
+            {
+                "email": "i_am_parens@lib.uchicago.edu (I Am Parentheses)"
+            },
+        ]
+    },
+    {
+        "plain_email": [
+            {
+                "email": "i_am_plain@lib.uchicago.edu"
+            },
+        ]
+    },
+    {
+        "local": [
+            {
+                "email": "catforum"
+            }
+        ]
+    },
+    {
+        "note": [
+            {
+                "note": "emails go to command: this is a note"
+            }
+        ]
+    },
+]
+
+# TODO: some kinda type error related to filt here that needs to be fixed; to
+# get the error, try to pass raw into this function
+
 def convert_list_to_dict(aliases_json, filt=[]):
 
     def values(alias_dct):
         return alias_dct[get_first_key(alias_dct)]
-
-    def sort_aliases(js):
-        return dict(sorted(js.items(), key=cmp_to_key(comparison2)))
 
     def categorize_entry(dct):
         first = get_first_key(dct)
