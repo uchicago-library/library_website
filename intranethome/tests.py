@@ -36,7 +36,8 @@ class test_mail_aliases_view(SimpleTestCase):
                                 {'email': '1_plus_1_Candy@uchicago.edu'}]}
         self.assertEqual(sort_aliases(pre_sort), post_sort)
 
-    def test_formatting(self):
+    def test_convert(self):
+
         raw = [
             {
                 "plain_email": [
@@ -143,4 +144,40 @@ class test_mail_aliases_view(SimpleTestCase):
             ]
         }
 
+        expected_p = {
+            "parentheses": [
+                {
+                    "parentheses": [
+                        "I Am Parentheses",
+                        "parens@uchicago.edu",
+                        "parens@uchicago.edu (I Am Parentheses)"
+                    ]
+                }
+            ],
+            "plain_email": [
+                {
+                    "plain_email": "i_am_plain@lib.uchicago.edu"
+                }
+            ]
+        }
+
+        expected_P = expected_p
+
+        expected_l = {
+            "local": [
+                {
+                    "local": "catforum"
+                }
+            ]
+        }
+
+        expected_L = expected_l
+
         self.assertEqual(convert_list_to_dict(raw), expected)
+        self.assertEqual(convert_list_to_dict(raw, filt='p'), expected_p)
+        self.assertEqual(convert_list_to_dict(raw, filt='P'), expected_P)
+        self.assertEqual(convert_list_to_dict(raw, filt='l'), expected_l)
+        self.assertEqual(convert_list_to_dict(raw, filt='L'), expected_L)
+        self.assertEqual(convert_list_to_dict(raw, filt='*'), expected)
+        self.assertEqual(convert_list_to_dict(raw, filt=''), expected)
+

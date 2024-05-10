@@ -25,10 +25,14 @@ def parse_file(filepath):
     Returns:
         output: dictionary that contains all of the converted json data
     """
-
-    with open(filepath) as f:
-        contents = f.read()
-        return json.loads(contents)
+    try:
+        with open(filepath) as f:
+            contents = f.read()
+            return {"ok": json.loads(contents)}
+    except (FileNotFoundError, PermissionError):
+        return {"error": ("There is a problem with our "
+                          "systems.  Please let us know "
+                          "at web-admin@lib.uchicago.edu.")}
 
 
 def get_first_key(dct):
@@ -171,10 +175,14 @@ def mail_aliases_view(request, *args, **kwargs):
     except KeyError:
         alias_filter = ""
 
-    final_data = convert_list_to_dict(parsed_file, alias_filter)
+    try:
+        _ = parsed_file["error"]
+        context = parsed_file
+    except KeyError:
+        final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
+        context = {'final_data': final_data}
 
     with open("./dude.txt", "w") as f:
         f.write(str(alias_filter))
 
-    context = {'final_data': final_data}
     return render(request, 'intranethome/mail_aliases.html', context)
