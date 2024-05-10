@@ -2,6 +2,7 @@ from django.test import SimpleTestCase
 
 from .views import (comparison,
                     sort_aliases,
+                    convert_list_to_dict,
                     )
 
 
@@ -35,28 +36,111 @@ class test_mail_aliases_view(SimpleTestCase):
                                 {'email': '1_plus_1_Candy@uchicago.edu'}]}
         self.assertEqual(sort_aliases(pre_sort), post_sort)
 
-    # def test_formatting(self):
-    #     raw = [
-    #         {
-    #             "triangle_brackets": [
-    #                 "I am triangle",
-    #                 "i_am_triangle@uchicago.edu",
-    #                 "I am triangle\t \t<i_am_triangle@uchicago.edu>",
-    #             ]
-    #         },
-    #         {
-    #             "parentheses": [
-    #                 "I am parentheses",
-    #                 "i_am_parentheses@uchicago.edu",
-    #                 "i_am_parentheses@uchicago.edu (I am parentheses)",
-    #             ]
-    #         },
-    #         {"plain_email": "i_am_plain@uchicago.edu"},
-    #         {"local": "i_am_local"},
-    #         {"note": "i_am_a_note"},
-    #     ]
-        
-    #     self.assertEqual(
-    #         formatting(list_of_options), 
-    #         )
+    def test_formatting(self):
+        raw = [
+            {
+                "plain_email": [
+                    {
+                        "email": "i_am_plain@lib.uchicago.edu"
+                    },
+                ]
+            },
+            {
+                "triangle_brackets": [
+                    {
+                        "email": "One-Tab Triangle\t<onetab@uchicago.edu>"
+                    },
+                    {
+                        "email": "Two-Tab Triangle\t\t<twotab@uchicago.edu>"
+                    },
+                ]
+            },
+            {
+                "parentheses": [
+                    {
+                        "email": "parens@uchicago.edu (I Am Parentheses)"
+                    }
+                ]
+            },
+            {
+                "local": [
+                    {
+                        "email": "catforum"
+                    }
+                ]
+            },
+            {
+                "note": [
+                    {
+                        "note": "it's a note with emails@in.it for testing"
+                    }
+                ]
+            },
+            {
+                "mixed": [
+                    {
+                        "email": "parens@uchicago.edu (Surprise Parens!) "
+                    },
+                    {
+                        "email": "surprise_plain@lib.uchicago.edu"
+                    }
+                ]
+            },
+        ]
 
+        expected = {
+            "local": [
+                {
+                    "local": "catforum"
+                }
+            ],
+            "mixed": [
+                {
+                    "parentheses": [
+                        "Surprise Parens!",
+                        "parens@uchicago.edu",
+                        "parens@uchicago.edu (Surprise Parens!)"
+                    ]
+                },
+                {
+                    "plain_email": "surprise_plain@lib.uchicago.edu"
+                }
+            ],
+            "note": [
+                {
+                    "note": "note: it's a note with emails@in.it for testing"
+                }
+            ],
+            "parentheses": [
+                {
+                    "parentheses": [
+                        "I Am Parentheses",
+                        "parens@uchicago.edu",
+                        "parens@uchicago.edu (I Am Parentheses)"
+                    ]
+                }
+            ],
+            "plain_email": [
+                {
+                    "plain_email": "i_am_plain@lib.uchicago.edu"
+                }
+            ],
+            "triangle_brackets": [
+                {
+                    "triangle_brackets": [
+                        "One-Tab Triangle",
+                        "onetab@uchicago.edu",
+                        "One-Tab Triangle\t<onetab@uchicago.edu>"
+                    ]
+                },
+                {
+                    "triangle_brackets": [
+                        "Two-Tab Triangle",
+                        "twotab@uchicago.edu",
+                        "Two-Tab Triangle\t\t<twotab@uchicago.edu>"
+                    ]
+                }
+            ]
+        }
+
+        self.assertEqual(convert_list_to_dict(raw), expected)

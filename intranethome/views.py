@@ -75,7 +75,7 @@ def sort_aliases(js):
 
 def figure_out_email(unparsed_email):
 
-    def helper_triangle_brackets(triangle_brackets_email):
+    def helper_triangle_brackets(tri_match):
         """
         A helper function that formats triangle brackets
 
@@ -85,13 +85,11 @@ def figure_out_email(unparsed_email):
            a list consisting of the name, the email address, and the
            original string
         """
-        tb_list = []
-        tb_list.append(triangle_brackets_email[1].strip())
-        tb_list.append(triangle_brackets_email[2])
-        tb_list.append(triangle_brackets_email[0])
-        return tb_list
+        return [tri_match[1].strip(),
+                tri_match[2],
+                tri_match[0],]
 
-    def helper_parentheses(parentheses_email):
+    def helper_parentheses(paren_match):
         """
         A helper function that formats parentheses emails
         Args:
@@ -99,12 +97,9 @@ def figure_out_email(unparsed_email):
         Returns:
            a formatted dicionary of a list of the data in the parentheses email
         """
-
-        formatted_parentheses_email = []
-        formatted_parentheses_email.append(parentheses_email[2])
-        formatted_parentheses_email.append(parentheses_email[1].strip())
-        formatted_parentheses_email.append(parentheses_email[0])
-        return formatted_parentheses_email
+        return [paren_match[2],
+                paren_match[1].strip(),
+                paren_match[0],]
 
     triangle_match = re.search("(.*)<(.*)>", unparsed_email)
     paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
@@ -121,58 +116,16 @@ def figure_out_email(unparsed_email):
         return {"local": unparsed_email}
 
 
-example = {"banana": [{"email": "banana@uchicago.edu"}],
-           "APPLE": [{"email": "APPLE@uchicago.edu"},
-                     {"note": "APPLES ARE GOOD"}],
-           "1Candy": [{"email": "1Candy@uchicago.edu"}],
-           "2Candy": [{"email": "2Candy@uchicago.edu"},
-                      {"email": "1_plus_1_Candy@uchicago.edu"}],
-           "1dumplings": [{"note": "1 dumplings are good"}]}
+def include_alias(alias, filt):
+    if filt == "number":
+        return alias[0].isdigit()
+    elif filt.isalpha() and len(filt) == 1:
+        return alias[0].lower() == filt.lower()
+    else:
+        return True
 
 
-raw = [
-    {
-        "triangle_brackets": [
-            {
-                "email": ("I Am Triangle Brackets\u0009",
-                          "<i_am_triangle_brackets@lib.uchicago.edu>")
-            },
-        ]
-    },
-    {
-        "parentheses": [
-            {
-                "email": "i_am_parens@lib.uchicago.edu (I Am Parentheses)"
-            },
-        ]
-    },
-    {
-        "plain_email": [
-            {
-                "email": "i_am_plain@lib.uchicago.edu"
-            },
-        ]
-    },
-    {
-        "local": [
-            {
-                "email": "catforum"
-            }
-        ]
-    },
-    {
-        "note": [
-            {
-                "note": "emails go to command: this is a note"
-            }
-        ]
-    },
-]
-
-# TODO: some kinda type error related to filt here that needs to be fixed; to
-# get the error, try to pass raw into this function
-
-def convert_list_to_dict(aliases_json, filt=[]):
+def convert_list_to_dict(aliases_json, filt=""):
 
     def values(alias_dct):
         return alias_dct[get_first_key(alias_dct)]
@@ -185,14 +138,6 @@ def convert_list_to_dict(aliases_json, filt=[]):
             return figure_out_email(dct["email"])
         else:
             return {}
-
-    def include_alias(alias, filt):
-        if filt == "number":
-            return alias[0].isdigit()
-        elif filt.isalpha() and len(filt) == 1:
-            return alias[0].lower() == filt.lower()
-        else:
-            return True
 
     aliases = sort_aliases(
         {get_first_key(dct): [categorize_entry(entry)
@@ -227,6 +172,9 @@ def mail_aliases_view(request, *args, **kwargs):
         alias_filter = ""
 
     final_data = convert_list_to_dict(parsed_file, alias_filter)
+
+    with open("./dude.txt", "w") as f:
+        f.write(str(alias_filter))
 
     context = {'final_data': final_data}
     return render(request, 'intranethome/mail_aliases.html', context)
