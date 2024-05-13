@@ -14,28 +14,45 @@ import json
 import re
 from wagtail.models import Site
 
+parse_error_message = {
+    "error": ("There is a problem with our "
+              "systems.  Please let us know "
+              "at "),
+    "link_text": "web-admin@lib.uchicago.edu",
+    "link_url": "mailto:web-admin@lib.uchicago.edu", }
+
 
 def parse_file(filepath):
     """
-    Opens and reads the json data and converts it into python
+    Parse the mail aliases json into a Python dictionary.  Does not
+    attempt to handle for syntactically invalid JSON.
 
     Args:
-        filepath: string file path to access the json
+        filepath: string file path to the JSON
 
     Returns:
-        output: dictionary that contains all of the converted json data
+        output: error dictionary when the filepath is bad, ok followed
+        by the parse result if the filepath is good
     """
     try:
         with open(filepath) as f:
             contents = f.read()
             return {"ok": json.loads(contents)}
     except (FileNotFoundError, PermissionError):
-        return {"error": ("There is a problem with our "
-                          "systems.  Please let us know "
-                          "at web-admin@lib.uchicago.edu.")}
+        return parse_error_message
 
 
 def get_first_key(dct):
+    """
+    Return the first key in a dictionary.  Useful for dealing with
+    single-key dictionaries, which are common in our mail aliases JSON.
+
+    Args:
+        dct: a dictionary
+
+    Returns:
+        key: a dictionary key
+    """
     key = ""
     for k, v in dct.items():
         key = k
@@ -45,16 +62,17 @@ def get_first_key(dct):
 
 def comparison(tup1, tup2):
     """
-    Lemma function for get_sorted_aliases to know where an alias
-    should be sorted relative to another alias
+    Custom comparison function for alphanumerically sorting a dictionary
+    by mail alias keys.
 
     Args:
         str1: one alias
         str2: another alias
 
     Returns:
-        integer: a value that tells the get_sorted_alias function, which
+        integer: a value that tells the sort_aliases function which
         alias is "smaller" and should go first
+
     """
     str1 = tup1[0].lower()
     str2 = tup2[0].lower()
@@ -74,6 +92,9 @@ def comparison(tup1, tup2):
 
 
 def sort_aliases(js):
+    """
+    
+    """
     return dict(sorted(js.items(), key=cmp_to_key(comparison)))
 
 

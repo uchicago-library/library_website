@@ -3,6 +3,8 @@ from django.test import SimpleTestCase
 from .views import (comparison,
                     sort_aliases,
                     convert_list_to_dict,
+                    parse_file,
+                    parse_error_message
                     )
 
 
@@ -181,3 +183,6 @@ class test_mail_aliases_view(SimpleTestCase):
         self.assertEqual(convert_list_to_dict(raw, filt='*'), expected)
         self.assertEqual(convert_list_to_dict(raw, filt=''), expected)
 
+    def test_bad_filepath(self):
+        bad_json = parse_file("this_doesnt_exist.json")
+        self.assertEqual(bad_json, parse_error_message)
