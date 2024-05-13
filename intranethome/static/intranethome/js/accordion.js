@@ -1,4 +1,3 @@
-
 function singleAccordionToggle() {
     var panel = this.nextElementSibling;
     if (panel.style.maxHeight) {

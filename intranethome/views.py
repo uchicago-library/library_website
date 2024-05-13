@@ -121,7 +121,7 @@ def figure_out_email(unparsed_email):
 
     def helper_triangle_brackets(tri_match):
         """
-        A helper function that formats triangle brackets
+        A function to parse angle bracket emails.
 
         Args:
             tri_match: a regular expression match object
@@ -135,7 +135,7 @@ def figure_out_email(unparsed_email):
 
     def helper_parentheses(paren_match):
         """
-        A helper function that formats parentheses emails
+        A function to parse parenthesis emails.
 
         Args:
             paren_match: a regular expression match object
@@ -164,6 +164,16 @@ def figure_out_email(unparsed_email):
 
 
 def include_alias(alias, filt):
+    """
+    Filter predicate for a/b/c/Number/etc. in the top menu.
+
+    Args:
+        alias: mail alias string
+        filt: filter string from the URL params (a/b/c/etc.)
+
+    Returns:
+        a boolean
+    """
     if filt == "number":
         return alias[0].isdigit()
     elif filt.isalpha() and len(filt) == 1:
@@ -173,11 +183,23 @@ def include_alias(alias, filt):
 
 
 def convert_list_to_dict(aliases_json, filt=""):
+    """
+    Transforms initial JSON parse from mail aliases file into JSON
+    representing what Wagtail will display in the template.
+
+    Args:
+        aliases_json: dictionary parse result of parse_file
+        filt: filter string from the URL params (a/b/c/etc.)
+
+    Returns:
+        aliases: a dictionary containing all mail aliases data to be
+        passed into the context
+    """
 
     def values(alias_dct):
         return alias_dct[get_first_key(alias_dct)]
 
-    def categorize_entry(dct):
+    def note_or_email(dct):
         first = get_first_key(dct)
         if first == "note":
             return {"note": "note: " + dct["note"]}
@@ -187,7 +209,7 @@ def convert_list_to_dict(aliases_json, filt=""):
             return {}
 
     aliases = sort_aliases(
-        {get_first_key(dct): [categorize_entry(entry)
+        {get_first_key(dct): [note_or_email(entry)
                               for entry
                               in values(dct)]
          for dct
