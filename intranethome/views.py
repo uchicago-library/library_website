@@ -72,7 +72,6 @@ def comparison(tup1, tup2):
     Returns:
         integer: a value that tells the sort_aliases function which
         alias is "smaller" and should go first
-
     """
     str1 = tup1[0].lower()
     str2 = tup2[0].lower()
@@ -93,22 +92,42 @@ def comparison(tup1, tup2):
 
 def sort_aliases(js):
     """
-    
+    Sorts the mail aliases dictionary by alias.
+
+    Args:
+        js: the parsed JSON read from disk
+
+    Returns:
+        the same dictionary, sorted by alias according to comparison
     """
     return dict(sorted(js.items(), key=cmp_to_key(comparison)))
 
 
 def figure_out_email(unparsed_email):
+    """
+    Classifies an email address string into one of four categories: note,
+    plain email, angle brackets email, parens email, or local alias.
+
+    Returns a dictionary whose key is the classification and whose value is a
+    string in the case of notes and plain emails, and a list in the case of
+    syntactically complex email strings.
+
+    Args:
+        a string representing an email address
+
+    Returns:
+        a parse result showing how the email address will display
+    """
 
     def helper_triangle_brackets(tri_match):
         """
         A helper function that formats triangle brackets
 
         Args:
-           a regular expression match object
+            tri_match: a regular expression match object
         Returns:
-           a list consisting of the name, the email address, and the
-           original string
+            a list consisting of the name, the email address, and the
+            original string
         """
         return [tri_match[1].strip(),
                 tri_match[2],
@@ -117,10 +136,13 @@ def figure_out_email(unparsed_email):
     def helper_parentheses(paren_match):
         """
         A helper function that formats parentheses emails
+
         Args:
-           parenthese_email: an email in the format of parentheses
+            paren_match: a regular expression match object
+
         Returns:
-           a formatted dicionary of a list of the data in the parentheses email
+            a list consisting of the name, the email address, and the
+            original string
         """
         return [paren_match[2],
                 paren_match[1].strip(),
