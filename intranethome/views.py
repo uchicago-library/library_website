@@ -9,27 +9,13 @@ from multiprocessing import process
 from django.http import HttpResponse
 from django.shortcuts import render
 from functools import cmp_to_key
-from library_website.settings import MAIL_ALIASES_PATH, CONTACT_URL
+from library_website.settings import MAIL_ALIASES_PATH
+import site_settings.models
 from site_settings.models import ContactInfo
+from django.core.exceptions import ObjectDoesNotExist
 import json
 import re
 from wagtail.models import Site
-
-
-ask_a_librarian_link = (
-    ContactInfo.objects
-    .get(pk=1)
-    .report_a_problem
-)
-
-if ask_a_librarian_link:
-    parse_error_message = {
-        "error": {"link_url": ask_a_librarian_link, }
-    }
-else:
-    parse_error_message = {
-        "error": {"link_url": CONTACT_URL, }
-    }
 
 
 def parse_file(filepath):
@@ -44,6 +30,17 @@ def parse_file(filepath):
         output: error dictionary when the filepath is bad, ok followed
         by the parse result if the filepath is good
     """
+
+    ask_a_librarian_link = (
+        ContactInfo.objects
+        .first()
+        .report_a_problem
+    )
+
+    parse_error_message = {
+        "error": {"link_url": ask_a_librarian_link, }
+    }
+
     try:
         with open(filepath) as f:
             contents = f.read()
