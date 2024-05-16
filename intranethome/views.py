@@ -9,17 +9,27 @@ from multiprocessing import process
 from django.http import HttpResponse
 from django.shortcuts import render
 from functools import cmp_to_key
-from library_website.settings import MAIL_ALIASES_PATH
+from library_website.settings import MAIL_ALIASES_PATH, CONTACT_URL
+from site_settings.models import ContactInfo
 import json
 import re
 from wagtail.models import Site
 
-parse_error_message = {
-    "error": ("There is a problem with our "
-              "systems.  Please let us know "
-              "at "),
-    "link_text": "web-admin@lib.uchicago.edu",
-    "link_url": "mailto:web-admin@lib.uchicago.edu", }
+
+ask_a_librarian_link = (
+    ContactInfo.objects
+    .get(pk=1)
+    .report_a_problem
+)
+
+if ask_a_librarian_link:
+    parse_error_message = {
+        "error": {"link_url": ask_a_librarian_link, }
+    }
+else:
+    parse_error_message = {
+        "error": {"link_url": CONTACT_URL, }
+    }
 
 
 def parse_file(filepath):

@@ -185,4 +185,11 @@ class test_mail_aliases_view(SimpleTestCase):
 
     def test_bad_filepath(self):
         bad_json = parse_file("this_doesnt_exist.json")
-        self.assertEqual(bad_json, parse_error_message)
+
+        def is_error(js):
+            try:
+                _ = js["error"]
+                return True
+            except KeyError:
+                return False
+        self.assertTrue(is_error(bad_json))

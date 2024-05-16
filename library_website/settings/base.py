@@ -616,3 +616,7 @@ FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 # up in the "out of sync staff members" email report.
 DO_NOT_SYNC = []
 MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
+
+CONTACT_URL = (
+    "https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/"
+)
