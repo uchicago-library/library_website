@@ -18,6 +18,14 @@ import re
 from wagtail.models import Site
 
 
+parse_error_message = {
+    "error": {
+        "link_url":
+        ContactInfo.objects.first().report_a_problem,
+    }
+}
+
+
 def parse_file(filepath):
     """
     Parse the mail aliases json into a Python dictionary.  Does not
@@ -31,15 +39,6 @@ def parse_file(filepath):
         by the parse result if the filepath is good
     """
 
-    ask_a_librarian_link = (
-        ContactInfo.objects
-        .first()
-        .report_a_problem
-    )
-
-    parse_error_message = {
-        "error": {"link_url": ask_a_librarian_link, }
-    }
 
     try:
         with open(filepath) as f:
