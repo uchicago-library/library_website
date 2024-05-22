@@ -91,6 +91,8 @@
             gtag('config', 'G-EWT5B3NZ15');
             gtag('set', 'content_group', 'public site');
         </script>
+        {# <link rel="stylesheet" href="{% static "base/css/temp-vmg-old.css" %}"/> #}
+        <link rel="stylesheet" href="{% static "base/css/temp-vmg.css" %}"/>
     </head>
 
     <body id="p-{{self.id}}" class="{{page_type|slugify}}">
@@ -112,7 +114,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-
+            
             {# Main navigation #}
             {% include "base/includes/header.html" %}
 
@@ -184,19 +186,19 @@
                     </div>
                     {% block above_main_content %}{% endblock %}
                     <div class="{{content_div_css}}" id="content" role="main">
+                        {% if has_left_sidebar %}
+                            <!-- Off-Canvas Toggle Button -->
+                            <div class="visible-xs visible-sm toggle-side">
+                                <button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button>
+                            </div>
+                            <!-- // End Off-Canvas Toggle Button -->
+                        {% endif %}
                         {% if object_title %}
                             <h1>{{object_title}}</h1>
                         {% elif page_type|slugify != 'libnewspage' %}
                             <h1 {% if self.banner_image and self.banner_title %}class="h1-banner"{% endif %}>{{self.title}}</h1>
                         {% endif %}
                         {% block under_h1 %}{% endblock %}
-                        {% if has_left_sidebar %}
-                            <!-- Off-Canvas Toggle Button -->
-                            <div class="row visible-xs visible-sm toggle-side">
-                                <p><button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button></p>
-                            </div>
-                            <!-- // End Off-Canvas Toggle Button -->
-                        {% endif %}
 
                         <!-- Main Content -->
                         {% if self.has_right_sidebar %}
@@ -256,30 +258,32 @@
                             </div>
                         {% endif %}
 
-                        {% block content %}
-                            {% for block in self.body %}
-                                {{ block }}
-                            {% endfor %}
-                        {% endblock %}
+                        <div class="">
+                            {% block content %}
+                                {% for block in self.body %}
+                                    {{ block }}
+                                {% endfor %}
+                            {% endblock %}
 
-                        {% autoescape off %}
-                            {{index_pages_html}}
-                        {% endautoescape %}
+                            {% autoescape off %}
+                                {{index_pages_html}}
+                            {% endautoescape %}
 
-                        {% if self.cgi_mail_form %}
-                            <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
-                            {% render_bundle 'CGIMailForm' %}
-                        {% endif %}
+                            {% if self.cgi_mail_form %}
+                                <div id="cgi-mail-form" data-json="{{self.cgi_mail_form}}" data-thank-you="{{self.cgi_mail_form_thank_you_text}}" data-cgi-mail="{{cgi_mail}}" data-item-servlet="{{item_servlet}}" data-springshare-pp="{{springshare_pp}}"></div>
+                                {% render_bundle 'CGIMailForm' %}
+                            {% endif %}
+                        </div>
 
-                        {% if self.has_richtext_widget %}
-                            <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
-                                <div class="home-module">
-                                    <h2>{{self.rich_text_heading}}</h2>
-                                    {% if self.rt_link and self.rich_text_link_text %}
-                                        <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-12">
+                        <div class="row">
+                            {% if self.has_richtext_widget %}
+                                <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides">
+                                    <div class="home-module">
+                                        <h2>{{self.rich_text_heading}}</h2>
+                                        {% if self.rt_link and self.rich_text_link_text %}
+                                            <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all">{{self.rich_text_link_text}}</a>
+                                        {% endif %}
+                                    </div>
                                     {% if link_queue %}
                                         {% for key, val in link_queue.items %}
                                             <h3>{{key}}</h3>
@@ -295,11 +299,9 @@
                                         {{self.rich_text|richtext}}
                                     {% endif %}
                                 </div>
-                            </div>
-                        {% endif %}
+                            {% endif %}
 
-                        {% if has_featured_lib_expert %}
-                            <div class="row">
+                            {% if has_featured_lib_expert %}
                                 {% if has_featured_lib_expert %}
                                     {% image featured_lib_expert_image fill-200x200 as profile_pic %}
                                     {#featured_lib_expert.block.library_expert #}
@@ -331,8 +333,9 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            </div> <!-- // row -->
-                        {% endif %}
+                            {% endif %}
+                        </div>
+
 
                         {% if self.news_feed_source %}
                             <div class="home-modwrapper" id="widget-news">
@@ -345,7 +348,7 @@
                                 <div class="news-wrap">
                                     {% if news_feed %}
                                         {% for story in news_feed %}
-                                            <div class="newsblock col-xs-12 col-sm-6 col-md-3">
+                                            <div class="newsblock col-xs-12 col-sm-6 col-lg-3">
                                                 <div class="embed">
                                                     <div class="figure-wrap">
                                                         <a href="{% pageurl story %}" data-ga-tracked="on">

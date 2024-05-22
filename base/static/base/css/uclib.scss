@@ -46,7 +46,8 @@ Forms (CGI)
 }
 
 .body-container {
-  padding: 30px;
+  padding: 30px 15px;
+  padding-top: 42px;
   max-width: 1200px;
   #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 &, &.directory {  // Exception for Home pages and directory pages
     max-width: 2000px;
@@ -55,6 +56,10 @@ Forms (CGI)
     @include respond-to(medium) {
       padding-left: 45px;
     }
+  }
+
+  @include respond-to(small) {
+    padding: 30px;
   }
 }
 
@@ -122,21 +127,21 @@ body.libnewsindexpage article .img-object .preload span {
     margin-top: 0;
     padding: 10px 15px;
   }
-  &.crerar {
-    background-color: $trans-blue;
-  }
-  &.eckhart {
-    background-color: $trans-purple;
-  }
-  &.mansueto {
-    background-color: $trans-darkgreen;
-  }
-  &.reg {
-    background-color: $trans-lightgreen;
-  }
-  &.ssa {
-    background-color: $trans-orange;
-  }
+  // &.crerar {
+  //   background-color: $trans-blue;
+  // }
+  // &.eckhart {
+  //   background-color: $trans-purple;
+  // }
+  // &.mansueto {
+  //   background-color: $trans-darkgreen;
+  // }
+  // &.reg {
+  //   background-color: $trans-lightgreen;
+  // }
+  // &.ssa {
+  //   background-color: $trans-orange;
+  // }
   @include respond-to(small) {
     position: absolute;
     padding-right: 3em;
@@ -161,13 +166,12 @@ body.libnewsindexpage article .img-object .preload span {
 
 .breadcrumbs {
   padding-top: 5px;
-  padding-left: 20px;
+  padding-left: 30px;
   font-size: 85%;
  }
 
 
 .centermain {
-  padding: 0;
   max-width: 900px;
   display: block;
   margin-left: auto;
@@ -561,12 +565,12 @@ figure.coll-thumb {
     }
   }
   &.info-box {
-    color: darken($crerarblue, 15%);
+    color: darken($ncs-links, 15%);
     background-color: #eef6fc;
     padding: 1em;
     h2, h3 {
-      color: darken($crerarblue, 15%)!important;
-      border-color: darken($crerarblue, 15%)!important
+      color: darken($ncs-links, 15%)!important;
+      border-color: darken($ncs-links, 15%)!important
     }
   }
 }
@@ -577,7 +581,7 @@ figure.coll-thumb {
     margin-top: 0;
   }
   a {
-    color: $crerarblue;
+    color: $ncs-links;
     text-decoration: underline;
     &:hover {
       color: $eckhartpurple;
@@ -590,7 +594,7 @@ figure.coll-thumb {
     padding: 1em;
   }
   .info-box {
-    color: darken($crerarblue, 15%);
+    color: darken($ncs-links, 15%);
     background-color: #eef6fc;
     padding: 1em;
   }
@@ -606,10 +610,9 @@ figure.coll-thumb {
     &:hover {
       color: $default-link;
       text-decoration: underline;
-      font-weight: 600;
     }
     &:focus {
-      outline: 2px dashed $crerarblue;
+      outline: 2px dashed $ncs-links;
       outline-offset: 2px;
     }
   }
@@ -635,7 +638,7 @@ figure.coll-thumb {
 }
 
 #widget-explore-research-guides {
-  padding-left: 0;
+  padding-left: 15px; /* undo BS override */
 }
 
 // featured expert homepage module
@@ -713,11 +716,13 @@ a.event-header {
  * --------------------------------------------------
  */
 
- .news-wrap {
+.news-wrap {
   display: flex;
   flex-wrap: wrap;
   display: -webkit-flex;  // Safari fix
   -webkit-flex-wrap: wrap;  // Safari fix
+  margin-left: -5px;
+  margin-right: -5px;
 }
 
 .newsblock {
@@ -737,7 +742,7 @@ a.event-header {
 }
 
 div.embed {
-  width: 98%;
+  width: 100%;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -762,9 +767,6 @@ div.embed {
   }
   div.capt {  //category tags on news images
     width: 100%;
-    padding: 0.5em;
-    background: rgba(50,50,50,0.7);
-    color: #fff;
     position: absolute;
     bottom: 0px;
     &.exhibitdate {
@@ -806,8 +808,15 @@ div.embed {
   }
 }
 
-.btn-primary {
-  @extend .btn-morelink;
+.btn-morecoll {
+  @extend .btn-tertiary;
+}
+.btn-morelink {  // "View more ..." link for sidebar
+  @extend .btn-tertiary;
+  &:after {
+    content: "\0020\f101";
+    font-family: FontAwesome;
+  }
 }
 
 .spaces-toggle {
@@ -825,9 +834,9 @@ div.embed {
   border-radius: 0;
   &.active {
     color: white;
-    background-color: $darkred;
-    border-top: 2px solid $maroon;
-    border-bottom: 2px solid $maroon;
+    background-color: $ncs-maroon;
+    border-top: 2px solid $ncs-maroon;
+    border-bottom: 2px solid $ncs-maroon;
     -webkit-box-shadow: none;
     box-shadow: none;   
     &:after {
@@ -841,7 +850,7 @@ div.embed {
     box-shadow: none; 
   }
   &:focus {
-    box-shadow: 2px 2px 10px $crerarblue;
+    box-shadow: $box-shadow-focus;
     border-top: 2px solid $maroon;
     border-bottom: 2px solid $maroon;
   }
@@ -914,7 +923,7 @@ div.embed {
       font-weight: 600;
     }
     &:focus {
-      outline: 2px dashed $crerarblue;
+      outline: 2px dashed $ncs-links;
       outline-offset: 2px;
     }
   }
@@ -965,12 +974,11 @@ tbody a {
 
 tr.etable-header>th, th.etable-header, table.etable thead {
   border-top: none!important;
-  border-bottom: 2px solid $table-main;
-  font-family: $accent-font;
+  border-bottom: 2px solid $ncs-maroon;
   font-size: 1.1em;
-  color: darken($table-main, 27%);
+  color: $ncs-maroon;
   font-weight: 600;
-  background: lighten($table-main, 35%)!important;
+  background: $ncs-lighter-greystone;
   @include respond-to(smallonly) {
     display: inline-block;
     width: inherit;
@@ -1084,15 +1092,16 @@ table.etable>tbody>tr {
   right:0;
   border:0;
   outline:0;
-  background:#dcddd8;
+  background: $ncs-lighter-greystone;
   width:100%;
   height:30px;
   margin:0;
   padding:0px 55px 0px 20px;
   font-size:1em;
-  color:$maroon;
+  color: black;
   &:focus {
-    box-shadow: 2px 2px 10px $crerarblue;
+    box-shadow: $box-shadow-focus;
+    background: white;
   }
 }
 
@@ -1115,14 +1124,14 @@ table.etable>tbody>tr {
   line-height:30px;
   text-align:center;
   cursor:pointer;
-  color:#ddd;
-  background:$maroon;
+  color:#fff;
+  background: $ncs-maroon;
   &:hover {
     color: black;
     background-color: $hovercalmlight;
   }
   &:focus {
-    box-shadow: 0px 1px 5px $crerarblue;
+    box-shadow: $box-shadow-focus;
     color: black;
     background-color: $hovercalmlight;
   }
@@ -1270,9 +1279,8 @@ a.btn-ask {
   border-collapse: collapse;
   border-spacing: 0;
   & thead {
-    background-color: lighten($table-main, 15%);;
-    color: #323232;
-    font-style: italic;
+    background-color: $table-main;
+    color: white;
     &>tr>th {
       vertical-align: bottom;
       border-bottom: 2px solid $table-main;
@@ -1301,7 +1309,7 @@ a.btn-ask {
       }
     }
     &:nth-of-type(even) {
-      background-color: #f9f9f9;
+      background-color: $ncs-lighter-greystone;
     }
     &:last-child {
       border-bottom:2px solid $table-main;
@@ -1311,18 +1319,16 @@ a.btn-ask {
 
 // Highlights "Today" column
 .s-lc-whw-head-date {
-  color: #4c4c4c;
   font-size: 0.9em;
 }
 
-.s-lc-whw-today-h, .s-lc-whw-today-h>.s-lc-whw-head-date {
-  color: #000;
-  background-color: $table-main;
-  font-style: normal;
+// .s-lc-whw-today-h>.s-lc-whw-head-date,
+.s-lc-whw-today-h{
+  background-color: $table-accent;
 }
 
 .s-lc-whw-today {
-  background-color: lighten($table-main, 32%);
+  background-color: $ncs-light-greystone;
   font-weight: 600;
 }
 
@@ -1350,9 +1356,8 @@ a.btn-ask {
   width: 100%;
   margin-bottom: 20px;
     & thead {
-    background-color: lighten($table-main, 15%);
-    color: #323232;
-    font-style: italic;
+    background-color: $table-main;
+    color: white;
     &>tr>th {
       vertical-align: middle;
       border-bottom: 2px solid $table-main;
@@ -1452,9 +1457,9 @@ a.btn-ask {
   font-size: 12px;
   line-height: 1.5;
   border-radius: 3px;
-  color: #333;
-  background-color: #fff;
-  border-color: #ccc;
+  background-color: $ncs-maroon;
+  color: #fff;
+  border: 1px solid white;
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -1462,12 +1467,15 @@ a.btn-ask {
   vertical-align: middle;
   cursor: pointer;
   background-image: none;
-  border: 1px solid transparent;
   white-space: nowrap;
+}
+.s-lc-whw-pr:hover, .s-lc-whw-ne:hover {
+  background-color: $ncs-light-brick;
+  color: white;
 }
 
 .s-lc-whw-pr:disabled, .s-lc-whw-ne:disabled {
-  background-color: #efefef;
+  background-color: $ncs-dark-brick;
 }
 
 
@@ -1697,7 +1705,7 @@ h2.spaces {
     background-color: $hovercalmlight;
   }
   &:focus {
-    box-shadow: 0px 1px 5px $crerarblue;
+    box-shadow: $box-shadow-focus;
     background-color: $hovercalmlight;
   }
  }
@@ -1733,11 +1741,6 @@ padding: 10px 0px 0px 15px;
   }
 }
 
-.btn-morecoll {
-  @extend .btn-morelink;
-  background: $hovercalm;
-  border-color: #a0a282;
-}
 
 .btn-coll-link {
   font-size: 0.9em;
@@ -1840,14 +1843,15 @@ a.coll-access {
   margin: 2em 0 0.25em 0;
   padding-left: 0;
   h2 {
-    color: $darkred;
+    color: $ncs-maroon;
     font-size: 1.15em;
     padding-left: 15px;
     margin-right: 2em;
     margin-bottom: 0.25em;
-    border-bottom: 2px solid #ddd;
-      a, a:active, a:focus, a:hover {
-      color: $mid-dark;
+    border-bottom: 2px solid $ncs-maroon;
+    font-weight: 600;
+    a, a:active, a:focus, a:hover {
+      color: $ncs-dark-maroon;
       text-decoration: none;
     }
   }
@@ -1880,7 +1884,6 @@ a.coll-access {
     h3, h4 {
       font-family: $base-font;
       font-size: 1em !important; 
-      color: darken($mid-dark, 10%);
       font-weight: 600;
       font-style: normal;
       display: block;
@@ -1899,7 +1902,7 @@ a.coll-access {
           font-weight: 600;
         }
         &:focus {
-          outline: 2px dashed $crerarblue;
+          outline: 2px dashed $ncs-links;
           outline-offset: 2px;
         }
       }
@@ -1937,12 +1940,12 @@ a.coll-access {
     margin-bottom: 0;
   }
   a, a:active, a:hover {
-    color: $crerarblue;
+    color: $ncs-links;
     text-decoration: underline;
     font-weight: 600;
   }
   &:focus {
-    outline: 2px dashed $crerarblue;
+    outline: 2px dashed $ncs-links;
     outline-offset: 2px;
   }
   .col-xs-12 {
@@ -1963,21 +1966,10 @@ a.coll-access {
  */
 
 button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
-  color: #ffffff;
-  background: #6e7337;
+  @extend .btn-secondary;
   margin-top: 0.5em;
-  border: none;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  &:hover, &:focus {
-    color: #2A5DB0;
-    background: transparent;
-    border: 1px solid #2A5DB0;
-  }
+  font-weight: 600;
 }
-
 
 .staff-profile { //Staff Page, Photo
   @include respond-to(smallonly) {

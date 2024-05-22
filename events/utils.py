@@ -1,10 +1,12 @@
+import itertools
+import re
 from datetime import datetime, timedelta
 from http.client import HTTPConnection, HTTPSConnection
 from urllib.parse import parse_qs, urlparse
 from xml.etree import ElementTree
 
-import itertools
-import re
+from library_website.settings import UC_EVENTS_BASE
+
 
 def get_xml_from_feed(feed):
     p = urlparse(feed)
@@ -20,9 +22,9 @@ def get_xml_from_feed(feed):
     xml_bytes = result.read()
     return ElementTree.fromstring(xml_bytes.decode('utf-8'))
 
+
 def get_entries_from_events_uchicago(x):
     entries = []
-    from lxml import etree
     for entry in x.find('channel').findall('item'):
         content = ''
         html = entry.find('description').itertext()
@@ -41,64 +43,80 @@ def get_entries_from_events_uchicago(x):
         end_date_short_form = ''
         if entry.find('endDate').text:
             end_date = entry.find('endDate').text.strip()
-            sortable_end_date = datetime.strptime(end_date, '%b %d, %Y').strftime('%Y-%m-%d')
-            end_date_short_form = datetime.strptime(end_date, '%b %d, %Y').strftime('%m/%d')
+            sortable_end_date = datetime.strptime(end_date, '%b %d, %Y').strftime(
+                '%Y-%m-%d'
+            )
+            end_date_short_form = datetime.strptime(end_date, '%b %d, %Y').strftime(
+                '%m/%d'
+            )
 
         end_time = ''
 
         if entry.find('endTime').text:
             end_time = entry.find('endTime').text.strip()
-    
-        sortable_date = datetime.strptime(start_date, '%b %d, %Y').strftime('%Y-%m-%d')
-        sortable_datetime = sortable_date + ' ' + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
 
-        start_date_short_form = datetime.strptime(start_date, '%b %d, %Y').strftime('%m/%d')
+        sortable_date = datetime.strptime(start_date, '%b %d, %Y').strftime('%Y-%m-%d')
+        sortable_datetime = (
+            sortable_date
+            + ' '
+            + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
+        )
+
+        start_date_short_form = datetime.strptime(start_date, '%b %d, %Y').strftime(
+            '%m/%d'
+        )
 
         title = entry.find('title').text
 
-        entries.append({
-            'content': content,
-            'end_date': end_date,
-            'end_date_short_form': end_date_short_form,
-            'end_time': end_time,
-            'guid': guid,
-            'link': entry.find('link').text,
-            'sortable_date': sortable_date,
-            'sortable_date_label': start_date,
-            'sortable_datetime': sortable_datetime,
-            'sortable_end_date': sortable_end_date,
-            'start_date': start_date,
-            'start_date_short_form': start_date_short_form,
-            'start_time': start_time,
-            'summary': content,
-            'title': title
-        })
+        entries.append(
+            {
+                'content': content,
+                'end_date': end_date,
+                'end_date_short_form': end_date_short_form,
+                'end_time': end_time,
+                'guid': guid,
+                'link': f"{UC_EVENTS_BASE}{entry.find('link').text}",
+                'sortable_date': sortable_date,
+                'sortable_date_label': start_date,
+                'sortable_datetime': sortable_datetime,
+                'sortable_end_date': sortable_end_date,
+                'start_date': start_date,
+                'start_date_short_form': start_date_short_form,
+                'start_time': start_time,
+                'summary': content,
+                'title': title,
+            }
+        )
     return entries
+
 
 def expand_multiday_entries(entries, nudge_to_date):
     """
     On the workshops and events widget, multiday events should be
-    "nudged" to appear on the current day. On the full events 
+    "nudged" to appear on the current day. On the full events
     view, multiday events should appear once on each day they
-    span. 
+    span.
 
     Args:
         entries: dictionary of fields parsed from the
         University events xml feed.
 
-        nudge_to_date: for display on the workshops and events 
-        widget, this is the day that multiday events should be 
-        "nudged" to. This will probably be today's date, except for 
-        testing. For a full listing of all dates, pass "none". 
+        nudge_to_date: for display on the workshops and events
+        widget, this is the day that multiday events should be
+        "nudged" to. This will probably be today's date, except for
+        testing. For a full listing of all dates, pass "none".
 
     Returns:
         A list of dictionaries with multiday events either repeated
-        or nudged up to the current day. 
+        or nudged up to the current day.
     """
     entries_out = []
-    i = 0 
+    i = 0
     while i < len(entries):
-        if entries[i]['end_date'] == '' or entries[i]['start_date'] == entries[i]['end_date']:
+        if (
+            entries[i]['end_date'] == ''
+            or entries[i]['start_date'] == entries[i]['end_date']
+        ):
             entries_out.append(entries[i])
         else:
             start_date = datetime.strptime(entries[i]['start_date'], '%b %d, %Y')
@@ -118,9 +136,12 @@ def expand_multiday_entries(entries, nudge_to_date):
         i = i + 1
     return entries_out
 
-# 
+
+#
 # input: xml from university event feed.
 #
+
+
 def get_flat_entries_from_ttrss(x):
     entries = []
     for entry in x.findall('{http://www.w3.org/2005/Atom}entry'):
@@ -128,11 +149,14 @@ def get_flat_entries_from_ttrss(x):
         entries.append({'guid': guid})
     return entries
 
-# collect all entries into a list of lists. 
-# [ 
+
+# collect all entries into a list of lists.
+# [
 #   [ '20160623', [ list-of-entries ] ],
 #   ...
 # ]
+
+
 def group_entries(entries):
     entries_out = []
     for entry in entries:
@@ -145,17 +169,20 @@ def group_entries(entries):
         # add a new date if necessary.
         if i == len(entries_out):
             entries_out.append([entry['sortable_date'], []])
-        # append this entry to that slot. 
+        # append this entry to that slot.
         entries_out[i][1].append(entry)
 
     # sort entries
     entries_out = sorted(entries_out, key=lambda e: e[0])
     i = 0
     while i < len(entries_out):
-        entries_out[i][1] = sorted(entries_out[i][1], key=lambda e: e['sortable_datetime'])
+        entries_out[i][1] = sorted(
+            entries_out[i][1], key=lambda e: e['sortable_datetime']
+        )
         i = i + 1
 
     return entries_out
+
 
 def filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries):
     """
@@ -185,12 +212,13 @@ def filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries
             entries_out.append(entry)
     return entries_out
 
+
 def truncate_summary(summary_string):
-    # replace all whitespace with a single space. 
+    # replace all whitespace with a single space.
     summary_string = re.sub('\s+', ' ', summary_string)
 
-    # string should be no more than 140 characters long, 
-    # split on a word boundary. 
+    # string should be no more than 140 characters long,
+    # split on a word boundary.
     character_count = 0
     needs_ellipses = False
     words_out = []
@@ -207,7 +235,8 @@ def truncate_summary(summary_string):
 
     return summary_string
 
-def get_events(university_url, ttrss_url, start, stop, full_view = True):
+
+def get_events(university_url, ttrss_url, start, stop, full_view=True):
     """
     Return a datastructure containing events data parsed from
     the University events feed and Tiny Tiny Rss.
@@ -238,7 +267,7 @@ def get_events(university_url, ttrss_url, start, stop, full_view = True):
     query = urlparse(ttrss_url).query
     category = parse_qs(query)['id'][0]
 
-    # get xml from the university event feed directly. 
+    # get xml from the university event feed directly.
     entries = get_entries_from_events_uchicago(university_xml)
 
     # get info from the event calendar as a list of lists.
@@ -247,17 +276,19 @@ def get_events(university_url, ttrss_url, start, stop, full_view = True):
     if not full_view:
         entries = expand_multiday_entries(entries, datetime.now().date())
         entries = filter_university_entries_to_ttrss_entries(entries, ttrss_entries)
-    
-    # group entries. 
+
+    # group entries.
     grouped_entries = group_entries(entries)
 
-    # only pass along the entries that make sense for this date range. 
+    # only pass along the entries that make sense for this date range.
     entries_out = []
-    #if start and stop:
+    # if start and stop:
     i = 0
     while i < len(grouped_entries):
         if start and stop:
-            if grouped_entries[i][0] >= start.strftime('%Y-%m-%d') and grouped_entries[i][0] <= stop.strftime('%Y-%m-%d'):
+            if grouped_entries[i][0] >= start.strftime('%Y-%m-%d') and grouped_entries[
+                i
+            ][0] <= stop.strftime('%Y-%m-%d'):
                 entries_out.append(grouped_entries[i])
         else:
             entries_out.append(grouped_entries[i])
@@ -265,16 +296,10 @@ def get_events(university_url, ttrss_url, start, stop, full_view = True):
 
     return entries_out
 
+
 def flatten_events(events):
     """
     Takes the data structure from get_events and returns a "flattened" version
     of it, with just events, not grouped by leading dates.
     """
     return list(itertools.chain(*[event_data[1] for event_data in events]))
-
-
-
-
-
-
-

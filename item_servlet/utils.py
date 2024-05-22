@@ -1,7 +1,6 @@
 import json
 
 import requests
-
 from django.conf import settings
 
 TIMEOUT = 5
@@ -9,7 +8,7 @@ TIMEOUT = 5
 GENERIC_HEADERS = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-Okapi-Tenant': '%s' % settings.FOLIO_TENANT
+    'X-Okapi-Tenant': '%s' % settings.FOLIO_TENANT,
 }
 
 
@@ -20,27 +19,28 @@ def get_auth():
     Returns:
         dict, with auth token.
     """
-    data = {"x-okapi-token": '', 'refreshtoken': ''}
+    data = {"x-okapi-token": ''}
     try:
         payload = '{"username": "%s", "password": "%s"}' % (
-            settings.FOLIO_USERNAME, settings.FOLIO_PASSWORD
+            settings.FOLIO_USERNAME,
+            settings.FOLIO_PASSWORD,
         )
         response = requests.post(
             settings.FOLIO_BASE_URL + '/authn/login',
             headers=GENERIC_HEADERS,
             data=payload,
-            timeout=TIMEOUT
+            timeout=TIMEOUT,
         )
         if response.status_code != 201:
             return data
         return {
             "x-okapi-token": response.headers['x-okapi-token'],
-            'refreshtoken': response.headers['refreshtoken']
         }
     except (
-        requests.exceptions.Timeout, json.decoder.JSONDecodeError,
+        requests.exceptions.Timeout,
+        json.decoder.JSONDecodeError,
         requests.exceptions.ConnectionError,
-        requests.exceptions.MissingSchema
+        requests.exceptions.MissingSchema,
     ):
         pass
     return data
@@ -68,8 +68,10 @@ def get_instances(bib, token):
         response = requests.get(url, headers=headers, timeout=TIMEOUT)
         return json.loads(response.content)['instances'][0]
     except (
-        requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-        requests.exceptions.ConnectionError, IndexError
+        requests.exceptions.Timeout,
+        json.decoder.JSONDecodeError,
+        requests.exceptions.ConnectionError,
+        IndexError,
     ):
         return dict()
 
@@ -95,12 +97,13 @@ def get_holdings(instance_id, token):
         response = requests.get(
             settings.FOLIO_BASE_URL + '/holdings-storage/holdings?query=%s' % q,
             headers=headers,
-            timeout=TIMEOUT
+            timeout=TIMEOUT,
         )
         return json.loads(response.content)
     except (
-        requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-        requests.exceptions.ConnectionError
+        requests.exceptions.Timeout,
+        json.decoder.JSONDecodeError,
+        requests.exceptions.ConnectionError,
     ):
         return dict()
 
@@ -126,8 +129,11 @@ def get_item(barcode, token):
             response = requests.get(url, headers=headers, timeout=TIMEOUT)
             return json.loads(response.content)['items'][0]
         except (
-            requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-            requests.exceptions.ConnectionError, IndexError, KeyError
+            requests.exceptions.Timeout,
+            json.decoder.JSONDecodeError,
+            requests.exceptions.ConnectionError,
+            IndexError,
+            KeyError,
         ):
             pass
     return dict()
@@ -151,11 +157,12 @@ def get_location(loc_id, token):
         response = requests.get(
             settings.FOLIO_BASE_URL + '/locations/%s' % loc_id,
             headers=headers,
-            timeout=TIMEOUT
+            timeout=TIMEOUT,
         )
         return json.loads(response.content)
     except (
-        requests.exceptions.Timeout, json.decoder.JSONDecodeError,
-        requests.exceptions.ConnectionError
+        requests.exceptions.Timeout,
+        json.decoder.JSONDecodeError,
+        requests.exceptions.ConnectionError,
     ):
         return dict()

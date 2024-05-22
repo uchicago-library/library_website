@@ -535,6 +535,7 @@ DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-publis
 NEWS_CACHE_TTL = 60 * 180
 
 # University Events Feed
+UC_EVENTS_BASE = ''
 UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
 
 # Tiny Tiny RSS Feed
@@ -630,4 +631,4 @@ FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 # we wish to keep out of sync. People listed here will not show
 # up in the "out of sync staff members" email report.
 DO_NOT_SYNC = []
-MAIL_ALIASES_PATH = '/data/web/aliases/aliases.json'
+MAIL_ALIASES_PATH = '/data/web/aliases/data.json'

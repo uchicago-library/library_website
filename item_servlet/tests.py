@@ -2,8 +2,13 @@ import json
 
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+
 from item_servlet.utils import (
-    get_auth, get_holdings, get_instances, get_item, get_location
+    get_auth,
+    get_holdings,
+    get_instances,
+    get_item,
+    get_location,
 )
 from item_servlet.views import parse_data
 
@@ -19,10 +24,23 @@ class TestItemServletView(TestCase):
         """
         self.client = Client()
         self.dict_keys = [
-            'title', 'location', 'internalLocation', 'callNumber',
-            'callNumberPrefix', 'copyNumber', 'volumeNumber', 'author', 'bibId',
-            'barcode', 'publisher', 'placePublished', 'dateIssued', 'edition',
-            'issn', 'isbn', 'linking_issn'
+            'title',
+            'location',
+            'internalLocation',
+            'callNumber',
+            'callNumberPrefix',
+            'copyNumber',
+            'volumeNumber',
+            'author',
+            'bibId',
+            'barcode',
+            'publisher',
+            'placePublished',
+            'dateIssued',
+            'edition',
+            'issn',
+            'isbn',
+            'linking_issn',
         ]
 
     def test_item_servlet_with_no_params(self):
@@ -49,7 +67,7 @@ class TestItemServletView(TestCase):
     FOLIO_USERNAME='Picard',
     FOLIO_PASSWORD='BeverlyCrusher',
     FOLIO_TENANT='Enterprise',
-    FOLIO_BASE_URL='https://siufhsari34hriwhrfishfksjfhnsf.com'
+    FOLIO_BASE_URL='https://siufhsari34hriwhrfishfksjfhnsf.com',
 )
 class TestItemServletUtils(TestCase):
     """
@@ -58,7 +76,7 @@ class TestItemServletUtils(TestCase):
 
     def test_get_auth_with_bad_data(self):
         auth = get_auth()
-        self.assertTrue(auth == {"x-okapi-token": '', 'refreshtoken': ''})
+        self.assertTrue(auth == {"x-okapi-token": ''})
 
     def test_get_instances_with_bad_data(self):
         instances = get_instances('badbib', 'badtoken')
