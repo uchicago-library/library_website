@@ -182,6 +182,7 @@ USE_TZ = True
 WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
     ('en', "English"),
     ('es', "Spanish"),
+    ('ko', "Korean"),
 ]
 
 LOCALE_PATHS = (
