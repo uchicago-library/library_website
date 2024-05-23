@@ -419,11 +419,15 @@
 
 {% block content %}
     {% if page %}
-        {% for translation in page.get_translations %}
-            <p><a href="{% pageurl translation %}" rel="alternate" hreflang="{{ translation.locale.language_code }}">
-                {{ translation.locale.language_code|upper }}
-            </a></p>
-        {% endfor %}
+        {% if page.get_translations %}
+            <ol class="breadcrumb">
+                {% for translation in page.get_translations %}
+                    <li><a href="{% pageurl translation %}" rel="alternate" hreflang="{{ translation.locale.language_code }}">
+                        {{ translation.locale.language_code|upper }}
+                    </a></li>
+                {% endfor %}
+            </ol>
+        {% endif %}
     {% endif %}
     <article>
         <div class="row">
