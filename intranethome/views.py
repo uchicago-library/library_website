@@ -10,230 +10,250 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from functools import cmp_to_key
 from library_website.settings import MAIL_ALIASES_PATH
+import site_settings.models
+from site_settings.models import ContactInfo
+from django.core.exceptions import ObjectDoesNotExist
 import json
 import re
 from wagtail.models import Site
 
+
+parse_error_message = {
+    "error": {
+        "link_url":
+        ContactInfo.objects.first().report_a_problem,
+    }
+}
+
+
 def parse_file(filepath):
-    '''
-    Opens and reads the json data and converts it into python
+    """
+    Parse the mail aliases json into a Python dictionary.  Does not
+    attempt to handle for syntactically invalid JSON.
 
     Args:
-        filepath: string file path to access the json
+        filepath: string file path to the JSON
 
     Returns:
-        output: dictionary that contains all of the converted json data
-    '''
+        output: error dictionary when the filepath is bad, ok followed
+        by the parse result if the filepath is good
+    """
 
-    with open(filepath) as f:
-        contents = f.read()
-        return json.loads(contents)
 
-def each_list(list_of_dicts, alias_value):
-    # run this inside of each mail alias
-    i = 0
+    try:
+        with open(filepath) as f:
+            contents = f.read()
+            return {"ok": json.loads(contents)}
+    except (FileNotFoundError, PermissionError):
+        return parse_error_message
 
-    def email_or_note(dct):
-        if 'email' in dct.keys():
-            return list(dct.values())
-        else:
-            return [ ("note: " + x) for x in list(dct.values()) ]
 
-    while i < len(list_of_dicts):
-        if alias_value in list_of_dicts[i]:
-            return sum([email_or_note(x) for x in list_of_dicts[i][alias_value]],[])
-        i+=1
-
-def flatten(xss):
-    '''
-    Flattens multiple layers of lists into a single list
+def get_first_key(dct):
+    """
+    Return the first key in a dictionary.  Useful for dealing with
+    single-key dictionaries, which are common in our mail aliases JSON.
 
     Args:
-        xss: list that needs to be flattened
+        dct: a dictionary
 
     Returns:
-        list: the flattened list
-    '''
-    return [x for xs in xss for x in xs]
+        key: a dictionary key
+    """
+    key = ""
+    for k, v in dct.items():
+        key = k
+        break
+    return key
 
-def starts_with_number(string):
-    '''
-    Checks if the first position in a string is a number
 
-    Args:
-        string: string that needs to be checked
-
-    Returns:
-        boolean: true if the string starts with a number and false otherwise
-    '''
-    return string[0].isnumeric()
-
-def cmp(a, b):
-    return (a > b) - (a < b)
-
-def comparison(str1, str2):    
-    '''
-    Lemma function for get_sorted_aliases to know where an alias should be sorted relative to another alias
+def comparison(tup1, tup2):
+    """
+    Custom comparison function for alphanumerically sorting a dictionary
+    by mail alias keys.
 
     Args:
         str1: one alias
         str2: another alias
 
     Returns:
-        integer: a value that tells the get_sorted_alias function, which alias is "smaller" and should go first
-    '''
-    if starts_with_number(str1.lower()) and not(starts_with_number(str2.lower())):
+        integer: a value that tells the sort_aliases function which
+        alias is "smaller" and should go first
+    """
+    str1 = tup1[0].lower()
+    str2 = tup2[0].lower()
+
+    def cmp(a, b):
+        return (a > b) - (a < b)
+
+    def starts_with_number(string):
+        return string[0].isnumeric()
+
+    if starts_with_number(str1) and not (starts_with_number(str2)):
         return 1
-    elif not(starts_with_number(str1.lower())) and starts_with_number(str2.lower()):
+    elif not (starts_with_number(str1)) and starts_with_number(str2):
         return -1
     else:
-        return cmp(str1.lower(), str2.lower())
-    
+        return cmp(str1, str2)
 
-def helper_function_triangle_brackets(triangle_brackets_email):
+
+def sort_aliases(js):
     """
-    A helper function that formats trinagle brackets
-    Args:
-       triangle_brackets_email: an email in the format of triangle brackets
-    Returns:
-       a formatted dicionary of a list of the data in the triangle brackets email
-    """
-
-    formatted_triangle_bracket_list = []
-    formatted_triangle_bracket_list.append(triangle_brackets_email[1].strip())
-    formatted_triangle_bracket_list.append(triangle_brackets_email[2])
-    formatted_triangle_bracket_list.append(triangle_brackets_email[0])
-    return formatted_triangle_bracket_list
-
-def get_sorted_aliases(parsed_data):
-    '''
-    Sorts the aliases
+    Sorts the mail aliases dictionary by alias.
 
     Args:
-        parsed_data: all of the json data converted into python
+        js: the parsed JSON read from disk
 
     Returns:
-        list: the sorted aliases
-    '''
-    return sorted(flatten([list(x.keys()) for x in parsed_data]), key=cmp_to_key(comparison))
-
-def helper_function_parentheses(parentheses_email):
+        the same dictionary, sorted by alias according to comparison
     """
-    A helper function that formats parentheses emails
+    return dict(sorted(js.items(), key=cmp_to_key(comparison)))
+
+
+def figure_out_email(unparsed_email):
+    """
+    Classifies an email address string into one of four categories: note,
+    plain email, angle brackets email, parens email, or local alias.
+
+    Returns a dictionary whose key is the classification and whose value is a
+    string in the case of notes and plain emails, and a list in the case of
+    syntactically complex email strings.
+
     Args:
-       parenthese_email: an email in the format of parentheses
+        a string representing an email address
+
     Returns:
-       a formatted dicionary of a list of the data in the parentheses email
+        a parse result showing how the email address will display
     """
 
-    formatted_parentheses_email = []
-    formatted_parentheses_email.append(parentheses_email[2])
-    formatted_parentheses_email.append(parentheses_email[1].strip())
-    formatted_parentheses_email.append(parentheses_email[0])
-    return formatted_parentheses_email
+    def helper_triangle_brackets(tri_match):
+        """
+        A function to parse angle bracket emails.
 
-def formatting(list):
-    if len(list) == 0:
-        return -1
-    new_list = []
-    for email in list:
-        parsed_email = {}
+        Args:
+            tri_match: a regular expression match object
+        Returns:
+            a list consisting of the name, the email address, and the
+            original string
+        """
+        return [tri_match[1].strip(),
+                tri_match[2],
+                tri_match[0],]
 
-        # selecting for option 1
-        triangle_brackets = re.search("(.*)<(.*)>", email)
+    def helper_parentheses(paren_match):
+        """
+        A function to parse parenthesis emails.
 
-        # selecting for option 2
-        parentheses = re.search("(.*)\s*\((.*)\)", email)
+        Args:
+            paren_match: a regular expression match object
 
-        # selecting for option 3
-        if not triangle_brackets and not parentheses:
-            plain_email = re.search(".*@.*", email)
+        Returns:
+            a list consisting of the name, the email address, and the
+            original string
+        """
+        return [paren_match[2],
+                paren_match[1].strip(),
+                paren_match[0],]
 
-        # selectig for option 1
-        if triangle_brackets:
-            parsed_email["triangle_brackets"] = helper_function_triangle_brackets(triangle_brackets)
+    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
+    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
+    bare_email_match = re.search(".*@.*", unparsed_email)
 
-        # secting for option 2
-        elif parentheses:
-            parsed_email["parentheses"] = helper_function_parentheses(parentheses)
+    if triangle_match:
+        return {"triangle_brackets":
+                helper_triangle_brackets(triangle_match)}
+    elif paren_match:
+        return {"parentheses": helper_parentheses(paren_match)}
+    elif bare_email_match:
+        return {"plain_email": unparsed_email}
+    else:
+        return {"local": unparsed_email}
 
-        # selecting for option 3
-        elif plain_email:
-            parsed_email["plain_email"] = plain_email[0]
 
-        # selecting for option 4
+def include_alias(alias, filt):
+    """
+    Filter predicate for a/b/c/Number/etc. in the top menu.
+
+    Args:
+        alias: mail alias string
+        filt: filter string from the URL params (a/b/c/etc.)
+
+    Returns:
+        a boolean
+    """
+    if filt == "number":
+        return alias[0].isdigit()
+    elif filt.isalpha() and len(filt) == 1:
+        return alias[0].lower() == filt.lower()
+    else:
+        return True
+
+
+def convert_list_to_dict(aliases_json, filt=""):
+    """
+    Transforms initial JSON parse from mail aliases file into JSON
+    representing what Wagtail will display in the template.
+
+    Args:
+        aliases_json: dictionary parse result of parse_file
+        filt: filter string from the URL params (a/b/c/etc.)
+
+    Returns:
+        aliases: a dictionary containing all mail aliases data to be
+        passed into the context
+    """
+
+    def values(alias_dct):
+        return alias_dct[get_first_key(alias_dct)]
+
+    def note_or_email(dct):
+        first = get_first_key(dct)
+        if first == "note":
+            return {"note": "note: " + dct["note"]}
+        elif first == "email":
+            return figure_out_email(dct["email"])
         else:
-            parsed_email["local"] = email
-        
-        new_list.append(parsed_email)
+            return {}
 
-    return new_list
+    aliases = sort_aliases(
+        {get_first_key(dct): [note_or_email(entry)
+                              for entry
+                              in values(dct)]
+         for dct
+         in aliases_json
+         if values(dct)
+         and include_alias(get_first_key(dct), filt)}
+    )
 
-def filter_by_value(original_alias_list, filter_value):
-    """
-    Filters the complete list of aliases by letter or number based on user input
-    Args:
-       original_alias_list: the full value of aliases that will filtered from
-       filter_value: the value that is being used as the filter (e.g. a letter like 'c', 'number' for all numerical aliases or '' to display all)
-    Returns:
-       a list of the filtered aliases
-    """
+    return aliases
 
-    filtered_alias_list = []
 
-    for alias in original_alias_list:
-
-        # if the filter is number
-        if filter_value == "number":
-            if alias[0] in "0123456789":
-                filtered_alias_list.append(alias)
-
-        # if the filter is a single letter
-        elif filter_value != "":
-            if alias[0] == filter_value:
-                filtered_alias_list.append(alias)
-
-        # if the filter is nothing, indicating that all values should be displayed
-        else:
-            return original_alias_list
-
-    return filtered_alias_list
-
-def mail_aliases_view(request):
+def mail_aliases_view(request, *args, **kwargs):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
-    aliases = get_sorted_aliases(parsed_file)
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    # <Page: Loop>
+    loop_homepage = (
+        Site.objects.get(site_name="Loop").root_page
+    )
+
     if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
-    
-    # grabs /mailaliases/*the_filter_value*
-    url = request.get_full_path()
+        return redirect_users_without_permissions(loop_homepage,
+                                                  request,
+                                                  None,
+                                                  None)
 
-    # pulls *the_filter_value* out
-    alias_filter = re.search("\/mailaliases\/([^\/]*)\/?", url)[1]
-
-    # returns a full list if the filter is not either
-    #   1. nothing (indicating no filter)
-    #   2. "number" (indicating aliases starting with a number)
-    #   3. any single letter indicating aliases starting with that letter
-    if (
-        alias_filter != ""
-        and alias_filter != "number"
-        and (
-            len(alias_filter) != 1
-            or alias_filter not in "abcdefghijklmnopqrstuvwxyz"
-        )
-    ):
+    try:
+        alias_filter = kwargs["alias_filter"].lower()
+    except KeyError:
         alias_filter = ""
-    
-    filtered_aliases = filter_by_value(aliases, alias_filter)
-    final_data = {}
-    for alias in filtered_aliases:
-        alias_data = formatting(each_list(parsed_file, alias))
-        if alias_data != -1:
-            final_data[alias] = alias_data
-      
 
-    context = {'final_data': final_data}
+    try:
+        _ = parsed_file["error"]
+        context = parsed_file
+    except KeyError:
+        final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
+        context = {'final_data': final_data}
+
+    with open("./dude.txt", "w") as f:
+        f.write(str(alias_filter))
+
     return render(request, 'intranethome/mail_aliases.html', context)

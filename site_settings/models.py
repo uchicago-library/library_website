@@ -1,5 +1,6 @@
 from django.db import models
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import PageChooserPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
@@ -26,3 +27,18 @@ class EmergencyHours(BaseSiteSetting):
             heading="Emergency Hours"
         )
     ]
+
+
+# @register_setting(icon="mail")
+# class ContactInfo(BaseSiteSetting):
+#     report_a_problem = models.URLField(
+#         max_length=200,
+#         null=False,
+#         blank=False,
+#         default=("https://www.lib.uchicago.edu/"
+#                  "research/help/ask-librarian/ask-contact/"),
+#     )
+
+#     panels = [
+#         FieldPanel('report_a_problem'),
+#     ]
