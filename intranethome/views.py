@@ -25,8 +25,6 @@ parse_error_message = {
     }
 }
 
-# parse_error_message = ''
-
 
 def parse_file(filepath):
     """
