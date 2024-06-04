@@ -29,16 +29,16 @@ class EmergencyHours(BaseSiteSetting):
     ]
 
 
-# @register_setting(icon="mail")
-# class ContactInfo(BaseSiteSetting):
-#     report_a_problem = models.URLField(
-#         max_length=200,
-#         null=False,
-#         blank=False,
-#         default=("https://www.lib.uchicago.edu/"
-#                  "research/help/ask-librarian/ask-contact/"),
-#     )
+@register_setting(icon="mail")
+class ContactInfo(BaseSiteSetting):
+    report_a_problem = models.URLField(
+        max_length=200,
+        null=False,
+        blank=False,
+        default=("https://www.lib.uchicago.edu/"
+                 "research/help/ask-librarian/ask-contact/"),
+    )
 
-#     panels = [
-#         FieldPanel('report_a_problem'),
-#     ]
+    panels = [
+        FieldPanel('report_a_problem'),
+    ]

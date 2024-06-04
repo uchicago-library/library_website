@@ -11,21 +11,21 @@ from django.shortcuts import render
 from functools import cmp_to_key
 from library_website.settings import MAIL_ALIASES_PATH
 import site_settings.models
-# from site_settings.models import ContactInfo
+from site_settings.models import ContactInfo
 from django.core.exceptions import ObjectDoesNotExist
 import json
 import re
 from wagtail.models import Site
 
 
-# parse_error_message = {
-#     "error": {
-#         "link_url":
-#         ContactInfo.objects.first().report_a_problem,
-#     }
-# }
+parse_error_message = {
+    "error": {
+        "link_url":
+        ContactInfo.objects.first().report_a_problem,
+    }
+}
 
-parse_error_message = ''
+# parse_error_message = ''
 
 
 def parse_file(filepath):
