@@ -1,27 +1,26 @@
+import json
+import re
 from argparse import REMAINDER
 from ast import Name, alias
+from functools import cmp_to_key
+from multiprocessing import process
+
+import site_settings.models
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
     redirect_users_without_permissions,
 )
-from multiprocessing import process
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render
-from functools import cmp_to_key
 from library_website.settings import MAIL_ALIASES_PATH
-import site_settings.models
 from site_settings.models import ContactInfo
-from django.core.exceptions import ObjectDoesNotExist
-import json
-import re
 from wagtail.models import Site
-
 
 parse_error_message = {
     "error": {
-        "link_url":
-        ContactInfo.objects.first().report_a_problem,
+        "link_url": ContactInfo.objects.first().report_a_problem,
     }
 }
 
@@ -38,7 +37,6 @@ def parse_file(filepath):
         output: error dictionary when the filepath is bad, ok followed
         by the parse result if the filepath is good
     """
-
 
     try:
         with open(filepath) as f:
@@ -135,9 +133,11 @@ def figure_out_email(unparsed_email):
             a list consisting of the name, the email address, and the
             original string
         """
-        return [tri_match[1].strip(),
-                tri_match[2],
-                tri_match[0],]
+        return [
+            tri_match[1].strip(),
+            tri_match[2],
+            tri_match[0],
+        ]
 
     def helper_parentheses(paren_match):
         """
@@ -150,17 +150,18 @@ def figure_out_email(unparsed_email):
             a list consisting of the name, the email address, and the
             original string
         """
-        return [paren_match[2],
-                paren_match[1].strip(),
-                paren_match[0],]
+        return [
+            paren_match[2],
+            paren_match[1].strip(),
+            paren_match[0],
+        ]
 
     triangle_match = re.search("(.*)<(.*)>", unparsed_email)
     paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
     bare_email_match = re.search(".*@.*", unparsed_email)
 
     if triangle_match:
-        return {"triangle_brackets":
-                helper_triangle_brackets(triangle_match)}
+        return {"triangle_brackets": helper_triangle_brackets(triangle_match)}
     elif paren_match:
         return {"parentheses": helper_parentheses(paren_match)}
     elif bare_email_match:
@@ -215,13 +216,11 @@ def convert_list_to_dict(aliases_json, filt=""):
             return {}
 
     aliases = sort_aliases(
-        {get_first_key(dct): [note_or_email(entry)
-                              for entry
-                              in values(dct)]
-         for dct
-         in aliases_json
-         if values(dct)
-         and include_alias(get_first_key(dct), filt)}
+        {
+            get_first_key(dct): [note_or_email(entry) for entry in values(dct)]
+            for dct in aliases_json
+            if values(dct) and include_alias(get_first_key(dct), filt)
+        }
     )
 
     return aliases
@@ -231,15 +230,10 @@ def mail_aliases_view(request, *args, **kwargs):
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
     # <Page: Loop>
-    loop_homepage = (
-        Site.objects.get(site_name="Loop").root_page
-    )
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
 
     if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage,
-                                                  request,
-                                                  None,
-                                                  None)
+        return redirect_users_without_permissions(loop_homepage, request, None, None)
 
     try:
         alias_filter = kwargs["alias_filter"].lower()
@@ -251,9 +245,9 @@ def mail_aliases_view(request, *args, **kwargs):
         context = parsed_file
     except KeyError:
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
-        context = {'final_data': final_data}
+        context = {"final_data": final_data}
 
     with open("./dude.txt", "w") as f:
         f.write(str(alias_filter))
 
-    return render(request, 'intranethome/mail_aliases.html', context)
+    return render(request, "intranethome/mail_aliases.html", context)
