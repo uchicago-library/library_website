@@ -3,7 +3,6 @@ from django.test import SimpleTestCase
 from .views import (
     comparison,
     convert_list_to_dict,
-    parse_error_message,
     parse_file,
     sort_aliases,
 )
