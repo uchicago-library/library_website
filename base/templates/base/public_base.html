@@ -10,6 +10,9 @@
 <html lang="en">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        {% if self.exclude_from_search_engines %}
+            <meta name="robots" content="noindex" />
+        {% endif %}
         <title>
             {% block title %}
                 {% if self.seo_title %}
