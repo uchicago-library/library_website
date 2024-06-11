@@ -1,18 +1,15 @@
 import json
 import re
 from functools import cmp_to_key
+from string import ascii_lowercase, ascii_uppercase
+
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
     redirect_users_without_permissions,
 )
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import ProgrammingError
-import json
-import re
-from string import (ascii_lowercase, ascii_uppercase)
-
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
@@ -21,13 +18,14 @@ from wagtail.models import Site
 try:
     message_text = ContactInfo.objects.first().report_a_problem
 except (ProgrammingError, AttributeError):
-    message_text = ''
+    message_text = ""
 
 parse_error_message = {
     "error": {
         "link_url": message_text,
     }
 }
+
 
 def parse_file(filepath):
     """
@@ -245,12 +243,7 @@ def mail_aliases_view(request, *args, **kwargs):
 
     # check whether user has permission to be on Loop; redirect if not
     if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(
-            loop_homepage,
-            request,
-            None,
-            None
-        )
+        return redirect_users_without_permissions(loop_homepage, request, None, None)
 
     try:
         alias_filter = kwargs["alias_filter"].lower()

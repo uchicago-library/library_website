@@ -35,8 +35,7 @@ class ContactInfo(BaseSiteSetting):
         null=False,
         blank=False,
         default=(
-            "https://www.lib.uchicago.edu/"
-            "research/help/ask-librarian/ask-contact/"
+            "https://www.lib.uchicago.edu/research/help/ask-librarian/ask-contact/"
         ),
     )
 
