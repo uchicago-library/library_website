@@ -231,13 +231,26 @@ def convert_list_to_dict(aliases_json, filt=""):
 
 
 def mail_aliases_view(request, *args, **kwargs):
+    """
+    View for mail aliases page.
+
+    Args: http request, regexp-ed string
+
+    Returns: http response
+    """
+
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
-    # <Page: Loop>
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
+    # check whether user has permission to be on Loop; redirect if not
     if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
+        return redirect_users_without_permissions(
+            loop_homepage,
+            request,
+            None,
+            None
+        )
 
     try:
         alias_filter = kwargs["alias_filter"].lower()
@@ -250,8 +263,5 @@ def mail_aliases_view(request, *args, **kwargs):
     except KeyError:
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
         context = {"final_data": final_data}
-
-    with open("./dude.txt", "w") as f:
-        f.write(str(alias_filter))
 
     return render(request, "intranethome/mail_aliases.html", context)
