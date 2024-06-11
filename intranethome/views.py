@@ -20,7 +20,7 @@ from wagtail.models import Site
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
-except ProgrammingError:
+except (ProgrammingError, AttributeError):
     message_text = ''
 
 parse_error_message = {

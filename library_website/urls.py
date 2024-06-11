@@ -54,7 +54,7 @@ urlpatterns = [
     re_path(r"^about/news-events/events/$", events_view, name="events"),
     re_path(r"^collex/$", collection_view, name="collection"),
     re_path(
-        r"^mailaliases/((?P<alias_filter>[A-Za-z]|number)/)?",
+        r"^mailaliases/((?P<alias_filter>[A-Za-z]|number)/)?$",
         mail_aliases_view,
         name="mail_aliases",
     ),
