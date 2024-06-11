@@ -6,17 +6,28 @@ from base.wagtail_hooks import (
     has_permission,
     redirect_users_without_permissions,
 )
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import ProgrammingError
+import json
+import re
+from string import (ascii_lowercase, ascii_uppercase)
+
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
 from wagtail.models import Site
 
+try:
+    message_text = ContactInfo.objects.first().report_a_problem
+except ProgrammingError:
+    message_text = ''
+
 parse_error_message = {
     "error": {
-        "link_url": ContactInfo.objects.first().report_a_problem,
+        "link_url": message_text,
     }
 }
-
 
 def parse_file(filepath):
     """
