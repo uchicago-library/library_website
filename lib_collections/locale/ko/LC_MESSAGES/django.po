@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-23 20:35+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+#: templates/includes/sidebar.html:4
+msgid "Browse Collection"
+msgstr "컬렉션 둘러보기"
+
+#: templates/includes/sidebar.html:31
+msgid "Access Location"
+msgstr "접근 위치"
+
+#: templates/lib_collections/exhibit_page.html:472
+msgid "Exhibit Publications & Documents"
+msgstr "전시물 발간물 및 문서"
+
+#: templates/lib_collections/exhibit_page.html:497
+#: templates/lib_collections/exhibit_page.html:500
+#: templates/lib_collections/exhibit_page.html:503
+msgid "Exhibit Checklist"
+msgstr "전시물 체크리스트"
+
+#: templates/lib_collections/exhibit_page.html:514
+msgid "Exhibit Details"
+msgstr "전시 세부 정보"
+
+#: templates/lib_collections/exhibit_page.html:551
+msgid "Contact"
+msgstr "연락처"
+
+#: templates/lib_collections/exhibit_page.html:643
+msgid "Please consult our"
+msgstr "당사를 참고해 주세요"
+
+#: templates/lib_collections/exhibit_page.html:643
+msgid "hours page"
+msgstr "시간 페이지"
