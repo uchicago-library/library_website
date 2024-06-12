@@ -1,10 +1,13 @@
 import requests
 from django.core.exceptions import ValidationError
+from django.urls import reverse
+from django.http import HttpRequest
 from django.core.validators import URLValidator
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase, SimpleTestCase, override_settings
 
 from library_website.settings import IDRESOLVE_URL
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
+from base.tests import boiler_plate, add_generic_request_meta_fields
 
 example_doi1 = "10.1007/s11050-007-9022-y"
 example_doi2 = "10.1017/S0960129518000324"
@@ -90,3 +93,28 @@ class IdresolveTest(SimpleTestCase):
     #         validate(result2[:-1])
     #     except ValidationError:
     #         self.fail("Idresolve not returning valid SFX url.")
+
+
+class TestStandardPage(TestCase):
+
+    def setUp(self):
+        # Create necessary pages
+        boiler_plate(self)
+        self.meta_tag = '<meta name="robots" content="noindex" />'
+
+    def test_no_robots_meta_tag_on_a_default_page(self):
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertNotContains(response, self.meta_tag)
+
+    def test_exclude_from_search_engines_has_meta_tag(self):
+        self.page.exclude_from_search_engines = True
+        self.page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertContains(response, self.meta_tag)
+
+    def test_normal_page_shows_in_search(self):
+        pass

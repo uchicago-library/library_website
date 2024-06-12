@@ -124,6 +124,80 @@ def run_report_page_maintainers_and_editors(options):
     return csv
 
 
+def boiler_plate(instance):
+    # Create the homepage
+    root = Page.objects.get(path='0001')
+    instance.homepage = Page(
+        slug='starfleet-academy', title='Welcome to Starfleet Academy'
+    )
+    root.add_child(instance=instance.homepage)
+
+    # Create a site and associate the homepage with it
+    instance.site = Site.objects.create(
+        hostname='starfleet-academy',
+        is_default_site=True,
+        port=80,
+        root_page=instance.homepage,
+        site_name='test federation site',
+    )
+
+    # Necessary pages
+    instance.staff = StaffPage(
+        title='Jean-Luc Picard',
+        cnetid='picard',
+        position_title='Captain of the USS Enterprise',
+    )
+    instance.homepage.add_child(instance=instance.staff)
+
+    instance.unit = UnitPage(
+        title='USS Enterprise (NCC-1701-D)',
+        page_maintainer=instance.staff,
+        editor=instance.staff,
+        display_in_dropdown=True,
+    )
+    instance.homepage.add_child(instance=instance.unit)
+
+    instance.ask_page = AskPage(
+        title='Ask a Betazoid (or don\'t)',
+        page_maintainer=instance.staff,
+        editor=instance.staff,
+        content_specialist=instance.staff,
+        unit=instance.unit,
+    )
+    instance.homepage.add_child(instance=instance.ask_page)
+
+    instance.building = LocationPage(
+        title='Deep Space 9',
+        is_building=True,
+        short_description='A space station orbiting Bajor.',
+        long_description='A space station orbiting Bajor\
+        that was called Terok Nor during the occupation.',
+        page_maintainer=instance.staff,
+        editor=instance.staff,
+        content_specialist=instance.staff,
+        libcal_library_id=1357,
+        unit=instance.unit,
+    )
+    instance.homepage.add_child(instance=instance.building)
+
+    # Set location property on UnitPage already created
+    instance.unit.location = instance.building
+    instance.unit.save()
+
+    instance.page = StandardPage(
+        title='Link Queue Test',
+        page_maintainer=instance.staff,
+        editor=instance.staff,
+        content_specialist=instance.staff,
+        unit=instance.unit,
+        slug='link-queue-test',
+        rich_text='Fallback text.',
+        rich_text_heading='Explore',
+        rich_text_external_link='https://something.com',
+    )
+    instance.homepage.add_child(instance=instance.page)
+
+
 # Tests
 
 
@@ -626,77 +700,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         return Document.objects.create(title=title, file=path_to_file)
 
     def setUp(self):
-        # Create the homepage
-        root = Page.objects.get(path='0001')
-        self.homepage = Page(
-            slug='starfleet-academy', title='Welcome to Starfleet Academy'
-        )
-        root.add_child(instance=self.homepage)
-
-        # Create a site and associate the homepage with it
-        self.site = Site.objects.create(
-            hostname='starfleet-academy',
-            is_default_site=True,
-            port=80,
-            root_page=self.homepage,
-            site_name='test federation site',
-        )
-
-        # Necessary pages
-        self.staff = StaffPage(
-            title='Jean-Luc Picard',
-            cnetid='picard',
-            position_title='Captain of the USS Enterprise',
-        )
-        self.homepage.add_child(instance=self.staff)
-
-        self.unit = UnitPage(
-            title='USS Enterprise (NCC-1701-D)',
-            page_maintainer=self.staff,
-            editor=self.staff,
-            display_in_dropdown=True,
-        )
-        self.homepage.add_child(instance=self.unit)
-
-        self.ask_page = AskPage(
-            title='Ask a Betazoid (or don\'t)',
-            page_maintainer=self.staff,
-            editor=self.staff,
-            content_specialist=self.staff,
-            unit=self.unit,
-        )
-        self.homepage.add_child(instance=self.ask_page)
-
-        self.building = LocationPage(
-            title='Deep Space 9',
-            is_building=True,
-            short_description='A space station orbiting Bajor.',
-            long_description='A space station orbiting Bajor\
-            that was called Terok Nor during the occupation.',
-            page_maintainer=self.staff,
-            editor=self.staff,
-            content_specialist=self.staff,
-            libcal_library_id=1357,
-            unit=self.unit,
-        )
-        self.homepage.add_child(instance=self.building)
-
-        # Set location property on UnitPage already created
-        self.unit.location = self.building
-        self.unit.save()
-
-        self.page = StandardPage(
-            title='Link Queue Test',
-            page_maintainer=self.staff,
-            editor=self.staff,
-            content_specialist=self.staff,
-            unit=self.unit,
-            slug='link-queue-test',
-            rich_text='Fallback text.',
-            rich_text_heading='Explore',
-            rich_text_external_link='https://something.com',
-        )
-        self.homepage.add_child(instance=self.page)
+        # Create necessary pages
+        boiler_plate(self)
 
         # Documents
         # Good data, current links
