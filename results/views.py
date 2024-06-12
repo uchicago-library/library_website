@@ -22,7 +22,8 @@ def results(request):
         homepage = Site.objects.get(site_name="Public").root_page
         unit_index_page = UnitIndexPage.objects.first()
         restricted = StandardPage.objects.live().get(id=RESTRICTED)
-        search_results1 = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).not_descendant_of(restricted, True).search(search_query, operator="and").annotate_score('score')
+        pages_to_exclude = StandardPage.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).not_descendant_of(restricted, True).filter(exclude_from_site_search=True)
+        search_results1 = Page.objects.live().descendant_of(homepage).not_descendant_of(unit_index_page, True).not_descendant_of(restricted, True).exclude(id__in=[p.id for p in pages_to_exclude]).search(search_query, operator="and").annotate_score('score')
         search_backend = get_search_backend()
 
         search_results2 = search_backend.search(search_query, LibGuidesSearchableContent.objects.all(), operator="and").annotate_score('score')

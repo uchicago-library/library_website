@@ -296,6 +296,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
+        index.FilterField('exclude_from_site_search'),
     ]
 
     promote_fields = PublicBasePage.promote_panels + [
