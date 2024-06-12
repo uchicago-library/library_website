@@ -1,15 +1,13 @@
 import json
 import re
 from functools import cmp_to_key
-from string import ascii_lowercase, ascii_uppercase
 
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
     redirect_users_without_permissions,
 )
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.utils import ProgrammingError
+from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
@@ -17,7 +15,7 @@ from wagtail.models import Site
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
-except (ProgrammingError, AttributeError):
+except (ProgrammingError, AttributeError, OperationalError):
     message_text = ""
 
 parse_error_message = {
