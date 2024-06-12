@@ -2220,6 +2220,22 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             )
         return [all_spaces, quiet_spaces, collaborative_spaces]
 
+    def get_sitemap_urls(self, request):
+        """
+        Override the default get_sitemap_urls method to exclude
+        pages we don't want in the sitemap xml.
+
+        Args:
+            request, object.
+
+        Returns:
+            list of dictionaries with sitemap data.
+        """
+        if self.exclude_from_sitemap_xml:
+            return []
+        else:
+            return super(PublicBasePage, self).get_sitemap_urls()
+
     def get_friendly_name(self):
         """
         Get the friendly name of the unit associated
