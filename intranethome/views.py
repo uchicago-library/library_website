@@ -11,6 +11,7 @@ from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
+from string import ascii_uppercase, ascii_lowercase
 from wagtail.models import Site
 
 try:
@@ -248,11 +249,13 @@ def mail_aliases_view(request, *args, **kwargs):
     except KeyError:
         alias_filter = ""
 
+    alphas = zip(ascii_uppercase, ascii_lowercase)
+
     try:
         _ = parsed_file["error"]
         context = parsed_file
     except KeyError:
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
-        context = {"final_data": final_data}
+        context = {"final_data": final_data, "alphas": alphas}
 
     return render(request, "intranethome/mail_aliases.html", context)
