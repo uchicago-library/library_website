@@ -1,6 +1,4 @@
-
 function singleAccordionToggle() {
-    this.classList.toggle("active");
     var panel = this.nextElementSibling;
     if (panel.style.maxHeight) {
 	panel.style.maxHeight = null;
@@ -24,7 +22,6 @@ function expandAll(){
     var i;
 
     for (i = 0; i < accordionElements.length; i++) {
-	accordionElements[i].classList.toggle("active");
 	var panel = accordionElements[i].nextElementSibling;
 	panel.style.maxHeight = null;
     }
@@ -35,7 +32,6 @@ function contractAll(){
     var i;
 
     for (i = 0; i < accordionElements.length; i++) {
-	accordionElements[i].classList.toggle("active");
 	var panel = accordionElements[i].nextElementSibling;
 	panel.style.maxHeight = 0;
     }
