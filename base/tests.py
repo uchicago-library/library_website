@@ -7,9 +7,11 @@ import pandas as pd
 from ask_a_librarian.models import AskPage
 from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import management
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.test import Client, TestCase
+from django.urls import clear_url_caches
 from file_parsing import is_json
 from news.models import NewsPage
 from public.models import LocationPage, StandardPage
@@ -18,6 +20,7 @@ from units.models import UnitPage
 from wagtail.core.blocks.stream_block import StreamValue
 from wagtail.documents.models import Document
 from wagtail.models import Page, Site
+from wagtailcache.cache import clear_cache
 
 from base.models import BasePage, LinkQueueSpreadsheetBlock, get_available_path_under
 from base.utils import get_hours_by_id, get_json_for_library
@@ -128,13 +131,13 @@ def boiler_plate(instance):
     # Create the homepage
     root = Page.objects.get(path='0001')
     instance.homepage = Page(
-        slug='starfleet-academy', title='Welcome to Starfleet Academy'
+        slug='welcome-to-starfleet-academy', title='Welcome to Starfleet Academy'
     )
     root.add_child(instance=instance.homepage)
 
     # Create a site and associate the homepage with it
     instance.site = Site.objects.create(
-        hostname='starfleet-academy',
+        hostname='starfleet-academy.com',
         is_default_site=True,
         port=80,
         root_page=instance.homepage,
@@ -185,12 +188,12 @@ def boiler_plate(instance):
     instance.unit.save()
 
     instance.page = StandardPage(
-        title='Link Queue Test',
+        title='The Great Link',
         page_maintainer=instance.staff,
         editor=instance.staff,
         content_specialist=instance.staff,
         unit=instance.unit,
-        slug='link-queue-test',
+        slug='the-great-link-test',
         rich_text='Fallback text.',
         rich_text_heading='Explore',
         rich_text_external_link='https://something.com',
@@ -751,6 +754,9 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         self.empty_document.save()
 
     def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
         self.site.delete()
 
     def test_clean_invalid_file_extension(self):
