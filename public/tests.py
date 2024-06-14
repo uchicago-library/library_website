@@ -1,13 +1,18 @@
-import requests
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-from django.http import HttpRequest
-from django.core.validators import URLValidator
-from django.test import TestCase, SimpleTestCase, override_settings
+import warnings
 
+import requests
+from base.tests import add_generic_request_meta_fields, boiler_plate
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+from django.http import HttpRequest
+from django.test import SimpleTestCase, TestCase
+from django.urls import clear_url_caches, reverse
+from elasticsearch import ElasticsearchWarning
 from library_website.settings import IDRESOLVE_URL
+from wagtailcache.cache import clear_cache
+
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
-from base.tests import boiler_plate, add_generic_request_meta_fields
 
 example_doi1 = "10.1007/s11050-007-9022-y"
 example_doi2 = "10.1017/S0960129518000324"
@@ -95,12 +100,17 @@ class IdresolveTest(SimpleTestCase):
     #         self.fail("Idresolve not returning valid SFX url.")
 
 
-class TestStandardPage(TestCase):
-
+class TestStandardPageExcludeFields(TestCase):
     def setUp(self):
         # Create necessary pages
         boiler_plate(self)
         self.meta_tag = '<meta name="robots" content="noindex" />'
+        warnings.filterwarnings("ignore", category=ElasticsearchWarning)
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
 
     def test_no_robots_meta_tag_on_a_default_page(self):
         request = HttpRequest()
@@ -108,7 +118,7 @@ class TestStandardPage(TestCase):
         response = self.page.serve(request)
         self.assertNotContains(response, self.meta_tag)
 
-    def test_exclude_from_search_engines_has_meta_tag(self):
+    def test_page_excluded_from_search_engines_has_meta_tag(self):
         self.page.exclude_from_search_engines = True
         self.page.save()
         request = HttpRequest()
@@ -117,4 +127,33 @@ class TestStandardPage(TestCase):
         self.assertContains(response, self.meta_tag)
 
     def test_normal_page_shows_in_search(self):
-        pass
+        response = self.client.get(reverse('results') + '?query=great')
+        self.assertContains(response, 'The Great Link')
+
+    def test_page_excluded_from_site_search_does_not_show_in_search_results(self):
+        self.page.exclude_from_site_search = True
+        self.page.save()
+        response = self.client.get(reverse('results') + '?query=great')
+        self.assertNotContains(response, 'The Great Link')
+
+    def test_normal_page_shows_in_sitemap_xml(self):
+        response = self.client.get(reverse('inventory'))
+        sitemap_url = self.page.get_sitemap_urls(response)
+        self.assertEqual(
+            sitemap_url,
+            [
+                {
+                    'location': 'http://starfleet-academy.com/the-great-link-test/',
+                    'lastmod': None,
+                }
+            ],
+        )
+        self.assertContains(response, 'the-great-link-test')
+
+    def test_page_excluded_from_sitemap_xml_not_in_sitemap_xml(self):
+        self.page.exclude_from_sitemap_xml = True
+        self.page.save_revision().publish()
+        response = self.client.get(reverse('inventory'))
+        sitemap_url = self.page.get_sitemap_urls(response)
+        self.assertEqual(sitemap_url, [])
+        self.assertNotContains(response, 'the-great-link-test')
