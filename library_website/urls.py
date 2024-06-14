@@ -41,7 +41,7 @@ urlpatterns = [
     re_path(r'^loop-search/$', search_view, name='search'),
     re_path(r'^ebooks-search/$', ebooks_search, name='ebooks'),
     re_path(r'^api/v2/', api_router.urls),
-    re_path('^inventory\.xml$', sitemap),
+    re_path('^inventory.xml$', sitemap, name='inventory'),
     re_path(r'^spaces/$', spaces_view, name='spaces'),
     re_path(r'^staff/$', staff, name='staff'),
     re_path(r'^staff_api/$', staff_api, name='staff_api'),
