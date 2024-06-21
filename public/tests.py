@@ -10,6 +10,8 @@ from django.test import SimpleTestCase, TestCase
 from django.urls import clear_url_caches, reverse
 from elasticsearch import ElasticsearchWarning
 from library_website.settings import IDRESOLVE_URL
+from results.views import main_search_query, pages_to_exclude
+from wagtail.core.models import Page
 from wagtailcache.cache import clear_cache
 
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
@@ -127,26 +129,30 @@ class TestStandardPageExcludeFields(TestCase):
         self.assertContains(response, self.meta_tag)
 
     def test_normal_page_shows_in_search(self):
-        response = self.client.get(reverse('results') + '?query=great')
-        self.assertContains(response, 'The Great Link')
+        self.page.save_revision().publish()
+        self.assertNotIn(self.page, pages_to_exclude())
+        self.assertIn(
+            Page.objects.all().get(id=self.page.id),
+            main_search_query(Page.objects.live()),
+        )
 
-    def test_page_excluded_from_site_search_does_not_show_in_search_results(self):
+    def test_page_excluded_from_site_search_does_not_show_in_search(self):
         self.page.exclude_from_site_search = True
-        self.page.save()
-        response = self.client.get(reverse('results') + '?query=great')
-        self.assertNotContains(response, 'The Great Link')
+        self.page.save_revision().publish()
+        self.assertIn(self.page, pages_to_exclude())
+        self.assertNotIn(
+            Page.objects.live().get(id=self.page.id),
+            main_search_query(Page.objects.live()),
+        )
 
     def test_normal_page_shows_in_sitemap_xml(self):
+        self.page.exclude_from_sitemap_xml = False
+        self.page.save_revision().publish()
         response = self.client.get(reverse('inventory'))
         sitemap_url = self.page.get_sitemap_urls(response)
         self.assertEqual(
-            sitemap_url,
-            [
-                {
-                    'location': 'http://starfleet-academy.com/the-great-link-test/',
-                    'lastmod': None,
-                }
-            ],
+            sitemap_url[0]['location'],
+            'http://starfleet-academy.com/the-great-link-test/',
         )
         self.assertContains(response, 'the-great-link-test')
 

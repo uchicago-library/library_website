@@ -21,6 +21,30 @@ from wagtail.search.backends import get_search_backend
 from wagtail.search.models import Query
 
 
+def pages_to_exclude():
+    """
+    Get pages to exclude from search.
+
+    Returns:
+        QuerySet
+    """
+    return StandardPage.objects.live().filter(exclude_from_site_search=True)
+
+
+def main_search_query(search_query):
+    """
+    Filter the main search results and exclude pages
+    we wish to hide.
+
+    Args:
+        search_results: QuerySet
+
+    Returns:
+        QuerySet
+    """
+    return search_query.exclude(id__in=[p.id for p in pages_to_exclude()])
+
+
 def results(request):
     search_query = request.GET.get('query', None)
     page = request.GET.get('page', 1)
@@ -40,27 +64,22 @@ def results(request):
         except (StandardPage.DoesNotExist):
             restricted = False
 
-        # Base search queries
-        pages_to_exclude = StandardPage.objects.live()
+        # Base search query
         search_results1 = Page.objects.live()
 
         # Only add filters if their basis exists
         if homepage:
-            pages_to_exclude = pages_to_exclude.descendant_of(homepage)
             search_results1 = search_results1.descendant_of(homepage)
 
         if unit_index_page:
-            pages_to_exclude = pages_to_exclude.not_descendant_of(unit_index_page, True)
             search_results1 = search_results1.not_descendant_of(unit_index_page, True)
 
         if restricted:
-            pages_to_exclude = pages_to_exclude.not_descendant_of(restricted, True)
             search_results1 = search_results1.not_descendant_of(restricted, True)
 
         # Add final filters that should always exist
-        pages_to_exclude = pages_to_exclude.filter(exclude_from_site_search=True)
         search_results1 = (
-            search_results1.exclude(id__in=[p.id for p in pages_to_exclude])
+            main_search_query(search_results1)
             .search(search_query, operator="and")
             .annotate_score('score')
         )
@@ -70,18 +89,17 @@ def results(request):
         search_results2 = search_backend.search(
             search_query, LibGuidesSearchableContent.objects.all(), operator="and"
         ).annotate_score('score')
-        r = 0
-        while r < len(search_results2):
-            search_results2[r].score = search_results2[r].score * 1.5
-            r += 1
 
         r = 0
         while r < len(search_results2):
+            search_results2[r].score = search_results2[r].score * 1.5
             search_results2[r].searchable_content = 'guides'
             r += 1
 
         search_results3 = search_backend.search(
-            search_query, LibGuidesAssetsSearchableContent.objects.all(), operator="and"
+            search_query,
+            LibGuidesAssetsSearchableContent.objects.all(),
+            operator="and",
         ).annotate_score('score')
         r = 0
         while r < len(search_results3):
@@ -89,6 +107,7 @@ def results(request):
             r += 1
 
         search_results = list(chain(search_results1, search_results2, search_results3))
+
         try:
             search_results.sort(key=lambda r: r.score, reverse=True)
         except (TypeError):
