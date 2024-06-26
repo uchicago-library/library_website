@@ -15,6 +15,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/jammy64"
   config.vm.box_version = "20230720.0.0"
 
+  es = "true"
+  if ENV['ELASTICSEARCH']
+    es = ENV['ELASTICSEARCH']
+  end
+
+  njs = "true"
+  if ENV['NODEJS']
+    njs = ENV['NODEJS']
+  end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -130,7 +140,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # documentation for more information about their specific syntax and use.
 
   # Normal provisioning
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL, args: [es, njs]
 
     # Force the build to fail if a command fails
     set -e
@@ -143,19 +153,31 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Silence "dpkg-preconfigure: unable to re-open stdin" warnings
     export DEBIAN_FRONTEND=noninteractive
 
-    echo "============== Installing NVM and NodeJS =============="
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-    NODE_MAJOR=18
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-    apt-get update
-    apt-get install nodejs -y
-    su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
-    npm install eslint@8.57.0
-    npm i prettier eslint-plugin-prettier eslint-config-prettier
-    npm install eslint-config-airbnb
-    npm install -g install-peerdeps -y
-    cd /vagrant/
-    npm install
+    if [ "$1" == "false" ]; then
+        echo "============== Building without Elasticsearch and Java =============="
+        echo "..."
+    fi
+
+    if [ "$2" == "false" ]; then
+        echo "============== Building without NVM and NodeJS =============="
+        echo "..."
+    fi
+
+    if [ "$2" != "false" ]; then
+        echo "============== Installing NVM and NodeJS =============="
+        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+        NODE_MAJOR=18
+        echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+        apt-get update
+        apt-get install nodejs -y
+        su - vagrant -c "cd $PROJECT_DIR && npm install --no-save"
+        npm install eslint@8.57.0
+        npm i prettier eslint-plugin-prettier eslint-config-prettier
+        npm install eslint-config-airbnb
+        npm install -g install-peerdeps -y
+        cd /vagrant/
+        npm install
+    fi
 
     # Create the django error log
     echo "============== Creating /var/log/django-errors.log =============="
@@ -201,16 +223,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     apt-get install -y libxslt-dev
 
     # Java for Elasticsearch
-    echo ""
-    echo "============== Installing Java for Elsasticsearch =============="
-    apt-get update -y
-    apt-get install -y openjdk-11-jre-headless ca-certificates-java
+    if [ "$1" != "false" ]; then
+        echo ""
+        echo "============== Installing Java for Elsasticsearch =============="
+        apt-get update -y
+        apt-get install -y openjdk-11-jre-headless ca-certificates-java
+    fi
 
-    # Install poetry and Fabric
     # We need virtualenv >13.0.0 in order to get pip 7 to automatically install
     echo ""
-    echo "============== Pip installing poetry, Fabric, and virtualenv =============="
-    pip3 install poetry Fabric
+    echo "============== Virtualenv =============="
     pip3 install virtualenv
 
     # Create a Postgres user and database
@@ -221,14 +243,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     sudo -u postgres createdb -O vagrant lib_www_dev
 
     # Elasticsearch
-    echo ""
-    echo "============== Downloading Elasticsearch =============="
-    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb
-    dpkg -i elasticsearch-7.17.13-amd64.deb
-    # reduce JVM heap size from 2g to 512m
-    sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
-    rm elasticsearch-7.17.13-amd64.deb
-    echo "xpack.security.enabled: false" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+    if [ "$1" != "false" ]; then
+        echo ""
+        echo "============== Downloading Elasticsearch =============="
+        wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb
+        dpkg -i elasticsearch-7.17.13-amd64.deb
+        # reduce JVM heap size from 2g to 512m
+        sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
+        rm elasticsearch-7.17.13-amd64.deb
+        echo "xpack.security.enabled: false" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+    fi
 
     # Create a Python virtualenv
     echo ""
@@ -245,10 +269,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pip install -r requirements.txt && pip install -r requirements-dev.txt
    
     # Start Elasticsearch
-    echo ""
-    echo "============== Starting Elasticsearch =============="
-    systemctl enable elasticsearch
-    systemctl start elasticsearch
+    if [ "$1" != "false" ]; then
+        echo ""
+        echo "============== Starting Elasticsearch =============="
+        systemctl enable elasticsearch
+        systemctl start elasticsearch
+    fi
 
     # Make a static directory if one does not exist
     echo ""

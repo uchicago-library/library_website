@@ -11,6 +11,20 @@
 3. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
 4. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
 
+### Build the site withouth Elasticsearch or NodeJS
+Since the majority of development tasks don't require Elasticsearch or NodeJS it is often faster and more desireable to build the site without these things. This can be accomplished by running `vagrant up` with the `ELASTICSEARCH` or `NODEJS` environment variables set to `false`:
+```
+ELASTICSEARCH=false NODEJS=false vagrant up
+```
+Note: If you build the site withouth Elasticsearch, you will need the following in your `local.py`:
+```
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database',
+    }
+}
+```
+
 ### Vagrant Troubleshooting
 If you have issues loading your local instance, try:
 ```
