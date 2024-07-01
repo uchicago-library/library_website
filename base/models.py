@@ -1487,6 +1487,18 @@ class PublicBasePage(BasePage):
     enable_index = models.BooleanField(default=False)
     display_hierarchical_listing = models.BooleanField(default=False)
 
+    # Promote fields
+    exclude_from_search_engines = models.BooleanField(
+        default=False,
+        help_text='Tells search engines not to index the page with a meta robots noindex tag',
+    )
+    exclude_from_site_search = models.BooleanField(
+        default=False, help_text='Excludes the page from the public site search'
+    )
+    exclude_from_sitemap_xml = models.BooleanField(
+        default=False, help_text='Excludes the page from the Google sitemap.xml'
+    )
+
     # Workshops and Events
     events_feed_url = models.URLField(
         blank=True, help_text='Link to a Tiny Tiny RSS Feed'
@@ -2207,6 +2219,22 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 ),
             )
         return [all_spaces, quiet_spaces, collaborative_spaces]
+
+    def get_sitemap_urls(self, request):
+        """
+        Override the default get_sitemap_urls method to exclude
+        pages we don't want in the sitemap xml.
+
+        Args:
+            request, object.
+
+        Returns:
+            list of dictionaries with sitemap data.
+        """
+        if self.exclude_from_sitemap_xml:
+            return []
+        else:
+            return super(PublicBasePage, self).get_sitemap_urls()
 
     def get_friendly_name(self):
         """

@@ -296,12 +296,23 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body', partial_match=True),
+        index.FilterField('exclude_from_site_search'),
+    ]
+
+    promote_fields = PublicBasePage.promote_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel('exclude_from_search_engines'),
+                FieldPanel('exclude_from_site_search'),
+                FieldPanel('exclude_from_sitemap_xml'),
+            ], heading='Exclude Fields'
+        ),
     ]
 
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
+            ObjectList(promote_fields, heading='Promote'),
             ObjectList(
                 Page.settings_panels, heading='Settings', classname="settings"
             ),

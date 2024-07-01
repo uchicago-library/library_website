@@ -1,9 +1,19 @@
+import warnings
+
 import requests
+from base.tests import add_generic_request_meta_fields, boiler_plate
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.test import TestCase, SimpleTestCase
-
+from django.http import HttpRequest
+from django.test import SimpleTestCase, TestCase
+from django.urls import clear_url_caches, reverse
+from elasticsearch import ElasticsearchWarning
 from library_website.settings import IDRESOLVE_URL
+from results.views import main_search_query, pages_to_exclude
+from wagtail.core.models import Page
+from wagtailcache.cache import clear_cache
+
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
 
 example_doi1 = "10.1007/s11050-007-9022-y"
@@ -90,3 +100,66 @@ class IdresolveTest(SimpleTestCase):
     #         validate(result2[:-1])
     #     except ValidationError:
     #         self.fail("Idresolve not returning valid SFX url.")
+
+
+class TestStandardPageExcludeFields(TestCase):
+    def setUp(self):
+        # Create necessary pages
+        boiler_plate(self)
+        self.meta_tag = '<meta name="robots" content="noindex" />'
+        warnings.filterwarnings("ignore", category=ElasticsearchWarning)
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
+
+    def test_no_robots_meta_tag_on_a_default_page(self):
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertNotContains(response, self.meta_tag)
+
+    def test_page_excluded_from_search_engines_has_meta_tag(self):
+        self.page.exclude_from_search_engines = True
+        self.page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        response = self.page.serve(request)
+        self.assertContains(response, self.meta_tag)
+
+    def test_normal_page_shows_in_search(self):
+        self.page.save_revision().publish()
+        self.assertNotIn(self.page, pages_to_exclude())
+        self.assertIn(
+            Page.objects.all().get(id=self.page.id),
+            main_search_query(Page.objects.live()),
+        )
+
+    def test_page_excluded_from_site_search_does_not_show_in_search(self):
+        self.page.exclude_from_site_search = True
+        self.page.save_revision().publish()
+        self.assertIn(self.page, pages_to_exclude())
+        self.assertNotIn(
+            Page.objects.live().get(id=self.page.id),
+            main_search_query(Page.objects.live()),
+        )
+
+    def test_normal_page_shows_in_sitemap_xml(self):
+        self.page.exclude_from_sitemap_xml = False
+        self.page.save_revision().publish()
+        response = self.client.get(reverse('inventory'))
+        sitemap_url = self.page.get_sitemap_urls(response)
+        self.assertEqual(
+            sitemap_url[0]['location'],
+            'http://starfleet-academy.com/the-great-link-test/',
+        )
+        self.assertContains(response, 'the-great-link-test')
+
+    def test_page_excluded_from_sitemap_xml_not_in_sitemap_xml(self):
+        self.page.exclude_from_sitemap_xml = True
+        self.page.save_revision().publish()
+        response = self.client.get(reverse('inventory'))
+        sitemap_url = self.page.get_sitemap_urls(response)
+        self.assertEqual(sitemap_url, [])
+        self.assertNotContains(response, 'the-great-link-test')
