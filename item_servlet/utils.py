@@ -26,7 +26,7 @@ def get_auth():
             settings.FOLIO_PASSWORD,
         )
         response = requests.post(
-            settings.FOLIO_BASE_URL + '/authn/login',
+            settings.FOLIO_BASE_URL + '/authn/login-with-expiry',
             headers=GENERIC_HEADERS,
             data=payload,
             timeout=TIMEOUT,
@@ -34,7 +34,7 @@ def get_auth():
         if response.status_code != 201:
             return data
         return {
-            "x-okapi-token": response.headers['x-okapi-token'],
+            "x-okapi-token": response.cookies.get('folioAccessToken'),
         }
     except (
         requests.exceptions.Timeout,
