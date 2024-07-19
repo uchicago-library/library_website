@@ -121,7 +121,6 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     secondary_registration_description = models.TextField(blank=True)
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
 
     # Panels and subpage types
@@ -280,7 +279,6 @@ class ConferenceSubPage(PublicBasePage):
     """
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
 
     content_panels = Page.content_panels + [

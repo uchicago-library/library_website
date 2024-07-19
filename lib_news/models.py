@@ -48,7 +48,7 @@ class PublicNewsCategories(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
     class Meta:
@@ -83,7 +83,7 @@ class PublicNewsAuthors(models.Model):
         return self.author_name
 
     search_fields = [
-        index.SearchField('name', partial_match=True),
+        index.AutocompleteField('name'),
     ]
 
     class Meta:
@@ -124,7 +124,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     contacts = StreamField(
         ContactPersonBlock(required=False),
         default=[],
-        use_json_field=True,
     )
 
     navigation = StreamField(
@@ -139,7 +138,6 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         default=[],
         null=True,
         blank=True,
-        use_json_field=True,
     )
 
     fallback_image = models.ForeignKey(
@@ -332,7 +330,6 @@ class LibNewsPage(PublicBasePage):
 
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
@@ -348,7 +345,6 @@ class LibNewsPage(PublicBasePage):
         RelatedExhibitBlock(required=False),
         blank=True,
         default=[],
-        use_json_field=True,
     )
     by_staff_or_unit = models.ForeignKey(
         'lib_news.PublicNewsAuthors',
@@ -515,7 +511,7 @@ class LibNewsPage(PublicBasePage):
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('body', partial_match=True),
+        index.AutocompleteField('body'),
         index.SearchField('alt_text'),
         index.SearchField('excerpt'),
         index.SearchField('related_exhibits'),

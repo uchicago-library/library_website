@@ -201,7 +201,6 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         blank=True,
         help_text='A brief bio highlighting what you offer to Library users.',
         null=True,
-        use_json_field=True,
     )
     cv = models.ForeignKey(
         'wagtaildocs.Document',
@@ -540,7 +539,7 @@ class Expertise(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 
