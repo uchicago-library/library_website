@@ -28,10 +28,10 @@ versa.</p>
             <section id="account" class="active nice-padding">
                 <ul class="fields">
                     {% block fields %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.filename %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.live %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.display_in_campus_directory %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.latest_revision_created_at %}
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.filename %}</li>
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.live %}</li>
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.display_in_campus_directory %}</li>
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.latest_revision_created_at %}</li>
                     {% endblock fields %}
                     <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
                 </ul>

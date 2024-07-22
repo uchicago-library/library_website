@@ -53,9 +53,9 @@
             <section id="account" class="active nice-padding">
                 <ul class="fields">
                     {% block fields %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.site %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.cnetid %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.role %}
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.site %}</li>
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.cnetid %}</li>
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.role %}</li>  
                     {% endblock fields %}
                     <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
                 </ul>

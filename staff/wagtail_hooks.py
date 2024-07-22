@@ -70,6 +70,6 @@ def register_frank_menu_item():
     return MenuItem(
         'Staff Reporting',
         reverse('list_staff_wagtail'),
-        classnames='icon icon-mail',
+        classname='icon icon-mail',
         order=9990,
     )

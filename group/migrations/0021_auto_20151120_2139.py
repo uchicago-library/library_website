@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import datetime
-from django.utils.timezone import utc
+
+utc = datetime.timezone.utc
 
 
 class Migration(migrations.Migration):

@@ -17,7 +17,7 @@ from news.models import NewsPage
 from public.models import LocationPage, StandardPage
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
-from wagtail.core.blocks.stream_block import StreamValue
+from wagtail.blocks.stream_block import StreamValue
 from wagtail.documents.models import Document
 from wagtail.models import Page, Site
 from wagtailcache.cache import clear_cache

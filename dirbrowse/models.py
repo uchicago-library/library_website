@@ -11,7 +11,6 @@ class DirBrowsePage(PublicBasePage):
         DefaultBodyFields(),
         blank=True,
         null=True,
-        use_json_field=True,
     )
     dir_browse_script_url = CharField(
         max_length=255,

@@ -20,7 +20,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-GROUP_PAGE_CONTENT_TYPES = ['group | group page', 'group | group index page']
+GROUP_PAGE_CONTENT_TYPES = ['Group | group page', 'Group | group index page']
 
 
 def default_end_time():
@@ -47,7 +47,7 @@ class GroupMemberRole(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 
@@ -234,12 +234,10 @@ class GroupPage(BasePage, Email):
     intro = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
     is_active = models.BooleanField(default=True)
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
 
     content_panels = (
@@ -416,8 +414,8 @@ class GroupMeetingMinutesPage(BasePage):
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('get_mm_summaries_for_indexing', partial_match=True),
-        index.SearchField('get_mm_doc_links_for_indexing', partial_match=True),
+        index.AutocompleteField('get_mm_summaries_for_indexing'),
+        index.AutocompleteField('get_mm_doc_links_for_indexing'),
     ]
 
     subpage_types = ['base.IntranetPlainPage']
@@ -521,8 +519,8 @@ class GroupReportsPage(BasePage):
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('get_report_summaries_for_indexing', partial_match=True),
-        index.SearchField('get_report_doc_links_for_indexing', partial_match=True),
+        index.AutocompleteField('get_report_summaries_for_indexing'),
+        index.AutocompleteField('get_report_doc_links_for_indexing'),
     ]
 
     subpage_types = ['base.IntranetPlainPage']

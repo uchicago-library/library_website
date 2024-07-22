@@ -109,7 +109,7 @@ class Subject(ClusterableModel, index.Indexed):
         return self.name
 
     search_fields = [
-        index.SearchField('name', partial_match=True),
+        index.AutocompleteField('name'),
     ]
 
     class Meta:

@@ -1387,8 +1387,8 @@ class BasePageWithoutStaffPageForeignKeys(
         Page.search_fields
         + AbstractBaseWithoutStaffPageForeignKeys.search_fields
         + [
-            index.SearchField('search_description', partial_match=True),
-            index.SearchField('title', partial_match=True, boost=4),
+            index.AutocompleteField('search_description'),
+            index.AutocompleteField('title', boost=4),
         ]
     )
 
@@ -1570,7 +1570,6 @@ elements and bulleted lists',
         [
             ('spreadsheet', LinkQueueSpreadsheetBlock()),
         ],
-        use_json_field=True,
         default='',
         blank=True,
         help_text='Spreadsheets should be .xlsx files with the following headers: "Start Date", "End Date", "Link Text", and "URL"',
@@ -2264,7 +2263,6 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 class IntranetPlainPage(BasePage):
     body = StreamField(
         IntranetDefaultBodyFields(),
-        use_json_field=True,
     )
 
     subpage_types = [
@@ -2323,12 +2321,10 @@ follow a strict schema. Contact DLDC for help with this',
 class IntranetIndexPage(BasePage):
     intro = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
     display_hierarchical_listing = models.BooleanField(default=False)
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
 
     subpage_types = [
