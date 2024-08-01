@@ -1,7 +1,6 @@
 {% load staff_tags %}
 
 {% if libcal_id %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
 	jQuery.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
 	    var id_num = "{{ libcal_id }}";
