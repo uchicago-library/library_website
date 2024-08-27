@@ -152,7 +152,7 @@ cache.clear()
 ## Pushing a branch to Nest
 For testing purposes, you may want to push a branch that is not master to Nest.
 - ssh to nest
-- `cd /data/nest/ ; source venv3.9/bin/activate ; cd sites/library_website`
+- `cd /data/local/ ; source venv3.9/bin/activate ; cd sites/library_website`
 - `git remote update`
 - `git status`
 - `git checkout {{ branch-name }}`
