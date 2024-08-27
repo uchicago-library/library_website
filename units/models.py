@@ -58,7 +58,7 @@ class Role(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 

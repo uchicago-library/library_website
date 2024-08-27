@@ -15,10 +15,9 @@ from searchable_content.models import (
     LibGuidesSearchableContent,
 )
 from units.models import UnitIndexPage
-from wagtail.contrib.search_promotions.models import SearchPromotion
+from wagtail.contrib.search_promotions.models import Query, SearchPromotion
 from wagtail.models import Page, Site
 from wagtail.search.backends import get_search_backend
-from wagtail.search.models import Query
 
 
 def pages_to_exclude():

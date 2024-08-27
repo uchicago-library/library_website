@@ -280,4 +280,4 @@ def mk_search_field(string):
     Returns:
         a search field
     """
-    return index.SearchField(string, partial_match=True)
+    return index.AutocompleteField(string)

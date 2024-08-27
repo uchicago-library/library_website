@@ -21,7 +21,6 @@ class RedirectPage(PublicBasePage, LinkFields):
     body = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
 
     subpage_types = []
