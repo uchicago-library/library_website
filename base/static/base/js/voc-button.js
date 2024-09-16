@@ -11,7 +11,26 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // URL for the feedback link
-    const feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W';
+    const currentPageUrl = encodeURIComponent(window.location.href);
+    let userLocation = 'unk, unk, unk'; // Default values for City, State/Region, Country
+
+    // Try to ascertain the city, region, and country using the Geolocation API
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetch('https://geocode.xyz/' + lat + ',' + lon + '?geoit=json')
+                .then(response => response.json())
+                .then(data => {
+                    const city = data.city || 'unk';
+                    const region = data.region || 'unk';
+                    const country = data.country || 'unk';
+                    userLocation = city + ', ' + region + ', ' + country;
+                });
+        });
+    }
+    let feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl + '&location=' + userLocation;
 
     // Check if the feedback button has been clicked before
     const hasClickedBefore = localStorage.getItem('feedbackButtonClicked') === 'true';
