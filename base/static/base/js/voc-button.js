@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Math.random() < showProbability) {
         // Create the feedback button element
         const button = document.createElement('a');
-        button.href = feedbackLinkUrl;
+        button.href = feedbackLinkUrl + '&button="float"';
         button.innerHTML = `<i class="fa fa-comment" aria-hidden="true"></i> feedback`;
         button.className = 'btn feedback-button';
 
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a list item and link for the feedback
         const feedbackListItem = document.createElement('li');
         const feedbackLink = document.createElement('a');
-        feedbackLink.href = feedbackLinkUrl;
+        feedbackLink.href = feedbackLinkUrl + '&button="footer"';
         feedbackLink.textContent = 'Feedback';
         feedbackLink.setAttribute('data-ga-category', 'footer-links');
         feedbackLink.setAttribute('data-ga-action', 'click');
