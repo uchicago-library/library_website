@@ -19,97 +19,120 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!dontShowClicked) {
         // Create the feedback flag element
-        const feedbackFlag = document.createElement('div');
-        feedbackFlag.className = 'feedback-flag';
-        feedbackFlag.innerHTML = `
-            <div class="feedback-flag-content">
+        const feedbackFlagWrapper = document.createElement('div');
+        feedbackFlagWrapper.className = 'feedback-flag-wrapper';
+        feedbackFlagWrapper.innerHTML = `
+            <div class="feedback-flag">
                 <i class="fa fa-comment" aria-hidden="true"></i> feedback
             </div>
-            <div class="feedback-flag-expanded">
+            <div class="feedback-flag-content"> <!-- Renamed here -->
                 <p>Take a 3 minute survey to help us improve our website!</p>
-                <button class="take-survey">Take the survey</button>
-                <button class="dont-show">Don't show this</button>
+                <div class="button-row">
+                    <button class="btn dont-show">Don't show this</button>
+                    <a id="take-survey-button" href="`+feedbackLinkUrl + `&button=flag" target="_blank" class="tbn take-survey">Take Survey</a>
+                </div>
             </div>
         `;
 
         // Define the CSS styles for the feedback flag
         const css = `
-            .feedback-flag {
+            .feedback-flag-wrapper {
                 position: fixed;
                 z-index: 9999999999999;
+                right: 0;
+                bottom: 15vh;
+                transition: all 0.3s ease;
+                display: flex;
+                flex-direction: row;
+            }
+            .feedback-flag {
                 background-color: #800000;
                 color: white;
-                border: none;
-                cursor: pointer;
-                text-decoration: none;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-family: Arial, sans-serif;
-                right: 0;
-                bottom: 15vh;
-                padding: 15px 5px;
-                border-radius: 0 4px 4px 0;
-                transition: all 0.3s ease;
-            }
-            .feedback-flag:hover, .feedback-flag.expanded {
-                background-color: #570000;
-                color: white;
+                cursor: pointer;
                 text-decoration: none;
-            }
-            .feedback-flag-content {
                 writing-mode: vertical-lr;
                 transform: rotate(180deg);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                border-radius: 0 4px 4px 0;
+                padding: 15px 5px;
             }
-            .feedback-flag-content i {
+            .feedback-flag i {
                 transform: rotate(180deg);
                 margin: 0 0 8px 0;
             }
-            .feedback-flag-expanded {
+            .feedback-flag-content { 
                 display: none;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 padding: 10px;
-                background-color: #570000;
-                border-radius: 4px;
+                background-color: #800000;
+                color: white;
             }
-            .feedback-flag.expanded .feedback-flag-expanded {
+            .feedback-flag-wrapper.expanded .feedback-flag-content { 
                 display: flex;
             }
+            .button-row {
+                display: flex;
+                flex-direction: row;
+                gap: 10px;flex-wrap: wrap;
+                justify-content: center;
+                align-content: center;
+            }
             .take-survey, .dont-show {
-                margin: 5px;
-                padding: 10px;
-                background-color: white;
-                color: #800000;
                 border: none;
                 cursor: pointer;
                 font-family: Arial, sans-serif;
+                font-weight: bold;
+                border-radius: 4px;
+
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                text-align: center;
             }
-            .take-survey:hover, .dont-show:hover {
-                background-color: #ccc;
+            .take-survey {
+                background-color: white;
+                color: #800000;
+            }
+            .take-survey:hover {
+                background-color: #fdf0f0;
+                color: #800000;
+            }
+            .dont-show {
+                background-color: #800000;
+                color: white;
+                border: 1px solid white;
+            }
+            .dont-show:hover {
+                background-color: #700707;
+                color: white;
+            }
+            .feedback-flag-wrapper.expanded .feedback-flag-content,
+            .feedback-flag-wrapper:hover .feedback-flag-content { 
+                display: flex;
             }
             @media (min-width: 768px) {
-                .feedback-flag {
-                    right: 200px;
+                .feedback-flag-wrapper {
+                    right: 280px;
+                    right: 20vw;
                     bottom: 0;
-                    padding: 10px 15px;
-                    border-radius: 4px 4px 0 0;
-                    flex-direction: row;
+                    flex-direction: column;
                 }
-                .feedback-flag-content {
+                .feedback-flag {
                     writing-mode: horizontal-tb;
                     transform: none;
+                    border-radius: 4px 4px 0 0;
+                    padding: 5px 15px;
                 }
-                .feedback-flag-content i {
+                .feedback-flag i {
                     transform: none;
                     margin: 0 8px 0 0;
-                }
-                .feedback-flag:hover .feedback-flag-expanded {
-                    display: flex;
                 }
             }
         `;
@@ -119,24 +142,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(styleElement);
 
         // Append the feedback flag to the body of the document
-        document.body.appendChild(feedbackFlag);
+        document.body.appendChild(feedbackFlagWrapper);
 
-        // Add event listeners for expanding the feedback flag
-        feedbackFlag.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                feedbackFlag.classList.toggle('expanded');
-            }
-        });
-
-        // Add event listener for the "Take the survey" button
-        feedbackFlag.querySelector('.take-survey').addEventListener('click', function() {
-            window.location.href = feedbackLinkUrl + '&button="flag"';
+        // Add event listener for the click toggle
+        feedbackFlagWrapper.addEventListener('click', function() {
+            feedbackFlagWrapper.classList.toggle('expanded');
         });
 
         // Add event listener for the "Don't show this" button
-        feedbackFlag.querySelector('.dont-show').addEventListener('click', function() {
+        feedbackFlagWrapper.querySelector('.dont-show').addEventListener('click', function() {
             localStorage.setItem('dontShowFeedbackFlag', 'true');
-            feedbackFlag.style.display = 'none';
+            feedbackFlagWrapper.style.display = 'none';
         });
     }
 
@@ -146,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a list item and link for the feedback
         const feedbackListItem = document.createElement('li');
         const feedbackLink = document.createElement('a');
-        feedbackLink.href = feedbackLinkUrl + '&button="footer"';
+        feedbackLink.href = feedbackLinkUrl + '&button=footer';
         feedbackLink.textContent = 'Feedback';
         feedbackLink.setAttribute('data-ga-category', 'footer-links');
         feedbackLink.setAttribute('data-ga-action', 'click');
