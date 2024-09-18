@@ -11,32 +11,30 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // URL for the feedback link
     const currentPageUrl = encodeURIComponent(window.location.href);
-    // Location can be retrived by getting  coordinates from navigator.geolocation and converting to a physical location via an external service like https://geocode.xyz/.
-    // This requires the user to grant permission for location access, which may impact usability.
-    // Or we can obtain this from the IP address via an external service like https://ipapi.co/json/, which gives us a city, region, and country.   
-    // This doesn't require user permission and might be done for free.
-    // let userLocation = 'unk, unk, unk'; // Default values for City, State/Region, Country
-    // let feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl;
     let feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl;
 
-    // Check if the feedback button has been clicked before
-    const hasClickedBefore = localStorage.getItem('feedbackButtonClicked') === 'true';
-    // Set the probability of showing the feedback button based on previous clicks
-    const showProbability = hasClickedBefore ? 0.1 : 0.8;
+    // Check if the "Don't show this" button has been clicked before
+    const dontShowClicked = localStorage.getItem('dontShowFeedbackFlag') === 'true';
 
-    // Show the feedback button
-    if (Math.random() < showProbability) {
-        // Create the feedback button element
-        const button = document.createElement('a');
-        button.href = feedbackLinkUrl + '&button="float"';
-        button.innerHTML = `<i class="fa fa-comment" aria-hidden="true"></i> feedback`;
-        button.className = 'btn feedback-button';
+    if (!dontShowClicked) {
+        // Create the feedback flag element
+        const feedbackFlag = document.createElement('div');
+        feedbackFlag.className = 'feedback-flag';
+        feedbackFlag.innerHTML = `
+            <div class="feedback-flag-content">
+                <i class="fa fa-comment" aria-hidden="true"></i> feedback
+            </div>
+            <div class="feedback-flag-expanded">
+                <p>Take a 3 minute survey to help us improve our website!</p>
+                <button class="take-survey">Take the survey</button>
+                <button class="dont-show">Don't show this</button>
+            </div>
+        `;
 
-        // Define the CSS styles for the feedback button
+        // Define the CSS styles for the feedback flag
         const css = `
-            .feedback-button {
+            .feedback-flag {
                 position: fixed;
                 z-index: 9999999999999;
                 background-color: #800000;
@@ -52,34 +50,66 @@ document.addEventListener('DOMContentLoaded', function() {
                 bottom: 15vh;
                 padding: 15px 5px;
                 border-radius: 0 4px 4px 0;
-                writing-mode: vertical-lr;
-                transform: rotate(180deg);
+                transition: all 0.3s ease;
             }
-            .feedback-button:hover {
+            .feedback-flag:hover, .feedback-flag.expanded {
                 background-color: #570000;
                 color: white;
                 text-decoration: none;
             }
-
-            .feedback-button i {
+            .feedback-flag-content {
+                writing-mode: vertical-lr;
+                transform: rotate(180deg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .feedback-flag-content i {
                 transform: rotate(180deg);
                 margin: 0 0 8px 0;
             }
-
+            .feedback-flag-expanded {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 10px;
+                background-color: #570000;
+                border-radius: 4px;
+            }
+            .feedback-flag.expanded .feedback-flag-expanded {
+                display: flex;
+            }
+            .take-survey, .dont-show {
+                margin: 5px;
+                padding: 10px;
+                background-color: white;
+                color: #800000;
+                border: none;
+                cursor: pointer;
+                font-family: Arial, sans-serif;
+            }
+            .take-survey:hover, .dont-show:hover {
+                background-color: #ccc;
+            }
             @media (min-width: 768px) {
-                .feedback-button {
+                .feedback-flag {
                     right: 200px;
                     bottom: 0;
                     padding: 10px 15px;
                     border-radius: 4px 4px 0 0;
                     flex-direction: row;
+                }
+                .feedback-flag-content {
                     writing-mode: horizontal-tb;
                     transform: none;
                 }
-
-                .feedback-button i {
+                .feedback-flag-content i {
                     transform: none;
                     margin: 0 8px 0 0;
+                }
+                .feedback-flag:hover .feedback-flag-expanded {
+                    display: flex;
                 }
             }
         `;
@@ -88,13 +118,26 @@ document.addEventListener('DOMContentLoaded', function() {
         styleElement.textContent = css;
         document.head.appendChild(styleElement);
 
-        // Add an event listener to the button to mark it as clicked in localStorage
-        button.addEventListener('click', function() {
-            localStorage.setItem('feedbackButtonClicked', 'true');
+        // Append the feedback flag to the body of the document
+        document.body.appendChild(feedbackFlag);
+
+        // Add event listeners for expanding the feedback flag
+        feedbackFlag.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                feedbackFlag.classList.toggle('expanded');
+            }
         });
 
-        // Append the feedback button to the body of the document
-        document.body.appendChild(button);
+        // Add event listener for the "Take the survey" button
+        feedbackFlag.querySelector('.take-survey').addEventListener('click', function() {
+            window.location.href = feedbackLinkUrl + '&button="flag"';
+        });
+
+        // Add event listener for the "Don't show this" button
+        feedbackFlag.querySelector('.dont-show').addEventListener('click', function() {
+            localStorage.setItem('dontShowFeedbackFlag', 'true');
+            feedbackFlag.style.display = 'none';
+        });
     }
 
     // Add feedback link to the footer
