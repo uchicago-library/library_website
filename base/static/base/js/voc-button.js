@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl;
 
     // Check if the "Don't show this" button has been clicked before
-    const dontShowClicked = localStorage.getItem('dontShowFeedbackFlag') === 'true';
+    const dontShowClicked = localStorage.getItem('dontShowFeedbackFlag') !== null;
 
     if (!dontShowClicked) {
         // Create the feedback flag element
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add event listener for the "Don't show this" button
         feedbackFlagWrapper.querySelector('.dont-show').addEventListener('click', function() {
-            localStorage.setItem('dontShowFeedbackFlag', 'true');
+            localStorage.setItem('dontShowFeedbackFlag', Date.now()); // Store current timestamp
             feedbackFlagWrapper.style.display = 'none';
         });
     }
