@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 display: flex;
                 flex-direction: row;
             }
-            .feedback-flag {
+            .feedback-flag-wrapper .feedback-flag {
                 background-color: #800000;
                 color: white;
                 display: flex;
@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 border-radius: 0 4px 4px 0;
                 padding: 15px 5px;
             }
-            .feedback-flag i {
+            .feedback-flag-wrapper .feedback-flag i {
                 transform: rotate(180deg);
                 margin: 0 0 8px 0;
             }
-            .feedback-flag-content { 
+            .feedback-flag-wrapper .feedback-flag-content { 
                 display: none;
                 flex-direction: column;
                 align-items: center;
@@ -75,14 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
             .feedback-flag-wrapper.expanded .feedback-flag-content { 
                 display: flex;
             }
-            .button-row {
+            .feedback-flag-wrapper .button-row {
                 display: flex;
                 flex-direction: row;
                 gap: 10px;flex-wrap: wrap;
                 justify-content: center;
                 align-content: center;
             }
-            .take-survey, .dont-show {
+            .feedback-flag-wrapper .take-survey, 
+            .feedback-flag-wrapper .dont-show {
                 border: none;
                 cursor: pointer;
                 font-family: Arial, sans-serif;
@@ -96,20 +97,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 text-decoration: none;
                 text-align: center;
             }
-            .take-survey {
+            .feedback-flag-wrapper .take-survey {
                 background-color: white;
                 color: #800000;
             }
-            .take-survey:hover {
+            .feedback-flag-wrapper .take-survey:hover {
                 background-color: #fdf0f0;
                 color: #800000;
             }
-            .dont-show {
+            .feedback-flag-wrapper .dont-show {
                 background-color: #800000;
                 color: white;
                 border: 1px solid white;
             }
-            .dont-show:hover {
+            .feedback-flag-wrapper .dont-show:hover {
                 background-color: #700707;
                 color: white;
             }
@@ -124,13 +125,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     bottom: 0;
                     flex-direction: column;
                 }
-                .feedback-flag {
+                .feedback-flag-wrapper .feedback-flag {
                     writing-mode: horizontal-tb;
                     transform: none;
                     border-radius: 4px 4px 0 0;
                     padding: 5px 15px;
                 }
-                .feedback-flag i {
+                .feedback-flag-wrapper .feedback-flag i {
                     transform: none;
                     margin: 0 8px 0 0;
                 }
