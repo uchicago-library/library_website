@@ -18,9 +18,23 @@ class Command(BaseCommand):
     """
 
     HEADER = (
-        'URL', 'Page Title', 'Last Modified', 'Last Reviewed',
-        'Page Maintainer CNetID', 'Page Maintainer', 'Editor CNetID', 'Editor',
-        'Content Specialist CNetID', 'Content Specialist'
+        'URL',
+        'Page Title',
+        'Last Modified',
+        'Last Reviewed',
+        'Page Maintainer CNetID',
+        'Page Maintainer',
+        'Editor CNetID',
+        'Editor',
+        'Content Specialist CNetID',
+        'Content Specialist',
+        'Unit',
+        'Page Type',
+        'Section Start',
+        'Total Number of Edits',
+        'Creation Date',
+        'Title Tag',
+        'Meta Description',
     )
 
     def add_arguments(self, parser):
@@ -36,14 +50,14 @@ class Command(BaseCommand):
             '-s',
             '--site',
             type=str,
-            help='Restrict results to a specific site (Loop or Public).'
+            help='Restrict results to a specific site (Loop or Public).',
         )
         parser.add_argument(
             '-r',
             '--role',
             type=str,
             help='Role of the person for whom pages are being looked \
-            up (page_maintainer, editor, content_specialist)'
+            up (page_maintainer, editor, content_specialist)',
         )
 
     def _get_pages(self, cnetid, site_name, role):
@@ -152,10 +166,12 @@ class Command(BaseCommand):
             content_specialist = self._get_attr(page, 'content_specialist')
             page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
             editor_cnetid = self._get_attr(editor, 'cnetid')
-            content_specialist_cnetid = self._get_attr(
-                content_specialist, 'cnetid'
-            )
-            if page_maintainer_cnetid == cnetid or editor_cnetid == cnetid or content_specialist_cnetid == cnetid:
+            content_specialist_cnetid = self._get_attr(content_specialist, 'cnetid')
+            if (
+                page_maintainer_cnetid == cnetid
+                or editor_cnetid == cnetid
+                or content_specialist_cnetid == cnetid
+            ):
                 yield self.get_row(page, cnetid, site_name, role)
 
     def get_row(self, p, cnetid, site_name, role):
@@ -175,7 +191,6 @@ class Command(BaseCommand):
             names (header) that will be used on the spreadsheet.
         """
         row = []
-        # row.append(self.HEADER)
         page_maintainer = self._get_attr(p, 'page_maintainer')
         page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
         page_maintainer_title = self._get_attr(page_maintainer, 'title')
@@ -189,17 +204,35 @@ class Command(BaseCommand):
         latest_revision_created_at = self._get_date_string(
             self._get_attr(p, 'latest_revision_created_at')
         )
-        last_reviewed = self._get_date_string(
-            self._get_attr(p, 'last_reviewed')
-        )
+        last_reviewed = self._get_date_string(self._get_attr(p, 'last_reviewed'))
+        unit = self._get_attr(p, 'unit')
+        page_type = p.cached_content_type.name
+        section_start = self._get_attr(p, 'start_sidebar_from_here')
+        title_tag = self._get_attr(p, 'seo_title')
+        meta_desc = self._get_attr(p, 'search_description')
+        total_edits = self._get_attr(p, 'revisions').count()
+        created_date = self._get_date_string(self._get_attr(p, 'first_published_at'))
 
         # Append to output.
         row.append(
             (
-                full_url, p.title, latest_revision_created_at, last_reviewed,
-                page_maintainer_cnetid, page_maintainer_title, editor_cnetid,
-                editor_title, content_specialist_cnetid,
-                content_specialist_title
+                full_url,
+                p.title,
+                latest_revision_created_at,
+                last_reviewed,
+                page_maintainer_cnetid,
+                page_maintainer_title,
+                editor_cnetid,
+                editor_title,
+                content_specialist_cnetid,
+                content_specialist_title,
+                unit,
+                page_type,
+                section_start,
+                total_edits,
+                created_date,
+                title_tag,
+                meta_desc,
             )
         )
         return row[0]
