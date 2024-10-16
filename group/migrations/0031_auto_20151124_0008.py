@@ -5,9 +5,10 @@ from django.db import migrations, models
 import wagtail.images.blocks
 import wagtail.fields
 import base.models
-from django.utils.timezone import utc
 import datetime
 import wagtail.blocks
+
+utc = datetime.timezone.utc
 
 
 class Migration(migrations.Migration):

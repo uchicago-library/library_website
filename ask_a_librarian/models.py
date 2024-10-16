@@ -25,7 +25,6 @@ class AskPage(PublicBasePage, ContactFields):
         ],
         null=True,
         blank=True,
-        use_json_field=True,
     )
     ask_widget_name = models.CharField(max_length=100, blank=True)
     body = StreamField(
@@ -33,7 +32,6 @@ class AskPage(PublicBasePage, ContactFields):
             null=True,
             blank=True,
         ),
-        use_json_field=True,
     )
     reference_resources = RichTextField(
         blank=True,

@@ -12,7 +12,6 @@ class TOCPage(BasePage):
     """
     body = StreamField(
         IconListCluster(),
-        use_json_field=True,
     )
 
     content_panels = Page.content_panels + [

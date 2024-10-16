@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # https://app.vagrantup.com/ubuntu/boxes/jammy64
   config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20230720.0.0"
+  config.vm.box_version = "20240720.0.1"
 
   es = "true"
   if ENV['ELASTICSEARCH']
@@ -191,13 +191,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "============== Updating repos =============="
     rm -rf /var/lib/apt/lists/partial
     apt-get update -y -o Acquire::CompressionTypes::Order::=gz
-    #apt-get update -y
 
+    # Jammy ships wih Python 10. We need Python 11.
+    # Remove this to go to Python 10 in the future.
     echo ""
-    echo "============== Install Python dev tools =============="
+    echo "============== Upgrading to Python 3.11 =============="
     apt-get install -y software-properties-common
-    apt-get -y install python3-distutils
-    apt-get install -y python3-pip python3-dev python3-venv
+    add-apt-repository ppa:deadsnakes/ppa
+    apt-get install -y python3.11
+    apt-get -y install python3.11-distutils
+    apt-get install -y python3-pip python3.11-dev python3.11-venv
 
     # Install Wagtail dependencies and useful dev tools
     echo -e ""
@@ -258,7 +261,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo ""
     echo "============== Creating a Python virtualenv =============="
     echo "..."
-    cd /home/vagrant && python3 -m venv lw
+    cd /home/vagrant && python3.11 -m venv lw
 
     # Pip install project dependencies
     echo ""
