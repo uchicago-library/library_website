@@ -46,3 +46,4 @@ def library_404_view(request, exception=Http404):
     context = context_404(is_default)
 
     return render(request, '404.html', context, status=404)
+
