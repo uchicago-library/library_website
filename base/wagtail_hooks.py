@@ -64,7 +64,7 @@ def has_permission(user, required_groups):
     return user_groups.issuperset(required_groups)
 
 
-@hooks.register('insert_editor_css')
+@hooks.register('insert_global_admin_css')
 def editor_css():
     """
     Modify the admin css in order to hide
@@ -140,6 +140,6 @@ def register_frank_menu_item():
     return MenuItem(
         'Page Owners Report',
         reverse('page_owners_report'),
-        classnames='icon icon-download',
+        classname='icon icon-download',
         order=10009
     )

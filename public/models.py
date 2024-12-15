@@ -126,7 +126,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     body = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
 
     # Search widget
@@ -159,7 +158,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         FeaturedLibraryExpertBaseFields(required=False),
         blank=True,
         default=[],
-        use_json_field=True,
     )
 
     expert_link = models.CharField(
@@ -170,7 +168,6 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         FeaturedLibraryExpertFields(required=False),
         blank=True,
         default=[],
-        use_json_field=True,
     )
 
     subpage_types = [
@@ -295,7 +292,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('body', partial_match=True),
+        index.AutocompleteField('body'),
         index.FilterField('exclude_from_site_search'),
     ]
 
@@ -591,7 +588,6 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         ],
         null=True,
         blank=True,
-        use_json_field=True,
     )
     long_description = RichTextField(null=False, blank=False)
     parent_building = models.ForeignKey(
@@ -733,8 +729,8 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         return ' '.join(i[0] for i in get_features())
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('short_description', partial_match=True),
-        index.SearchField('long_description', partial_match=True),
+        index.AutocompleteField('short_description'),
+        index.AutocompleteField('long_description'),
         index.SearchField('parent_building'),
         index.SearchField('location_photo'),
         index.SearchField('reservation_url'),
@@ -1059,7 +1055,6 @@ class PublicRawHTMLPage(PublicBasePage):
     """
     html = StreamField(
         RawHTMLBodyField(),
-        use_json_field=True,
     )
 
     content_panels = Page.content_panels + [
@@ -1088,7 +1083,7 @@ class PublicRawHTMLPage(PublicBasePage):
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('html', partial_match=True),
+        index.AutocompleteField('html'),
     ]
 
     subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']

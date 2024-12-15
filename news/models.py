@@ -48,7 +48,6 @@ class NewsPage(BasePage):
         DefaultBodyFields(),
         blank=False,
         null=False,
-        use_json_field=True,
     )
 
     subpage_types = []

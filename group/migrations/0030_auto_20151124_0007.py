@@ -4,10 +4,11 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import wagtail.images.blocks
 import datetime
-from django.utils.timezone import utc
 import base.models
 import wagtail.fields
 import wagtail.blocks
+
+utc = datetime.timezone.utc
 
 
 class Migration(migrations.Migration):

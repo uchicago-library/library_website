@@ -15,8 +15,8 @@ from group.models import (
 from staff.models import StaffPage
 
 INTRANET_UNIT_PAGE_CONTENT_TYPES = [
-    'intranetunits | intranet units page',
-    'intranetunits | intranet units index page'
+    'Intranetunits | intranet units page',
+    'Intranetunits | intranet units index page'
 ]
 
 
@@ -63,9 +63,9 @@ class IntranetUnitsReportsPage(BasePage):
 
     search_fields = BasePage.search_fields + [
         index.
-        SearchField('get_report_summaries_for_indexing', partial_match=True),
+        AutocompleteField('get_report_summaries_for_indexing'),
         index.
-        SearchField('get_report_doc_links_for_indexing', partial_match=True),
+        AutocompleteField('get_report_doc_links_for_indexing'),
     ]
 
     subpage_types = ['base.IntranetPlainPage']
@@ -138,7 +138,6 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     intro = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
     internal_location = models.CharField(max_length=255, blank=True)
     internal_phone_number = models.CharField(max_length=255, blank=True)
@@ -148,7 +147,6 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         DefaultBodyFields(),
         null=True,
         blank=True,
-        use_json_field=True,
     )
     show_staff = models.BooleanField(default=False)
     show_departments = models.BooleanField(default=False)

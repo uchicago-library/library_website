@@ -1,23 +1,23 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-from wagtail import models, Site
-from wagtail.search.models import Query
+from django.shortcuts import render
+from wagtail import Site, models
+from wagtail.contrib.search_promotions.models import Query
 
 
 def search(
-        request,
-        template=None,
-        template_ajax=None,
-        results_per_page=10,
-        use_json=False,
-        json_attrs=['title', 'url'],
-        show_unpublished=False,
-        search_title_only=False,
-        extra_filters={},
-        path=None):
+    request,
+    template=None,
+    template_ajax=None,
+    results_per_page=10,
+    use_json=False,
+    json_attrs=['title', 'url'],
+    show_unpublished=False,
+    search_title_only=False,
+    extra_filters={},
+    path=None,
+):
 
     # Get default templates
     if template is None:
@@ -39,7 +39,9 @@ def search(
     # Search
     if query_string != '':
         site = Site.find_for_request(request)
-        pages = models.Page.objects.filter(path__startswith=(path or site.root_page.path))
+        pages = models.Page.objects.filter(
+            path__startswith=(path or site.root_page.path)
+        )
 
         if not show_unpublished:
             pages = pages.live()
@@ -77,22 +79,28 @@ def search(
             for result in search_results:
                 result_specific = result.specific
 
-                search_results_json.append(dict(
-                    (attr, getattr(result_specific, attr))
-                    for attr in json_attrs
-                    if hasattr(result_specific, attr)
-                ))
+                search_results_json.append(
+                    dict(
+                        (attr, getattr(result_specific, attr))
+                        for attr in json_attrs
+                        if hasattr(result_specific, attr)
+                    )
+                )
 
             return JsonResponse(search_results_json, safe=False)
         else:
             return JsonResponse([], safe=False)
-    else: # Render a template
+    else:  # Render a template
         if request.is_ajax() and template_ajax:
             template = template_ajax
 
-        return render(request, template, dict(
-            query_string=query_string,
-            search_results=search_results,
-            is_ajax=request.is_ajax(),
-            query=query
-        ))
+        return render(
+            request,
+            template,
+            dict(
+                query_string=query_string,
+                search_results=search_results,
+                is_ajax=request.is_ajax(),
+                query=query,
+            ),
+        )
