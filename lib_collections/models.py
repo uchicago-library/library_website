@@ -100,7 +100,7 @@ class Format(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 
@@ -735,7 +735,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         DefaultBodyFields(),
         blank=True,
         null=True,
-        use_json_field=True,
     )
     access_instructions = models.TextField(null=False, blank=True, default='')
     thumbnail = models.ForeignKey(
@@ -1503,7 +1502,6 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         DefaultBodyFields(),
         blank=False,
         null=True,
-        use_json_field=True,
     )
     policy_link_text = models.CharField(max_length=255, blank=True, null=True)
     policy_link_url = models.URLField("Policy URL", blank=True, null=True)
@@ -1912,7 +1910,6 @@ class ExhibitPage(PublicBasePage):
         DefaultBodyFields(),
         blank=True,
         null=True,
-        use_json_field=True,
     )
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
@@ -2363,7 +2360,6 @@ class ExhibitChildPage(PublicBasePage):
     body = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
 
     subpage_types = ['lib_collections.ExhibitChildPage']

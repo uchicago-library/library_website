@@ -11,7 +11,7 @@ from django.urls import clear_url_caches, reverse
 from elasticsearch import ElasticsearchWarning
 from library_website.settings import IDRESOLVE_URL
 from results.views import main_search_query, pages_to_exclude
-from wagtail.core.models import Page
+from wagtail.models import Page
 from wagtailcache.cache import clear_cache
 
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
@@ -145,6 +145,17 @@ class TestStandardPageExcludeFields(TestCase):
             main_search_query(Page.objects.live()),
         )
 
+
+class TestStandardPageSitemapExcludeFieldFalse(TestCase):
+    def setUp(self):
+        # Create necessary pages
+        boiler_plate(self)
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
+
     def test_normal_page_shows_in_sitemap_xml(self):
         self.page.exclude_from_sitemap_xml = False
         self.page.save_revision().publish()
@@ -155,6 +166,17 @@ class TestStandardPageExcludeFields(TestCase):
             'http://starfleet-academy.com/the-great-link-test/',
         )
         self.assertContains(response, 'the-great-link-test')
+
+
+class TestStandardPageSitemapExcludeFieldTrue(TestCase):
+    def setUp(self):
+        # Create necessary pages
+        boiler_plate(self)
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
 
     def test_page_excluded_from_sitemap_xml_not_in_sitemap_xml(self):
         self.page.exclude_from_sitemap_xml = True
