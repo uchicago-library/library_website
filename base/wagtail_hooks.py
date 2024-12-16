@@ -1,19 +1,19 @@
 import csv
 
 from django.conf import settings
-from django.templatetags.static import static
 from django.http import StreamingHttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse, re_path
+from django.templatetags.static import static
+from django.urls import re_path, reverse
 from django.utils.html import format_html
-from wagtail.admin.menu import MenuItem
-from wagtail import hooks
-
-from base.management.commands.report_page_maintainers_and_editors import \
-    Command
 from library_website.settings.base import (
-    NO_PERMISSIONS_REDIRECT_URL, PERMISSIONS_MAPPING
+    NO_PERMISSIONS_REDIRECT_URL,
+    PERMISSIONS_MAPPING,
 )
+from wagtail import hooks
+from wagtail.admin.menu import MenuItem
+
+from base.management.commands.report_page_maintainers_and_editors import Command
 
 
 class Echo:
@@ -71,8 +71,7 @@ def editor_css():
     option in the rich text editor etc.
     """
     return format_html(
-        '<link rel="stylesheet" href="' + settings.STATIC_URL +
-        'css/editor.css">'
+        '<link rel="stylesheet" href="' + settings.STATIC_URL + 'css/editor.css">'
     )
 
 
@@ -91,9 +90,7 @@ def global_admin_css():
     """
     Override the main admin css.
     """
-    return format_html(
-        '<link rel="stylesheet" href="{}">', static('css/admin.css')
-    )
+    return format_html('<link rel="stylesheet" href="{}">', static('css/admin.css'))
 
 
 def admin_view(request):
@@ -101,6 +98,7 @@ def admin_view(request):
     View for the page owner's report form.
     """
     from base.forms import PageOwnersForm
+
     if request.method == 'POST':
         c = Command()
         form = PageOwnersForm(request.POST)
@@ -118,8 +116,9 @@ def admin_view(request):
             response = StreamingHttpResponse(
                 (writer.writerow(row) for row in rows), content_type="text/csv"
             )
-            response['Content-Disposition'
-                     ] = 'attachment; filename="somefilename.csv"'
+            response['Content-Disposition'] = (
+                'attachment; filename="page-owners-report.csv"'
+            )
 
             return response
 
@@ -130,9 +129,7 @@ def admin_view(request):
 
 @hooks.register('register_admin_urls')
 def urlconf_time():
-    return [
-        re_path(r'^page_owners_report/$', admin_view, name='page_owners_report')
-    ]
+    return [re_path(r'^page_owners_report/$', admin_view, name='page_owners_report')]
 
 
 @hooks.register('register_settings_menu_item')
