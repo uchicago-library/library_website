@@ -580,8 +580,11 @@ class GroupIndexPage(BasePage):
     Receptacle page for holding groups.
     """
 
-    max_count = 1
-    subpage_types = ['group.GroupPage']
+    subpage_types = [
+        'group.GroupPage',
+        'group.GroupIndexPage',
+        'base.IntranetPlainPage',
+    ]
     intro = RichTextField()
 
     content_panels = (
@@ -597,8 +600,8 @@ class GroupIndexPage(BasePage):
 
         groups_active = [
             {
-                'title': GroupIndexPage.objects.first().title,
-                'url': GroupIndexPage.objects.first().url,
+                'title': self.title,
+                'url': self.url,
                 'children': [],
             }
         ]
@@ -609,10 +612,12 @@ class GroupIndexPage(BasePage):
         # create it. Then continue on, one descendant at a time, either adding
         # new levels or using the existing ones if they're already there
         # from previous group pages.
-        for grouppage in GroupPage.objects.live().filter(is_active=True):
+        for grouppage in (
+            GroupPage.objects.live().child_of(self).filter(is_active=True)
+        ):
             ancestors = (
-                [GroupIndexPage.objects.first()]
-                + list(GroupPage.objects.ancestor_of(grouppage))
+                [self]
+                + list(GroupPage.objects.descendant_of(grouppage))
                 + [grouppage]
             )
             currentlevel = groups_active
@@ -669,7 +674,10 @@ class GroupIndexPage(BasePage):
         context['groups_inactive'] = list(
             map(
                 lambda g: {'title': g.title, 'url': g.url},
-                GroupPage.objects.live().filter(is_active=False).order_by('title'),
+                GroupPage.objects.live()
+                .child_of(self)
+                .filter(is_active=False)
+                .order_by('title'),
             )
         )
         return context

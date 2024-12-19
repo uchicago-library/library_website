@@ -4,26 +4,28 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-  <div class="row-fluid">
-    <div class="col-xs-12 col-sm-12 col-md-12 swnews">
-      <article>
-        <h1>{{ self.title }}</h1>
-    
-        {{ self.intro|richtext }}
-        
-        <div class="grouplist">
-          {{ groups_active_html|richtext }}
+    <div class="row-fluid">
+        <div class="col-xs-12 col-sm-12 col-md-12 swnews">
+            <article>
+                <h1>{{ self.title }}</h1>
+
+                {{ self.intro|richtext }}
+
+                <div class="grouplist">
+                    {{ groups_active_html|richtext }}
+                </div>
+
+                {% if groups_inactive %}
+                    <h2>Inactive Groups</h2>
+                    <div class="inactive-groups">
+                        <ul>
+                            {% for group in groups_inactive %}
+                                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </article>
         </div>
-    
-        <h2>Inactive Groups</h2>
-        <div class="inactive-groups">
-          <ul>
-            {% for group in groups_inactive %}
-              <li><a href="{{ group.url }}">{{ group.title }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-      </article>
     </div>
-  </div>
 {% endblock %}
