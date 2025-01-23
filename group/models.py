@@ -613,12 +613,10 @@ class GroupIndexPage(BasePage):
         # new levels or using the existing ones if they're already there
         # from previous group pages.
         for grouppage in (
-            GroupPage.objects.live().child_of(self).filter(is_active=True)
+            GroupPage.objects.live().descendant_of(self).filter(is_active=True)
         ):
             ancestors = (
-                [self]
-                + list(GroupPage.objects.descendant_of(grouppage))
-                + [grouppage]
+                [self] + list(GroupPage.objects.ancestor_of(grouppage)) + [grouppage]
             )
             currentlevel = groups_active
             while ancestors:
@@ -670,14 +668,26 @@ class GroupIndexPage(BasePage):
 
         groups_active_html = get_html(groups_active[0]['children'])
 
-        context['groups_active_html'] = groups_active_html
-        context['groups_inactive'] = list(
+        inactive_children = (
+            GroupPage.objects.live()
+            .descendant_of(self)
+            .filter(is_active=False)
+            .order_by('title')
+        )
+        index_children = GroupIndexPage.objects.live().descendant_of(self)
+        for index_child in index_children:
+            for inactive_child in inactive_children:
+                if inactive_child.is_descendant_of(index_child):
+                    inactive_children = inactive_children.not_descendant_of(index_child)
+
+        inactive_children = list(
             map(
                 lambda g: {'title': g.title, 'url': g.url},
-                GroupPage.objects.live()
-                .child_of(self)
-                .filter(is_active=False)
-                .order_by('title'),
+                inactive_children,
             )
         )
+
+        context['groups_active_html'] = groups_active_html
+        context['groups_inactive'] = inactive_children
+
         return context
