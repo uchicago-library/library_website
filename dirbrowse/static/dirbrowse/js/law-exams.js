@@ -27,9 +27,12 @@ $(document).ready(function() {
 		}
 
 		var getSeasons = function(records) {
-			var seasons = new Array();
+            var seasons = {};
 			$.each(records, function(i, r) {
 				switch (r['season']) {
+                    case 'Fall':
+                        var season = r['year'] + '-10';
+                        break;
 					case 'Winter':
 						var season = r['year'] + '-01';
 						break;
@@ -39,21 +42,32 @@ $(document).ready(function() {
 					case 'Summer':
 						var season = r['year'] + '-07';
 						break;
-					case 'Fall':
-						var season = r['year'] + '-10';
-						break;
 				}
 				seasons[season] = true;
 			});
-			return getKeys(seasons);
+            // Sort seasons by year then by season order (Fall, Winter, Spring, Summer)
+            return Object.keys(seasons).sort(function(a, b) {
+                var yearA = parseInt(a.split('-')[0]);
+                var yearB = parseInt(b.split('-')[0]);
+                var monthA = parseInt(a.split('-')[1]);
+                var monthB = parseInt(b.split('-')[1]);
+                if (yearA !== yearB) return yearA - yearB;
+                return monthA - monthB; // This maintains the new order
+            });
 		}
 
 		var getRecordsForSeason = function(records, year, season) {
 			var out = new Array();
 			$.each(records, function(i, r) {
-				if (r['year'] == year && r['season'] == season) {
+                if (r['year'] == year) {
+                    // Match season based on the new order
+                    var seasonCode = {
+                        '10': 'Fall', '01': 'Winter', '04': 'Spring', '07': 'Summer'
+                    }[season.split('-')[1]];
+                    if (r['season'] === seasonCode) {
 					out.push(r);
 				}
+                }
 			});
 			return out;
 		}
@@ -151,25 +165,15 @@ $(document).ready(function() {
 
 				var lis = new Array();
 				var seasons = getSeasons(profs[p]);
-				$.each(getSeasons(profs[p]), function(i2, s) {
+                $.each(seasons, function(i2, s) {
 					var chunks = s.split('-');
 					var year = chunks[0];
-					switch (chunks[1]) {
-						case '01':
-							var season = 'Winter';
-							break;
-						case '04':
-							var season = 'Spring';
-							break;
-						case '07':
-							var season = 'Summer';
-							break;
-						case '10':
-							var season = 'Fall';
-							break;
-					};
-					var links = new Array();
-					$.each(getRecordsForSeason(profs[p], year, season), function(i3, r) {
+                    var month = chunks[1];
+                    var season = {
+                        '10': 'Fall', '01': 'Winter', '04': 'Spring', '07': 'Summer'
+                    }[month];
+                    var links = [];
+                    $.each(getRecordsForSeason(profs[p], year, s), function(i3, r) {
 						if (i3 == 0) {
 							links.push('<a href="' + r['link'] + '">' + season + ' ' + year + ' ' + r['doc'] + '</a>');
 						} else {
