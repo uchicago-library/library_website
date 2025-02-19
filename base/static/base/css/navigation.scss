@@ -27,14 +27,17 @@ Navigation Drop Downs
   background-color: rgba(67, 67, 67, 0.7);
   padding: 0 15px;
   display: flex;
+
   a {
     color: #fff;
     flex-grow: 1;
     padding: .5em 0;
   }
+
   @include respond-to(small) {
     padding: 0 30px;
   }
+
   @include respond-to(medium) {
     display: none;
   }
@@ -43,38 +46,44 @@ Navigation Drop Downs
 #navbar-right {
   font-size: 1em;
   padding-right: 30px;
+
   &>li>a {
     color: $ncs-maroon;
-    &:hover, 
+
+    &:hover,
     &:focus {
       background: $ncs-lighter-greystone;
       text-decoration: underline;
     }
-    i.ask-icon{
+
+    i.ask-icon {
       color: inherit !important;
     }
   }
+
   &>li>.dropdown-menu {
     color: inherit;
     text-align: right;
     background: $ncs-lighter-greystone;
+
     li>a,
-    li>a:hover{
+    li>a:hover {
       color: inherit !important;
     }
   }
+
   @include respond-to(xlarge) {
-      padding-right: 15em;
-      margin-right: 30px;
+    padding-right: 15em;
+    margin-right: 30px;
   }
 }
 
-ul#navbar-right li:hover > ul.dropdown-menu.menuhover {
-    display: block;
+ul#navbar-right li:hover>ul.dropdown-menu.menuhover {
+  display: block;
 }
 
 i.ask-icon {
-  color:$darkgray;
+  color: $darkgray;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #fff;
   text-shadow:
@@ -82,6 +91,7 @@ i.ask-icon {
     1px -1px 0 #fff,
     -1px 1px 0 #fff,
     1px 1px 0 #fff;
+
   &.active {
     color: #eee;
     text-shadow: none;
@@ -97,6 +107,7 @@ i.ask-icon {
 
 .fluid-top {
   box-shadow: $box-shadow-header;
+
   @include respond-to(small) {
     padding: 0px;
   }
@@ -107,14 +118,17 @@ i.ask-icon {
   padding: 9px 0 6px 15px;
   margin: 0;
   height: unset;
-  &>img{
+
+  &>img {
     max-width: 120px;
   }
+
   @include respond-to(small) {
     max-width: 225px;
     padding-left: 45px;
     padding-top: 15px;
   }
+
   @include respond-to(medium) {
     max-width: 225px;
     padding-top: 15px;
@@ -123,19 +137,22 @@ i.ask-icon {
 
 .navbar-default {
   border: 0px;
-  margin-bottom:0px;
+  margin-bottom: 0px;
   background-color: white;
   z-index: 10;
   border-radius: 0;
+
   .navbar-nav {
     &>li>a {
       color: #eee;
       text-decoration: none;
+
       &:hover {
         color: #fff;
         background-color: $transparent;
         text-decoration: underline;
       }
+
       &:focus {
         color: #fff;
         background-color: $transparent;
@@ -143,20 +160,25 @@ i.ask-icon {
         text-decoration: underline;
       }
     }
+
     & .open .dropdown-menu {
       background-color: $transparent;
     }
+
     &>.open>a:focus {
       background-color: $maroon;
       color: #fff;
     }
-    &>.open>a, &>.open>a:hover {
+
+    &>.open>a,
+    &>.open>a:hover {
       color: #EDD4C1;
       background-color: $transparent;
     }
   }
+
   .divider {
-      background-color: $darkgray;
+    background-color: $darkgray;
   }
 }
 
@@ -164,10 +186,12 @@ i.ask-icon {
   background-color: $ncs-maroon;
   font-size: $font-small;
   padding-left: 15px;
+
   & .navbar-nav>li>a:hover,
-  & .navbar-nav>li>a:focus{
+  & .navbar-nav>li>a:focus {
     text-decoration: none;
   }
+
   & .navbar-nav>li>a:hover,
   & .navbar-nav>li>a:focus,
   & .navbar-nav>.open>a,
@@ -180,15 +204,18 @@ i.ask-icon {
     background: $ncs-dark-maroon;
     color: white;
   }
-  @include respond-to(small)  {
+
+  @include respond-to(small) {
     margin-top: 60px;
     padding: 0 15px;
+
     .navbar-nav>li>a {
       padding-top: 7px;
       padding-bottom: 7px;
     }
   }
-  @include respond-to(medium)  {
+
+  @include respond-to(medium) {
     padding-left: 15px;
   }
 }
@@ -201,17 +228,22 @@ i.ask-icon {
 
 #navbar-right .dropdown-menu {
   border: none;
+
   &>li>a {
-      color: #fff;
-      font-size: 1.05em;
-      margin-bottom: 5px;
-      text-decoration: none;
-    &:hover { //For top right nav
-        color: #EDD4C1;
-        text-decoration: underline;
-        background-color: transparent;
+    color: #fff;
+    font-size: 1.05em;
+    margin-bottom: 5px;
+    text-decoration: none;
+
+    &:hover {
+      //For top right nav
+      color: #EDD4C1;
+      text-decoration: underline;
+      background-color: transparent;
     }
-    &:focus { //For top right nav
+
+    &:focus {
+      //For top right nav
       color: #fff;
       background-color: transparent;
       outline-offset: 1px;
@@ -220,11 +252,14 @@ i.ask-icon {
   }
 }
 
-.dropdown-menu>li>a { // ADA
+.dropdown-menu>li>a {
+  // ADA
   text-decoration: none;
+
   &:hover {
     text-decoration: underline;
   }
+
   &:focus {
     color: #fff;
     background-color: transparent;
@@ -241,7 +276,8 @@ i.ask-icon {
 //   }
 // }
 
-.twocol-head { // Headers for mega drop downs
+.twocol-head {
+  // Headers for mega drop downs
   color: $ncs-greystone;
   font-size: .8em;
   line-height: 2.4em;
@@ -250,22 +286,29 @@ i.ask-icon {
 
 .twocol-drop {
   background-color: $transparent;
+
   @include respond-to(small) {
     min-width: 500px;
     padding: 10px 0 10px 0;
   }
+
   a {
     color: #fff;
     font-size: $font-small;
     text-decoration: none;
-    line-height: 2em;
-    &:hover, &:focus {
+    line-height: 1.5em;
+    display: inline-block;
+    margin-bottom: .8em;
+
+    &:hover,
+    &:focus {
       color: #EDD4C1;
       text-decoration: underline;
     }
   }
+
   & li.col-sm-7,
-  & li.col-sm-6:nth-child(2){
+  & li.col-sm-6:nth-child(2) {
     border-left: 1.2px solid #767676;
     margin-left: -1px;
   }
@@ -274,24 +317,30 @@ i.ask-icon {
 .onecol-drop {
   background-color: $transparent;
   padding: 0 15px 10px 15px;
+
   @include respond-to(small) {
     min-width: 15em;
     padding: 10px 15px 10px 15px;
   }
+
   >li {
     margin-bottom: 5px;
+
     a {
-      color: #fff!important;
-      padding: 0!important;
+      color: #fff !important;
+      padding: 0 !important;
       text-decoration: none;
       font-size: $font-small;
       margin-bottom: 12px;
-      &:hover, &:focus {
+
+      &:hover,
+      &:focus {
         color: #EDD4C1;
         background-color: transparent;
       }
     }
   }
+
   .twocol-head {
     padding-left: 0px;
   }
@@ -299,10 +348,9 @@ i.ask-icon {
 
 .ul-left {
   padding-bottom: 1.5em;
+
   @include respond-to(small) {
     padding-bottom: 0px;
     border-right: 1.2px solid $darkgray;
   }
 }
-
-
