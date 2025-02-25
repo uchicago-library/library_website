@@ -2,9 +2,12 @@ from base.models import PublicBasePage
 from library_website.settings import MARKLOGIC_LDR_BASE, MARKLOGIC_FINDINGAIDS_PORT
 from wagtail.models import Page
 from xml.etree import ElementTree
+from django.core.paginator import Paginator
 
 import re
 import urllib
+# import random
+# import string
 
 
 class FindingAidsPage(PublicBasePage):
@@ -183,17 +186,28 @@ class FindingAidsPage(PublicBasePage):
         topics = request.GET.get('topics', None)
         if topics and not topics == 'all':
             topics = None
-        view = request.GET.get('view', None)
-        if not view:
-            view = 'title'
+        view = request.GET.get('view', 'all')
 
-        # browse
-        browses = get_browses()
-        browselinks = get_browse_links(browses)
+        all_browses = get_browses()
+        paginator = Paginator(all_browses, 100)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        num_pages = paginator.num_pages
+
         if browse:
-            browses = get_browse_list(browses, browse)
+            browses = get_browse_list(all_browses, browse)
+            browselinks = get_browse_links(all_browses)
+        else:
+            browses = None
+            browselinks = get_browse_links(all_browses)
 
         all_topics = get_topics()
+
+        # def random_string():
+        #     return "".join(random.choice(string.ascii_uppercase) for _ in range (0,28))
+
+        # def random_list():
+        #     return [ [ random_string(), random_string() ] for _ in range (0, 1744) ]
 
         # digitized
         digitizedlist = []
@@ -221,6 +235,9 @@ class FindingAidsPage(PublicBasePage):
             except KeyError:
                 thistopiclist = []
 
+
+        context["page_obj"] = page_obj
+        context["num_pages"] = num_pages
         context['browse'] = browse
         context['browselinks'] = browselinks
         context['browses'] = browses
