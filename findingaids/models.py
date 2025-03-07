@@ -188,6 +188,13 @@ class FindingAidsPage(PublicBasePage):
             topics = None
         view = request.GET.get('view', 'all')
 
+        # search
+        searchresults = []
+        searchresultcount = 0
+        if searchq:
+            searchresults = get_search_results(searchq)
+            searchresultcount = len(searchresults)
+
         all_browses = get_browses()
         paginator = Paginator(all_browses, 100)
         page_number = request.GET.get("page")
@@ -209,32 +216,20 @@ class FindingAidsPage(PublicBasePage):
         # def random_list():
         #     return [ [ random_string(), random_string() ] for _ in range (0, 1744) ]
 
-        # digitized
         digitizedlist = []
+        topiclist = []
+        thistopiclist = []
+
         if view == 'digitized':
             digitizedlist = get_digitized_content()
-
-        # search
-        searchresults = []
-        searchresultcount = 0
-        if searchq:
-            searchresults = get_search_results(searchq)
-            searchresultcount = len(searchresults)
-
-        # topics
-        topiclist = []
-        if view == 'topics':
+        elif view == 'topics':
             topiclist = get_topic_list(all_topics)
-
-        # topic
-        thistopiclist = []
-        if topic:
-            try:
-                thistopiclist = list(
-                    sorted(all_topics[topic], key=lambda t: t[1]))
-            except KeyError:
-                thistopiclist = []
-
+            if topic:
+                try:
+                    thistopiclist = list(
+                        sorted(all_topics[topic], key=lambda t: t[1]))
+                except KeyError:
+                    thistopiclist = []
 
         context["page_obj"] = page_obj
         context["num_pages"] = num_pages
