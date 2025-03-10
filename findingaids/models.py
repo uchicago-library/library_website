@@ -179,14 +179,14 @@ class FindingAidsPage(PublicBasePage):
 
         context = super(FindingAidsPage, self).get_context(request)
 
-        browse = request.GET.get('browse', None)
+        browse = request.GET.get('browse', 'all')
         digitized = request.GET.get('digitized', None)
         searchq = request.GET.get('searchq', None)
         topic = request.GET.get('topic', None)
         topics = request.GET.get('topics', None)
         if topics and not topics == 'all':
             topics = None
-        view = request.GET.get('view', 'all')
+        view = request.GET.get('view', 'title')
 
         # search
         searchresults = []
@@ -201,7 +201,7 @@ class FindingAidsPage(PublicBasePage):
         page_obj = paginator.get_page(page_number)
         num_pages = paginator.num_pages
 
-        if browse:
+        if browse != 'all':
             browses = get_browse_list(all_browses, browse)
             browselinks = get_browse_links(all_browses)
         else:
@@ -220,7 +220,11 @@ class FindingAidsPage(PublicBasePage):
         topiclist = []
         thistopiclist = []
 
-        if view == 'digitized':
+        if view == 'all':
+            pass
+        elif view == 'title':
+            pass
+        elif view == 'digitized':
             digitizedlist = get_digitized_content()
         elif view == 'topics':
             topiclist = get_topic_list(all_topics)
