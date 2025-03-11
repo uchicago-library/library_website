@@ -3,9 +3,11 @@ from library_website.settings import MARKLOGIC_LDR_BASE, MARKLOGIC_FINDINGAIDS_P
 from wagtail.models import Page
 from xml.etree import ElementTree
 from django.core.paginator import Paginator
+from django.core.cache import cache
 
 import re
 import urllib
+import json
 # import random
 # import string
 
@@ -195,7 +197,14 @@ class FindingAidsPage(PublicBasePage):
             searchresults = get_search_results(searchq)
             searchresultcount = len(searchresults)
 
-        all_browses = get_browses()
+        cached_browses = cache.get("finding_aids_all_browses")
+
+        if cached_browses:
+            all_browses = json.loads(cached_browses)
+        else:
+            all_browses = get_browses()
+            cache.set("finding_aids_all_browses", json.dumps(all_browses))
+        
         paginator = Paginator(all_browses, 100)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
