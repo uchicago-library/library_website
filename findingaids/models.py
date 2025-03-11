@@ -220,11 +220,7 @@ class FindingAidsPage(PublicBasePage):
         topiclist = []
         thistopiclist = []
 
-        if view == 'all':
-            pass
-        elif view == 'title':
-            pass
-        elif view == 'digitized':
+        if view == 'digitized':
             digitizedlist = get_digitized_content()
         elif view == 'topics':
             topiclist = get_topic_list(all_topics)
