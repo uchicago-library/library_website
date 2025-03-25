@@ -8,9 +8,6 @@ from django.core.cache import cache
 import re
 import urllib
 import json
-# import random
-# import string
-
 
 class FindingAidsPage(PublicBasePage):
     content_panels = Page.content_panels + PublicBasePage.content_panels
@@ -218,12 +215,6 @@ class FindingAidsPage(PublicBasePage):
             browselinks = get_browse_links(all_browses)
 
         all_topics = get_topics()
-
-        # def random_string():
-        #     return "".join(random.choice(string.ascii_uppercase) for _ in range (0,28))
-
-        # def random_list():
-        #     return [ [ random_string(), random_string() ] for _ in range (0, 1744) ]
 
         digitizedlist = []
         topiclist = []
