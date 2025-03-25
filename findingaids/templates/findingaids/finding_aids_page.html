@@ -3,266 +3,266 @@
 
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 {% block content %}
-<article>
+    <article>
 
-    <div class="row">
-	<div class="col-xs-12">
-            <div class="btn-group spaces-toggle">
-		<a class="btn btn-list-toggle{% if view == 'title' %} active{% endif %}" href="?view=title&browse=all">By Title</a>
-		<a class="btn btn-list-toggle{% if view == 'topics' %} active{% endif %}" href="?view=topics">By Topic</a>
-		<a class="btn btn-list-toggle{% if view == 'digitized' %} active{% endif %}" href="?view=digitized">With Digital Content</a>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group spaces-toggle">
+                    <a class="btn btn-list-toggle{% if view == 'title' %} active{% endif %}" href="?view=title&browse=all">By Title</a>
+                    <a class="btn btn-list-toggle{% if view == 'topics' %} active{% endif %}" href="?view=topics">By Topic</a>
+                    <a class="btn btn-list-toggle{% if view == 'digitized' %} active{% endif %}" href="?view=digitized">With Digital Content</a>
+                </div>
             </div>
-	</div>
 
-	<div class="col-xs-12 col-sm-6 col-sm-offset-3 distinct-search">
-            <form action="." class="searchbox" method="get">
-		<input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="searchq" placeholder="Search finding aids"{% if searchq %} value="{{ searchq }}"{% endif %}/>
-		<span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
-		    <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;"/>
-		</span>
-            </form>
-	</div>
-	<div class="col-md-12">
-	    <!-- just padding -->
-	    <p/>
-	</div>
+            <div class="col-xs-12 col-sm-6 col-sm-offset-3 distinct-search">
+                <form action="." class="searchbox" method="get">
+                    <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="searchq" placeholder="Search finding aids"{% if searchq %} value="{{ searchq }}"{% endif %}/>
+                    <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
+                        <input type="submit" class="searchbox-submit" style="background-color: transparent; color: transparent;"/>
+                    </span>
+                </form>
+            </div>
+            <div class="col-md-12">
+                <!-- just padding -->
+                <p/>
+            </div>
 
-	<!-- case 1: user has just entered a search term -->
-	{% if searchq %}
-        {% if searchresults %}
-	<div class="col-md-12">
-	    <!-- just padding -->
-	    <p/>
-	</div>
-        <table class="table table-striped scrc-list">
-            <thead>
-		<tr class="etable-header">
-                    <th colspan="1">
-			{{ searchresultcount }} documents match your search for <em>{{ searchq }}</em>
-                    </th>
-		</tr>
-            </thead>
-            <tbody>
-		{% for r in searchresults %}
-                <tr>
-                    <td colspan="1">
-			<h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
-			<p>{{ r.abstract }}</p>
-                    </td>
-                </tr>
-		{% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <table class="table table-striped scrc-list">
-            <thead>
-		<tr class="etable-header">
-                    <th colspan="1">
-			There were no results for your search.
-                    </th>
-		</tr>
-            </thead>
-        </table>
-	{% endif %}
+            <!-- case 1: user has just entered a search term -->
+            {% if searchq %}
+                {% if searchresults %}
+                    <div class="col-md-12">
+                        <!-- just padding -->
+                        <p/>
+                    </div>
+                    <table class="table table-striped scrc-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="1">
+                                    {{ searchresultcount }} documents match your search for <em>{{ searchq }}</em>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in searchresults %}
+                                <tr>
+                                    <td colspan="1">
+                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
+                                        <p>{{ r.abstract }}</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <table class="table table-striped scrc-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="1">
+                                    There were no results for your search.
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                {% endif %}
 
-	<!-- case 2: user is browsing all finding aids w/ pagination -->
-	{% elif page_obj and view == 'title' and browse == 'all' %}
-	<center>
-	    <ul class="pagination justify-content-center">
-		{% if browse == 'all' %}
-		<li class="active">
-		    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-		</li>
-		{% else %}
-		<li>
-		    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-		</li>
-		{% endif %}
-		{% for b in browselinks %}
-		{% if browse == b %}
-		<li class="active">
-		    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		</li>
-		{% else %}
-		<li>
-		    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		</li>
-		{% endif %}
-		{% endfor %}
-	    </ul>
-	</center>
-	<table class="table table-striped scrc-list">
-	    <thead>
-		<tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
-	    </thead>
-	    <tbody>
-		{% for b in page_obj %}
-		<tr>
-		    <td>
-			<strong>
-			    <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
-			</strong>
-		    </td>
-		</tr>
-		{% endfor %}
-	    </tbody>
-	</table>
-	<center>
-	    <ul class="pagination justify-content-center">
-		{% if page_obj.has_previous %}
-		<li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
-		{% else %}
-		<li class="disabled"><span>&laquo;</span></li>
-		{% endif %}
+                <!-- case 2: user is browsing all finding aids w/ pagination -->
+            {% elif page_obj and view == 'title' and browse == 'all' %}
+                <center>
+                    <ul class="pagination justify-content-center">
+                        {% if browse == 'all' %}
+                            <li class="active">
+                                <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+                            </li>
+                        {% endif %}
+                        {% for b in browselinks %}
+                            {% if browse == b %}
+                                <li class="active">
+                                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </center>
+                <table class="table table-striped scrc-list">
+                    <thead>
+                        <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in page_obj %}
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
+                                    </strong>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <center>
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
+                        {% else %}
+                            <li class="disabled"><span>&laquo;</span></li>
+                        {% endif %}
 
-		{% for i in page_obj.paginator.page_range %}
-		{% if page_obj.number == i %}
-		<li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-		{% else %}
-		<li><a href="{{ root_link }}?view=title&browse=all&page={{ i }}">{{ i }}</a></li>
-		{% endif %}
-		{% endfor %}
+                        {% for i in page_obj.paginator.page_range %}
+                            {% if page_obj.number == i %}
+                                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                            {% else %}
+                                <li><a href="{{ root_link }}?view=title&browse=all&page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
 
-		{% if page_obj.has_next %}
-		<li><a href="{{ root_link }}?view=title&browse=all&page={{ page_obj.next_page_number }}">&raquo;</a></li>
-		{% else %}
-		<li class="disabled"><span>&raquo;</span></li>
-		{% endif %}
-	    </ul>
-	    <div class="text-primary col-md-12">
-		page {{ page_obj.number }} of {{ num_pages }}
-		<div class="col-md-12">
-		    <!-- more padding -->
-		    <p/>
-		</div>
-	    </div>
-	</center>
+                        {% if page_obj.has_next %}
+                            <li><a href="{{ root_link }}?view=title&browse=all&page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                        {% else %}
+                            <li class="disabled"><span>&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                    <div class="text-primary col-md-12">
+                        page {{ page_obj.number }} of {{ num_pages }}
+                        <div class="col-md-12">
+                            <!-- more padding -->
+                            <p/>
+                        </div>
+                    </div>
+                </center>
 
-	<!-- case 3: user is looking at browses by title -->
-	{% elif view == 'title' %}
-	<center>
-	    <ul class="pagination justify-content-center">
-		{% if browse == 'all' %}
-		<li class="active">
-		    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-		</li>
-		{% else %}
-		<li>
-		    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-		</li>
-		{% endif %}
-		{% for b in browselinks %}
-		{% if browse == b %}
-		<li class="active">
-		    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		</li>
-		{% else %}
-		<li>
-		    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		</li>
-		{% endif %}
-		{% endfor %}
-	    </ul>
-	</center>
-	<div class="col-md-12">
-	    <!-- just padding -->
-	    <p/>
-	</div>
-	<!-- wait till user has clicked on a link before displaying browses -->
-	{% if browse != 'all' %}
-	<table class="table table-striped scrc-list">
-	    <thead>
-		<tr class="etable-header">
-		    <th colspan="1">
-			All Finding Aids beginning with "{{ browse }}"
-		    </th>
-		</tr>
-	    </thead>
-	    <tbody>
-		{% for b in browses %}
-		<tr>
-		    <td>
-			<strong>
-			    <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
-			</strong>
-		    </td>
-		</tr>
-		{% endfor %}
-	    </tbody>
-	</table>
-	{% endif %}
+                <!-- case 3: user is looking at browses by title -->
+            {% elif view == 'title' %}
+                <center>
+                    <ul class="pagination justify-content-center">
+                        {% if browse == 'all' %}
+                            <li class="active">
+                                <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+                            </li>
+                        {% endif %}
+                        {% for b in browselinks %}
+                            {% if browse == b %}
+                                <li class="active">
+                                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </center>
+                <div class="col-md-12">
+                    <!-- just padding -->
+                    <p/>
+                </div>
+                <!-- wait till user has clicked on a link before displaying browses -->
+                {% if browse != 'all' %}
+                    <table class="table table-striped scrc-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="1">
+                                    All Finding Aids beginning with "{{ browse }}"
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in browses %}
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
 
-	<!-- case 4: user is looking at browses by topic -->
-	{% elif view == 'topics' %}
-	{% if thistopiclist %} 	<!-- the user has clicked on a specific topic browse -->
-	<table class="table table-striped scrc-list">
-            <thead>
-		<tr class="etable-header">
-		    <th colspan="1">
-			{{ topic }}
-		    </th>
-		</tr>
-            </thead>
-            <tbody>
-		{% for t in thistopiclist %}
-		<tr>
-                    <td>
-			<h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
-			<p>{{ t.2 }}</p>
-                    </td>
-		</tr>
-		{% endfor %}
-            </tbody>
-        </table>
-	{% elif topiclist %}  <!-- the user has NOT clicked on a specific topic browse -->
-	<table class="table table-striped scrc-list">
-            <thead>
-		<tr class="etable-header">
-		    <th colspan="1">
-			Browse Finding Aids by Topic
-		    </th>
-		</tr>
-            </thead>
-            <tbody>
-		{% for t in topiclist %}
-		<tr>
-                    <td><strong><a href=".?topic={{ t.0|urlencode }}&amp;view=topics">{{ t.0 }} ({{ t.1 }})</a></strong></td>
-		</tr>
-		{% endfor %}
-            </tbody>
-        </table>
-	{% endif %}
-	
-	<!-- TODO case 5: user is looking at digital content -->
-	{% elif view == 'digitized' and digitizedlist %}
-	<table class="table table-striped scrc-list">
-            <thead>
-		<tr class="etable-header">
-		    <th colspan="1">
-			Browse Finding Aids with Digitized Content
-		    </th>
-		</tr>
-            </thead>
-            <tbody>
-		{% for d in digitizedlist %}
-		<tr>
-		    <td>
-			<strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></strong><br/>
-			{{ d.2 }}
-		    </td>
-		</tr>
-		{% endfor %}
-            </tbody>
-	</table>
+                <!-- case 4: user is looking at browses by topic -->
+            {% elif view == 'topics' %}
+                {% if thistopiclist %} 	<!-- the user has clicked on a specific topic browse -->
+                    <table class="table table-striped scrc-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="1">
+                                    {{ topic }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in thistopiclist %}
+                                <tr>
+                                    <td>
+                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
+                                        <p>{{ t.2 }}</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% elif topiclist %}  <!-- the user has NOT clicked on a specific topic browse -->
+                    <table class="table table-striped scrc-list">
+                        <thead>
+                            <tr class="etable-header">
+                                <th colspan="1">
+                                    Browse Finding Aids by Topic
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in topiclist %}
+                                <tr>
+                                    <td><strong><a href=".?topic={{ t.0|urlencode }}&amp;view=topics">{{ t.0 }} ({{ t.1 }})</a></strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
 
-	<!-- case 6: there's a problem grabbing the Mark Logic data -->
-	{% else %}
-	<div class="col-md-12">
-            {% include "findingaids/marklogic_error.html" %}
-	</div>
+                <!-- TODO case 5: user is looking at digital content -->
+            {% elif view == 'digitized' and digitizedlist %}
+                <table class="table table-striped scrc-list">
+                    <thead>
+                        <tr class="etable-header">
+                            <th colspan="1">
+                                Browse Finding Aids with Digitized Content
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in digitizedlist %}
+                            <tr>
+                                <td>
+                                    <strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></strong><br/>
+                                    {{ d.2 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-	<!-- end of cases 1-6 if/elif/else -->
-	{% endif %}
+                <!-- case 6: there's a problem grabbing the Mark Logic data -->
+            {% else %}
+                <div class="col-md-12">
+                    {% include "findingaids/marklogic_error.html" %}
+                </div>
 
-</article>
+                <!-- end of cases 1-6 if/elif/else -->
+            {% endif %}
+
+        </article>
 {% endblock %}
