@@ -44,8 +44,8 @@
                             {% for r in searchresults %}
                                 <tr>
                                     <td colspan="1">
-                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
-                                        <p>{{ r.abstract }}</p>
+					<h3><a target="_blank" href="{{ e_url }}{{ r.eadid|urlencode }}&amp;q={{ searchq|urlencode }}">{{ r.title }}</a></h3>
+					<p>{{ r.abstract }}</p>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -98,7 +98,7 @@
                             <tr>
                                 <td>
                                     <strong>
-                                        <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b0|urlencode }}">{{ b1 }}</a>
+				        <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
                                     </strong>
                                 </td>
                             </tr>
@@ -180,7 +180,7 @@
                                 <tr>
                                     <td>
                                         <strong>
-                                            <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b0|urlencode }}">{{ b1 }}</a>
+					    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
                                         </strong>
                                     </td>
                                 </tr>
@@ -204,8 +204,8 @@
                             {% for t0, t1, t2 in thistopiclist %}
                                 <tr>
                                     <td>
-                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t0|urlencode }}">{{ t1 }}</a></h3>
-                                        <p>{{ t2 }}</p>
+					<h3><a target="_blank" href="{{ e_url }}{{ t0|urlencode }}">{{ t1 }}</a></h3>
+					<p>{{ t2 }}</p>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -230,7 +230,7 @@
                     </table>
                 {% endif %}
 
-                <!-- TODO case 5: user is looking at digital content -->
+            <!-- case 5: user is looking at digital content -->
             {% elif view == 'digitized' and digitizedlist %}
                 <table class="table table-striped scrc-list">
                     <thead>
@@ -241,11 +241,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for d in digitizedlist %}
+                        {% for d0, d1, d2 in digitizedlist %}
                             <tr>
                                 <td>
-                                    <strong><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ d.0|urlencode }}">{{ d.1 }}</a></strong><br/>
-                                    {{ d.2 }}
+				    <strong><a target="_blank" href="{{ e_url }}{{ d0|urlencode }}">{{ d1 }}</a></strong><br/>
+                                    {{ d2 }}
                                 </td>
                             </tr>
                         {% endfor %}

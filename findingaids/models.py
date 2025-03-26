@@ -6,7 +6,7 @@ from xml.etree import ElementTree
 from base.models import PublicBasePage
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from library_website.settings import MARKLOGIC_FINDINGAIDS_PORT, MARKLOGIC_LDR_BASE
+from library_website.settings import MARKLOGIC_FINDINGAIDS_PORT, MARKLOGIC_LDR_BASE, E_FINDING_AIDS
 from wagtail.models import Page
 
 
@@ -249,5 +249,6 @@ class FindingAidsPage(PublicBasePage):
         context["topics"] = topics
         context["topic"] = topic
         context["view"] = view
+        context["e_url"] = E_FINDING_AIDS
 
         return context
