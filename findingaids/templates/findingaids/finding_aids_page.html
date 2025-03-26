@@ -22,18 +22,16 @@
                     </span>
                 </form>
             </div>
-            <div class="col-md-12">
-                <!-- just padding -->
-                <p/>
-            </div>
-
-            <!-- case 1: user has just entered a search term -->
+	    <div class="col-md-12" style="padding-top:1em!important">
+	        <!-- just padding -->
+	    </div>
+            
+	    <!-- case 1: user has just entered a search term -->
             {% if searchq %}
                 {% if searchresults %}
-                    <div class="col-md-12">
-                        <!-- just padding -->
-                        <p/>
-                    </div>
+                    <div class="col-md-12" style="padding-top:1em!important">
+	                <!-- just padding -->
+	            </div>
                     <table class="table table-striped scrc-list">
                         <thead>
                             <tr class="etable-header">
@@ -96,11 +94,11 @@
                         <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
                     </thead>
                     <tbody>
-                        {% for b in page_obj %}
+                        {% for b0, b1 in page_obj %}
                             <tr>
                                 <td>
                                     <strong>
-                                        <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
+                                        <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b0|urlencode }}">{{ b1 }}</a>
                                     </strong>
                                 </td>
                             </tr>
@@ -164,10 +162,9 @@
                         {% endfor %}
                     </ul>
                 </center>
-                <div class="col-md-12">
-                    <!-- just padding -->
-                    <p/>
-                </div>
+                <div class="col-md-12" style="padding-top:1em!important">
+	            <!-- just padding -->
+	        </div>
                 <!-- wait till user has clicked on a link before displaying browses -->
                 {% if browse != 'all' %}
                     <table class="table table-striped scrc-list">
@@ -179,11 +176,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for b in browses %}
+                            {% for b0, b1 in browses %}
                                 <tr>
                                     <td>
                                         <strong>
-                                            <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b.0|urlencode }}">{{ b.1 }}</a>
+                                            <a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ b0|urlencode }}">{{ b1 }}</a>
                                         </strong>
                                     </td>
                                 </tr>
@@ -204,11 +201,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for t in thistopiclist %}
+                            {% for t0, t1, t2 in thistopiclist %}
                                 <tr>
                                     <td>
-                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t.0|urlencode }}">{{ t.1 }}</a></h3>
-                                        <p>{{ t.2 }}</p>
+                                        <h3><a target="_blank" href="http://www.lib.uchicago.edu/e/scrc/findingaids/view.php?eadid={{ t0|urlencode }}">{{ t1 }}</a></h3>
+                                        <p>{{ t2 }}</p>
                                     </td>
                                 </tr>
                             {% endfor %}
