@@ -1,10 +1,13 @@
-from base.models import PublicBasePage
-from library_website.settings import MARKLOGIC_LDR_BASE, MARKLOGIC_FINDINGAIDS_PORT
-from wagtail.models import Page
-from xml.etree import ElementTree
-
+import json
 import re
 import urllib
+from xml.etree import ElementTree
+
+from base.models import PublicBasePage
+from django.core.cache import cache
+from django.core.paginator import Paginator
+from library_website.settings import MARKLOGIC_FINDINGAIDS_PORT, MARKLOGIC_LDR_BASE, E_FINDING_AIDS
+from wagtail.models import Page
 
 
 class FindingAidsPage(PublicBasePage):
@@ -22,26 +25,25 @@ class FindingAidsPage(PublicBasePage):
 
         def get_marklogic_xml(route):
             try:
-                r = urllib.request.urlopen(
-                    marklogic_url(route)
-                )
-                xml_string = r.read().decode('utf-8')
+                r = urllib.request.urlopen(marklogic_url(route))
+                xml_string = r.read().decode("utf-8")
                 return xml_string
             except urllib.error.URLError:
-                return ''
+                return ""
 
         def get_browses():
             browses = []
 
-            route = ('/admin/gimme.xqy'
-                     '?collection=institution%2FUniversity%20of%20Chicago')
+            route = (
+                "/admin/gimme.xqy" "?collection=institution%2FUniversity%20of%20Chicago"
+            )
 
             xml_string = get_marklogic_xml(route)
 
             try:
                 e = ElementTree.fromstring(xml_string)
-                for div in e.find('body').findall('div'):
-                    span = div.findall('span')
+                for div in e.find("body").findall("div"):
+                    span = div.findall("span")
                     if span[0].text and span[1].text:
                         browses.append([span[0].text, span[1].text])
                     else:
@@ -53,10 +55,7 @@ class FindingAidsPage(PublicBasePage):
 
         def get_browse_list(browses, browse):
             return sorted(
-                list(filter(
-                    lambda b: b[1][0] == browse, browses
-                )),
-                key=lambda b: b[1]
+                list(filter(lambda b: b[1][0] == browse, browses)), key=lambda b: b[1]
             )
 
         # e.g. "A", "B", "C"...
@@ -67,18 +66,21 @@ class FindingAidsPage(PublicBasePage):
 
             digitized = []
 
-            route = '/admin/gimmeDigitalEADIDs.xqy'
+            route = "/admin/gimmeDigitalEADIDs.xqy"
 
             xml_string = get_marklogic_xml(route)
 
             try:
                 e = ElementTree.fromstring(xml_string)
-                for div in e.find('body').findall('div'):
-                    span = div.findall('span')
-                    digitized.append([span[0].find('eadid').text,
-                                      span[1].text, span[2].find(
-                                          'abstract').text]
-                                     )
+                for div in e.find("body").findall("div"):
+                    span = div.findall("span")
+                    digitized.append(
+                        [
+                            span[0].find("eadid").text,
+                            span[1].text,
+                            span[2].find("abstract").text,
+                        ]
+                    )
             except ElementTree.ParseError:
                 pass
 
@@ -98,31 +100,31 @@ class FindingAidsPage(PublicBasePage):
 
             if exactphrase:
                 route = "/request.xqy?" + urllib.parse.urlencode(
-                        {'action': 'search', 'collection': 'project/SCRC',
-                            'q': '"' + searchq + '"'}
+                    {
+                        "action": "search",
+                        "collection": "project/SCRC",
+                        "q": '"' + searchq + '"',
+                    }
                 )
             else:
                 route = "/request.xqy?" + urllib.parse.urlencode(
-                        {'action':
-                         'search',
-                         'collection':
-                         'project/SCRC',
-                         'q': searchq
-                         }
+                    {"action": "search", "collection": "project/SCRC", "q": searchq}
                 )
 
             xml_string = get_marklogic_xml(route)
 
             try:
                 e = ElementTree.fromstring(xml_string)
-                for div in e.find(
-                        "div[@class='search-results']"
-                ).findall("div[@class='search-result']"):
-                    searchresults.append({
-                        'eadid': div.find("div[@class='eadid']").text,
-                        'title': div.find("div[@class='project']").text,
-                        'abstract': div.find("div[@class='abstract']").text
-                    })
+                for div in e.find("div[@class='search-results']").findall(
+                    "div[@class='search-result']"
+                ):
+                    searchresults.append(
+                        {
+                            "eadid": div.find("div[@class='eadid']").text,
+                            "title": div.find("div[@class='project']").text,
+                            "abstract": div.find("div[@class='abstract']").text,
+                        }
+                    )
             except (AttributeError, ElementTree.ParseError):
                 pass
 
@@ -137,8 +139,8 @@ class FindingAidsPage(PublicBasePage):
 
             try:
                 e = ElementTree.fromstring(xml_string)
-                for div in e.findall('div'):
-                    subject = div.find('subject').text
+                for div in e.findall("div"):
+                    subject = div.find("subject").text
 
                     if subject is None:
                         continue
@@ -147,22 +149,26 @@ class FindingAidsPage(PublicBasePage):
                         topics[subject] = []
 
                     topic_data = {}
-                    for f in ['eadid', 'title']:
+                    for f in ["eadid", "title"]:
                         try:
                             topic_data[f] = div.find(f).text
                         except AttributeError:
-                            topic_data[f] = ''
+                            topic_data[f] = ""
 
                     try:
-                        topic_data['abstract'] = div.find(
-                            'abstract').find('abstract').text
+                        topic_data["abstract"] = (
+                            div.find("abstract").find("abstract").text
+                        )
                     except AttributeError:
-                        topic_data['abstract'] = ''
+                        topic_data["abstract"] = ""
 
                     topics[subject].append(
-                        [topic_data['eadid'],
-                         topic_data['title'],
-                         topic_data['abstract']])
+                        [
+                            topic_data["eadid"],
+                            topic_data["title"],
+                            topic_data["abstract"],
+                        ]
+                    )
             except ElementTree.ParseError:
                 pass
 
@@ -176,29 +182,14 @@ class FindingAidsPage(PublicBasePage):
 
         context = super(FindingAidsPage, self).get_context(request)
 
-        browse = request.GET.get('browse', None)
-        digitized = request.GET.get('digitized', None)
-        searchq = request.GET.get('searchq', None)
-        topic = request.GET.get('topic', None)
-        topics = request.GET.get('topics', None)
-        if topics and not topics == 'all':
+        browse = request.GET.get("browse", "all")
+        digitized = request.GET.get("digitized", None)
+        searchq = request.GET.get("searchq", None)
+        topic = request.GET.get("topic", None)
+        topics = request.GET.get("topics", None)
+        if topics and not topics == "all":
             topics = None
-        view = request.GET.get('view', None)
-        if not view:
-            view = 'title'
-
-        # browse
-        browses = get_browses()
-        browselinks = get_browse_links(browses)
-        if browse:
-            browses = get_browse_list(browses, browse)
-
-        all_topics = get_topics()
-
-        # digitized
-        digitizedlist = []
-        if view == 'digitized':
-            digitizedlist = get_digitized_content()
+        view = request.GET.get("view", "title")
 
         # search
         searchresults = []
@@ -207,32 +198,57 @@ class FindingAidsPage(PublicBasePage):
             searchresults = get_search_results(searchq)
             searchresultcount = len(searchresults)
 
-        # topics
+        cached_browses = cache.get("finding_aids_all_browses")
+
+        if cached_browses:
+            all_browses = json.loads(cached_browses)
+        else:
+            all_browses = get_browses()
+            cache.set("finding_aids_all_browses", json.dumps(all_browses))
+
+        paginator = Paginator(all_browses, 100)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        num_pages = paginator.num_pages
+
+        if browse != "all":
+            browses = get_browse_list(all_browses, browse)
+            browselinks = get_browse_links(all_browses)
+        else:
+            browses = None
+            browselinks = get_browse_links(all_browses)
+
+        all_topics = get_topics()
+
+        digitizedlist = []
         topiclist = []
-        if view == 'topics':
-            topiclist = get_topic_list(all_topics)
-
-        # topic
         thistopiclist = []
-        if topic:
-            try:
-                thistopiclist = list(
-                    sorted(all_topics[topic], key=lambda t: t[1]))
-            except KeyError:
-                thistopiclist = []
 
-        context['browse'] = browse
-        context['browselinks'] = browselinks
-        context['browses'] = browses
-        context['digitized'] = digitized
-        context['digitizedlist'] = digitizedlist
-        context['searchq'] = searchq
-        context['searchresultcount'] = searchresultcount
-        context['searchresults'] = searchresults
-        context['topiclist'] = topiclist
-        context['thistopiclist'] = thistopiclist
-        context['topics'] = topics
-        context['topic'] = topic
-        context['view'] = view
+        if view == "digitized":
+            digitizedlist = get_digitized_content()
+        elif view == "topics":
+            topiclist = get_topic_list(all_topics)
+            if topic:
+                try:
+                    thistopiclist = list(sorted(all_topics[topic], key=lambda t: t[1]))
+                except KeyError:
+                    thistopiclist = []
+
+        context["page_obj"] = page_obj
+        context["num_pages"] = num_pages
+        context["browse"] = browse
+        context["browselinks"] = browselinks
+        context["browses"] = browses
+        context["digitized"] = digitized
+        context["digitizedlist"] = digitizedlist
+        context["searchq"] = searchq
+        context["searchresultcount"] = searchresultcount
+        context["searchresults"] = searchresults
+        context["topiclist"] = topiclist
+        context["thistopiclist"] = thistopiclist
+        context["topics"] = topics
+        context["topic"] = topic
+        context["view"] = view
+        context["e_url"] = E_FINDING_AIDS
 
         return context
