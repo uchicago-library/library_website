@@ -98,80 +98,39 @@
                 {% endfor %}
             </tbody>
         </table>
+	<!-- show pagination only when 'all' is selected -->
 	{% if browse == 'all' %}
-            <ul class="text-center pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                    <li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
-                {% else %}
-                    <li class="disabled"><span>&laquo;</span></li>
-                {% endif %}
+        <ul class="text-center pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
 
-                {% for i in page_obj.paginator.page_range %}
-                    {% if page_obj.number == i %}
-                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                    {% else %}
-                        <li><a href="{{ root_link }}?view=title&browse=all&page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+            <li><a href="{{ root_link }}?view=title&browse=all&page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
 
-                {% if page_obj.has_next %}
-                    <li><a href="{{ root_link }}?view=title&browse=all&page={{ page_obj.next_page_number }}">&raquo;</a></li>
-                {% else %}
-                    <li class="disabled"><span>&raquo;</span></li>
-                {% endif %}
-            </ul>
-            <div class="text-primary col-md-12">
-                page {{ page_obj.number }} of {{ num_pages }}
-                <div class="col-md-12">
-                    <!-- more padding -->
-                    <p/>
-                </div>
+            {% if page_obj.has_next %}
+            <li><a href="{{ root_link }}?view=title&browse=all&page={{ page_obj.next_page_number }}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+        <div class="text-primary col-md-12">
+            page {{ page_obj.number }} of {{ num_pages }}
+            <div class="col-md-12">
+                <!-- more padding -->
+                <p/>
             </div>
-	    {% endif %}
-
-    <!-- case 3: user is looking at browses by title -->
-    {% elif view == 'title' %}
-	<ul class="text-center pagination justify-content-center">
-	    {% for b in browselinks %}
-		{% if browse == b %}
-		    <li class="active">
-			<a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		    </li>
-		{% else %}
-		    <li>
-			<a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-		    </li>
-		{% endif %}
-	    {% endfor %}
-	</ul>
-        <div class="col-md-12" style="padding-top:1em!important">
-            <!-- just padding -->
         </div>
-        <!-- wait till user has clicked on a link before displaying browses -->
-        {% if browse != 'all' %}
-            <table class="table table-striped scrc-list">
-                <thead>
-                    <tr class="etable-header">
-                        <th colspan="1">
-                            All Finding Aids beginning with "{{ browse }}"
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for b0, b1 in browses %}
-                        <tr>
-                            <td>
-                                <strong>
-                                    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
-                                </strong>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+	{% endif %}
 
-        <!-- case 4: user is looking at browses by topic -->
+    <!-- case 3: user is looking at browses by topic -->
     {% elif view == 'topics' %}
         {% if thistopiclist %} 	<!-- the user has clicked on a specific topic browse -->
             <table class="table table-striped scrc-list">
@@ -212,7 +171,7 @@
             </table>
         {% endif %}
 
-        <!-- case 5: user is looking at digital content -->
+    <!-- case 4: user is looking at digital content -->
     {% elif view == 'digitized' and digitizedlist %}
         <table class="table table-striped scrc-list">
             <thead>
@@ -234,12 +193,12 @@
             </tbody>
         </table>
 
-        <!-- case 6: there's a problem grabbing the Mark Logic data -->
+    <!-- case 5: there's a problem grabbing the Mark Logic data -->
     {% else %}
         <div class="col-md-12">
             {% include "findingaids/marklogic_error.html" %}
         </div>
 
-        <!-- end of cases 1-6 if/elif/else -->
+    <!-- end of cases 1-5 if/elif/else -->
     {% endif %}
 {% endblock %}
