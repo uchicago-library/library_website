@@ -35,7 +35,8 @@ class FindingAidsPage(PublicBasePage):
             browses = []
 
             route = (
-                '/admin/gimme.xqy" "?collection=institution%2FUniversity%20of%20Chicago'
+                '/admin/gimme.xqy'
+                '?collection=institution%2FUniversity%20of%20Chicago'
             )
 
             xml_string = get_marklogic_xml(route)
