@@ -60,19 +60,12 @@
             </table>
         {% endif %}
 
-        <!-- case 2: user is browsing all finding aids w/ pagination -->
+    <!-- case 2: user is browsing all finding aids w/ pagination -->
     {% elif page_obj and view == 'title' and browse == 'all' %}
-        <center>
-            <ul class="pagination justify-content-center">
-                {% if browse == 'all' %}
-                    <li class="active">
-                        <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a href="{{ root_url} google calend}?view=title&browse=all">ALL</a>
-                    </li>
-                {% endif %}
+            <ul class="text-center pagination justify-content-center">
+                <li class="active">
+                    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+                </li>
                 {% for b in browselinks %}
                     {% if browse == b %}
                         <li class="active">
@@ -85,7 +78,6 @@
                     {% endif %}
                 {% endfor %}
             </ul>
-        </center>
         <table class="table table-striped scrc-list">
             <thead>
                 <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
@@ -102,8 +94,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <center>
-            <ul class="pagination justify-content-center">
+            <ul class="text-center pagination justify-content-center">
                 {% if page_obj.has_previous %}
                     <li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
                 {% else %}
@@ -131,12 +122,10 @@
                     <p/>
                 </div>
             </div>
-        </center>
 
-        <!-- case 3: user is looking at browses by title -->
+    <!-- case 3: user is looking at browses by title -->
     {% elif view == 'title' %}
-        <center>
-            <ul class="pagination justify-content-center">
+            <ul class="text-center pagination justify-content-center">
                 {% if browse == 'all' %}
                     <li class="active">
                         <a href="{{ root_url }}?view=title&browse=all">ALL</a>
@@ -158,7 +147,6 @@
                     {% endif %}
                 {% endfor %}
             </ul>
-        </center>
         <div class="col-md-12" style="padding-top:1em!important">
             <!-- just padding -->
         </div>
