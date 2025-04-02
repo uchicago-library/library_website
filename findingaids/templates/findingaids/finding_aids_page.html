@@ -60,8 +60,8 @@
             </table>
         {% endif %}
 
-    <!-- case 2: user is browsing all finding aids w/ pagination -->
-    {% elif page_obj and view == 'title' and browse == 'all' %}
+    <!-- case 2: user is browsing by title -->
+    {% elif page_obj and view == 'title' %}
             <ul class="text-center pagination justify-content-center">
                 <li class="active">
                     <a href="{{ root_url }}?view=title&browse=all">ALL</a>
@@ -80,7 +80,11 @@
             </ul>
         <table class="table table-striped scrc-list">
             <thead>
+		{% if browse == 'all' %}
                 <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
+		{% else %}
+		<tr class="etable-header"> <th colspan="1"> All Finding Aids beginning with "{{ browse }}" </th> </tr>
+		{% endif %}
             </thead>
             <tbody>
                 {% for b0, b1 in page_obj %}
@@ -94,6 +98,7 @@
                 {% endfor %}
             </tbody>
         </table>
+	{% if browse == 'all' %}
             <ul class="text-center pagination justify-content-center">
                 {% if page_obj.has_previous %}
                     <li><a href="{{ root_link }}?view=title&browse=all&page={{ previous_page_number }}">&laquo;</a></li>
@@ -122,31 +127,23 @@
                     <p/>
                 </div>
             </div>
+	    {% endif %}
 
     <!-- case 3: user is looking at browses by title -->
     {% elif view == 'title' %}
-            <ul class="text-center pagination justify-content-center">
-                {% if browse == 'all' %}
-                    <li class="active">
-                        <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-                    </li>
-                {% endif %}
-                {% for b in browselinks %}
-                    {% if browse == b %}
-                        <li class="active">
-                            <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
+	<ul class="text-center pagination justify-content-center">
+	    {% for b in browselinks %}
+		{% if browse == b %}
+		    <li class="active">
+			<a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+		    </li>
+		{% else %}
+		    <li>
+			<a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+		    </li>
+		{% endif %}
+	    {% endfor %}
+	</ul>
         <div class="col-md-12" style="padding-top:1em!important">
             <!-- just padding -->
         </div>
