@@ -83,37 +83,37 @@
         {% endfor %}
         </ul>
         <table class="table table-striped scrc-list">
-	    {% if browse == 'all' %}
-            <thead>
-                <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
-            </thead>
-            <tbody>
-                {% for b0, b1 in page_obj %}
-                    <tr>
-                        <td>
-                            <strong>
-                                <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
-                            </strong>
-                        </td>
-                    </tr>
+            {% if browse == 'all' %}
+                <thead>
+                    <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
+                </thead>
+                <tbody>
+                    {% for b0, b1 in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
+                                </strong>
+                            </td>
+                        </tr>
                     {% endfor %}
-            </tbody>
-	    {% else %}
-            <thead>
-                <tr class="etable-header"> <th colspan="1"> All Finding Aids beginning with "{{ browse }}" </th> </tr>
-            </thead>
-            <tbody>
-                {% for b0, b1 in browses %}
-                <tr>
-                    <td>
-                        <strong>
-                            <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
-                        </strong>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-	    {% endif %}
+                </tbody>
+            {% else %}
+                <thead>
+                    <tr class="etable-header"> <th colspan="1"> All Finding Aids beginning with "{{ browse }}" </th> </tr>
+                </thead>
+                <tbody>
+                    {% for b0, b1 in browses %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
+                                </strong>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            {% endif %}
         </table>
         <!-- show pagination only when 'all' is selected -->
         {% if browse == 'all' %}
