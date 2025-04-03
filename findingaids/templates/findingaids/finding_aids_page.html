@@ -83,24 +83,37 @@
         {% endfor %}
         </ul>
         <table class="table table-striped scrc-list">
-            <thead>
-                {% if browse == 'all' %}
+            {% if browse == 'all' %}
+                <thead>
                     <tr class="etable-header"> <th colspan="1"> All Finding Aids </th> </tr>
-                {% else %}
+                </thead>
+                <tbody>
+                    {% for b0, b1 in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
+                                </strong>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            {% else %}
+                <thead>
                     <tr class="etable-header"> <th colspan="1"> All Finding Aids beginning with "{{ browse }}" </th> </tr>
-                {% endif %}
-            </thead>
-            <tbody>
-                {% for b0, b1 in page_obj %}
-                    <tr>
-                        <td>
-                            <strong>
-                                <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
-                            </strong>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+                </thead>
+                <tbody>
+                    {% for b0, b1 in browses %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a target="_blank" href="{{ e_url }}{{ b0|urlencode }}">{{ b1 }}</a>
+                                </strong>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            {% endif %}
         </table>
         <!-- show pagination only when 'all' is selected -->
         {% if browse == 'all' %}
@@ -125,7 +138,7 @@
                     <li class="disabled"><span>&raquo;</span></li>
                 {% endif %}
             </ul>
-            <div class="text-primary col-md-12">
+            <div class="text-primary col-md-12" style="display:flex;flex-wrap:wrap;justify-content:center;">
                 page {{ page_obj.number }} of {{ num_pages }}
                 <div class="col-md-12">
                     <!-- more padding -->
