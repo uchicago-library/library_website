@@ -9,6 +9,7 @@ from staff.models import StaffPage, StaffPageSubjectPlacement
 from subjects.models import Subject
 from units.models import UnitPage
 from wagtail.models import Page, Site
+from wagtail.search.backends import get_search_backend
 
 from lib_collections.marklogic import get_record_for_display
 from lib_collections.models import CollectingAreaPage, CollectionPage, ExhibitPage
@@ -1176,11 +1177,52 @@ class TestExhibitFiltering(TestCase):
 
     def test_combined_search_and_filter(self):
         """Test that filtering and searching works together"""
-        # Get all pages with specific title that are web exhibits
-        results = ExhibitPage.objects.filter(web_exhibit=True).filter(
-            title="Test Web Exhibit"
+        # Create another web exhibit with a different title for testing search specificity
+        another_web_exhibit = ExhibitPage(
+            title="Another Web Exhibit",
+            short_abstract="Another test web exhibit",
+            web_exhibit=True,
+            page_maintainer=self.staff,
+            editor=self.staff,
+            content_specialist=self.staff,
+            unit=self.unit,
         )
+        self.space.add_child(instance=another_web_exhibit)
 
-        # Should find exactly one result
-        self.assertEqual(results.count(), 1)
-        self.assertEqual(results.first(), self.web_exhibit)
+        try:
+            # This simulates what happens in the collections view
+            # First, filter by web_exhibit
+            filtered_exhibits = ExhibitPage.objects.filter(web_exhibit=True)
+
+            # Then apply search to the filtered results
+            # Search for 'Test' which should only match our test web exhibits
+            s = get_search_backend()
+            search_results = s.search("Test", filtered_exhibits)
+
+            # Should find two results - self.web_exhibit and another_web_exhibit
+            self.assertEqual(len(search_results), 2)
+            self.assertEqual(search_results[0], self.web_exhibit)
+            self.assertEqual(search_results[1], another_web_exhibit)
+
+            # Now search for something that doesn't match any exhibits
+            search_results_empty = s.search("NonexistentTerm", filtered_exhibits)
+            self.assertEqual(len(search_results_empty), 0)
+
+            # Test the inverse - search first, then filter
+            all_test_results = s.search("Exhibit", ExhibitPage.objects.all())
+            # Should find both exhibits with 'Exhibit' in the title
+            self.assertGreaterEqual(len(all_test_results), 2)
+
+            # Now filter those results to only web exhibits
+            web_exhibits_only = [r for r in all_test_results if r.web_exhibit]
+            # Should include both our web exhibits
+            self.assertIn(self.web_exhibit, web_exhibits_only)
+            self.assertIn(another_web_exhibit, web_exhibits_only)
+
+            # And filter to only physical exhibits
+            physical_exhibits_only = [r for r in all_test_results if not r.web_exhibit]
+            # Should include our physical exhibit
+            self.assertIn(self.physical_exhibit, physical_exhibits_only)
+        finally:
+            # Clean up the additional exhibit we created
+            another_web_exhibit.delete()
