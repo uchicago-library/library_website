@@ -64,23 +64,23 @@
     {% elif page_obj and view == 'title' %}
         <ul class="text-center pagination" style="display:flex;flex-wrap:wrap;justify-content:center;">
             {% if browse == 'all' %}
-	    <li class="active">
-		{% else %}
-		<li>
-		    {% endif %}
-                    <a href="{{ root_url }}?view=title&browse=all">ALL</a>
-		</li>
-            {% for b in browselinks %}
-                {% if browse == b %}
-                    <li class="active">
-                        <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
+                <li class="active">
+            {% else %}
+                <li>
+            {% endif %}
+            <a href="{{ root_url }}?view=title&browse=all">ALL</a>
+        </li>
+        {% for b in browselinks %}
+            {% if browse == b %}
+                <li class="active">
+                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{ root_url }}?view=title&amp;browse={{ b|urlencode }}">{{ b }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
         </ul>
         <table class="table table-striped scrc-list">
             <thead>
