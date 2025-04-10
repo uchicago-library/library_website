@@ -134,13 +134,12 @@ and run `./manage.py wagtail_update_image_renditions`.
 - `git status`
 - `git pull origin master`
 - `./manage.py migrate` _only needed if made migrations_
-- `./manage.py compress`
 - `./manage.py collectstatic`
 - `sudo service apache24 restart`
 
 ### Caching Issues
 If your changes aren't loading into production, try:
-- Compress, collectstatic, and restart apache again
+- Collectstatic, and restart apache again
 - Clear the Wagtail cache in Wagtail settings or run `./manage.py clear_wagtail_cache`
 - Clear the Django cache manually
 ```
@@ -158,6 +157,5 @@ For testing purposes, you may want to push a branch that is not master to Nest.
 - `git checkout {{ branch-name }}`
 - `git pull origin {{ branch-name }}`
 - `./manage.py migrate` _only needed if made migrations_
-- `./manage.py compress`
 - `./manage.py collectstatic`
 - `sudo service apache24 restart`
