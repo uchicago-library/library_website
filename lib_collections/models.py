@@ -12,17 +12,24 @@ from django.db import models
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.text import slugify
-from library_website.settings import (COLLECTION_OBJECT_TRUNCATE,
-                                      CRERAR_BUILDING_ID,
-                                      CRERAR_EXHIBIT_FOOTER_IMG,
-                                      SCRC_BUILDING_ID,
-                                      SCRC_EXHIBIT_FOOTER_IMG)
+from library_website.settings import (
+    COLLECTION_OBJECT_TRUNCATE,
+    CRERAR_BUILDING_ID,
+    CRERAR_EXHIBIT_FOOTER_IMG,
+    SCRC_BUILDING_ID,
+    SCRC_EXHIBIT_FOOTER_IMG,
+)
 from modelcluster.fields import ParentalKey
 from public.models import StaffPublicPage
 from staff.models import StaffPage
-from wagtail.admin.panels import (FieldPanel, InlinePanel, MultiFieldPanel,
-                                  ObjectList, PageChooserPanel,
-                                  TabbedInterface)
+from wagtail.admin.panels import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
+)
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.models import Image
@@ -31,8 +38,7 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from .marklogic import get_record_for_display, get_record_no_parsing
-from .utils import (CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay,
-                    LBrowseURL)
+from .utils import CBrowseURL, CitationInfo, DisplayBrowse, IIIFDisplay, LBrowseURL
 
 DEFAULT_WEB_EXHIBIT_FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -50,7 +56,7 @@ def get_current_exhibits():
     exhibits = ExhibitPage.objects.live()
     current_exhibits = exhibits.filter(
         exhibit_open_date__lt=datetime.datetime.now().date(),
-        exhibit_close_date__gt=datetime.datetime.now().date()
+        exhibit_close_date__gt=datetime.datetime.now().date(),
     ).distinct()
     return current_exhibits
 
@@ -78,12 +84,9 @@ class SupplementaryAccessLink(models.Model):
 # to the model we want to add related links to (CollectionPage)
 
 
-class CollectionPageSupplementaryAccessLinks(
-    Orderable, SupplementaryAccessLink
-):
+class CollectionPageSupplementaryAccessLinks(Orderable, SupplementaryAccessLink):
     page = ParentalKey(
-        'lib_collections.CollectionPage',
-        related_name='supplementary_access_links'
+        'lib_collections.CollectionPage', related_name='supplementary_access_links'
     )
 
 
@@ -100,7 +103,7 @@ class Format(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 
@@ -111,7 +114,7 @@ class CollectionPageFormatPlacement(Orderable, models.Model):
     page = ParentalKey(
         'lib_collections.CollectionPage',
         on_delete=models.CASCADE,
-        related_name='collection_placements'
+        related_name='collection_placements',
     )
     format = models.ForeignKey(
         'lib_collections.Format', on_delete=models.CASCADE, related_name='+'
@@ -133,12 +136,10 @@ class CollectionPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey(
         'lib_collections.CollectionPage',
         on_delete=models.CASCADE,
-        related_name='collection_subject_placements'
+        related_name='collection_subject_placements',
     )
     subject = models.ForeignKey(
-        'subjects.Subject',
-        on_delete=models.CASCADE,
-        related_name='collection_pages'
+        'subjects.Subject', on_delete=models.CASCADE, related_name='collection_pages'
     )
 
     class Meta:
@@ -158,12 +159,13 @@ class DonorPagePlacement(Orderable, models.Model):
     """
     Create a through table for linking donor pages to collection pages
     """
+
     parent = ParentalKey(
         'lib_collections.CollectionPage',
         related_name='donor_page_list_placement',
         null=True,
         blank=False,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     donor = models.ForeignKey(
@@ -171,7 +173,7 @@ class DonorPagePlacement(Orderable, models.Model):
         related_name='donor_page',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -196,9 +198,8 @@ class CollectionPageAlternateNames(Orderable, AlternateName):
     """
     Creates a through table for alternate names for CollectionPages.
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name='alternate_name'
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name='alternate_name')
 
 
 # Interstitial model for linking the collection RelatedPages to the
@@ -210,12 +211,13 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
     Creates a through table for RelatedPages that attach to
     the CollectionPage type.
     """
+
     parent = ParentalKey(
         'lib_collections.CollectionPage',
         related_name='related_collection_placement',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     related_collection = models.ForeignKey(
@@ -223,7 +225,7 @@ class RelatedCollectionPagePlacement(Orderable, models.Model):
         related_name='related_collection',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -231,6 +233,7 @@ class ExternalService(models.Model):
     """
     Class for link to an external service in a Collection Page.
     """
+
     MENU_OPTIONS = [
         (1, "LUNA"),
         (2, "BTAA"),
@@ -256,6 +259,7 @@ class CollectionPageExternalService(Orderable, ExternalService):
     Intermediate class for links to external services in a Collection
     Page. (needed to create an InlinePanel)
     """
+
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_external_service"
     )
@@ -265,6 +269,7 @@ class ObjectMetadata(models.Model):
     """
     Class for metadata fields to display in search results.
     """
+
     MENU_OPTIONS = [
         (1, "go to a results page for the selected item"),
         (2, "link to a related item in the collection"),
@@ -275,7 +280,7 @@ class ObjectMetadata(models.Model):
     )
     hotlinked = models.BooleanField(
         default=False,
-        help_text='Do you want this label to linked to a unique browse view?'
+        help_text='Do you want this label to linked to a unique browse view?',
     )
     link_target = models.IntegerField(
         choices=MENU_OPTIONS,
@@ -283,7 +288,7 @@ class ObjectMetadata(models.Model):
         help_text=(
             'How do you want the link to behave? \
             (Required for hotlinked)'
-        )
+        ),
     )
 
     panels = [
@@ -302,6 +307,7 @@ class CollectionPageObjectMetadata(Orderable, ObjectMetadata):
     Intermediate class for metadata fields within a Collection Page
     result.  (needed to create an InlinePanel)
     """
+
     page = ParentalKey(
         'lib_collections.CollectionPage', related_name="col_obj_metadata"
     )
@@ -311,6 +317,7 @@ class CResult(models.Model):
     """
     Class for search results within a Collection Page.
     """
+
     field_label = models.CharField(max_length=255, blank=True)
     field_identifier = models.CharField(
         max_length=255, blank=True, help_text="EDM/IIIF field identifier"
@@ -330,15 +337,15 @@ class CollectionPageResult(Orderable, CResult):
     Intermediate class for results within a Collection Page.
     (needed to create an InlinePanel)
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_result"
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name="col_result")
 
 
 class CFacet(models.Model):
     """
     Class for facets within a Collection Page.
     """
+
     label = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
     includes_ocr = models.BooleanField(
@@ -364,22 +371,22 @@ class CollectionPageFacet(Orderable, CFacet):
     Intermediate class for facets within a Collection Page.
     (needed to create an InlinePanel)
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_facet"
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name="col_facet")
 
 
 class CBrowse(models.Model):
     """
     Class for cluster browses within a Collection Page.
     """
+
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
         help_text=(
             'Include browse term in collection sidebar? \
             (Featured browse)'
-        )
+        ),
     )
     iiif_location = models.URLField(max_length=255, blank=True)
     link_text_override = models.CharField(max_length=255, blank=True)
@@ -404,22 +411,22 @@ class CollectionPageClusterBrowse(Orderable, CBrowse):
     Intermediate class for cluster browses within a Collection Page.
     (needed to create an InlinePanel)
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_cbrowse"
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name="col_cbrowse")
 
 
 class LBrowse(models.Model):
     """
     Class for list browses within a Collection Page.
     """
+
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
         help_text=(
             'Include browse term in collection sidebar? \
             (Featured browse)'
-        )
+        ),
     )
     iiif_location = models.URLField(max_length=255, blank=True)
     link_text_override = models.CharField(max_length=255, blank=True)
@@ -444,25 +451,23 @@ class CollectionPageListBrowse(Orderable, LBrowse):
     Intermediate class for list browses within a Collection Page.
     (needed to create an InlinePanel)
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_lbrowse"
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name="col_lbrowse")
 
 
 class CSearch(models.Model):
     """
     Class for searches within a Collection Page.
     """
+
     label = models.CharField(max_length=255, blank=True)
-    include = models.BooleanField(
-        default=False, help_text='Include in sidebar?'
-    )
+    include = models.BooleanField(default=False, help_text='Include in sidebar?')
     default = models.BooleanField(
         default=False,
         help_text=(
             'Is this the default search? (If more than one are selected, the \
             first one selected will be the default.)'
-        )
+        ),
     )
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
@@ -492,9 +497,8 @@ class CollectionPageSearch(Orderable, CSearch):
     Intermediate class for searches within a Collection Page.
     (needed to create an InlinePanel)
     """
-    page = ParentalKey(
-        'lib_collections.CollectionPage', related_name="col_search"
-    )
+
+    page = ParentalKey('lib_collections.CollectionPage', related_name="col_search")
 
 
 # Collection page content type
@@ -519,9 +523,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         Returns:
             List of field names (strings)
         """
-        metadata_fields = CollectionPageObjectMetadata.objects.filter(
-            page_id=self.id
-        )
+        metadata_fields = CollectionPageObjectMetadata.objects.filter(page_id=self.id)
         query_set = metadata_fields.values_list('edm_field_label')
         return [field[0] for field in query_set]
 
@@ -558,33 +560,33 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         output = {}
 
         staff_title = default(lambda: self.staff_contact.title, '')
-        staff_position_title = default(
-            lambda: self.staff_contact.position_title, ''
-        )
+        staff_position_title = default(lambda: self.staff_contact.position_title, '')
         staff_email = default(
             lambda: self.staff_contact.staff_page_email.first().email, ''
         )
         staff_phone_number = default(
             lambda: (
                 self.staff_contact.staff_page_phone_faculty_exchange.first()
-            ).phone_number, ''
+            ).phone_number,
+            '',
         )
         staff_faculty_exchange = default(
             lambda: (
                 self.staff_contact.staff_page_phone_faculty_exchange.first()
-            ).faculty_exchange, ''
+            ).faculty_exchange,
+            '',
         )
         staff_url = default(
-            lambda:
-            (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
-            ''
+            lambda: (StaffPublicPage.objects.get(cnetid=self.staff_contact.cnetid).url),
+            '',
         )
 
         access_location = default(
             lambda: {
                 "url": self.collection_location.url,
-                "title": self.collection_location.title
-            }, ''
+                "title": self.collection_location.title,
+            },
+            '',
         )
 
         unit_title = lazy_dotchain(lambda: self.unit.title, '')
@@ -601,9 +603,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
         unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
         unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document = lazy_dotchain(
-            lambda: self.unit.link_document.file.url, ''
-        )
+        unit_link_document = lazy_dotchain(lambda: self.unit.link_document.file.url, '')
 
         related_collections = lazy_dotchain(
             lambda: self.related_collection_placement.all(), ''
@@ -667,10 +667,12 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         def path_up_to(idx, lst):
             return {
-                unslugify_browse(lst[i - 1]):
-                ("/collex/collections/" + "/".join(lst[:i]))
+                unslugify_browse(lst[i - 1]): (
+                    "/collex/collections/" + "/".join(lst[:i])
+                )
                 for i in range(1, idx + 1)
-                if lst[i - 1] not in [
+                if lst[i - 1]
+                not in [
                     'list-browse',
                     'object',
                     'cluster-browse',
@@ -717,14 +719,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             [
                 (
                     CollectionPage.override(x.link_text_override, x.label),
-                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label))
+                    mk_cbrowse_type_url_wagtail(slug, slugify(x.label)),
                 )
                 for x in CollectionPageClusterBrowse.objects.filter(page=self)
-            ] + [
+            ]
+            + [
                 (
                     CollectionPage.override(x.link_text_override, x.label),
-                    mk_lbrowse_url_wagtail(slug, slugify(x.label))
-                ) for x in CollectionPageListBrowse.objects.filter(page=self)
+                    mk_lbrowse_url_wagtail(slug, slugify(x.label)),
+                )
+                for x in CollectionPageListBrowse.objects.filter(page=self)
             ]
         )
 
@@ -735,7 +739,6 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         DefaultBodyFields(),
         blank=True,
         null=True,
-        use_json_field=True,
     )
     access_instructions = models.TextField(null=False, blank=True, default='')
     thumbnail = models.ForeignKey(
@@ -743,12 +746,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
     )
     thumbnail_caption = models.TextField(null=False, blank=True)
-    primary_online_access_link_label = models.CharField(
-        max_length=255, blank=True
-    )
+    primary_online_access_link_label = models.CharField(max_length=255, blank=True)
     primary_online_access_link_url = models.URLField(
         "Primary online access link URL", blank=True
     )
@@ -766,19 +767,16 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         default=False, help_text='Is this a Digital Collection?'
     )
     hex_regex = RegexValidator(
-        regex='^#[a-zA-Z0-9]{6}$',
-        message='Please enter a hex color, e.g. #012043'
+        regex='^#[a-zA-Z0-9]{6}$', message='Please enter a hex color, e.g. #012043'
     )
-    branding_color = models.CharField(
-        validators=[hex_regex], max_length=7, blank=True
-    )
+    branding_color = models.CharField(validators=[hex_regex], max_length=7, blank=True)
     google_font_link = models.URLField(
         blank=True, help_text='Google fonts link to embed in the header'
     )
     font_family = models.CharField(
         max_length=100,
         blank=True,
-        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif',
     )
     citation_config = models.TextField(
         default=CitationInfo.default_config,
@@ -795,7 +793,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         help_text=(
             'URL for the select objects you would \
             like to show in the collection page'
-        )
+        ),
     )
 
     # TODO: eventually this will contain instructions for generating a
@@ -807,7 +805,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         help_text=(
             'Use a Bib ID or a record PI to construct \
             a link to the catalog'
-        )
+        ),
     )
 
     @route(r'^object/(?P<manifid>\w+)/$')
@@ -879,14 +877,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             final_crumb = object_title
         elif 'Title' in marklogic.keys():
             object_title = marklogic['Title'].split(',')[0]
-            final_crumb = truncate_crumb(
-                object_title, COLLECTION_OBJECT_TRUNCATE
-            )
+            final_crumb = truncate_crumb(object_title, COLLECTION_OBJECT_TRUNCATE)
         elif 'Description' in marklogic.keys():
             object_title = marklogic['Description'].split(',')[0]
-            final_crumb = truncate_crumb(
-                object_title, COLLECTION_OBJECT_TRUNCATE
-            )
+            final_crumb = truncate_crumb(object_title, COLLECTION_OBJECT_TRUNCATE)
         else:
             object_title = 'Object'
             final_crumb = object_title
@@ -909,9 +903,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
                 return defval
 
         def callno_to_pi(callno):
-            return '-'.join(
-                callno.replace(':', ' ').replace('.', ' ').upper().split()
-            )
+            return '-'.join(callno.replace(':', ' ').replace('.', ' ').upper().split())
 
         # get link to physical object in VuFind
         physical_object = default(
@@ -936,16 +928,15 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
             """
             if service.get_service_display() == 'LUNA':
                 return {
-                    'service':
-                    'LUNA',
-                    'caption':
-                    'Assemble Slide Decks',
+                    'service': 'LUNA',
+                    'caption': 'Assemble Slide Decks',
                     'link': (
                         'https://luna.lib.uchicago.edu/'
                         'luna/servlet/view/search'
                         '?q=_luna_media_exif_filename='
                         '%s.tif'
-                    ) % pi,
+                    )
+                    % pi,
                 }
             elif service.get_service_display() == 'BTAA':
                 return {
@@ -1062,9 +1053,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # construct browse type links for sidebar
         sidebar_browse_types = self.build_browse_types()
 
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
+        all_browse_types = CollectionPageClusterBrowse.objects.filter(page=self)
 
         try:
             browse_type = kwargs["browse_type"]
@@ -1131,9 +1120,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         browse_s = kwargs['browse']
         browse_type_s = kwargs['browse_type']
 
-        all_browse_types = (
-            CollectionPageClusterBrowse.objects.filter(page=self)
-        )
+        all_browse_types = CollectionPageClusterBrowse.objects.filter(page=self)
 
         names = [x.label.lower() for x in all_browse_types]
 
@@ -1195,7 +1182,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         browse_name = paginate_name[:-1]
 
-        all_browse_types = (CollectionPageListBrowse.objects.filter(page=self))
+        all_browse_types = CollectionPageListBrowse.objects.filter(page=self)
 
         names = [x.label.lower() for x in all_browse_types]
 
@@ -1238,12 +1225,10 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
         if current_browse:
             browse_title = CollectionPage.override(
-                current_browse.link_text_override,
-                "Browse by %s" % current_browse.label
+                current_browse.link_text_override, "Browse by %s" % current_browse.label
             )
             collection_final_breadcrumb = CollectionPage.override(
-                current_browse.link_text_override,
-                unslugify_browse(final_crumb)
+                current_browse.link_text_override, unslugify_browse(final_crumb)
             )
         else:
             browse_title = unslugify_browse(browse_name)
@@ -1252,7 +1237,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         # final breadcrumb just says e.g. Page 2
         try:
             int(final_crumb)
-            final_crumb = ('Page ' + final_crumb)
+            final_crumb = 'Page ' + final_crumb
         except ValueError:
             pass
 
@@ -1268,7 +1253,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         context["internal_error"] = internal_error
         context["list_objects"] = list_objects_page
         context["root_link"] = "/collex/collections/%s/list-browse/%s" % (
-            collection, paginate_name
+            collection,
+            paginate_name,
         )
         context['collection_final_breadcrumb'] = collection_final_breadcrumb
         context['collection_breadcrumb'] = breads
@@ -1277,41 +1263,43 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
 
     subpage_types = ['public.StandardPage']
 
-    content_panels = Page.content_panels + [
-        FieldPanel('acknowledgments'),
-        InlinePanel('alternate_name', label='Alternate Names'),
-        FieldPanel('short_abstract'),
-        FieldPanel('full_description'),
-        MultiFieldPanel(
-            [
-                FieldPanel('thumbnail'),
-                FieldPanel('thumbnail_caption'),
-            ],
-            heading='Thumbnail'
-        ),
-        InlinePanel('collection_subject_placements', label='Subjects'),
-        InlinePanel('collection_placements', label='Formats'),
-        FieldPanel('access_instructions'),
-        MultiFieldPanel(
-            [
-                FieldPanel('primary_online_access_link_label'),
-                FieldPanel('primary_online_access_link_url'),
-            ],
-            heading='Primary Online Access Link'
-        ),
-        InlinePanel(
-            'supplementary_access_links', label='Supplementary Access Links'
-        ),
-        InlinePanel('related_collection_placement',
-                    label='Related Collection'),
-        FieldPanel('collection_location'),
-        InlinePanel('donor_page_list_placement', label='Donor'),
-        MultiFieldPanel(
-            [FieldPanel('staff_contact'),
-             FieldPanel('unit_contact')],
-            heading='Staff or Unit Contact'
-        )
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel('acknowledgments'),
+            InlinePanel('alternate_name', label='Alternate Names'),
+            FieldPanel('short_abstract'),
+            FieldPanel('full_description'),
+            MultiFieldPanel(
+                [
+                    FieldPanel('thumbnail'),
+                    FieldPanel('thumbnail_caption'),
+                ],
+                heading='Thumbnail',
+            ),
+            InlinePanel('collection_subject_placements', label='Subjects'),
+            InlinePanel('collection_placements', label='Formats'),
+            FieldPanel('access_instructions'),
+            MultiFieldPanel(
+                [
+                    FieldPanel('primary_online_access_link_label'),
+                    FieldPanel('primary_online_access_link_url'),
+                ],
+                heading='Primary Online Access Link',
+            ),
+            InlinePanel(
+                'supplementary_access_links', label='Supplementary Access Links'
+            ),
+            InlinePanel('related_collection_placement', label='Related Collection'),
+            FieldPanel('collection_location'),
+            InlinePanel('donor_page_list_placement', label='Donor'),
+            MultiFieldPanel(
+                [FieldPanel('staff_contact'), FieldPanel('unit_contact')],
+                heading='Staff or Unit Contact',
+            ),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.FilterField('title'),
@@ -1360,9 +1348,7 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
         [
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
+            ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
             ObjectList(collection_panels, heading='Collection'),
         ]
     )
@@ -1415,6 +1401,7 @@ class RegionalCollection(models.Model):
     """
     Abstract model for regional collections.
     """
+
     regional_collection_name = models.CharField(max_length=254, blank=True)
     regional_collection_url = models.URLField(
         "Regional Collection URL", blank=True, null=True
@@ -1435,9 +1422,9 @@ class RegionalCollectionPlacements(Orderable, RegionalCollection):
     """
     Through table for repeatable regional collections.
     """
+
     page = ParentalKey(
-        'lib_collections.CollectingAreaPage',
-        related_name='regional_collections'
+        'lib_collections.CollectingAreaPage', related_name='regional_collections'
     )
 
 
@@ -1445,12 +1432,13 @@ class RelatedCollectingAreas(Orderable, models.Model):
     """
     Through table for repeatable regional collections.
     """
+
     parent = ParentalKey(
         'lib_collections.CollectingAreaPage',
         related_name='related_collecting_areas',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     related_collecting_area = models.ForeignKey(
@@ -1458,7 +1446,7 @@ class RelatedCollectingAreas(Orderable, models.Model):
         related_name='related_collecting_area',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -1466,6 +1454,7 @@ class LibGuide(models.Model):
     """
     Abstract model for lib guides.
     """
+
     guide_link_text = models.CharField(max_length=255, blank=True, null=True)
     guide_link_url = models.URLField("Libguide URL", blank=True, null=True)
 
@@ -1482,9 +1471,8 @@ class CollectingAreaPageLibGuides(Orderable, LibGuide):
     """
     Through table for repeatable guides.
     """
-    page = ParentalKey(
-        'lib_collections.CollectingAreaPage', related_name='lib_guides'
-    )
+
+    page = ParentalKey('lib_collections.CollectingAreaPage', related_name='lib_guides')
 
 
 # Collecting Area page content type
@@ -1492,18 +1480,18 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
     """
     Content type for collecting area pages.
     """
+
     subject = models.ForeignKey(
         'subjects.Subject',
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_related'
+        related_name='%(app_label)s_%(class)s_related',
     )
     collecting_statement = StreamField(
         DefaultBodyFields(),
         blank=False,
         null=True,
-        use_json_field=True,
     )
     policy_link_text = models.CharField(max_length=255, blank=True, null=True)
     policy_link_url = models.URLField("Policy URL", blank=True, null=True)
@@ -1513,132 +1501,135 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
     )
     collection_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
     )
     reference_materials = RichTextField(blank=True, null=True)
     circulating_materials = RichTextField(blank=True, null=True)
-    archival_link_text = models.CharField(
-        max_length=255, blank=True, null=True)
+    archival_link_text = models.CharField(max_length=255, blank=True, null=True)
     archival_link_url = models.URLField("Archival URL", blank=True, null=True)
     first_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
     second_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
     third_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
     fourth_feature = models.ForeignKey(
         'wagtailcore.Page',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
-    supplementary_header = models.CharField(
-        max_length=255, blank=True, null=True
-    )
+    supplementary_header = models.CharField(max_length=255, blank=True, null=True)
     supplementary_text = RichTextField(blank=True, null=True)
 
     subpage_types = []
 
-    content_panels = Page.content_panels + [
-        FieldPanel('subject'),
-        FieldPanel('collecting_statement'),
-        MultiFieldPanel(
-            [
-                FieldPanel('policy_link_text'),
-                FieldPanel('policy_link_url'),
-            ],
-            heading='Collecting Policy Link',
-            classname='collapsible collapsed',
-        ),
-        FieldPanel('short_abstract'),
-        FieldPanel('thumbnail'),
-        FieldPanel('collection_location'),
-        InlinePanel('lib_guides', label='Subject Guides'),
-        MultiFieldPanel(
-            [
-                FieldPanel('reference_materials'),
-                FieldPanel('circulating_materials'),
-            ],
-            heading='Reference and Stacks Materials',
-            classname='collapsible collapsed',
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('archival_link_text'),
-                FieldPanel('archival_link_url'),
-            ],
-            heading='Archive Materials',
-            classname='collapsible collapsed',
-        ),
-        MultiFieldPanel(
-            [
-                PageChooserPanel(
-                    'first_feature', [
-                        'lib_collections.CollectionPage',
-                        'lib_collections.ExhibitPage'
-                    ]
-                ),
-                PageChooserPanel(
-                    'second_feature', [
-                        'lib_collections.CollectionPage',
-                        'lib_collections.ExhibitPage'
-                    ]
-                ),
-                PageChooserPanel(
-                    'third_feature', [
-                        'lib_collections.CollectionPage',
-                        'lib_collections.ExhibitPage'
-                    ]
-                ),
-                PageChooserPanel(
-                    'fourth_feature', [
-                        'lib_collections.CollectionPage',
-                        'lib_collections.ExhibitPage'
-                    ]
-                ),
-            ],
-            heading='Featured Collections and Exhibits',
-            classname='collapsible collapsed',
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('supplementary_header'),
-                FieldPanel('supplementary_text'),
-            ],
-            heading='Supplementary Text',
-            classname='collapsible collapsed',
-        ),
-        InlinePanel(
-            'related_collecting_areas', label='Related Collecting Area'
-        ),
-        InlinePanel(
-            'regional_collections',
-            label='Other Local Collections',
-            help_text=(
-                'Related collections that are held by other \
-                institutions, like BMRC, Newberry, etc.'
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel('subject'),
+            FieldPanel('collecting_statement'),
+            MultiFieldPanel(
+                [
+                    FieldPanel('policy_link_text'),
+                    FieldPanel('policy_link_url'),
+                ],
+                heading='Collecting Policy Link',
+                classname='collapsible collapsed',
             ),
-        )
-    ] + PublicBasePage.content_panels
+            FieldPanel('short_abstract'),
+            FieldPanel('thumbnail'),
+            FieldPanel('collection_location'),
+            InlinePanel('lib_guides', label='Subject Guides'),
+            MultiFieldPanel(
+                [
+                    FieldPanel('reference_materials'),
+                    FieldPanel('circulating_materials'),
+                ],
+                heading='Reference and Stacks Materials',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('archival_link_text'),
+                    FieldPanel('archival_link_url'),
+                ],
+                heading='Archive Materials',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    PageChooserPanel(
+                        'first_feature',
+                        [
+                            'lib_collections.CollectionPage',
+                            'lib_collections.ExhibitPage',
+                        ],
+                    ),
+                    PageChooserPanel(
+                        'second_feature',
+                        [
+                            'lib_collections.CollectionPage',
+                            'lib_collections.ExhibitPage',
+                        ],
+                    ),
+                    PageChooserPanel(
+                        'third_feature',
+                        [
+                            'lib_collections.CollectionPage',
+                            'lib_collections.ExhibitPage',
+                        ],
+                    ),
+                    PageChooserPanel(
+                        'fourth_feature',
+                        [
+                            'lib_collections.CollectionPage',
+                            'lib_collections.ExhibitPage',
+                        ],
+                    ),
+                ],
+                heading='Featured Collections and Exhibits',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('supplementary_header'),
+                    FieldPanel('supplementary_text'),
+                ],
+                heading='Supplementary Text',
+                classname='collapsible collapsed',
+            ),
+            InlinePanel('related_collecting_areas', label='Related Collecting Area'),
+            InlinePanel(
+                'regional_collections',
+                label='Other Local Collections',
+                help_text=(
+                    'Related collections that are held by other \
+                institutions, like BMRC, Newberry, etc.'
+                ),
+            ),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('subject'),
@@ -1685,7 +1676,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             page = Page.objects.get(id=page_id)
             title = str(page)
             url = page.relative_url(site)
-        except (Page.DoesNotExist):
+        except Page.DoesNotExist:
             return ('', '')
         return (title, url)
 
@@ -1710,9 +1701,7 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         url = librarian.public_page.relative_url(site)
         thumb = librarian.profile_picture
         try:
-            email = librarian.staff_page_email.values_list(
-                'email', flat=True
-            )[0]
+            email = librarian.staff_page_email.values_list('email', flat=True)[0]
         except:
             email = ''
         phone_and_fac = tuple(
@@ -1759,13 +1748,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         librarians = StaffPage.objects.live()
         subject_specialists = set([])
         for staff in librarians:
-            intersecting = len(
-                staff.get_subject_objects().intersection(subjects)
-            ) > 0
+            intersecting = len(staff.get_subject_objects().intersection(subjects)) > 0
             if intersecting:
-                subject_specialists.add(
-                    self._build_subject_specialist(staff, site)
-                )
+                subject_specialists.add(self._build_subject_specialist(staff, site))
         related['subject_specialists'] = subject_specialists
         return related
 
@@ -1785,16 +1770,19 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         """
         retval = []
         features = [
-            self.first_feature, self.second_feature, self.third_feature,
-            self.fourth_feature
+            self.first_feature,
+            self.second_feature,
+            self.third_feature,
+            self.fourth_feature,
         ]
         for feature in features:
             if feature:
                 retval.append(
                     (
-                        str(feature), feature.relative_url(site),
+                        str(feature),
+                        feature.relative_url(site),
                         feature.specific.short_abstract,
-                        feature.specific.thumbnail
+                        feature.specific.thumbnail,
                     )
                 )
         return retval
@@ -1810,15 +1798,13 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         limit = -1
         context['related_collections'] = sorted(related['collections'])[:limit]
         context['related_exhibits'] = sorted(related['exhibits'])[:limit]
-        context['related_subject_specialists'] = sorted(
-            related['subject_specialists']
-        )
+        context['related_subject_specialists'] = sorted(related['subject_specialists'])
         context['features'] = self.get_features(current_site)
         context['lib_guides'] = self.lib_guides.get_object_list()
 
         try:
             regional_collections = self.regional_collections.all()
-        except (AttributeError):
+        except AttributeError:
             regional_collections = []
         context['regional_collections'] = regional_collections
         return context
@@ -1828,12 +1814,10 @@ class ExhibitPageSubjectPlacement(Orderable, models.Model):
     page = ParentalKey(
         'lib_collections.ExhibitPage',
         on_delete=models.CASCADE,
-        related_name='exhibit_subject_placements'
+        related_name='exhibit_subject_placements',
     )
     subject = models.ForeignKey(
-        'subjects.Subject',
-        on_delete=models.CASCADE,
-        related_name='exhibit_pages'
+        'subjects.Subject', on_delete=models.CASCADE, related_name='exhibit_pages'
     )
 
     class Meta:
@@ -1854,12 +1838,13 @@ class ExhibitPageRelatedCollectionPagePlacement(Orderable, models.Model):
     Creates a through table to attach related CollectionPages to
     the ExhibitPage type.
     """
+
     parent = ParentalKey(
         'lib_collections.ExhibitPage',
         related_name='exhibit_page_related_collection_placement',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     related_collection = models.ForeignKey(
@@ -1867,7 +1852,7 @@ class ExhibitPageRelatedCollectionPagePlacement(Orderable, models.Model):
         related_name='exhibit_page_related_collection',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -1876,12 +1861,13 @@ class ExhibitPageDonorPagePlacement(Orderable, models.Model):
     """
     Create a through table for linking donor pages to exhibit pages
     """
+
     parent = ParentalKey(
         'lib_collections.ExhibitPage',
         related_name='exhibit_page_donor_page_list_placement',
         null=True,
         blank=False,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     donor = models.ForeignKey(
@@ -1889,7 +1875,7 @@ class ExhibitPageDonorPagePlacement(Orderable, models.Model):
         related_name='exhibit_page_donor_page',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -1897,22 +1883,18 @@ class ExhibitPage(PublicBasePage):
     """
     Pages for individual exhibits.
     """
+
     extra_exhibit_info = RichTextField(
-        blank=True,
-        help_text='Additional unique information for accessing exhibit'
+        blank=True, help_text='Additional unique information for accessing exhibit'
     )
     acknowledgments = models.TextField(null=False, blank=True, default='')
     short_abstract = models.TextField(
-        null=False,
-        blank=False,
-        default='',
-        help_text='Shown in Exhibit browse view'
+        null=False, blank=False, default='', help_text='Shown in Exhibit browse view'
     )
     full_description = StreamField(
         DefaultBodyFields(),
         blank=True,
         null=True,
-        use_json_field=True,
     )
     thumbnail = models.ForeignKey(
         'wagtailimages.Image',
@@ -1920,13 +1902,13 @@ class ExhibitPage(PublicBasePage):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Shown in browse view and widgets'
+        help_text='Shown in browse view and widgets',
     )
     thumbnail_caption = models.TextField(
         null=False,
         blank=True,
         default='',
-        help_text='Optional. Displays under thumbnail if NOT a web exhibit.'
+        help_text='Optional. Displays under thumbnail if NOT a web exhibit.',
     )
     staff_contact = models.ForeignKey(
         'staff.StaffPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -1937,12 +1919,12 @@ class ExhibitPage(PublicBasePage):
     exhibit_open_date = models.DateField(
         blank=True,
         null=True,
-        help_text='Controls when an exhibit starts being featured as "current" in browse and widgets.'
+        help_text='Controls when an exhibit starts being featured as "current" in browse and widgets.',
     )
     exhibit_close_date = models.DateField(
         blank=True,
         null=True,
-        help_text='When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.'
+        help_text='When exhibit stops being featured as "current." If "space type" is "Online" end date will not display.',
     )
     exhibit_location = models.ForeignKey(
         'public.LocationPage', null=True, blank=True, on_delete=models.SET_NULL
@@ -1950,16 +1932,12 @@ class ExhibitPage(PublicBasePage):
     exhibit_daily_hours = models.CharField(
         blank=True, null=False, default='', max_length=255
     )
-    exhibit_cost = models.CharField(
-        blank=True, null=False, default='', max_length=255
-    )
+    exhibit_cost = models.CharField(blank=True, null=False, default='', max_length=255)
     space_type = models.CharField(
         null=False,
         blank=True,
-        choices=(
-            ('Case', 'Case'), ('Gallery', 'Gallery'), ('Online', 'Online')
-        ),
-        max_length=255
+        choices=(('Case', 'Case'), ('Gallery', 'Gallery'), ('Online', 'Online')),
+        max_length=255,
     )
     web_exhibit_url = models.URLField("Web Exhibit URL", blank=True)
     publication_description = models.CharField(
@@ -1979,14 +1957,14 @@ class ExhibitPage(PublicBasePage):
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
     exhibit_text_document = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     exhibit_checklist_link_external = models.URLField(
@@ -1997,14 +1975,14 @@ class ExhibitPage(PublicBasePage):
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
     exhibit_checklist_document = models.ForeignKey(
         'wagtaildocs.Document',
         null=True,
         blank=True,
         related_name='+',
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     # Web exhibit fields
@@ -2012,30 +1990,27 @@ class ExhibitPage(PublicBasePage):
         default=False, help_text='Turns on custom styling'
     )
     hex_regex = RegexValidator(
-        regex='^#[a-zA-Z0-9]{6}$',
-        message='Please enter a hex color, e.g. #012043'
+        regex='^#[a-zA-Z0-9]{6}$', message='Please enter a hex color, e.g. #012043'
     )
-    branding_color = models.CharField(
-        validators=[hex_regex], max_length=7, blank=True
-    )
+    branding_color = models.CharField(validators=[hex_regex], max_length=7, blank=True)
     google_font_link = models.URLField(
         blank=True, help_text='Google fonts link to embedd in the header'
     )
     font_family = models.CharField(
         max_length=100,
         blank=True,
-        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif'
+        help_text='CSS font-family value, e.g. \'Roboto\', sans-serif',
     )
 
     font_scaler = models.FloatField(
         blank=True,
         null=True,
-        help_text='Enter a value between 0 and 1 for a smaller font. Enter a value greater than 1 for a larger font. e.g. 0.5, 1.5, or 2'
+        help_text='Enter a value between 0 and 1 for a smaller font. Enter a value greater than 1 for a larger font. e.g. 0.5, 1.5, or 2',
     )
     font_kerning = models.FloatField(
         null=True,
         blank=True,
-        help_text='Enter a positive number to increase spacing between letters, or a negative number to reduce spacing. Decimal values are okay. e.g. 2.5 or -1.25'
+        help_text='Enter a positive number to increase spacing between letters, or a negative number to reduce spacing. Decimal values are okay. e.g. 2.5 or -1.25',
     )
 
     subpage_types = ['lib_collections.ExhibitChildPage']
@@ -2049,7 +2024,7 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('banner_title'),
                 FieldPanel('banner_subtitle'),
             ],
-            heading='Theme styling'
+            heading='Theme styling',
         ),
         MultiFieldPanel(
             [
@@ -2059,106 +2034,109 @@ class ExhibitPage(PublicBasePage):
                 FieldPanel('font_scaler'),
                 FieldPanel('font_kerning'),
             ],
-            heading='Custom color and fonts'
+            heading='Custom color and fonts',
         ),
     ]
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [
-                FieldPanel('short_abstract'),
-                FieldPanel('thumbnail'),
-                FieldPanel('thumbnail_caption')
-            ],
-            heading='Browse View'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('exhibit_open_date'),
-                FieldPanel('exhibit_close_date'),
-            ],
-            heading='Dates'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('student_exhibit'),
-                FieldPanel('acknowledgments'),
-                InlinePanel(
-                    'exhibit_page_donor_page_list_placement', label='Donor'
-                )
-            ],
-            heading='Acknowledgments and Donors',
-            classname='collapsible collapsed'
-        ),
-        FieldPanel('full_description'),
-        InlinePanel('exhibit_subject_placements', label='Subjects'),
-        InlinePanel(
-            'exhibit_page_related_collection_placement',
-            label='Related Collection'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('exhibit_location'),
-                FieldPanel('space_type'),
-                FieldPanel('extra_exhibit_info')
-            ],
-            heading='Visiting information'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('exhibit_daily_hours'),
-                FieldPanel('exhibit_cost'),
-            ],
-            heading='Extra Visiting Information',
-            classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('publication_description'),
-                FieldPanel('publication_price'),
-                FieldPanel('ordering_information'),
-                FieldPanel(
-                    'publication_url',
-                    help_text='If exhibit publication is hosted outside of Library site'
-                ),
-                FieldPanel(
-                    'web_exhibit_url',
-                    help_text='If exhibit is hosted outside of Library site'
-                ),
-            ],
-            heading='Exhibit Publications',
-            classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('exhibit_checklist_link_external'),
-                PageChooserPanel('exhibit_checklist_link_page'),
-                FieldPanel('exhibit_checklist_document')
-            ],
-            heading='Exhibit Checklist (Choose One or None)',
-            classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('exhibit_text_link_external'),
-                PageChooserPanel('exhibit_text_link_page'),
-                FieldPanel('exhibit_text_document')
-            ],
-            heading='Physical Exhibit Texts (Choose One or None)',
-            classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [FieldPanel('staff_contact'),
-             FieldPanel('unit_contact')],
-            heading='Staff or Unit Contact'
-        )
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            MultiFieldPanel(
+                [
+                    FieldPanel('short_abstract'),
+                    FieldPanel('thumbnail'),
+                    FieldPanel('thumbnail_caption'),
+                ],
+                heading='Browse View',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('exhibit_open_date'),
+                    FieldPanel('exhibit_close_date'),
+                ],
+                heading='Dates',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('student_exhibit'),
+                    FieldPanel('acknowledgments'),
+                    InlinePanel(
+                        'exhibit_page_donor_page_list_placement', label='Donor'
+                    ),
+                ],
+                heading='Acknowledgments and Donors',
+                classname='collapsible collapsed',
+            ),
+            FieldPanel('full_description'),
+            InlinePanel('exhibit_subject_placements', label='Subjects'),
+            InlinePanel(
+                'exhibit_page_related_collection_placement', label='Related Collection'
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('exhibit_location'),
+                    FieldPanel('space_type'),
+                    FieldPanel('extra_exhibit_info'),
+                ],
+                heading='Visiting information',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('exhibit_daily_hours'),
+                    FieldPanel('exhibit_cost'),
+                ],
+                heading='Extra Visiting Information',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('publication_description'),
+                    FieldPanel('publication_price'),
+                    FieldPanel('ordering_information'),
+                    FieldPanel(
+                        'publication_url',
+                        help_text='If exhibit publication is hosted outside of Library site',
+                    ),
+                    FieldPanel(
+                        'web_exhibit_url',
+                        help_text='If exhibit is hosted outside of Library site',
+                    ),
+                ],
+                heading='Exhibit Publications',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('exhibit_checklist_link_external'),
+                    PageChooserPanel('exhibit_checklist_link_page'),
+                    FieldPanel('exhibit_checklist_document'),
+                ],
+                heading='Exhibit Checklist (Choose One or None)',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel('exhibit_text_link_external'),
+                    PageChooserPanel('exhibit_text_link_page'),
+                    FieldPanel('exhibit_text_document'),
+                ],
+                heading='Physical Exhibit Texts (Choose One or None)',
+                classname='collapsible collapsed',
+            ),
+            MultiFieldPanel(
+                [FieldPanel('staff_contact'), FieldPanel('unit_contact')],
+                heading='Staff or Unit Contact',
+            ),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.FilterField('exhibit_open_date'),
         index.FilterField('exhibit_close_date'),
         index.FilterField('title'),
         index.FilterField('web_exhibit_url'),
+        index.FilterField('web_exhibit'),
         index.SearchField('short_abstract'),
         index.SearchField('full_description'),
         index.SearchField('thumbnail'),
@@ -2178,9 +2156,7 @@ class ExhibitPage(PublicBasePage):
         [
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
+            ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
             ObjectList(web_exhibit_panels, heading='Web Exhibit'),
         ]
     )
@@ -2249,7 +2225,7 @@ class ExhibitPage(PublicBasePage):
         # building = self.location_and_hours['page_location'].id
         img = {
             SCRC_BUILDING_ID: SCRC_EXHIBIT_FOOTER_IMG,
-            CRERAR_BUILDING_ID: CRERAR_EXHIBIT_FOOTER_IMG
+            CRERAR_BUILDING_ID: CRERAR_EXHIBIT_FOOTER_IMG,
         }
         if building in img:
             return Image.objects.get(id=img[building])
@@ -2274,9 +2250,13 @@ class ExhibitPage(PublicBasePage):
         if collections:
             for collection in collections:
                 if collection.related_collection:
-                    related_collections += '<li><a href="' + collection.related_collection.relative_url(
-                        current_site
-                    ) + '">' + collection.related_collection.title + '</a></li>'
+                    related_collections += (
+                        '<li><a href="'
+                        + collection.related_collection.relative_url(current_site)
+                        + '">'
+                        + collection.related_collection.title
+                        + '</a></li>'
+                    )
             return related_collections + '</ul>'
         return None
 
@@ -2317,9 +2297,7 @@ class ExhibitPage(PublicBasePage):
         unit_link_text = lazy_dotchain(lambda: self.unit.link_text, '')
         unit_link_external = lazy_dotchain(lambda: self.unit.link_external, '')
         unit_link_page = lazy_dotchain(lambda: self.unit.link_page.url, '')
-        unit_link_document = lazy_dotchain(
-            lambda: self.unit.link_document.file.url, ''
-        )
+        unit_link_document = lazy_dotchain(lambda: self.unit.link_document.file.url, '')
 
         context = super(ExhibitPage, self).get_context(request)
         footer_img = self.get_web_exhibit_footer_img(
@@ -2363,14 +2341,17 @@ class ExhibitChildPage(PublicBasePage):
     body = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
 
     subpage_types = ['lib_collections.ExhibitChildPage']
 
-    content_panels = Page.content_panels + [
-        FieldPanel('body'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel('body'),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
         index.SearchField('body'),
@@ -2393,9 +2374,7 @@ class ExhibitChildPage(PublicBasePage):
         context['footer_img'] = footer_img
         context['has_exhibit_footer'] = not (not footer_img)
         context['is_web_exhibit'] = True
-        context['related_collections'] = exhibit.get_related_collections(
-            request
-        )
+        context['related_collections'] = exhibit.get_related_collections(request)
         context['exhibit_open_date'] = exhibit.exhibit_open_date
         context['exhibit_close_date'] = exhibit.exhibit_close_date
         context['exhibit_close_date'] = exhibit.exhibit_location

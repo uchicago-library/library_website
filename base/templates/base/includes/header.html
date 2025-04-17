@@ -1,4 +1,5 @@
 {% load static %}
+<script src="{% static "base/js/voc-button.js" %}"></script>
 <!-- Top Navigation -->
 <nav aria-label="main" class="navbar navbar-default"> <!-- Navwrapper -->
     <!-- Mobile top right nav -->
@@ -197,23 +198,25 @@
                     <a href="#" data-ga-category="main-nav-links" data-ga-action="pulldown" data-ga-label="Collections &amp; Exhibits" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collections <span class="hidden-sm hidden-md">&amp; Exhibits</span> <span class="caret"></span></a>
                     <ul class="dropdown-menu twocol-drop">
 
-                        <!-- Collection/Exhibits > Collections sub-column -->
                         <li class="col-sm-6 ul-left"><span class="visually-hidden" role="heading" aria-level="2" id="collex_materials">Collection Materials</span> <!-- Formatted like this for ADA purposes since Collection and Exhibit division is for visual reasons only. -->
                             <ul class="list-unstyled" aria-labelledby="collex_materials">
+                                
+                                <!-- Collection/Exhibits > Collections sub-column -->
                                 <li class="twocol-head" role="heading" aria-level="3">Collections</li>
                                 <li role="separator" class="divider visible-xs" role="presentation"></li>
                                 <li><a href="/collex/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Notable Collections">Notable Collections</a></li>
                                 <li><a href="/collex/?digital=on&view=collections" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Digital Collections">Digital Collections</a></li>
                                 <li><a href="/collex/?view=subjects" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Collecting Areas by Subject">Collecting Areas by Subject</a></li>
                                 <li><a href="/collex/collections/other-local-collections/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Other Local Collections">Other Local Collections</a></li>
-                                <li role="separator" class="divider hidden-xs" role="presentation"></li>
                                 <!-- // Collection/Exhibits > Collections sub-column -->
-
-                                <!-- // Collection/Exhibits > Exhibits sub-column -->
+                                
+                                <!-- Collection/Exhibits > Exhibits sub-column -->
+                                <li role="separator" class="divider hidden-xs" role="presentation"></li>
                                 <li class="twocol-head" role="heading" aria-level="3">Exhibits</li>
                                 <li role="separator" class="divider visible-xs" role="presentation"></li>
                                 <li><a href="/collex/?view=exhibits" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; All Exhibits">All Exhibits</a></li>
                                 <li><a href="/collex/?digital=on&view=exhibits" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="Collections &amp; Exhibits &gt; Web Exhibits">Web Exhibits</a></li>
+                                <!-- // Collection/Exhibits > Exhibits sub-column -->
                             </ul>
                         </li>
                         <!-- // Collection/Exhibits > Exhibits sub-column -->
@@ -232,7 +235,6 @@
                     </ul>
                 </li>
                 <!-- // Collection/Exhibits Dropdown -->
-
 
                 <!-- Spaces  Dropdown
                         <li class="dropdown">
@@ -320,24 +322,33 @@
                                 <li><a href="/about/directory/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Departments &amp; Staff">Departments &amp; Staff</a></li>
                                 <li><a href="/about/thelibrary/employment/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Employment">Employment</a></li>
                                 <li><a href="/about/thelibrary/policies/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Library Policies">Library Policies</a></li>
-                                <li><a href="/about/thelibrary/surveys/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Library Surveys &amp; Reports">Library Surveys &amp; Reports</a></li>
                                 <li><a href="/about/thelibrary/committees/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Library Boards &amp; Committees">Library Boards &amp; Committees</a></li>
                                 <li><a href="/about/thelibrary/supportus/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Support the Library">Support the Library</a></li>
                             </ul>
                         </li>
                         <!-- // About > Library column -->
 
-                        <!-- About > News column -->
+                        <!-- About > News & Programs column -->
                         <li class="col-sm-6"><span class="twocol-head" role="heading" aria-level="2" id="about_news">News &amp; Events</span>
                             <ul class="list-unstyled" aria-labelledby="about_news">
+                                
+                                <!-- About > News sub-column -->
                                 <li role="separator" class="divider visible-xs" role="presentation"></li>
                                 <li><a href="/about/news/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; News">News</a></li>
                                 <li><a href="/about/news-events/events/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Workshops &amp; Events">Workshops &amp; Events</a></li>
                                 <li><a href="/about/thelibrary/conferences/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Conferences">Conferences</a></li>
                                 <li><a href="/about/news-events/libra" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Libra (newsletter)">Libra Newsletter</a></li>
                                 <li><a href="/about/news-events/social-media/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Social Media Directory">Social Media Directory</a></li>
+                                <!-- // About > News sub-column -->
+
+                                <!-- About > Programs sub-column -->
+                                <li role="separator" class="divider hidden-xs" role="presentation"></li>
+                                <li class="twocol-head" role="heading" aria-level="3">Programs</li>
+                                <li role="separator" class="divider visible-xs" role="presentation"></li>
+                                <li><a href="/about/kim-park-program-for-the-study-of-the-book/" data-ga-category="main-nav-links" data-ga-action="click" data-ga-label="About &gt; Programs">Kim-Park Program for the Study of the Book</a></li>
+                                <!-- // About > Programs sub-column -->
                             </ul>
-                        </li>
+                        </li>                        
                         <!-- // About > News column -->
                     </ul>
                 </li>

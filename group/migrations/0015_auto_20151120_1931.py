@@ -7,7 +7,8 @@ import base.models
 import wagtail.fields
 import datetime
 import wagtail.images.blocks
-from django.utils.timezone import utc
+
+utc = datetime.timezone.utc
 
 
 class Migration(migrations.Migration):

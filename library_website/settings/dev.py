@@ -10,11 +10,6 @@ SECRET_KEY = 'z%4u$f(8jjkp@qqd$4g+w_xrbco3xbakg9=abrb*1ic7g@o*xc'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
-COMPRESS_OFFLINE_TIMEOUT = 3
-COMPRESS_REBUILD_TIMEOUT = 3
-
 # Restricted directory locked down to campus by shib
 RESTRICTED = 7163
 

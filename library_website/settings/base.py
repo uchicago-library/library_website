@@ -190,6 +190,11 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = False
+COMPRESS_OFFLINE_TIMEOUT = 3
+COMPRESS_REBUILD_TIMEOUT = 3
+
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
 
 # Phone number format
@@ -564,7 +569,9 @@ MARKLOGIC_LDR_URL = "%s:%i%s" % (MARKLOGIC_LDR_BASE,
 
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
-# "http://marklogic.lib.uchicago.edu:8011/admin/gimme.xqy?collection=institution%2FUniversity%20of%20Chicago")
+E_FINDING_AIDS_URL = "http://www.lib.uchicago.edu/e/scrc/findingaids/view.php"
+E_FINDING_AIDS_QUERY_STRING = "?eadid=" 
+E_FINDING_AIDS = E_FINDING_AIDS_URL + E_FINDING_AIDS_QUERY_STRING
 
 EBOOKS_SEARCH = 'https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor='
 

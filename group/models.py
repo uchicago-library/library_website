@@ -20,7 +20,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-GROUP_PAGE_CONTENT_TYPES = ['group | group page', 'group | group index page']
+GROUP_PAGE_CONTENT_TYPES = ['Group | group page', 'Group | group index page']
 
 
 def default_end_time():
@@ -47,7 +47,7 @@ class GroupMemberRole(models.Model, index.Indexed):
         return self.text
 
     search_fields = [
-        index.SearchField('text', partial_match=True),
+        index.AutocompleteField('text'),
     ]
 
 
@@ -234,12 +234,10 @@ class GroupPage(BasePage, Email):
     intro = StreamField(
         DefaultBodyFields(),
         blank=True,
-        use_json_field=True,
     )
     is_active = models.BooleanField(default=True)
     body = StreamField(
         DefaultBodyFields(),
-        use_json_field=True,
     )
 
     content_panels = (
@@ -416,8 +414,8 @@ class GroupMeetingMinutesPage(BasePage):
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('get_mm_summaries_for_indexing', partial_match=True),
-        index.SearchField('get_mm_doc_links_for_indexing', partial_match=True),
+        index.AutocompleteField('get_mm_summaries_for_indexing'),
+        index.AutocompleteField('get_mm_doc_links_for_indexing'),
     ]
 
     subpage_types = ['base.IntranetPlainPage']
@@ -521,8 +519,8 @@ class GroupReportsPage(BasePage):
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('get_report_summaries_for_indexing', partial_match=True),
-        index.SearchField('get_report_doc_links_for_indexing', partial_match=True),
+        index.AutocompleteField('get_report_summaries_for_indexing'),
+        index.AutocompleteField('get_report_doc_links_for_indexing'),
     ]
 
     subpage_types = ['base.IntranetPlainPage']
@@ -582,8 +580,11 @@ class GroupIndexPage(BasePage):
     Receptacle page for holding groups.
     """
 
-    max_count = 1
-    subpage_types = ['group.GroupPage']
+    subpage_types = [
+        'group.GroupPage',
+        'group.GroupIndexPage',
+        'base.IntranetPlainPage',
+    ]
     intro = RichTextField()
 
     content_panels = (
@@ -599,8 +600,8 @@ class GroupIndexPage(BasePage):
 
         groups_active = [
             {
-                'title': GroupIndexPage.objects.first().title,
-                'url': GroupIndexPage.objects.first().url,
+                'title': self.title,
+                'url': self.url,
                 'children': [],
             }
         ]
@@ -611,11 +612,11 @@ class GroupIndexPage(BasePage):
         # create it. Then continue on, one descendant at a time, either adding
         # new levels or using the existing ones if they're already there
         # from previous group pages.
-        for grouppage in GroupPage.objects.live().filter(is_active=True):
+        for grouppage in (
+            GroupPage.objects.live().descendant_of(self).filter(is_active=True)
+        ):
             ancestors = (
-                [GroupIndexPage.objects.first()]
-                + list(GroupPage.objects.ancestor_of(grouppage))
-                + [grouppage]
+                [self] + list(GroupPage.objects.ancestor_of(grouppage)) + [grouppage]
             )
             currentlevel = groups_active
             while ancestors:
@@ -667,11 +668,26 @@ class GroupIndexPage(BasePage):
 
         groups_active_html = get_html(groups_active[0]['children'])
 
-        context['groups_active_html'] = groups_active_html
-        context['groups_inactive'] = list(
+        inactive_children = (
+            GroupPage.objects.live()
+            .descendant_of(self)
+            .filter(is_active=False)
+            .order_by('title')
+        )
+        index_children = GroupIndexPage.objects.live().descendant_of(self)
+        for index_child in index_children:
+            for inactive_child in inactive_children:
+                if inactive_child.is_descendant_of(index_child):
+                    inactive_children = inactive_children.not_descendant_of(index_child)
+
+        inactive_children = list(
             map(
                 lambda g: {'title': g.title, 'url': g.url},
-                GroupPage.objects.live().filter(is_active=False).order_by('title'),
+                inactive_children,
             )
         )
+
+        context['groups_active_html'] = groups_active_html
+        context['groups_inactive'] = inactive_children
+
         return context

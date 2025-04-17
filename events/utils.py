@@ -36,7 +36,12 @@ def get_entries_from_events_uchicago(x):
         guid = entry.find('link').text
 
         start_date = entry.find('startDate').text.strip()
-        start_time = entry.find('startTime').text.strip()
+        start_time = entry.find('startTime').text
+
+        if start_time:
+            start_time = start_time.strip()
+        else:
+            start_time = ''
 
         end_date = ''
         sortable_end_date = ''
@@ -56,11 +61,14 @@ def get_entries_from_events_uchicago(x):
             end_time = entry.find('endTime').text.strip()
 
         sortable_date = datetime.strptime(start_date, '%b %d, %Y').strftime('%Y-%m-%d')
-        sortable_datetime = (
-            sortable_date
-            + ' '
-            + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
-        )
+        try:
+            sortable_datetime = (
+                sortable_date
+                + ' '
+                + datetime.strptime(start_time, '%I:%M %p').strftime('%H:%M')
+            )
+        except (ValueError):
+            sortable_datetime = (sortable_date + ' ' + '')
 
         start_date_short_form = datetime.strptime(start_date, '%b %d, %Y').strftime(
             '%m/%d'
