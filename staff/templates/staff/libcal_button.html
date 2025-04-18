@@ -2,6 +2,8 @@
 
 {% if libcal_id %}
 	<!-- libcal button with jquery no conflict -->
+	
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
     var $jq3 = jQuery.noConflict(true);
     $jq3.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
