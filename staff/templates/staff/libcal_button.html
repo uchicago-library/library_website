@@ -1,6 +1,7 @@
 {% load staff_tags %}
 
 {% if libcal_id %}
+	<!-- libcal button with jquery no conflict -->
     <script>
     var $jq3 = jQuery.noConflict(true);
     $jq3.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
