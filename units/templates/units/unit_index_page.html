@@ -1,5 +1,5 @@
 {% extends "base/public_base.html" %}
-{% load cache %}
+{% load cache static %}
 {% load units_tags %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
@@ -7,6 +7,8 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
+
+
     <div class="col-xs-12 col-md-9 centermain">
         <div class="row">
 
@@ -115,3 +117,8 @@
     </div>
 {% endblock %}
 
+{% block extra_scripts %}
+    {# for the libcal "schedule an appointment" button  #}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
+{% endblock %}

@@ -33,9 +33,9 @@
         </div>
         <div class="profile-image">
             {% if staff_page.profile_picture %}
-                {% image staff_page.profile_picture fill-100x100 %}
+                {% image staff_page.profile_picture fill-100x100 loading="lazy" %}
             {% else %}
-                {% image default_image fill-100x100 alt="" %}
+                {% image default_image fill-100x100 alt="" loading="lazy" %}
             {% endif %}
         </div>
     </article>
