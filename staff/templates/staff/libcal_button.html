@@ -2,10 +2,11 @@
 
 {% if libcal_id %}
     <script>
-	jQuery.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
-	    var id_num = "{{ libcal_id }}";
-	    jQuery("#mysched_{{ libcal_id }}").LibCalMySched({iid: 482, lid: 0, gid: 0, uid: id_num, width: 560, height: 680, title: 'Make an Appointment', domain: 'https://api3.libcal.com'});
-	});
+    var $jq3 = jQuery.noConflict(true);
+    $jq3.getScript("https://api3.libcal.com/js/myscheduler.min.js", function() {
+        var id_num = "{{ libcal_id }}";
+        $jq3("#mysched_{{ libcal_id }}").LibCalMySched({iid: 482, lid: 0, gid: 0, uid: id_num, width: 560, height: 680, title: 'Make an Appointment', domain: 'https://api3.libcal.com'});
+    });
     </script>
-<button id="mysched_{{ libcal_id }}" href="#">Schedule Appointment</button>
+    <button id="mysched_{{ libcal_id }}" href="#">Schedule Appointment</button>
 {% endif %}

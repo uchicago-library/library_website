@@ -43,6 +43,8 @@
                 <a href="mailto:{{ email|urlencode }}">{{ email }}</a><br>
             {% endif %}
             {% staff_faculty_exchanges_phone_numbers staff_page %}
+    <!-- for the libcal "schedule an appointment" button -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
             {% libcal_button staff_page email %}
         </p>
     </div>
@@ -84,4 +86,9 @@
             </p>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+    {# for the libcal "schedule an appointment" button  #}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 {% endblock %}
