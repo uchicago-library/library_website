@@ -605,7 +605,10 @@
         <script src='https://www.lib.uchicago.edu/clickheat/js/clickheat.js'></script>
         <script src='/static/base/js/clickheat-config.js'></script>
 
-        {% block extra_scripts %}{% endblock %}
+        <!-- extra scripts -->
+        {% block extra_scripts %}
+            <!-- extra scripts block: base.html -->
+        {% endblock %}
         {% if is_hours_page %}
             <script>
                 // >> Crerar << //
@@ -680,7 +683,10 @@
                 });
             </script>
         {% endif %}
-        {% block js %}{% endblock %}
+        <!-- js block -->
+        {% block js %}
+            <!-- js block: base.html -->
+        {% endblock %}
         <!-- // Scripts -->
     </body>
 </html>
