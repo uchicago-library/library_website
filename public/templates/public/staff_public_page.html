@@ -1,6 +1,7 @@
 {% extends "base/public_base.html" %}
 {% load staff_tags %}
 {% load units_tags %}
+{% load static %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
@@ -84,4 +85,10 @@
             </p>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+    {# for the libcal "schedule an appointment" button  #}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
 {% endblock %}
