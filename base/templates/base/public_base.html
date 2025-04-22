@@ -608,10 +608,10 @@
         {% block extra_scripts %}
             {% if request.path == '/' %}
                 {# for the libcal "schedule an appointment" button #}
-                <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
                 <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
             {% endif %}
         {% endblock %}
+
         {% if is_hours_page %}
             <script>
                 // >> Crerar << //
