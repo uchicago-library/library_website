@@ -7,10 +7,11 @@ from xml.etree import ElementTree
 
 from library_website.settings import UC_EVENTS_BASE
 
-DATE_FORMAT_DISPLAY = '%b %d, %Y'      # 'Apr 28, 2025'
-DATE_FORMAT_SORTABLE = '%Y-%m-%d'      # '2025-04-28'
-DATE_FORMAT_TIME = '%I:%M %p'          # '9:00 am'
-DATE_FORMAT_SHORT = '%m/%d'            # '04/28'
+DATE_FORMAT_DISPLAY = '%b %d, %Y'  # 'Apr 28, 2025'
+DATE_FORMAT_SORTABLE = '%Y-%m-%d'  # '2025-04-28'
+DATE_FORMAT_TIME = '%I:%M %p'  # '9:00 am'
+DATE_FORMAT_SHORT = '%m/%d'  # '04/28'
+
 
 def get_xml_from_feed(feed):
     p = urlparse(feed)
@@ -52,31 +53,33 @@ def get_entries_from_events_uchicago(x):
         end_date_short_form = ''
         if entry.find('endDate').text:
             end_date = entry.find('endDate').text.strip()
-            sortable_end_date = datetime.strptime(end_date, DATE_FORMAT_DISPLAY).strftime(
-                DATE_FORMAT_SORTABLE
-            )
-            end_date_short_form = datetime.strptime(end_date, DATE_FORMAT_DISPLAY).strftime(
-                DATE_FORMAT_SHORT
-            )
+            sortable_end_date = datetime.strptime(
+                end_date, DATE_FORMAT_DISPLAY
+            ).strftime(DATE_FORMAT_SORTABLE)
+            end_date_short_form = datetime.strptime(
+                end_date, DATE_FORMAT_DISPLAY
+            ).strftime(DATE_FORMAT_SHORT)
 
         end_time = ''
 
         if entry.find('endTime').text:
             end_time = entry.find('endTime').text.strip()
 
-        sortable_date = datetime.strptime(start_date, DATE_FORMAT_DISPLAY).strftime(DATE_FORMAT_SORTABLE)
+        sortable_date = datetime.strptime(start_date, DATE_FORMAT_DISPLAY).strftime(
+            DATE_FORMAT_SORTABLE
+        )
         try:
             sortable_datetime = (
                 sortable_date
                 + ' '
                 + datetime.strptime(start_time, DATE_FORMAT_TIME).strftime('%H:%M')
             )
-        except (ValueError):
-            sortable_datetime = (sortable_date + ' ' + '')
+        except ValueError:
+            sortable_datetime = sortable_date + ' ' + ''
 
-        start_date_short_form = datetime.strptime(start_date, DATE_FORMAT_DISPLAY).strftime(
-            DATE_FORMAT_SHORT
-        )
+        start_date_short_form = datetime.strptime(
+            start_date, DATE_FORMAT_DISPLAY
+        ).strftime(DATE_FORMAT_SHORT)
 
         title = entry.find('title').text
 
@@ -128,11 +131,14 @@ def expand_multiday_entries(entries, nudge_to_date):
         if (
             entries[i]['end_date'].strip() == ''
             or entries[i]['start_date'] == entries[i]['end_date']
-            or datetime.strptime(entries[i]['end_date'], DATE_FORMAT_DISPLAY).date() > nudge_to_date
+            or datetime.strptime(entries[i]['end_date'], DATE_FORMAT_DISPLAY).date()
+            > nudge_to_date
         ):
             entries_out.append(entries[i])
         else:
-            start_date = datetime.strptime(entries[i]['start_date'], DATE_FORMAT_DISPLAY)
+            start_date = datetime.strptime(
+                entries[i]['start_date'], DATE_FORMAT_DISPLAY
+            )
             current_date = start_date
             end_date = datetime.strptime(entries[i]['end_date'], DATE_FORMAT_DISPLAY)
             while current_date <= end_date:
@@ -140,8 +146,12 @@ def expand_multiday_entries(entries, nudge_to_date):
                     # using dict() makes a new copy.
                     tmp = dict(entries[i])
                     tmp['sortable_date'] = current_date.strftime(DATE_FORMAT_SORTABLE)
-                    tmp['sortable_date_label'] = current_date.strftime(DATE_FORMAT_DISPLAY)
-                    tmp['sortable_datetime'] = current_date.strftime(DATE_FORMAT_SORTABLE)
+                    tmp['sortable_date_label'] = current_date.strftime(
+                        DATE_FORMAT_DISPLAY
+                    )
+                    tmp['sortable_datetime'] = current_date.strftime(
+                        DATE_FORMAT_SORTABLE
+                    )
                     entries_out.append(tmp)
                     if nudge_to_date != None:
                         current_date = end_date
@@ -300,9 +310,9 @@ def get_events(university_url, ttrss_url, start, stop, full_view=True):
     i = 0
     while i < len(grouped_entries):
         if start and stop:
-            if grouped_entries[i][0] >= start.strftime(DATE_FORMAT_SORTABLE) and grouped_entries[
-                i
-            ][0] <= stop.strftime(DATE_FORMAT_SORTABLE):
+            if grouped_entries[i][0] >= start.strftime(
+                DATE_FORMAT_SORTABLE
+            ) and grouped_entries[i][0] <= stop.strftime(DATE_FORMAT_SORTABLE):
                 entries_out.append(grouped_entries[i])
         else:
             entries_out.append(grouped_entries[i])
