@@ -1,5 +1,6 @@
 import datetime
 import json
+import urllib.parse
 
 from ask_a_librarian.utils import (
     get_chat_status, get_chat_status_and_css, get_chat_status_css,
@@ -77,7 +78,8 @@ def json_events(request):
         request: e.g., request.GET['feed'] = 'http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=library&key=oxj4em577573f09bc56'
     """
     if request.method == 'GET':
-        ttrss_url = request.GET['feed']
+        encoded_url = request.GET.get('feed', '')
+        ttrss_url = urllib.parse.unquote(encoded_url)
 
         n = datetime.datetime.now()
         return JsonResponse(
