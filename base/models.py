@@ -2085,9 +2085,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         context['banner_url'] = section_info[5]
         context['branch_title'] = branch_name if branch_name is not self.title else ''
         context['page_type'] = str(self.specific.__class__.__name__)
-        context['events_feed'] = urllib.parse.quote(
-            self.events_feed_url, safe=url_filter
-        )
+        context['events_feed'] = self.events_feed_url
         context['news_feed'] = self.get_news(self.news_feed_source, 4)
         context['unfriendly_a'] = (
             True if self.friendly_name.strip() in UNFRIENDLY_ARTICLES else False
