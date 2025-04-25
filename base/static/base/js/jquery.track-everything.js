@@ -1,17 +1,52 @@
 /**
-* Script to track link clicks and send events to GA4 using event delegation.
-* 
-* This script handles:
-* - Event delegation for efficient event handling.
-* - Debouncing to prevent excessive event firing.
-* - Documentation for clarity and maintainability.
-* - Consistent naming conventions.
-* - Edge case handling for robustness.
-* - Accessibility considerations to avoid conflicts with screen readers.
-* - Browser compatibility for wide support.
-*/
+ * @fileoverview GA4 Event Tracking Implementation
+ * @version 1.0.0
+ * @author [Vitor]
+ * @requires jQuery
+ * 
+ * Script to track user interactions and send events to Google Analytics 4 (GA4)
+ * using event delegation for optimal performance.
+ * 
+ * Schema:
+ * - name
+ * - event_category
+ * - event_subcategory
+ * - event_label
+ * - click_position
+ * 
+ * Features:
+ * - Event delegation for efficient event handling
+ * - Debounced event processing to prevent excessive API calls
+ * -- commented out, was not working
+ * - Automatic detection of event categories based on DOM context
+ * - Support for custom data attributes (data-ga-*)
+ * - Fallback handling for missing labels, categories, and sub-categories
+ * - Position tracking for list items
+ * - with specific selectors for .news-wrap and .news-stories
+ * 
+ * Usage:
+ * Add data-ga-* attributes to track custom parameters:
+ * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
+ */
 
 (function () {
+    // Configuration constants
+    const SELECTORS = {
+        GLOBAL_NAV: '#global-navbar',
+        NAVBAR_RIGHT: '#navbar-right',
+        WIDGET: '.widget, [id*="widget"]',
+        SIDEBAR: '[class^="sidebar"], [id*="sidebar"]'
+    };
+
+    const CATEGORIES = {
+        NAVIGATION: 'navigation',
+        SHORTCUTS: 'navbar-shortcuts',
+        FOOTER: 'footer',
+        WIDGET: 'widget',
+        SIDEBAR: 'sidebar',
+        MAIN: 'main'
+    };
+
     // Debounce function to limit the rate at which a function can fire.
     function debounce(func, wait) {
         let timeout;
@@ -40,38 +75,38 @@
         };
 
         // Determine category, subcategory, based on link context.
-        if (link.closest('#global-navbar')) { // main navbar
-            params.event_category = params.event_category || 'navigation';
+        if (link.closest(SELECTORS.GLOBAL_NAV)) { // main navbar
+            params.event_category = params.event_category || CATEGORIES.NAVIGATION;
             const listParent = link.closest('ul, ol');
             params.event_subcategory = params.event_subcategory ||
                 (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                params.label || 'navigation';
+                params.label || CATEGORIES.NAVIGATION;
 
-        } else if (link.closest('#navbar-right')) { // shortcuts
-            params.event_category = params.event_category || 'navbar-shortcuts';
-            params.event_subcategory = params.event_subcategory || 'navbar-shortcuts';
+        } else if (link.closest(SELECTORS.NAVBAR_RIGHT)) { // shortcuts
+            params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
+            params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
 
         } else if (link.closest('footer')) { // footer
-            params.event_category = params.event_category || 'footer';
+            params.event_category = params.event_category || CATEGORIES.FOOTER;
             const listParent = link.closest('ul, ol');
             params.event_subcategory = params.event_subcategory ||
-                (listParent ? listParent.getAttribute('aria-labelledby') : null) || 'footer';
+                (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
 
-        } else if (link.closest('.widget, [id*="widget"]')) { // any widget
-            params.event_category = params.event_category || 'widget';
-            const widgetParent = link.closest('.widget, [id*="widget"]');
+        } else if (link.closest(SELECTORS.WIDGET)) { // any widget
+            params.event_category = params.event_category || CATEGORIES.WIDGET;
+            const widgetParent = link.closest(SELECTORS.WIDGET);
             params.event_subcategory = params.event_subcategory ||
                 (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
 
-        } else if (link.closest('[class^="sidebar"], [id*="sidebar"]')) { // any sidebar
-            params.event_category = 'sidebar';
-            const sidebarParent = link.closest('[class^="sidebar"], [id*="sidebar"]');
+        } else if (link.closest(SELECTORS.SIDEBAR)) { // any sidebar
+            params.event_category = CATEGORIES.SIDEBAR;
+            const sidebarParent = link.closest(SELECTORS.SIDEBAR);
             params.event_subcategory = link.getAttribute('data-ga-subcategory') ||
                 (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                 (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
         } else { // main content
-            params.event_category = params.event_category || 'main';
+            params.event_category = params.event_category || CATEGORIES.MAIN;
             params.event_subcategory = params.event_category || link.closest('[id]').getAttribute('id');
         }
 
