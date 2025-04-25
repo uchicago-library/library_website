@@ -63,7 +63,7 @@
             params.event_subcategory = params.event_subcategory ||
                 (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
 
-        } else if (link.closest('[class^="sidebar"], [role="complementary"], [id*="sidebar"]')) { // any sidebar
+        } else if (link.closest('[class^="sidebar"], [id*="sidebar"]')) { // any sidebar
             params.event_category = 'sidebar';
             const sidebarParent = link.closest('[class^="sidebar"], [id*="sidebar"]');
             params.event_subcategory = link.getAttribute('data-ga-subcategory') ||
