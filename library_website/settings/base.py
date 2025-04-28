@@ -103,8 +103,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'wagtailcache.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_turnstile_site_protect.middleware.TurnstileMiddleware',
+    'wagtailcache.cache.UpdateCacheMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,7 +117,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django_turnstile_site_protect.middleware.TurnstileMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'wagtailcache.cache.FetchFromCacheMiddleware',
 ]
@@ -637,6 +637,11 @@ SESSION_COOKIE_AGE = 1209600
 
 # Exclude admin, static files, etc. from Turnstile protection
 TURNSTILE_EXCLUDED_PATHS = [
+    r'^/json-events/.*$',
+    r'^/chat-status/.*$',
+    r'^/json-hours/.*$',
+    r'^/item-servlet/.*$',
+    r'^/cgi-bin/.*$',
     r'^/admin/.*$',
     r'^/django-admin/.*$',
     r'^/static/.*$',
