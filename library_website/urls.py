@@ -58,6 +58,7 @@ urlpatterns = [
         mail_aliases_view,
         name="mail_aliases",
     ),
+    re_path(r'^turnstile/', include('django_turnstile_site_protect.urls')),
     re_path(r"^citation_display$", citation_display, name="citation_display"),
     re_path(r"^collex/collections/$", RedirectView.as_view(url="/collex/")),
     re_path(r"^collex/exhibits/$", RedirectView.as_view(url="/collex/?view=exhibits")),

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bleach',
+    'django_turnstile_site_protect',
     'taggit',
     'compressor',
     'modelcluster',
@@ -102,8 +103,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'wagtailcache.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_turnstile_site_protect.middleware.TurnstileMiddleware',
+    'wagtailcache.cache.UpdateCacheMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -623,3 +625,26 @@ FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 # up in the "out of sync staff members" email report.
 DO_NOT_SYNC = []
 MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
+
+# Cloudflare Turnstile settings (using test keys that always pass)
+TURNSTILE_SITE_KEY = '3x00000000000000000000FF'
+TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'
+TURNSTILE_MODE = 'non-interactive'  # Options: 'managed', 'non-interactive', 'invisible'
+TURNSTILE_APPEARANCE = 'always'
+
+# 2 weeks (in seconds)
+SESSION_COOKIE_AGE = 1209600
+
+# Exclude admin, static files, etc. from Turnstile protection
+TURNSTILE_EXCLUDED_PATHS = [
+    r'^/json-events/.*$',
+    r'^/chat-status/.*$',
+    r'^/json-hours/.*$',
+    r'^/item-servlet/.*$',
+    r'^/cgi-bin/.*$',
+    r'^/admin/.*$',
+    r'^/django-admin/.*$',
+    r'^/static/.*$',
+    r'^/media/.*$',
+    r'^/shib/.*$',
+]
