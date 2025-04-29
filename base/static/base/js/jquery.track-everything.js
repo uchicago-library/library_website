@@ -35,7 +35,12 @@
         GLOBAL_NAV: '#global-navbar',
         NAVBAR_RIGHT: '#navbar-right',
         WIDGET: '.widget, [id*="widget"]',
-        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]'
+        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]',
+        FOOTER: 'footer',
+        TAB: '[role="tab"], [data-role="tab"], .spaces-toggle',
+        DROPDOWN: '[data-bs-toggle="dropdown"], [data-toggle="dropdown"]',
+        CHECKBOX_RADIO: 'input[type="checkbox"], input[type="radio"]',
+        BUTTON_A: 'button, a'
     };
 
     const CATEGORIES = {
@@ -111,24 +116,26 @@
         }
 
         // Get link position if in a list
-        if (link.getAttribute('data-ga-position')) {
-            params.event_subcategory = params.event_subcategory || 'list';
-            params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
-        } else {
-            const parentLi = link.closest('li');
-            if (parentLi) {
+        if (!link.closest(SELECTORS.FOOTER)) {
+            if (link.getAttribute('data-ga-position')) {
                 params.event_subcategory = params.event_subcategory || 'list';
-                params.click_position = Array.from(parentLi.parentElement.children).indexOf(parentLi) + 1;
+                params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
-                const parentNews = link.closest('.news-wrap');
-                if (parentNews) {
-                    params.event_subcategory = params.event_subcategory || 'news-list';
-                    params.click_position = Array.from(parentNews.children).indexOf(link.closest('.newsblock')) + 1;
+                const parentLi = link.closest('li');
+                if (parentLi) {
+                    params.event_subcategory = params.event_subcategory || 'list';
+                    params.click_position = Array.from(parentLi.parentElement.children).indexOf(parentLi) + 1;
                 } else {
-                    const parentNews = link.closest('.news-stories');
+                    const parentNews = link.closest('.news-wrap');
                     if (parentNews) {
                         params.event_subcategory = params.event_subcategory || 'news-list';
-                        params.click_position = Array.from(parentNews.children).indexOf(link.closest('article')) + 1;
+                        params.click_position = Array.from(parentNews.children).indexOf(link.closest('.newsblock')) + 1;
+                    } else {
+                        const parentNews = link.closest('.news-stories');
+                        if (parentNews) {
+                            params.event_subcategory = params.event_subcategory || 'news-list';
+                            params.click_position = Array.from(parentNews.children).indexOf(link.closest('article')) + 1;
+                        }
                     }
                 }
             }
@@ -142,22 +149,21 @@
         if (!target) return false;
 
         // Check if event target or direct parent is defined as a tab
-        if (target.matches('[role="tab"], [data-role="tab"]') ||
-            target.closest('[role="tab"], [data-role="tab"]')) {
+        if (target.matches(SELECTORS.TAB) ||
+            target.closest(SELECTORS.TAB)) {
             return 'tab';
         }
         // Check if target or direct parent is defined as a toggler
-        else if (target.matches('[data-bs-toggle="dropdown"], [data-toggle="dropdown"]') ||
-            target.closest('[data-bs-toggle="dropdown"], [data-toggle="dropdown"]')) {
+        else if (target.matches(SELECTORS.DROPDOWN) ||
+            target.closest(SELECTORS.DROPDOWN)) {
             return 'dropdown';
         }
         // Check if target is an input of type checkbox
-        else if (target.matches('input[type="checkbox"]') ||
-            target.matches('input[type="radio"]')) {
+        else if (target.matches(SELECTORS.CHECKBOX_RADIO)) {
             return 'checkbox';
         }
         // Check if element is an <a>
-        else if (target.matches('a') || target.matches('button')) {
+        else if (target.matches(SELECTORS.BUTTON_A)) {
             return 'click';
         }
         // return false and do not trigger a GA4 event
