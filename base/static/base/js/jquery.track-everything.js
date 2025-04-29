@@ -35,7 +35,7 @@
         GLOBAL_NAV: '#global-navbar',
         NAVBAR_RIGHT: '#navbar-right',
         WIDGET: '.widget, [id*="widget"]',
-        SIDEBAR: '[class^="sidebar"], [id*="sidebar"]'
+        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]'
     };
 
     const CATEGORIES = {
