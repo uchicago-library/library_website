@@ -72,7 +72,14 @@
             event_subcategory: link.getAttribute('data-ga-subcategory'),
             event_label: link.getAttribute('data-ga-label') ||
                 link.getAttribute('aria-label') ||
-                (link.textContent.replace(/\s+/g, ' ').trim()) ||
+                ((() => {
+                    // Clone the node to avoid modifying the original DOM
+                    const clone = link.cloneNode(true);
+                    // Remove visually-hidden elements from the clone
+                    clone.querySelectorAll('.visually-hidden, .sr-only, [aria-hidden="true"]').forEach(el => el.remove());
+                    // Get and clean the remaining text
+                    return clone.textContent.replace(/\s+/g, ' ').trim();
+                })()) ||
                 link.getAttribute('title') ||
                 (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                 'Unknown',
@@ -80,39 +87,43 @@
         };
 
         // Determine category, subcategory, based on link context.
-        if (link.closest(SELECTORS.GLOBAL_NAV)) { // main navbar
-            params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-            const listParent = link.closest('ul, ol');
-            params.event_subcategory = params.event_subcategory ||
-                (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                params.label || CATEGORIES.NAVIGATION;
+        if (!params.event_category || !params.event_subcategory) {
+            if (link.closest(SELECTORS.GLOBAL_NAV)) { // main navbar
+                params.event_category = params.event_category || CATEGORIES.main;
+                const listParent = link.closest('ul, ol');
+                params.event_subcategory = params.event_subcategory ||
+                    (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
+                    params.label || CATEGORIES.main;
 
-        } else if (link.closest(SELECTORS.NAVBAR_RIGHT)) { // shortcuts
-            params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
-            params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
+            } else if (link.closest(SELECTORS.NAVBAR_RIGHT)) { // shortcuts
+                params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
+                params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
 
-        } else if (link.closest('footer')) { // footer
-            params.event_category = params.event_category || CATEGORIES.FOOTER;
-            const listParent = link.closest('ul, ol');
-            params.event_subcategory = params.event_subcategory ||
-                (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
+            } else if (link.closest(SELECTORS.FOOTER)) { // footer
+                params.event_category = params.event_category || CATEGORIES.FOOTER;
+                const listParent = link.closest('ul, ol');
+                params.event_subcategory = params.event_subcategory ||
+                    (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
 
-        } else if (link.closest(SELECTORS.WIDGET)) { // any widget
-            params.event_category = params.event_category || CATEGORIES.WIDGET;
-            const widgetParent = link.closest(SELECTORS.WIDGET);
-            params.event_subcategory = params.event_subcategory ||
-                (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
+            } else if (link.closest(SELECTORS.WIDGET)) { // any widget
+                params.event_category = params.event_category || CATEGORIES.WIDGET;
+                const widgetParent = link.closest(SELECTORS.WIDGET);
+                params.event_subcategory = params.event_subcategory ||
+                    (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
 
-        } else if (link.closest(SELECTORS.SIDEBAR)) { // any sidebar
-            params.event_category = CATEGORIES.SIDEBAR;
-            const sidebarParent = link.closest(SELECTORS.SIDEBAR);
-            params.event_subcategory = link.getAttribute('data-ga-subcategory') ||
-                (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
-                (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
+            } else if (link.closest(SELECTORS.SIDEBAR)) { // any sidebar
+                params.event_category = params.event_category || CATEGORIES.SIDEBAR;
+                const sidebarParent = link.closest(SELECTORS.SIDEBAR);
+                params.event_subcategory = params.event_subcategory ||
+                    (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
+                    (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
-        } else { // main content
-            params.event_category = params.event_category || CATEGORIES.MAIN;
-            params.event_subcategory = params.event_category || link.closest('[id]').getAttribute('id');
+            } else { // main content
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_subcategory = params.event_subcategory || link.closest('[id]').getAttribute('id');
+            }
+        } else {
+            console.log("already has category and subcategory from `data-ga-` property");
         }
 
         // Get link position if in a list
@@ -181,10 +192,9 @@
         if (eventName) {
             const ep = getEventParameters(target);
             // gtag('event', eventName, eventParams);
-            console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+            console.log("Event Name.::.: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
         } else {
-            console.log("No click event. Event name: " + eventName)
-            console.log("No click event. Event name: " + eventName + ". event.target.tagName: " + event.target.tagName)
+            // console.log("No click event. Event name: " + eventName + ". event.target.tagName: " + event.target.tagName)
         }
     }
 
