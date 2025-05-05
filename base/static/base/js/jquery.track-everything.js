@@ -67,6 +67,7 @@
 
     // Function to determine event parameters based on link context.
     function getEventParameters(link) {
+        
         const params = {
             event_category: link.getAttribute('data-ga-category'),
             event_subcategory: link.getAttribute('data-ga-subcategory'),
@@ -122,9 +123,7 @@
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory || link.closest('[id]').getAttribute('id');
             }
-        } else {
-            console.log("already has category and subcategory from `data-ga-` property");
-        }
+        } 
 
         // Get link position if in a list
         if (!link.closest(SELECTORS.FOOTER)) {
@@ -132,21 +131,21 @@
                 params.event_subcategory = params.event_subcategory || 'list';
                 params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
-                const ancestor = link.closest('li');
+                let ancestor = link.closest('li');
                 // for any list
-                if (ancestor) { 
+                if (ancestor) {
                     params.event_subcategory = params.event_subcategory || 'list';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
-                } 
+                }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
                     params.event_subcategory = params.event_subcategory || 'news-list';
                     params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
-                } 
+                }
                 // for collex but works for any table actually
-                else if ((ancestor = link.closest('tr'))) {
+                else if ((ancestor = link.closest('tbody'))) {
                     params.event_subcategory = params.event_subcategory || 'table';
-                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
                 }
             }
         }
@@ -191,7 +190,7 @@
         if (eventName) {
             const ep = getEventParameters(target);
             // gtag('event', eventName, eventParams);
-            console.log("Event Name.::.: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+            console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
         } else {
             // console.log("No click event. Event name: " + eventName + ". event.target.tagName: " + event.target.tagName)
         }
