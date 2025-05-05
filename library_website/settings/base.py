@@ -62,6 +62,9 @@ INSTALLED_APPS = [
     'wagtail.contrib.settings',
     'wagtail.contrib.styleguide',
     'wagtail.api.v2',
+    'wagtail_ai',
+    'wagtail_vector_index',
+    'wagtail_vector_index.storage.pgvector',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -649,3 +652,50 @@ TURNSTILE_EXCLUDED_PATHS = [
     r'^/shib/.*$',
     r'^/_util/.*$',
 ]
+
+WAGTAIL_AI = {
+    "BACKENDS": {
+        "default": {
+            "CLASS": "wagtail_ai.ai.llm.LLMBackend",
+            "CONFIG": {
+                # Model ID recognizable by the "LLM" library.
+                "MODEL_ID": "gpt-3.5-turbo",
+            },
+        },
+        "vision": {
+            "CLASS": "wagtail_ai.ai.openai.OpenAIBackend",
+            "CONFIG": {
+                "MODEL_ID": "gpt-4o-mini",
+                "TOKEN_LIMIT": 300,
+            },
+        },
+    },
+    "IMAGE_DESCRIPTION_BACKEND": "vision",
+}
+
+WAGTAILIMAGES_IMAGE_FORM_BASE = "wagtail_ai.forms.DescribeImageForm"
+
+WAGTAIL_VECTOR_INDEX = {
+    "CHAT_BACKENDS": {
+        "default": {
+            "CLASS": "wagtail_vector_index.ai_utils.backends.litellm.LiteLLMChatBackend",
+            "CONFIG": {
+                "MODEL_ID": "gpt-3.5-turbo",
+            },
+        },
+    },
+    "EMBEDDING_BACKENDS": {
+        "default": {
+            "CLASS": "wagtail_vector_index.ai_utils.backends.litellm.LiteLLMEmbeddingBackend",
+            "CONFIG": {
+                "MODEL_ID": "text-embedding-ada-002",
+            },
+        }
+    },
+}
+
+WAGTAIL_VECTOR_INDEX_STORAGE_PROVIDERS = {
+    "default": {
+        "STORAGE_PROVIDER": "wagtail_vector_index.storage.pgvector.PgvectorStorageProvider",
+    }
+}
