@@ -132,22 +132,21 @@
                 params.event_subcategory = params.event_subcategory || 'list';
                 params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
-                const parentLi = link.closest('li');
-                if (parentLi) {
+                const ancestor = link.closest('li');
+                // for any list
+                if (ancestor) { 
                     params.event_subcategory = params.event_subcategory || 'list';
-                    params.click_position = Array.from(parentLi.parentElement.children).indexOf(parentLi) + 1;
-                } else {
-                    const parentNews = link.closest('.news-wrap');
-                    if (parentNews) {
-                        params.event_subcategory = params.event_subcategory || 'news-list';
-                        params.click_position = Array.from(parentNews.children).indexOf(link.closest('.newsblock')) + 1;
-                    } else {
-                        const parentNews = link.closest('.news-stories');
-                        if (parentNews) {
-                            params.event_subcategory = params.event_subcategory || 'news-list';
-                            params.click_position = Array.from(parentNews.children).indexOf(link.closest('article')) + 1;
-                        }
-                    }
+                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                } 
+                // for the news list on the home page and on the news page
+                else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
+                    params.event_subcategory = params.event_subcategory || 'news-list';
+                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
+                } 
+                // for collex but works for any table actually
+                else if ((ancestor = link.closest('tr'))) {
+                    params.event_subcategory = params.event_subcategory || 'table';
+                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
                 }
             }
         }
