@@ -310,10 +310,20 @@ def get_events(university_url, ttrss_url, start, stop, full_view=True):
     i = 0
     while i < len(grouped_entries):
         if start and stop:
-            if grouped_entries[i][0] >= start.strftime(
-                DATE_FORMAT_SORTABLE
-            ) and grouped_entries[i][0] <= stop.strftime(DATE_FORMAT_SORTABLE):
-                entries_out.append(grouped_entries[i])
+            # Events feed on kiosk pages.
+            if not full_view:
+                # Don't use start date because ongoing events will have a start
+                # date in the past
+                if grouped_entries[i][0] <= stop.strftime(DATE_FORMAT_SORTABLE):
+                    entries_out.append(grouped_entries[i])
+            # Full calendar view
+            else:
+                # Start date is needed because we show ranges of time on different pages
+                if grouped_entries[i][0] >= start.strftime(
+                    DATE_FORMAT_SORTABLE
+                ) and grouped_entries[i][0] <= stop.strftime(DATE_FORMAT_SORTABLE):
+                    entries_out.append(grouped_entries[i])
+        # Start and stop not provided
         else:
             entries_out.append(grouped_entries[i])
         i = i + 1
