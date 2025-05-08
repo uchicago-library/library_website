@@ -624,8 +624,7 @@ WAGTAIL_AI = {
             "CLASS": "wagtail_ai.ai.llm.LLMBackend",
             "CONFIG": {
                 # Model ID recognizable by the "LLM" library.
-                # "MODEL_ID": "gpt-3.5-turbo",
-                "MODEL_ID": "gpt-4.1",
+                "MODEL_ID": "gpt-3.5-turbo",
             },
         },
         "vision": {

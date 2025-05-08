@@ -1480,6 +1480,9 @@ class PublicBasePage(BasePage):
     view_more_link_label = models.CharField(max_length=100, blank=True)
     change_to_callout = models.BooleanField(default=False)
 
+    # Similar pages
+    similar_pages_in_right_sidebar = models.BooleanField(default=False)
+
     # Sidebar hours
     display_hours_in_right_sidebar = models.BooleanField(default=False)
 
@@ -1647,7 +1650,7 @@ follow a strict schema. Contact DLDC for help with this',
         try:
             current_site = Site.find_for_request(request)
             return Page.objects.get(id=HOURS_PAGE).relative_url(current_site)
-        except (IndexError):
+        except IndexError:
             msg = 'HOURS_PAGE in settings.base is configured incorrectly. \
 Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
@@ -1733,7 +1736,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         try:
             key = str(get_hours_and_location(self)['page_location'])
             return css[key]
-        except (KeyError):
+        except KeyError:
             return ''
 
     def get_granular_libcal_lid(self, unit):
@@ -1758,7 +1761,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return current_page_id
             else:
                 return self.get_granular_libcal_lid(self.get_parent().unit.location)
-        except (AttributeError):
+        except AttributeError:
             return get_default_unit().location.libcal_library_id
 
     def has_granular_hours(self):
@@ -1834,7 +1837,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         try:
             if self.reusable_content:
                 return True
-        except (AttributeError):
+        except AttributeError:
             return False
 
     def base_has_right_sidebar(self):
@@ -1845,7 +1848,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             boolean
         """
-        fields = [strip_tags(self.quicklinks), self.events_feed_url]
+        fields = [strip_tags(self.quicklinks), self.events_feed_url, self.similar_pages_in_right_sidebar]
         has_social_media = hasattr(self, 'has_social_media') and self.has_social_media
         return (
             self.has_field(fields)
@@ -1887,7 +1890,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             else:
                 return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
-        except (AttributeError):
+        except AttributeError:
             return (False, None, None, '', '', '', '')
 
     def get_parent_of_type(self, t):
@@ -1906,7 +1909,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return self
             else:
                 return self.get_parent().specific.get_parent_of_type(t)
-        except (AttributeError):
+        except AttributeError:
             return None
 
     def get_directory_link_by_location(self, location, specialists=False):
@@ -2047,7 +2050,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 context['directory_link'] = self.get_directory_link_by_location(
                     location, True
                 )
-        except (AttributeError):
+        except AttributeError:
             logger = logging.getLogger(__name__)
             logger.error('Context variables not set in PublicBasePage.')
 
@@ -2106,20 +2109,27 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 if self.external_news_page
                 else self.internal_news_page.relative_url(current_site)
             )
-        except (AttributeError):
+        except AttributeError:
             context['news_page'] = ''
 
         try:
             carousel = self.carousel_items.all()
-        except (AttributeError):
+        except AttributeError:
             carousel = []
         context['carousel_items'] = carousel
         context['carousel_multi'] = len(carousel) > 1
 
+        # Similar Pages
+        try:
+            from vector_index.indexes import SelectedPagesVectorIndex
+            context['similar_pages'] = SelectedPagesVectorIndex().find_similar(self, limit=5)
+        except AttributeError:
+            context['similar_pages'] = []
+
         # Reusable Content Blocks for sidebar
         try:
             reusable_content = self.reusable_content.all()
-        except (AttributeError):
+        except AttributeError:
             reusable_content = []
         context['reusable_content'] = reusable_content
 
@@ -2246,7 +2256,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         """
         try:
             return self.unit.friendly_name + ' '
-        except (AttributeError):
+        except AttributeError:
             return ''
 
     @property

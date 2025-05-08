@@ -236,6 +236,12 @@ class StandardPage(VectorIndexedMixin, PublicBasePage, SocialMediaFields):
         ),
         MultiFieldPanel(
             [
+                FieldPanel('similar_pages_in_right_sidebar'),
+            ],
+            heading='Similar Pages',
+        ),
+        MultiFieldPanel(
+            [
                 FieldPanel('enable_index'),
                 FieldPanel('display_hierarchical_listing'),
             ],
