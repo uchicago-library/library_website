@@ -211,6 +211,7 @@ class StandardPage(VectorIndexedMixin, PublicBasePage, SocialMediaFields):
         'base.IntranetPlainPage',
         'dirbrowse.DirBrowsePage',
         'public.StaffPublicPage',
+        'chatbot.ChatbotPage',
     ]
 
     content_panels = (

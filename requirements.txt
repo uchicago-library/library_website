@@ -9,6 +9,7 @@ django-compressor>=4.0,<5.0
 django-cors-headers>=4.2,<5
 django-libsass
 django-localflavor>=4.0,<5.0.0
+django-htmx
 django-macros==0.4.0
 django-redis
 git+https://github.com/rev138/django-shibboleth-remoteuser.git#egg=django_shibboleth_remoteuser
@@ -17,6 +18,7 @@ django-webpack-loader==1.8.0
 elasticsearch>=7.0.0,<8.0.0
 libsass
 lxml
+markdown
 networkx
 openpyxl>=3.1.0,<3.2.0
 git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
