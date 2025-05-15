@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'wagtail_ai',
     'wagtail_vector_index',
     'wagtail_vector_index.storage.pgvector',
+    'vector_index',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',

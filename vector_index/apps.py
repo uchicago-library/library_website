@@ -2,11 +2,12 @@ from django.apps import AppConfig
 
 
 class VectorIndexConfig(AppConfig):
-    name = "library_website.vector_index"
+    default_auto_field = "django.db.models.AutoField"
+    name = "vector_index"
 
     def ready(self):
-        from wagtail_vector_index.index import registry
+        from wagtail_vector_index.storage import registry
 
         from .indexes import SelectedPagesVectorIndex
 
-        registry.register()(SelectedPagesVectorIndex)
+        registry.register_index(SelectedPagesVectorIndex())

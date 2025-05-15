@@ -1,8 +1,7 @@
 from lib_news.models import LibNewsPage
 from public.models import StandardPage
-from wagtail_vector_index.storage.base import Document, DocumentConverter, VectorIndex
+from wagtail_vector_index.storage.base import Document, VectorIndex
 from wagtail_vector_index.storage.models import (
-    DefaultStorageVectorIndex,
     EmbeddableFieldsDocumentConverter,
     EmbeddableFieldsVectorIndexMixin,
 )
@@ -131,6 +130,21 @@ class SelectedPagesVectorIndex(
             backend_dict=backend_dict, backend_id=backend_id
         )
         converter = self.get_converter()
+
+        # Only process objects that have valid embeddings
         for queryset in self.querysets:
+            # Filter to only include objects with embeddings
+            objects_with_embeddings = []
             for obj in queryset:
+                embeddings_manager = getattr(obj, 'embeddings', None)
+                if embeddings_manager is not None and embeddings_manager.exists():
+                    objects_with_embeddings.append(obj)
+
+            # Log how many objects have embeddings
+            print(
+                f"Found {len(objects_with_embeddings)} objects with embeddings out of {queryset.count()} total"
+            )
+
+            # Only process objects that have valid embeddings
+            for obj in objects_with_embeddings:
                 yield converter.to_document(obj, embedding_backend)
