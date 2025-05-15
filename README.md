@@ -148,6 +148,10 @@ from django.core.cache import cache
 cache.clear()
 ```
 
+### Updating vector indexes
+- `export OPENAI_API_KEY="--YOUR-OPENAI-KEY--"`
+- Update vector indexes for chatbot and similar pages functionality: `./manage.py update_vector_indexes`
+
 ## Pushing a branch to Nest
 For testing purposes, you may want to push a branch that is not master to Nest.
 - ssh to nest
