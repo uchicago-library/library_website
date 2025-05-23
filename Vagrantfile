@@ -226,6 +226,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install UChicago dependencies
     echo ""
     echo "============== Installing UChicago dependencies =============="
+    sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
     apt-get update -y
     apt-get install -y libxml2-dev
     apt-get install -y libxslt-dev
@@ -302,18 +303,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install pgvector for wagtail-vector-index
     echo ""
     echo "============== Installing pgvector for wagtail-vector-index =============="
-    echo "install postgresql-server-dev-14"
-    sudo apt install postgresql-server-dev-14 -y
-    echo "cd to tmp..."
-    cd /tmp
-    echo "git clone..."
-    git clone --branch v0.8.0 https://github.com/pgvector/pgvector.git
-    echo "cd pgvector..."
-    cd pgvector
-    echo "make..."
-    make
-    echo "make install..."
-    make install
+    sudo apt-get install -y postgresql-14-pgvector
 
     # Run migrations, load the dev db and build a search index
     echo ""
