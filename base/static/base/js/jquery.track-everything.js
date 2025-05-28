@@ -203,22 +203,18 @@
         const eventName = getEventName(target);
         if (!eventName) { return; }
 
-        // event.preventDefault(); // Prevents default behavior like following links
-        // event.stopPropagation(); // Stops event from bubbling up
-
         const ep = getEventParameters(target);
-        // DEBUG
+        // DEBUG, leaving it here for the first couple of weeks.
         console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
-        // gtag('event', eventName, eventParams);
+        gtag('event', eventName, eventParams);
 
         // for links that navigate away
         const href = target.getAttribute('href');
         if (href) {
-            console.log("Link HREF: " + href);
-            // e.preventDefault(); // delay navigation just slightly
-            // setTimeout(() => {
-            //     window.location.href = href;
-            // }, 200); // give GA time to fire
+            e.preventDefault(); // delay navigation just slightly
+            setTimeout(() => {
+                window.location.href = href;
+            }, 200); // give GA time to fire
         }
     }
 
