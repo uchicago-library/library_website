@@ -33,7 +33,6 @@
     // Configuration constants
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
-        NAVBAR_RIGHT: '#navbar-right',
         WIDGET: '.widget, [id*="widget"]',
         SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]',
         FOOTER: 'footer',
@@ -45,7 +44,6 @@
 
     const CATEGORIES = {
         NAVIGATION: 'navigation',
-        SHORTCUTS: 'navbar-shortcuts',
         FOOTER: 'footer',
         WIDGET: 'widget',
         SIDEBAR: 'sidebar',
@@ -67,7 +65,7 @@
 
     // Function to determine event parameters based on link context.
     function getEventParameters(link) {
-        
+
         const params = {
             event_category: link.getAttribute('data-ga-category'),
             event_subcategory: link.getAttribute('data-ga-subcategory'),
@@ -86,6 +84,7 @@
                 'Unknown',
             click_position: null,
         };
+
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
@@ -119,11 +118,25 @@
                     (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                     (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
+            } else if (window.location.href.indexOf("lib.uchicago.edu/vufind/Search/Results") > -1) { // Catalog Vufind Search results
+                params.event_category = params.event_category || CATEGORIES.SIDEBAR;
+                const sidebarParent = link.closest(SELECTORS.SIDEBAR);
+                params.event_subcategory = params.event_subcategory || "vufind-search-results";
+                params.event_label = link.classList.contains('title') ? 'title' :
+                    link.classList.contains('result-author') ? 'author' :
+                        link.classList.contains('external') ? 'holding' :
+                            link.classList.contains('save-record') ? 'save-record' :
+                                params.event_label || 'Unknown';
+
             } else { // main content
                 params.event_category = params.event_category || CATEGORIES.MAIN;
-                params.event_subcategory = params.event_subcategory || link.closest('[id]').getAttribute('id');
+                params.event_subcategory = params.event_subcategory ||
+                    link.closest('#navbar-right') ? 'navbar-shortcuts' :
+                    link.closest('.action-toolbar') ? 'action-toolbar' :
+                        link.closest('.pagination') ? 'pagination' :
+                            link.closest('[id]').getAttribute('id');
             }
-        } 
+        }
 
         // Get link position if in a list
         if (!link.closest(SELECTORS.FOOTER)) {
@@ -183,21 +196,30 @@
 
     // Function to handle link clicks and send events to GA4.
     function handleLinkClick(event) {
-        event.preventDefault(); // Prevents default behavior like following links
-        event.stopPropagation(); // Stops event from bubbling up
         const target = event.target.closest('a, button, input');
         const eventName = getEventName(target);
-        if (eventName) {
-            const ep = getEventParameters(target);
-            // gtag('event', eventName, eventParams);
-            console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
-        } else {
-            // console.log("No click event. Event name: " + eventName + ". event.target.tagName: " + event.target.tagName)
+        if (!eventName) { return; }
+
+        // event.preventDefault(); // Prevents default behavior like following links
+        // event.stopPropagation(); // Stops event from bubbling up
+
+        const ep = getEventParameters(target);
+        // DEBUG
+        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+        // gtag('event', eventName, eventParams);
+
+        // for links that navigate away
+        const href = target.getAttribute('href');
+        if (href) {
+            console.log("Link HREF: " + href);
+            // e.preventDefault(); // delay navigation just slightly
+            // setTimeout(() => {
+            //     window.location.href = href;
+            // }, 200); // give GA time to fire
         }
     }
 
     // Attach a single event listener to the document body using event delegation.
     // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-    document.body.addEventListener('click', handleLinkClick);
+    document.body.addEventListener('click', handleLinkClick, true);
 })();
-
