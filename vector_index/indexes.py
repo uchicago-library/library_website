@@ -160,8 +160,8 @@ class SelectedPagesVectorIndex(
     # Use issubclass to filter models implementing a specific mixin
     # This approach can be adapted if you have a custom mixin
     querysets = [
-        StandardPage.objects.all(),
-        LibNewsPage.objects.all(),
+        StandardPage.objects.live(),
+        LibNewsPage.objects.live(),
     ]
 
     def get_converter_class(self):
