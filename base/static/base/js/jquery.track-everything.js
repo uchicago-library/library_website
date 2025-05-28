@@ -120,7 +120,10 @@
 
             } else if (window.location.href.indexOf("lib.uchicago.edu/vufind/Search/Results") > -1) { // Catalog Vufind Search results
                 params.event_category = params.event_category || "vufind-search-results";
-                params.event_subcategory = params.event_subcategory || link.closest('[id]').getAttribute('id');
+                params.event_subcategory = params.event_subcategory ||
+                    link.closest('.action-toolbar') ? 'action-toolbar' :
+                    link.closest('.pagination') ? 'pagination' :
+                        link.closest('[id]').getAttribute('id');
                 params.event_label = link.classList.contains('title') ? 'title' :
                     link.classList.contains('result-author') ? 'author' :
                         link.classList.contains('external') ? 'holding' :
