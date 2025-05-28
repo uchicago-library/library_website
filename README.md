@@ -25,6 +25,16 @@ WAGTAILSEARCH_BACKENDS = {
 }
 ```
 
+### Turnstile Configuration
+By default, Turnstile (Cloudflare's CAPTCHA service) is disabled in the Vagrant dev environment and CI. If you need to test or develop with Turnstile enabled, you can set the `TURNSTILE_ENABLED` environment variable to `True`:
+```
+TURNSTILE_ENABLED=True vagrant up
+```
+Or if you're already in the Vagrant environment, you can export the variable:
+```
+export TURNSTILE_ENABLED=True
+```
+
 ### Vagrant Troubleshooting
 If you have issues loading your local instance, try:
 ```
