@@ -647,4 +647,6 @@ TURNSTILE_EXCLUDED_PATHS = [
     r'^/static/.*$',
     r'^/media/.*$',
     r'^/shib/.*$',
+    r'^/_util/.*$',
+    r'^/api/.*$',
 ]
