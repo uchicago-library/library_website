@@ -60,14 +60,66 @@ class MultiModelDocumentConverter(EmbeddableFieldsDocumentConverter):
             [str(getattr(obj, field.field_name)) for field in obj.embedding_fields]
         )
 
-        # Generate vector embedding and ensure it's flat (1D)
-        vector_result = list(embedding_backend.embed(text))
+        # Chunk text if needed to avoid token limit issues
+        import numpy as np
+        import tiktoken
 
-        # Check if we need to flatten (if it's a nested list)
-        if len(vector_result) == 1 and isinstance(vector_result[0], (list, tuple)):
-            vector = vector_result[0]  # Take the first (and only) inner list
+        # Initialize tokenizer for token counting based on embedding model
+        # cl100k_base is the encoding used by text-embedding-ada-002 and the embedding-3 models
+        encoding = tiktoken.get_encoding("cl100k_base")
+
+        # Count tokens in the full text
+        tokens = encoding.encode(text)
+        token_count = len(tokens)
+
+        # Define max tokens per chunk (8000 is safely under the 8192 limit)
+        # This leaves room for model-specific tokens and prevents context window errors
+        MAX_TOKENS = 8000
+
+        # Process text based on token count
+        if token_count <= MAX_TOKENS:
+            # If under the limit, process normally
+            vector_result = list(embedding_backend.embed(text))
+
+            # Check if we need to flatten (if it's a nested list)
+            if len(vector_result) == 1 and isinstance(vector_result[0], (list, tuple)):
+                # Take the first (and only) inner list
+                vector = vector_result[0]
+            else:
+                vector = vector_result
         else:
-            vector = vector_result
+            # If over the limit, split into chunks and average embeddings
+            print(f"Chunking text with {token_count} tokens into smaller pieces")
+
+            # Split tokens into chunks
+            chunks = []
+            for i in range(0, token_count, MAX_TOKENS):
+                # Get token indices for this chunk
+                chunk_tokens = tokens[i : i + MAX_TOKENS]
+                # Convert back to text
+                chunk_text = encoding.decode(chunk_tokens)
+                chunks.append(chunk_text)
+
+            print(f"Split into {len(chunks)} chunks")
+
+            # Process each chunk and collect embeddings
+            all_vectors = []
+            for i, chunk in enumerate(chunks):
+                print(f"Processing chunk {i + 1}/{len(chunks)}")
+                chunk_vector_result = list(embedding_backend.embed(chunk))
+
+                # Flatten if needed
+                if len(chunk_vector_result) == 1 and isinstance(
+                    chunk_vector_result[0], (list, tuple)
+                ):
+                    all_vectors.append(chunk_vector_result[0])
+                else:
+                    all_vectors.append(chunk_vector_result)
+
+            # Average all chunk vectors
+            all_vectors_array = np.array(all_vectors)
+            vector = np.mean(all_vectors_array, axis=0).tolist()
+            print(f"Created averaged embedding vector from {len(chunks)} chunks")
 
         # Get embedding_pk if available
         embedding_pk = None
