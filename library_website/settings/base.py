@@ -617,6 +617,7 @@ TURNSTILE_EXCLUDED_PATHS = [
     r'^/media/.*$',
     r'^/shib/.*$',
     r'^/_util/.*$',
+    r'^/api/.*$',
 ]
 
 WAGTAIL_AI = {

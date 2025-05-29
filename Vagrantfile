@@ -340,5 +340,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "source lw/bin/activate" >> /home/vagrant/.bashrc
     echo "cd /vagrant/" >> /home/vagrant/.bashrc
     echo "export PATH=\"/vagrant/node_modules/.bin:$PATH\"" >> /home/vagrant/.bashrc
+    echo "export TURNSTILE_ENABLED=\"False\"" >> /home/vagrant/.bashrc
   SHELL
 end

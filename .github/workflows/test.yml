@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      TURNSTILE_ENABLED: 'False'
       DIRECTORY_USERNAME: ${{ secrets.DIRECTORY_USERNAME }}
       DIRECTORY_WEB_SERVICE: ${{ secrets.DIRECTORY_WEB_SERVICE }}
       DIRECTORY_PASSWORD: ${{ secrets.DIRECTORY_PASSWORD }}
