@@ -656,6 +656,7 @@ WAGTAIL_VECTOR_INDEX = {
             "CLASS": "wagtail_vector_index.ai_utils.backends.litellm.LiteLLMEmbeddingBackend",
             "CONFIG": {
                 "MODEL_ID": "text-embedding-ada-002",
+                "TOKEN_LIMIT": 5000,
             },
         }
     },
