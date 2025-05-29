@@ -1,0 +1,42 @@
+{% load wagtailcore_tags %}
+{% load markdown_filters %}
+
+{% if query %}
+    <div class="question">
+        <p><strong>Your Question</strong>:<br/>
+            {{ query }}
+        </p>
+    </div>
+
+    {% if result %}
+        <div class="libbot-results">
+            <div class="answer">
+                <p class="answer-heading"><strong>Answer</strong>:</p>
+                {{ result.answer|markdown_to_html }}
+            </div>
+
+            {% if result.sources %}
+                <div class="card-footer bg-light">
+                    <p class="card-title mt-2"><strong>Sources</strong>:</p>
+                    <div class="list-group list-group-flush">
+                        {% for source in result.sources %}
+                            <div class="list-group-item list-group-item-action flex-column align-items-start border-0 ps-0 pe-0">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <p class="mb-1">
+                                        {% if source.title %}
+                                            <a href="{% pageurl source %}" class="text-decoration-none">{{ source.title }}</a>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No results found for your query.
+        </div>
+    {% endif %}
+{% endif %}
