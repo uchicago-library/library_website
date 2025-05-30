@@ -33,12 +33,18 @@
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
         WIDGET: '.widget, [id*="widget"]',
-        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]',
+        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"], ul.nav.nav-pills.nav-stacked',
         FOOTER: 'footer',
         TAB: '[role="tab"], [data-role="tab"], .spaces-toggle',
         DROPDOWN: '[data-bs-toggle="dropdown"], [data-toggle="dropdown"]',
         CHECKBOX_RADIO: 'input[type="checkbox"], input[type="radio"]',
         BUTTON_A: 'button, a'
+    };
+
+    const LOCATIONS = {
+        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
+        GUIDES: 'guides.lib.uchicago.edu',
+        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
 
     const CATEGORIES = {
@@ -117,7 +123,7 @@
                     (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                     (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
-            } else if (window.location.href.indexOf("lib.uchicago.edu/vufind/Search/Results") > -1) { // Catalog Vufind Search results
+            } else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) { // Catalog Vufind Search results
                 params.event_category = params.event_category || "vufind-search-results";
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('.action-toolbar') ? 'action-toolbar' :
@@ -130,13 +136,20 @@
                             link.classList.contains('save-record') ? 'save-record' :
                                 params.event_label || 'Unknown';
 
+            } else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) { // Guides
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_subcategory = params.event_subcategory ||
+                    link.closest('#navbar-right') ? 'navbar-shortcuts' :
+                    link.closest('.action-toolbar') ? 'action-toolbar' :
+                        link.closest('.pagination') ? 'pagination' : CATEGORIES.MAIN;
+
             } else { // main content
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('#navbar-right') ? 'navbar-shortcuts' :
                     link.closest('.action-toolbar') ? 'action-toolbar' :
                         link.closest('.pagination') ? 'pagination' :
-                            link.closest('[id]').getAttribute('id');
+                            link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
             }
         }
 
@@ -147,10 +160,17 @@
                 params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
                 let ancestor = link.closest('li');
-                // for any list
+
+                // for the news list on the home page and on the news page
                 if (ancestor) {
                     params.event_subcategory = params.event_subcategory || 'list';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                }
+                // Guides
+                else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
+                    let ancestor = link.closest('s-srch-results');
+                    let item = link.closest('s-srch-result');
+                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(item) + 1;
                 }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
@@ -200,9 +220,6 @@
     function handleLinkClick(event) {
         const target = event.target.closest('a, button, input');
         const eventName = getEventName(target);
-        console.log("Event Name: " + eventName);
-        console.log("Event Target: ", target);
-        console.log("event taget: ", event.target);
         if (!eventName) { return; }
 
         const ep = getEventParameters(target);
