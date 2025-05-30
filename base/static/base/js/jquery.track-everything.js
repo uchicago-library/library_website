@@ -168,9 +168,9 @@
                 }
                 // Guides
                 else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
-                    let ancestor = link.closest('s-srch-results');
-                    let item = link.closest('s-srch-result');
-                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(item) + 1;
+                    let ancestor = link.closest('.s-srch-results');
+                    let item = link.closest('.s-srch-result');
+                    params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
                 }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
