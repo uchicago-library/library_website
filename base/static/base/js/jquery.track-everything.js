@@ -28,7 +28,7 @@
  * Add data-ga-* attributes to track custom parameters:
  * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
  */
-
+console.log("jQuery Track Everything script loaded.");
 (function () {
     // Configuration constants
     const SELECTORS = {
@@ -201,6 +201,9 @@
     function handleLinkClick(event) {
         const target = event.target.closest('a, button, input');
         const eventName = getEventName(target);
+        console.log("Event Name: " + eventName);
+        console.log("Event Target: ", target);
+        console.log("event taget: ", event.target);
         if (!eventName) { return; }
 
         const ep = getEventParameters(target);
@@ -211,7 +214,7 @@
         // for links that navigate away
         const href = target.getAttribute('href');
         if (href) {
-            e.preventDefault(); // delay navigation just slightly
+            event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
                 window.location.href = href;
             }, 200); // give GA time to fire
