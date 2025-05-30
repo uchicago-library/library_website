@@ -142,6 +142,11 @@
                     link.closest('#navbar-right') ? 'navbar-shortcuts' :
                     link.closest('.action-toolbar') ? 'action-toolbar' :
                         link.closest('.pagination') ? 'pagination' : CATEGORIES.MAIN;
+                params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
+                    link.closest('.s-srch-result-author') ? 'Guide Author' :
+                        link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
+                            link.closest('.s-srch-result-url') ? 'Guide Link' :
+                                link.closest('.s-srch-result-title') ? 'Guide Page Title' : params.event_label || "Unknown";
 
             } else { // main content
                 params.event_category = params.event_category || CATEGORIES.MAIN;
