@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 1.0.0
+ * @version 2.0.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -28,7 +28,6 @@
  * Add data-ga-* attributes to track custom parameters:
  * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
  */
-console.log("jQuery Track Everything script loaded.");
 (function () {
     // Configuration constants
     const SELECTORS = {
@@ -221,7 +220,11 @@ console.log("jQuery Track Everything script loaded.");
         }
     }
 
-    // Attach a single event listener to the document body using event delegation.
-    // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-    document.body.addEventListener('click', handleLinkClick, true);
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("jQuery Track Everything script loaded.");
+
+        // Attach a single event listener to the document body using event delegation.
+        // document.body.addEventListener('click', debounce(handleLinkClick, 200));
+        document.body.addEventListener('click', handleLinkClick, true);
+    });
 })();
