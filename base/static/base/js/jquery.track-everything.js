@@ -205,8 +205,8 @@
 
         const ep = getEventParameters(target);
         // DEBUG, leaving it here for the first couple of weeks.
-        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
-        gtag('event', eventName, eventParams);
+        console.log("Event Name.: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+        gtag('event', eventName, ep);
 
         // for links that navigate away
         const href = target.getAttribute('href');
