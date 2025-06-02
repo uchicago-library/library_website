@@ -52,7 +52,8 @@
         FOOTER: 'Footer',
         WIDGET: 'Widget',
         SIDEBAR: 'Sidebar',
-        MAIN: 'Main'
+        MAIN: 'Main',
+        VUFIND_RESULTS: 'VuFind Results',
     };
 
     // Debounce function to limit the rate at which a function can fire.
@@ -93,50 +94,63 @@
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
-            if (link.closest(SELECTORS.GLOBAL_NAV)) { // main navbar
-                params.event_category = params.event_category || CATEGORIES.main;
+            // main navbar
+            if (link.closest(SELECTORS.GLOBAL_NAV)) {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                    params.label || CATEGORIES.main;
+                    params.event_label || CATEGORIES.MAIN;
 
-            } else if (link.closest(SELECTORS.NAVBAR_RIGHT)) { // shortcuts
+            }
+            // shortcuts
+            else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
                 params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
                 params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
 
-            } else if (link.closest(SELECTORS.FOOTER)) { // footer
+            }
+            // footer
+            else if (link.closest(SELECTORS.FOOTER)) {
                 params.event_category = params.event_category || CATEGORIES.FOOTER;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
 
-            } else if (link.closest(SELECTORS.WIDGET)) { // any widget
+            }
+            // any widget
+            else if (link.closest(SELECTORS.WIDGET)) {
                 params.event_category = params.event_category || CATEGORIES.WIDGET;
                 const widgetParent = link.closest(SELECTORS.WIDGET);
                 params.event_subcategory = params.event_subcategory ||
                     (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
 
-            } else if (link.closest(SELECTORS.SIDEBAR)) { // any sidebar
+            }
+            // any sidebar
+            else if (link.closest(SELECTORS.SIDEBAR)) {
                 params.event_category = params.event_category || CATEGORIES.SIDEBAR;
                 const sidebarParent = link.closest(SELECTORS.SIDEBAR);
                 params.event_subcategory = params.event_subcategory ||
                     (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                     (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
-            } else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) { // Catalog Vufind Search results
-                params.event_category = params.event_category || "vufind-search-results";
+            }
+            // Catalog Vufind Search results
+            else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                params.event_category = params.event_category || CATEGORIES.VUFIND_RESULTS;
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('.action-toolbar') ? 'Action Toolbar' :
                     link.closest('.searchtools') ? 'Searchtools' :
                         link.closest('.pagination') ? 'Pagination' :
                             link.closest('[id]').getAttribute('id');
-                params.event_label = link.classList.contains('title') ? 'title' :
-                    link.classList.contains('result-author') ? 'author' :
-                        link.classList.contains('external') ? 'holding' :
-                            link.classList.contains('save-record') ? 'save-record' :
+                params.event_label = link.classList.contains('title') ? 'Title' :
+                    link.classList.contains('result-author') ? 'Author' :
+                        link.classList.contains('external') ? 'Holding' :
+                            link.classList.contains('save-record') ? 'Save Record' :
                                 params.event_label || 'Unknown';
 
-            } else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) { // Guides
+            }
+            // Guides
+            else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('#s-lg-guide-search-form') ? 'Search Form' :
@@ -149,9 +163,11 @@
                         link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
                             link.closest('.s-srch-result-url') ? 'Guide Link' :
                                 link.closest('.s-srch-result-title') ? 'Guide Page Title' :
-                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || "Unknown";
+                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
 
-            } else { // main content
+            }
+            // main content
+            else {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('#navbar-right') ? 'navbar-shortcuts' :
@@ -164,14 +180,14 @@
         // Get link position if in a list
         if (!link.closest(SELECTORS.FOOTER)) {
             if (link.getAttribute('data-ga-position')) {
-                params.event_subcategory = params.event_subcategory || 'list';
+                params.event_subcategory = params.event_subcategory || 'List';
                 params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
                 let ancestor = link.closest('li');
 
-                // for the news list on the home page and on the news page
+                // For any <ul> or <ol> list
                 if (ancestor) {
-                    params.event_subcategory = params.event_subcategory || 'list';
+                    params.event_subcategory = params.event_subcategory || 'List';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
                 }
                 // Guides
@@ -184,12 +200,12 @@
                 }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
-                    params.event_subcategory = params.event_subcategory || 'news-list';
+                    params.event_subcategory = params.event_subcategory || 'News List';
                     params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
                 }
                 // for collex but works for any table actually
                 else if ((ancestor = link.closest('tbody'))) {
-                    params.event_subcategory = params.event_subcategory || 'table';
+                    params.event_subcategory = params.event_subcategory || 'Table';
                     params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
                 }
             }
