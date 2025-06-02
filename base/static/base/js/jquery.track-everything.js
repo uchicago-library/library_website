@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 1.0.0
+ * @version 2.0.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -14,27 +14,36 @@
  * - event_label
  * - click_position
  * 
+ * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results'
+ * 
+ * `event_subcategory`: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
+ * 
+ * Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
+ * VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
+ * Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
+ * 
+ * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
+ * 
  * Features:
  * - Event delegation for efficient event handling
  * - Debounced event processing to prevent excessive API calls
  * -- commented out, was not working
  * - Automatic detection of event categories based on DOM context
- * - Support for custom data attributes (data-ga-*)
+ * - Support for custom data attributes (data-ga-*) overrides
  * - Fallback handling for missing labels, categories, and sub-categories
  * - Position tracking for list items
- * - with specific selectors for .news-wrap and .news-stories
+ * - with specific selectors for .news-wrap, .news-stories, VuFind, and Guides
  * 
  * Usage:
  * Add data-ga-* attributes to track custom parameters:
  * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
  */
-
 (function () {
     // Configuration constants
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
         WIDGET: '.widget, [id*="widget"]',
-        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"]',
+        SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"], ul.nav.nav-pills.nav-stacked',
         FOOTER: 'footer',
         TAB: '[role="tab"], [data-role="tab"], .spaces-toggle',
         DROPDOWN: '[data-bs-toggle="dropdown"], [data-toggle="dropdown"]',
@@ -42,12 +51,20 @@
         BUTTON_A: 'button, a'
     };
 
+    const LOCATIONS = {
+        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
+        GUIDES: 'guides.lib.uchicago.edu',
+        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
+    };
+
     const CATEGORIES = {
-        NAVIGATION: 'navigation',
-        FOOTER: 'footer',
-        WIDGET: 'widget',
-        SIDEBAR: 'sidebar',
-        MAIN: 'main'
+        NAVIGATION: 'Navigation',
+        FOOTER: 'Footer',
+        WIDGET: 'Widget',
+        SIDEBAR: 'Sidebar',
+        MAIN: 'Main',
+        SHORTCUTS: 'Navbar Shortcuts',
+        VUFIND_RESULTS: 'VuFind Results',
     };
 
     // Debounce function to limit the rate at which a function can fire.
@@ -88,79 +105,118 @@
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
-            if (link.closest(SELECTORS.GLOBAL_NAV)) { // main navbar
-                params.event_category = params.event_category || CATEGORIES.main;
+            // main navbar
+            if (link.closest(SELECTORS.GLOBAL_NAV)) {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                    params.label || CATEGORIES.main;
+                    params.event_label || CATEGORIES.MAIN;
 
-            } else if (link.closest(SELECTORS.NAVBAR_RIGHT)) { // shortcuts
+            }
+            // shortcuts
+            else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
                 params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
                 params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
 
-            } else if (link.closest(SELECTORS.FOOTER)) { // footer
+            }
+            // footer
+            else if (link.closest(SELECTORS.FOOTER)) {
                 params.event_category = params.event_category || CATEGORIES.FOOTER;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
 
-            } else if (link.closest(SELECTORS.WIDGET)) { // any widget
+            }
+            // any widget
+            else if (link.closest(SELECTORS.WIDGET)) {
                 params.event_category = params.event_category || CATEGORIES.WIDGET;
                 const widgetParent = link.closest(SELECTORS.WIDGET);
                 params.event_subcategory = params.event_subcategory ||
                     (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
 
-            } else if (link.closest(SELECTORS.SIDEBAR)) { // any sidebar
+            }
+            // any sidebar
+            else if (link.closest(SELECTORS.SIDEBAR)) {
                 params.event_category = params.event_category || CATEGORIES.SIDEBAR;
                 const sidebarParent = link.closest(SELECTORS.SIDEBAR);
                 params.event_subcategory = params.event_subcategory ||
                     (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                     (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
 
-            } else if (window.location.href.indexOf("lib.uchicago.edu/vufind/Search/Results") > -1) { // Catalog Vufind Search results
-                params.event_category = params.event_category || "vufind-search-results";
+            }
+            // Catalog Vufind Search results
+            else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                params.event_category = params.event_category || CATEGORIES.VUFIND_RESULTS;
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('.action-toolbar') ? 'action-toolbar' :
-                    link.closest('.searchtools') ? 'searchtools' :
-                        link.closest('.pagination') ? 'pagination' :
+                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                    link.closest('.searchtools') ? 'Searchtools' :
+                        link.closest('.pagination') ? 'Pagination' :
                             link.closest('[id]').getAttribute('id');
-                params.event_label = link.classList.contains('title') ? 'title' :
-                    link.classList.contains('result-author') ? 'author' :
-                        link.classList.contains('external') ? 'holding' :
-                            link.classList.contains('save-record') ? 'save-record' :
+                params.event_label = link.classList.contains('title') ? 'Title' :
+                    link.classList.contains('result-author') ? 'Author' :
+                        link.classList.contains('external') ? 'Holding' :
+                            link.classList.contains('save-record') ? 'Save Record' :
                                 params.event_label || 'Unknown';
 
-            } else { // main content
+            }
+            // Guides
+            else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('#navbar-right') ? 'navbar-shortcuts' :
-                    link.closest('.action-toolbar') ? 'action-toolbar' :
-                        link.closest('.pagination') ? 'pagination' :
-                            link.closest('[id]').getAttribute('id');
+                    link.closest('#s-lg-guide-search-form') ? 'Search Form' :
+                    link.closest('#s-lg-col-1') ? 'Center Column' :
+                        link.closest('#s-lg-col-2') ? 'Right Column' :
+                            link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                                link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
+                params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
+                    link.closest('.s-srch-result-author') ? 'Guide Author' :
+                        link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
+                            link.closest('.s-srch-result-url') ? 'Guide Link' :
+                                link.closest('.s-srch-result-title') ? 'Guide Page Title' :
+                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
+
+            }
+            // main content
+            else {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_subcategory = params.event_subcategory ||
+                    link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                        link.closest('.pagination') ? 'Pagination' :
+                            link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
             }
         }
 
         // Get link position if in a list
         if (!link.closest(SELECTORS.FOOTER)) {
             if (link.getAttribute('data-ga-position')) {
-                params.event_subcategory = params.event_subcategory || 'list';
+                params.event_subcategory = params.event_subcategory || 'List';
                 params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
             } else {
                 let ancestor = link.closest('li');
-                // for any list
+
+                // For any <ul> or <ol> list
                 if (ancestor) {
-                    params.event_subcategory = params.event_subcategory || 'list';
+                    params.event_subcategory = params.event_subcategory || 'List';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                }
+                // Guides
+                else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
+                    let ancestor = link.closest('.s-srch-results');
+                    let item = link.closest('.s-srch-result');
+                    if (ancestor && item && !link.closest('.pagination')) {
+                        params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
+                    }
                 }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
-                    params.event_subcategory = params.event_subcategory || 'news-list';
+                    params.event_subcategory = params.event_subcategory || 'News List';
                     params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
                 }
                 // for collex but works for any table actually
                 else if ((ancestor = link.closest('tbody'))) {
-                    params.event_subcategory = params.event_subcategory || 'table';
+                    params.event_subcategory = params.event_subcategory || 'Table';
                     params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
                 }
             }
@@ -205,20 +261,23 @@
 
         const ep = getEventParameters(target);
         // DEBUG, leaving it here for the first couple of weeks.
-        console.log("Event Name.: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
         gtag('event', eventName, ep);
 
         // for links that navigate away
         const href = target.getAttribute('href');
         if (href) {
-            e.preventDefault(); // delay navigation just slightly
+            event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
                 window.location.href = href;
             }, 200); // give GA time to fire
         }
     }
 
-    // Attach a single event listener to the document body using event delegation.
-    // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-    document.body.addEventListener('click', handleLinkClick, true);
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Attach a single event listener to the document body using event delegation.
+        // document.body.addEventListener('click', debounce(handleLinkClick, 200));
+        document.body.addEventListener('click', handleLinkClick, true);
+    });
 })();
