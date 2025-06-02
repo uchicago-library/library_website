@@ -126,9 +126,9 @@
             } else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) { // Catalog Vufind Search results
                 params.event_category = params.event_category || "vufind-search-results";
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('.action-toolbar') ? 'action-toolbar' :
-                    link.closest('.searchtools') ? 'searchtools' :
-                        link.closest('.pagination') ? 'pagination' :
+                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                    link.closest('.searchtools') ? 'Searchtools' :
+                        link.closest('.pagination') ? 'Pagination' :
                             link.closest('[id]').getAttribute('id');
                 params.event_label = link.classList.contains('title') ? 'title' :
                     link.classList.contains('result-author') ? 'author' :
@@ -140,12 +140,11 @@
                 console.log("Guides detected.");
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('#s-lg-guide-search-form') ? 'search-form' :
-                    link.closest('#s-lg-col-1') ? 'cetner column' :
-                        link.closest('#s-lg-col-2') ? 'right column' :
-                            link.closest('#navbar-right') ? 'navbar-shortcuts' :
-                                link.closest('.action-toolbar') ? 'action-toolbar' :
-                                    link.closest('.pagination') ? 'pagination' : CATEGORIES.MAIN;
+                    link.closest('#s-lg-guide-search-form') ? 'Search Form' :
+                    link.closest('#s-lg-col-1') ? 'Center Column' :
+                        link.closest('#s-lg-col-2') ? 'Right Column' :
+                            link.closest('#navbar-right') ? 'Navbar Shortcuts' :
+                                link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
                 params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
                     link.closest('.s-srch-result-author') ? 'Guide Author' :
                         link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
@@ -181,7 +180,9 @@
                     console.log("Guides search detected.");
                     let ancestor = link.closest('.s-srch-results');
                     let item = link.closest('.s-srch-result');
-                    params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
+                    if (ancestor && item && !link.closest('.pagination')) {
+                        params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
+                    }
                 }
                 // for the news list on the home page and on the news page
                 else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
