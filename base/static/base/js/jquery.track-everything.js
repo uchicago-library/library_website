@@ -14,6 +14,16 @@
  * - event_label
  * - click_position
  * 
+ * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results'
+ * 
+ * `event_subcategory`: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
+ * 
+ * Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
+ * VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
+ * Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
+ * 
+ * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
+ * 
  * Features:
  * - Event delegation for efficient event handling
  * - Debounced event processing to prevent excessive API calls
@@ -53,6 +63,7 @@
         WIDGET: 'Widget',
         SIDEBAR: 'Sidebar',
         MAIN: 'Main',
+        SHORTCUTS: 'Navbar Shortcuts',
         VUFIND_RESULTS: 'VuFind Results',
     };
 
@@ -156,7 +167,7 @@
                     link.closest('#s-lg-guide-search-form') ? 'Search Form' :
                     link.closest('#s-lg-col-1') ? 'Center Column' :
                         link.closest('#s-lg-col-2') ? 'Right Column' :
-                            link.closest('#navbar-right') ? 'Navbar Shortcuts' :
+                            link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
                                 link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
                 params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
                     link.closest('.s-srch-result-author') ? 'Guide Author' :
@@ -170,9 +181,9 @@
             else {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('#navbar-right') ? 'navbar-shortcuts' :
-                    link.closest('.action-toolbar') ? 'action-toolbar' :
-                        link.closest('.pagination') ? 'pagination' :
+                    link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                        link.closest('.pagination') ? 'Pagination' :
                             link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
             }
         }
