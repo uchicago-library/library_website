@@ -137,16 +137,21 @@
                                 params.event_label || 'Unknown';
 
             } else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) { // Guides
+                console.log("Guides detected.");
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
-                    link.closest('#navbar-right') ? 'navbar-shortcuts' :
-                    link.closest('.action-toolbar') ? 'action-toolbar' :
-                        link.closest('.pagination') ? 'pagination' : CATEGORIES.MAIN;
+                    link.closest('#s-lg-guide-search-form') ? 'search-form' :
+                    link.closest('#s-lg-col-1') ? 'cetner column' :
+                        link.closest('#s-lg-col-2') ? 'right column' :
+                            link.closest('#navbar-right') ? 'navbar-shortcuts' :
+                                link.closest('.action-toolbar') ? 'action-toolbar' :
+                                    link.closest('.pagination') ? 'pagination' : CATEGORIES.MAIN;
                 params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
                     link.closest('.s-srch-result-author') ? 'Guide Author' :
                         link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
                             link.closest('.s-srch-result-url') ? 'Guide Link' :
-                                link.closest('.s-srch-result-title') ? 'Guide Page Title' : params.event_label || "Unknown";
+                                link.closest('.s-srch-result-title') ? 'Guide Page Title' :
+                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || "Unknown";
 
             } else { // main content
                 params.event_category = params.event_category || CATEGORIES.MAIN;
@@ -173,6 +178,7 @@
                 }
                 // Guides
                 else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
+                    console.log("Guides search detected.");
                     let ancestor = link.closest('.s-srch-results');
                     let item = link.closest('.s-srch-result');
                     params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
