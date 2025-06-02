@@ -19,10 +19,10 @@
  * - Debounced event processing to prevent excessive API calls
  * -- commented out, was not working
  * - Automatic detection of event categories based on DOM context
- * - Support for custom data attributes (data-ga-*)
+ * - Support for custom data attributes (data-ga-*) overrides
  * - Fallback handling for missing labels, categories, and sub-categories
  * - Position tracking for list items
- * - with specific selectors for .news-wrap and .news-stories
+ * - with specific selectors for .news-wrap, .news-stories, VuFind, and Guides
  * 
  * Usage:
  * Add data-ga-* attributes to track custom parameters:
@@ -48,11 +48,11 @@
     };
 
     const CATEGORIES = {
-        NAVIGATION: 'navigation',
-        FOOTER: 'footer',
-        WIDGET: 'widget',
-        SIDEBAR: 'sidebar',
-        MAIN: 'main'
+        NAVIGATION: 'Navigation',
+        FOOTER: 'Footer',
+        WIDGET: 'Widget',
+        SIDEBAR: 'Sidebar',
+        MAIN: 'Main'
     };
 
     // Debounce function to limit the rate at which a function can fire.
@@ -137,7 +137,6 @@
                                 params.event_label || 'Unknown';
 
             } else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) { // Guides
-                console.log("Guides detected.");
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
                     link.closest('#s-lg-guide-search-form') ? 'Search Form' :
@@ -177,7 +176,6 @@
                 }
                 // Guides
                 else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
-                    console.log("Guides search detected.");
                     let ancestor = link.closest('.s-srch-results');
                     let item = link.closest('.s-srch-result');
                     if (ancestor && item && !link.closest('.pagination')) {
@@ -250,7 +248,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log("jQuery Track Everything script loaded...");
 
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
