@@ -281,12 +281,11 @@
 
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
+        
         document.body.addEventListener('click', handleLinkClick, true);
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
             if (e.button == 1) {
-                //log event tagname
-                console.log("Middle click tagname: " + e.target.tagName);
                 handleLinkClick(e, true);
             }
         }, true);
