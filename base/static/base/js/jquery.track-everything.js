@@ -254,7 +254,7 @@
     }
 
     // Function to handle link clicks and send events to GA4.
-    function handleLinkClick(event) {
+    function handleLinkClick(event, isMiddleClick = false) {
         const target = event.target.closest('a, button, input');
         const eventName = getEventName(target);
         if (!eventName) { return; }
@@ -266,11 +266,14 @@
 
         // for links that navigate away
         const href = target.getAttribute('href');
-        if (href) {
+        if (href && !isMiddleClick) {
             event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
                 window.location.href = href;
             }, 200); // give GA time to fire
+        } else if (href && isMiddleClick) {
+            // For middle-clicks, we don't prevent default, allowing the browser to handle it.
+            window.open(href, '_blank');
         }
     }
 
@@ -284,7 +287,7 @@
             if (e.button == 1) {
                 //log event tagname
                 console.log("Middle click tagname: " + e.target.tagName);
-                handleLinkClick(e);
+                handleLinkClick(e, true);
             }
         }, true);
     });
