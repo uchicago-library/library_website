@@ -282,6 +282,8 @@
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
             if (e.button == 1) {
+                //log event tagname
+                console.log("Middle click tagname: " + e.target.tagName);
                 handleLinkClick(e);
             }
         }, true);
