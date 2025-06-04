@@ -398,6 +398,19 @@
                                     {% include "base/includes/quicklinks.html" %}
                                 {% endif %}
 
+                                {% if similar_pages and self.similar_pages_in_right_sidebar %}
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-similar-pages">
+                                        <h3>Similar Pages</h3>
+                                        <ul class="similar-pages">
+                                            {% for sp in similar_pages %}
+                                                <li>
+                                                    <a href="{% pageurl sp %}">{{ sp.title }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
                                 {% if self.has_granular_hours %}
                                     <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
                                         <h3>Hours Today</h3>
