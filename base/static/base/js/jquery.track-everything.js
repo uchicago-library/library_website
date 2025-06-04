@@ -271,9 +271,6 @@
             setTimeout(() => {
                 window.location.href = href;
             }, 200); // give GA time to fire
-        } else if (href && isMiddleClick) {
-            // For middle-clicks, we don't prevent default, allowing the browser to handle it.
-            window.open(href, '_blank');
         }
     }
 
@@ -281,7 +278,7 @@
 
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-        
+
         document.body.addEventListener('click', handleLinkClick, true);
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
