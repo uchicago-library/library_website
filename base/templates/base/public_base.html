@@ -606,10 +606,8 @@
         <script src='/static/base/js/clickheat-config.js'></script>
 
         {% block extra_scripts %}
-            {% if request.path == '/' %}
-                {# for the libcal "schedule an appointment" button #}
-                <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
-            {% endif %}
+            {# for the libcal "schedule an appointment" button #}
+            <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
         {% endblock %}
 
         {% if is_hours_page %}
