@@ -266,7 +266,7 @@
 
         // for links that navigate away
         const href = target.getAttribute('href');
-        if (href && !isMiddleClick && !(eventName === 'tab' && href && href.startsWith('#'))) {
+        if (href && !isMiddleClick) {
             event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
                 window.location.href = href;
