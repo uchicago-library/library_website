@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 2.0.0
+ * @version 2.0.1
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -266,7 +266,7 @@
 
         // for links that navigate away
         const href = target.getAttribute('href');
-        if (href && !isMiddleClick) {
+        if (href && !isMiddleClick && !(eventName === 'tab' && href && href.startsWith('#'))) {
             event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
                 window.location.href = href;
