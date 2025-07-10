@@ -227,13 +227,32 @@ def filter_university_entries_to_ttrss_entries(university_entries, ttrss_entries
         xml feed and the Tiny Tiny Rss feed.
     """
     ttrss_guids = []
+    ttrss_slugs = []
+
     for ttrss_entry in ttrss_entries:
-        ttrss_guids.append(ttrss_entry['guid'])
+        guid = ttrss_entry['guid']
+        ttrss_guids.append(guid)
+        # Extract the slug (part after the last slash)
+        slug = guid.split('/')[-1]
+        # If the slug contains a hyphen followed by text, extract just that part
+        if '-' in slug:
+            slug = slug.split('-', 1)[1]  # Split on first hyphen only
+        ttrss_slugs.append(slug)
 
     entries_out = []
     for entry in university_entries:
-        if entry['guid'] in ttrss_guids:
+        guid = entry['link']
+
+        # Check for exact GUID match first
+        if guid in ttrss_guids:
             entries_out.append(entry)
+            continue
+
+        # If no exact match, try matching by slug
+        slug = guid.split('/')[-1]
+        if slug in ttrss_slugs:
+            entries_out.append(entry)
+
     return entries_out
 
 
