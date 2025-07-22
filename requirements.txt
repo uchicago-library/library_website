@@ -22,6 +22,7 @@ openpyxl>=3.1.0,<3.2.0
 git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
 git+https://github.com/uchicago-library/pyiiif.git#egg=pyiiif
 git+https://github.com/bbusenius/django-turnstile-site-protect.git#egg=django_turnstile_site_protect
+git+https://github.com/bbusenius/Good-Bots.git
 pandas>=2,<3
 pocli==0.1.10
 psycopg2
