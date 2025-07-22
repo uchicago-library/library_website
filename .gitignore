@@ -16,6 +16,7 @@ base/static/bundles/*.LICENSE.txt
 
 django-errors.log
 library_website/settings/database.db
+*bot_ips_config.py
 
 .vagrant/
 /.vagrant/

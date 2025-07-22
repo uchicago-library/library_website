@@ -38,6 +38,11 @@ export TURNSTILE_ENABLED=True
 
 Note that this will only affect the current session. When you log out and log back in, `TURNSTILE_ENABLED` will be set back to "False".
 
+### Bot IP Management
+The site uses the [Good-Bots package](https://github.com/bbusenius/Good-Bots) to automatically manage IP exclusions for legitimate search engine bots and crawlers. This ensures they aren't blocked by Turnstile protection.
+
+The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that gets updated daily via cron. This file is automatically imported in Django settings and excluded from version control.
+
 ### Vagrant Troubleshooting
 If you have issues loading your local instance, try:
 ```
