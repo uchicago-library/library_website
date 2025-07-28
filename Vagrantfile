@@ -95,6 +95,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     The file will need to be saved and checked into version control.
 
+    Indexing for wagtail-vector-index and other AI capabilities
+    ===========================================================
+    export OPENAI_API_KEY="--YOUR-OPENAI-KEY--"
+    ./manage.py update_vector_indexes
+
     Run unit tests
     ==============
 
@@ -221,6 +226,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install UChicago dependencies
     echo ""
     echo "============== Installing UChicago dependencies =============="
+    sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
     apt-get update -y
     apt-get install -y libxml2-dev
     apt-get install -y libxslt-dev
@@ -293,6 +299,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Remove Python tests pycache (only used for testing Python itself. Saves 29.5MB)
     rm -rf /usr/local/lib/python3.7/test/__pycache__
     apt-get clean
+
+    # Install pgvector for wagtail-vector-index
+    echo ""
+    echo "============== Installing pgvector for wagtail-vector-index =============="
+    sudo apt-get install -y postgresql-14-pgvector
 
     # Run migrations, load the dev db and build a search index
     echo ""
