@@ -1,0 +1,32 @@
+Docker Commands
+===============
+
+Start all services:
+  docker compose up -d
+
+Access container shell (equivalent to 'vagrant ssh'):
+  docker compose exec web bash
+
+Start development server:
+  docker compose exec web ./manage.py runserver 0.0.0.0:8000
+
+View logs:
+  docker compose logs -f web
+
+Stop all services:
+  docker compose down
+
+Complete cleanup (recommended):
+  ./docker-cleanup.sh
+
+Rebuild after dependency changes:
+  docker compose build web
+
+Environment variable options (same as Vagrant):
+  ELASTICSEARCH=false NODEJS=false docker compose build
+  ELASTICSEARCH=false NODEJS=false docker compose up --build
+
+Access your site at:
+  Public site: http://wwwdev:8000/ (add '127.0.0.1 wwwdev' to /etc/hosts)
+  Intranet: http://loopdev:8000/ (add '127.0.0.1 loopdev' to /etc/hosts)
+  Or simply: http://localhost:8000/

@@ -1,0 +1,75 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        - ELASTICSEARCH=${ELASTICSEARCH:-true}
+        - NODEJS=${NODEJS:-true}
+    volumes:
+      - .:/app  # Bind mount for live code editing
+      - static_files:/app/static
+    ports:
+      - "8000:8000"
+    environment:
+      - ELASTICSEARCH=${ELASTICSEARCH:-true}
+      - NODEJS=${NODEJS:-true}
+      - POSTGRES_DB=lib_www_dev
+      - POSTGRES_USER=vagrant
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=library_website.settings.docker
+    depends_on:
+      - db
+      - redis
+    networks:
+      - library_network
+    # Keep container running for development
+    tty: true
+    stdin_open: true
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=lib_www_dev
+      - POSTGRES_USER=vagrant
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - library_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - library_network
+
+  elasticsearch:
+    image: elasticsearch:7.17.13
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - library_network
+    profiles:
+      - elasticsearch  # Only start with --profile elasticsearch or when ELASTICSEARCH=true
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
+  static_files:
+
+networks:
+  library_network:
+    driver: bridge

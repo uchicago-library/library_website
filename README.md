@@ -5,18 +5,40 @@
 - [ADA Documentation and code](https://github.com/uchicago-library/uchicago-library.github.io/blob/master/docs/code-resources.md#documentation)
 
 ## Running an Instance of the Site
-*If you haven't run Vagrant yet, see the 'Setting up for Development' section below.*
+
+### Docker (Recommended)
+*Docker is the preferred development environment - it's faster to set up and more consistent across different systems.*
+
+1. **Initial setup**: `./docker-setup.sh`
+2. **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
+3. **Access shell**: `docker compose exec web bash`
+4. **View help**: `./docker-setup.sh --help`
+
+#### Build without Elasticsearch or NodeJS
+Since most development tasks don't require Elasticsearch or NodeJS, you can build faster by skipping them:
+```bash
+ELASTICSEARCH=false NODEJS=false ./docker-setup.sh
+```
+
+#### Docker Commands
+- **Start services**: `docker compose up -d`
+- **Stop services**: `docker compose down`
+- **Complete cleanup**: `./docker-cleanup.sh`
+- **View logs**: `docker compose logs -f web`
+
+### Vagrant (Alternative)
+*If you prefer Vagrant or need it for specific development tasks.*
+
 1. Start the dev environment from the root of the project directory: `vagrant up`
 2. ssh to the guest machine: `vagrant ssh`
 3. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
 4. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
 
-### Build the site withouth Elasticsearch or NodeJS
-Since the majority of development tasks don't require Elasticsearch or NodeJS it is often faster and more desireable to build the site without these things. This can be accomplished by running `vagrant up` with the `ELASTICSEARCH` or `NODEJS` environment variables set to `false`:
+#### Build without Elasticsearch or NodeJS (Vagrant)
 ```
 ELASTICSEARCH=false NODEJS=false vagrant up
 ```
-Note: If you build the site withouth Elasticsearch, you will need the following in your `local.py`:
+Note: If you build without Elasticsearch, you will need the following in your `local.py`:
 ```
 WAGTAILSEARCH_BACKENDS = {
     'default': {
@@ -56,6 +78,21 @@ pip install -r requirements.txt
 Loop Sass file compression is separate from the public site compression. If you want to compress new Sass code into an updated CSS file, in a terminal that is not running Vagrant, run 'gulp' in the root directory. This command should start a watch on all Loop Sass files and compress anytime a Sass file is saved.
 
 ## Setting up for Development
+
+### Docker Setup (Recommended)
+
+1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
+2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
+3. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
+4. **Start development**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
+
+The Docker setup automatically:
+- Creates and loads the development database
+- Sets up all dependencies
+- Configures services (PostgreSQL, Redis, optional Elasticsearch)
+- Shows development documentation
+
+### Vagrant Setup (Alternative)
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
 2. Clone this repo or fetch the newest code
@@ -127,8 +164,8 @@ OWNCLOUD_PASSWORD = #Get from another developer
 
 ```
 
-### Optional (but recommended)
-#### Configure etc/hosts
+### Optional (but recommended for both Docker and Vagrant)
+#### Configure /etc/hosts
 Add the following lines to your `/etc/hosts` file
 
 ```bash
@@ -136,7 +173,7 @@ Add the following lines to your `/etc/hosts` file
 127.0.0.1 loopdev
 ```
 
-This will allow you to access the public site at `http://wwwdev:8000` and the intranet at `http://loopdev:8000`.
+This will allow you to access the public site at `http://wwwdev:8000` and the intranet at `http://loopdev:8000`. Alternatively, you can access the site at `http://localhost:8000`.
 
 #### Get development images
 These are the images used on pages in the test database on the dev version of the site. Not having these
