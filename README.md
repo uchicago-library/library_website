@@ -9,24 +9,24 @@
 ### Docker (Recommended)
 *Docker is the preferred development environment - it's faster to set up and more consistent across different systems.*
 
-**Initial Setup:**
+#### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
 3. **Create local config file**: `library_website/settings/local.py` (see Local Configuration File section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
-**Daily Development:**
+#### Daily Development:
 - **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
 - **Access shell**: `docker compose exec web bash`
 - **View help**: `./docker-setup.sh --help`
 
-**Docker Commands:**
+#### Docker Commands:
 - **Start services**: `docker compose up -d`
 - **Stop services**: `docker compose down`
 - **Complete cleanup**: `./docker-cleanup.sh`
 - **View logs**: `docker compose logs -f web`
 
-**Build without Elasticsearch or NodeJS:**
+#### Build without Elasticsearch or NodeJS:
 Since most development tasks don't require Elasticsearch or NodeJS, you can build faster by skipping them:
 ```bash
 ELASTICSEARCH=false NODEJS=false ./docker-setup.sh
@@ -41,20 +41,20 @@ The Docker setup automatically:
 ### Vagrant (Alternative)
 *If you prefer Vagrant or need it for specific development tasks.*
 
-**Initial Setup:**
+#### Initial Setup:
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
 2. Clone this repo or fetch the newest code
 3. Create a local config file: `library_website/settings/local.py` (see Local Configuration File section below)
 4. Create the dev environment from the root of the project directory: `vagrant up` (this will take awhile)
 
-**Daily Development:**
+#### Daily Development:
 1. ssh to the guest machine: `vagrant ssh`
 2. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
 3. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
 4. In the Wagtail admin go to: `Settings > Sites` and delete the site called `localhost`.
 5. If you're not a regular contributor to the Library website, you will need to create a superuser by running `./manage.py createsuperuser`. This will allow you access to the admin. If you're a Library developer, however, this was already done for you.
 
-**Build without Elasticsearch or NodeJS:**
+#### Build without Elasticsearch or NodeJS:
 ```
 ELASTICSEARCH=false NODEJS=false vagrant up
 ```
@@ -67,7 +67,7 @@ WAGTAILSEARCH_BACKENDS = {
 }
 ```
 
-**Vagrant Troubleshooting:**
+#### Vagrant Troubleshooting:
 If you have issues loading your local instance, try:
 ```
 vagrant halt
