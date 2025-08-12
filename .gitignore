@@ -25,3 +25,7 @@ src
 
 **/*~
 .vscode
+
+.claude/
+.gemini/
+CLAUDE.md
