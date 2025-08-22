@@ -262,7 +262,18 @@
 
         const ep = getEventParameters(target);
         // DEBUG, leaving it here for the first couple of weeks.
-        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position + "\n" + (ep.event_option || ''));
+        // Left align values for easier reading
+        function pad(label, width = 18) {
+            return (label + ':').padEnd(width, ' ');
+        }
+        console.log(
+            pad('eventName') + eventName + '\n' +
+            pad('event_category') + ep.event_category + '\n' +
+            pad('event_subcategory') + ep.event_subcategory + '\n' +
+            pad('event_label') + ep.event_label + '\n' +
+            pad('click_position') + ep.click_position + '\n' +
+            pad('event_option') + (ep.event_option || '')
+        );
         gtag('event', eventName, ep);
 
         // for links that navigate away
