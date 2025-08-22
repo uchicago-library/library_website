@@ -100,6 +100,7 @@
                 (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                 'Unknown',
             click_position: null,
+            event_option: link.getAttribute('data-ga-event-option') || null,
         };
 
 
@@ -261,7 +262,7 @@
 
         const ep = getEventParameters(target);
         // DEBUG, leaving it here for the first couple of weeks.
-        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
+        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position + "\n" + (ep.event_option || ''));
         gtag('event', eventName, ep);
 
         // for links that navigate away
@@ -277,7 +278,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
 
@@ -287,6 +287,52 @@
             if (e.button == 1) {
                 handleLinkClick(e, true);
             }
+        }, true);
+
+        // Add event listeners for checkboxes and selectpickers in search-widget
+        document.body.addEventListener('change', function (e) {
+            const target = e.target;
+            // Checkbox in search-widget
+            if (target.matches('input[type="checkbox"]') && target.closest('.search-widget')) {
+                const searchWidget = target.closest('.search-widget');
+                const searchButton = searchWidget.querySelector('button[type="submit"], .btn-search');
+                if (searchButton) {
+                    let optionText = target.value;
+                    let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                    if (target.checked) {
+                        // Add option
+                        if (currentOption) {
+                            if (!currentOption.split('; ').includes(optionText)) {
+                                currentOption += '; ' + optionText;
+                            }
+                        } else {
+                            currentOption = optionText;
+                        }
+                    } else {
+                        // Remove option
+                        currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
+                    }
+                    searchButton.setAttribute('data-ga-event-option', currentOption);
+                }
+            } else
+                // Selectpicker in search-widget
+                if (target.matches('#search_widget_catalog_search select.selectpicker.btn-searchtype') && target.closest('.search-widget')) {
+                    const searchWidget = target.closest('.search-widget');
+                    const searchButton = searchWidget.querySelector('button[type="submit"], .btn-search');
+                    if (searchButton) {
+                        // let selectedValue = target.options[target.selectedIndex].text.trim();
+                        let selectedValue = target.value.trim();
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        let optionsArr = currentOption ? currentOption.split('; ') : [];
+                        // Remove any previous type:... entry
+                        optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+                        if (selectedValue !== 'AllFields') {
+                            optionsArr.push('type:' + selectedValue);
+                        }
+                        currentOption = optionsArr.join('; ');
+                        searchButton.setAttribute('data-ga-event-option', currentOption);
+                    }
+                }
         }, true);
     });
 })();
