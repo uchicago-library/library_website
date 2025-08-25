@@ -1,0 +1,19 @@
+<form>
+    <input type="text" id="plink">
+    <input type="button" onclick="proxify(plink.value)" value="proxify link">
+    <input type="button" value="copy">
+</form>
+
+<script>
+
+ const proxify = (link) => {
+     const uri = encodeURIComponent (link);
+     const scheme = "https";
+     const hostname = "proxy-redirector-test.lib.uchicago.edu";
+     const route = "login";
+     const querystring = "url=" + uri;
+     const output = scheme + "://" + hostname + "/" + route + "?" + querystring;
+     alert (output);
+ };
+
+</script>

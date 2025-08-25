@@ -12,6 +12,7 @@ from ask_a_librarian.utils import (
 )
 from base.models import UNFRIENDLY_ARTICLES
 from base.utils import get_hours_and_location, sort_buildings
+from django.template.response import TemplateResponse
 from library_website.settings import (
     CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE, MANSUETO_HOMEPAGE,
     PUBLIC_HOMEPAGE, SCRC_HOMEPAGE, SSA_HOMEPAGE
@@ -108,6 +109,12 @@ def switchboard(request):
         query_string = parse.urlencode(params)
         url = f'{url_prefix}?{query_string}'
         return redirect(url)
+
+
+def proxylinker(request):
+    context = {}
+    template = "public/proxylinker.html"
+    return TemplateResponse(request, template, context)
 
 
 @cache_page
