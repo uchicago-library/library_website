@@ -101,7 +101,7 @@
                 'Unknown',
             click_position: null,
             event_option: link.getAttribute('data-ga-event-option') || null,
-            event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
+            event_indecision_count: link.getAttribute('data-ga-event-indecision-count') || null,
         };
 
 
@@ -303,12 +303,12 @@
         const href = target.getAttribute('href');
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
         const isNewTab = target.target === '_blank' || isMiddleClick;
-        if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
-            event.preventDefault(); // delay navigation just slightly
-            setTimeout(() => {
-                window.location.href = href;
-            }, 200); // give GA time to fire
-        }
+        // if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
+        //     event.preventDefault(); // delay navigation just slightly
+        //     setTimeout(() => {
+        //         window.location.href = href;
+        //     }, 200); // give GA time to fire
+        // }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
