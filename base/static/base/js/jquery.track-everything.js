@@ -101,6 +101,7 @@
                 'Unknown',
             click_position: null,
             event_option: link.getAttribute('data-ga-event-option') || null,
+            event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
         };
 
 
@@ -261,9 +262,30 @@
         if (!eventName) { return; }
 
         const ep = getEventParameters(target);
+
+        // --- indecision count logic ---
+        if (eventName === 'tab') {
+            // search-widget
+            if (ep.event_category === 'search-widget') {
+                const searchWidget = target.closest('#search-widget');
+                if (searchWidget) {
+                    let searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"]');
+                    searchButtons.forEach((searchButton) => {
+                        let count = parseInt(searchButton.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
+                        searchButton.setAttribute('data-ga-event-indecision-count', count);
+                    });
+                }
+            } else
+                // main-nav-links widget
+                if (ep.event_category === 'main-nav-links') {
+                    let count = parseInt(target.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
+                    target.setAttribute('data-ga-event-indecision-count', count);
+                }
+        }
+
         // DEBUG, leaving it here for the first couple of weeks.
         // Left align values for easier reading
-        function pad(label, width = 18) {
+        function pad(label, width = 25) {
             return (label + ':').padEnd(width, ' ');
         }
         console.log(
@@ -272,9 +294,10 @@
             pad('event_subcategory') + ep.event_subcategory + '\n' +
             pad('event_label') + ep.event_label + '\n' +
             pad('click_position') + ep.click_position + '\n' +
-            pad('event_option') + (ep.event_option || '')
+            pad('event_option') + (ep.event_option || '') + '\n' +
+            pad('event_indecision_count') + (ep.event_indecision_count || '')
         );
-        gtag('event', eventName, ep);
+        // gtag('event', eventName, ep);
 
         // for links that navigate away
         const href = target.getAttribute('href');
@@ -303,47 +326,71 @@
         // Add event listeners for checkboxes and selectpickers in search-widget
         document.body.addEventListener('change', function (e) {
             const target = e.target;
+            // console.log('change event detected', e.target, target.matches('input[type="checkbox"]'), target.closest('#search-widget'));
             // Checkbox in search-widget
-            if (target.matches('input[type="checkbox"]') && target.closest('.search-widget')) {
-                const searchWidget = target.closest('.search-widget');
-                const searchButton = searchWidget.querySelector('button[type="submit"], .btn-search');
-                if (searchButton) {
-                    let optionText = target.value;
-                    let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                    if (target.checked) {
-                        // Add option
-                        if (currentOption) {
-                            if (!currentOption.split('; ').includes(optionText)) {
-                                currentOption += '; ' + optionText;
+            if (target.matches('input[type="checkbox"]') && target.closest('#search-widget')) {
+                const searchWidget = target.closest('#search-widget');
+                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+                if (searchButtons.length) {
+                    searchButtons.forEach((searchButton) => {
+                        let optionText = target.getAttribute('data-ga-label');
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        if (target.checked) {
+                            // Add option
+                            if (currentOption) {
+                                if (!currentOption.split('; ').includes(optionText)) {
+                                    currentOption += '; ' + optionText;
+                                }
+                            } else {
+                                currentOption = optionText;
                             }
                         } else {
-                            currentOption = optionText;
+                            // Remove option
+                            currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
                         }
-                    } else {
-                        // Remove option
-                        currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
-                    }
-                    searchButton.setAttribute('data-ga-event-option', currentOption);
-                }
-            } else
-                // Selectpicker in search-widget
-                if (target.matches('#search_widget_catalog_search select.selectpicker.btn-searchtype') && target.closest('.search-widget')) {
-                    const searchWidget = target.closest('.search-widget');
-                    const searchButton = searchWidget.querySelector('button[type="submit"], .btn-search');
-                    if (searchButton) {
-                        // let selectedValue = target.options[target.selectedIndex].text.trim();
-                        let selectedValue = target.value.trim();
-                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                        let optionsArr = currentOption ? currentOption.split('; ') : [];
-                        // Remove any previous type:... entry
-                        optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
-                        if (selectedValue !== 'AllFields') {
-                            optionsArr.push('type:' + selectedValue);
-                        }
-                        currentOption = optionsArr.join('; ');
                         searchButton.setAttribute('data-ga-event-option', currentOption);
-                    }
+                    });
                 }
+
+            } else
+                if (target.matches('input[type="radio"]') && target.closest('#search-widget')) {
+                    console.log('radio change event detected');
+                    const searchWidget = target.closest('#search-widget');
+                    const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+                    if (searchButtons.length) {
+                        searchButtons.forEach((searchButton) => {
+                            let optionText = target.getAttribute('data-ga-label');
+                            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                            let optionsArr = currentOption ? currentOption.split('; ') : [];
+                            // Remove any previous rad:... entry
+                            optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
+                            if (target.checked) {
+                                optionsArr.push('radio:' + optionText);
+                            }
+                            currentOption = optionsArr.join('; ');
+                            searchButton.setAttribute('data-ga-event-option', currentOption);
+                        });
+                    }
+
+                } else
+                    // Selectpicker in search-widget
+                    if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest('#search-widget')) {
+                        const searchWidget = target.closest('#search-widget');
+                        const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
+                        if (searchButton) {
+                            // let selectedValue = target.options[target.selectedIndex].text.trim();
+                            let selectedValue = target.value.trim();
+                            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                            let optionsArr = currentOption ? currentOption.split('; ') : [];
+                            // Remove any previous type:... entry
+                            optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+                            if (selectedValue !== 'AllFields') {
+                                optionsArr.push('type:' + selectedValue);
+                            }
+                            currentOption = optionsArr.join('; ');
+                            searchButton.setAttribute('data-ga-event-option', currentOption);
+                        }
+                    }
         }, true);
     });
 })();
