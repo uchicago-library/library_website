@@ -1,10 +1,13 @@
-<form>
-    <input type="text" id="plink">
-    <input type="button" onclick="proxifyForm(plink)" value="proxify link">
-    <input type="button" onclick="copyLink(plink)" value="copy">
-</form>
+<input type="text" id="plink">
+<input type="button" onclick="proxifyForm(plink)" value="proxify link">
+<input type="button" onclick="copyLink(plink)" value="copy">
 
 <script>
+ const isProxyLink = (link) => {
+     url = URL.parse(link);
+     hostname = url.hostname ? url.hostname : null;
+     return hostname == "proxy-redirector-test.lib.uchicago.edu";
+ };
 
  const proxify = (link) => {
      const uri = encodeURIComponent (link.trim());
@@ -13,7 +16,7 @@
      const route = "login";
      const querystring = "url=" + uri;
      const output = scheme + "://" + hostname + "/" + route + "?" + querystring;
-     return output;
+     return isProxyLink (link) ? link : output;
  };
 
  const proxifyForm = (form) => {
@@ -25,5 +28,4 @@
      form.select ();
      document.execCommand ("copy");
  };
-
 </script>
