@@ -43,6 +43,7 @@
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
         WIDGET: '.widget, [id*="widget"]',
+        SEARCH_WIDGET: '#search-widget',
         SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"], ul.nav.nav-pills.nav-stacked',
         FOOTER: 'footer',
         TAB: '[role="tab"], [data-role="tab"], .spaces-toggle',
@@ -104,6 +105,12 @@
             event_indecision_count: link.getAttribute('data-ga-event-indecision-count') || null,
         };
 
+        // Get indecision count for search widget
+        if (link.closest(SELECTORS.SEARCH_WIDGET)) {
+            params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-event-indecision-count') || null;
+        } else if (link.closest(SELECTORS.GLOBAL_NAV)) {
+            params.event_indecision_count = link.closest(SELECTORS.GLOBAL_NAV).getAttribute('data-ga-event-indecision-count') || null;
+        }
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
@@ -114,7 +121,6 @@
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
                     params.event_label || CATEGORIES.MAIN;
-
             }
             // shortcuts
             else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
@@ -136,7 +142,9 @@
                 const widgetParent = link.closest(SELECTORS.WIDGET);
                 params.event_subcategory = params.event_subcategory ||
                     (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
-
+                if (link.closest(SELECTORS.SEARCH_WIDGET)) {
+                    params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-event-indecision-count') || null;
+                }
             }
             // any sidebar
             else if (link.closest(SELECTORS.SIDEBAR)) {
@@ -264,22 +272,20 @@
         const ep = getEventParameters(target);
 
         // --- indecision count logic ---
-        if (eventName === 'tab') {
+        if (eventName === 'tab' || eventName === 'dropdown') {
             // search-widget
             if (ep.event_category === 'search-widget') {
-                const searchWidget = target.closest('#search-widget');
+                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
                 if (searchWidget) {
-                    let searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"]');
-                    searchButtons.forEach((searchButton) => {
-                        let count = parseInt(searchButton.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
-                        searchButton.setAttribute('data-ga-event-indecision-count', count);
-                    });
+                    let count = parseInt(searchWidget.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
+                    searchWidget.setAttribute('data-ga-event-indecision-count', count);
                 }
             } else
                 // main-nav-links widget
-                if (ep.event_category === 'main-nav-links') {
-                    let count = parseInt(target.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
-                    target.setAttribute('data-ga-event-indecision-count', count);
+                if (target.closest(SELECTORS.GLOBAL_NAV)) {
+                    let navBar = target.closest(SELECTORS.GLOBAL_NAV);
+                    let count = parseInt(navBar.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
+                    navBar.setAttribute('data-ga-event-indecision-count', count);
                 }
         }
 
@@ -311,6 +317,7 @@
         // }
     }
 
+    // Add options to the search widget search button on change.
     document.addEventListener('DOMContentLoaded', function () {
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
@@ -326,10 +333,9 @@
         // Add event listeners for checkboxes and selectpickers in search-widget
         document.body.addEventListener('change', function (e) {
             const target = e.target;
-            // console.log('change event detected', e.target, target.matches('input[type="checkbox"]'), target.closest('#search-widget'));
             // Checkbox in search-widget
-            if (target.matches('input[type="checkbox"]') && target.closest('#search-widget')) {
-                const searchWidget = target.closest('#search-widget');
+            if (target.matches('input[type="checkbox"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
                 const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
                 if (searchButtons.length) {
                     searchButtons.forEach((searchButton) => {
@@ -353,9 +359,8 @@
                 }
 
             } else
-                if (target.matches('input[type="radio"]') && target.closest('#search-widget')) {
-                    console.log('radio change event detected');
-                    const searchWidget = target.closest('#search-widget');
+                if (target.matches('input[type="radio"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+                    const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
                     const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
                     if (searchButtons.length) {
                         searchButtons.forEach((searchButton) => {
@@ -374,8 +379,8 @@
 
                 } else
                     // Selectpicker in search-widget
-                    if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest('#search-widget')) {
-                        const searchWidget = target.closest('#search-widget');
+                    if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+                        const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
                         const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
                         if (searchButton) {
                             // let selectedValue = target.options[target.selectedIndex].text.trim();
