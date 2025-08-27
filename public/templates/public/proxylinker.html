@@ -40,6 +40,8 @@
  };
 
  const displayText = (newText) => {
-     document.getElementById ("original_link").innerHTML = "original link: " + newText;
+     if (newText) {
+	 document.getElementById ("original_link").innerHTML = "original link: " + newText;
+     } else {};
  };
 </script>
