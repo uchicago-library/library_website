@@ -40,7 +40,7 @@
  };
 
  const displayText = (newText) => {
-     if (newText) {
+     if (newText.trim()) {
 	 document.getElementById ("original_link").innerHTML = "original link: " + newText;
      } else {};
  };
