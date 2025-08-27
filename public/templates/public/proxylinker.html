@@ -1,6 +1,14 @@
-<input type="text" id="plink">
+<input type="text" id="plink" onblur="displayText(plink.value)">
 <input type="button" onclick="proxifyForm(plink)" value="proxify link">
 <input type="button" onclick="copyLink(plink)" value="copy">
+
+<p/>
+
+<div id="current_link"></div>
+
+<p/>
+
+<div id="proxied_link"></div>
 
 <script>
  const isProxyLink = (link) => {
@@ -21,11 +29,17 @@
 
  const proxifyForm = (form) => {
      const link = form.value;
-     form.value = proxify (link);
+     const proxified = proxify (link);
+     form.value = proxified;
+     document.getElementById ("proxied_link").innerHTML = "proxified link: " + proxified;
  };
 
  const copyLink = (form) => {
      form.select ();
      document.execCommand ("copy");
+ };
+
+ const displayText = (newText) => {
+     document.getElementById ("current_link").innerHTML = "original link: " + newText;
  };
 </script>
