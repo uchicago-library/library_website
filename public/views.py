@@ -113,7 +113,7 @@ def switchboard(request):
 
 def proxylinker(request):
     context = {}
-    template = "public/proxylinker.html"
+    template = "public/proxy-linker.html"
     return TemplateResponse(request, template, context)
 
 
