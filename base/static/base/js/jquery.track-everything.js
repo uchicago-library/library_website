@@ -16,9 +16,9 @@
  * - event_option
  * - event_indecision_count
  * 
- * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results'
+ * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results', "Right Sidebar"
  * 
- * `event_subcategory`: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
+ * `event_subcategory` examples: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
  * 
  * Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
  * VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
@@ -107,7 +107,7 @@
                 link.getAttribute('title') ||
                 (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                 'Unknown',
-            click_position: null,
+            click_position: link.getAttribute('data-ga-position') || null,
             event_option: link.getAttribute('data-ga-event-option') || null,
             event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
         };
@@ -129,6 +129,7 @@
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
+            // A lot of links will have this established in the HTML and will not get in here.
             // main navbar
             if (link.closest(SELECTORS.GLOBAL_NAV)) {
                 params.event_category = params.event_category || CATEGORIES.MAIN;

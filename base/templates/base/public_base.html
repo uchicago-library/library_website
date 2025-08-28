@@ -156,18 +156,18 @@
 
                     {% if has_left_sidebar %}
                         <nav role="navigation" aria-label="Secondary menu">
-                            <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar">
+                            <div class="col-xs-6 col-md-2 sidebar-offcanvas sidebar {{branch_lib_css}}" id="sidebar" data-ga-category="Navigation" data-ga-subcategory="Left Sidebar">
                                 {% if sidebartitle %}
-                                    <h2><a href="{{sidebartitleurl}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
+                                    <h2><a href="{{sidebartitleurl}}" data-ga-label="{{sidebartitle}}">{{sidebartitle}}</a></h2>
                                 {% endif %}
                                 {% if sidebar %}
                                     <ul>
                                         {% for child in sidebar %}
-                                            <li><a href="{{child.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{child.title}}">{{child.title}}</a>
+                                            <li><a href="{{child.url}}" data-ga-label="{{child.title}}">{{child.title}}</a>
                                                 {% if child.children %}
                                                     <ul>
                                                         {% for grandchild in child.children %}
-                                                            <li><a href="{{grandchild.url}}" data-ga-category="sidebar-links" data-ga-action="click" data-ga-label="{{grandchild.title}}">{{grandchild.title}}</a></li>
+                                                            <li><a href="{{grandchild.url}}" data-ga-label="{{grandchild.title}}">{{grandchild.title}}</a></li>
                                                         {% endfor %}
                                                     </ul>
                                                 {% endif %}
@@ -338,11 +338,11 @@
 
 
                         {% if self.news_feed_source %}
-                            <div class="home-modwrapper" id="widget-news">
+                            <div class="home-modwrapper" id="widget-news" data-ga-category="Widget" data-ga-subcategory="News">
                                 <div id="news-header" class="home-module">
                                     <h2>News</h2>
                                     {% if news_page %}
-                                        <a class="viewall" href="{{news_page}}" id="widget-news-view-all">View all</a>
+                                        <a class="viewall" href="{{news_page}}" id="widget-news-view-all" data-ga-label="View all">View all</a>
                                     {% endif %}
                                 </div>
                                 <div class="news-wrap">
@@ -351,7 +351,7 @@
                                             <div class="newsblock col-xs-12 col-sm-6 col-lg-3">
                                                 <div class="embed">
                                                     <div class="figure-wrap">
-                                                        <a href="{% pageurl story %}" data-ga-tracked="on">
+                                                        <a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{story.title}}">
                                                             {% image story.thumbnail fill-273x125 as tnt %}
                                                             <img src="{{tnt.url}}" width="{{tnt.width}}" height="{{tnt.height}}" alt="{{tnt.alt}} from {{story.title}}" class="img-responsive"/>
                                                         </a>
@@ -360,10 +360,10 @@
                                                         <div class="capt news-category {{first_category|slugify}}">{{first_category}}</div>
                                                     {% endwith %}
                                                 </div>
-                                                <h3><a href="{% pageurl story %}" data-ga-tracked="on">{{story.title}}</a></h3>
+                                                <h3><a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{story.title}}">{{story.title}}</a></h3>
                                                 <p>
                                                     {{story.excerpt|richtext|striptags}}<br/>
-                                                    <a aria-label="Read more about {{story.title}}"href="{% pageurl story %}" data-ga-tracked="on">Read more...</a>
+                                                    <a aria-label="Read more about {{story.title}}" href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{story.title}}">Read more...</a>
                                                 </p>
                                             </div>
                                         {% endfor %}
@@ -376,10 +376,10 @@
                         {% endif %}
 
                         {% if self.has_right_sidebar %}
-                            <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary"> <!-- Right Sidebar Content -->
+                            <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary" data-ga-category="Right Sidebar"> <!-- Right Sidebar Content -->
 
                                 {% if reusable_content %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content" data-ga-subcategory="Reusable Content">
                                         {% for widget in reusable_content %}
                                             <div class="widget-reusable-content-block {{widget.content.style_type}}">
                                                 {% if widget.content.sidebar_heading %}
@@ -399,7 +399,7 @@
                                 {% endif %}
 
                                 {% if self.has_granular_hours %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Granular Hours">
                                         <h3>Hours Today</h3>
                                         <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required 'script' moved to footer #}
                                         <a href="/libraries/libraries-hours/" class="viewall">View all library hours</a>
@@ -407,7 +407,7 @@
                                 {% endif %}
 
                                 {% if self.has_icon_link_items %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="{{self.widget_title}}">
                                         {% if self.widget_title %}
                                             <h3>{{self.widget_title}}</h3>
                                         {% endif %}
@@ -432,7 +432,7 @@
                                 {% endif %}
 
                                 {% if self.has_find_spaces %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces" data-ga-subcategory="Find Spaces">
                                         <h2>Find Spaces</h2>
                                         <div class="studymod col-xs-12 columns icon-widget">
                                             <div class="column">
@@ -454,7 +454,7 @@
                                 {% endif %}
 
                                 {% if self.events_feed_url %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events" data-ga-subcategory="Workshops & Events">
                                         <h2>Workshops &amp; Events</h2>
                                         <div class="calledOnce">
                                             <!--<div class="jflatTimeline calledOnce">-->
@@ -471,7 +471,7 @@
 
                                 {% if self.collection_page %}
                                     {% image self.collection_page.thumbnail fill-200x200-c100 as collection_img %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Featured Collection">
                                         <h3>Featured Collection</h3>
                                         <img style="padding-bottom: 10px;" class="img-responsive" src="{{collection_img.url}}" alt="{{self.collection_page.title}}"/>
                                         <p><strong><a href="{{self.collection_page.url}}">{{self.collection_page.title}}</a></strong></p>
@@ -480,7 +480,7 @@
                                 {% endif %}
 
                                 {% if self.has_social_media %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media" data-ga-subcategory="Social Media">
                                         <h3>{{self.friendly_name}}Social Media</h3>
                                         <ul>
                                             {% if self.twitter_page %}
@@ -512,7 +512,7 @@
                                 {% endif %}
 
                                 {% if libra %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Libra">
                                         <h2>Print</h2>
                                         <div class="libra-link-wrap">
                                             <p><a href="{% pageurl libra %}">{{libra}}</a></p>
