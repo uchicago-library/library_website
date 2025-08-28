@@ -25,9 +25,3 @@ const copyLink = (form) => {
     form.select ();
     document.execCommand ("copy");
 };
-
-const displayText = (newText) => {
-    if (newText.trim()) {
-	document.getElementById ("original_link").innerHTML = "original link: " + newText;
-    } else {};
-};
