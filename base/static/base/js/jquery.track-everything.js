@@ -13,6 +13,8 @@
  * - event_subcategory
  * - event_label
  * - click_position
+ * - event_option
+ * - event_indecision_count
  * 
  * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results'
  * 
@@ -23,6 +25,10 @@
  * Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
  * 
  * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
+ * 
+ * `event_option` adds any checkbox or radio button selected to the main link, like search options in the home page search widget
+ * 
+ * `event_indecision_count` counts how many times a user has clicked on tabs or dropdowns before making a final selection
  * 
  * Features:
  * - Event delegation for efficient event handling
@@ -102,14 +108,22 @@
                 'Unknown',
             click_position: null,
             event_option: link.getAttribute('data-ga-event-option') || null,
-            event_indecision_count: link.getAttribute('data-ga-event-indecision-count') || null,
+            event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
         };
+
+        // Look for Category and Subcategory in parent elements
+        if (!params.event_category && link.closest('[data-ga-category]')) {
+            params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
+        }
+        if (!params.event_subcategory && link.closest('[data-ga-subcategory]')) {
+            params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
+        }
 
         // Get indecision count for search widget
         if (link.closest(SELECTORS.SEARCH_WIDGET)) {
-            params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-event-indecision-count') || null;
+            params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-indecision-count') || null;
         } else if (link.closest(SELECTORS.GLOBAL_NAV)) {
-            params.event_indecision_count = link.closest(SELECTORS.GLOBAL_NAV).getAttribute('data-ga-event-indecision-count') || null;
+            params.event_indecision_count = link.closest(SELECTORS.GLOBAL_NAV).getAttribute('data-ga-indecision-count') || null;
         }
 
         // Determine category, subcategory, based on link context.
@@ -143,7 +157,7 @@
                 params.event_subcategory = params.event_subcategory ||
                     (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
                 if (link.closest(SELECTORS.SEARCH_WIDGET)) {
-                    params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-event-indecision-count') || null;
+                    params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-indecision-count') || null;
                 }
             }
             // any sidebar
@@ -263,32 +277,28 @@
         }
     }
 
-    // Function to handle link clicks and send events to GA4.
-    function handleLinkClick(event, isMiddleClick = false) {
-        const target = event.target.closest('a, button, input');
-        const eventName = getEventName(target);
-        if (!eventName) { return; }
-
-        const ep = getEventParameters(target);
-
+    function count_indecision(ep, eventName, target) {
+        // Function to count indecision clicks on tabs and dropdowns
         // --- indecision count logic ---
         if (eventName === 'tab' || eventName === 'dropdown') {
             // search-widget
             if (ep.event_category === 'search-widget') {
                 const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
                 if (searchWidget) {
-                    let count = parseInt(searchWidget.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
-                    searchWidget.setAttribute('data-ga-event-indecision-count', count);
+                    let count = parseInt(searchWidget.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                    searchWidget.setAttribute('data-ga-indecision-count', count);
                 }
             } else
                 // main-nav-links widget
                 if (target.closest(SELECTORS.GLOBAL_NAV)) {
                     let navBar = target.closest(SELECTORS.GLOBAL_NAV);
-                    let count = parseInt(navBar.getAttribute('data-ga-event-indecision-count') || '0', 10) + 1;
-                    navBar.setAttribute('data-ga-event-indecision-count', count);
+                    let count = parseInt(navBar.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                    navBar.setAttribute('data-ga-indecision-count', count);
                 }
         }
+    }
 
+    function all_log(ep, eventName) {
         // DEBUG, leaving it here for the first couple of weeks.
         // Left align values for easier reading
         function pad(label, width = 25) {
@@ -303,8 +313,10 @@
             pad('event_option') + (ep.event_option || '') + '\n' +
             pad('event_indecision_count') + (ep.event_indecision_count || '')
         );
-        // gtag('event', eventName, ep);
 
+    }
+
+    function continue_link_click(event, href) {
         // for links that navigate away
         const href = target.getAttribute('href');
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
@@ -315,6 +327,23 @@
         //         window.location.href = href;
         //     }, 200); // give GA time to fire
         // }
+    }
+
+    // Function to handle link clicks and send events to GA4. ----- MAIN FUNCTION -----
+    function handleLinkClick(event, isMiddleClick = false) {
+        const target = event.target.closest('a, button, input');
+        const eventName = getEventName(target);
+        if (!eventName) { return; }
+
+        const ep = getEventParameters(target);
+
+        count_indecision(ep, eventName, target);
+
+        all_log(ep, eventName); // for debugging
+
+        // gtag('event', eventName, ep);
+
+        continue_link_click(event, href);
     }
 
     // Add options to the search widget search button on change.
