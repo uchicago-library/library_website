@@ -17,7 +17,6 @@ const proxify = (link) => {
 const proxifyForm = (form) => {
     const link = form.value;
     const proxified = proxify (link);
-    form.value = proxified;
     document.getElementById ("copy_button").hidden = false;
     document.getElementById ("proxied_link").innerHTML = "proxified link: " + proxified;
 };
