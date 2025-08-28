@@ -8,7 +8,7 @@ const proxify = (link) => {
     return output;
 };
 
-const proxifyForm = (form, pdisplay) => {
+const proxifyForm = (form, pbutton, pdisplay) => {
     pbutton = document.getElementById("pbutton");
     pbutton.classList.remove("btn-secondary");
     pbutton.classList.add("btn-primary");
