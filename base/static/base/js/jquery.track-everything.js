@@ -48,6 +48,7 @@
     // Configuration constants
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
+        NAVBAR_RIGHT: '#navbar-right',
         WIDGET: '.widget, [id*="widget"]',
         SEARCH_WIDGET: '#search-widget',
         SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"], ul.nav.nav-pills.nav-stacked',
@@ -58,12 +59,6 @@
         BUTTON_A: 'button, a'
     };
 
-    const LOCATIONS = {
-        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
-        GUIDES: 'guides.lib.uchicago.edu',
-        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
-    };
-
     const CATEGORIES = {
         NAVIGATION: 'Navigation',
         FOOTER: 'Footer',
@@ -72,6 +67,12 @@
         MAIN: 'Main',
         SHORTCUTS: 'Navbar Shortcuts',
         VUFIND_RESULTS: 'VuFind Results',
+    };
+
+    const LOCATIONS = {
+        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
+        GUIDES: 'guides.lib.uchicago.edu',
+        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
 
     // Debounce function to limit the rate at which a function can fire.
