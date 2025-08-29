@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 2.0.1
+ * @version 3.0.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -155,7 +155,7 @@
                 params.event_category = params.event_category || CATEGORIES.WIDGET;
                 const widgetParent = link.closest(SELECTORS.WIDGET);
                 params.event_subcategory = params.event_subcategory ||
-                    (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
+                    (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || null;
                 if (link.closest(SELECTORS.SEARCH_WIDGET)) {
                     params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-indecision-count') || null;
                 }
@@ -165,8 +165,8 @@
                 params.event_category = params.event_category || CATEGORIES.SIDEBAR;
                 const sidebarParent = link.closest(SELECTORS.SIDEBAR);
                 params.event_subcategory = params.event_subcategory ||
-                    (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
-                    (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
+                    (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
+                    (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || null);
             }
             // Catalog Vufind Search results
             else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
@@ -410,7 +410,7 @@
 
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
-            if (e.button == 1) {
+            if (e.button === 1) {
                 handleLinkClick(e, true);
             }
         }, true);
