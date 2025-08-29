@@ -16,7 +16,7 @@
  * - event_option
  * - event_indecision_count
  * 
- * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results', "Right Sidebar"
+ * `event_category`: Alert Banner, Navigation, Expert Widget, Guides Widget, Widget, Right Sidebar, Sidebar, Main, Footer, VuFind Results, 
  * 
  * `event_subcategory` examples: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
  * 
@@ -43,6 +43,7 @@
  * Usage:
  * Add data-ga-* attributes to track custom parameters:
  * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
+ * Add data-ga-category and data-ga-subcategory to parent elements to set context for child links.
  */
 (function () {
     // Configuration constants
@@ -289,7 +290,6 @@
 
     function all_log(ep, eventName) {
         // DEBUG, leaving it here for the first couple of weeks.
-        // Left align values for easier reading
         function pad(label, width = 25) {
             return (label + ':').padEnd(width, ' ');
         }
@@ -305,17 +305,16 @@
 
     }
 
-    function continue_link_click(eventName, event, href, isMiddleClick) {
+    function defer_link_click(eventName, event, href, isMiddleClick) {
         // for links that navigate away
-
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
         const isNewTab = target.target === '_blank' || isMiddleClick;
-        // if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
-        //     event.preventDefault(); // delay navigation just slightly
-        //     setTimeout(() => {
-        //         window.location.href = href;
-        //     }, 200); // give GA time to fire
-        // }
+        if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
+            event.preventDefault(); // delay navigation just slightly
+            setTimeout(() => {
+                window.location.href = href;
+            }, 200); // give GA time to fire
+        }
     }
 
     // Function to handle link clicks and send events to GA4. ----- MAIN FUNCTION -----
@@ -330,9 +329,77 @@
 
         all_log(ep, eventName); // for debugging
 
-        // gtag('event', eventName, ep);
+        gtag('event', eventName, ep);
 
-        continue_link_click(eventName, event, target.getAttribute('href'), isMiddleClick);
+        defer_link_click(eventName, event, target.getAttribute('href'), isMiddleClick);
+    }
+
+    // Function to add option changes (checkboxes, radio buttons, select pickers) in the search widget to the main search button.
+    function handleOptionChange(e) {
+        const target = e.target;
+        // Checkbox in search-widget
+        if (target.matches('input[type="checkbox"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+            const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+            const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+            if (searchButtons.length) {
+                searchButtons.forEach((searchButton) => {
+                    let optionText = target.getAttribute('data-ga-label');
+                    let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                    if (target.checked) {
+                        // Add option
+                        if (currentOption) {
+                            if (!currentOption.split('; ').includes(optionText)) {
+                                currentOption += '; ' + optionText;
+                            }
+                        } else {
+                            currentOption = optionText;
+                        }
+                    } else {
+                        // Remove option
+                        currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
+                    }
+                    searchButton.setAttribute('data-ga-event-option', currentOption);
+                });
+            }
+
+        } else
+            if (target.matches('input[type="radio"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+                if (searchButtons.length) {
+                    searchButtons.forEach((searchButton) => {
+                        let optionText = target.getAttribute('data-ga-label');
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        let optionsArr = currentOption ? currentOption.split('; ') : [];
+                        // Remove any previous rad:... entry
+                        optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
+                        if (target.checked) {
+                            optionsArr.push('radio:' + optionText);
+                        }
+                        currentOption = optionsArr.join('; ');
+                        searchButton.setAttribute('data-ga-event-option', currentOption);
+                    });
+                }
+
+            } else
+                // Selectpicker in search-widget
+                if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest(SELECTORS.SEARCH_WIDGET)) {
+                    const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+                    const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
+                    if (searchButton) {
+                        // let selectedValue = target.options[target.selectedIndex].text.trim();
+                        let selectedValue = target.value.trim();
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        let optionsArr = currentOption ? currentOption.split('; ') : [];
+                        // Remove any previous type:... entry
+                        optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+                        if (selectedValue !== 'AllFields') {
+                            optionsArr.push('type:' + selectedValue);
+                        }
+                        currentOption = optionsArr.join('; ');
+                        searchButton.setAttribute('data-ga-event-option', currentOption);
+                    }
+                }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -340,6 +407,7 @@
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
 
         document.body.addEventListener('click', handleLinkClick, true);
+
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
             if (e.button == 1) {
@@ -348,72 +416,6 @@
         }, true);
 
         // Add options to the search widget search button on change.
-        // Add event listeners for checkboxes and selectpickers in search-widget
-        document.body.addEventListener('change', function (e) {
-            const target = e.target;
-            // Checkbox in search-widget
-            if (target.matches('input[type="checkbox"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-                if (searchButtons.length) {
-                    searchButtons.forEach((searchButton) => {
-                        let optionText = target.getAttribute('data-ga-label');
-                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                        if (target.checked) {
-                            // Add option
-                            if (currentOption) {
-                                if (!currentOption.split('; ').includes(optionText)) {
-                                    currentOption += '; ' + optionText;
-                                }
-                            } else {
-                                currentOption = optionText;
-                            }
-                        } else {
-                            // Remove option
-                            currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
-                        }
-                        searchButton.setAttribute('data-ga-event-option', currentOption);
-                    });
-                }
-
-            } else
-                if (target.matches('input[type="radio"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-                    const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                    const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-                    if (searchButtons.length) {
-                        searchButtons.forEach((searchButton) => {
-                            let optionText = target.getAttribute('data-ga-label');
-                            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                            let optionsArr = currentOption ? currentOption.split('; ') : [];
-                            // Remove any previous rad:... entry
-                            optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
-                            if (target.checked) {
-                                optionsArr.push('radio:' + optionText);
-                            }
-                            currentOption = optionsArr.join('; ');
-                            searchButton.setAttribute('data-ga-event-option', currentOption);
-                        });
-                    }
-
-                } else
-                    // Selectpicker in search-widget
-                    if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-                        const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                        const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
-                        if (searchButton) {
-                            // let selectedValue = target.options[target.selectedIndex].text.trim();
-                            let selectedValue = target.value.trim();
-                            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                            let optionsArr = currentOption ? currentOption.split('; ') : [];
-                            // Remove any previous type:... entry
-                            optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
-                            if (selectedValue !== 'AllFields') {
-                                optionsArr.push('type:' + selectedValue);
-                            }
-                            currentOption = optionsArr.join('; ');
-                            searchButton.setAttribute('data-ga-event-option', currentOption);
-                        }
-                    }
-        }, true);
+        document.body.addEventListener('change', handleOptionChange, true);
     });
 })();
