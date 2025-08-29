@@ -318,9 +318,9 @@
 
     }
 
-    function continue_link_click(event, href) {
+    function continue_link_click(eventName, event, href, isMiddleClick) {
         // for links that navigate away
-        const href = target.getAttribute('href');
+
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
         const isNewTab = target.target === '_blank' || isMiddleClick;
         // if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
@@ -345,14 +345,13 @@
 
         // gtag('event', eventName, ep);
 
-        continue_link_click(event, href);
+        continue_link_click(eventName, event, target.getAttribute('href'), isMiddleClick);
     }
 
-    // Add options to the search widget search button on change.
     document.addEventListener('DOMContentLoaded', function () {
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-
+        
         document.body.addEventListener('click', handleLinkClick, true);
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
@@ -361,6 +360,7 @@
             }
         }, true);
 
+        // Add options to the search widget search button on change.
         // Add event listeners for checkboxes and selectpickers in search-widget
         document.body.addEventListener('change', function (e) {
             const target = e.target;
