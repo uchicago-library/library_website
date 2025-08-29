@@ -2,13 +2,13 @@
 
 {% for page in self.get_ancestors %}
     {% if not page.is_root and not page.get_parent.is_root %}
-	<a href="{% pageurl page %}">{{ page.title }}</a> &gt;
+	<a href="{% pageurl page %}" data-ga-category="Navigation" data-ga-subcategory="Breadcrumbs" data-ga-label="{{ page.title }}">{{ page.title }}</a> &gt;
     {% endif %}
 {% endfor %}
 
 {% if collection_breadcrumb %}
     {% for name, link in collection_breadcrumb.items %}
-	<a href ="{{ link }}">{{ name }}</a> &gt;
+	<a href ="{{ link }}" data-ga-category="Navigation" data-ga-subcategory="Breadcrumbs" data-ga-label="{{ name }}">{{ name }}</a> &gt;
     {% endfor %}
     {{ collection_final_breadcrumb }}
 {% else %}
