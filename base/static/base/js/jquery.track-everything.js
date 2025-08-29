@@ -113,6 +113,7 @@
         };
 
         // Look for Category and Subcategory in parent elements
+        // This will handle most cases
         if (!params.event_category && link.closest('[data-ga-category]')) {
             params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
         }
@@ -120,29 +121,26 @@
             params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
         }
 
-        // Get indecision count for search widget
-        if (link.closest(SELECTORS.SEARCH_WIDGET)) {
-            params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-indecision-count') || null;
-        } else if (link.closest(SELECTORS.GLOBAL_NAV)) {
-            params.event_indecision_count = link.closest(SELECTORS.GLOBAL_NAV).getAttribute('data-ga-indecision-count') || null;
+        if (link.closest('[data-ga-category][data-ga-indecision-count]')) {
+            params.event_indecision_count = link.closest('[data-ga-category][data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
         }
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
             // A lot of links will have this established in the HTML and will not get in here.
+            // But might be of help if changes are made to the HTML without proper labeling.
             // main navbar
             if (link.closest(SELECTORS.GLOBAL_NAV)) {
-                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_category = params.event_category || CATEGORIES.NAVIGATION;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                    params.event_label || CATEGORIES.MAIN;
+                    params.event_label || CATEGORIES.NAVIGATION;
             }
             // shortcuts
             else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
                 params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
                 params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
-
             }
             // footer
             else if (link.closest(SELECTORS.FOOTER)) {
@@ -150,7 +148,6 @@
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
-
             }
             // any widget
             else if (link.closest(SELECTORS.WIDGET)) {
@@ -169,7 +166,6 @@
                 params.event_subcategory = params.event_subcategory ||
                     (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
                     (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
-
             }
             // Catalog Vufind Search results
             else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
@@ -283,20 +279,11 @@
         // Function to count indecision clicks on tabs and dropdowns
         // --- indecision count logic ---
         if (eventName === 'tab' || eventName === 'dropdown') {
-            // search-widget
-            if (ep.event_category === 'search-widget') {
-                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                if (searchWidget) {
-                    let count = parseInt(searchWidget.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
-                    searchWidget.setAttribute('data-ga-indecision-count', count);
-                }
-            } else
-                // main-nav-links widget
-                if (target.closest(SELECTORS.GLOBAL_NAV)) {
-                    let navBar = target.closest(SELECTORS.GLOBAL_NAV);
-                    let count = parseInt(navBar.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
-                    navBar.setAttribute('data-ga-indecision-count', count);
-                }
+            const component = target.closest('[data-ga-category]');
+            if (component) {
+                let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                component.setAttribute('data-ga-indecision-count', count);
+            }
         }
     }
 
@@ -351,7 +338,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
-        
+
         document.body.addEventListener('click', handleLinkClick, true);
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
