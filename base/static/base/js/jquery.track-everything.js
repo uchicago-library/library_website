@@ -283,6 +283,7 @@
             const component = target.closest('[data-ga-category]');
             if (component) {
                 let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                if (isNaN(count)) count = 1;
                 component.setAttribute('data-ga-indecision-count', count);
             }
         }
