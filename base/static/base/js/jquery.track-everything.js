@@ -318,6 +318,64 @@
         }
     }
 
+    function handleCheckboxChange(target, searchWidget) {
+        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+        if (searchButtons.length) {
+            searchButtons.forEach((searchButton) => {
+                let optionText = target.getAttribute('data-ga-label');
+                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                if (target.checked) {
+                    // Add option
+                    if (currentOption) {
+                        if (!currentOption.split('; ').includes(optionText)) {
+                            currentOption += '; ' + optionText;
+                        }
+                    } else {
+                        currentOption = optionText;
+                    }
+                } else {
+                    // Remove option
+                    currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
+                }
+                searchButton.setAttribute('data-ga-event-option', currentOption);
+            });
+        }
+    }
+
+    function handleRadioChange(target, searchWidget) {
+        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+        if (searchButtons.length) {
+            searchButtons.forEach((searchButton) => {
+                let optionText = target.getAttribute('data-ga-label');
+                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                let optionsArr = currentOption ? currentOption.split('; ') : [];
+                // Remove any previous rad:... entry
+                optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
+                if (target.checked) {
+                    optionsArr.push('radio:' + optionText);
+                }
+                currentOption = optionsArr.join('; ');
+                searchButton.setAttribute('data-ga-event-option', currentOption);
+            });
+        }
+    }
+
+    function handleSelectPickerChange(target, searchWidget) {
+        const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
+        if (searchButton) {
+            let selectedValue = target.value.trim();
+            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+            let optionsArr = currentOption ? currentOption.split('; ') : [];
+            // Remove any previous type:... entry
+            optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+            if (selectedValue !== 'AllFields') {
+                optionsArr.push('type:' + selectedValue);
+            }
+            currentOption = optionsArr.join('; ');
+            searchButton.setAttribute('data-ga-event-option', currentOption);
+        }
+    }
+
     // Function to handle link clicks and send events to GA4. ----- MAIN FUNCTION -----
     function handleLinkClick(event, isMiddleClick = false) {
         const target = event.target.closest('a, button, input');
@@ -338,69 +396,15 @@
     // Function to add option changes (checkboxes, radio buttons, select pickers) in the search widget to the main search button.
     function handleOptionChange(e) {
         const target = e.target;
-        // Checkbox in search-widget
-        if (target.matches('input[type="checkbox"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-            const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-            const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-            if (searchButtons.length) {
-                searchButtons.forEach((searchButton) => {
-                    let optionText = target.getAttribute('data-ga-label');
-                    let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                    if (target.checked) {
-                        // Add option
-                        if (currentOption) {
-                            if (!currentOption.split('; ').includes(optionText)) {
-                                currentOption += '; ' + optionText;
-                            }
-                        } else {
-                            currentOption = optionText;
-                        }
-                    } else {
-                        // Remove option
-                        currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
-                    }
-                    searchButton.setAttribute('data-ga-event-option', currentOption);
-                });
-            }
-
-        } else
-            if (target.matches('input[type="radio"]') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-                const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-                if (searchButtons.length) {
-                    searchButtons.forEach((searchButton) => {
-                        let optionText = target.getAttribute('data-ga-label');
-                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                        let optionsArr = currentOption ? currentOption.split('; ') : [];
-                        // Remove any previous rad:... entry
-                        optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
-                        if (target.checked) {
-                            optionsArr.push('radio:' + optionText);
-                        }
-                        currentOption = optionsArr.join('; ');
-                        searchButton.setAttribute('data-ga-event-option', currentOption);
-                    });
-                }
-
-            } else
-                // Selectpicker in search-widget
-                if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype') && target.closest(SELECTORS.SEARCH_WIDGET)) {
-                    const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-                    const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
-                    if (searchButton) {
-                        // let selectedValue = target.options[target.selectedIndex].text.trim();
-                        let selectedValue = target.value.trim();
-                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                        let optionsArr = currentOption ? currentOption.split('; ') : [];
-                        // Remove any previous type:... entry
-                        optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
-                        if (selectedValue !== 'AllFields') {
-                            optionsArr.push('type:' + selectedValue);
-                        }
-                        currentOption = optionsArr.join('; ');
-                        searchButton.setAttribute('data-ga-event-option', currentOption);
-                    }
-                }
+        const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+        if (!searchWidget) return;
+        if (target.matches('input[type="checkbox"]')) {
+            handleCheckboxChange(target, searchWidget);
+        } else if (target.matches('input[type="radio"]')) {
+            handleRadioChange(target, searchWidget);
+        } else if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype')) {
+            handleSelectPickerChange(target, searchWidget);
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
