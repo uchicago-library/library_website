@@ -8,15 +8,20 @@ const proxify = (link) => {
     return output;
 };
 
-const proxifyForm = (form, pbutton, pdisplay) => {
+const proxifyForm = (form, pdisplay) => {
+    form.reportValidity();
     pbutton = document.getElementById("pbutton");
+    cbutton = document.getElementById("copy_button");
     pbutton.classList.remove("btn-secondary");
     pbutton.classList.add("btn-primary");
     const link = form.value;
     const proxified = proxify (link);
-    document.getElementById ("copy_button").hidden = false;
-    pdisplay.value = link ? proxified : pdisplay.value;
+    if (form.checkValidity()) {
+	pdisplay.value = link ? proxified : pdisplay.value;
+	cbutton.disabled = false;
+    } else {};
 };
+
 
 const copyLink = (form) => {
     form.select ();
