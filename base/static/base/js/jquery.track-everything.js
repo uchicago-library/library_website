@@ -71,7 +71,7 @@
     };
 
     const LOCATIONS = {
-        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
+        VUFIND: 'catalog.lib.uchicago.edu/vufind/Search/Results',
         GUIDES: 'guides.lib.uchicago.edu',
         GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
@@ -200,7 +200,7 @@
                                     link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
 
             }
-            // main content
+            // default - probably main content
             else {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
@@ -223,6 +223,13 @@
                 if (ancestor) {
                     params.event_subcategory = params.event_subcategory || 'List';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                }
+                // Catalog Vufind Search results
+                else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                    let ancestor = link.closest('[data-record-number]');
+                    if (ancestor) {
+                        params.click_position = ancestor.getAttribute('data-record-number');
+                    }
                 }
                 // Guides
                 else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
