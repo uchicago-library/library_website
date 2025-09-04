@@ -313,10 +313,10 @@
 
     }
 
-    function defer_link_click(eventName, event, href, isMiddleClick) {
+    function defer_link_click(eventName, event, href, isNewTab) {
         // for links that navigate away
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
-        const isNewTab = target.target === '_blank' || isMiddleClick;
+        // const isNewTab = event.target === '_blank' || isMiddleClick;
         if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
             event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
@@ -397,7 +397,7 @@
 
         gtag('event', eventName, ep);
 
-        defer_link_click(eventName, event, target.getAttribute('href'), isMiddleClick);
+        defer_link_click(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
     }
 
     // Function to add option changes (checkboxes, radio buttons, select pickers) in the search widget to the main search button.
