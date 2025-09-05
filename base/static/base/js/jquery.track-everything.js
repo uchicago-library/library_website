@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 2.0.1
+ * @version 3.0.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -13,16 +13,22 @@
  * - event_subcategory
  * - event_label
  * - click_position
+ * - event_option
+ * - event_indecision_count
  * 
- * `event_category`: 'Navigation', 'Footer', 'Widget', 'Sidebar', 'Main', 'VuFind Results'
+ * `event_category`: Alert Banner, Navigation, Expert Widget, Guides Widget, Widget, Right Sidebar, Sidebar, Main, Footer, VuFind Results, 
  * 
- * `event_subcategory`: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
+ * `event_subcategory` examples: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
  * 
  * Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
  * VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
  * Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
  * 
  * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
+ * 
+ * `event_option` adds any checkbox or radio button selected to the main link, like search options in the home page search widget
+ * 
+ * `event_indecision_count` counts how many times a user has clicked on tabs or dropdowns before making a final selection
  * 
  * Features:
  * - Event delegation for efficient event handling
@@ -37,24 +43,21 @@
  * Usage:
  * Add data-ga-* attributes to track custom parameters:
  * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
+ * Add data-ga-category and data-ga-subcategory to parent elements to set context for child links.
  */
 (function () {
     // Configuration constants
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
+        NAVBAR_RIGHT: '#navbar-right',
         WIDGET: '.widget, [id*="widget"]',
+        SEARCH_WIDGET: '#search-widget',
         SIDEBAR: '[class^="sidebar"], [id*="sidebar"], .rightside, [role="complementary"], ul.nav.nav-pills.nav-stacked',
         FOOTER: 'footer',
         TAB: '[role="tab"], [data-role="tab"], .spaces-toggle',
         DROPDOWN: '[data-bs-toggle="dropdown"], [data-toggle="dropdown"]',
         CHECKBOX_RADIO: 'input[type="checkbox"], input[type="radio"]',
         BUTTON_A: 'button, a'
-    };
-
-    const LOCATIONS = {
-        VUFIND: 'lib.uchicago.edu/vufind/Search/Results',
-        GUIDES: 'guides.lib.uchicago.edu',
-        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
 
     const CATEGORIES = {
@@ -65,6 +68,12 @@
         MAIN: 'Main',
         SHORTCUTS: 'Navbar Shortcuts',
         VUFIND_RESULTS: 'VuFind Results',
+    };
+
+    const LOCATIONS = {
+        VUFIND: 'catalog.lib.uchicago.edu/vufind/Search/Results',
+        GUIDES: 'guides.lib.uchicago.edu',
+        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
 
     // Debounce function to limit the rate at which a function can fire.
@@ -99,26 +108,40 @@
                 link.getAttribute('title') ||
                 (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                 'Unknown',
-            click_position: null,
+            click_position: link.getAttribute('data-ga-position') || null,
+            event_option: link.getAttribute('data-ga-event-option') || null,
+            event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
         };
 
+        // Look for Category and Subcategory in parent elements
+        // This will handle most cases
+        if (!params.event_category && link.closest('[data-ga-category]')) {
+            params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
+        }
+        if (!params.event_subcategory && link.closest('[data-ga-subcategory]')) {
+            params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
+        }
+
+        if (link.closest('[data-ga-category][data-ga-indecision-count]')) {
+            params.event_indecision_count = link.closest('[data-ga-category][data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
+        }
 
         // Determine category, subcategory, based on link context.
         if (!params.event_category || !params.event_subcategory) {
+            // A lot of links will have this established in the HTML and will not get in here.
+            // But might be of help if changes are made to the HTML without proper labeling.
             // main navbar
             if (link.closest(SELECTORS.GLOBAL_NAV)) {
-                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_category = params.event_category || CATEGORIES.NAVIGATION;
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                    params.event_label || CATEGORIES.MAIN;
-
+                    params.event_label || CATEGORIES.NAVIGATION;
             }
             // shortcuts
             else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
                 params.event_category = params.event_category || CATEGORIES.SHORTCUTS;
                 params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
-
             }
             // footer
             else if (link.closest(SELECTORS.FOOTER)) {
@@ -126,24 +149,24 @@
                 const listParent = link.closest('ul, ol');
                 params.event_subcategory = params.event_subcategory ||
                     (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
-
             }
             // any widget
             else if (link.closest(SELECTORS.WIDGET)) {
                 params.event_category = params.event_category || CATEGORIES.WIDGET;
                 const widgetParent = link.closest(SELECTORS.WIDGET);
                 params.event_subcategory = params.event_subcategory ||
-                    (widgetParent?.id.includes('widget') ? widgetParent.id : null) || null;
-
+                    (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || null;
+                if (link.closest(SELECTORS.SEARCH_WIDGET)) {
+                    params.event_indecision_count = link.closest(SELECTORS.SEARCH_WIDGET).getAttribute('data-ga-indecision-count') || null;
+                }
             }
             // any sidebar
             else if (link.closest(SELECTORS.SIDEBAR)) {
                 params.event_category = params.event_category || CATEGORIES.SIDEBAR;
                 const sidebarParent = link.closest(SELECTORS.SIDEBAR);
                 params.event_subcategory = params.event_subcategory ||
-                    (sidebarParent?.id.includes('sidebar') ? sidebarParent.id : '') ||
-                    (sidebarParent?.className.split(' ').find(c => c.includes('sidebar')) || null);
-
+                    (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
+                    (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || null);
             }
             // Catalog Vufind Search results
             else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
@@ -177,7 +200,7 @@
                                     link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
 
             }
-            // main content
+            // default - probably main content
             else {
                 params.event_category = params.event_category || CATEGORIES.MAIN;
                 params.event_subcategory = params.event_subcategory ||
@@ -200,6 +223,13 @@
                 if (ancestor) {
                     params.event_subcategory = params.event_subcategory || 'List';
                     params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                }
+                // Catalog Vufind Search results
+                else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                    let ancestor = link.closest('[data-record-number]');
+                    if (ancestor) {
+                        params.click_position = ancestor.getAttribute('data-record-number');
+                    }
                 }
                 // Guides
                 else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
@@ -253,21 +283,40 @@
         }
     }
 
-    // Function to handle link clicks and send events to GA4.
-    function handleLinkClick(event, isMiddleClick = false) {
-        const target = event.target.closest('a, button, input');
-        const eventName = getEventName(target);
-        if (!eventName) { return; }
+    function count_indecision(ep, eventName, target) {
+        // Function to count indecision clicks on tabs and dropdowns
+        // --- indecision count logic ---
+        if (eventName === 'tab' || eventName === 'dropdown') {
+            const component = target.closest('[data-ga-category]');
+            if (component) {
+                let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                if (isNaN(count)) count = 1;
+                component.setAttribute('data-ga-indecision-count', count);
+            }
+        }
+    }
 
-        const ep = getEventParameters(target);
+    function all_log(ep, eventName) {
         // DEBUG, leaving it here for the first couple of weeks.
-        console.log("Event Name: " + eventName + "\n" + ep.event_category + "\n" + ep.event_subcategory + "\n" + ep.event_label + "\n" + ep.click_position);
-        gtag('event', eventName, ep);
+        function pad(label, width = 25) {
+            return (label + ':').padEnd(width, ' ');
+        }
+        console.log(
+            pad('eventName') + eventName + '\n' +
+            pad('event_category') + ep.event_category + '\n' +
+            pad('event_subcategory') + ep.event_subcategory + '\n' +
+            pad('event_label') + ep.event_label + '\n' +
+            pad('click_position') + ep.click_position + '\n' +
+            pad('event_option') + (ep.event_option || '') + '\n' +
+            pad('event_indecision_count') + (ep.event_indecision_count || '')
+        );
 
+    }
+
+    function defer_link_click(eventName, event, href, isNewTab) {
         // for links that navigate away
-        const href = target.getAttribute('href');
         // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
-        const isNewTab = target.target === '_blank' || isMiddleClick;
+        // const isNewTab = event.target === '_blank' || isMiddleClick;
         if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
             event.preventDefault(); // delay navigation just slightly
             setTimeout(() => {
@@ -276,17 +325,109 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function handleCheckboxChange(target, searchWidget) {
+        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+        if (searchButtons.length) {
+            searchButtons.forEach((searchButton) => {
+                let optionText = target.getAttribute('data-ga-label');
+                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                if (target.checked) {
+                    // Add option
+                    if (currentOption) {
+                        if (!currentOption.split('; ').includes(optionText)) {
+                            currentOption += '; ' + optionText;
+                        }
+                    } else {
+                        currentOption = optionText;
+                    }
+                } else {
+                    // Remove option
+                    currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
+                }
+                searchButton.setAttribute('data-ga-event-option', currentOption);
+            });
+        }
+    }
 
+    function handleRadioChange(target, searchWidget) {
+        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+        if (searchButtons.length) {
+            searchButtons.forEach((searchButton) => {
+                let optionText = target.getAttribute('data-ga-label');
+                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                let optionsArr = currentOption ? currentOption.split('; ') : [];
+                // Remove any previous rad:... entry
+                optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
+                if (target.checked) {
+                    optionsArr.push('radio:' + optionText);
+                }
+                currentOption = optionsArr.join('; ');
+                searchButton.setAttribute('data-ga-event-option', currentOption);
+            });
+        }
+    }
+
+    function handleSelectPickerChange(target, searchWidget) {
+        const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
+        if (searchButton) {
+            let selectedValue = target.value.trim();
+            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+            let optionsArr = currentOption ? currentOption.split('; ') : [];
+            // Remove any previous type:... entry
+            optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+            if (selectedValue !== 'AllFields') {
+                optionsArr.push('type:' + selectedValue);
+            }
+            currentOption = optionsArr.join('; ');
+            searchButton.setAttribute('data-ga-event-option', currentOption);
+        }
+    }
+
+    // Function to handle link clicks and send events to GA4. ----- MAIN FUNCTION -----
+    function handleLinkClick(event, isMiddleClick = false) {
+        const target = event.target.closest('a, button, input');
+        const eventName = getEventName(target);
+        if (!eventName) { return; }
+
+        const ep = getEventParameters(target);
+
+        count_indecision(ep, eventName, target);
+
+        all_log(ep, eventName); // for debugging
+
+        gtag('event', eventName, ep);
+
+        defer_link_click(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
+    }
+
+    // Function to add option changes (checkboxes, radio buttons, select pickers) in the search widget to the main search button.
+    function handleOptionChange(e) {
+        const target = e.target;
+        const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+        if (!searchWidget) return;
+        if (target.matches('input[type="checkbox"]')) {
+            handleCheckboxChange(target, searchWidget);
+        } else if (target.matches('input[type="radio"]')) {
+            handleRadioChange(target, searchWidget);
+        } else if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype')) {
+            handleSelectPickerChange(target, searchWidget);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
         // Attach a single event listener to the document body using event delegation.
         // document.body.addEventListener('click', debounce(handleLinkClick, 200));
 
         document.body.addEventListener('click', handleLinkClick, true);
+
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
-            if (e.button == 1) {
+            if (e.button === 1) {
                 handleLinkClick(e, true);
             }
         }, true);
+
+        // Add options to the search widget search button on change.
+        document.body.addEventListener('change', handleOptionChange, true);
     });
 })();
