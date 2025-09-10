@@ -111,12 +111,6 @@ def switchboard(request):
         return redirect(url)
 
 
-def proxylinker(request):
-    context = {}
-    template = "public/proxy-linker.html"
-    return TemplateResponse(request, template, context)
-
-
 @cache_page
 def spaces(request):
     building = request.GET.get('building', None)
