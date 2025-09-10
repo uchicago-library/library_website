@@ -12,7 +12,6 @@ from ask_a_librarian.utils import (
 )
 from base.models import UNFRIENDLY_ARTICLES
 from base.utils import get_hours_and_location, sort_buildings
-from django.template.response import TemplateResponse
 from library_website.settings import (
     CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, ECKHART_HOMEPAGE, MANSUETO_HOMEPAGE,
     PUBLIC_HOMEPAGE, SCRC_HOMEPAGE, SSA_HOMEPAGE
