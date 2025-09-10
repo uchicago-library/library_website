@@ -13,7 +13,6 @@ from lib_news.views import RSSFeeds, ltdrfr
 from public.views import navigation as navigation_view
 from public.views import spaces as spaces_view
 from public.views import switchboard
-from public.views import proxylinker
 from results.views import results as results_view
 from search.views import ebooks_search
 from search.views import loop_search as search_view
@@ -65,7 +64,6 @@ urlpatterns = [
     re_path(r"^collex/exhibits/$", RedirectView.as_view(url="/collex/?view=exhibits")),
     re_path(r"^workflowautomator/", include("workflowautomator.urls")),
     re_path(r"rss/(?P<slug>[-\w]+)/$", RSSFeeds()),
-    re_path(r"proxylinker$", proxylinker, name="proxylinker"),
     re_path(r"", include(wagtail_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
