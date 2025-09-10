@@ -12,8 +12,10 @@ const proxifyForm = (form, pdisplay) => {
     form.reportValidity();
     pbutton = document.getElementById("pbutton");
     cbutton = document.getElementById("copy_button");
-    pbutton.classList.remove("btn-secondary");
-    pbutton.classList.add("btn-primary");
+    pbutton.classList.remove("btn-primary");
+    pbutton.classList.add("btn-secondary");
+    cbutton.classList.remove("btn-secondary");
+    cbutton.classList.add("btn-primary");
     const link = form.value;
     const proxified = proxify (link);
     if (form.checkValidity()) {
