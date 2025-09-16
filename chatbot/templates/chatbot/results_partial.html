@@ -1,5 +1,6 @@
 {% load wagtailcore_tags %}
 {% load markdown_filters %}
+{% load page_extras %}
 
 {% if query %}
     <div class="question">
@@ -25,6 +26,7 @@
                                     <p class="mb-1">
                                         {% if source.title %}
                                             <a href="{% pageurl source %}" class="text-decoration-none">{{ source.title }}</a>
+                                            <span class="text-muted">{{ source|page_type }}</span>
                                         {% endif %}
                                     </p>
                                 </div>
@@ -33,6 +35,7 @@
                     </div>
                 </div>
             {% endif %}
+
         </div>
     {% else %}
         <div class="alert alert-info" role="alert">
