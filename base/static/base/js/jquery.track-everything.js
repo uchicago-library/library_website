@@ -16,13 +16,17 @@
  * - event_option
  * - event_indecision_count
  * 
- * `event_category`: Alert Banner, Navigation, Expert Widget, Guides Widget, Widget, Right Sidebar, Sidebar, Main, Footer, VuFind Results, 
+ * `event_category`: Navigation, Main, Sidebar, Floating (Alert banners, feedback button), Main Search Widget, Global Navbar
  * 
- * `event_subcategory` examples: 'List', 'News List', 'Table', .getAttribute('aria-labelledby'), 'Footer', 'Main', sidebarParent.id, sidebar className, widgetParent.id, 'Navbar Shortcuts', 'Action Toolbar', 'Searchtools', 'Pagination', .getAttribute('id'), 'Search Form', 'Center Column', 'Right Column'
+ * `event_subcategory`: Recognizable content or function blocks. 
+ *      Typically has a conceptual term like: List, Widget, Table, Form, Toolbar
+ *      ex: Global Navbar, Footer, Left Sidebar, Right Sidebar, Search Widget, *** Widget, Recent News, News List, Search Results List,
+ *      defaults to: .getAttribute('aria-labelledby'), .closest('[id]').getAttribute('id'),
  * 
- * Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
- * VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
- * Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
+ * `event_label`: The actual link or button text, image alt text, or aria-label, role of the link. Where links are typically highly dynamic, the role of the link will be preferred
+ *      Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
+ *      VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
+ *      Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
  * 
  * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
  * 
@@ -32,8 +36,7 @@
  * 
  * Features:
  * - Event delegation for efficient event handling
- * - Debounced event processing to prevent excessive API calls
- * -- commented out, was not working
+ * - Debounced event processing to prevent excessive API calls (not enabled, was not working)
  * - Automatic detection of event categories based on DOM context
  * - Support for custom data attributes (data-ga-*) overrides
  * - Fallback handling for missing labels, categories, and sub-categories
