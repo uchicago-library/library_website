@@ -22,53 +22,54 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container py-4">
+    <div class="container">
         <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <!-- Form with htmx attributes for AJAX submission -->
-                        <form id="chatbot-form" hx-get="{{ page.url }}" hx-target="#results-container" hx-indicator="#loading-indicator"
-                            hx-trigger="submit" class="mb-0">
-                            <div class="form-group">
-                                <label for="chatbot-query" class="form-label">Ask a question:</label>
-                                <textarea class="form-control" id="chatbot-query" name="q" rows="3"
-                                    placeholder="Type your question here...">{{ query|default:'' }}</textarea>
+            <div class="col-sm-12">
+                <!-- Form with htmx attributes for AJAX submission; using BS3 form best-practices -->
+                <form id="chatbot-form" role="form" hx-get="{{ page.url }}" hx-target="#results-container" hx-indicator="#loading-indicator" hx-trigger="submit" class="form-horizontal" aria-describedby="chatbot-form-desc">
+                    <p id="chatbot-form-desc" class="sr-only">Ask a question to the library chatbot. Results will appear below the form.</p>
+
+                    <div class="form-group">
+                        <label for="chatbot-query" class="control-label">Ask your question</label>
+                        <textarea class="form-control" id="chatbot-query" name="q" rows="3" placeholder="Type your question here..." aria-label="Chatbot question">{{ query|default:'' }}</textarea>
+                    </div>
+
+                    <!-- Options rendered from server-provided `allowed_options` for validation and i18n -->
+                    <fieldset id="chatbot-options" class="form-group" aria-labelledby="chatbot-options-legend">
+                        <legend id="chatbot-options-legend" class="sr-only">Add context from</legend>
+                        {% for slug, label, default in allowed_options %}
+                            <div class="checkbox" style="padding: 0 !important">
+                                <label for="chatbot-opt-{{ forloop.counter0 }}">
+                                    <input type="checkbox" id="chatbot-opt-{{ forloop.counter0 }}" name="options" value="{{ slug }}"
+                                        {% if form_submitted %}
+                                            {% if selected_option_slugs and slug in selected_option_slugs %}checked{% endif %}
+                                        {% else %}
+                                            {% if default %}checked{% endif %}
+                                        {% endif %}>
+                                    {{ label }}
+                                </label>
                             </div>
+                        {% empty %}
+                            <p class="text-muted">No options available.</p>
+                        {% endfor %}
+                    </fieldset>
 
-                            <!-- Options rendered from server-provided `allowed_options` for validation and i18n -->
-                            <fieldset class="form-group mb-3" id="chatbot-options">
-                                <legend class="col-form-label">Add context from:</legend>
-                                {% for slug, label, default in allowed_options %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="chatbot-opt-{{ forloop.counter0 }}" name="options" value="{{ slug }}"
-                                            {% if form_submitted %}
-                                                {% if selected_option_slugs and slug in selected_option_slugs %}checked{% endif %}
-                                            {% else %}
-                                                {% if default %}checked{% endif %}
-                                            {% endif %}>
-                                        <label class="form-check-label" for="chatbot-opt-{{ forloop.counter0 }}">{{ label }}</label>
-                                    </div>
-                                {% empty %}
-                                    <p class="text-muted">No options available.</p>
-                                {% endfor %}
-                            </fieldset>
-
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </form>
-
-                        <!-- Server-driven options rendered above; server will validate and assemble the query. No client-side prefixing needed. -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" aria-label="Search the library chatbot">Search</button>
                     </div>
+                </form>
+
+                <!-- Server-driven options rendered above; server will validate and assemble the query. -->
+
+                <!-- Loading indicator that only shows during AJAX requests. Use aria-live so screen readers announce changes. -->
+                <div id="loading-indicator" class="htmx-indicator text-center" aria-live="polite" aria-hidden="true">
+                    <span class="sr-only">Loading</span>
+                    <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
+                    <span>Querying LibBot...</span>
                 </div>
-                <!-- Loading indicator that only shows during AJAX requests -->
-                <div id="loading-indicator" class="htmx-indicator text-center my-4">
-                    <div class="spinner-border" role="status">
-                        <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
-                        <span>Querying LibBot...</span>
-                    </div>
-                </div>
+
                 <!-- Results container that will be updated by htmx -->
-                <div id="results-container">
+                <div id="results-container" role="region" aria-live="polite" aria-atomic="true">
                     {% include "chatbot/results_partial.html" %}
                 </div>
             </div>

@@ -12,27 +12,24 @@
     {% if result %}
         <div class="libbot-results">
             <div class="answer">
-                <p class="answer-heading"><strong>Answer</strong>:</p>
+                <h3 class="answer-heading">Answer</h3>
                 {{ result.answer|markdown_to_html }}
             </div>
 
             {% if result.sources %}
-                <div class="card-footer bg-light">
-                    <p class="card-title mt-2"><strong>Sources</strong>:</p>
-                    <div class="list-group list-group-flush">
+                <div class="well well-sm" role="region" aria-labelledby="sources-heading">
+                    <h4 id="sources-heading" class="sr-only">Sources</h4>
+                    <p><strong>Sources:</strong></p>
+                    <ul class="list-unstyled" role="list">
                         {% for source in result.sources %}
-                            <div class="list-group-item list-group-item-action flex-column align-items-start border-0 ps-0 pe-0">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <p class="mb-1">
-                                        {% if source.title %}
-                                            <a href="{% pageurl source %}" class="text-decoration-none">{{ source.title }}</a>
-                                            <span class="text-muted">{{ source|page_type }}</span>
-                                        {% endif %}
-                                    </p>
-                                </div>
-                            </div>
+                            <li role="listitem">
+                                {% if source.title %}
+                                    <a href="{% pageurl source %}">{{ source.title }}</a>
+                                    <span class="text-muted"> — {{ source|page_type }}</span>
+                                {% endif %}
+                            </li>
                         {% endfor %}
-                    </div>
+                    </ul>
                 </div>
             {% endif %}
 
