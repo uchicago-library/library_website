@@ -262,8 +262,13 @@
     function getEventName(target) {
         if (!target) return false;
 
+        // Force to global nav dropdowns t
+        if (target.matches(SELECTORS.DROPDOWN) &&
+            target.closest(SELECTORS.GLOBAL_NAV)) {
+            return 'tab';
+        }
         // Check if event target or direct parent is defined as a tab
-        if (target.matches(SELECTORS.TAB) ||
+        else if (target.matches(SELECTORS.TAB) ||
             target.closest(SELECTORS.TAB)) {
             return 'tab';
         }
@@ -289,7 +294,7 @@
     function count_indecision(ep, eventName, target) {
         // Function to count indecision clicks on tabs and dropdowns
         // --- indecision count logic ---
-        if (eventName === 'tab' || eventName === 'dropdown') {
+        if (eventName === 'tab') {
             const component = target.closest('[data-ga-category]');
             if (component) {
                 let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
