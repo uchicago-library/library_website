@@ -98,6 +98,11 @@ class test_lib_news_pages_and_categories(TestCase):
             slug='borg-attack',
         )
         self.news_homepage.add_child(instance=self.news_article)
+        PublicNewsCategories.objects.create(text='Picard').save()
+        PublicNewsCategories.objects.create(text='Borg').save()
+        PublicNewsCategories.objects.create(text='Alpha Quadrant').save()
+        self.news_article.save()
+        self.news_homepage.save()
 
         self.factory = RequestFactory()
         self.client = Client()
@@ -106,22 +111,15 @@ class test_lib_news_pages_and_categories(TestCase):
         self.site.delete()
 
     def test_get_alpha_cats_with_categories(self):
-        PublicNewsCategories.objects.create(text='Picard').save()
-        PublicNewsCategories.objects.create(text='Borg').save()
-        PublicNewsCategories.objects.create(text='Alpha Quadrant').save()
         cats = self.news_homepage.get_alpha_cats()
         self.assertEqual(cats[0], 'Alpha Quadrant')
         self.assertEqual(cats[1], 'Borg')
         self.assertEqual(cats[2], 'Picard')
 
     def test_get_alpha_cats_without_categories(self):
+        PublicNewsCategories.objects.all().delete()
         cats = self.news_homepage.get_alpha_cats()
         self.assertEqual(cats, [])
-
-    def test_visit_to_news_article_page(self):
-        url = LibNewsPage.objects.live().first().url
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
 
     def test_generic_news_article_page_routing(self):
         url = self.news_article.url
@@ -129,6 +127,7 @@ class test_lib_news_pages_and_categories(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_news_article_page_routing_to_category_listing(self):
+        PublicNewsCategories.objects.create(text='Borg').save()
         url = '/starfleet-news/category/borg/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
