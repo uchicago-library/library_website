@@ -49,6 +49,178 @@
  * Add data-ga-category and data-ga-subcategory to parent elements to set context for child links.
  */
 (function () {
+    console.log('loading jquery.track-everything.js');
+    /*
+     * applyHtmlProperties
+     * Apply attributes (or data-*) to elements based on a list of rules.
+     * - Each rule: { selector, attribute, value, valueFn, childSelector, useFirstHeading, onlyIfMissing, apply }
+     * - apply: 'each' (default) or 'first' to only apply to the first matched element
+     * - useFirstHeading: boolean or { levels: [1,2,3] } - finds the first heading inside the matched element (h1/h2/h3 by default)
+     * - valueFn receives ( $mainMatchedElement, $targetElement ) and should return a string value
+     */
+    function applyHtmlProperties(rules) {
+        if (!Array.isArray(rules)) { return; }
+
+        function getFirstHeadingTextWithin($elem, levels, $child) {
+            // Defensive: ensure $elem is present and is a jQuery object with content
+            if (!$elem || !$elem.length) { return ''; }
+            // Default heading preference: skip h1 (will never target h1), prefer h2,h3,h4
+            levels = Array.isArray(levels) && levels.length ? levels : [2, 3, 4];
+            for (var i = 0; i < levels.length; i++) {
+                var lvl = levels[i];
+                var $h = $elem.find('h' + lvl).first();
+                if ($h.length) {
+                    return $h.text().trim();
+                }
+            }
+            return '';
+        }
+
+        rules.forEach(function (rule) {
+            if (!rule || !rule.selector || !rule.attribute) { return; }
+
+            var $items = $(rule.selector);
+            if (!$items.length) { return; }
+
+            // If rule.apply === 'first', only use the first matched element
+            if (rule.apply === 'first' || !rule.childSelector) {
+                $items = $items.first();
+            }
+            var $main = $items;
+            // Determine the actual target to set attribute on: 
+            //      either the main matched element or it's children
+            if (rule.childSelector) {
+                var $children = $items.find(rule.childSelector);
+                if ($children.length) {
+
+                    $items = $children;
+                } else { return; }
+            }
+
+            $items.each(function () {
+                var $target = $(this); // the element matched by selector (the "main" element)
+                // Defensive: ensure $target is present
+                if (!$target || !$target.length) { return; }
+                // Skip if attribute already exists and onlyIfMissing is true
+                if (rule.onlyIfMissing && typeof $target.attr(rule.attribute) !== 'undefined') {
+                    return;
+                }
+
+                // Find heading inside the main matched element if requested (explicitly inside the main, not child)
+                var headingText = '';
+                if (rule.useFirstHeading) {
+                    if (typeof rule.useFirstHeading === 'object' && Array.isArray(rule.useFirstHeading.levels)) {
+                        headingText = getFirstHeadingTextWithin($main, rule.useFirstHeading.levels);
+                    } else {
+                        headingText = getFirstHeadingTextWithin($main);
+                    }
+                }
+
+
+                // Compute value
+                var val = '';
+                try {
+                    if (rule.valueFn && typeof rule.valueFn === 'function') {
+                        // Give both the main matched element and the final target element to the value function
+                        val = rule.valueFn($main, $target) || '';
+                    } else if (rule.useFirstHeading) {
+                        val = headingText || '';
+                    } else if (typeof rule.value !== 'undefined') {
+                        val = rule.value;
+                    } else {
+                        // nothing to set
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('applyHtmlProperties valueFn error for selector', rule.selector, e);
+                    return;
+                }
+
+                // Set attribute (support data-* via attr so it appears in DOM)
+                try {
+                    $target.attr(rule.attribute, val);
+                    console.log('applyHtmlProperties set', rule.attribute, 'for', rule.selector, 'to:', val);
+                } catch (e) {
+                    console.warn('applyHtmlProperties failed to set attribute', rule.attribute, 'for', rule.selector, e);
+                }
+            });
+        });
+    }
+    // Example rules for applyHtmlProperties - fill these in as needed
+    var htmlPropertyRules = [
+        {
+            selector: '#widget-explore-research-guides',
+            childSelector: 'a',
+            attribute: 'data-test-label',
+            useFirstHeading: { levels: [3] },
+            apply: 'each'
+        },
+    ];
+    // Example rules for applyHtmlProperties - fill these in as needed
+    var ExampleHtmlPropertyRules = [
+        // 1) Set a data attribute on each .record-header using the first heading inside the record header
+        {
+            selector: '.record .record-header',
+            attribute: 'data-first-heading',
+            useFirstHeading: true,
+            apply: 'each'
+        },
+        // 2) Set the label for the main home page widgets.
+        {
+            selector: '#widget-featured-library-expert',
+            childSelector: 'a',
+            attribute: 'data-test-label',
+            valueFn: function ($main, $target) {
+                var mainClassAttr = $main.attr('class') || '';
+                var mainClass = '';
+                if (mainClassAttr) {
+                    var classes = mainClassAttr.split(/\s+/).filter(function (c) { return c; });
+                    if (classes.length) {
+                        mainClass = classes.reduce(function (a, b) { return a.length >= b.length ? a : b; }, '');
+                    }
+                }
+                if (!mainClass) {
+                    mainClass = $target.text().trim();
+                }
+                return mainClass;
+            },
+            apply: 'each'
+        },
+        // 3) Example: derive a role value from a class on the target element (assumes class like 'role-admin' => 'admin')
+        {
+            selector: '.some-role-element',
+            attribute: 'role',
+            valueFn: function ($main, $target) {
+                var classes = ($target.attr('class') || '').split(/\s+/);
+                for (var i = 0; i < classes.length; i++) {
+                    var m = classes[i].match(/^role-(.+)$/);
+                    if (m) { return m[1]; }
+                }
+                return '';
+            },
+            onlyIfMissing: true,
+            apply: 'each'
+        }
+    ];
+
+    // Apply the example rules now on page load
+    applyHtmlProperties(htmlPropertyRules);
+    console.log('ran htmlPropertyRules');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Configuration constants
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
