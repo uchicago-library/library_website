@@ -149,10 +149,10 @@
     // Example rules for applyHtmlProperties - fill these in as needed
     var htmlPropertyRules = [
         {
-            selector: '#widget-explore-research-guides',
+            selector: '#widget-featured-library-expert',
             childSelector: 'a',
-            attribute: 'data-test-label',
-            useFirstHeading: { levels: [3] },
+            attribute: 'data-ga-label',
+            useFirstHeading: "Expert's Subjects",
             apply: 'each'
         },
     ];
