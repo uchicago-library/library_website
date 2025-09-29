@@ -7,46 +7,7 @@
  * Script to track user interactions and send events to Google Analytics 4 (GA4)
  * using event delegation for optimal performance.
  * 
- * Schema:
- * - name
- * - event_category
- * - event_subcategory
- * - event_label
- * - click_position
- * - event_option
- * - event_indecision_count
- * 
- * `event_category`: Navigation, Main, Sidebar, Floating (Alert banners, feedback button), Main Search Widget, Global Navbar
- * 
- * `event_subcategory`: Recognizable content or function blocks. 
- *      Typically has a conceptual term like: List, Widget, Table, Form, Toolbar
- *      ex: Global Navbar, Footer, Left Sidebar, Right Sidebar, Search Widget, *** Widget, Recent News, News List, Search Results List,
- *      defaults to: .getAttribute('aria-labelledby'), .closest('[id]').getAttribute('id'),
- * 
- * `event_label`: The actual link or button text, image alt text, or aria-label, role of the link. Where links are typically highly dynamic, the role of the link will be preferred
- *      Generic `event_label`: .getAttribute('aria-label'), .textContent, .getAttribute('title'), .getAttribute('alt'), 'Unknown'
- *      VuFind `event_label`: 'Title', 'Author', 'Holding', 'Save Record', 'Unknown'
- *      Guides `event_label`: 'Guide Name', 'Guide Author', 'Guide Subject', 'Guide Link', 'Guide Page Title', 'More Button', 'Unknown'
- * 
- * `click_position` can be based on the index of a `<li>` item, a `<div>` as a ('.newsblock, article'), a row on a table 
- * 
- * `event_option` adds any checkbox or radio button selected to the main link, like search options in the home page search widget
- * 
- * `event_indecision_count` counts how many times a user has clicked on tabs or dropdowns before making a final selection
- * 
- * Features:
- * - Event delegation for efficient event handling
- * - Debounced event processing to prevent excessive API calls (not enabled, was not working)
- * - Automatic detection of event categories based on DOM context
- * - Support for custom data attributes (data-ga-*) overrides
- * - Fallback handling for missing labels, categories, and sub-categories
- * - Position tracking for list items
- * - with specific selectors for .news-wrap, .news-stories, VuFind, and Guides
- * 
- * Usage:
- * Add data-ga-* attributes to track custom parameters:
- * <a href="#" data-ga-category="custom" data-ga-label="My Link">Link</a>
- * Add data-ga-category and data-ga-subcategory to parent elements to set context for child links.
+ * More information here:  https://github.com/uchicago-library/library_website/wiki/Custom-Event-labeling
  */
 (function () {
     // 
