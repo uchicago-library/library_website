@@ -81,6 +81,7 @@
 
     const LOCATIONS = {
         LIB: 'catalog.lib.uchicago.edu/vufind/Search/Results',
+        VUFIND: 'catalog.lib.uchicago.edu/vufind/',
         VUFIND_RESULTS: 'catalog.lib.uchicago.edu/vufind/Search/Results',
         VUFIND_RECORD: 'catalog.lib.uchicago.edu/vufind/Record/',
         GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
@@ -137,7 +138,7 @@
 
             var $items = $(rule.selector);
             if (!$items.length) { return; }
-            
+
             // If rule.apply === 'first', only use the first matched element
             if (rule.apply === 'first' || rule.childSelector) {
                 $items = $items.first();
@@ -150,7 +151,7 @@
                     $items = $children;
                 } else { return; }
             }
-            
+
             console.log('applyHtmlProperties found', $items.length, 'items for selector', rule.selector);
 
             $items.each(function () {
@@ -358,12 +359,12 @@
                     (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
             }
             // Catalog VuFind Search results
-            else if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1 || window.location.href.indexOf(LOCATIONS.VUFIND_RECORD) > -1) {
+            else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
                 params.event_category = params.event_category ||
                     link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                     link.closest('footer') ? CATEGORIES.FOOTER :
-                        link.closest('.main') ? CATEGORIES.MAIN :
-                            link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
+                        link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
+                            link.closest('.main') ? CATEGORIES.MAIN :
                                 "VuFind";
 
                 // Catalog VuFind Search results
