@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 3.0.0
+ * @version 4.5.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -49,12 +49,9 @@
  * Add data-ga-category and data-ga-subcategory to parent elements to set context for child links.
  */
 (function () {
-    console.log('loading jquery.track-everything.js');
-
-
-
-
-    // Configuration constants
+    // 
+    // # Section 1: Configuration constants
+    //
     const SELECTORS = {
         GLOBAL_NAV: '#global-navbar',
         NAVBAR_RIGHT: '#navbar-right',
@@ -88,23 +85,75 @@
         GUIDES: 'guides.lib.uchicago.edu',
     };
 
-    // Debounce function to limit the rate at which a function can fire.
-    function debounce(func, wait) {
-        let timeout;
-        return function (...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+    // Rules for applyHtmlProperties
+    var htmlPropertyRules = [
+        {
+            location: LOCATIONS.LIB,
+            selector: '#widget-featured-library-expert',
+            childSelector: 'a',
+            attribute: 'data-ga-label',
+            value: "Expert's Subjects",
+        },
+        {
+            location: LOCATIONS.VUFIND_RECORD,
+            selector: '.media-body table tr td a',
+            attribute: 'data-ga-label',
+            valueFn: function ($items, $target) {
+                return $($target).closest('tr').find('th').text().trim();
+            },
+        },
+    ];
+    // Example rules for applyHtmlProperties
+    var ExampleHtmlPropertyRules = [
+        // 1) Set a data attribute on each .record-header using the first heading inside the record header
+        {
+            selector: '.record .record-header',
+            attribute: 'data-first-heading',
+            useFirstHeading: true,
+            apply: 'each'
+        },
+        // 2) Set the label for the main home page widgets.
+        {
+            selector: '#widget-featured-library-expert',
+            childSelector: 'a',
+            attribute: 'data-test-label',
+            valueFn: function ($items, $target) {
+                var mainClassAttr = $items.attr('class') || '';
+                var mainClass = '';
+                if (mainClassAttr) {
+                    var classes = mainClassAttr.split(/\s+/).filter(function (c) { return c; });
+                    if (classes.length) {
+                        mainClass = classes.reduce(function (a, b) { return a.length >= b.length ? a : b; }, '');
+                    }
+                }
+                if (!mainClass) {
+                    mainClass = $target.text().trim();
+                }
+                return mainClass;
+            },
+            apply: 'each'
+        },
+        // 3) Example: derive a role value from a class on the target element (assumes class like 'role-admin' => 'admin')
+        {
+            selector: '.some-role-element',
+            attribute: 'role',
+            valueFn: function ($items, $target) {
+                var classes = ($target.attr('class') || '').split(/\s+/);
+                for (var i = 0; i < classes.length; i++) {
+                    var m = classes[i].match(/^role-(.+)$/);
+                    if (m) { return m[1]; }
+                }
+                return '';
+            },
+            onlyIfMissing: true,
+            apply: 'each'
+        }
+    ];
 
-
-
-
-
+    // 
+    // # Section 2: Populate HTML properties based on rules
+    // for key screens that are hard to temper with templates.
+    //
     /*
      * applyHtmlProperties
      * Apply attributes (or data-*) to elements based on a list of rules.
@@ -204,463 +253,387 @@
                 }
             });
         });
+
+        return;
     }
-    // Example rules for applyHtmlProperties - fill these in as needed
-    var htmlPropertyRules = [
-        {
-            location: LOCATIONS.LIB,
-            selector: '#widget-featured-library-expert',
-            childSelector: 'a',
-            attribute: 'data-ga-label',
-            value: "Expert's Subjects",
-        },
-        {
-            location: LOCATIONS.VUFIND_RECORD,
-            selector: '.media-body table tr td a',
-            attribute: 'data-ga-label',
-            valueFn: function ($items, $target) {
-                return $($target).closest('tr').find('th').text().trim();
+
+    // 
+    // # Section 3: Log all click events to GA4
+    //
+
+    // Manipulate data and debug
+    const helpers = {
+        addOptionToSearchButton: {
+            checkbox(target, searchWidget) {
+                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+                if (searchButtons.length) {
+                    searchButtons.forEach((searchButton) => {
+                        let optionText = target.getAttribute('data-ga-label');
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        if (target.checked) {
+                            // Add option
+                            if (currentOption) {
+                                if (!currentOption.split('; ').includes(optionText)) {
+                                    currentOption += '; ' + optionText;
+                                }
+                            } else {
+                                currentOption = optionText;
+                            }
+                        } else {
+                            // Remove option
+                            currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
+                        }
+                        searchButton.setAttribute('data-ga-event-option', currentOption);
+                    });
+                }
             },
-        },
-    ];
-    // Example rules for applyHtmlProperties - fill these in as needed
-    var ExampleHtmlPropertyRules = [
-        // 1) Set a data attribute on each .record-header using the first heading inside the record header
-        {
-            selector: '.record .record-header',
-            attribute: 'data-first-heading',
-            useFirstHeading: true,
-            apply: 'each'
-        },
-        // 2) Set the label for the main home page widgets.
-        {
-            selector: '#widget-featured-library-expert',
-            childSelector: 'a',
-            attribute: 'data-test-label',
-            valueFn: function ($items, $target) {
-                var mainClassAttr = $items.attr('class') || '';
-                var mainClass = '';
-                if (mainClassAttr) {
-                    var classes = mainClassAttr.split(/\s+/).filter(function (c) { return c; });
-                    if (classes.length) {
-                        mainClass = classes.reduce(function (a, b) { return a.length >= b.length ? a : b; }, '');
+            radio(target, searchWidget) {
+                const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
+                if (searchButtons.length) {
+                    searchButtons.forEach((searchButton) => {
+                        let optionText = target.getAttribute('data-ga-label');
+                        let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                        let optionsArr = currentOption ? currentOption.split('; ') : [];
+                        // Remove any previous rad:... entry
+                        optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
+                        if (target.checked) {
+                            optionsArr.push('radio:' + optionText);
+                        }
+                        currentOption = optionsArr.join('; ');
+                        searchButton.setAttribute('data-ga-event-option', currentOption);
+                    });
+                }
+            },
+            select(target, searchWidget) {
+                const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
+                if (searchButton) {
+                    let selectedValue = target.value.trim();
+                    let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
+                    let optionsArr = currentOption ? currentOption.split('; ') : [];
+                    // Remove any previous type:... entry
+                    optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
+                    if (selectedValue !== 'AllFields') {
+                        optionsArr.push('type:' + selectedValue);
                     }
+                    currentOption = optionsArr.join('; ');
+                    searchButton.setAttribute('data-ga-event-option', currentOption);
                 }
-                if (!mainClass) {
-                    mainClass = $target.text().trim();
-                }
-                return mainClass;
-            },
-            apply: 'each'
+            }
         },
-        // 3) Example: derive a role value from a class on the target element (assumes class like 'role-admin' => 'admin')
-        {
-            selector: '.some-role-element',
-            attribute: 'role',
-            valueFn: function ($items, $target) {
-                var classes = ($target.attr('class') || '').split(/\s+/);
-                for (var i = 0; i < classes.length; i++) {
-                    var m = classes[i].match(/^role-(.+)$/);
-                    if (m) { return m[1]; }
+        count_indecision(ep, eventName, target) {
+            // Function to count indecision clicks on tabs and dropdowns
+            // --- indecision count logic ---
+            if (eventName === 'tab') {
+                const component = target.closest('[data-ga-category]');
+                if (component) {
+                    let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
+                    if (isNaN(count)) count = 1;
+                    component.setAttribute('data-ga-indecision-count', count);
                 }
-                return '';
-            },
-            onlyIfMissing: true,
-            apply: 'each'
+            }
+        },
+        all_log(ep, eventName) {
+            // DEBUG, leaving it here for the first couple of weeks.
+            function pad(label, width = 25) {
+                return (label + ':').padEnd(width, ' ');
+            }
+            console.log(
+                pad('eventName') + eventName + '\n' +
+                pad('event_category') + ep.event_category + '\n' +
+                pad('event_subcategory') + ep.event_subcategory + '\n' +
+                pad('event_label') + ep.event_label + '\n' +
+                pad('click_position') + ep.click_position + '\n' +
+                pad('event_option') + (ep.event_option || '') + '\n' +
+                pad('event_indecision_count') + (ep.event_indecision_count || '')
+            );
+
         }
-    ];
+    };
 
-    // Apply the example rules now on page load
-    applyHtmlProperties(htmlPropertyRules);
-    console.log('ran htmlPropertyRules');
+    // Functions to determine event parameters based on link context. ----- Big logic work-horse -----
+    const getEventDetails = {
+        parameters(link) {
 
+            const params = {
+                event_category: link.getAttribute('data-ga-category'),
+                event_subcategory: link.getAttribute('data-ga-subcategory'),
+                event_label: link.getAttribute('data-ga-label') ||
+                    link.getAttribute('aria-label') ||
+                    ((() => {
+                        // Clone the node to avoid modifying the original DOM
+                        const clone = link.cloneNode(true);
+                        // Remove visually-hidden elements from the clone
+                        clone.querySelectorAll('.visually-hidden, .sr-only, [aria-hidden="true"]').forEach(el => el.remove());
+                        // Get and clean the remaining text
+                        return clone.textContent.replace(/\s+/g, ' ').trim();
+                    })()) ||
+                    link.getAttribute('title') ||
+                    (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
+                    'Unknown',
+                click_position: link.getAttribute('data-ga-position') || null,
+                event_option: link.getAttribute('data-ga-event-option') || null,
+                event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
+            };
 
-
-
-
-
-
-
-    // Function to determine event parameters based on link context. ----- Big logic work-horse -----
-    function getEventParameters(link) {
-
-        const params = {
-            event_category: link.getAttribute('data-ga-category'),
-            event_subcategory: link.getAttribute('data-ga-subcategory'),
-            event_label: link.getAttribute('data-ga-label') ||
-                link.getAttribute('aria-label') ||
-                ((() => {
-                    // Clone the node to avoid modifying the original DOM
-                    const clone = link.cloneNode(true);
-                    // Remove visually-hidden elements from the clone
-                    clone.querySelectorAll('.visually-hidden, .sr-only, [aria-hidden="true"]').forEach(el => el.remove());
-                    // Get and clean the remaining text
-                    return clone.textContent.replace(/\s+/g, ' ').trim();
-                })()) ||
-                link.getAttribute('title') ||
-                (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
-                'Unknown',
-            click_position: link.getAttribute('data-ga-position') || null,
-            event_option: link.getAttribute('data-ga-event-option') || null,
-            event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
-        };
-
-        // Look for Category and Subcategory in parent elements
-        // This will handle most cases
-        if (!params.event_category && link.closest('[data-ga-category]')) {
-            params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
-        }
-        if (!params.event_subcategory && link.closest('[data-ga-subcategory]')) {
-            params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
-        }
-
-        if (!params.event_indecision_count && link.closest('[data-ga-indecision-count]')) {
-            params.event_indecision_count = link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
-        }
-
-        // Determine category, subcategory, based on link context.
-        if (!params.event_category || !params.event_subcategory) {
-            // A lot of links will have this established in the HTML and will not get in here.
-            // But might be of help if changes are made to the HTML without proper labeling,
-            // or for websites where this script is reused.
-            // main navbar
-            if (link.closest(SELECTORS.GLOBAL_NAV)) {
-                params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                const listParent = link.closest('ul, ol');
-                params.event_subcategory = params.event_subcategory ||
-                    (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                    params.event_label || CATEGORIES.NAVIGATION;
+            // Look for Category and Subcategory in parent elements
+            // This will handle most cases
+            if (!params.event_category && link.closest('[data-ga-category]')) {
+                params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
             }
-            // shortcuts
-            else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
-                params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
+            if (!params.event_subcategory && link.closest('[data-ga-subcategory]')) {
+                params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
             }
-            // footer
-            else if (link.closest(SELECTORS.FOOTER)) {
-                params.event_category = params.event_category || CATEGORIES.FOOTER;
-                const listParent = link.closest('ul, ol');
-                params.event_subcategory = params.event_subcategory ||
-                    (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
-            }
-            // any widget
-            else if (link.closest(SELECTORS.WIDGET)) {
-                params.event_category = params.event_category || CATEGORIES.MAIN;
-                const widgetParent = link.closest(SELECTORS.WIDGET);
-                params.event_subcategory = params.event_subcategory ||
-                    (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
-            }
-            // any sidebar
-            else if (link.closest(SELECTORS.SIDEBAR)) {
-                params.event_category = params.event_category || CATEGORIES.SIDEBAR;
-                const sidebarParent = link.closest(SELECTORS.SIDEBAR);
-                params.event_subcategory = params.event_subcategory ||
-                    (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
-                    (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
-            }
-            // Catalog VuFind Search results
-            else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
-                params.event_category = params.event_category ||
-                    link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
-                    link.closest('footer') ? CATEGORIES.FOOTER :
-                        link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
-                            link.closest('.main') ? CATEGORIES.MAIN :
-                                "VuFind";
 
-                // Catalog VuFind Search results
-                if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
+            if (!params.event_indecision_count && link.closest('[data-ga-indecision-count]')) {
+                params.event_indecision_count = link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
+            }
+
+            // Determine category, subcategory, based on link context.
+            if (!params.event_category || !params.event_subcategory) {
+                // A lot of links will have this established in the HTML and will not get in here.
+                // But might be of help if changes are made to the HTML without proper labeling,
+                // or for websites where this script is reused.
+                // main navbar
+                if (link.closest(SELECTORS.GLOBAL_NAV)) {
+                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
+                    const listParent = link.closest('ul, ol');
                     params.event_subcategory = params.event_subcategory ||
-                        link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                        link.closest('.search.container.navbar') ? 'Search Operations' :
-                            link.closest('.record-list.search-results-solr') ? 'Search Results List' :
-                                link.closest('.facet-group') ? link.closest('.facet-group').getAttribute('data-title') :
-                                    link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                        link.closest('.searchtools') ? 'Search Toolbar' :
-                                            link.closest('.pagination') ? 'Pagination' :
-                                                link.closest('.search-sort') ? 'Sort Filter' :
-                                                    'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Widget";
-                    params.event_label = link.classList.contains('title') ? 'Title' :
-                        link.classList.contains('result-author') ? 'Author' :
-                            link.classList.contains('external') ? 'Holding' :
-                                link.classList.contains('save-record') ? 'Save Record' :
-                                    params.event_label || 'Unknown';
-
+                        (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
+                        params.event_label || CATEGORIES.NAVIGATION;
                 }
-                // Catalog VuFind Record
-                else if (window.location.href.indexOf(LOCATIONS.VUFIND_RECORD) > -1) {
+                // shortcuts
+                else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
+                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
+                    params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
+                }
+                // footer
+                else if (link.closest(SELECTORS.FOOTER)) {
+                    params.event_category = params.event_category || CATEGORIES.FOOTER;
+                    const listParent = link.closest('ul, ol');
                     params.event_subcategory = params.event_subcategory ||
-                        link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                        link.closest('.search.container.navbar') ? 'Search Operations' :
-                            link.closest('.breadcrumbs') ? 'Breadcrumbs' :
-                                link.closest('#bookplates') ? "Bookplates" :
-                                    link.closest('.media-left') ? "Record Media" :
-                                        link.closest('.savedLists') ? "Record Saved in Lists" :
-                                            link.closest('.media-body, .bibToggle') ? "Record Metadata" :
-                                                link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
-                                                    link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
-                                                        link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
-                                                            link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
-                                                                link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
-                                                                    link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
-                    params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
-                        link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
-                            link.classList.contains('title') ? 'Title' :
-                                link.classList.contains('result-author') ? 'Author' :
-                                    link.classList.contains('external') ? 'Holding' :
-                                        link.classList.contains('save-record') ? 'Save Record' :
-                                            params.event_label || 'Unknown';
-
+                        (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
                 }
-            }
-            // Guides
-            else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) {
-                params.event_category = params.event_category || CATEGORIES.MAIN;
-                params.event_subcategory = params.event_subcategory ||
-                    link.closest('#s-lg-guide-search-form') ? 'Search Form' :
-                    link.closest('#s-lg-col-1') ? 'Center Column' :
-                        link.closest('#s-lg-col-2') ? 'Right Column' :
-                            link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
-                                link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
-                params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
-                    link.closest('.s-srch-result-author') ? 'Guide Author' :
-                        link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
-                            link.closest('.s-srch-result-url') ? 'Guide Link' :
-                                link.closest('.s-srch-result-title') ? 'Guide Page Title' :
-                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
-
-            }
-            // default - probably main content
-            else {
-                params.event_category = params.event_category || CATEGORIES.MAIN;
-                params.event_subcategory = params.event_subcategory ||
-                    link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
-                    link.closest('.action-toolbar') ? 'Action Toolbar' :
-                        link.closest('.pagination') ? 'Pagination' :
-                            'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
-            }
-        }
-
-        // Get link position if in a list
-        if (!link.closest(SELECTORS.FOOTER)) {
-            if (link.getAttribute('data-ga-position')) {
-                params.event_subcategory = params.event_subcategory || 'List';
-                params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
-            } else {
-                let ancestor = link.closest('li');
-
-                // For any <ul> or <ol> list
-                if (ancestor) {
-                    params.event_subcategory = params.event_subcategory || 'List';
-                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                // any widget
+                else if (link.closest(SELECTORS.WIDGET)) {
+                    params.event_category = params.event_category || CATEGORIES.MAIN;
+                    const widgetParent = link.closest(SELECTORS.WIDGET);
+                    params.event_subcategory = params.event_subcategory ||
+                        (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
+                }
+                // any sidebar
+                else if (link.closest(SELECTORS.SIDEBAR)) {
+                    params.event_category = params.event_category || CATEGORIES.SIDEBAR;
+                    const sidebarParent = link.closest(SELECTORS.SIDEBAR);
+                    params.event_subcategory = params.event_subcategory ||
+                        (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
+                        (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
                 }
                 // Catalog VuFind Search results
-                else if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
-                    let ancestor = link.closest('[data-record-number]');
-                    if (ancestor) {
-                        params.click_position = ancestor.getAttribute('data-record-number');
+                else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                    params.event_category = params.event_category ||
+                        link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
+                        link.closest('footer') ? CATEGORIES.FOOTER :
+                            link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
+                                link.closest('.main') ? CATEGORIES.MAIN :
+                                    "VuFind";
+
+                    // Catalog VuFind Search results
+                    if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
+                        params.event_subcategory = params.event_subcategory ||
+                            link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
+                            link.closest('.search.container.navbar') ? 'Search Operations' :
+                                link.closest('.record-list.search-results-solr') ? 'Search Results List' :
+                                    link.closest('.facet-group') ? link.closest('.facet-group').getAttribute('data-title') :
+                                        link.closest('.action-toolbar') ? 'Action Toolbar' :
+                                            link.closest('.searchtools') ? 'Search Toolbar' :
+                                                link.closest('.pagination') ? 'Pagination' :
+                                                    link.closest('.search-sort') ? 'Sort Filter' :
+                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Widget";
+                        params.event_label = link.classList.contains('title') ? 'Title' :
+                            link.classList.contains('result-author') ? 'Author' :
+                                link.classList.contains('external') ? 'Holding' :
+                                    link.classList.contains('save-record') ? 'Save Record' :
+                                        params.event_label || 'Unknown';
+
+                    }
+                    // Catalog VuFind Record
+                    else if (window.location.href.indexOf(LOCATIONS.VUFIND_RECORD) > -1) {
+                        params.event_subcategory = params.event_subcategory ||
+                            link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
+                            link.closest('.search.container.navbar') ? 'Search Operations' :
+                                link.closest('.breadcrumbs') ? 'Breadcrumbs' :
+                                    link.closest('#bookplates') ? "Bookplates" :
+                                        link.closest('.media-left') ? "Record Media" :
+                                            link.closest('.savedLists') ? "Record Saved in Lists" :
+                                                link.closest('.media-body, .bibToggle') ? "Record Metadata" :
+                                                    link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
+                                                        link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
+                                                            link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
+                                                                link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
+                                                                    link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
+                                                                        link.closest('.action-toolbar') ? 'Action Toolbar' :
+                                                                            'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
+                        params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
+                            link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
+                                link.classList.contains('title') ? 'Title' :
+                                    link.classList.contains('result-author') ? 'Author' :
+                                        link.classList.contains('external') ? 'Holding' :
+                                            link.classList.contains('save-record') ? 'Save Record' :
+                                                params.event_label || 'Unknown';
+
                     }
                 }
                 // Guides
-                else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
-                    let ancestor = link.closest('.s-srch-results');
-                    let item = link.closest('.s-srch-result');
-                    if (ancestor && item && !link.closest('.pagination')) {
-                        params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
-                    }
+                else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) {
+                    params.event_category = params.event_category || CATEGORIES.MAIN;
+                    params.event_subcategory = params.event_subcategory ||
+                        link.closest('#s-lg-guide-search-form') ? 'Search Form' :
+                        link.closest('#s-lg-col-1') ? 'Center Column' :
+                            link.closest('#s-lg-col-2') ? 'Right Column' :
+                                link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                                    link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
+                    params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
+                        link.closest('.s-srch-result-author') ? 'Guide Author' :
+                            link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
+                                link.closest('.s-srch-result-url') ? 'Guide Link' :
+                                    link.closest('.s-srch-result-title') ? 'Guide Page Title' :
+                                        link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
+
                 }
-                // for the news list on the home page and on the news page
-                else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
-                    params.event_subcategory = params.event_subcategory || 'News List';
-                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
-                }
-                // for collex but works for any table actually
-                else if ((ancestor = link.closest('tbody'))) {
-                    params.event_subcategory = params.event_subcategory || 'Table';
-                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
+                // default - probably main content
+                else {
+                    params.event_category = params.event_category || CATEGORIES.MAIN;
+                    params.event_subcategory = params.event_subcategory ||
+                        link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                        link.closest('.action-toolbar') ? 'Action Toolbar' :
+                            link.closest('.pagination') ? 'Pagination' :
+                                'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
                 }
             }
-        }
 
-        return params;
-    }
-
-    // Function to establish the event name
-    function getEventName(target) {
-        if (!target) return false;
-
-        // Force to global nav dropdowns t
-        if (target.matches(SELECTORS.DROPDOWN) &&
-            target.closest(SELECTORS.GLOBAL_NAV)) {
-            return 'tab';
-        }
-        // Check if event target or direct parent is defined as a tab
-        else if (target.matches(SELECTORS.TAB) ||
-            target.closest(SELECTORS.TAB)) {
-            return 'tab';
-        }
-        // Check if target or direct parent is defined as a toggler
-        else if (target.matches(SELECTORS.DROPDOWN) ||
-            target.closest(SELECTORS.DROPDOWN)) {
-            return 'dropdown';
-        }
-        // Check if target is an input of type checkbox
-        else if (target.matches(SELECTORS.CHECKBOX_RADIO)) {
-            return 'checkbox';
-        }
-        // Check if element is an <a>
-        else if (target.matches(SELECTORS.BUTTON_A)) {
-            return 'click';
-        }
-        // return false and do not trigger a GA4 event
-        else {
-            return false;
-        }
-    }
-
-    function count_indecision(ep, eventName, target) {
-        // Function to count indecision clicks on tabs and dropdowns
-        // --- indecision count logic ---
-        if (eventName === 'tab') {
-            const component = target.closest('[data-ga-category]');
-            if (component) {
-                let count = parseInt(component.getAttribute('data-ga-indecision-count') || '0', 10) + 1;
-                if (isNaN(count)) count = 1;
-                component.setAttribute('data-ga-indecision-count', count);
-            }
-        }
-    }
-
-
-
-
-
-    function all_log(ep, eventName) {
-        // DEBUG, leaving it here for the first couple of weeks.
-        function pad(label, width = 25) {
-            return (label + ':').padEnd(width, ' ');
-        }
-        console.log(
-            pad('eventName') + eventName + '\n' +
-            pad('event_category') + ep.event_category + '\n' +
-            pad('event_subcategory') + ep.event_subcategory + '\n' +
-            pad('event_label') + ep.event_label + '\n' +
-            pad('click_position') + ep.click_position + '\n' +
-            pad('event_option') + (ep.event_option || '') + '\n' +
-            pad('event_indecision_count') + (ep.event_indecision_count || '')
-        );
-
-    }
-
-    function defer_link_click(eventName, event, href, isNewTab) {
-        // for links that navigate away
-        // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
-        // const isNewTab = event.target === '_blank' || isMiddleClick;
-        if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
-            event.preventDefault(); // delay navigation just slightly
-            setTimeout(() => {
-                window.location.href = href;
-            }, 200); // give GA time to fire
-        }
-    }
-
-    function handleCheckboxChange(target, searchWidget) {
-        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-        if (searchButtons.length) {
-            searchButtons.forEach((searchButton) => {
-                let optionText = target.getAttribute('data-ga-label');
-                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                if (target.checked) {
-                    // Add option
-                    if (currentOption) {
-                        if (!currentOption.split('; ').includes(optionText)) {
-                            currentOption += '; ' + optionText;
-                        }
-                    } else {
-                        currentOption = optionText;
-                    }
+            // Get link position if in a list
+            if (!link.closest(SELECTORS.FOOTER)) {
+                if (link.getAttribute('data-ga-position')) {
+                    params.event_subcategory = params.event_subcategory || 'List';
+                    params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
                 } else {
-                    // Remove option
-                    currentOption = currentOption.split('; ').filter(opt => opt !== optionText).join('; ');
-                }
-                searchButton.setAttribute('data-ga-event-option', currentOption);
-            });
-        }
-    }
+                    let ancestor = link.closest('li');
 
-    function handleRadioChange(target, searchWidget) {
-        const searchButtons = searchWidget.querySelectorAll('button.btn-search[type="submit"][data-ga-subcategory="' + target.getAttribute('data-ga-subcategory') + '"]');
-        if (searchButtons.length) {
-            searchButtons.forEach((searchButton) => {
-                let optionText = target.getAttribute('data-ga-label');
-                let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-                let optionsArr = currentOption ? currentOption.split('; ') : [];
-                // Remove any previous rad:... entry
-                optionsArr = optionsArr.filter(opt => !opt.startsWith('radio:'));
-                if (target.checked) {
-                    optionsArr.push('radio:' + optionText);
+                    // For any <ul> or <ol> list
+                    if (ancestor) {
+                        params.event_subcategory = params.event_subcategory || 'List';
+                        params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                    }
+                    // Catalog VuFind Search results
+                    else if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
+                        let ancestor = link.closest('[data-record-number]');
+                        if (ancestor) {
+                            params.click_position = ancestor.getAttribute('data-record-number');
+                        }
+                    }
+                    // Guides
+                    else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
+                        let ancestor = link.closest('.s-srch-results');
+                        let item = link.closest('.s-srch-result');
+                        if (ancestor && item && !link.closest('.pagination')) {
+                            params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
+                        }
+                    }
+                    // for the news list on the home page and on the news page
+                    else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
+                        params.event_subcategory = params.event_subcategory || 'News List';
+                        params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
+                    }
+                    // for collex but works for any table actually
+                    else if ((ancestor = link.closest('tbody'))) {
+                        params.event_subcategory = params.event_subcategory || 'Table';
+                        params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
+                    }
                 }
-                currentOption = optionsArr.join('; ');
-                searchButton.setAttribute('data-ga-event-option', currentOption);
-            });
-        }
-    }
-
-    function handleSelectPickerChange(target, searchWidget) {
-        const searchButton = searchWidget.querySelector('button[type="submit"].btn-search');
-        if (searchButton) {
-            let selectedValue = target.value.trim();
-            let currentOption = searchButton.getAttribute('data-ga-event-option') || '';
-            let optionsArr = currentOption ? currentOption.split('; ') : [];
-            // Remove any previous type:... entry
-            optionsArr = optionsArr.filter(opt => !opt.startsWith('type:'));
-            if (selectedValue !== 'AllFields') {
-                optionsArr.push('type:' + selectedValue);
             }
-            currentOption = optionsArr.join('; ');
-            searchButton.setAttribute('data-ga-event-option', currentOption);
+
+        },
+        name(target) {
+            if (!target) return false;
+
+            // Force to global nav dropdowns t
+            if (target.matches(SELECTORS.DROPDOWN) &&
+                target.closest(SELECTORS.GLOBAL_NAV)) {
+                return 'tab';
+            }
+            // Check if event target or direct parent is defined as a tab
+            else if (target.matches(SELECTORS.TAB) ||
+                target.closest(SELECTORS.TAB)) {
+                return 'tab';
+            }
+            // Check if target or direct parent is defined as a toggler
+            else if (target.matches(SELECTORS.DROPDOWN) ||
+                target.closest(SELECTORS.DROPDOWN)) {
+                return 'dropdown';
+            }
+            // Check if target is an input of type checkbox
+            else if (target.matches(SELECTORS.CHECKBOX_RADIO)) {
+                return 'checkbox';
+            }
+            // Check if element is an <a>
+            else if (target.matches(SELECTORS.BUTTON_A)) {
+                return 'click';
+            }
+            // return false and do not trigger a GA4 event
+            else {
+                return false;
+            }
+
         }
     }
 
+    // Main handling functions
+    const handleClick = {
+        linkClick(event, isMiddleClick = false) {
+            const target = event.target.closest('a, button, input');
+            const eventName = getEventDetails.name(target);
+            if (!eventName) { return; }
 
+            const ep = getEventDetails.parameters(target);
 
+            helpers.count_indecision(ep, eventName, target);
 
-    // Function to handle link clicks and send events to GA4. ----- MAIN FUNCTION -----
-    function handleLinkClick(event, isMiddleClick = false) {
-        const target = event.target.closest('a, button, input');
-        const eventName = getEventName(target);
-        if (!eventName) { return; }
+            helpers.all_log(ep, eventName); // for debugging
 
-        const ep = getEventParameters(target);
+            gtag('event', eventName, ep);
 
-        count_indecision(ep, eventName, target);
-
-        all_log(ep, eventName); // for debugging
-
-        gtag('event', eventName, ep);
-
-        defer_link_click(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
-    }
-
-    // Function to add option changes (checkboxes, radio buttons, select pickers) in the search widget to the main search button.
-    function handleOptionChange(e) {
-        const target = e.target;
-        const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
-        if (!searchWidget) return;
-        if (target.matches('input[type="checkbox"]')) {
-            handleCheckboxChange(target, searchWidget);
-        } else if (target.matches('input[type="radio"]')) {
-            handleRadioChange(target, searchWidget);
-        } else if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype')) {
-            handleSelectPickerChange(target, searchWidget);
+            this.deferClick(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
+        },
+        optionChange(e) {
+            const target = e.target;
+            const searchWidget = target.closest(SELECTORS.SEARCH_WIDGET);
+            if (!searchWidget) return;
+            if (target.matches('input[type="checkbox"]')) {
+                helpers.addOptionToSearchButton.checkbox(target, searchWidget);
+            } else if (target.matches('input[type="radio"]')) {
+                helpers.addOptionToSearchButton.radio(target, searchWidget);
+            } else if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype')) {
+                helpers.addOptionToSearchButton.select(target, searchWidget);
+            }
+        },
+        deferClick(eventName, event, href, isNewTab) {
+            // for links that navigate away
+            // const isNewTab = target.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || isMiddleClick; // UNTESTED
+            // const isNewTab = event.target === '_blank' || isMiddleClick;
+            if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
+                event.preventDefault(); // delay navigation just slightly
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 200); // give GA time to fire
+            }
         }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Attach a single event listener to the document body using event delegation.
-        // document.body.addEventListener('click', debounce(handleLinkClick, 200));
+        // Apply the rules now on page load
+        applyHtmlProperties(htmlPropertyRules);
 
-        document.body.addEventListener('click', handleLinkClick, true);
+        document.body.addEventListener('click', handleClick.linkClick, true);
 
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
@@ -670,6 +643,6 @@
         }, true);
 
         // Add options to the search widget search button on change.
-        document.body.addEventListener('change', handleOptionChange, true);
+        document.body.addEventListener('change', handleClick.optionChange, true);
     });
 })();
