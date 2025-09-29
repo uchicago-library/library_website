@@ -378,7 +378,7 @@
                                         link.closest('.searchtools') ? 'Search Toolbar' :
                                             link.closest('.pagination') ? 'Pagination' :
                                                 link.closest('.search-sort') ? 'Sort Filter' :
-                                                    link.closest('[id]').getAttribute('id') || "VuFind Results Widget";
+                                                    'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Widget";
                     params.event_label = link.classList.contains('title') ? 'Title' :
                         link.classList.contains('result-author') ? 'Author' :
                             link.classList.contains('external') ? 'Holding' :
@@ -402,7 +402,7 @@
                                                             link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
                                                                 link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
                                                                     link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                                                        link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
+                                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
                     params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                         link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                             link.classList.contains('title') ? 'Title' :
@@ -437,7 +437,7 @@
                     link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
                     link.closest('.action-toolbar') ? 'Action Toolbar' :
                         link.closest('.pagination') ? 'Pagination' :
-                            link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
+                            'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
             }
         }
 
