@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="feedback-flag-content"> <!-- Renamed here -->
                 <p>Take a 3 minute survey to help us improve our website!</p>
                 <div class="button-row">
-                    <button class="btn dont-show" data-ga-label="Dont't show this">Don't show this</button>
+                    <button class="btn dont-show" data-ga-label="Don't show this">Don't show this</button>
                     <a id="take-survey-button" href="`+ feedbackLinkUrl + `&button=flag" target="_blank" class="tbn take-survey" data-ga-label="Give feedback">Give feedback</a>
                 </div>
             </div>

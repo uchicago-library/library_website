@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.5.0
+ * @version 4.6.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -38,7 +38,7 @@
     };
 
     const LOCATIONS = {
-        LIB: 'catalog.lib.uchicago.edu/vufind/Search/Results',
+        LIB: 'www.lib.uchicago.edu',
         VUFIND: 'catalog.lib.uchicago.edu/vufind/',
         VUFIND_RESULTS: 'catalog.lib.uchicago.edu/vufind/Search/Results',
         VUFIND_RECORD: 'catalog.lib.uchicago.edu/vufind/Record/',
@@ -64,52 +64,6 @@
             },
         },
     ];
-    // Example rules for applyHtmlProperties
-    var ExampleHtmlPropertyRules = [
-        // 1) Set a data attribute on each .record-header using the first heading inside the record header
-        {
-            selector: '.record .record-header',
-            attribute: 'data-first-heading',
-            useFirstHeading: true,
-            apply: 'each'
-        },
-        // 2) Set the label for the main home page widgets.
-        {
-            selector: '#widget-featured-library-expert',
-            childSelector: 'a',
-            attribute: 'data-test-label',
-            valueFn: function ($items, $target) {
-                var mainClassAttr = $items.attr('class') || '';
-                var mainClass = '';
-                if (mainClassAttr) {
-                    var classes = mainClassAttr.split(/\s+/).filter(function (c) { return c; });
-                    if (classes.length) {
-                        mainClass = classes.reduce(function (a, b) { return a.length >= b.length ? a : b; }, '');
-                    }
-                }
-                if (!mainClass) {
-                    mainClass = $target.text().trim();
-                }
-                return mainClass;
-            },
-            apply: 'each'
-        },
-        // 3) Example: derive a role value from a class on the target element (assumes class like 'role-admin' => 'admin')
-        {
-            selector: '.some-role-element',
-            attribute: 'role',
-            valueFn: function ($items, $target) {
-                var classes = ($target.attr('class') || '').split(/\s+/);
-                for (var i = 0; i < classes.length; i++) {
-                    var m = classes[i].match(/^role-(.+)$/);
-                    if (m) { return m[1]; }
-                }
-                return '';
-            },
-            onlyIfMissing: true,
-            apply: 'each'
-        }
-    ];
 
     // 
     // # Section 2: Populate HTML properties based on rules
@@ -118,18 +72,24 @@
     /*
      * applyHtmlProperties
      * Apply attributes (or data-*) to elements based on a list of rules.
-     * - Each rule: { location, selector, attribute, value, valueFn, childSelector, useFirstHeading, onlyIfMissing, apply }
+     * - Each rule: { location, selector, attribute, value, valueFn, childSelector, useFirstHeading, overrideIfExists, apply }
+     * - overrideIfExists: if true and element already has the attribute, will override existing attribute value
      * - apply: 'each' (default) or 'first' to only apply to the first matched element
      * - useFirstHeading: boolean or { levels: [1,2,3] } - finds the first heading inside the matched element (h1/h2/h3 by default)
-     * - valueFn receives ( $mainMatchedElement, $targetElement ) and should return a string value
+     * - valueFn receives ( <$items: element or array of elements found by $selector>, <$target: specific element during iteration over $items> ) and should return a string value
      */
     function applyHtmlProperties(rules) {
-        if (!Array.isArray(rules)) { return; }
+        if (!Array.isArray(rules) || !rules.length) {
+            console.warn('applyHtmlProperties: no rules provided');
+            return;
+        }
 
         function getFirstHeadingTextWithin($elem, levels, $child) {
             // Defensive: ensure $elem is present and is a jQuery object with content
             if (!$elem || !$elem.length) { return ''; }
             // Default heading preference: skip h1 (will never target h1), prefer h2,h3,h4
+            // h1 will most likely never be meaningful as a parameter for an event
+            //     because that information is already in the page title/path.
             levels = Array.isArray(levels) && levels.length ? levels : [2, 3, 4];
             for (var i = 0; i < levels.length; i++) {
                 var lvl = levels[i];
@@ -144,7 +104,7 @@
         rules.forEach(function (rule) {
             if (!rule || !rule.selector || !rule.attribute) { return; }
 
-            if (rule.location && window.location.href.indexOf(rule.location) === -1) { return; }
+            if (rule.location && window.location.href.includes(rule.location) === -1) { return; }
 
             var $items = $(rule.selector);
             if (!$items.length) { return; }
@@ -162,16 +122,13 @@
                 } else { return; }
             }
 
-            console.log('applyHtmlProperties found', $items.length, 'items for selector', rule.selector);
-
             $items.each(function () {
-                console.log('applyHtmlProperties processing', rule.selector, 'for attribute', rule.attribute);
 
                 var $target = $(this); // the element matched by selector (the "main" element)
                 // Defensive: ensure $target is present
                 if (!$target || !$target.length) { return; }
-                // Skip if attribute already exists and onlyIfMissing is true
-                if (rule.onlyIfMissing && typeof $target.attr(rule.attribute) !== 'undefined') {
+                // Skip if attribute already exists and overrideIfExists is untrue
+                if (typeof $target.attr(rule.attribute) !== 'undefined' || rule.overrideIfExists) {
                     return;
                 }
 
@@ -208,7 +165,6 @@
                 // Set attribute (support data-* via attr so it appears in DOM)
                 try {
                     $target.attr(rule.attribute, val);
-                    console.log('applyHtmlProperties set', rule.attribute, 'for', rule.selector, 'to:', val);
                 } catch (e) {
                     console.warn('applyHtmlProperties failed to set attribute', rule.attribute, 'for', rule.selector, e);
                 }
@@ -591,6 +547,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        if (typeof jQuery === 'undefined') {
+            console.error('track-everything.js requires jQuery');
+            return;
+        }
+
         // Apply the rules now on page load
         applyHtmlProperties(htmlPropertyRules);
 
