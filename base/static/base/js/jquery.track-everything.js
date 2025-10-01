@@ -469,6 +469,7 @@
                 }
             }
 
+            return params;
         },
         name(target) {
             if (!target) return false;
