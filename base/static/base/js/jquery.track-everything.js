@@ -560,7 +560,7 @@
         // Handle middle-clicks (auxclick) for links and buttons.
         document.body.addEventListener('auxclick', function (e) {
             if (e.button === 1) {
-                handleLinkClick(e, true);
+                handleClick.linkClick(e, true);
             }
         }, true);
 
