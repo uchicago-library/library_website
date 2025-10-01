@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.6.0
+ * @version 4.6.2
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -520,7 +520,7 @@
 
             gtag('event', eventName, ep);
 
-            this.deferClick(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
+            handleClick.deferClick(eventName, event, target.getAttribute('href'), target.target === '_blank' || isMiddleClick);
         },
         optionChange(e) {
             const target = e.target;
