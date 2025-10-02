@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.7.051
+ * @version 4.7.052
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -58,7 +58,7 @@
         {
             location: LOCATIONS.VUFIND,
             selector: '.myresearch-menu.account-menu',
-            attribute: 'data-ga-subcateogry',
+            attribute: 'data-ga-subcategory',
             value: "Your Account Menu",
         },
         {
