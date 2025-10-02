@@ -38,10 +38,10 @@
     };
 
     const LOCATIONS = {
-        LIB: 'www.lib.uchicago.edu',
-        VUFIND: 'catalog.lib.uchicago.edu/vufind/',
-        VUFIND_RESULTS: 'catalog.lib.uchicago.edu/vufind/Search/Results',
-        VUFIND_RECORD: 'catalog.lib.uchicago.edu/vufind/Record/',
+        LIB: 'lib.uchicago.edu',
+        VUFIND: '.lib.uchicago.edu/vufind/',
+        VUFIND_RESULTS: '.lib.uchicago.edu/vufind/Search/Results',
+        VUFIND_RECORD: '.lib.uchicago.edu/vufind/Record/',
         GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
         GUIDES: 'guides.lib.uchicago.edu',
     };
@@ -346,7 +346,7 @@
                         (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
                 }
                 // Catalog VuFind Search results
-                else if (window.location.href.indexOf(LOCATIONS.VUFIND) > -1) {
+                else if (window.location.href.includes(LOCATIONS.VUFIND) > -1) {
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -355,7 +355,7 @@
                                     "VuFind";
 
                     // Catalog VuFind Search results
-                    if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
+                    if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS) > -1) {
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
@@ -374,7 +374,7 @@
 
                     }
                     // Catalog VuFind Record
-                    else if (window.location.href.indexOf(LOCATIONS.VUFIND_RECORD) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD) > -1) {
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
@@ -401,7 +401,7 @@
                     }
                 }
                 // Guides
-                else if (window.location.href.indexOf(LOCATIONS.GUIDES) > -1) {
+                else if (window.location.href.includes(LOCATIONS.GUIDES) > -1) {
                     params.event_category = params.event_category || CATEGORIES.MAIN;
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('#s-lg-guide-search-form') ? 'Search Form' :
@@ -442,14 +442,14 @@
                         params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
                     }
                     // Catalog VuFind Search results
-                    else if (window.location.href.indexOf(LOCATIONS.VUFIND_RESULTS) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS) > -1) {
                         let ancestor = link.closest('[data-record-number]');
                         if (ancestor) {
                             params.click_position = ancestor.getAttribute('data-record-number');
                         }
                     }
                     // Guides
-                    else if (window.location.href.indexOf(LOCATIONS.GUIDES_SEARCH) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.GUIDES_SEARCH) > -1) {
                         let ancestor = link.closest('.s-srch-results');
                         let item = link.closest('.s-srch-result');
                         if (ancestor && item && !link.closest('.pagination')) {
