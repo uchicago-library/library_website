@@ -324,6 +324,7 @@
                         link.closest('footer') ? CATEGORIES.FOOTER :
                             link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
                                 link.closest('.main') ? CATEGORIES.MAIN :
+                                link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
                                     "VuFind";
 
                     // Catalog VuFind Search results
@@ -364,15 +365,17 @@
                                                                 link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
                                                                     link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
                                                                         link.closest('.action-toolbar') ? 'Action Toolbar' :
+                                                                        link.closest('.pager') ? 'Pagination' :
                                                                             'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                                 link.classList.contains('title') ? 'Title' :
                                     link.classList.contains('result-author') ? 'Author' :
-                                        link.classList.contains('external') ? 'Holding' :
-                                            link.classList.contains('save-record') ? 'Save Record' :
+                                        link.classList.contains('save-record') ? 'Save Record' :
+                                        link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
+                                        link.closest('.maplookup') ? 'Map Lookup' :
+                                        link.closest('.eLink') ? 'Online Access' :
                                                 params.event_label || 'Unknown';
-
                     }
                 }
                 // Guides
