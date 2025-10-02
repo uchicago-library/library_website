@@ -310,43 +310,8 @@
                 // A lot of links will have this established in the HTML and will not get in here.
                 // But might be of help if changes are made to the HTML without proper labeling,
                 // or for websites where this script is reused.
-                // main navbar
-                if (link.closest(SELECTORS.GLOBAL_NAV)) {
-                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                    const listParent = link.closest('ul, ol');
-                    params.event_subcategory = params.event_subcategory ||
-                        (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                        params.event_label || CATEGORIES.NAVIGATION;
-                }
-                // shortcuts
-                else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
-                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                    params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
-                }
-                // footer
-                else if (link.closest(SELECTORS.FOOTER)) {
-                    params.event_category = params.event_category || CATEGORIES.FOOTER;
-                    const listParent = link.closest('ul, ol');
-                    params.event_subcategory = params.event_subcategory ||
-                        (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
-                }
-                // any widget
-                else if (link.closest(SELECTORS.WIDGET)) {
-                    params.event_category = params.event_category || CATEGORIES.MAIN;
-                    const widgetParent = link.closest(SELECTORS.WIDGET);
-                    params.event_subcategory = params.event_subcategory ||
-                        (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
-                }
-                // any sidebar
-                else if (link.closest(SELECTORS.SIDEBAR)) {
-                    params.event_category = params.event_category || CATEGORIES.SIDEBAR;
-                    const sidebarParent = link.closest(SELECTORS.SIDEBAR);
-                    params.event_subcategory = params.event_subcategory ||
-                        (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
-                        (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
-                }
                 // Catalog VuFind Search results
-                else if (window.location.href.includes(LOCATIONS.VUFIND) > -1) {
+                if (window.location.href.includes(LOCATIONS.VUFIND) > -1) {
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -419,6 +384,41 @@
                                     link.closest('.s-srch-result-title') ? 'Guide Page Title' :
                                         link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
 
+                }
+                // main navbar
+                else if (link.closest(SELECTORS.GLOBAL_NAV)) {
+                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
+                    const listParent = link.closest('ul, ol');
+                    params.event_subcategory = params.event_subcategory ||
+                        (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
+                        params.event_label || CATEGORIES.NAVIGATION;
+                }
+                // shortcuts
+                else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
+                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
+                    params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
+                }
+                // footer
+                else if (link.closest(SELECTORS.FOOTER)) {
+                    params.event_category = params.event_category || CATEGORIES.FOOTER;
+                    const listParent = link.closest('ul, ol');
+                    params.event_subcategory = params.event_subcategory ||
+                        (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
+                }
+                // any widget
+                else if (link.closest(SELECTORS.WIDGET)) {
+                    params.event_category = params.event_category || CATEGORIES.MAIN;
+                    const widgetParent = link.closest(SELECTORS.WIDGET);
+                    params.event_subcategory = params.event_subcategory ||
+                        (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
+                }
+                // any sidebar
+                else if (link.closest(SELECTORS.SIDEBAR)) {
+                    params.event_category = params.event_category || CATEGORIES.SIDEBAR;
+                    const sidebarParent = link.closest(SELECTORS.SIDEBAR);
+                    params.event_subcategory = params.event_subcategory ||
+                        (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
+                        (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
                 }
                 // default - probably main content
                 else {
