@@ -356,11 +356,12 @@
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS) > -1) {
+                        console.log('VUFIND_RESULTS');
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
                                 link.closest('.record-list.search-results-solr') ? 'Search Results List' :
-                                    link.closest('.facet-group') ? link.closest('.facet-group').getAttribute('data-title') :
+                                    link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
                                     link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
                                         link.closest('.action-toolbar') ? 'Action Toolbar' :
                                             link.closest('.searchtools') ? 'Search Toolbar' :
@@ -372,6 +373,7 @@
                                 link.classList.contains('external') ? 'Holding' :
                                     link.classList.contains('save-record') ? 'Save Record' :
                                         params.event_label || 'Unknown';
+                        console.log('VUFIND_RESULTS', params);
 
                     }
                     // Catalog VuFind Record
