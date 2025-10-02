@@ -345,7 +345,8 @@
                                             link.closest('.searchtools') ? 'Search Toolbar' :
                                                 link.closest('.pagination') ? 'Pagination' :
                                                     link.closest('.search-sort') ? 'Sort Filter' :
-                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Component";
+                                                        link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
+                                                         "VuFind Results Component";
                         params.event_label = link.classList.contains('title') ? 'Title' :
                             link.classList.contains('result-author') ? 'Author' :
                                 link.classList.contains('external') ? 'Holding' :
@@ -370,7 +371,8 @@
                                                                     link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
                                                                         link.closest('.action-toolbar') ? 'Action Toolbar' :
                                                                         link.closest('.pager') ? 'Pagination' :
-                                                                            'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Component";
+                                                                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
+                                                                             "VuFind Record Component";
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                                 link.classList.contains('title') ? 'Title' :
@@ -390,7 +392,7 @@
                     }
                     
                     params.event_subcategory = params.event_subcategory ||
-                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Component";
+                        link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component";
 
                 }
                 // Guides
