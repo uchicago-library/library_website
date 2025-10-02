@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.7.050
+ * @version 4.7.051
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -39,9 +39,9 @@
 
     const LOCATIONS = {
         LIB: 'lib.uchicago.edu',
-        VUFIND: '.lib.uchicago.edu/vufind/',
+        VUFIND: '.lib.uchicago.edu/vufind',
         VUFIND_RESULTS: '.lib.uchicago.edu/vufind/Search/Results',
-        VUFIND_RECORD: '.lib.uchicago.edu/vufind/Record/',
+        VUFIND_RECORD: '.lib.uchicago.edu/vufind/Record',
         GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
         GUIDES: 'guides.lib.uchicago.edu',
     };
