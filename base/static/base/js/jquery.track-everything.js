@@ -361,6 +361,7 @@
                             link.closest('.search.container.navbar') ? 'Search Operations' :
                                 link.closest('.record-list.search-results-solr') ? 'Search Results List' :
                                     link.closest('.facet-group') ? link.closest('.facet-group').getAttribute('data-title') :
+                                    link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
                                         link.closest('.action-toolbar') ? 'Action Toolbar' :
                                             link.closest('.searchtools') ? 'Search Toolbar' :
                                                 link.closest('.pagination') ? 'Pagination' :
