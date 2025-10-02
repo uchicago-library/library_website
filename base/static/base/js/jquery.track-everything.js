@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.7.0
+ * @version 4.7.050
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -54,6 +54,12 @@
             childSelector: 'a',
             attribute: 'data-ga-label',
             value: "Expert's Subjects",
+        },
+        {
+            location: LOCATIONS.VUFIND,
+            selector: '.myresearch-menu.account-menu',
+            attribute: 'data-ga-subcateogry',
+            value: "Your Account Menu",
         },
         {
             location: LOCATIONS.VUFIND_RECORD,
@@ -340,7 +346,7 @@
                                             link.closest('.searchtools') ? 'Search Toolbar' :
                                                 link.closest('.pagination') ? 'Pagination' :
                                                     link.closest('.search-sort') ? 'Sort Filter' :
-                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Widget";
+                                                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Results Component";
                         params.event_label = link.classList.contains('title') ? 'Title' :
                             link.classList.contains('result-author') ? 'Author' :
                                 link.classList.contains('external') ? 'Holding' :
@@ -366,7 +372,7 @@
                                                                     link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
                                                                         link.closest('.action-toolbar') ? 'Action Toolbar' :
                                                                         link.closest('.pager') ? 'Pagination' :
-                                                                            'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Widget";
+                                                                            'id:' + link.closest('[id]').getAttribute('id') || "VuFind Record Component";
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                                 link.classList.contains('title') ? 'Title' :
@@ -377,6 +383,17 @@
                                         link.closest('.eLink') ? 'Online Access' :
                                                 params.event_label || 'Unknown';
                     }
+                    // My Account
+                    else if(link.closest('.template-dir-myresearch')) {
+                        params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
+                            link.closest('.title') ? 'Title' :
+                            link.closest('.record-cover-link') ? 'Record Cover' :
+                            params.event_label;
+                    }
+                    
+                    params.event_subcategory = params.event_subcategory ||
+                        'id:' + link.closest('[id]').getAttribute('id') || "VuFind Component";
+
                 }
                 // Guides
                 else if (window.location.href.includes(LOCATIONS.GUIDES)) {
