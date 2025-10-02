@@ -1,6 +1,6 @@
 /**
  * @fileoverview GA4 Event Tracking Implementation
- * @version 4.6.2
+ * @version 4.7.0
  * @author [Vitor]
  * @requires jQuery
  * 
@@ -63,6 +63,12 @@
                 return $($target).closest('tr').find('th').text().trim();
             },
         },
+        {
+            location: LOCATIONS.VUFIND_RECORD,
+            selector: '.media-body table tr td a',
+            attribute: 'data-ga-subcategory',
+            value: 'Record Metadata',
+        },
     ];
 
     // 
@@ -104,7 +110,7 @@
         rules.forEach(function (rule) {
             if (!rule || !rule.selector || !rule.attribute) { return; }
 
-            if (rule.location && window.location.href.includes(rule.location) === -1) { return; }
+            if (rule.location && !window.location.href.includes(rule.location)) { return; }
 
             var $items = $(rule.selector);
             if (!$items.length) { return; }
@@ -310,8 +316,9 @@
                 // A lot of links will have this established in the HTML and will not get in here.
                 // But might be of help if changes are made to the HTML without proper labeling,
                 // or for websites where this script is reused.
+
                 // Catalog VuFind Search results
-                if (window.location.href.includes(LOCATIONS.VUFIND) > -1) {
+                if (window.location.href.includes(LOCATIONS.VUFIND)) {
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -320,7 +327,7 @@
                                     "VuFind";
 
                     // Catalog VuFind Search results
-                    if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS) > -1) {
+                    if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
                         console.log('VUFIND_RESULTS');
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
@@ -338,11 +345,11 @@
                                 link.classList.contains('external') ? 'Holding' :
                                     link.classList.contains('save-record') ? 'Save Record' :
                                         params.event_label || 'Unknown';
-                        console.log('VUFIND_RESULTS', params);
 
                     }
                     // Catalog VuFind Record
-                    else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
+                        console.log('VUFIND_RECORD');
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
@@ -369,7 +376,7 @@
                     }
                 }
                 // Guides
-                else if (window.location.href.includes(LOCATIONS.GUIDES) > -1) {
+                else if (window.location.href.includes(LOCATIONS.GUIDES)) {
                     params.event_category = params.event_category || CATEGORIES.MAIN;
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('#s-lg-guide-search-form') ? 'Search Form' :
@@ -445,14 +452,14 @@
                         params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
                     }
                     // Catalog VuFind Search results
-                    else if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
                         let ancestor = link.closest('[data-record-number]');
                         if (ancestor) {
                             params.click_position = ancestor.getAttribute('data-record-number');
                         }
                     }
                     // Guides
-                    else if (window.location.href.includes(LOCATIONS.GUIDES_SEARCH) > -1) {
+                    else if (window.location.href.includes(LOCATIONS.GUIDES_SEARCH)) {
                         let ancestor = link.closest('.s-srch-results');
                         let item = link.closest('.s-srch-result');
                         if (ancestor && item && !link.closest('.pagination')) {
