@@ -335,7 +335,6 @@
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
-                        console.log('VUFIND_RESULTS');
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
@@ -356,7 +355,6 @@
                     }
                     // Catalog VuFind Record
                     else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
-                        console.log('VUFIND_RECORD');
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                             link.closest('.search.container.navbar') ? 'Search Operations' :
