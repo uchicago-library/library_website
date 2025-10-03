@@ -42,8 +42,8 @@
         VUFIND: '.lib.uchicago.edu/vufind',
         VUFIND_RESULTS: '.lib.uchicago.edu/vufind/Search/Results',
         VUFIND_RECORD: '.lib.uchicago.edu/vufind/Record',
-        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
         GUIDES: 'guides.lib.uchicago.edu',
+        GUIDES_SEARCH: 'guides.lib.uchicago.edu/srch.php',
     };
 
     // Rules for applyHtmlProperties
@@ -408,10 +408,6 @@
                 else if (window.location.href.includes(LOCATIONS.GUIDES)) {
                     params.event_category = params.event_category || CATEGORIES.MAIN;
                     params.event_subcategory = params.event_subcategory || (
-                        link.closest('#s-lg-guide-search-form') ? 'Search Form' :
-                        link.closest('#s-lg-col-1') ? 'Center Column' :
-                        link.closest('#s-lg-col-2') ? 'Right Column' :
-                        link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
                         link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN
                     );
                     params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
