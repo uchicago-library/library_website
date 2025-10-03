@@ -392,13 +392,14 @@
                             link.closest('.record-cover-link') ? 'Record Cover' :
                             params.event_label;
                     }
-                    helpers.all_log(params, 'click', 'VuFind fallback');
+                    helpers.all_log(params, 'click', 'VuFind fallback '+typeof params.event_subcategory+'. Is it? '+!!params.event_subcategory);
                     // Fallback for all VuFind Screens.
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('.search.container.navbar') ? 'Search Operations' :
                         link.closest('.breadcrumbs') ? 'Breadcrumbs' :
                         link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                         link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component";
+                    helpers.all_log(params, 'click', 'end of VuFind');
 
                 }
                 // Guides
