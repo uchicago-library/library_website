@@ -317,6 +317,7 @@
                 params.event_indecision_count = link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
             }
 
+            console.log('BAse',JSON.stringify(params));
             // Determine category, subcategory, based on link context.
             if (!params.event_category || !params.event_subcategory) {
                 // A lot of links will have this established in the HTML and will not get in here.
@@ -325,7 +326,7 @@
 
                 // Catalog VuFind Search results
                 if (window.location.href.includes(LOCATIONS.VUFIND)) {
-                    console.log('VuFind',params);
+                    console.log('VuFind',JSON.stringify(params));
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -336,7 +337,7 @@
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
-                        console.log('VuFind Results',params);
+                        console.log('VuFind Results',JSON.stringify(params));
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.record-list.search-results-solr') ? 'Search Results List' :
                             link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
@@ -356,7 +357,7 @@
                     }
                     // Catalog VuFind Record
                     else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
-                        console.log('VuFind Record',params);
+                        console.log('VuFind Record',JSON.stringify(params));
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('#bookplates') ? "Bookplates" :
                             link.closest('.media-left') ? "Record Media" :
@@ -383,13 +384,13 @@
                     }
                     // My Account
                     else if(link.closest('.template-dir-myresearch')) {
-                        console.log('VuFind My Research',params);
+                        console.log('VuFind My Research',JSON.stringify(params));
                         params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
                             link.closest('.title') ? 'Title' :
                             link.closest('.record-cover-link') ? 'Record Cover' :
                             params.event_label;
                     }
-                    console.log('VuFind fallback',params);
+                    console.log('VuFind fallback',JSON.stringify(params));
                     // Fallback for all VuFind Screens.
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('.search.container.navbar') ? 'Search Operations' :
