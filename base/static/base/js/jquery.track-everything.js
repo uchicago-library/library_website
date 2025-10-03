@@ -348,12 +348,13 @@
                             link.closest('.pagination') ? 'Pagination' :
                             link.closest('.search-sort') ? 'Sort Filter' :
                             "" );
-                        params.event_label = link.classList.contains('title') ? 'Title' :
+                        params.event_label = link.getAttribute('data-ga-label') || (
+                            link.classList.contains('title') ? 'Title' :
                             link.closest('.result-author') ? 'Author' :
                             link.closest('.eLink.external') ? 'Online Access' :
                             link.closest('.save-record') ? 'Save Record' :
                             link.closest('.record-cover-link') ? 'Record Cover' :
-                            params.event_label || 'VuFind Results Link';
+                            params.event_label || 'VuFind Results Link' );
 
                     }
                     // Catalog VuFind Record
@@ -372,7 +373,8 @@
                             link.closest('.action-toolbar') ? 'Action Toolbar' :
                             link.closest('.pager') ? 'Pagination' :
                             "" );
-                        params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
+                        params.event_label = link.getAttribute('data-ga-label') || (
+                            link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                             link.classList.contains('title') ? 'Title' :
                             link.classList.contains('result-author') ? 'Author' :
@@ -380,7 +382,7 @@
                             link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
                             link.closest('.maplookup') ? 'Map Lookup' :
                             link.closest('.eLink') ? 'Online Access' :
-                            params.event_label || 'VuFind Record Link';
+                            params.event_label || 'VuFind Record Link');
                     }
                     // My Account
                     else if(link.closest('.template-dir-myresearch')) {
