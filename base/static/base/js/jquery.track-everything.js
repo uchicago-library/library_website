@@ -387,9 +387,9 @@
                     }
                     // Defaults for all VuFind Screens.
                     params.event_subcategory = params.event_subcategory ||
-                        link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                         link.closest('.search.container.navbar') ? 'Search Operations' :
                         link.closest('.breadcrumbs') ? 'Breadcrumbs' :
+                        link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                         link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component";
 
                 }
