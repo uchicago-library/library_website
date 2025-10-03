@@ -352,6 +352,7 @@
                             link.closest('.result-author') ? 'Author' :
                             link.closest('.eLink.external') ? 'Online Access' :
                             link.closest('.save-record') ? 'Save Record' :
+                            link.closest('.record-cover-link') ? 'Record Cover' :
                             params.event_label || 'VuFind Results Link';
 
                     }
