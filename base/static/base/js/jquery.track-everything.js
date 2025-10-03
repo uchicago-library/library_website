@@ -328,18 +328,18 @@
                 // Catalog VuFind Search results
                 if (window.location.href.includes(LOCATIONS.VUFIND)) {
                     helpers.all_log(params, 'click', 'VuFind Detected');
-                    params.event_category = params.event_category ||
+                    params.event_category = params.event_category || (
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
                         link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
                         link.closest('.main') ? CATEGORIES.MAIN :
                         link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
-                        "VuFind";
+                        "VuFind" );
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
                         helpers.all_log(params, 'click', 'VuFind Results');
-                        params.event_subcategory = params.event_subcategory ||
+                        params.event_subcategory = params.event_subcategory || (
                             link.closest('.record-list.search-results-solr') ? 'Search Results List' :
                             link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
                             link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
@@ -348,7 +348,7 @@
                             link.closest('.pagination') ? 'Pagination' :
                             link.closest('.search-sort') ? 'Sort Filter' :
                             link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
-                            "";
+                            "" );
                         params.event_label = link.classList.contains('title') ? 'Title' :
                             link.closest('.result-author') ? 'Author' :
                             link.closest('.eLink.external') ? 'Online Access' :
@@ -359,7 +359,7 @@
                     // Catalog VuFind Record
                     else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
                         helpers.all_log(params, 'click', 'VuFind Record'); 
-                        params.event_subcategory = params.event_subcategory ||
+                        params.event_subcategory = params.event_subcategory || (
                             link.closest('#bookplates') ? "Bookplates" :
                             link.closest('.media-left') ? "Record Media" :
                             link.closest('.savedLists') ? "Record Saved in Lists" :
@@ -372,7 +372,7 @@
                             link.closest('.action-toolbar') ? 'Action Toolbar' :
                             link.closest('.pager') ? 'Pagination' :
                             link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
-                            "";
+                            "" );
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                             link.classList.contains('title') ? 'Title' :
@@ -394,23 +394,25 @@
                     }
                     helpers.all_log(params, 'click', 'VuFind fallback '+typeof params.event_subcategory+'. Is it? '+!!params.event_subcategory);
                     // Fallback for all VuFind Screens.
-                    params.event_subcategory = params.event_subcategory ||
+                    params.event_subcategory = params.event_subcategory || (
                         link.closest('.search.container.navbar') ? 'Search Operations' :
                         link.closest('.breadcrumbs') ? 'Breadcrumbs' :
                         link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                        link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component";
+                        link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component"
+                    );
                     helpers.all_log(params, 'click', 'end of VuFind');
 
                 }
                 // Guides
                 else if (window.location.href.includes(LOCATIONS.GUIDES)) {
                     params.event_category = params.event_category || CATEGORIES.MAIN;
-                    params.event_subcategory = params.event_subcategory ||
+                    params.event_subcategory = params.event_subcategory || (
                         link.closest('#s-lg-guide-search-form') ? 'Search Form' :
                         link.closest('#s-lg-col-1') ? 'Center Column' :
                         link.closest('#s-lg-col-2') ? 'Right Column' :
                         link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
-                        link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
+                        link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN
+                    );
                     params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
                         link.closest('.s-srch-result-author') ? 'Guide Author' :
                         link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
@@ -457,11 +459,12 @@
                 // default - probably main content
                 else {
                     params.event_category = params.event_category || CATEGORIES.MAIN;
-                    params.event_subcategory = params.event_subcategory ||
+                    params.event_subcategory = params.event_subcategory || (
                         link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
                         link.closest('.action-toolbar') ? 'Action Toolbar' :
                             link.closest('.pagination') ? 'Pagination' :
-                                'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN;
+                                'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN
+                    );
                 }
             }
 
