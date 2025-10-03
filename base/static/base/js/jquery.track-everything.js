@@ -349,7 +349,7 @@
                             link.closest('.result-author') ? 'Author' :
                             link.closest('.eLink.external') ? 'Online Access' :
                             link.closest('.save-record') ? 'Save Record' :
-                            params.event_label;
+                            params.event_label || 'VuFind Results Link';
 
                     }
                     // Catalog VuFind Record
@@ -367,7 +367,7 @@
                             link.closest('.action-toolbar') ? 'Action Toolbar' :
                             link.closest('.pager') ? 'Pagination' :
                             link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
-                            "VuFind Record Component";
+                            "";
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
                             link.classList.contains('title') ? 'Title' :
@@ -376,7 +376,7 @@
                             link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
                             link.closest('.maplookup') ? 'Map Lookup' :
                             link.closest('.eLink') ? 'Online Access' :
-                            params.event_label || 'Unknown';
+                            params.event_label || 'VuFind Record Link';
                     }
                     // My Account
                     else if(link.closest('.template-dir-myresearch')) {
