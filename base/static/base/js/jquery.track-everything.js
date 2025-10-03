@@ -328,60 +328,55 @@
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
-                            link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
-                                link.closest('.main') ? CATEGORIES.MAIN :
-                                link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
-                                    "VuFind";
+                        link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
+                        link.closest('.main') ? CATEGORIES.MAIN :
+                        link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
+                        "VuFind";
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
                         params.event_subcategory = params.event_subcategory ||
-                            link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                            link.closest('.search.container.navbar') ? 'Search Operations' :
-                                link.closest('.record-list.search-results-solr') ? 'Search Results List' :
-                                    link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
-                                    link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
-                                        link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                            link.closest('.searchtools') ? 'Search Toolbar' :
-                                                link.closest('.pagination') ? 'Pagination' :
-                                                    link.closest('.search-sort') ? 'Sort Filter' :
-                                                        link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
-                                                         "VuFind Results Component";
+                            link.closest('.record-list.search-results-solr') ? 'Search Results List' :
+                            link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
+                            link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
+                            link.closest('.action-toolbar') ? 'Action Toolbar' :
+                            link.closest('.searchtools') ? 'Search Toolbar' :
+                            link.closest('.pagination') ? 'Pagination' :
+                            link.closest('.search-sort') ? 'Sort Filter' :
+                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
+                            "";
                         params.event_label = link.classList.contains('title') ? 'Title' :
                             link.classList.contains('result-author') ? 'Author' :
-                                link.classList.contains('external') ? 'Holding' :
-                                    link.classList.contains('save-record') ? 'Save Record' :
-                                        params.event_label || 'Unknown';
+                            link.classList.contains('external') ? 'Holding' :
+                            link.classList.contains('save-record') ? 'Save Record' :
+                            params.event_label;
 
                     }
                     // Catalog VuFind Record
                     else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
                         params.event_subcategory = params.event_subcategory ||
-                            link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                            link.closest('.search.container.navbar') ? 'Search Operations' :
-                                link.closest('.breadcrumbs') ? 'Breadcrumbs' :
-                                    link.closest('#bookplates') ? "Bookplates" :
-                                        link.closest('.media-left') ? "Record Media" :
-                                            link.closest('.savedLists') ? "Record Saved in Lists" :
-                                                link.closest('.media-body, .bibToggle') ? "Record Metadata" :
-                                                    link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
-                                                        link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
-                                                            link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
-                                                                link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
-                                                                    link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
-                                                                        link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                                                        link.closest('.pager') ? 'Pagination' :
-                                                                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
-                                                                             "VuFind Record Component";
+                            link.closest('#bookplates') ? "Bookplates" :
+                            link.closest('.media-left') ? "Record Media" :
+                            link.closest('.savedLists') ? "Record Saved in Lists" :
+                            link.closest('.media-body, .bibToggle') ? "Record Metadata" :
+                            link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
+                            link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
+                            link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
+                            link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
+                            link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
+                            link.closest('.action-toolbar') ? 'Action Toolbar' :
+                            link.closest('.pager') ? 'Pagination' :
+                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
+                            "VuFind Record Component";
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
-                                link.classList.contains('title') ? 'Title' :
-                                    link.classList.contains('result-author') ? 'Author' :
-                                        link.classList.contains('save-record') ? 'Save Record' :
-                                        link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
-                                        link.closest('.maplookup') ? 'Map Lookup' :
-                                        link.closest('.eLink') ? 'Online Access' :
-                                                params.event_label || 'Unknown';
+                            link.classList.contains('title') ? 'Title' :
+                            link.classList.contains('result-author') ? 'Author' :
+                            link.classList.contains('save-record') ? 'Save Record' :
+                            link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
+                            link.closest('.maplookup') ? 'Map Lookup' :
+                            link.closest('.eLink') ? 'Online Access' :
+                            params.event_label || 'Unknown';
                     }
                     // My Account
                     else if(link.closest('.template-dir-myresearch')) {
@@ -390,8 +385,11 @@
                             link.closest('.record-cover-link') ? 'Record Cover' :
                             params.event_label;
                     }
-                    
+                    // Defaults for all VuFind Screens.
                     params.event_subcategory = params.event_subcategory ||
+                        link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
+                        link.closest('.search.container.navbar') ? 'Search Operations' :
+                        link.closest('.breadcrumbs') ? 'Breadcrumbs' :
                         link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component";
 
                 }
@@ -401,15 +399,15 @@
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('#s-lg-guide-search-form') ? 'Search Form' :
                         link.closest('#s-lg-col-1') ? 'Center Column' :
-                            link.closest('#s-lg-col-2') ? 'Right Column' :
-                                link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
-                                    link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
+                        link.closest('#s-lg-col-2') ? 'Right Column' :
+                        link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
+                        link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN;
                     params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
                         link.closest('.s-srch-result-author') ? 'Guide Author' :
-                            link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
-                                link.closest('.s-srch-result-url') ? 'Guide Link' :
-                                    link.closest('.s-srch-result-title') ? 'Guide Page Title' :
-                                        link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
+                        link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
+                        link.closest('.s-srch-result-url') ? 'Guide Link' :
+                        link.closest('.s-srch-result-title') ? 'Guide Page Title' :
+                        link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
 
                 }
                 // main navbar
