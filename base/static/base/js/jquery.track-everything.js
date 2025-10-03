@@ -261,7 +261,7 @@
                 }
             }
         },
-        all_log(ep, eventName = '', someText = 'All Log') {
+        all_log(ep, eventName = '', someText = '# All Log #') {
             // DEBUG, leaving it here for the first couple of weeks.
             function pad(label, width = 25) {
                 return (label + ':').padEnd(width, ' ');
@@ -347,7 +347,6 @@
                             link.closest('.searchtools') ? 'Search Toolbar' :
                             link.closest('.pagination') ? 'Pagination' :
                             link.closest('.search-sort') ? 'Sort Filter' :
-                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
                             "" );
                         params.event_label = link.classList.contains('title') ? 'Title' :
                             link.closest('.result-author') ? 'Author' :
@@ -371,7 +370,6 @@
                             link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
                             link.closest('.action-toolbar') ? 'Action Toolbar' :
                             link.closest('.pager') ? 'Pagination' :
-                            link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
                             "" );
                         params.event_label = link.closest('.savedLists') ? 'Record Saved in List' :
                             link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
