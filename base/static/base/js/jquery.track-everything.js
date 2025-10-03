@@ -346,9 +346,9 @@
                             link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') :
                             "";
                         params.event_label = link.classList.contains('title') ? 'Title' :
-                            link.classList.contains('result-author') ? 'Author' :
-                            link.classList.contains('external') ? 'Holding' :
-                            link.classList.contains('save-record') ? 'Save Record' :
+                            link.closest('.result-author') ? 'Author' :
+                            link.closest('.eLink.external') ? 'Online Access' :
+                            link.closest('.save-record') ? 'Save Record' :
                             params.event_label;
 
                     }
