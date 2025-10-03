@@ -325,6 +325,7 @@
 
                 // Catalog VuFind Search results
                 if (window.location.href.includes(LOCATIONS.VUFIND)) {
+                    console.log('VuFind',params);
                     params.event_category = params.event_category ||
                         link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -335,6 +336,7 @@
 
                     // Catalog VuFind Search results
                     if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
+                        console.log('VuFind Results',params);
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('.record-list.search-results-solr') ? 'Search Results List' :
                             link.closest('.facet-group') ? 'Facet: '+ link.closest('.facet-group').getAttribute('data-title') :
@@ -354,6 +356,7 @@
                     }
                     // Catalog VuFind Record
                     else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
+                        console.log('VuFind Record',params);
                         params.event_subcategory = params.event_subcategory ||
                             link.closest('#bookplates') ? "Bookplates" :
                             link.closest('.media-left') ? "Record Media" :
@@ -380,12 +383,14 @@
                     }
                     // My Account
                     else if(link.closest('.template-dir-myresearch')) {
+                        console.log('VuFind My Research',params);
                         params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
                             link.closest('.title') ? 'Title' :
                             link.closest('.record-cover-link') ? 'Record Cover' :
                             params.event_label;
                     }
-                    // Defaults for all VuFind Screens.
+                    console.log('VuFind fallback',params);
+                    // Fallback for all VuFind Screens.
                     params.event_subcategory = params.event_subcategory ||
                         link.closest('.search.container.navbar') ? 'Search Operations' :
                         link.closest('.breadcrumbs') ? 'Breadcrumbs' :
