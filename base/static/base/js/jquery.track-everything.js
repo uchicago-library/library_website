@@ -583,10 +583,7 @@
             }
         },
         deferClick(eventName, event, href, isNewTab) {
-            // for links that navigate away
-            // isMiddleClick = flase => called by `document.body.addEventListener('click')`
-            // isMiddleClick = true => called by `document.body.addEventListener('auxclick')`
-            const isNewTab = event.target === '_blank' || isMiddleClick;
+            // defer links that navigate away
 
             if (href && ignoreDeferUrls.some(u => href.toLowerCase().includes(u))) {
                 // Don't interfere with auth links
