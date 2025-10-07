@@ -484,12 +484,13 @@
         parameters(link) {
 
             const params = {
-                event_category: link.closest('[data-ga-category]') ? 
+                event_category: link.closest('[data-ga-category]') ?
                     link.closest('[data-ga-category]').getAttribute('data-ga-category') : null,
-                event_subcategory: link.closest('[data-ga-subcategory]') ? 
+                event_subcategory: link.closest('[data-ga-subcategory]') ?
                     link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory') : null,
                 event_label: link.getAttribute('data-ga-label') ||
                     link.getAttribute('aria-label') ||
+                    link.getAttribute('title') ||
                     ((() => {
                         // Clone the node to avoid modifying the original DOM
                         const clone = link.cloneNode(true);
@@ -498,12 +499,11 @@
                         // Get and clean the remaining text
                         return clone.textContent.replace(/\s+/g, ' ').trim();
                     })()) ||
-                    link.getAttribute('title') ||
                     (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                     'Unknown',
                 click_position: parseInt(link.getAttribute('data-ga-position'), 10) || null,
                 event_option: link.getAttribute('data-ga-event-option'),
-                event_indecision_count: link.closest('[data-ga-indecision-count]') ? 
+                event_indecision_count: link.closest('[data-ga-indecision-count]') ?
                     link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') : null,
             };
 
