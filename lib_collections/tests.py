@@ -1107,6 +1107,7 @@ class TestExhibitFiltering(TestCase):
             unit=self.unit,
         )
         self.space.add_child(instance=self.physical_exhibit)
+        self.physical_exhibit.save()
 
     def tearDown(self):
         # Clean up created pages
@@ -1194,6 +1195,10 @@ class TestExhibitFiltering(TestCase):
             unit=self.unit,
         )
         self.space.add_child(instance=another_web_exhibit)
+
+        # Update search index to ensure objects are searchable
+        search_backend = get_search_backend()
+        search_backend.add_bulk(ExhibitPage, ExhibitPage.objects.all())
 
         try:
             # This simulates what happens in the collections view
