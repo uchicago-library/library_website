@@ -483,7 +483,7 @@
         },
         parameters(link) {
 
-            const params = {
+            let params = {
                 event_category: link.closest('[data-ga-category]') ?
                     link.closest('[data-ga-category]').getAttribute('data-ga-category') : null,
                 event_subcategory: link.closest('[data-ga-subcategory]') ?
