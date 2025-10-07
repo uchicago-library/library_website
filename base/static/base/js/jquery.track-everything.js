@@ -484,8 +484,10 @@
         parameters(link) {
 
             const params = {
-                event_category: link.closest('[data-ga-category]').getAttribute('data-ga-category'),
-                event_subcategory: link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory'),
+                event_category: link.closest('[data-ga-category]') ? 
+                    link.closest('[data-ga-category]').getAttribute('data-ga-category') : null,
+                event_subcategory: link.closest('[data-ga-subcategory]') ? 
+                    link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory') : null,
                 event_label: link.getAttribute('data-ga-label') ||
                     link.getAttribute('aria-label') ||
                     ((() => {
@@ -501,7 +503,8 @@
                     'Unknown',
                 click_position: parseInt(link.getAttribute('data-ga-position'), 10) || null,
                 event_option: link.getAttribute('data-ga-event-option'),
-                event_indecision_count: link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count'),
+                event_indecision_count: link.closest('[data-ga-indecision-count]') ? 
+                    link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') : null,
             };
 
             helpers.all_log(params, 'click', 'Base');
