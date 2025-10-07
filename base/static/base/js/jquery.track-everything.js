@@ -31,6 +31,8 @@
         FOOTER: 'Footer',
         SIDEBAR: 'Sidebar',
         MAIN: 'Main',
+        NAVBAR: 'Global Navbar',
+        SEARCH_WIDGET: 'Main Search Widget',
         SHORTCUTS: 'Navbar Shortcuts',
         VUFIND_RESULTS: 'VuFind Results',
         VUFIND_RECORD: 'VuFind Record',
@@ -286,11 +288,204 @@
 
     // Functions to determine event parameters based on link context. ----- Big logic work-horse -----
     const getEventDetails = {
+        getParametersForSpecialCases(link, params) {
+            // A lot of links will have this established in the HTML and will not get in here.
+            // But might be of help if changes are made to the HTML without proper labeling,
+            // or for websites where this script is reused.
+
+            // Catalog VuFind Search results
+            if (window.location.href.includes(LOCATIONS.VUFIND)) {
+                helpers.all_log(params, 'click', 'VuFind Detected');
+                params.event_category = params.event_category || (
+                    link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
+                        link.closest('footer') ? CATEGORIES.FOOTER :
+                            link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
+                                link.closest('.main') ? CATEGORIES.MAIN :
+                                    link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
+                                        "VuFind");
+
+                // Catalog VuFind Search results
+                if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
+                    helpers.all_log(params, 'click', 'VuFind Results');
+                    params.event_subcategory = params.event_subcategory || (
+                        link.closest('.record-list.search-results-solr') ? 'Search Results List' :
+                            link.closest('.facet-group') ? 'Facet: ' + link.closest('.facet-group').getAttribute('data-title') :
+                                link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
+                                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                                        link.closest('.searchtools') ? 'Search Toolbar' :
+                                            link.closest('.pagination') ? 'Pagination' :
+                                                link.closest('.search-sort') ? 'Sort Filter' :
+                                                    "");
+                    params.event_label = link.getAttribute('data-ga-label') || (
+                        link.classList.contains('title') ? 'Title' :
+                            link.closest('.result-author') ? 'Author' :
+                                link.closest('.eLink.external') ? 'Online Access' :
+                                    link.closest('.save-record') ? 'Save Record' :
+                                        link.closest('.record-cover-link') ? 'Record Cover' :
+                                            params.event_label || 'VuFind Results Link');
+
+                }
+                // Catalog VuFind Record
+                else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
+                    helpers.all_log(params, 'click', 'VuFind Record');
+                    params.event_subcategory = params.event_subcategory || (
+                        link.closest('#bookplates') ? "Bookplates" :
+                            link.closest('.media-left') ? "Record Media" :
+                                link.closest('.savedLists') ? "Record Saved in Lists" :
+                                    link.closest('.media-body, .bibToggle') ? "Record Metadata" :
+                                        link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
+                                            link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
+                                                link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
+                                                    link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
+                                                        link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
+                                                            link.closest('.action-toolbar') ? 'Action Toolbar' :
+                                                                link.closest('.pager') ? 'Pagination' :
+                                                                    "");
+                    params.event_label = link.getAttribute('data-ga-label') || (
+                        link.closest('.savedLists') ? 'Record Saved in List' :
+                            link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
+                                link.classList.contains('title') ? 'Title' :
+                                    link.classList.contains('result-author') ? 'Author' :
+                                        link.classList.contains('save-record') ? 'Save Record' :
+                                            link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
+                                                link.closest('.maplookup') ? 'Map Lookup' :
+                                                    link.closest('.eLink') ? 'Online Access' :
+                                                        params.event_label || 'VuFind Record Link');
+                }
+                // My Account
+                else if (link.closest('.template-dir-myresearch')) {
+                    helpers.all_log(params, 'click', 'VuFind My Research');
+                    console.log('VuFind My Research', JSON.stringify(params));
+                    params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
+                        link.closest('.title') ? 'Title' :
+                            link.closest('.record-cover-link') ? 'Record Cover' :
+                                params.event_label;
+                }
+                helpers.all_log(params, 'click', 'VuFind fallback ' + typeof params.event_subcategory + '. Is it? ' + !!params.event_subcategory);
+                // Fallback for all VuFind Screens.
+                params.event_subcategory = params.event_subcategory || (
+                    link.closest('.search.container.navbar') ? 'Search Operations' :
+                        link.closest('.breadcrumbs') ? 'Breadcrumbs' :
+                            link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
+                                link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component"
+                );
+                helpers.all_log(params, 'click', 'end of VuFind');
+
+            }
+            // Guides
+            else if (window.location.href.includes(LOCATIONS.GUIDES)) {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_subcategory = params.event_subcategory || (
+                    link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN
+                );
+                params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
+                    link.closest('.s-srch-result-author') ? 'Guide Author' :
+                        link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
+                            link.closest('.s-srch-result-url') ? 'Guide Link' :
+                                link.closest('.s-srch-result-title') ? 'Guide Page Title' :
+                                    link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
+
+            }
+
+            // default for basic cases where HTML was not set
+            // main navbar
+            else if (link.closest(SELECTORS.GLOBAL_NAV)) {
+                params.event_category = params.event_category || CATEGORIES.NAVBAR;
+                const listParent = link.closest('ul, ol');
+                params.event_subcategory = params.event_subcategory ||
+                    (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
+                    params.event_label || CATEGORIES.NAVIGATION;
+            }
+            // shortcuts
+            else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
+                params.event_category = params.event_category || CATEGORIES.NAVIGATION;
+                params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
+            }
+            // footer
+            else if (link.closest(SELECTORS.FOOTER)) {
+                params.event_category = params.event_category || CATEGORIES.FOOTER;
+                const listParent = link.closest('ul, ol');
+                params.event_subcategory = params.event_subcategory ||
+                    (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
+            }
+            // search widget
+            else if (link.closest(SELECTORS.SEARCH_WIDGET)) {
+                params.event_category = params.event_category || CATEGORIES.SEARCH_WIDGET;
+                const widgetParent = link.closest(SELECTORS.SEARCH_WIDGET);
+                params.event_subcategory = params.event_subcategory ||
+                    (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.SEARCH_WIDGET;
+            }
+            // any widget
+            else if (link.closest(SELECTORS.WIDGET)) {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                const widgetParent = link.closest(SELECTORS.WIDGET);
+                params.event_subcategory = params.event_subcategory ||
+                    (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
+            }
+            // any sidebar
+            else if (link.closest(SELECTORS.SIDEBAR)) {
+                params.event_category = params.event_category || CATEGORIES.SIDEBAR;
+                const sidebarParent = link.closest(SELECTORS.SIDEBAR);
+                params.event_subcategory = params.event_subcategory ||
+                    (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
+                    (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
+            }
+
+            // default - catch all for everything else
+            else {
+                params.event_category = params.event_category || CATEGORIES.MAIN;
+                params.event_subcategory = params.event_subcategory || (
+                    link.closest('.action-toolbar') ? 'Action Toolbar' :
+                        link.closest('.pagination') ? 'Pagination' :
+                            'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN
+                );
+            }
+            return params;
+        },
+        getPositionInList(link, params) {
+            if (!link.closest(SELECTORS.FOOTER)) {
+                let ancestor = link.closest('li');
+
+                // For any <ul> or <ol> list
+                if (ancestor) {
+                    params.event_subcategory = params.event_subcategory || 'List';
+                    params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
+                }
+                // Catalog VuFind Search results
+                else if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
+                    params.event_subcategory = params.event_subcategory || 'VuFind Search Results';
+                    let ancestor = link.closest('[data-record-number]');
+                    if (ancestor) {
+                        params.click_position = ancestor.getAttribute('data-record-number');
+                    }
+                }
+                // Guides Search results
+                else if (window.location.href.includes(LOCATIONS.GUIDES_SEARCH)) {
+                    params.event_subcategory = params.event_subcategory || 'Guides Search Results';
+                    let ancestor = link.closest('.s-srch-results');
+                    let item = link.closest('.s-srch-result');
+                    if (ancestor && item && !link.closest('.pagination')) {
+                        params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
+                    }
+                }
+                // for the news list on the home page and on the news page
+                else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
+                    params.event_subcategory = params.event_subcategory || 'News List';
+                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
+                }
+                // for collex but works for any table actually
+                else if ((ancestor = link.closest('tbody'))) {
+                    params.event_subcategory = params.event_subcategory || 'Table';
+                    params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
+                }
+            }
+            return params;
+        },
         parameters(link) {
 
             const params = {
-                event_category: link.getAttribute('data-ga-category'),
-                event_subcategory: link.getAttribute('data-ga-subcategory'),
+                event_category: link.closest('[data-ga-category]').getAttribute('data-ga-category'),
+                event_subcategory: link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory'),
                 event_label: link.getAttribute('data-ga-label') ||
                     link.getAttribute('aria-label') ||
                     ((() => {
@@ -304,210 +499,22 @@
                     link.getAttribute('title') ||
                     (link.querySelector('img') ? link.querySelector('img').getAttribute('alt') : '') ||
                     'Unknown',
-                click_position: link.getAttribute('data-ga-position') || null,
-                event_option: link.getAttribute('data-ga-event-option') || null,
-                event_indecision_count: link.getAttribute('data-ga-indecision-count') || null,
+                click_position: parseInt(link.getAttribute('data-ga-position'), 10) || null,
+                event_option: link.getAttribute('data-ga-event-option'),
+                event_indecision_count: link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count'),
             };
 
-            // Look for Category and Subcategory in parent elements
-            // This will handle most cases
-            if (!params.event_category && link.closest('[data-ga-category]')) {
-                params.event_category = link.closest('[data-ga-category]').getAttribute('data-ga-category');
-            }
-            if (!params.event_subcategory && link.closest('[data-ga-subcategory]')) {
-                params.event_subcategory = link.closest('[data-ga-subcategory]').getAttribute('data-ga-subcategory');
-            }
-
-            if (!params.event_indecision_count && link.closest('[data-ga-indecision-count]')) {
-                params.event_indecision_count = link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') || null;
-            }
-
             helpers.all_log(params, 'click', 'Base');
-            // Determine category, subcategory, based on link context.
+
             if (!params.event_category || !params.event_subcategory) {
-                // A lot of links will have this established in the HTML and will not get in here.
-                // But might be of help if changes are made to the HTML without proper labeling,
-                // or for websites where this script is reused.
-
-                // Catalog VuFind Search results
-                if (window.location.href.includes(LOCATIONS.VUFIND)) {
-                    helpers.all_log(params, 'click', 'VuFind Detected');
-                    params.event_category = params.event_category || (
-                        link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
-                            link.closest('footer') ? CATEGORIES.FOOTER :
-                                link.closest('.sidebar') ? CATEGORIES.SIDEBAR :
-                                    link.closest('.main') ? CATEGORIES.MAIN :
-                                        link.closest('.pager, .pagination') ? CATEGORIES.NAVIGATION :
-                                            "VuFind");
-
-                    // Catalog VuFind Search results
-                    if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
-                        helpers.all_log(params, 'click', 'VuFind Results');
-                        params.event_subcategory = params.event_subcategory || (
-                            link.closest('.record-list.search-results-solr') ? 'Search Results List' :
-                                link.closest('.facet-group') ? 'Facet: ' + link.closest('.facet-group').getAttribute('data-title') :
-                                    link.closest('[id^="side-panel"]') ? link.closest('[id^="side-panel"]').getAttribute('id') :
-                                        link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                            link.closest('.searchtools') ? 'Search Toolbar' :
-                                                link.closest('.pagination') ? 'Pagination' :
-                                                    link.closest('.search-sort') ? 'Sort Filter' :
-                                                        "");
-                        params.event_label = link.getAttribute('data-ga-label') || (
-                            link.classList.contains('title') ? 'Title' :
-                                link.closest('.result-author') ? 'Author' :
-                                    link.closest('.eLink.external') ? 'Online Access' :
-                                        link.closest('.save-record') ? 'Save Record' :
-                                            link.closest('.record-cover-link') ? 'Record Cover' :
-                                                params.event_label || 'VuFind Results Link');
-
-                    }
-                    // Catalog VuFind Record
-                    else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
-                        helpers.all_log(params, 'click', 'VuFind Record');
-                        params.event_subcategory = params.event_subcategory || (
-                            link.closest('#bookplates') ? "Bookplates" :
-                                link.closest('.media-left') ? "Record Media" :
-                                    link.closest('.savedLists') ? "Record Saved in Lists" :
-                                        link.closest('.media-body, .bibToggle') ? "Record Metadata" :
-                                            link.closest('.related__title, .record-tab.similar, .tab-pane.similar-tab') ? 'Record Similar Items' :
-                                                link.closest('.record-tab.holdings, .tab-pane.holdings-tab') ? 'Record Holdings' :
-                                                    link.closest('.record-tab.description, .tab-pane.description-tab') ? 'Record Description' :
-                                                        link.closest('.record-tab.toc, .tab-pane.toc-tab') ? 'Record Table of Contents' :
-                                                            link.closest('.record-tab.details, .tab-pane.details-tab') ? 'Record Staff View' :
-                                                                link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                                                    link.closest('.pager') ? 'Pagination' :
-                                                                        "");
-                        params.event_label = link.getAttribute('data-ga-label') || (
-                            link.closest('.savedLists') ? 'Record Saved in List' :
-                                link.closest('.bibToggle') ? 'More Details' : // How did VSCode knew to predict the value 'More Details' here?.
-                                    link.classList.contains('title') ? 'Title' :
-                                        link.classList.contains('result-author') ? 'Author' :
-                                            link.classList.contains('save-record') ? 'Save Record' :
-                                                link.closest('[href*="/Alphabrowse/"]') ? 'Call Number' :
-                                                    link.closest('.maplookup') ? 'Map Lookup' :
-                                                        link.closest('.eLink') ? 'Online Access' :
-                                                            params.event_label || 'VuFind Record Link');
-                    }
-                    // My Account
-                    else if (link.closest('.template-dir-myresearch')) {
-                        helpers.all_log(params, 'click', 'VuFind My Research');
-                        console.log('VuFind My Research', JSON.stringify(params));
-                        params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
-                            link.closest('.title') ? 'Title' :
-                                link.closest('.record-cover-link') ? 'Record Cover' :
-                                    params.event_label;
-                    }
-                    helpers.all_log(params, 'click', 'VuFind fallback ' + typeof params.event_subcategory + '. Is it? ' + !!params.event_subcategory);
-                    // Fallback for all VuFind Screens.
-                    params.event_subcategory = params.event_subcategory || (
-                        link.closest('.search.container.navbar') ? 'Search Operations' :
-                            link.closest('.breadcrumbs') ? 'Breadcrumbs' :
-                                link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
-                                    link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component"
-                    );
-                    helpers.all_log(params, 'click', 'end of VuFind');
-
-                }
-                // Guides
-                else if (window.location.href.includes(LOCATIONS.GUIDES)) {
-                    params.event_category = params.event_category || CATEGORIES.MAIN;
-                    params.event_subcategory = params.event_subcategory || (
-                        link.closest('.pagination') ? 'Pagination' : CATEGORIES.MAIN
-                    );
-                    params.event_label = link.closest('.s-srch-result-guide') ? 'Guide Name' :
-                        link.closest('.s-srch-result-author') ? 'Guide Author' :
-                            link.closest('.s-srch-result-subjects') ? 'Guide Subject' :
-                                link.closest('.s-srch-result-url') ? 'Guide Link' :
-                                    link.closest('.s-srch-result-title') ? 'Guide Page Title' :
-                                        link.closest('.s-lg-label-more') ? 'More Button' : params.event_label || 'Unknown';
-
-                }
-                // main navbar
-                else if (link.closest(SELECTORS.GLOBAL_NAV)) {
-                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                    const listParent = link.closest('ul, ol');
-                    params.event_subcategory = params.event_subcategory ||
-                        (listParent ? listParent.getAttribute('aria-labelledby') : null) ||
-                        params.event_label || CATEGORIES.NAVIGATION;
-                }
-                // shortcuts
-                else if (link.closest(SELECTORS.NAVBAR_RIGHT)) {
-                    params.event_category = params.event_category || CATEGORIES.NAVIGATION;
-                    params.event_subcategory = params.event_subcategory || CATEGORIES.SHORTCUTS;
-                }
-                // footer
-                else if (link.closest(SELECTORS.FOOTER)) {
-                    params.event_category = params.event_category || CATEGORIES.FOOTER;
-                    const listParent = link.closest('ul, ol');
-                    params.event_subcategory = params.event_subcategory ||
-                        (listParent ? listParent.getAttribute('aria-labelledby') : null) || CATEGORIES.FOOTER;
-                }
-                // any widget
-                else if (link.closest(SELECTORS.WIDGET)) {
-                    params.event_category = params.event_category || CATEGORIES.MAIN;
-                    const widgetParent = link.closest(SELECTORS.WIDGET);
-                    params.event_subcategory = params.event_subcategory ||
-                        (widgetParent && widgetParent.id && widgetParent.id.includes('widget') ? widgetParent.id : null) || CATEGORIES.WIDGET;
-                }
-                // any sidebar
-                else if (link.closest(SELECTORS.SIDEBAR)) {
-                    params.event_category = params.event_category || CATEGORIES.SIDEBAR;
-                    const sidebarParent = link.closest(SELECTORS.SIDEBAR);
-                    params.event_subcategory = params.event_subcategory ||
-                        (sidebarParent && sidebarParent.id && sidebarParent.id.includes('sidebar') ? sidebarParent.id : '') ||
-                        (sidebarParent && sidebarParent.className && sidebarParent.className.split(' ').find(function (c) { return c.includes('sidebar'); }) || "Sidebar Widget");
-                }
-                // default - probably main content
-                else {
-                    params.event_category = params.event_category || CATEGORIES.MAIN;
-                    params.event_subcategory = params.event_subcategory || (
-                        link.closest('#navbar-right') ? CATEGORIES.SHORTCUTS :
-                            link.closest('.action-toolbar') ? 'Action Toolbar' :
-                                link.closest('.pagination') ? 'Pagination' :
-                                    'id:' + link.closest('[id]').getAttribute('id') || CATEGORIES.MAIN
-                    );
-                }
+                // Determine category, subcategory, based on link context.
+                // should be handled mostly by HTML properties, but not always possible.
+                params = getEventDetails.getParametersForSpecialCases(link, params);
             }
 
-            // Get link position if in a list
-            if (!link.closest(SELECTORS.FOOTER)) {
-                if (link.getAttribute('data-ga-position')) {
-                    params.event_subcategory = params.event_subcategory || 'List';
-                    params.click_position = parseInt(link.getAttribute('data-ga-position'), 10);
-                } else {
-                    let ancestor = link.closest('li');
-
-                    // For any <ul> or <ol> list
-                    if (ancestor) {
-                        params.event_subcategory = params.event_subcategory || 'List';
-                        params.click_position = Array.from(ancestor.parentElement.children).indexOf(ancestor) + 1;
-                    }
-                    // Catalog VuFind Search results
-                    else if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
-                        let ancestor = link.closest('[data-record-number]');
-                        if (ancestor) {
-                            params.click_position = ancestor.getAttribute('data-record-number');
-                        }
-                    }
-                    // Guides
-                    else if (window.location.href.includes(LOCATIONS.GUIDES_SEARCH)) {
-                        let ancestor = link.closest('.s-srch-results');
-                        let item = link.closest('.s-srch-result');
-                        if (ancestor && item && !link.closest('.pagination')) {
-                            params.click_position = Array.from(ancestor.children).indexOf(item) + 1;
-                        }
-                    }
-                    // for the news list on the home page and on the news page
-                    else if ((ancestor = link.closest('.news-wrap, .news-stories'))) {
-                        params.event_subcategory = params.event_subcategory || 'News List';
-                        params.click_position = Array.from(ancestor.children).indexOf(link.closest('.newsblock, article')) + 1;
-                    }
-                    // for collex but works for any table actually
-                    else if ((ancestor = link.closest('tbody'))) {
-                        params.event_subcategory = params.event_subcategory || 'Table';
-                        params.click_position = Array.from(ancestor.children).indexOf(link.closest('tr')) + 1;
-                    }
-                }
+            if (!params.click_position) {
+                // Determine position in list if applicable
+                params = getEventDetails.getPositionInList(link, params);
             }
 
             return params;
