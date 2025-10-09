@@ -19,6 +19,10 @@ fi
 
 echo "🐳 Setting up Library Website Docker environment..."
 
+# Create necessary directories (under bind mount)
+echo "Creating required directories..."
+mkdir -p media/documents library_website/static
+
 # Build and start services
 echo "Building Docker images..."
 docker compose build

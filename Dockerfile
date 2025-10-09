@@ -75,8 +75,8 @@ RUN echo 'source /venv/bin/activate' >> /root/.bashrc && \
     echo 'export PATH="/app/node_modules/.bin:$PATH"' >> /root/.bashrc && \
     echo 'export TURNSTILE_ENABLED="False"' >> /root/.bashrc
 
-# Make static directories
-RUN mkdir -p /app/static /app/library_website/static
+# Make static directories (in Docker volume)
+RUN mkdir -p /app/static
 
 # Clean up
 RUN apt-get autoremove -y && \
