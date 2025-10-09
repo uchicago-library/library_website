@@ -1,7 +1,8 @@
 from base.utils import save_virtual_workbook
+from django.contrib.auth.models import Permission
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.urls import reverse, re_path
+from django.urls import re_path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
@@ -72,4 +73,15 @@ def register_frank_menu_item():
         reverse('list_staff_wagtail'),
         classname='icon icon-mail',
         order=9990,
+    )
+
+
+@hooks.register('register_permissions')
+def register_staff_hr_permission():
+    """
+    Register the custom staff HR permission so it appears
+    in the Wagtail Groups administration interface.
+    """
+    return Permission.objects.filter(
+        content_type__app_label='staff', codename='change_staff_hr_info'
     )
