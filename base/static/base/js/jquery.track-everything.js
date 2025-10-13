@@ -507,8 +507,6 @@
                     link.closest('[data-ga-indecision-count]').getAttribute('data-ga-indecision-count') : null,
             };
 
-            helpers.all_log(params, 'click', 'Base');
-
             if (!params.event_category || !params.event_subcategory) {
                 // Determine category, subcategory, based on link context.
                 // should be handled mostly by HTML properties, but not always possible.
