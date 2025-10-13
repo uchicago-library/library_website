@@ -267,7 +267,7 @@
                 }
             }
         },
-        all_log(ep, eventName = '', someText = '# All Log #') {
+        all_log(ep, eventName = '', someText = '') {
             // DEBUG, leaving it here for the first couple of weeks.
             function pad(label, width = 25) {
                 return (label + ':').padEnd(width, ' ');
@@ -295,7 +295,6 @@
 
             // Catalog VuFind Search results
             if (window.location.href.includes(LOCATIONS.VUFIND)) {
-                helpers.all_log(params, 'click', 'VuFind Detected');
                 params.event_category = params.event_category || (
                     link.closest('header, .breadcrumbs') ? CATEGORIES.NAVIGATION :
                         link.closest('footer') ? CATEGORIES.FOOTER :
@@ -306,7 +305,6 @@
 
                 // Catalog VuFind Search results
                 if (window.location.href.includes(LOCATIONS.VUFIND_RESULTS)) {
-                    helpers.all_log(params, 'click', 'VuFind Results');
                     params.event_subcategory = params.event_subcategory || (
                         link.closest('.record-list.search-results-solr') ? 'Search Results List' :
                             link.closest('.facet-group') ? 'Facet: ' + link.closest('.facet-group').getAttribute('data-title') :
@@ -327,7 +325,6 @@
                 }
                 // Catalog VuFind Record
                 else if (window.location.href.includes(LOCATIONS.VUFIND_RECORD)) {
-                    helpers.all_log(params, 'click', 'VuFind Record');
                     params.event_subcategory = params.event_subcategory || (
                         link.closest('#bookplates') ? "Bookplates" :
                             link.closest('.media-left') ? "Record Media" :
@@ -354,14 +351,12 @@
                 }
                 // My Account
                 else if (link.closest('.template-dir-myresearch')) {
-                    helpers.all_log(params, 'click', 'VuFind My Research');
                     console.log('VuFind My Research', JSON.stringify(params));
                     params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
                         link.closest('.title') ? 'Title' :
                             link.closest('.record-cover-link') ? 'Record Cover' :
                                 params.event_label;
                 }
-                helpers.all_log(params, 'click', 'VuFind fallback ' + typeof params.event_subcategory + '. Is it? ' + !!params.event_subcategory);
                 // Fallback for all VuFind Screens.
                 params.event_subcategory = params.event_subcategory || (
                     link.closest('.search.container.navbar') ? 'Search Operations' :
@@ -369,7 +364,6 @@
                             link.closest('.top-navbar, .navbar-header, .navbar-collapse') ? 'Header Navbar' :
                                 link.closest('[id]') ? 'id:' + link.closest('[id]').getAttribute('id') : "VuFind Component"
                 );
-                helpers.all_log(params, 'click', 'end of VuFind');
 
             }
             // Guides
@@ -565,7 +559,7 @@
 
             helpers.count_indecision(ep, eventName, target);
 
-            helpers.all_log(ep, eventName); // for debugging
+            helpers.all_log(ep, eventName, '# Pre GA'); // for debugging
 
             gtag('event', eventName, ep);
 
