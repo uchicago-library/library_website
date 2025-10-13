@@ -351,7 +351,6 @@
                 }
                 // My Account
                 else if (link.closest('.template-dir-myresearch')) {
-                    console.log('VuFind My Research', JSON.stringify(params));
                     params.event_label = link.closest('[href*="source=author"]') ? 'Author' :
                         link.closest('.title') ? 'Title' :
                             link.closest('.record-cover-link') ? 'Record Cover' :
