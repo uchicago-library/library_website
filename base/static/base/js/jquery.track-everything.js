@@ -53,7 +53,7 @@
     ];
 
     // Rules for applyHtmlProperties
-    var htmlPropertyRules = [
+    const htmlPropertyRules = [
         {
             location: LOCATIONS.LIB,
             selector: '#widget-featured-library-expert',
@@ -109,9 +109,9 @@
             // h1 will most likely never be meaningful as a parameter for an event
             //     because that information is already in the page title/path.
             levels = Array.isArray(levels) && levels.length ? levels : [2, 3, 4];
-            for (var i = 0; i < levels.length; i++) {
-                var lvl = levels[i];
-                var $h = $elem.find('h' + lvl).first();
+            for (let i = 0; i < levels.length; i++) {
+                let lvl = levels[i];
+                let $h = $elem.find('h' + lvl).first();
                 if ($h.length) {
                     return $h.text().trim();
                 }
@@ -124,7 +124,7 @@
 
             if (rule.location && !window.location.href.includes(rule.location)) { return; }
 
-            var $items = $(rule.selector);
+            let $items = $(rule.selector);
             if (!$items.length) { return; }
 
             // If rule.apply === 'first', only use the first matched element
@@ -134,7 +134,7 @@
             // Determine the actual target to set attribute on: 
             //      either the main matched element or it's children
             if (rule.childSelector) {
-                var $children = $items.find(rule.childSelector);
+                let $children = $items.find(rule.childSelector);
                 if ($children.length) {
                     $items = $children;
                 } else { return; }
@@ -142,7 +142,7 @@
 
             $items.each(function () {
 
-                var $target = $(this); // the element matched by selector (the "main" element)
+                let $target = $(this); // the element matched by selector (the "main" element)
                 // Defensive: ensure $target is present
                 if (!$target || !$target.length) { return; }
                 // Skip if attribute already exists and overrideIfExists is untrue
@@ -151,7 +151,7 @@
                 }
 
                 // Find heading inside the main matched element if requested (explicitly inside the main, not child)
-                var headingText = '';
+                let headingText = '';
                 if (rule.useFirstHeading) {
                     if (typeof rule.useFirstHeading === 'object' && Array.isArray(rule.useFirstHeading.levels)) {
                         headingText = getFirstHeadingTextWithin($items, rule.useFirstHeading.levels);
@@ -162,7 +162,7 @@
 
 
                 // Compute value
-                var val = '';
+                let val = '';
                 try {
                     if (rule.valueFn && typeof rule.valueFn === 'function') {
                         // Give both the main matched element and the final target element to the value function
