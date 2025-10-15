@@ -7,8 +7,12 @@ from base.wagtail_hooks import (
     has_permission,
     redirect_users_without_permissions,
 )
+from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+from .utils import xlsx_to_json
+import json
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
 from string import ascii_uppercase, ascii_lowercase
@@ -259,3 +263,35 @@ def mail_aliases_view(request, *args, **kwargs):
         context = {"final_data": final_data, "alphas": alphas}
 
     return render(request, "intranethome/mail_aliases.html", context)
+
+
+def ags_upload_page(request):
+    # context = {"upload_input": "", "xlsx": ""}
+    # template_path = "intranethome/ags_upload_page.html"
+    # if request.method == "POST":
+    #     form = UploadFileForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         xlsx = request.FILES["uploadFile"].__str__()
+    #         context["upload_input"] = form
+    #         context["xlsx"] = xlsx
+    #     else:
+    #         raise Exception("blah")
+    # else:
+    #     form = UploadFileForm()
+    # return render(request, template_path, {"upload_input": form})
+
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
+
+    try:
+        dude = request.FILES["uploadFile"]
+        dude2 = xlsx_to_json(dude, "data1")
+    except:
+        dude = ""
+        dude2 = ""
+
+    if not has_permission(request.user, get_required_groups(loop_homepage)):
+        return redirect_users_without_permissions(loop_homepage, request, None, None)
+    else:
+        template_path = "intranethome/ags_upload_page.html"
+        context = { "dude": dude, "dude2": dude2 }
+        return TemplateResponse(request, template_path, context)
