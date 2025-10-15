@@ -56,4 +56,4 @@ jobs:
         mkdir -p media/documents
     - name: Run tests
       run: |
-        ./manage.py test --parallel --keepdb
+        ./manage.py test --parallel

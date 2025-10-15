@@ -1,5 +1,4 @@
 import os
-import time
 from tempfile import NamedTemporaryFile
 
 from django.contrib.auth.models import Group, Permission, User
@@ -23,24 +22,7 @@ from .models import (
 )
 
 
-def print_test_time_elapsed(method):
-    """
-    Utility method for print verbalizing test suite, prints out
-    time taken for test and functions name, and status
-    """
-
-    def run(*args, **kw):
-        ts = time.time()
-        print('\n\ttesting function %r' % method.__name__)
-        method(*args, **kw)
-        te = time.time()
-        print('\t[OK] in %r %2.2f sec' % (method.__name__, te - ts))
-
-    return run
-
-
 class UniversityDirectoryTestCase(TestCase):
-    @print_test_time_elapsed
     def test_get_all_library_cnet_ids_from_directory_two_staff(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
         <responseData>
@@ -140,7 +122,6 @@ class UniversityDirectoryTestCase(TestCase):
 
         return True
 
-    @print_test_time_elapsed
     def test_get_individual_info_from_directory(self):
         self.maxDiff = None
 
@@ -199,8 +180,9 @@ class UniversityDirectoryTestCase(TestCase):
 
 
 class StaffPageSupervisors(TestCase):
-    @print_test_time_elapsed
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
+        # Create page hierarchy (runs once for all tests in this class)
         try:
             welcome = Page.objects.get(path='00010001')
         except:
@@ -334,7 +316,6 @@ class StaffPageSupervisors(TestCase):
             page=employee_two_units, library_unit=unit_two
         )
 
-    @print_test_time_elapsed
     def test_supervisor_relationships(self):
         # official supervisor
         self.assertEqual(
@@ -371,8 +352,9 @@ class StaffPageSupervisors(TestCase):
 
 
 class ListStaffWagtail(TestCase):
-    @print_test_time_elapsed
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
+        # Create page hierarchy (runs once for all tests in this class)
         try:
             welcome = Page.objects.get(path='00010001')
         except:
@@ -512,7 +494,6 @@ class ListStaffWagtail(TestCase):
 
         return [[cell.value for cell in row] for row in ws.iter_rows(min_row=2)]
 
-    @print_test_time_elapsed
     def test_report_columns(self):
         records = self.run_command(cnetid='jej')
 
@@ -562,7 +543,6 @@ class ListStaffWagtail(TestCase):
         # supervisor
         self.assertEqual(records[0][12].rstrip(), 'Charles Blair (chas)')
 
-    @print_test_time_elapsed
     def test_report_queries(self):
         # position title
         records = self.run_command(position_title='Programmer/Analyst')
