@@ -535,6 +535,8 @@ class TestPageOwnerReports(TestCase):
 
     fixtures = ['test.json']
 
+    # Note: Cannot use setUpTestData() because Command objects contain
+    # file handles that aren't picklable (can't be deepcopied)
     def setUp(self):
         from base.management.commands.report_page_maintainers_and_editors import Command
 
@@ -684,14 +686,10 @@ class TestUpdateSiteDataCommand(TestCase):
 
 
 class LinkQueueSpreadsheetBlockTestCase(TestCase):
-    def makeTestingSpreadsheet(self, path_to_file, data, title):
-        df = pd.DataFrame(data)
-        df.to_excel('media/' + path_to_file, index=False)
-        return Document.objects.create(title=title, file=path_to_file)
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # Create necessary pages
-        boiler_plate(self)
+        boiler_plate(cls)
 
         # Documents
         # Good data, current links
@@ -710,10 +708,10 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
                 'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
             ],
         }
-        self.good_document = self.makeTestingSpreadsheet(
+        cls.good_document = cls.makeTestingSpreadsheet(
             'documents/test_get_link_queue.xlsx', data, 'The Rules of Acquisition'
         )
-        self.good_document.save()
+        cls.good_document.save()
 
         # Old dates, no current links
         data = {
@@ -726,25 +724,30 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
                 'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
             ],
         }
-        self.document_expired = self.makeTestingSpreadsheet(
+        cls.document_expired = cls.makeTestingSpreadsheet(
             'documents/test_link_queue_fallback.xlsx', data, 'The Rules of Acquisition'
         )
-        self.document_expired.save()
+        cls.document_expired.save()
 
         # Empty spreadsheet
-        self.path_to_empty_doc = 'documents/test_empty.xlsx'
+        cls.path_to_empty_doc = 'documents/test_empty.xlsx'
         df = pd.DataFrame()
-        df.to_excel('media/' + self.path_to_empty_doc, index=False)
-        self.empty_document = Document.objects.create(
-            title='Empty Spreadsheet', file=self.path_to_empty_doc
+        df.to_excel('media/' + cls.path_to_empty_doc, index=False)
+        cls.empty_document = Document.objects.create(
+            title='Empty Spreadsheet', file=cls.path_to_empty_doc
         )
-        self.empty_document.save()
+        cls.empty_document.save()
+
+    @classmethod
+    def makeTestingSpreadsheet(cls, path_to_file, data, title):
+        df = pd.DataFrame(data)
+        df.to_excel('media/' + path_to_file, index=False)
+        return Document.objects.create(title=title, file=path_to_file)
 
     def tearDown(self):
         clear_url_caches()
         cache.clear()
         clear_cache()
-        self.site.delete()
 
     def test_clean_invalid_file_extension(self):
         file_path = 'documents/invalid_file.doc'

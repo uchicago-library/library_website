@@ -95,14 +95,16 @@ class IdresolveTest(SimpleTestCase):
 
 
 class TestStandardPageExcludeFields(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create necessary pages (runs once for all tests in this class)
+        boiler_plate(cls)
+        cls.meta_tag = '<meta name="robots" content="noindex" />'
+
     def setUp(self):
-        # Create necessary pages
-        boiler_plate(self)
-        self.meta_tag = '<meta name="robots" content="noindex" />'
         warnings.filterwarnings("ignore", category=ElasticsearchWarning)
 
     def tearDown(self):
-        self.site.delete()
         clear_url_caches()
         cache.clear()
         clear_cache()
@@ -140,12 +142,12 @@ class TestStandardPageExcludeFields(TestCase):
 
 
 class TestStandardPageSitemapExcludeFieldFalse(TestCase):
-    def setUp(self):
-        # Create necessary pages
-        boiler_plate(self)
+    @classmethod
+    def setUpTestData(cls):
+        # Create necessary pages (runs once for all tests in this class)
+        boiler_plate(cls)
 
     def tearDown(self):
-        self.site.delete()
         clear_url_caches()
         cache.clear()
         clear_cache()
@@ -166,12 +168,12 @@ class TestStandardPageSitemapExcludeFieldFalse(TestCase):
 
 
 class TestStandardPageSitemapExcludeFieldTrue(TestCase):
-    def setUp(self):
-        # Create necessary pages
-        boiler_plate(self)
+    @classmethod
+    def setUpTestData(cls):
+        # Create necessary pages (runs once for all tests in this class)
+        boiler_plate(cls)
 
     def tearDown(self):
-        self.site.delete()
         clear_url_caches()
         cache.clear()
         clear_cache()
