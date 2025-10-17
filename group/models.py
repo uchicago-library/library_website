@@ -242,7 +242,7 @@ class GroupPage(BasePage, Email):
 
     content_panels = (
         Page.content_panels
-        + Email.content_panels
+        + Email.panels
         + [
             MultiFieldPanel(
                 [
