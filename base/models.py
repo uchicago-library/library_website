@@ -271,7 +271,7 @@ class Email(models.Model):
     email_label = models.CharField(max_length=254, blank=True)
     email = models.EmailField(max_length=254, blank=True)
 
-    content_panels = [
+    panels = [
         MultiFieldPanel(
             [
                 FieldPanel('email_label'),
@@ -294,7 +294,7 @@ class PhoneNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    content_panels = [
+    panels = [
         MultiFieldPanel(
             [
                 FieldPanel('phone_label'),
@@ -316,7 +316,7 @@ class FaxNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     fax_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    content_panels = [
+    panels = [
         FieldPanel('fax_number'),
     ]
 
@@ -354,7 +354,7 @@ class LinkFields(models.Model):
         else:
             return self.link_external
 
-    content_panels = [
+    panels = [
         FieldPanel('link_external'),
         PageChooserPanel('link_page'),
         FieldPanel('link_document'),
@@ -477,9 +477,9 @@ class LinkedText(LinkFields):
 
     link_text = models.CharField(max_length=255, blank=True)
 
-    content_panels = [
+    panels = [
         FieldPanel('link_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -491,10 +491,10 @@ class ContactFields(Email, PhoneNumber, FaxNumber, LinkedText):
     """
 
     content_panels = (
-        Email.content_panels
-        + PhoneNumber.content_panels
-        + FaxNumber.content_panels
-        + LinkedText.content_panels
+        Email.panels
+        + PhoneNumber.panels
+        + FaxNumber.panels
+        + LinkedText.panels
     )
 
     class Meta:
@@ -582,7 +582,7 @@ class LinkedTextOrLogo(LinkedText):
 
     panels = [
         FieldPanel('logo'),
-    ] + LinkedText.content_panels
+    ] + LinkedText.panels
 
     class Meta:
         abstract = True
@@ -598,7 +598,7 @@ class AbstractButton(LinkFields):
 
     panels = [
         FieldPanel('button_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -630,7 +630,7 @@ class AbstractReport(LinkFields):
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
