@@ -12,6 +12,10 @@
         <h1>Search Results</h1>
         <small>There are <span class="result-number">{{ search_results_count }}</span> Results</small>
 
+        <div class="alert alert-info" role="alert">
+            Looking for reports or other documents? Try searching by filename in the <a href="/admin/documents/" class="alert-link">Wagtail document library</a>.
+        </div>
+
         {% if search_picks %}
             {% for pick in search_picks %}
                 <h2><a href="{{ pick.page.url }}">{{ pick.page }}</a></h2>
