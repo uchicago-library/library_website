@@ -58,6 +58,7 @@ docker compose exec web bash -c "
     source /venv/bin/activate && \
     python manage.py migrate --noinput && \
     python manage.py loaddata /app/base/fixtures/test.json && \
+    python manage.py shell -c \"from wagtail.models import Site; Site.objects.filter(hostname='localhost').delete()\" && \
     python manage.py update_index
 "
 

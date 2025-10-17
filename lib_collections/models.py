@@ -1676,6 +1676,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             page = Page.objects.get(id=page_id)
             title = str(page)
             url = page.relative_url(site)
+            # Handle case where relative_url returns None
+            if url is None:
+                url = ''
         except Page.DoesNotExist:
             return ('', '')
         return (title, url)
@@ -1699,6 +1702,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         staff_member = str(librarian)
         title = librarian.position_title
         url = librarian.public_page.relative_url(site)
+        # Handle case where relative_url returns None
+        if url is None:
+            url = ''
         thumb = librarian.profile_picture
         try:
             email = librarian.staff_page_email.values_list('email', flat=True)[0]

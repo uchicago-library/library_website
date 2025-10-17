@@ -2231,7 +2231,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         if self.exclude_from_sitemap_xml:
             return []
         else:
-            return super(PublicBasePage, self).get_sitemap_urls()
+            return super(PublicBasePage, self).get_sitemap_urls(request)
 
     def get_friendly_name(self):
         """

@@ -291,7 +291,10 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     @property
     def base_url(self):
-        return self.get_url_parts()[-1]
+        url_parts = self.get_url_parts()
+        if url_parts is None:
+            return ''
+        return url_parts[-1]
 
     def get_context(self, request):
         """
