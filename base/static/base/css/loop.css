@@ -678,6 +678,9 @@ ul.index-list {
   font-weight: 600;
   font-size: 1.1em; }
 
+.template-searchresults .alert {
+  margin-top: 1em;}
+
 .template-searchresults .page-path {
   display: block;
   font-size: 1em;
