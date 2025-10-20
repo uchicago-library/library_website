@@ -649,4 +649,5 @@ TURNSTILE_EXCLUDED_PATHS = [
     r'^/shib/.*$',
     r'^/_util/.*$',
     r'^/api/.*$',
+    r'^/rss/.*$',
 ]
