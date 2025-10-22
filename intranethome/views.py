@@ -1,5 +1,6 @@
 import json
 import re
+import os
 from functools import cmp_to_key
 
 from base.wagtail_hooks import (
@@ -7,6 +8,7 @@ from base.wagtail_hooks import (
     has_permission,
     redirect_users_without_permissions,
 )
+from django.core.files.base import File
 from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
@@ -17,6 +19,9 @@ from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
 from string import ascii_uppercase, ascii_lowercase
 from wagtail.models import Site
+# from wagtail.documents.models import Document
+from wagtail.documents import get_document_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -266,25 +271,19 @@ def mail_aliases_view(request, *args, **kwargs):
 
 
 def ags_upload_page(request):
-    # context = {"upload_input": "", "xlsx": ""}
-    # template_path = "intranethome/ags_upload_page.html"
-    # if request.method == "POST":
-    #     form = UploadFileForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         xlsx = request.FILES["uploadFile"].__str__()
-    #         context["upload_input"] = form
-    #         context["xlsx"] = xlsx
-    #     else:
-    #         raise Exception("blah")
-    # else:
-    #     form = UploadFileForm()
-    # return render(request, template_path, {"upload_input": form})
+
+    def create_document(bytz, filename):
+        Document = get_document_model()
+        uploaded_file = SimpleUploadedFile(filename, bytz, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        document = Document(title="dudebro", file=uploaded_file)
+        document.save()
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
     try:
         dude = request.FILES["uploadFile"]
         dude2 = xlsx_to_json(dude, "data1")
+        create_document(dude, "dudebro")
     except:
         dude = ""
         dude2 = ""
