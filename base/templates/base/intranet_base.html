@@ -1,4 +1,4 @@
-{% load static wagtailuserbar %}
+{% load compress static wagtailuserbar %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -39,8 +39,11 @@
   <![endif]-->
   <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
   <link href="{% static 'base/css/uclib_print.css' %}" rel="stylesheet">
-  <link href="{% static 'base/css/loop-navigation.css' %}" rel="stylesheet">
-  <link href="{% static 'base/css/loop.css' %}" rel="stylesheet">
+  {% compress css %}
+    {# SCSS compilation relies on django compressor #}
+    <link href="{% static 'base/css/loop/loop-navigation.scss' %}" rel="stylesheet" type="text/x-scss">
+    <link href="{% static 'base/css/loop/loop.scss' %}" rel="stylesheet" type="text/x-scss">
+  {% endcompress %}
   {% block extra_css %}
     {# Override this in templates to add extra stylesheets #}
   {% endblock %}
