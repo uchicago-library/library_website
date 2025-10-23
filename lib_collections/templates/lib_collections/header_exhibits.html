@@ -10,6 +10,7 @@
   <form class="searchbox">
     <input type="search" required="" onkeyup="buttonUp();" class="searchbox-input" name="search" aria-label="search exhibits" placeholder="Search exhibits"{% if search %} value="{{ search }}"{% endif %}/>
     <input name="view" type="hidden" value="exhibits"/>
+    {% if sort %}<input name="sort" type="hidden" value="{{ sort }}"/>{% endif %}
     <span class="searchbox-icon"><i title="search" class="fa fa-search"></i>
       <input type="submit" style="background-color: transparent; color: transparent;" class="searchbox-submit">
     </span>
@@ -25,12 +26,12 @@
     <ul class="dropdown-menu listings-dropdown">
       {% if subject %}
         <li>
-          <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">All Subjects</a>
+          <a href=".?view=exhibits{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if sort %}&amp;sort={{ sort|urlencode }}{% endif %}" class="dropdown-item">All Subjects</a>
         </li>
       {% endif %}
       {% for subject in subjects_pulldown %}
         <li>
-          <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}" class="dropdown-item">{{ subject }}</a>
+          <a href=".?view=exhibits&amp;subject={{ subject|urlencode }}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if sort %}&amp;sort={{ sort|urlencode }}{% endif %}" class="dropdown-item">{{ subject }}</a>
         </li>
       {% endfor %}
     </ul>
@@ -42,14 +43,31 @@
     <ul class="dropdown-menu listings-dropdown">
       {% if location %}
         <li>
-          <a href=".?view=exhibits" class="dropdown-item">All Locations</a>
+          <a href=".?view=exhibits{% if sort %}&amp;sort={{ sort|urlencode }}{% endif %}" class="dropdown-item">All Locations</a>
         </li>
       {% endif %}
       {% for l in locations %}
         <li>
-          <a href=".?view=exhibits&amp;location={{ l|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}" class="dropdown-item">{{ l }}</a>
+          <a href=".?view=exhibits&amp;location={{ l|urlencode }}{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}{% if sort %}&amp;sort={{ sort|urlencode }}{% endif %}" class="dropdown-item">{{ l }}</a>
         </li>
       {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="col-xs-12 col-sm-7 coll-dropdown">
+  <span class="headline">Sort by</span>
+  <div class="btn-group">
+    <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-textonly dropdown-toggle" type="button">
+      <span class="visually-hidden">Sort by</span> {% if sort == 'exhibit_open_date' %}Exhibit open date{% else %}Title{% endif %} <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu listings-dropdown">
+      <li>
+        <a href=".?view=exhibits{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}" class="dropdown-item">Title</a>
+      </li>
+      <li>
+        <a href=".?view=exhibits&amp;sort=exhibit_open_date{% if subject %}&amp;subject={{ subject|urlencode }}{% endif %}{% if location %}&amp;location={{ location|urlencode }}{% endif %}{% if digital %}&amp;digital={{ digital|urlencode }}{% endif %}" class="dropdown-item">Exhibit open date</a>
+      </li>
     </ul>
   </div>
 </div>
@@ -61,6 +79,7 @@
     <input name="view" type="hidden" value="exhibits"/>
     {% if location %}<input name="location" type="hidden" value="{{ location }}"/>{% endif %}
     {% if search %}<input name="search" type="hidden" value="{{ search }}"/>{% endif %}
+    {% if sort %}<input name="sort" type="hidden" value="{{ sort }}"/>{% endif %}
     {% if subject %}<input name="subject" type="hidden" value="{{ subject }}"/>{% endif %}
     <input type="submit"/>
   </form>
