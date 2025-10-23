@@ -1,6 +1,7 @@
 import logging
 
 from base.utils import save_virtual_workbook
+from django.contrib import messages
 from django.contrib.auth.models import Permission, User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -92,6 +93,19 @@ def register_staff_hr_permission():
     """
     return Permission.objects.filter(
         content_type__app_label='staff', codename='change_staff_hr_info'
+    )
+
+
+@hooks.register('before_edit_user')
+def show_user_edit_help(request, user):
+    """
+    Display an info message on the user edit form explaining the automatic
+    staff page publishing/unpublishing behavior.
+    """
+    messages.info(
+        request,
+        'Note: Marking a user as inactive will automatically unpublish their staff pages (both Loop and public). '
+        'Reactivating will republish them. This only works when editing individual users, not with bulk actions.',
     )
 
 
