@@ -556,6 +556,35 @@ class ListStaffWagtail(TestCase):
         records = self.run_command(supervises_students=True)
         self.assertEqual(len(records), 2)
 
+    def test_empty_library_unit_does_not_crash(self):
+        """
+        Test that staff with empty library units (None) don't cause crashes
+        in the reporting commands. Regression test for issue #702.
+        """
+        # Get a staff member
+        staff = StaffPage.objects.get(cnetid='jej')
+
+        # Add an empty library unit (None) - this reproduces the bug
+        StaffPageLibraryUnits.objects.create(page=staff, library_unit=None)
+
+        # The staff report should not crash
+        records = self.run_command(cnetid='jej')
+        self.assertEqual(len(records), 1)
+
+        # Out of sync report should also not crash
+        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        management.call_command(
+            'list_staff_wagtail',
+            filename=tempfile.name,
+            output_format='excel',
+            report_out_of_sync_staff=True
+        )
+
+        wb = load_workbook(tempfile.name)
+        # Should have at least one worksheet
+        self.assertGreaterEqual(len(wb.sheetnames), 1)
+        os.unlink(tempfile.name)
+
 
 class StaffPageHRPermissionsTestCase(TestCase):
     """
