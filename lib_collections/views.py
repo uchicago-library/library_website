@@ -274,16 +274,10 @@ def collections(request):
         subjecttree = subjecttree.replace('<body>', '')
         subjecttree = subjecttree.replace('</body>', '')
 
-    # for the subject pulldown, find subjects that are first generation
-    # children- their parents should have no parent.  still need these:
-    # Area Studies Social Sciences Biological Sciences Physical Sciences
-
-    subjects_pulldown = [
-        'Area Studies', 'Arts', 'Biological Sciences', 'Business',
-        'Humanities', 'Law', 'Literature', 'Medicine',
-        'Physical Sciences', 'Social Sciences', 'Social Services',
-        'Special Collections'
-    ]
+    # Get subjects dynamically from the database using the display_in_dropdown field
+    subjects_pulldown = Subject.objects.filter(
+        display_in_dropdown=True
+    ).order_by('name').values_list('name', flat=True)
 
     default_image = None
     try:
