@@ -1131,9 +1131,8 @@ table.etable>tbody>tr {
     background-color: $hovercalmlight;
   }
   &:focus {
-    box-shadow: $box-shadow-focus;
-    color: black;
-    background-color: $hovercalmlight;
+    outline: 2px solid #767676;
+    outline-offset: 2px;
   }
 }
 
