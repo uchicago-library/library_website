@@ -21,7 +21,6 @@ from library_website.settings import (
 from openpyxl import Workbook
 from site_settings.models import StaffSyncSettings
 from units.models import UnitPage
-from wagtail.models import Site
 
 from staff.models import EMPLOYEE_TYPES, StaffPage, StaffPageLibraryUnits
 
@@ -37,8 +36,7 @@ def get_excluded_cnetids():
         set: A set of CNetID strings to exclude from sync.
     """
     try:
-        site = Site.objects.get(is_default_site=True)
-        settings = StaffSyncSettings.for_site(site)
+        settings = StaffSyncSettings.load()
         return set(settings.excluded_cnetids.values_list('cnetid', flat=True))
     except Exception:
         # If settings don't exist or there's any error, return empty set
@@ -446,7 +444,7 @@ class WagtailStaffReport:
                         _format(
                             s.cnetid,
                             d.library_unit.get_campus_directory_full_name(),
-                            'department'
+                            'department',
                         )
                     )
 
@@ -698,7 +696,7 @@ class WagtailStaffReport:
                     units.append(
                         (
                             slu.library_unit.get_full_name(),
-                            slu.library_unit.get_campus_directory_full_name()
+                            slu.library_unit.get_campus_directory_full_name(),
                         )
                     )
             units.sort(key=lambda u: u[0])

@@ -2,7 +2,11 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.contrib.settings.models import (
+    BaseGenericSetting,
+    BaseSiteSetting,
+    register_setting,
+)
 from wagtail.models import Orderable
 
 
@@ -74,9 +78,10 @@ class ExcludedCNetID(Orderable, models.Model):
 
 
 @register_setting(icon="user")
-class StaffSyncSettings(BaseSiteSetting, ClusterableModel):
+class StaffSyncSettings(BaseGenericSetting, ClusterableModel):
     """
     Settings for staff directory synchronization.
+    Applies globally across all sites.
     """
 
     panels = [
