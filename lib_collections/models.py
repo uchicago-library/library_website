@@ -2044,6 +2044,16 @@ class ExhibitPage(PublicBasePage):
         ),
     ]
 
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('enable_index'),
+                FieldPanel('display_hierarchical_listing'),
+            ],
+            heading='Auto-generated Sitemap',
+        ),
+    ]
+
     content_panels = (
         Page.content_panels
         + [
@@ -2163,6 +2173,7 @@ class ExhibitPage(PublicBasePage):
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
             ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+            ObjectList(widget_content_panels, heading='Widgets'),
             ObjectList(web_exhibit_panels, heading='Web Exhibit'),
         ]
     )
