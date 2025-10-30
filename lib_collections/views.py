@@ -65,6 +65,10 @@ def collections(request):
     if view not in ['collections', 'exhibits', 'subjects', 'subjecttree']:
         view = 'collections'
 
+    sort = request.GET.get('sort', None)
+    if sort not in ['title', 'exhibit_open_date']:
+        sort = None
+
     # filter collections.
     collections = []
     if view == 'collections':
@@ -144,13 +148,28 @@ def collections(request):
             exhibits_current = exhibits_current.search(search).results()
 
         if not search:
-            exhibits = sorted(
-                exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title)
-            )
-            exhibits_current = sorted(
-                exhibits_current,
-                key=lambda e: re.sub('r^(A|An|The) ', '', e.title)
-            )
+            if sort == 'exhibit_open_date':
+                # Sort by exhibit_open_date, most recent first (descending)
+                # Handle None values by treating them as very old dates
+                exhibits = sorted(
+                    exhibits,
+                    key=lambda e: e.exhibit_open_date if e.exhibit_open_date else datetime.date.min,
+                    reverse=True
+                )
+                exhibits_current = sorted(
+                    exhibits_current,
+                    key=lambda e: e.exhibit_open_date if e.exhibit_open_date else datetime.date.min,
+                    reverse=True
+                )
+            else:
+                # Default: sort alphabetically by title
+                exhibits = sorted(
+                    exhibits, key=lambda e: re.sub(r'^(A|An|The) ', '', e.title)
+                )
+                exhibits_current = sorted(
+                    exhibits_current,
+                    key=lambda e: re.sub('r^(A|An|The) ', '', e.title)
+                )
 
     # locations
     locations = sorted(
@@ -274,16 +293,10 @@ def collections(request):
         subjecttree = subjecttree.replace('<body>', '')
         subjecttree = subjecttree.replace('</body>', '')
 
-    # for the subject pulldown, find subjects that are first generation
-    # children- their parents should have no parent.  still need these:
-    # Area Studies Social Sciences Biological Sciences Physical Sciences
-
-    subjects_pulldown = [
-        'Area Studies', 'Arts', 'Biological Sciences', 'Business',
-        'Humanities', 'Law', 'Literature', 'Medicine',
-        'Physical Sciences', 'Social Sciences', 'Social Services',
-        'Special Collections'
-    ]
+    # Get subjects dynamically from the database using the display_in_dropdown field
+    subjects_pulldown = Subject.objects.filter(
+        display_in_dropdown=True
+    ).order_by('name').values_list('name', flat=True)
 
     default_image = None
     try:
@@ -318,6 +331,7 @@ def collections(request):
             'self': {
                 'title': 'Collections & Exhibits'
             },
+            'sort': sort,
             'subject': subject,
             'subjects': subjects,
             'subjects_pulldown': subjects_pulldown,

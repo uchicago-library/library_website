@@ -440,13 +440,15 @@ class WagtailStaffReport:
                     )
                 )
             for d in s.staff_page_units.all():
-                wag_staff_info.add(
-                    _format(
-                        s.cnetid,
-                        d.library_unit.get_campus_directory_full_name(),
-                        'department',
+                # Skip entries where library_unit is None (added but not selected)
+                if d.library_unit is not None:
+                    wag_staff_info.add(
+                        _format(
+                            s.cnetid,
+                            d.library_unit.get_campus_directory_full_name(),
+                            'department'
+                        )
                     )
-                )
 
         missing_in_campus_directory = sorted(
             list(wag_staff_info.difference(api_staff_info))
@@ -691,12 +693,14 @@ class WagtailStaffReport:
 
             units = []
             for slu in staffpage_library_units:
-                units.append(
-                    (
-                        slu.library_unit.get_full_name(),
-                        slu.library_unit.get_campus_directory_full_name(),
+                # Skip entries where library_unit is None (added but not selected)
+                if slu.library_unit is not None:
+                    units.append(
+                        (
+                            slu.library_unit.get_full_name(),
+                            slu.library_unit.get_campus_directory_full_name()
+                        )
                     )
-                )
             units.sort(key=lambda u: u[0])
 
             groups = sorted([g.parent.title for g in s.member.all()])

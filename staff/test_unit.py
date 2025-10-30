@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group, Permission, User
 from django.core import management
 from django.test import TestCase
 from openpyxl import load_workbook
-from public.models import StandardPage
+from public.models import StaffPublicPage, StandardPage
 from units.models import UnitPage
 from wagtail.models import Page
 
@@ -556,6 +556,35 @@ class ListStaffWagtail(TestCase):
         records = self.run_command(supervises_students=True)
         self.assertEqual(len(records), 2)
 
+    def test_empty_library_unit_does_not_crash(self):
+        """
+        Test that staff with empty library units (None) don't cause crashes
+        in the reporting commands. Regression test for issue #702.
+        """
+        # Get a staff member
+        staff = StaffPage.objects.get(cnetid='jej')
+
+        # Add an empty library unit (None) - this reproduces the bug
+        StaffPageLibraryUnits.objects.create(page=staff, library_unit=None)
+
+        # The staff report should not crash
+        records = self.run_command(cnetid='jej')
+        self.assertEqual(len(records), 1)
+
+        # Out of sync report should also not crash
+        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        management.call_command(
+            'list_staff_wagtail',
+            filename=tempfile.name,
+            output_format='excel',
+            report_out_of_sync_staff=True
+        )
+
+        wb = load_workbook(tempfile.name)
+        # Should have at least one worksheet
+        self.assertGreaterEqual(len(wb.sheetnames), 1)
+        os.unlink(tempfile.name)
+
 
 class StaffPageHRPermissionsTestCase(TestCase):
     """
@@ -634,3 +663,299 @@ class StaffPageHRPermissionsTestCase(TestCase):
             ('change_staff_hr_info', 'Can edit Human Resources Info for staff pages'),
             StaffPage._meta.permissions,
         )
+
+
+class UserActiveStateStaffPagePublishingTestCase(TestCase):
+    """
+    Test suite for automatic staff page publishing/unpublishing
+    when user active state changes.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test users and staff pages."""
+        # Create root and welcome pages
+        try:
+            welcome = Page.objects.get(path='00010001')
+        except Page.DoesNotExist:
+            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
+            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            root.add_child(instance=welcome)
+
+        cls.welcome = welcome
+
+        # Create a staff page to use as editor/maintainer/content specialist
+        admin_staff = StaffPage(
+            cnetid='admin',
+            slug='admin-staff',
+            title='Admin Staff',
+        )
+        welcome.add_child(instance=admin_staff)
+
+        # Create a unit page for required unit field
+        cls.unit = UnitPage(
+            slug='test-unit',
+            title='Test Unit',
+            display_in_dropdown=True,
+            editor=admin_staff,
+            page_maintainer=admin_staff,
+        )
+        welcome.add_child(instance=cls.unit)
+
+        cls.admin_staff = admin_staff
+
+    def setUp(self):
+        """Set up per-test data."""
+        # Create test user
+        self.user = User.objects.create_user(
+            username='teststaff', password='password', is_active=True
+        )
+
+        # Create Loop staff page
+        self.staff_page = StaffPage(
+            cnetid='teststaff',
+            slug='test-staff',
+            title='Test Staff',
+            position_title='Test Position',
+        )
+        self.welcome.add_child(instance=self.staff_page)
+        self.staff_page.save_revision().publish()
+
+        # Create public staff page
+        self.public_page = StaffPublicPage(
+            cnetid='teststaff',
+            slug='test-staff-public',
+            title='Test Staff Public',
+            editor=self.admin_staff,
+            page_maintainer=self.admin_staff,
+            content_specialist=self.admin_staff,
+            unit=self.unit,
+        )
+        self.welcome.add_child(instance=self.public_page)
+        self.public_page.save_revision().publish()
+
+    def test_deactivating_user_unpublishes_staff_pages(self):
+        """Test that marking a user inactive unpublishes their staff pages."""
+        # Verify pages are published
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
+
+        # Deactivate user
+        self.user.is_active = False
+        self.user.save()
+
+        # Verify pages are unpublished
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertFalse(self.staff_page.live)
+        self.assertFalse(self.public_page.live)
+
+    def test_reactivating_user_republishes_staff_pages(self):
+        """Test that marking an inactive user active republishes their staff pages."""
+        # Deactivate user first
+        self.user.is_active = False
+        self.user.save()
+
+        # Verify pages are unpublished
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertFalse(self.staff_page.live)
+        self.assertFalse(self.public_page.live)
+
+        # Reactivate user
+        self.user.is_active = True
+        self.user.save()
+
+        # Verify pages are republished
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
+
+    def test_activating_inactive_user_with_unpublished_pages(self):
+        """Test that activating an existing inactive user publishes their unpublished pages."""
+        # Create an inactive user
+        inactive_user = User.objects.create_user(
+            username='inactiveuser', password='password', is_active=False
+        )
+
+        # Create unpublished staff pages for this user
+        unpublished_staff = StaffPage(
+            cnetid='inactiveuser',
+            slug='inactive-user-staff',
+            title='Inactive User Staff',
+        )
+        self.welcome.add_child(instance=unpublished_staff)
+        unpublished_staff.unpublish()
+
+        unpublished_public = StaffPublicPage(
+            cnetid='inactiveuser',
+            slug='inactive-user-public',
+            title='Inactive User Public',
+            editor=self.admin_staff,
+            page_maintainer=self.admin_staff,
+            content_specialist=self.admin_staff,
+            unit=self.unit,
+        )
+        self.welcome.add_child(instance=unpublished_public)
+        unpublished_public.unpublish()
+
+        # Verify pages are unpublished
+        unpublished_staff.refresh_from_db()
+        unpublished_public.refresh_from_db()
+        self.assertFalse(unpublished_staff.live)
+        self.assertFalse(unpublished_public.live)
+
+        # Activate the user
+        inactive_user.is_active = True
+        inactive_user.save()
+
+        # Verify pages are now published
+        unpublished_staff.refresh_from_db()
+        unpublished_public.refresh_from_db()
+        self.assertTrue(unpublished_staff.live)
+        self.assertTrue(unpublished_public.live)
+
+    def test_deactivating_user_with_no_staff_pages(self):
+        """Test that deactivating a user with no staff pages doesn't raise errors."""
+        # Create user without staff pages
+        user_no_pages = User.objects.create_user(
+            username='nostaff', password='password', is_active=True
+        )
+
+        # This should not raise an exception
+        user_no_pages.is_active = False
+        user_no_pages.save()
+
+        # Verify user is inactive
+        user_no_pages.refresh_from_db()
+        self.assertFalse(user_no_pages.is_active)
+
+    def test_creating_new_inactive_user_does_not_affect_existing_published_pages(self):
+        """Test that creating a new inactive user matching existing published pages doesn't unpublish them."""
+        # Verify the existing pages are published
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
+
+        # Create a new inactive user with matching cnetid (teststaff)
+        # This should NOT unpublish the existing pages because the signal only fires
+        # when is_active changes from True to False, not when a new user is created as inactive
+        User.objects.create_user(
+            username='teststaff2', password='password', is_active=False
+        )
+
+        # Create additional published staff pages for this new user
+        new_staff_page = StaffPage(
+            cnetid='teststaff2',
+            slug='test-staff-2',
+            title='Test Staff 2',
+        )
+        self.welcome.add_child(instance=new_staff_page)
+        new_staff_page.save_revision().publish()
+
+        new_public_page = StaffPublicPage(
+            cnetid='teststaff2',
+            slug='test-staff-2-public',
+            title='Test Staff 2 Public',
+            editor=self.admin_staff,
+            page_maintainer=self.admin_staff,
+            content_specialist=self.admin_staff,
+            unit=self.unit,
+        )
+        self.welcome.add_child(instance=new_public_page)
+        new_public_page.save_revision().publish()
+
+        # The new pages should remain published even though the user was created as inactive
+        # because the signal doesn't fire on user creation, only on save when is_active changes
+        new_staff_page.refresh_from_db()
+        new_public_page.refresh_from_db()
+        self.assertTrue(new_staff_page.live)
+        self.assertTrue(new_public_page.live)
+
+        # Original pages should still be published
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
+
+    def test_creating_new_active_user_publishes_matching_unpublished_pages(self):
+        """Test that creating a new active user publishes their unpublished staff pages."""
+        # Create unpublished staff pages with a cnetid that doesn't have a user yet
+        unpublished_staff = StaffPage(
+            cnetid='newactive', slug='new-active-staff', title='New Active Staff'
+        )
+        self.welcome.add_child(instance=unpublished_staff)
+        unpublished_staff.unpublish()
+
+        # Create an unpublished public page too
+        unpublished_public = StaffPublicPage(
+            cnetid='newactive',
+            slug='new-active-public',
+            title='New Active Public',
+            editor=self.admin_staff,
+            page_maintainer=self.admin_staff,
+            content_specialist=self.admin_staff,
+            unit=self.unit,
+        )
+        self.welcome.add_child(instance=unpublished_public)
+        unpublished_public.unpublish()
+
+        # Verify they're not live initially
+        unpublished_staff.refresh_from_db()
+        unpublished_public.refresh_from_db()
+        self.assertFalse(unpublished_staff.live)
+        self.assertFalse(unpublished_public.live)
+
+        # Create a new active user with matching cnetid
+        User.objects.create_user(
+            username='newactive', password='password', is_active=True
+        )
+
+        # The unpublished pages should now be published automatically
+        unpublished_staff.refresh_from_db()
+        unpublished_public.refresh_from_db()
+        self.assertTrue(unpublished_staff.live)
+        self.assertTrue(unpublished_public.live)
+
+    def test_only_live_pages_are_unpublished(self):
+        """Test that only live pages are affected when user is deactivated."""
+        # Create an already unpublished staff page
+        unpublished_staff = StaffPage(
+            cnetid='teststaff2',
+            slug='test-staff-2',
+            title='Test Staff 2',
+        )
+        self.welcome.add_child(instance=unpublished_staff)
+        # Don't publish it
+
+        # Create user and deactivate
+        user2 = User.objects.create_user(
+            username='teststaff2', password='password', is_active=True
+        )
+        user2.is_active = False
+        user2.save()
+
+        # Page should still be unpublished (no error should occur)
+        unpublished_staff.refresh_from_db()
+        self.assertFalse(unpublished_staff.live)
+
+    def test_active_user_does_not_unpublish_pages(self):
+        """Test that saving an active user doesn't unpublish their pages."""
+        # Verify pages are published
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
+
+        # Save user without changing active state
+        self.user.save()
+
+        # Verify pages are still published
+        self.staff_page.refresh_from_db()
+        self.public_page.refresh_from_db()
+        self.assertTrue(self.staff_page.live)
+        self.assertTrue(self.public_page.live)
