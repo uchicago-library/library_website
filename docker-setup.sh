@@ -17,6 +17,12 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     exit 0
 fi
 
+# simplify progress bar if this is being run in an Emacs shell
+if [ -n "$INSIDE_EMACS" ]; then
+    DOCKER_PROG=--progress=plain;
+else DOCKER_PROG=;
+fi
+
 echo "🐳 Setting up Library Website Docker environment..."
 
 # Create necessary directories (under bind mount)
@@ -25,14 +31,14 @@ mkdir -p media/documents library_website/static
 
 # Build and start services
 echo "Building Docker images..."
-docker compose build
+docker compose $DOCKER_PROG build
 
 echo "Starting services..."
-docker compose up -d db redis
+docker compose $DOCKER_PROG up -d db redis
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until docker compose exec db pg_isready -U vagrant -d lib_www_dev; do
+until docker compose $DOCKER_PROG exec db pg_isready -U vagrant -d lib_www_dev; do
   echo "Database not ready, waiting..."
   sleep 2
 done
@@ -40,7 +46,7 @@ done
 # Start Elasticsearch if enabled
 if [ "${ELASTICSEARCH:-true}" != "false" ]; then
     echo "Starting Elasticsearch..."
-    docker compose --profile elasticsearch up -d elasticsearch
+    docker compose $DOCKER_PROG --profile elasticsearch up -d elasticsearch
     echo "Waiting for Elasticsearch to be ready..."
     until curl -s http://localhost:9200/_cluster/health | grep -q "yellow\|green"; do
         echo "Elasticsearch not ready, waiting..."
@@ -50,7 +56,7 @@ fi
 
 # Start the web container
 echo "Starting web container..."
-docker compose up -d web
+docker compose $DOCKER_PROG up -d web
 
 # Run Django setup
 echo "Running Django migrations and loading dev database..."
@@ -64,7 +70,7 @@ docker compose exec web bash -c "
 
 # Create news feed test file
 echo "Creating news feed test file..."
-docker compose exec web bash -c "
+docker compose $DOCKER_PROG exec web bash -c "
     cp /app/base/fixtures/news-feed-test.json /app/static/lib_news/files/lib-news.json
 "
 
