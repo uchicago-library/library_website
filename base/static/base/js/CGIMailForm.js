@@ -11,6 +11,7 @@ import {
   Legend,
   RequiredFieldsText,
   FormFieldHelpText,
+  DefinitionListItem,
 } from './index'
 
 import schema from './CGIMailFormSchema'
@@ -81,15 +82,31 @@ function defaultFieldMappings(e, state) {
     const src = e.map.src || null
     if (src === 'itemServlet') {
       if (Array.isArray(e.map.fields)) {
-        return e.map.fields.map(v => state.itemInfo[v]).join(' ')
+        return e.map.fields
+          .map(v => state.itemInfo[v])
+          .filter(Boolean)
+          .join(' ')
       }
       return state.itemInfo[e.map.fields]
     }
     if (src === 'GET') {
       if (Array.isArray(e.map.fields)) {
-        return e.map.fields.map(v => URLPARAMS.get(v)).join(' ')
+        return e.map.fields
+          .map(v => URLPARAMS.get(v))
+          .filter(Boolean)
+          .join(' ')
       }
-      return URLPARAMS.get(e.map.fields) || null
+      // Handle both regular params and array params with [] notation
+      const fieldName = e.map.fields
+      let value = URLPARAMS.get(fieldName)
+      if (!value && fieldName.indexOf('[') === -1) {
+        // Try with array notation
+        const allValues = URLPARAMS.getAll(`${fieldName}[]`)
+        if (allValues.length > 0) {
+          value = allValues.join(', ')
+        }
+      }
+      return value || null
     }
   }
   return ''
@@ -132,14 +149,14 @@ InvalidJSON.propTypes = {
   errors: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
-const buildField = (elm, state, handleChange) => {
+const buildField = (elm, state, handleChange, isDisabled = false) => {
   const id = elm.id || elm.name || null
   const value =
     elm.value || state[id] || defaultFieldMappings(elm, state) || null
   const type = elm.type || null
   const name = elm.name || null
   const placeholder = elm.placeholder || null
-  const required = elm.required || null
+  const required = isDisabled ? false : elm.required || null
   const options = elm.options || null
   const htl = getHelpText(elm)
   const ariaDescribedBy = htl[0]
@@ -156,6 +173,7 @@ const buildField = (elm, state, handleChange) => {
           name={name}
           placeholder={placeholder}
           required={required}
+          disabled={isDisabled}
           ariaDescribedBy={ariaDescribedBy}
           onChange={e => {
             handleChange(e)
@@ -176,6 +194,7 @@ const buildField = (elm, state, handleChange) => {
           name={name}
           placeholder={placeholder}
           required={required}
+          disabled={isDisabled}
           ariaDescribedBy={ariaDescribedBy}
           onChange={e => {
             handleChange(e)
@@ -195,6 +214,7 @@ const buildField = (elm, state, handleChange) => {
           type={type}
           name={name}
           required={required}
+          disabled={isDisabled}
           value={value}
           ariaDescribedBy={ariaDescribedBy}
           onChange={e => {
@@ -214,6 +234,7 @@ const buildField = (elm, state, handleChange) => {
           type={type}
           name={name}
           required={required}
+          disabled={isDisabled}
           value={value}
         />
       </div>
@@ -228,7 +249,11 @@ const buildField = (elm, state, handleChange) => {
           type={type}
           name={name}
           required={required}
+          disabled={isDisabled}
           value={value}
+          onChange={e => {
+            handleChange(e)
+          }}
         />
       </div>
     )
@@ -236,38 +261,107 @@ const buildField = (elm, state, handleChange) => {
   return '[Unknown Field Type]'
 }
 
-const buildGroup = (elm, state, handleChange) => {
+const buildGroup = (elm, state, handleChange, isDisabled) => {
   const len = elm.group.elements.length
   const colNum = 12 / len
   const divClassName = `col-sm-${String(colNum)}`
   return (
     <div className="form-group row">
       {elm.group.elements.map(e => (
-        <div className={divClassName}>{buildField(e, state, handleChange)}</div>
+        <div className={divClassName}>
+          {buildField(e, state, handleChange, isDisabled)}
+        </div>
       ))}
     </div>
   )
 }
 
+const buildDefinitionListItem = (elm, state) => {
+  const label = elm.label || elm.name || ''
+  const value =
+    elm.value || state[elm.id] || defaultFieldMappings(elm, state) || ''
+
+  // Only render if value is not empty
+  if (!value || value.trim() === '') {
+    return null
+  }
+
+  return <DefinitionListItem term={label} definition={value} />
+}
+
+const buildHiddenInput = (elm, state) => {
+  const id = elm.id || elm.name || null
+  const name = elm.name || null
+  const value = elm.value || state[id] || defaultFieldMappings(elm, state) || ''
+  return <input type="hidden" id={id} name={name} value={value} />
+}
+
+// Helper function to evaluate if a fieldset/group/element should be disabled
+const evaluateDisabled = (element, state) => {
+  // Start with the element's own disabled state
+  let isDisabled = element.disabled || false
+
+  // Check enabledWhen condition
+  if (element.enabledWhen) {
+    const { field, value } = element.enabledWhen
+    const currentValue = state[field]
+    // If enabledWhen condition is not met, element should be disabled
+    if (currentValue !== value) {
+      isDisabled = true
+    } else {
+      isDisabled = false
+    }
+  }
+
+  // Check disabledWhen condition
+  if (element.disabledWhen) {
+    const { field, value } = element.disabledWhen
+    const currentValue = state[field]
+    // If disabledWhen condition is met, element should be disabled
+    if (currentValue === value) {
+      isDisabled = true
+    } else {
+      isDisabled = false
+    }
+  }
+
+  return isDisabled
+}
+
 const FormElements = props => {
-  const { elements, handleChange, state } = props
+  const { elements, handleChange, state, hiddenButVisible } = props
+
+  if (hiddenButVisible) {
+    // Render as definition list with hidden inputs
+    return (
+      <>
+        <dl>{elements.map(elm => buildDefinitionListItem(elm, state))}</dl>
+        {elements.map(elm => buildHiddenInput(elm, state))}
+      </>
+    )
+  }
+
   return elements.map(elm => {
     if (Object.keys(elm).includes('fieldset')) {
+      const isDisabled = evaluateDisabled(elm.fieldset, state)
+      const fieldsetClassName = isDisabled ? 'disabled' : ''
       return (
-        <fieldset>
+        <fieldset className={fieldsetClassName}>
           {getLegend(elm.fieldset)}
           {elm.fieldset.elements.map(e =>
             Object.keys(e).includes('group')
-              ? buildGroup(e, state, handleChange)
-              : buildField(e, state, handleChange),
+              ? buildGroup(e, state, handleChange, isDisabled)
+              : buildField(e, state, handleChange, isDisabled),
           )}
         </fieldset>
       )
     }
     if (Object.keys(elm).includes('group')) {
-      return buildGroup(elm, state, handleChange)
+      const isDisabled = evaluateDisabled(elm.group, state)
+      return buildGroup(elm, state, handleChange, isDisabled)
     }
-    return buildField(elm, state, handleChange)
+    const isDisabled = evaluateDisabled(elm, state)
+    return buildField(elm, state, handleChange, isDisabled)
   })
 }
 
@@ -281,12 +375,55 @@ SectionTitle.propTypes = {
 }
 
 const Section = props => {
-  const { title, description, elements, handleChange, state, hidden } = props
+  const {
+    title,
+    description,
+    elements,
+    handleChange,
+    state,
+    hidden,
+    hiddenButVisible,
+  } = props
+
   if (hidden) {
     return (
-      <FormElements elements={elements} handleChange={null} state={state} />
+      <FormElements
+        elements={elements}
+        handleChange={null}
+        state={state}
+        hiddenButVisible={false}
+      />
     )
   }
+
+  if (hiddenButVisible) {
+    // Check if any elements have values
+    const hasVisibleFields = elements.some(elm => {
+      const value =
+        elm.value || state[elm.id] || defaultFieldMappings(elm, state) || ''
+      return value && value.trim() !== ''
+    })
+
+    // Don't render section if no fields have values
+    if (!hasVisibleFields) {
+      // Still render hidden inputs for form submission
+      return <>{elements.map(elm => buildHiddenInput(elm, state))}</>
+    }
+
+    return (
+      <section className="hidden-but-visible">
+        {title ? <SectionTitle title={title} /> : ''}
+        {description ? <p>{description}</p> : ''}
+        <FormElements
+          elements={elements}
+          handleChange={handleChange}
+          state={state}
+          hiddenButVisible
+        />
+      </section>
+    )
+  }
+
   return (
     <section>
       {title ? <SectionTitle title={title} /> : ''}
@@ -295,6 +432,7 @@ const Section = props => {
         elements={elements}
         handleChange={handleChange}
         state={state}
+        hiddenButVisible={false}
       />
     </section>
   )
@@ -304,6 +442,7 @@ Section.defaultProps = {
   title: null,
   description: null,
   hidden: null,
+  hiddenButVisible: null,
 }
 
 Section.propTypes = {
@@ -313,6 +452,7 @@ Section.propTypes = {
   handleChange: PropTypes.func.isRequired,
   state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hidden: PropTypes.bool,
+  hiddenButVisible: PropTypes.bool,
 }
 
 const Sections = props => {
@@ -325,6 +465,7 @@ const Sections = props => {
       handleChange={handleChange}
       state={state}
       hidden={d.hidden || null}
+      hiddenButVisible={d.hiddenButVisible || null}
     />
   ))
 }

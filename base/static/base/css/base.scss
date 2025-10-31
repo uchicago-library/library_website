@@ -150,3 +150,48 @@ Alerts
     text-decoration: underline;
   }
 }
+
+/*
+ * CGIMail Form Styles
+ * --------------------------------------------------
+ */
+
+/* Hidden but visible sections - display catalog data as definition list */
+.hidden-but-visible {
+  dl {
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    dt {
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 0.5em;
+      &:after {
+        content: ':';
+      }
+    }
+    dd {
+      display: inline;
+      margin: 0;
+      &:after {
+        content: '\A';
+        white-space: pre;
+      }
+    }
+  }
+}
+
+/* Disabled fieldsets for conditional fields */
+fieldset.disabled {
+  opacity: 0.6;
+  legend {
+    color: #999;
+  }
+  input,
+  select,
+  textarea {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+  }
+}
