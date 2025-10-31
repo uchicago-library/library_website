@@ -51,7 +51,7 @@
                     {% if feature.thumbnail %}
                         <span class="img-object">
                             <a href="{{feature.url}}">
-                                {% image feature.thumbnail width-1000 class="article-img" %}
+                                {% image feature.thumbnail width-1000 class="article-img" alt=feature.title %}
                             </a>
                         </span>
                     {% endif %}
