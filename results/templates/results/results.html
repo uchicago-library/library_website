@@ -50,9 +50,9 @@
                             <p>{{ result.datestamp }}</p>
                             {{ result.description }}
                         {% else %}
-                            <h4><a href="{% pageurl result %}">{{ result }}</a> {% autoescape off %}{% pagetype result %}{% endautoescape %}</h4>
+                            <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
                             {% if result.latest_revision_created_at %}
-                                <p>{{ result.latest_revision_created_at }}</p>
+                                <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.latest_revision_created_at }}</p>
                             {% endif %}
                             {% if result.search_description %}
                                 {{ result.search_description|safe }}
