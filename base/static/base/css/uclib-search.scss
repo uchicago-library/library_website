@@ -213,4 +213,29 @@ h3.searchbox-header {
   }
 }
 
+/*
+ * Placeholder Text Contrast
+ * --------------------------------------------------
+ * Override Bootstrap's default #999 placeholder color (bootstrap.css lines 2575-2584)
+ * to meet WCAG 4.5:1 contrast ratio
+ *
+ * Note: These rules must be defined separately, not grouped with commas.
+ * Browsers will ignore an entire selector group if even one pseudo-element
+ * selector is invalid or unsupported in that browser.
+ */
 
+.form-control::-webkit-input-placeholder {
+  color: #666;
+}
+
+.form-control::-moz-placeholder {
+  color: #666;
+}
+
+.form-control:-ms-input-placeholder {
+  color: #666;
+}
+
+.form-control::placeholder {
+  color: #666;
+}
