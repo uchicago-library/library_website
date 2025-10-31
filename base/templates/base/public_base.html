@@ -2,8 +2,8 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% image banner original as banner %}
-{% image banner_feature original as banner_feature %}
+{% image banner fill-1920x400 as banner %}
+{% image banner_feature fill-400x400 as banner_feature %}
 {% load public_tags %}
 {% load staff_tags %}
 <!DOCTYPE html>
@@ -219,7 +219,7 @@
 
                                 <div class="carousel-inner">
                                     {% for item in carousel_items %}
-                                        {% image item.image original as nifty %}
+                                        {% image item.image fill-1920x500 as nifty %}
                                         {% if nifty %}
                                             <article class="item {% if forloop.first %}active{% endif %}">
                                                 {% if item.link %}
