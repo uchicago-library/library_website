@@ -1,6 +1,13 @@
 from django.db import models
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.contrib.settings.models import (
+    BaseGenericSetting,
+    BaseSiteSetting,
+    register_setting,
+)
+from wagtail.models import Orderable
 
 
 @register_setting(icon="warning")
@@ -41,4 +48,42 @@ class ContactInfo(BaseSiteSetting):
 
     panels = [
         FieldPanel("report_a_problem"),
+    ]
+
+
+class ExcludedCNetID(Orderable, models.Model):
+    """
+    CNetID to exclude from staff directory sync.
+    """
+
+    settings = ParentalKey(
+        'StaffSyncSettings', on_delete=models.CASCADE, related_name='excluded_cnetids'
+    )
+    cnetid = models.CharField(
+        max_length=25, help_text='CNetID to exclude from staff directory sync'
+    )
+    note = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text='Optional note explaining why this person is excluded from sync',
+    )
+
+    panels = [
+        FieldPanel('cnetid'),
+        FieldPanel('note'),
+    ]
+
+    def __str__(self):
+        return self.cnetid
+
+
+@register_setting(icon="user")
+class StaffSyncSettings(BaseGenericSetting, ClusterableModel):
+    """
+    Settings for staff directory synchronization.
+    Applies globally across all sites.
+    """
+
+    panels = [
+        InlinePanel('excluded_cnetids', label="Excluded CNetIDs"),
     ]
