@@ -8,23 +8,40 @@ from intranettocs.models import TOCPage
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from news.models import NewsIndexPage, NewsPage
 from staff.models import StaffIndexPage, StaffPage
+from lib_news.models import LibNewsIndexPage, LibNewsPage
 
 register = template.Library()
 
 @register.simple_tag(name='pagetype', takes_context=True)
 def pagetype(context, page):
     """
-    Returns a formatted page type label for display in search results.
-    Uses Wagtail's content type to dynamically determine the page type.
+    Returns the top-level section/category for display in search results.
+    Uses page hierarchy to determine the category, with special handling
+    for news pages.
     """
     try:
-        # Get the content type name and convert to title case
-        content_type_name = page.get_content_type().name
-        # Convert to title case (e.g., "exhibit page" -> "Exhibit Page")
-        page_type_label = content_type_name.title()
+        label = None
 
-        # Return formatted span with the page type
-        return f"<span class='page-type-label'>{page_type_label}</span>"
+        # Special case: LibNewsIndexPage and its descendants should always show "News"
+        try:
+            lib_news_index = LibNewsIndexPage.objects.first()
+            if lib_news_index and (page.id == lib_news_index.id or page.is_descendant_of(lib_news_index)):
+                label = "News"
+        except:
+            pass
+
+        # Get ancestors excluding root (id=1) and Home page (depth <= 2)
+        if not label:
+            ancestors = page.get_ancestors(inclusive=False).filter(depth__gt=2)
+            if ancestors.exists():
+                # Get the first child of Home (the top-level section)
+                top_level = ancestors.first()
+                label = top_level.title
+
+        # Return formatted span with the label
+        if label:
+            return f"<span class='page-type-label'>{label}</span>"
+        return ""
     except:
         return ""
 
