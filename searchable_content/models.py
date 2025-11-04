@@ -47,4 +47,7 @@ class LibGuidesSearchableContent(SearchableContent):
 
 
 class LibGuidesAssetsSearchableContent(SearchableContent):
-    pass
+    search_fields = [
+        index.SearchField('title', boost=4),
+        index.SearchField('description'),
+    ]

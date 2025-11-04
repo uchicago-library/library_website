@@ -47,7 +47,7 @@
                     <li>
                         {% if result.searchable_content %}
                             <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
-                            <p>{{ result.datestamp }}</p>
+                            <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.datestamp }}</p>
                             {{ result.description }}
                         {% else %}
                             <h4><a href="{% pageurl result %}">{{ result }}</a></h4>

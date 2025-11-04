@@ -16,27 +16,36 @@ register = template.Library()
 def pagetype(context, page):
     """
     Returns the top-level section/category for display in search results.
-    Uses page hierarchy to determine the category, with special handling
-    for news pages.
+    For LibGuides content, returns 'Research Guide' or 'Database'.
+    For Wagtail pages, uses page hierarchy to determine the category,
+    with special handling for news pages.
     """
     try:
         label = None
 
-        # Special case: LibNewsIndexPage and its descendants should always show "News"
-        try:
-            lib_news_index = LibNewsIndexPage.objects.first()
-            if lib_news_index and (page.id == lib_news_index.id or page.is_descendant_of(lib_news_index)):
-                label = "News"
-        except:
-            pass
+        # Check if this is LibGuides content (has searchable_content attribute)
+        if hasattr(page, 'searchable_content'):
+            if page.searchable_content == 'guides':
+                label = "Research Guide"
+            elif page.searchable_content == 'assets':
+                label = "Database"
+        else:
+            # Wagtail page logic
+            # Special case: LibNewsIndexPage and its descendants should always show "News"
+            try:
+                lib_news_index = LibNewsIndexPage.objects.first()
+                if lib_news_index and (page.id == lib_news_index.id or page.is_descendant_of(lib_news_index)):
+                    label = "News"
+            except:
+                pass
 
-        # Get ancestors excluding root (id=1) and Home page (depth <= 2)
-        if not label:
-            ancestors = page.get_ancestors(inclusive=False).filter(depth__gt=2)
-            if ancestors.exists():
-                # Get the first child of Home (the top-level section)
-                top_level = ancestors.first()
-                label = top_level.title
+            # Get ancestors excluding root (id=1) and Home page (depth <= 2)
+            if not label:
+                ancestors = page.get_ancestors(inclusive=False).filter(depth__gt=2)
+                if ancestors.exists():
+                    # Get the first child of Home (the top-level section)
+                    top_level = ancestors.first()
+                    label = top_level.title
 
         # Return formatted span with the label
         if label:
