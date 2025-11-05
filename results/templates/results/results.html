@@ -48,12 +48,10 @@
                         {% if result.searchable_content %}
                             <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
                             <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.datestamp }}</p>
-                            {{ result.description }}
+                            {{ result.description|snippet }}
                         {% else %}
                             <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-                            {% if result.latest_revision_created_at %}
-                                <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.latest_revision_created_at }}</p>
-                            {% endif %}
+                            <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong>{% if result.latest_revision_created_at %} {{ result.latest_revision_created_at }}{% endif %}</p>
                             {% if result.search_description %}
                                 {{ result.search_description|safe }}
                             {% elif result.specific.intro %}
