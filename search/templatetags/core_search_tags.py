@@ -8,30 +8,49 @@ from intranettocs.models import TOCPage
 from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
 from news.models import NewsIndexPage, NewsPage
 from staff.models import StaffIndexPage, StaffPage
+from lib_news.models import LibNewsIndexPage, LibNewsPage
 
 register = template.Library()
 
 @register.simple_tag(name='pagetype', takes_context=True)
 def pagetype(context, page):
+    """
+    Returns the top-level section/category for display in search results.
+    For LibGuides content, returns 'Research Guide' or 'Database'.
+    For Wagtail pages, uses page hierarchy to determine the category,
+    with special handling for news pages.
+    """
     try:
-        if page.is_descendant_of(GroupIndexPage.objects.first()):
-            return "<span class='g-search'>Groups</span>"
-        elif page.is_descendant_of(IntranetUnitsIndexPage.objects.first()):
-            return "<span class='dept-search'>Departments</span>"
-        elif page.is_descendant_of(NewsIndexPage.objects.first()):
-            return "<span class='n-search'>News</span>"
-        elif page.is_descendant_of(StaffIndexPage.objects.first()):
-            return "<span class='s-search'>Staff</span>"
-        elif page.is_descendant_of(TOCPage.objects.get(title='Forms')):
-            return "<span class='f-search'>Forms</span>"
-        elif page.is_descendant_of(TOCPage.objects.get(title='Documents & Policies')):
-            return "<span class='doc-search'>Documents</span>"
-        elif page.is_descendant_of(TOCPage.objects.get(title='Technical Support')):
-            return "<span class='tech-search'>Tech Support</span>"
-        elif page.is_descendant_of(TOCPage.objects.get(title='Human Resources')):
-            return "<span class='hr-search'>HR</span>"
+        label = None
+
+        # Check if this is LibGuides content (has searchable_content attribute)
+        if hasattr(page, 'searchable_content'):
+            if page.searchable_content == 'guides':
+                label = "Research Guide"
+            elif page.searchable_content == 'assets':
+                label = "Database"
         else:
-            return ""
+            # Wagtail page logic
+            # Special case: LibNewsIndexPage and its descendants should always show "News"
+            try:
+                lib_news_index = LibNewsIndexPage.objects.first()
+                if lib_news_index and (page.id == lib_news_index.id or page.is_descendant_of(lib_news_index)):
+                    label = "News"
+            except:
+                pass
+
+            # Get ancestors excluding root (id=1) and Home page (depth <= 2)
+            if not label:
+                ancestors = page.get_ancestors(inclusive=False).filter(depth__gt=2)
+                if ancestors.exists():
+                    # Get the first child of Home (the top-level section)
+                    top_level = ancestors.first()
+                    label = top_level.title
+
+        # Return formatted span with the label
+        if label:
+            return f"<span class='page-type-label'>{label}</span>"
+        return ""
     except:
         return ""
 
