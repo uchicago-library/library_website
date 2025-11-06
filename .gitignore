@@ -10,9 +10,8 @@
 /cache
 
 node_modules/
-package.json
-package-lock.json
 base/static/bundles/*.LICENSE.txt
+webpack-stats.json
 
 django-errors.log
 library_website/settings/database.db
