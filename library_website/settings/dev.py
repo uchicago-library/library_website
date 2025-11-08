@@ -22,32 +22,33 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 
-# Logging configuration for development
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'formatter': 'default',
-            'filename': '/var/log/django-errors.log',
+# Skip in GitHub Actions - no file permissions
+if os.getenv("GITHUB_ACTIONS") != "true":
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'formatter': 'default',
+                'filename': '/var/log/django-errors.log',
+            },
         },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        'loggers': {
+            'django.request': {
+                'handlers': ['file'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
         },
-    },
-    'formatters': {
-        'default': {
-            'format':
-            '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
+        'formatters': {
+            'default': {
+                'format':
+                '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
+            }
         }
     }
-}
 
 # Database configuration for development
 # Override in local.py if needed (e.g., for production secrets)
