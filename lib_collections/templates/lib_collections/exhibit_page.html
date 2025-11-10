@@ -534,19 +534,26 @@
     {% endif %}
 
 
-    {% if self.staff_contact or unit_contact%}
+    {% if staff_contacts or unit_contact%}
         <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
             <h3>Contact</h3>
             <p>
-                {% if self.staff_contact %}
-                    <a href="{{ staff_url }}">{{ self.staff_contact.title }}</a><br>
-                    <em>{{ self.staff_contact.position_title }}</em><br>
-                    <a href="mailto:{{ self.staff_contact.staff_page_email.first.email|urlencode }}">{{ self.staff_contact.staff_page_email.first.email }}</a><br>
-                    {{ self.staff_contact.staff_page_phone_faculty_exchange.first.phone_number }}<br>
-                    {{ self.staff_contact.staff_page_phone_faculty_exchange.first.faculty_exchange }}<br>
+                {% if staff_contacts %}
+                    {% for contact_info in staff_contacts %}
+                        <a href="{{ contact_info.url }}">{{ contact_info.staff.title }}</a><br>
+                        <em>{{ contact_info.staff.position_title }}</em><br>
+                        {% if contact_info.staff.staff_page_email.first %}
+                            <a href="mailto:{{ contact_info.staff.staff_page_email.first.email|urlencode }}">{{ contact_info.staff.staff_page_email.first.email }}</a><br>
+                        {% endif %}
+                        {% if contact_info.staff.staff_page_phone_faculty_exchange.first %}
+                            {{ contact_info.staff.staff_page_phone_faculty_exchange.first.phone_number }}<br>
+                            {{ contact_info.staff.staff_page_phone_faculty_exchange.first.faculty_exchange }}<br>
+                        {% endif %}
+                        {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
                 {% endif %}
 
-                {% if self.staff_contact and unit_contact%}
+                {% if staff_contacts and unit_contact%}
                     <br/>
                 {% endif %}
 
