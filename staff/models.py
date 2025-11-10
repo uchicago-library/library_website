@@ -251,6 +251,22 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             for u in self.staff_page_units.values()
         ]
 
+    def get_serialized_supervisors(self):
+        """
+        Return a detailed list of supervisors for this staff member.
+
+        Returns:
+            List of dicts containing supervisor information
+        """
+        return [
+            {
+                'name': s.title,
+                'cnetid': s.cnetid,
+                'position_title': s.position_title or ''
+            }
+            for s in self.get_supervisors
+        ]
+
     api_fields = [
         APIField('cnetid'),
         APIField(
@@ -263,6 +279,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         APIField(
             'library_units',
             serializer=serializers.ListField(source='get_serialized_units')
+        ),
+        APIField(
+            'supervisors',
+            serializer=serializers.ListField(source='get_serialized_supervisors')
         ),
     ]
 
