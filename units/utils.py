@@ -1,16 +1,49 @@
 from base.utils import get_xml_from_directory_api
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models.base import ObjectDoesNotExist
 from django.utils.text import slugify
 from file_parsing import is_int
 from library_website.settings import DEFAULT_UNIT, PUBLIC_HOMEPAGE, PUBLIC_SITE
 from openpyxl import Workbook
+from site_settings.models import QuickNumberGroup
 from wagtail.models import Page, Site
 from xml.etree import ElementTree
 
 import csv
 import io
 import re
+
+
+def get_quick_nums_dict():
+    """
+    Get quick numbers dictionary from Wagtail site settings.
+    Results are cached for 24 hours.
+
+    Returns:
+        dict: Quick numbers in format {slug: [{'label': str, 'number': str, 'link': int|None}]}
+    """
+    cached = cache.get('quick_nums_dict')
+    if cached:
+        return cached
+
+    result = {}
+    groups = QuickNumberGroup.objects.prefetch_related('numbers').all()
+
+    for group in groups:
+        result[group.slug] = [
+            {
+                'label': num.label,
+                'number': num.number,
+                'link': num.link.id if num.link else None,
+            }
+            for num in group.numbers.all()
+        ]
+
+    # Cache for 24 hours (86400 seconds)
+    cache.set('quick_nums_dict', result, 86400)
+    return result
+
 
 def get_default_unit():
     """
@@ -134,22 +167,37 @@ def get_quick_nums_for_library_or_dept(request):
     """
     library = request.GET.get('library', None)
     department = request.GET.get('department', None)
-    fallback = slugify('the-university-of-chicago-library')
 
-    assert fallback in settings.QUICK_NUMS, '"the-university-of-chicago-library" is a required key in the "QUICK_NUMS" dictionary'
-    html = get_all_quick_nums_html(settings.QUICK_NUMS[fallback])
+    quick_nums = get_quick_nums_dict()
+
+    # Get default fallback
+    default_group = QuickNumberGroup.objects.filter(is_default=True).first()
+    default_numbers = []
+    if default_group and default_group.slug in quick_nums:
+        default_numbers = quick_nums[default_group.slug]
+
+    # Start with default
+    html = get_all_quick_nums_html(default_numbers)
+
+    # Override with specific library if provided
     if library:
-        html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(library)])
+        library_slug = slugify(library)
+        if library_slug in quick_nums:
+            html = get_all_quick_nums_html(quick_nums[library_slug])
     elif department:
-        try:
-            html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(department)])
-        except(KeyError):
-            from units.models import UnitIndexPage, UnitPage
-            url_path = UnitIndexPage.objects.first().url_path + '/'.join(map(slugify, department.split(' - '))) + '/'
+        dept_slug = slugify(department)
+        if dept_slug in quick_nums:
+            html = get_all_quick_nums_html(quick_nums[dept_slug])
+        else:
+            # Try looking up by unit location
             try:
+                from units.models import UnitIndexPage, UnitPage
+                url_path = UnitIndexPage.objects.first().url_path + '/'.join(map(slugify, department.split(' - '))) + '/'
                 unitpage = UnitPage.objects.live().get(url_path=url_path)
-                html = get_all_quick_nums_html(settings.QUICK_NUMS[slugify(unitpage.location)])
-            except(UnitPage.DoesNotExist, AssertionError, KeyError):
+                location_slug = slugify(unitpage.location)
+                if location_slug in quick_nums:
+                    html = get_all_quick_nums_html(quick_nums[location_slug])
+            except(UnitPage.DoesNotExist, AttributeError):
                 pass
     return html
 

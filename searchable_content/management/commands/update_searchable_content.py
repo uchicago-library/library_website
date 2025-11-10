@@ -2,7 +2,14 @@ from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from searchable_content.models import LibGuidesAssetsSearchableContent, LibGuidesSearchableContent
 from wagtail.search import index
-from library_website.settings.local import LIBGUIDES_CLIENT_ID, LIBGUIDES_CLIENT_SECRET, LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT, LIBGUIDES_API_ASSETS_AZ_ENDPOINT, LIBGUIDES_API_GUIDES_ENDPOINT, LIBGUIDES_OAI_PMH_ENDPOINT 
+from library_website.settings import (
+    LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT,
+    LIBGUIDES_API_ASSETS_AZ_ENDPOINT,
+    LIBGUIDES_OAI_PMH_ENDPOINT,
+    LIBGUIDES_CLIENT_ID,
+    LIBGUIDES_CLIENT_SECRET,
+    LIBGUIDES_API_GUIDES_ENDPOINT
+)
 import datetime 
 import json
 import pytz

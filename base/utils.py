@@ -21,7 +21,7 @@ from wagtail.documents.models import Document
 from wagtail.models import Page
 
 try:
-    from library_website.settings.local import (
+    from library_website.settings import (
         DIRECTORY_PASSWORD,
         DIRECTORY_USERNAME,
         DIRECTORY_WEB_SERVICE,

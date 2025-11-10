@@ -14,7 +14,7 @@ from http.client import HTTPSConnection
 from xml.etree import ElementTree
 
 try:
-    from library_website.settings.local import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
+    from library_website.settings import DIRECTORY_USERNAME, DIRECTORY_PASSWORD
 except(ImportError):
     import os
     DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
