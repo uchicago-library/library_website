@@ -1342,12 +1342,6 @@ class DefaultBodyFields(StreamBlock):
         help_text='Audio or video files that have been uploaded into Wagtail',
         group="Images and Media",
     )
-    video = EmbedBlock(
-        icon='media',
-        label='External Video Embed (Legacy - No Title)',
-        help_text='Embed video that is hosted on YouTube or Vimeo. NOTE: This block does not support title attributes for ADA compliance. Use "External Video with Title" instead.',
-        group="Images and Media",
-    )
     video_with_title = VideoEmbedBlock(
         icon='media',
         label='External Video with Title',
