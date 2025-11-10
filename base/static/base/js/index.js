@@ -13,6 +13,7 @@ const Input = props => {
     placeholder,
     ariaDescribedBy,
     required,
+    disabled,
   } = props
   return (
     <input
@@ -23,6 +24,7 @@ const Input = props => {
       placeholder={placeholder}
       value={value}
       required={required}
+      disabled={disabled}
       aria-describedby={ariaDescribedBy}
       className="form-control"
     />
@@ -38,6 +40,7 @@ Input.defaultProps = {
   placeholder: null,
   ariaDescribedBy: null,
   required: null,
+  disabled: false,
 }
 
 Input.propTypes = {
@@ -49,10 +52,11 @@ Input.propTypes = {
   placeholder: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
+  disabled: PropTypes.bool,
 }
 
 const TextArea = props => {
-  const { id, type, name, required, value, onChange, ariaDescribedBy } = props
+  const { id, type, name, required, value, onChange, ariaDescribedBy, disabled } = props
   return (
     <textarea
       id={id}
@@ -62,6 +66,7 @@ const TextArea = props => {
       name={name}
       aria-describedby={ariaDescribedBy}
       required={required}
+      disabled={disabled}
       value={value}
     />
   )
@@ -75,6 +80,7 @@ TextArea.defaultProps = {
   name: null,
   ariaDescribedBy: null,
   required: null,
+  disabled: false,
 }
 
 TextArea.propTypes = {
@@ -85,6 +91,7 @@ TextArea.propTypes = {
   name: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
+  disabled: PropTypes.bool,
 }
 
 const Option = props => {
@@ -130,6 +137,7 @@ const Select = props => {
     required,
     options,
     ariaDescribedBy,
+    disabled,
   } = props
   return (
     <select
@@ -141,6 +149,7 @@ const Select = props => {
       value={value}
       aria-describedby={ariaDescribedBy}
       required={required}
+      disabled={disabled}
     >
       {options.map(e => makeOption(e))}
     </select>
@@ -155,6 +164,7 @@ Select.defaultProps = {
   name: null,
   ariaDescribedBy: null,
   required: null,
+  disabled: false,
 }
 
 Select.propTypes = {
@@ -165,6 +175,7 @@ Select.propTypes = {
   name: PropTypes.string,
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
+  disabled: PropTypes.bool,
   options: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
@@ -219,6 +230,21 @@ FormFieldHelpText.propTypes = {
   text: PropTypes.string.isRequired,
 }
 
+const DefinitionListItem = props => {
+  const { term, definition } = props
+  return (
+    <>
+      <dt>{term}</dt>
+      <dd>{definition}</dd>
+    </>
+  )
+}
+
+DefinitionListItem.propTypes = {
+  term: PropTypes.string.isRequired,
+  definition: PropTypes.string.isRequired,
+}
+
 export {
   Input,
   TextArea,
@@ -227,4 +253,5 @@ export {
   Legend,
   RequiredFieldsText,
   FormFieldHelpText,
+  DefinitionListItem,
 }

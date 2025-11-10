@@ -10,8 +10,6 @@
 /cache
 
 node_modules/
-package.json
-package-lock.json
 base/static/bundles/*.LICENSE.txt
 
 django-errors.log

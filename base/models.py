@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import urllib
 from datetime import datetime
 
@@ -63,7 +64,9 @@ from wagtail.blocks import (
 )
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.embeds import embeds
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.embeds.exceptions import EmbedException
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page, Site
@@ -1237,6 +1240,60 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
         icon = 'media'
 
 
+class VideoEmbedBlock(StructBlock):
+    """
+    Custom video embed block with title attribute for ADA compliance.
+    Addresses accessibility issues with external video embeds from YouTube/Vimeo.
+    """
+
+    url = URLBlock(
+        required=True,
+        help_text='Video URL from YouTube or Vimeo'
+    )
+    title = CharBlock(
+        required=True,
+        max_length=255,
+        help_text='Descriptive title for screen readers (e.g., "Introduction to Python Programming")'
+    )
+
+    def render(self, value, context=None):
+        if not value or not value.get('url'):
+            return ''
+
+        try:
+            # Get the embed HTML from Wagtail's embed service
+            embed = embeds.get_embed(value['url'])
+            html = embed.html
+
+            # Inject the title attribute into the iframe tag using regex
+            # This handles iframes with or without existing title attributes
+            title = value.get('title', '').replace('"', '&quot;')  # Escape quotes
+
+            # Replace existing title attribute or add new one
+            if 'title=' in html:
+                # Replace existing title
+                html = re.sub(
+                    r'title="[^"]*"',
+                    f'title="{title}"',
+                    html
+                )
+            else:
+                # Add title attribute after the opening <iframe tag
+                html = re.sub(
+                    r'<iframe\s',
+                    f'<iframe title="{title}" ',
+                    html,
+                    count=1
+                )
+
+            return mark_safe(html)
+        except EmbedException:
+            return ''
+
+    class Meta:
+        icon = 'media'
+
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared
@@ -1285,10 +1342,9 @@ class DefaultBodyFields(StreamBlock):
         help_text='Audio or video files that have been uploaded into Wagtail',
         group="Images and Media",
     )
-    video = EmbedBlock(
+    video_with_title = VideoEmbedBlock(
         icon='media',
-        label='External Video Embed',
-        help_text='Embed video that is hosted on YouTube or Vimeo',
+        label='External Video with Title',
         group="Images and Media",
     )
     button = ButtonBlock(group="Links")
