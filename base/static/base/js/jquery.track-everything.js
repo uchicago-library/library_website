@@ -619,4 +619,5 @@
         // Add options to the search widget search button on change.
         document.body.addEventListener('change', handleClick.optionChange, true);
     });
+
 })();
