@@ -50,6 +50,7 @@
 
     const ignoreDeferUrls = [
         "rooms.lib.uchicago.edu/appointments-auth/prepare",
+        "/media/images/",
     ];
 
     // Rules for applyHtmlProperties
@@ -584,8 +585,9 @@
                 return;
             }
 
+            const target = event.target.closest('a, button, input');
             console.log('Checking if navigation should be deferred. Event:', event, 'event.target:', event.target, 'event.target.getAttribute("data-toggle"):', event.target.getAttribute('data-toggle'), 'is lightbox:', event.target.getAttribute('data-toggle') === "lightbox");
-            if (event.target.getAttribute('data-toggle') === "lightbox" || event.target.classList.contains('holdingslink')) {
+            if (target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
                 // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
                 return;
             }
