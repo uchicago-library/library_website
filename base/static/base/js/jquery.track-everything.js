@@ -579,23 +579,19 @@
         },
         deferClick(eventName, event, href, isNewTab) {
             // defer links that navigate away
-            console.log('Checking if navigation should be deferred. Event:', event, 'event.target:', event.target);
 
             if (href && ignoreDeferUrls.some(u => href.toLowerCase().includes(u))) {
-                console.log('Not deferring, ignoreDeferUrls');
                 // Don't interfere with auth links
                 return;
             }
 
             const target = event.target.closest('a, button, input');
             if (target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
-                console.log('Not deferring, lightbox or holdingslink');
                 // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
                 return;
             }
 
             if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
-                console.log('Deferring navigation.');
                 event.preventDefault(); // delay navigation just slightly
                 setTimeout(() => {
                     window.location.href = href;
