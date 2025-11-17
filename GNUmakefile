@@ -9,6 +9,5 @@ docker: local
 .PHONY: local
 local:
 	git -C $(LOCAL_PY_PATH) pull
-	rm -f $(SETTINGS_PATH)/local.py
+	$(RM) $(SETTINGS_PATH)/local.py
 	install -m 444 $(LOCAL_PY_PATH)/local.py $(SETTINGS_PATH)
-
