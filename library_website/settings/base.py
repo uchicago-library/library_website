@@ -265,6 +265,7 @@ CORS_ALLOWED_ORIGINS = (
     'http://guides.lib.uchicago.edu',
     'https://guides.lib.uchicago.edu',
     'https://rooms.lib.uchicago.edu',
+    'http://sfxdemo.lib.uchicago.edu',
     'https://sfx.lib.uchicago.edu',
     'https://sfx.lib.uchicago.edu:3103',
 )
@@ -352,62 +353,6 @@ LOOP_EMAIL_NOTIFICATION_FOOTER = "As always, contact <a href='mailto:intranet@li
 # Site IDs
 PUBLIC_SITE = 3
 
-# Quick numbers for directory
-# Links should be integers (page ID)
-# If a link is present, the phone number
-# will not be used
-QUICK_NUMS = {
-    'the-university-of-chicago-library': [
-        {'label': 'Main Telephone', 'number': '773-702-8740', 'link': None},
-        {'label': 'Privileges', 'number': '773-702-8782', 'link': None},
-        {'label': 'General Reference', 'number': '773-702-4685', 'link': None},
-    ],
-    'the-joseph-regenstein-library': [
-        {'label': 'Main Telephone', 'number': '773-702-8740', 'link': None},
-        {'label': 'Privileges', 'number': '773-702-8782', 'link': None},
-        {'label': 'General Reference', 'number': '773-702-4685', 'link': None},
-    ],
-    'the-john-crerar-library': [
-        {'label': 'Crerar Circulation', 'number': '773-702-7409', 'link': None},
-        {'label': 'Crerar Reference', 'number': '773-702-7715', 'link': None},
-    ],
-    'the-dangelo-law-library': [
-        {
-            'label': 'D\'Angelo Law Main Telephone',
-            'number': '773-702-9615',
-            'link': None,
-        },
-        {'label': 'D\'Angelo Law Circulation', 'number': '773-702-0213', 'link': None},
-        {'label': 'D\'Angelo Law Reference', 'number': '773-702-9631', 'link': None},
-    ],
-    'eckhart-library': [
-        {'label': 'Eckhart Library', 'number': '773-702-8778', 'link': None}
-    ],
-    'the-joe-and-rika-mansueto-library': [
-        {'label': 'Mansueto Circulation Desk', 'number': '773-702-0901', 'link': None}
-    ],
-    'the-hanna-holborn-gray-special-collections-research-center': [
-        {'label': 'SCRC Front Desk', 'number': '773-702-8705', 'link': None},
-        {'label': 'SCRC Contact Form', 'number': '', 'link': SCRC_ASK_PAGE},
-    ],
-    'the-social-work-library': [
-        {'label': 'SSA Library', 'number': '773-702-1199', 'link': None}
-    ],
-}
-
-# This setting is used in units/models.py and staff/templatetags/staff_tags.py.
-# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead
-BUILDINGS = (
-    (1, 'The John Crerar Library'),
-    (2, 'The D\'Angelo Law Library'),
-    (3, 'Eckhart Library'),
-    (4, 'The Joe and Rika Mansueto Library'),
-    (5, 'The Joseph Regenstein Library'),
-    (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Work Library'),
-    (8, 'Ryerson Physical Laboratory'),
-)
-
 # Location pages
 SCRC_BUILDING_ID = 2971
 CRERAR_BUILDING_ID = 2713
@@ -432,6 +377,10 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'cache'),
         'KEY_PREFIX': 'wagtailcache',
         'TIMEOUT': 21600,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 5,
+        }
     },
 }
 
@@ -463,9 +412,15 @@ WAGTAILAPI_LIMIT_MAX = None
 OWNCLOUD_USERNAME = 'ldr_oc_admin'
 OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'
 
+# Directory service
+DIRECTORY_WEB_SERVICE = 'directory.uchicago.edu'
+
 # Uploaded files and documents should have group read/write permissions
 # and world read permissions.
 FILE_UPLOAD_PERMISSIONS = 0o664
+
+# Email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Config for frontent dependencies
 WEBPACK_LOADER = {
@@ -476,8 +431,6 @@ WEBPACK_LOADER = {
 }
 
 # Public news site
-NEWS_FEED_DEFAULT_VISIBLE = 9
-NEWS_FEED_INCREMENT_BY = 18
 LIBRA_ID = 1664
 STATIC_NEWS_FEED = os.path.join(STATIC_ROOT, 'lib_news', 'files', 'lib-news.json')
 DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*&limit=1000'
@@ -519,17 +472,13 @@ if 'test' in sys.argv:
 IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 
 MARKLOGIC_LDR_PORT = 8008
-
 MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
-
 MARKLOGIC_LDR_ROUTE = "/v1/graphs"
-
 MARKLOGIC_LDR_URL = "%s:%i%s" % (
     MARKLOGIC_LDR_BASE,
     MARKLOGIC_LDR_PORT,
     MARKLOGIC_LDR_ROUTE,
 )
-
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
 E_FINDING_AIDS_URL = "http://www.lib.uchicago.edu/e/scrc/findingaids/view.php"
@@ -582,6 +531,11 @@ FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
 FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 
 MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
+
+# LibGuides API endpoints
+LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT = 'https://lgapi-us.libapps.com/1.2/oauth/token'
+LIBGUIDES_API_ASSETS_AZ_ENDPOINT = 'https://lgapi-us.libapps.com/1.2/az'
+LIBGUIDES_OAI_PMH_ENDPOINT = 'http://guides.lib.uchicago.edu/oai.php?verb=ListRecords&metadataPrefix=oai_dc'
 
 # Cloudflare Turnstile settings (using test keys that always pass)
 TURNSTILE_SITE_KEY = '3x00000000000000000000FF'

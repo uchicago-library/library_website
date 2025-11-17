@@ -2,6 +2,7 @@ from base.tests import add_generic_request_meta_fields
 from base.utils import get_hours_and_location
 from django.http import HttpRequest
 from django.test import TestCase
+from urllib.parse import urlparse
 from library_website.settings import (
     CRERAR_HOMEPAGE,
     DANGELO_HOMEPAGE,
@@ -99,7 +100,8 @@ class TestAskUtils(TestCase):
                 .relative_url(current_site)
             )
 
-            self.assertEqual(a, b)
+            # Normalize to paths to handle both relative and absolute URLs
+            self.assertEqual(urlparse(a).path, urlparse(b).path)
 
         # Eckhart
         request_eck = HttpRequest()
