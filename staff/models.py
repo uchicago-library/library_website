@@ -14,7 +14,7 @@ from rest_framework import serializers
 from subjects.models import Subject
 from units.models import BUILDINGS
 from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
+    FieldPanel, HelpPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
     TabbedInterface
 )
 from wagtail.api import APIField
@@ -385,6 +385,13 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             return StaffPage.objects.none()
 
     content_panels = Page.content_panels + [
+        HelpPanel(
+            content='<div class="help-block help-info"><p><strong>Note</strong>: Your contact information '
+            '(name, job title, email address, etc) in the Library\'s directory comes from the '
+            '<a href="https://directory.uchicago.edu/"">University\'s directory</a>. '
+            'See <a href="https://loop.lib.uchicago.edu/documentation/edit-staff-profile/managing-your-directory-information/">'
+            'Managing Your Directory Information</a> to learn how to make changes.</p></div>',
+        ),
         FieldPanel('profile_picture'),
         FieldPanel('pronouns'),
         FieldPanel('bio'),
@@ -446,12 +453,19 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             ObjectList(
                 Page.settings_panels, heading='Settings', classname="settings"
             ),
-            ObjectList(human_resources_panels, heading='Human Resources Info'),
+            ObjectList(
+                human_resources_panels,
+                heading='Human Resources Info',
+                permission='staff.change_staff_hr_info'
+            ),
         ]
     )
 
     class Meta:
         ordering = ['last_name', 'first_name']
+        permissions = [
+            ("change_staff_hr_info", "Can edit Human Resources Info for staff pages"),
+        ]
 
     def get_context(self, request):
         position_title = self.position_title

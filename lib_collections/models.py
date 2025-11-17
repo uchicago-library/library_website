@@ -1676,6 +1676,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             page = Page.objects.get(id=page_id)
             title = str(page)
             url = page.relative_url(site)
+            # Handle case where relative_url returns None
+            if url is None:
+                url = ''
         except Page.DoesNotExist:
             return ('', '')
         return (title, url)
@@ -1699,6 +1702,9 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
         staff_member = str(librarian)
         title = librarian.position_title
         url = librarian.public_page.relative_url(site)
+        # Handle case where relative_url returns None
+        if url is None:
+            url = ''
         thumb = librarian.profile_picture
         try:
             email = librarian.staff_page_email.values_list('email', flat=True)[0]
@@ -2038,6 +2044,16 @@ class ExhibitPage(PublicBasePage):
         ),
     ]
 
+    widget_content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('enable_index'),
+                FieldPanel('display_hierarchical_listing'),
+            ],
+            heading='Auto-generated Sitemap',
+        ),
+    ]
+
     content_panels = (
         Page.content_panels
         + [
@@ -2157,6 +2173,7 @@ class ExhibitPage(PublicBasePage):
             ObjectList(content_panels, heading='Content'),
             ObjectList(PublicBasePage.promote_panels, heading='Promote'),
             ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+            ObjectList(widget_content_panels, heading='Widgets'),
             ObjectList(web_exhibit_panels, heading='Web Exhibit'),
         ]
     )

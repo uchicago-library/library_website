@@ -689,9 +689,9 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
                 FieldPanel('has_all_gender_restrooms'),
             ], classname='location-booleans'
         ),
-        MultiFieldPanel(PhoneNumber.content_panels, heading='Phone Number'),
+        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
         InlinePanel('location_donor_page_placements', label='Donor'),
-    ] + Email.content_panels + Address.content_panels + PublicBasePage.content_panels
+    ] + Email.panels + Address.content_panels + PublicBasePage.content_panels
 
     widget_content_panels = [
         FieldPanel('page_alerts'),

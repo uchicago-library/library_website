@@ -109,11 +109,9 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-
     # Required for shibboleth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
-
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -141,10 +139,11 @@ TEMPLATES = [
             ],
             'loaders': [
                 (
-                    'django.template.loaders.cached.Loader', [
+                    'django.template.loaders.cached.Loader',
+                    [
                         'django.template.loaders.filesystem.Loader',
                         'django.template.loaders.app_directories.Loader',
-                    ]
+                    ],
                 ),
             ],
         },
@@ -205,11 +204,15 @@ PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
 
 # Postal code format
 POSTAL_CODE_FORMAT = '^[0-9]{5}$'
-POSTAL_CODE_ERROR_MSG = 'Please enter the postal code as a five digit number, e.g. 60637'
+POSTAL_CODE_ERROR_MSG = (
+    'Please enter the postal code as a five digit number, e.g. 60637'
+)
 
 # ORCID
 ORCID_FORMAT = '^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$'
-ORCID_ERROR_MSG = 'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444'
+ORCID_ERROR_MSG = (
+    'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444'
+)
 
 # django-compressor settings
 COMPRESS_PRECOMPILERS = (('text/x-scss', 'django_libsass.SassCompiler'),)
@@ -217,10 +220,11 @@ COMPRESS_PRECOMPILERS = (('text/x-scss', 'django_libsass.SassCompiler'),)
 # django-static-precompilers
 STATIC_PRECOMPILER_COMPILERS = (
     (
-        'static_precompiler.compilers.libsass.SCSS', {
+        'static_precompiler.compilers.libsass.SCSS',
+        {
             'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
-            'output_style': 'compressed'
-        }
+            'output_style': 'compressed',
+        },
     ),
 )
 
@@ -238,9 +242,7 @@ WAGTAILSEARCH_BACKENDS = {
                 'index': {
                     'analysis': {
                         'analyzer': {
-                            'default': {
-                                'type': 'english'
-                            },
+                            'default': {'type': 'english'},
                         },
                     }
                 }
@@ -263,6 +265,7 @@ CORS_ALLOWED_ORIGINS = (
     'http://guides.lib.uchicago.edu',
     'https://guides.lib.uchicago.edu',
     'https://rooms.lib.uchicago.edu',
+    'http://sfxdemo.lib.uchicago.edu',
     'https://sfx.lib.uchicago.edu',
     'https://sfx.lib.uchicago.edu:3103',
 )
@@ -314,8 +317,16 @@ HOURS_PAGE = 4084
 # Library news categories
 NEWS_CATEGORIES = set(
     [
-        'Resources', 'Research', 'Teaching', 'Events', 'Exhibits', 'People',
-        'Hours & Access', 'Spaces', 'Spotlight', 'From the Director'
+        'Resources',
+        'Research',
+        'Teaching',
+        'Events',
+        'Exhibits',
+        'People',
+        'Hours & Access',
+        'Spaces',
+        'Spotlight',
+        'From the Director',
     ]
 )
 
@@ -334,117 +345,13 @@ SCRC_HOMEPAGE = 1756
 DISSERTATION_HOMEPAGE = 1672
 
 # Loop Email Notification header and footer
-LOOP_EMAIL_NOTIFICATION_HEADER = "Here is a round-up of some interesting Loop news stories that you may have missed."
+LOOP_EMAIL_NOTIFICATION_HEADER = (
+    "Here is a round-up of some interesting Loop news stories that you may have missed."
+)
 LOOP_EMAIL_NOTIFICATION_FOOTER = "As always, contact <a href='mailto:intranet@lib.uchicago.edu'>intranet@lib.uchicago.edu</a> with any questions or feedback regarding Loop."
 
 # Site IDs
 PUBLIC_SITE = 3
-
-# Quick numbers for directory
-# Links should be integers (page ID)
-# If a link is present, the phone number
-# will not be used
-QUICK_NUMS = {
-    'the-university-of-chicago-library': [
-        {
-            'label': 'Main Telephone',
-            'number': '773-702-8740',
-            'link': None
-        }, {
-            'label': 'Privileges',
-            'number': '773-702-8782',
-            'link': None
-        }, {
-            'label': 'General Reference',
-            'number': '773-702-4685',
-            'link': None
-        }
-    ],
-    'the-joseph-regenstein-library': [
-        {
-            'label': 'Main Telephone',
-            'number': '773-702-8740',
-            'link': None
-        }, {
-            'label': 'Privileges',
-            'number': '773-702-8782',
-            'link': None
-        }, {
-            'label': 'General Reference',
-            'number': '773-702-4685',
-            'link': None
-        }
-    ],
-    'the-john-crerar-library': [
-        {
-            'label': 'Crerar Circulation',
-            'number': '773-702-7409',
-            'link': None
-        }, {
-            'label': 'Crerar Reference',
-            'number': '773-702-7715',
-            'link': None
-        }
-    ],
-    'the-dangelo-law-library': [
-        {
-            'label': 'D\'Angelo Law Main Telephone',
-            'number': '773-702-9615',
-            'link': None
-        }, {
-            'label': 'D\'Angelo Law Circulation',
-            'number': '773-702-0213',
-            'link': None
-        }, {
-            'label': 'D\'Angelo Law Reference',
-            'number': '773-702-9631',
-            'link': None
-        }
-    ],
-    'eckhart-library':
-    [{
-        'label': 'Eckhart Library',
-        'number': '773-702-8778',
-        'link': None
-    }],
-    'the-joe-and-rika-mansueto-library': [
-        {
-            'label': 'Mansueto Circulation Desk',
-            'number': '773-702-0901',
-            'link': None
-        }
-    ],
-    'the-hanna-holborn-gray-special-collections-research-center': [
-        {
-            'label': 'SCRC Front Desk',
-            'number': '773-702-8705',
-            'link': None
-        }, {
-            'label': 'SCRC Contact Form',
-            'number': '',
-            'link': SCRC_ASK_PAGE
-        }
-    ],
-    'the-social-work-library':
-    [{
-        'label': 'SSA Library',
-        'number': '773-702-1199',
-        'link': None
-    }],
-}
-
-# This setting is used in units/models.py and staff/templatetags/staff_tags.py.
-# The code should be updated to use LocationPage.objects.live().filter(is_building=True) instead
-BUILDINGS = (
-    (1, 'The John Crerar Library'),
-    (2, 'The D\'Angelo Law Library'),
-    (3, 'Eckhart Library'),
-    (4, 'The Joe and Rika Mansueto Library'),
-    (5, 'The Joseph Regenstein Library'),
-    (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Work Library'),
-    (8, 'Ryerson Physical Laboratory'),
-)
 
 # Location pages
 SCRC_BUILDING_ID = 2971
@@ -470,7 +377,11 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'cache'),
         'KEY_PREFIX': 'wagtailcache',
         'TIMEOUT': 21600,
-    }
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 5,
+        }
+    },
 }
 
 # Base URL for LibAnswers services
@@ -491,7 +402,7 @@ LIBCHAT_IDS = {
     'dissertation-office': '11495',
     'law': '11496',
     'crerar': '9650',
-    'ssa': '9650'
+    'ssa': '9650',
 }
 
 # API configuration
@@ -501,9 +412,15 @@ WAGTAILAPI_LIMIT_MAX = None
 OWNCLOUD_USERNAME = 'ldr_oc_admin'
 OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'
 
+# Directory service
+DIRECTORY_WEB_SERVICE = 'directory.uchicago.edu'
+
 # Uploaded files and documents should have group read/write permissions
 # and world read permissions.
 FILE_UPLOAD_PERMISSIONS = 0o664
+
+# Email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Config for frontent dependencies
 WEBPACK_LOADER = {
@@ -514,12 +431,8 @@ WEBPACK_LOADER = {
 }
 
 # Public news site
-NEWS_FEED_DEFAULT_VISIBLE = 9
-NEWS_FEED_INCREMENT_BY = 18
 LIBRA_ID = 1664
-STATIC_NEWS_FEED = os.path.join(
-    STATIC_ROOT, 'lib_news', 'files', 'lib-news.json'
-)
+STATIC_NEWS_FEED = os.path.join(STATIC_ROOT, 'lib_news', 'files', 'lib-news.json')
 DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*&limit=1000'
 
 # Cache time for news site categories is 3 hours
@@ -559,20 +472,17 @@ if 'test' in sys.argv:
 IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
 
 MARKLOGIC_LDR_PORT = 8008
-
 MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
-
 MARKLOGIC_LDR_ROUTE = "/v1/graphs"
-
-MARKLOGIC_LDR_URL = "%s:%i%s" % (MARKLOGIC_LDR_BASE,
-                                 MARKLOGIC_LDR_PORT,
-                                 MARKLOGIC_LDR_ROUTE
-                                 )
-
+MARKLOGIC_LDR_URL = "%s:%i%s" % (
+    MARKLOGIC_LDR_BASE,
+    MARKLOGIC_LDR_PORT,
+    MARKLOGIC_LDR_ROUTE,
+)
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
 E_FINDING_AIDS_URL = "http://www.lib.uchicago.edu/e/scrc/findingaids/view.php"
-E_FINDING_AIDS_QUERY_STRING = "?eadid=" 
+E_FINDING_AIDS_QUERY_STRING = "?eadid="
 E_FINDING_AIDS = E_FINDING_AIDS_URL + E_FINDING_AIDS_QUERY_STRING
 
 EBOOKS_SEARCH = 'https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor='
@@ -620,16 +530,18 @@ FOLIO_TYPE_ISBN_ID = '8261054f-be78-422d-bd51-4ed9f33c3422'
 FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
 FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
 
-# CNetIDs for people in the University or Library directory that
-# we wish to keep out of sync. People listed here will not show
-# up in the "out of sync staff members" email report.
-DO_NOT_SYNC = []
 MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
+
+# LibGuides API endpoints
+LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT = 'https://lgapi-us.libapps.com/1.2/oauth/token'
+LIBGUIDES_API_ASSETS_AZ_ENDPOINT = 'https://lgapi-us.libapps.com/1.2/az'
+LIBGUIDES_OAI_PMH_ENDPOINT = 'http://guides.lib.uchicago.edu/oai.php?verb=ListRecords&metadataPrefix=oai_dc'
 
 # Cloudflare Turnstile settings (using test keys that always pass)
 TURNSTILE_SITE_KEY = '3x00000000000000000000FF'
 TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'
-TURNSTILE_MODE = 'non-interactive'  # Options: 'managed', 'non-interactive', 'invisible'
+# Options: 'managed', 'non-interactive', 'invisible'
+TURNSTILE_MODE = 'non-interactive'
 TURNSTILE_APPEARANCE = 'always'
 
 # 2 weeks (in seconds)
@@ -649,4 +561,5 @@ TURNSTILE_EXCLUDED_PATHS = [
     r'^/shib/.*$',
     r'^/_util/.*$',
     r'^/api/.*$',
+    r'^/rss/.*$',
 ]

@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import urllib
 from datetime import datetime
 
@@ -63,7 +64,9 @@ from wagtail.blocks import (
 )
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.documents.blocks import DocumentChooserBlock
+from wagtail.embeds import embeds
 from wagtail.embeds.blocks import EmbedBlock
+from wagtail.embeds.exceptions import EmbedException
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page, Site
@@ -271,7 +274,7 @@ class Email(models.Model):
     email_label = models.CharField(max_length=254, blank=True)
     email = models.EmailField(max_length=254, blank=True)
 
-    content_panels = [
+    panels = [
         MultiFieldPanel(
             [
                 FieldPanel('email_label'),
@@ -294,7 +297,7 @@ class PhoneNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     phone_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    content_panels = [
+    panels = [
         MultiFieldPanel(
             [
                 FieldPanel('phone_label'),
@@ -316,7 +319,7 @@ class FaxNumber(models.Model):
     phone_regex = RegexValidator(regex=PHONE_FORMAT, message=PHONE_ERROR_MSG)
     fax_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
-    content_panels = [
+    panels = [
         FieldPanel('fax_number'),
     ]
 
@@ -354,7 +357,7 @@ class LinkFields(models.Model):
         else:
             return self.link_external
 
-    content_panels = [
+    panels = [
         FieldPanel('link_external'),
         PageChooserPanel('link_page'),
         FieldPanel('link_document'),
@@ -477,9 +480,9 @@ class LinkedText(LinkFields):
 
     link_text = models.CharField(max_length=255, blank=True)
 
-    content_panels = [
+    panels = [
         FieldPanel('link_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -491,10 +494,10 @@ class ContactFields(Email, PhoneNumber, FaxNumber, LinkedText):
     """
 
     content_panels = (
-        Email.content_panels
-        + PhoneNumber.content_panels
-        + FaxNumber.content_panels
-        + LinkedText.content_panels
+        Email.panels
+        + PhoneNumber.panels
+        + FaxNumber.panels
+        + LinkedText.panels
     )
 
     class Meta:
@@ -582,7 +585,7 @@ class LinkedTextOrLogo(LinkedText):
 
     panels = [
         FieldPanel('logo'),
-    ] + LinkedText.content_panels
+    ] + LinkedText.panels
 
     class Meta:
         abstract = True
@@ -598,7 +601,7 @@ class AbstractButton(LinkFields):
 
     panels = [
         FieldPanel('button_text'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -630,7 +633,7 @@ class AbstractReport(LinkFields):
     panels = [
         FieldPanel('date'),
         FieldPanel('summary'),
-    ] + LinkFields.content_panels
+    ] + LinkFields.panels
 
     class Meta:
         abstract = True
@@ -1237,6 +1240,60 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
         icon = 'media'
 
 
+class VideoEmbedBlock(StructBlock):
+    """
+    Custom video embed block with title attribute for ADA compliance.
+    Addresses accessibility issues with external video embeds from YouTube/Vimeo.
+    """
+
+    url = URLBlock(
+        required=True,
+        help_text='Video URL from YouTube or Vimeo'
+    )
+    title = CharBlock(
+        required=True,
+        max_length=255,
+        help_text='Descriptive title for screen readers (e.g., "Introduction to Python Programming")'
+    )
+
+    def render(self, value, context=None):
+        if not value or not value.get('url'):
+            return ''
+
+        try:
+            # Get the embed HTML from Wagtail's embed service
+            embed = embeds.get_embed(value['url'])
+            html = embed.html
+
+            # Inject the title attribute into the iframe tag using regex
+            # This handles iframes with or without existing title attributes
+            title = value.get('title', '').replace('"', '&quot;')  # Escape quotes
+
+            # Replace existing title attribute or add new one
+            if 'title=' in html:
+                # Replace existing title
+                html = re.sub(
+                    r'title="[^"]*"',
+                    f'title="{title}"',
+                    html
+                )
+            else:
+                # Add title attribute after the opening <iframe tag
+                html = re.sub(
+                    r'<iframe\s',
+                    f'<iframe title="{title}" ',
+                    html,
+                    count=1
+                )
+
+            return mark_safe(html)
+        except EmbedException:
+            return ''
+
+    class Meta:
+        icon = 'media'
+
+
 class DefaultBodyFields(StreamBlock):
     """
     Standard default streamfield options to be shared
@@ -1285,10 +1342,9 @@ class DefaultBodyFields(StreamBlock):
         help_text='Audio or video files that have been uploaded into Wagtail',
         group="Images and Media",
     )
-    video = EmbedBlock(
+    video_with_title = VideoEmbedBlock(
         icon='media',
-        label='External Video Embed',
-        help_text='Embed video that is hosted on YouTube or Vimeo',
+        label='External Video with Title',
         group="Images and Media",
     )
     button = ButtonBlock(group="Links")
@@ -2231,7 +2287,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         if self.exclude_from_sitemap_xml:
             return []
         else:
-            return super(PublicBasePage, self).get_sitemap_urls()
+            return super(PublicBasePage, self).get_sitemap_urls(request)
 
     def get_friendly_name(self):
         """

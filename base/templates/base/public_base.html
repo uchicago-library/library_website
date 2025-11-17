@@ -2,8 +2,8 @@
 {% load cache compress static wagtailuserbar %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
-{% image banner original as banner %}
-{% image banner_feature original as banner_feature %}
+{% image banner fill-1920x400 as banner %}
+{% image banner_feature fill-400x400 as banner_feature %}
 {% load public_tags %}
 {% load staff_tags %}
 <!DOCTYPE html>
@@ -110,7 +110,7 @@
                 <div class="alert {{alert_level}}" role="alert">
                     {{alert_message|richtext}}
                     {% if alert_more_info|striptags %}
-                        <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="Alert Banner" data-ga-subcategory="Alert Banner" data-ga-label="Alert Banner More Info">More info...</a></span>
+                        <span class="alert-link-wrapper"> | <a id="alert-more" href="{{alert_link}}" data-ga-category="Floating" data-ga-subcategory="Alert Banner" data-ga-label="More Info...">More info...</a></span>
                     {% endif %}
                 </div>
             {% endif %}
@@ -181,14 +181,16 @@
                     {% endif %}
                     <!-- // Left Sidebar -->
 
+                    {% if page_type|slugify != 'libnewspage' and page_type|slugify != 'libnewsindexpage' %}
                     <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
                         {% include "base/includes/public_site_breadcrumbs.html" %}
                     </div>
+                    {% endif %}
                     {% block above_main_content %}{% endblock %}
                     <div class="{{content_div_css}}" id="content" role="main">
                         {% if has_left_sidebar %}
                             <!-- Off-Canvas Toggle Button -->
-                            <div class="visible-xs visible-sm toggle-side">
+                            <div class="visible-xs visible-sm toggle-side" data-ga-category="Navigation" data-ga-subcategory="Left Sidebar">
                                 <button type="button" class="btn btn-sidebar law btn-xs" data-toggle="offcanvas" aria-label="Toggle sidebar menu"><i class="fa fa-caret-square-o-right fa-lg" aria-hidden="true" title="Toggle sidebar menu"></i></button>
                             </div>
                             <!-- // End Off-Canvas Toggle Button -->
@@ -203,7 +205,7 @@
                         <!-- Main Content -->
                         {% if self.has_right_sidebar %}
                             <div class="row">
-                                <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
+                                <div class="col-xs-12 col-md-9 centermain" data-ga-category="Main"> <!-- Center Content -->
                         {% endif %}
 
                         {% if carousel_items %}
@@ -219,7 +221,7 @@
 
                                 <div class="carousel-inner">
                                     {% for item in carousel_items %}
-                                        {% image item.image original as nifty %}
+                                        {% image item.image fill-1920x500 as nifty %}
                                         {% if nifty %}
                                             <article class="item {% if forloop.first %}active{% endif %}">
                                                 {% if item.link %}
@@ -277,8 +279,8 @@
 
                         <div class="row">
                             {% if self.has_richtext_widget %}
-                                <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides" data-ga-category="Guides Widget">
-                                    <div class="home-module" data-ga-subcategory="View All">
+                                <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-explore-research-guides" data-ga-subcategory="Guides Widget">
+                                    <div class="home-module">
                                         <h2>{{self.rich_text_heading}}</h2>
                                         {% if self.rt_link and self.rich_text_link_text %}
                                             <a class="viewall" href="{{self.rt_link}}" id="widget-explore-research-guides-view-all" data-ga-label="{{self.rich_text_link_text}}">{{self.rich_text_link_text}}</a>
@@ -288,9 +290,9 @@
                                         {% for key, val in link_queue.items %}
                                             <h3>{{key}}</h3>
                                             {% if val %}
-                                                <ul data-ga-subcategory="{{key}}">
+                                                <ul>
                                                     {% for link_url, link_text in val %}
-                                                        <li><a href="{{link_url}}" data-ga-label="{{link_text}}">{{link_text}}</a></li>
+                                                        <li><a href="{{link_url}}" data-ga-label="{{key}}">{{link_text}}</a></li>
                                                     {% endfor %}
                                                 </ul>
                                             {% endif %}
@@ -305,24 +307,24 @@
                                 {% if has_featured_lib_expert %}
                                     {% image featured_lib_expert_image fill-200x200 as profile_pic %}
                                     {#featured_lib_expert.block.library_expert #}
-                                    <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert" data-ga-category="Expert Widget">
+                                    <div class="col-xs-12 col-sm-6 home-modwrapper" id="widget-featured-library-expert" data-ga-subcategory="Expert Widget">
                                         <div class="home-module">
-                                            <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{ self.expert_link }}" id="widget-featured-library-expert-view-all" data-ga-subcategory="Constant Links" data-ga-label="View All Experts"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
+                                            <h2><span class="hidden-xs hidden-sm hidden-md">Contact </span>Your Library Expert</h2><a class="viewall" href="{{ self.expert_link }}" id="widget-featured-library-expert-view-all" data-ga-label="View All Experts"><span class="hidden-xs hidden-sm hidden-md">View a</span><span class="hidden-lg">A</span>ll {{self.friendly_name}} experts</a>
                                         </div>
                                         <div class="home-expert-info">
                                             {% if featured_lib_expert_profile %}
-                                                <h3>Ask <a href="{{featured_lib_expert_profile}}" data-ga-subcategory="Expert Name">{{featured_lib_expert_name}}</a> about:</h3>
+                                                <h3>Ask <a href="{{featured_lib_expert_profile}}" data-ga-label="Expert Name">{{featured_lib_expert_name}}</a> about:</h3>
                                             {% else %}
                                                 <h3>Ask {{featured_lib_expert_name}} about:</h3>
                                             {% endif %}
-                                            <ul data-ga-subcategory="Expert Subjects">
+                                            <ul>
                                                 {% for link in featured_lib_expert_links %}
                                                     <li>{% autoescape off %}{{link}}{% endautoescape %}</li>
                                                 {% endfor %}
                                             </ul>
                                             <h3>Not sure where to start?</h3>
                                             <ul>
-                                                <li><a href="{{chat_url}}" data-ga-subcategory="Constant Links" data-ga-label="Ask a Librarian">Ask a {{self.friendly_name}} Librarian</a></li>
+                                                <li><a href="{{chat_url}}" data-ga-label="Ask a Librarian">Ask a {{self.friendly_name}} Librarian</a></li>
                                             </ul>
                                         </div>
                                         <div class="home-profile">
@@ -338,7 +340,7 @@
 
 
                         {% if self.news_feed_source %}
-                            <div class="home-modwrapper" id="widget-news" data-ga-category="Widget" data-ga-subcategory="News">
+                            <div class="home-modwrapper" id="widget-news" data-ga-subcategory="Recent News">
                                 <div id="news-header" class="home-module">
                                     <h2>News</h2>
                                     {% if news_page %}
@@ -348,24 +350,24 @@
                                 <div class="news-wrap">
                                     {% if news_feed %}
                                         {% for story in news_feed %}
-                                            <div class="newsblock col-xs-12 col-sm-6 col-lg-3">
-                                                <div class="embed">
-                                                    <div class="figure-wrap">
-                                                        <a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{story.title}}">
-                                                            {% image story.thumbnail fill-273x125 as tnt %}
-                                                            <img src="{{tnt.url}}" width="{{tnt.width}}" height="{{tnt.height}}" alt="{{tnt.alt}} from {{story.title}}" class="img-responsive"/>
-                                                        </a>
-                                                    </div>
-                                                    {% with first_category=story.get_categories|first %}
+                                            {% with first_category=story.get_categories|first %}
+                                                <div class="newsblock col-xs-12 col-sm-6 col-lg-3">
+                                                    <div class="embed">
+                                                        <div class="figure-wrap">
+                                                            <a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{first_category}}">
+                                                                {% image story.thumbnail fill-273x125 as tnt %}
+                                                                <img src="{{tnt.url}}" width="{{tnt.width}}" height="{{tnt.height}}" alt="{{tnt.alt}} from {{story.title}}" class="img-responsive"/>
+                                                            </a>
+                                                        </div>
                                                         <div class="capt news-category {{first_category|slugify}}">{{first_category}}</div>
-                                                    {% endwith %}
+                                                    </div>
+                                                    <h3><a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{first_category}}">{{story.title}}</a></h3>
+                                                    <p>
+                                                        {{story.excerpt|richtext|striptags}}<br/>
+                                                        <a aria-label="Read more about {{story.title}}" href="{% pageurl story %}" data-ga-position="{{ forloop.counter}}" data-ga-label="{{first_category}}">Read more...</a>
+                                                    </p>
                                                 </div>
-                                                <h3><a href="{% pageurl story %}" data-ga-position="{{ forloop.counter }}" data-ga-label="{{story.title}}">{{story.title}}</a></h3>
-                                                <p>
-                                                    {{story.excerpt|richtext|striptags}}<br/>
-                                                    <a aria-label="Read more about {{story.title}}" href="{% pageurl story %}" data-ga-position="{{ forloop.counter}}" data-ga-label="{{story.title}}">Read more...</a>
-                                                </p>
-                                            </div>
+                                            {% endwith %}
                                         {% endfor %}
                                     {% endif %}
                                 </div>
@@ -376,10 +378,10 @@
                         {% endif %}
 
                         {% if self.has_right_sidebar %}
-                            <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary" data-ga-category="Right Sidebar"> <!-- Right Sidebar Content -->
+                            <div class="col-xs-12 col-md-3 rightside {{ right_sidebar_classes }}" role="complementary" data-ga-category="Sidebar"> <!-- Right Sidebar Content -->
 
                                 {% if reusable_content %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content" data-ga-subcategory="Reusable Content">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-reusable-content" data-ga-subcategory="Sidebar Reusable Content">
                                         {% for widget in reusable_content %}
                                             <div class="widget-reusable-content-block {{widget.content.style_type}}">
                                                 {% if widget.content.sidebar_heading %}
@@ -399,7 +401,7 @@
                                 {% endif %}
 
                                 {% if self.has_granular_hours %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Granular Hours">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Granular Hours Widget">
                                         <h3>Hours Today</h3>
                                         <div id="api_hours_today_iid{{libcaliid}}_lid{{granular_libcalid}}"></div> {# Required 'script' moved to footer #}
                                         <a href="/libraries/libraries-hours/" class="viewall">View all library hours</a>
@@ -407,7 +409,7 @@
                                 {% endif %}
 
                                 {% if self.has_icon_link_items %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="{{self.widget_title}}">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="{{self.widget_title}} Widget">
                                         {% if self.widget_title %}
                                             <h3>{{self.widget_title}}</h3>
                                         {% endif %}
@@ -432,7 +434,7 @@
                                 {% endif %}
 
                                 {% if self.has_find_spaces %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces" data-ga-subcategory="Find Spaces">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-spaces" data-ga-subcategory="Find Spaces Widget">
                                         <h2>Find Spaces</h2>
                                         <div class="studymod col-xs-12 columns icon-widget">
                                             <div class="column">
@@ -454,7 +456,7 @@
                                 {% endif %}
 
                                 {% if self.events_feed_url %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events" data-ga-subcategory="Workshops & Events">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-workshops-and-events" data-ga-subcategory="Workshops & Events Widget">
                                         <h2>Workshops &amp; Events</h2>
                                         <div class="calledOnce">
                                             <!--<div class="jflatTimeline calledOnce">-->
@@ -480,7 +482,7 @@
                                 {% endif %}
 
                                 {% if self.has_social_media %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media" data-ga-subcategory="Social Media">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" id="widget-social-media" data-ga-subcategory="Social Media Widget">
                                         <h3>{{self.friendly_name}}Social Media</h3>
                                         <ul>
                                             {% if self.twitter_page %}
@@ -512,7 +514,7 @@
                                 {% endif %}
 
                                 {% if libra %}
-                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Libra">
+                                    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12" data-ga-subcategory="Libra Widget">
                                         <h2>Print</h2>
                                         <div class="libra-link-wrap">
                                             <p><a href="{% pageurl libra %}">{{libra}}</a></p>
@@ -580,6 +582,7 @@
         <script src="{% static "base/js/bootstrap.min.js" %}"></script>
         <script src="{% static "base/js/transformer-tabs.js" %}"></script>
         <script src="{% static "public/js/bootstrap-select.js" %}"></script>
+        <script src="{% static "public/js/bootstrap-select-aria-patch.js" %}"></script>
         {% if has_search_widget %}
             <script src="{% static "public/js/radiobuttoncontroller.js" %}"></script>
             <script src="{% static "public/js/ebscohostsearch.js" %}"></script>
@@ -600,8 +603,7 @@
         <script src="{% static "base/js/offcanvas.js" %}"></script>
         <script src="{% static "base/js/library_website.js" %}"></script>
         <script src="{% static "base/js/render_hours.js" %}"></script>
-        <script src='/static/base/js/jquery.track-everything.js'></script>
-        <script src='/static/base/js/ga.public.js'></script>
+        <script src='/static/base/js/jquery.track-everything.js' defer></script>
         <script src='https://www.lib.uchicago.edu/clickheat/js/clickheat.js'></script>
         <script src='/static/base/js/clickheat-config.js'></script>
 

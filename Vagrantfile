@@ -241,6 +241,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo "============== Running django migrations and loading the dev database =============="
     su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py migrate --noinput && \
                      $PYTHON $PROJECT_DIR/manage.py loaddata /vagrant/base/fixtures/test.json && \
+                     $PYTHON $PROJECT_DIR/manage.py shell -c \"from wagtail.models import Site; Site.objects.filter(hostname='localhost').delete()\" && \
                      $PYTHON $PROJECT_DIR/manage.py update_index"
 
     # Create the static news feed JSON file

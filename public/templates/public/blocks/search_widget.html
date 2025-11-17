@@ -1,5 +1,5 @@
 <h2 class="sr-only" id="tablist-1">Search</h2>
-<div id="search-widget" class="tabs col-xs-12 nopadding main-search" role="tablist" aria-labelledby="tablist-1" data-ga-category="Search Widget" > <!-- Search Tabs Wrapper -->
+<div id="search-widget" class="tabs col-xs-12 nopadding main-search" role="tablist" aria-labelledby="tablist-1" data-ga-category="Main Search Widget" > <!-- Search Tabs Wrapper -->
     <nav class="transformer-tabs">
         <ul>
             <li><a id="t-1" class="active" href="#tab-1" data-ga-subcategory="Tab Catalog" data-ga-label="Catalogs" role="tab" aria-selected="true" aria-controls="tab-1" tabindex="0">Catalogs</a></li>
@@ -39,7 +39,7 @@
             <!-- Filter Search -->
             <div class="col-xs-12 col-sm-9 eoptions" style="font-size: 1.5rem;">
                 <label for="checkboxebooks" class="checkbox-inline">
-                    <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks" aria-label="Limit to Ebooks" data-ga-label="Limit to Ebooks &amp; Ejournals"/>
+                    <input name="filter[]" type="checkbox" value="format:&quot;E-Resource&quot;" id="checkboxebooks" aria-label="Limit to Ebooks and Ejournals" data-ga-label="Limit to Ebooks &amp; Ejournals"/>
                     Limit to Ebooks &amp; Ejournals
                 </label><p></p>
             </div> <!-- // eoptions -->
@@ -121,7 +121,8 @@
 
         <!-- Filter Search -->
         <div class="col-xs-12 col-sm-9 eoptions">
-            <p><strong class="hidden-xs">Searching for &nbsp;</strong>
+            <fieldset style="border:0; padding:0; margin:0;">
+                <legend class="hidden-xs" style="float:left; width:auto; padding:0; margin:0; font-size:inherit; font-weight:bold; line-height:inherit;">Searching for &nbsp;</legend>
                 <label for="radio_articles" class="radio-inline" style="padding-bottom:0">
                     <input checked="checked" name="searching_for" type="radio" value="articles" id="radio_articles" data-radio-button-controller="articles-plus" data-ga-label="Articles" aria-label="Articles">Articles
                 </label> &nbsp;
@@ -131,7 +132,7 @@
                 <label for="radio_databases" class="radio-inline" style="padding-bottom:0">
                     <input name="searching_for" type="radio" value="databases" id="radio_databases" data-radio-button-controller="database-finder" data-ga-label="Databases" aria-label="Databases">Databases
                 </label>
-            </p>
+            </fieldset>
         </div>
 
         <div class="col-xs-12 searchoptions" data-radio-button-content-panel="articles-plus">

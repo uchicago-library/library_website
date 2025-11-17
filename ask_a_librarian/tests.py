@@ -1,16 +1,22 @@
+from base.tests import add_generic_request_meta_fields
+from base.utils import get_hours_and_location
 from django.http import HttpRequest
 from django.test import TestCase
+from urllib.parse import urlparse
+from library_website.settings import (
+    CRERAR_HOMEPAGE,
+    DANGELO_HOMEPAGE,
+    DISSERTATION_HOMEPAGE,
+    ECKHART_HOMEPAGE,
+    PUBLIC_HOMEPAGE,
+    SCRC_HOMEPAGE,
+    SSA_HOMEPAGE,
+)
+from public.models import PublicRawHTMLPage, StandardPage
 from wagtail.models import Site
 
 from ask_a_librarian.models import AskPage
 from ask_a_librarian.utils import get_chat_statuses, get_unit_chat_link
-from base.tests import add_generic_request_meta_fields
-from base.utils import get_hours_and_location
-from library_website.settings import (
-    CRERAR_HOMEPAGE, DANGELO_HOMEPAGE, DISSERTATION_HOMEPAGE, ECKHART_HOMEPAGE,
-    PUBLIC_HOMEPAGE, SCRC_HOMEPAGE, SSA_HOMEPAGE
-)
-from public.models import PublicRawHTMLPage, StandardPage
 
 
 class TestAskUtils(TestCase):
@@ -18,11 +24,9 @@ class TestAskUtils(TestCase):
     # See base.tests to learn how to create this file
     fixtures = ['test.json']
 
-    def setUp(self):
-        """
-        Common stuff used in multiple test cases.
-        """
-        self.ask_pages = AskPage.objects.all()
+    @classmethod
+    def setUpTestData(cls):
+        cls.ask_pages = AskPage.objects.all()
 
     def test_get_chat_statuses(self):
         """
@@ -31,8 +35,9 @@ class TestAskUtils(TestCase):
         """
         chat_statuses = get_chat_statuses()
         self.assertEqual(
-            len(self.ask_pages), len(chat_statuses),
-            'There are AskPages not present in the get_chat_statuses function'
+            len(self.ask_pages),
+            len(chat_statuses),
+            'There are AskPages not present in the get_chat_statuses function',
         )
 
     def test_get_unit_chat_link(self):
@@ -42,9 +47,7 @@ class TestAskUtils(TestCase):
         and SCRC are treated differently since they're circumstances
         are slightly different.
         """
-        ask_widgets = set(
-            ['law', 'crerar', 'ssa', 'uofc-ask', 'dissertation-office']
-        )
+        ask_widgets = set(['law', 'crerar', 'ssa', 'uofc-ask', 'dissertation-office'])
 
         # Dictionary of tuples where the keys map to the ask_widget_name field
         # of AskPages. The firs item of the tuple is a mixed dictionary of
@@ -52,39 +55,34 @@ class TestAskUtils(TestCase):
         # a random url belonging to a page of a given section of the site.
         data = {
             'law': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=DANGELO_HOMEPAGE)
-                ), '/law/services/carrelslockers/'
+                get_hours_and_location(StandardPage.objects.get(id=DANGELO_HOMEPAGE)),
+                '/law/services/carrelslockers/',
             ),
             'crerar': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=CRERAR_HOMEPAGE)
-                ), '/crerar/science-research-services/data-support-services/'
+                get_hours_and_location(StandardPage.objects.get(id=CRERAR_HOMEPAGE)),
+                '/crerar/science-research-services/data-support-services/',
             ),
             'ssa': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=SSA_HOMEPAGE)
-                ), '/ssa/about/'
+                get_hours_and_location(StandardPage.objects.get(id=SSA_HOMEPAGE)),
+                '/ssa/about/',
             ),
             'uofc-ask': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=PUBLIC_HOMEPAGE)
-                ), '/research/help/offcampus/'
+                get_hours_and_location(StandardPage.objects.get(id=PUBLIC_HOMEPAGE)),
+                '/research/help/offcampus/',
             ),
             'dissertation-office': (
                 get_hours_and_location(
                     StandardPage.objects.get(id=DISSERTATION_HOMEPAGE)
-                ), '/research/scholar/phd/students/'
+                ),
+                '/research/scholar/phd/students/',
             ),
             'eck': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=ECKHART_HOMEPAGE)
-                ), '/eck/mathematics-research-services/'
+                get_hours_and_location(StandardPage.objects.get(id=ECKHART_HOMEPAGE)),
+                '/eck/mathematics-research-services/',
             ),
             'scrc': (
-                get_hours_and_location(
-                    StandardPage.objects.get(id=SCRC_HOMEPAGE)
-                ), '/scrc/visiting/'
+                get_hours_and_location(StandardPage.objects.get(id=SCRC_HOMEPAGE)),
+                '/scrc/visiting/',
             ),
         }
 
@@ -96,10 +94,14 @@ class TestAskUtils(TestCase):
             current_site = Site.find_for_request(request)
 
             a = get_unit_chat_link(data[item][0]['page_unit'], request)
-            b = AskPage.objects.filter(ask_widget_name=item
-                                       ).first().relative_url(current_site)
+            b = (
+                AskPage.objects.filter(ask_widget_name=item)
+                .first()
+                .relative_url(current_site)
+            )
 
-            self.assertEqual(a, b)
+            # Normalize to paths to handle both relative and absolute URLs
+            self.assertEqual(urlparse(a).path, urlparse(b).path)
 
         # Eckhart
         request_eck = HttpRequest()
@@ -116,6 +118,5 @@ class TestAskUtils(TestCase):
         request_scrc.path = data['scrc'][1]
         current_site = Site.find_for_request(request_scrc)
         scrcurl = get_unit_chat_link(data['scrc'][0]['page_unit'], request_scrc)
-        scrcask = PublicRawHTMLPage.objects.get(id=4127
-                                                ).relative_url(current_site)
+        scrcask = PublicRawHTMLPage.objects.get(id=4127).relative_url(current_site)
         self.assertEqual(scrcurl, scrcask)

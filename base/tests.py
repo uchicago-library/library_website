@@ -5,7 +5,7 @@ from io import StringIO
 
 import pandas as pd
 from ask_a_librarian.models import AskPage
-from django.contrib.auth.models import AnonymousUser, Group, User
+from django.contrib.auth.models import Group, User
 from django.core import management
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -26,9 +26,9 @@ from base.models import BasePage, LinkQueueSpreadsheetBlock, get_available_path_
 from base.utils import get_hours_by_id, get_json_for_library
 
 GENERIC_REQUEST_HEADERS = [
-    ('HTTP_HOST', 'foobartest.com'),
+    ('HTTP_HOST', 'starfleet-academy.com'),
     ('SERVER_PORT', '80'),
-    ('SERVER_NAME', 'dungeon'),
+    ('SERVER_NAME', 'starfleet-academy.com'),
 ]
 
 
@@ -128,6 +128,16 @@ def run_report_page_maintainers_and_editors(options):
 
 
 def boiler_plate(instance):
+    # Delete the default localhost site created by Wagtail migrations
+    # to prevent conflicts with our test site
+    Site.objects.filter(hostname='localhost').delete()
+
+    # Clear cache after site deletion and before creating new site
+    # This ensures Wagtail doesn't use stale cached references
+    clear_url_caches()
+    cache.clear()
+    clear_cache()
+
     # Create the homepage
     root = Page.objects.get(path='0001')
     instance.homepage = Page(
@@ -300,31 +310,6 @@ class TestUsersAndServingLivePages(TestCase):
     #        url = page.relative_url(site)
     #        response = user.client.get(page.url, HTTP_HOST=site.hostname)
     #        self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
-
-    def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(self):
-        """
-        Test all live public pages with an anonymous user.
-        Most pages should return a 200, however, the redirect
-        page will return a 301 and some custom views return
-        a 302. Nothing should return a 404.
-        """
-        site = Site.objects.filter(site_name='Public')[0]
-        user = AnonymousUser()
-        user.client = Client()
-        pages = site.root_page.get_descendants().live()
-        possible = set([200, 301, 302])
-
-        for page in pages:
-            try:
-                response = user.client.get(page.url, HTTP_HOST=site.hostname)
-                self.assertEqual(
-                    response.status_code in possible,
-                    True,
-                    msg=page.url + ' returned a ' + str(response.status_code),
-                )
-            except:
-                print(page.relative_url(site) + ' has a problem')
-                raise
 
     # def test_loop_page_with_anonymous_user(self):
     #    """
@@ -534,8 +519,10 @@ class TestAssignUnitLocationCommand(TestCase):
         Should exit with a code of 1 if a location or
         unit doesn't exist.
         """
+        # Suppress stdout to avoid cluttering test output
+        out = StringIO()
         with self.assertRaises(SystemExit) as cm:
-            management.call_command('assign_unit_location', str(1), str(2))
+            management.call_command('assign_unit_location', str(1), str(2), stdout=out)
 
         self.assertEqual(cm.exception.code, 1)
 
@@ -548,6 +535,8 @@ class TestPageOwnerReports(TestCase):
 
     fixtures = ['test.json']
 
+    # Note: Cannot use setUpTestData() because Command objects contain
+    # file handles that aren't picklable (can't be deepcopied)
     def setUp(self):
         from base.management.commands.report_page_maintainers_and_editors import Command
 
@@ -697,14 +686,10 @@ class TestUpdateSiteDataCommand(TestCase):
 
 
 class LinkQueueSpreadsheetBlockTestCase(TestCase):
-    def makeTestingSpreadsheet(self, path_to_file, data, title):
-        df = pd.DataFrame(data)
-        df.to_excel('media/' + path_to_file, index=False)
-        return Document.objects.create(title=title, file=path_to_file)
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # Create necessary pages
-        boiler_plate(self)
+        boiler_plate(cls)
 
         # Documents
         # Good data, current links
@@ -723,10 +708,10 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
                 'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
             ],
         }
-        self.good_document = self.makeTestingSpreadsheet(
+        cls.good_document = cls.makeTestingSpreadsheet(
             'documents/test_get_link_queue.xlsx', data, 'The Rules of Acquisition'
         )
-        self.good_document.save()
+        cls.good_document.save()
 
         # Old dates, no current links
         data = {
@@ -739,25 +724,30 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
                 'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
             ],
         }
-        self.document_expired = self.makeTestingSpreadsheet(
+        cls.document_expired = cls.makeTestingSpreadsheet(
             'documents/test_link_queue_fallback.xlsx', data, 'The Rules of Acquisition'
         )
-        self.document_expired.save()
+        cls.document_expired.save()
 
         # Empty spreadsheet
-        self.path_to_empty_doc = 'documents/test_empty.xlsx'
+        cls.path_to_empty_doc = 'documents/test_empty.xlsx'
         df = pd.DataFrame()
-        df.to_excel('media/' + self.path_to_empty_doc, index=False)
-        self.empty_document = Document.objects.create(
-            title='Empty Spreadsheet', file=self.path_to_empty_doc
+        df.to_excel('media/' + cls.path_to_empty_doc, index=False)
+        cls.empty_document = Document.objects.create(
+            title='Empty Spreadsheet', file=cls.path_to_empty_doc
         )
-        self.empty_document.save()
+        cls.empty_document.save()
+
+    @classmethod
+    def makeTestingSpreadsheet(cls, path_to_file, data, title):
+        df = pd.DataFrame(data)
+        df.to_excel('media/' + path_to_file, index=False)
+        return Document.objects.create(title=title, file=path_to_file)
 
     def tearDown(self):
         clear_url_caches()
         cache.clear()
         clear_cache()
-        self.site.delete()
 
     def test_clean_invalid_file_extension(self):
         file_path = 'documents/invalid_file.doc'

@@ -68,6 +68,7 @@ docker-compose*.yml
 # Project specific
 static/
 media/
+cache/
 *.sqlite3
 *.db
 

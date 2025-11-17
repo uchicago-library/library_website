@@ -1,11 +1,21 @@
+import logging
+
 from base.utils import save_virtual_workbook
+from django.contrib import messages
+from django.contrib.auth.models import Permission, User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.urls import reverse, re_path
+from django.urls import re_path, reverse
+from public.models import StaffPublicPage
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
+from staff.models import StaffPage
 from staff.utils import WagtailStaffReport
+
+logger = logging.getLogger(__name__)
 
 
 def admin_view(request):
@@ -73,3 +83,83 @@ def register_frank_menu_item():
         classname='icon icon-mail',
         order=9990,
     )
+
+
+@hooks.register('register_permissions')
+def register_staff_hr_permission():
+    """
+    Register the custom staff HR permission so it appears
+    in the Wagtail Groups administration interface.
+    """
+    return Permission.objects.filter(
+        content_type__app_label='staff', codename='change_staff_hr_info'
+    )
+
+
+@hooks.register('before_edit_user')
+def show_user_edit_help(request, user):
+    """
+    Display an info message on the user edit form explaining the automatic
+    staff page publishing/unpublishing behavior.
+    """
+    messages.info(
+        request,
+        'Note: Marking a user as inactive will automatically unpublish their staff pages (both Loop and public). '
+        'Reactivating will republish them. This only works when editing individual users, not with bulk actions.',
+    )
+
+
+@receiver(post_save, sender=User)
+def manage_staff_pages_on_user_active_state_change(sender, instance, **kwargs):
+    """
+    Automatically unpublish staff pages when a user is marked inactive,
+    and republish them when a user is reactivated.
+    The username matches the cnetid field on both StaffPage and StaffPublicPage.
+
+    Note: This only works when editing individual users through the admin interface.
+    The bulk "Set active state" action does not trigger this signal, so users must be
+    activated/deactivated individually to automatically publish/unpublish their staff pages.
+    """
+    if not instance.is_active:
+        # Unpublish Loop staff page(s)
+        for staff_page in StaffPage.objects.filter(cnetid=instance.username, live=True):
+            try:
+                staff_page.unpublish()
+            except Exception as e:
+                logger.warning(
+                    f"Failed to unpublish StaffPage for {instance.username}: {e}"
+                )
+
+        # Unpublish public staff page(s)
+        for public_page in StaffPublicPage.objects.filter(
+            cnetid=instance.username, live=True
+        ):
+            try:
+                public_page.unpublish()
+            except Exception as e:
+                logger.warning(
+                    f"Failed to unpublish StaffPublicPage for {instance.username}: {e}"
+                )
+    else:
+        # User is active - republish their staff pages if they exist and are unpublished
+        # Publish Loop staff page(s)
+        for staff_page in StaffPage.objects.filter(
+            cnetid=instance.username, live=False
+        ):
+            try:
+                staff_page.save_revision().publish()
+            except Exception as e:
+                logger.warning(
+                    f"Failed to publish StaffPage for {instance.username}: {e}"
+                )
+
+        # Publish public staff page(s)
+        for public_page in StaffPublicPage.objects.filter(
+            cnetid=instance.username, live=False
+        ):
+            try:
+                public_page.save_revision().publish()
+            except Exception as e:
+                logger.warning(
+                    f"Failed to publish StaffPublicPage for {instance.username}: {e}"
+                )
