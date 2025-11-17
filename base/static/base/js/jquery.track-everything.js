@@ -584,6 +584,11 @@
                 return;
             }
 
+            if (event.target.hasAttribute('data-toggle') || event.target.classList.contains('holdingslink')) {
+                // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
+                return;
+            }
+
             if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
                 event.preventDefault(); // delay navigation just slightly
                 setTimeout(() => {
