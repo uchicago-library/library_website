@@ -584,7 +584,8 @@
                 return;
             }
 
-            if (event.target.hasAttribute('data-toggle') || event.target.classList.contains('holdingslink')) {
+            console.log('Checking if navigation should be deferred. Event:', event, 'event.target:', event.target, 'event.target.getAttribute("data-toggle"):', event.target.getAttribute('data-toggle'), 'is lightbox:', event.target.getAttribute('data-toggle') === "lightbox");
+            if (event.target.getAttribute('data-toggle') === "lightbox" || event.target.classList.contains('holdingslink')) {
                 // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
                 return;
             }
