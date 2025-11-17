@@ -50,6 +50,7 @@
 
     const ignoreDeferUrls = [
         "rooms.lib.uchicago.edu/appointments-auth/prepare",
+        // "/media/images/",
     ];
 
     // Rules for applyHtmlProperties
@@ -584,6 +585,12 @@
                 return;
             }
 
+            const target = event.target.closest('a, button, input');
+            if (target.hasAttribute('data-lightbox') || target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
+                // Don't interfere with lightbox, ekkolightbox, or with SFX FindIt holdings links.
+                return;
+            }
+
             if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
                 event.preventDefault(); // delay navigation just slightly
                 setTimeout(() => {
@@ -614,4 +621,5 @@
         // Add options to the search widget search button on change.
         document.body.addEventListener('change', handleClick.optionChange, true);
     });
+
 })();
