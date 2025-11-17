@@ -590,6 +590,7 @@
             }
 
             if (href && !isNewTab && !(eventName === 'tab' && href && href.startsWith('#'))) {
+                console.log('Deferring navigation.');
                 event.preventDefault(); // delay navigation just slightly
                 setTimeout(() => {
                     window.location.href = href;
