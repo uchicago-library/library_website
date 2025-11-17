@@ -579,15 +579,17 @@
         },
         deferClick(eventName, event, href, isNewTab) {
             // defer links that navigate away
-            console.log('Checking if navigation should be deferred. Event:', event, 'event.target:', event.target, 'event.target.getAttribute("data-toggle"):');
+            console.log('Checking if navigation should be deferred. Event:', event, 'event.target:', event.target);
 
             if (href && ignoreDeferUrls.some(u => href.toLowerCase().includes(u))) {
+                console.log('Not deferring, ignoreDeferUrls');
                 // Don't interfere with auth links
                 return;
             }
 
             const target = event.target.closest('a, button, input');
-            if (event.target.classList.contains('holdingslink')) {
+            if (target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
+                console.log('Not deferring, lightbox or holdingslink');
                 // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
                 return;
             }
