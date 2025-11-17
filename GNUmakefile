@@ -1,10 +1,16 @@
-LOCAL_PY_PATH = ~/wagtail-local
+LOCAL_PY_PATH = ~/lw-config
 SETTINGS_PATH = ./library_website/settings
 
 .PHONY: docker
-docker: local
-	./docker-cleanup.sh
+docker: local clean docker-cache
+
+.PHONY: docker-cache
+docker-cache: local
 	./docker-setup.sh
+
+.PHONY: clean
+clean:
+	./docker-cleanup.sh
 
 .PHONY: local
 local:
