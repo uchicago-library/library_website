@@ -586,8 +586,8 @@
             }
 
             const target = event.target.closest('a, button, input');
-            if (target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
-                // Don't interfere with the ekkolightbox or with SFX FindIt holdings links.
+            if (target.hasAttribute('data-lightbox') || target.getAttribute('data-toggle') === "lightbox" || target.classList.contains('holdingslink')) {
+                // Don't interfere with lightbox, ekkolightbox, or with SFX FindIt holdings links.
                 return;
             }
 
