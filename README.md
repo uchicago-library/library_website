@@ -104,7 +104,7 @@ To obtain permission to clone repositories owned by the `wagtail` user on `vault
 
 - pulls down the latest changes to `secrets.py` from whatever branch in the `lw-config` repository you have checked out on your machine
 - copies `secrets.py` from the `lw-config` repository into where our Wagtail site expects it to be, which is `./library_website/settings` within the `library_website` project
-- sets the permissions on `secrets.py` to 444 to remind any developer doing Wagtail development to edit the original in `lw-config` rather than the copy in `library_website`
+- sets the permissions on the copy of `secrets.py` to 444 to remind any developer doing Wagtail development to edit the original in `lw-config` rather than the copy in `library_website`
 
 This will put the project in the state it needs to be in to run `docker-setup.sh`.
 
