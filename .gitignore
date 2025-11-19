@@ -5,6 +5,7 @@
 .sass-cache
 
 /library_website/settings/local.py
+/library_website/settings/secrets.py
 /static
 /media
 /cache
