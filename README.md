@@ -106,7 +106,7 @@ To obtain permission to clone repositories owned by the `wagtail` user on `vault
 - copies `secrets.py` from the `lw-config` repository into where our Wagtail site expects it to be, which is `./library_website/settings` within the `library_website` project
 - sets the permissions on the copy of `secrets.py` to 444 to remind any developer doing Wagtail development to edit the original in `lw-config` rather than the copy in `library_website`
 
-This will put the project in the state it needs to be in to run `docker-setup.sh`.
+This will put the `library_website` project in the state it needs to be in to run `docker-setup.sh`.
 
 ## Bot IP Management
 The site uses the [Good-Bots package](https://github.com/bbusenius/Good-Bots) to automatically manage IP exclusions for legitimate search engine bots and crawlers. This ensures they aren't blocked by Turnstile protection.
