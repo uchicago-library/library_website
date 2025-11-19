@@ -102,7 +102,7 @@ In order to run, the library website requires a file called `./library_website/s
 
 To obtain permission to clone repositories owned by the `wagtail` user on `vault`, please contact our system administrators.  The `make secrets` rule does the following:
 
-- pulls down the latest changes from whatever branch in the `lw-config` repository you have checked out on your machine
+- pulls down the latest changes to `secrets.py` from whatever branch in the `lw-config` repository you have checked out on your machine
 - copies `secrets.py` from the `lw-config` repository into where our Wagtail site expects it to be, which is `./library_website/settings` within the `library_website` project
 
 This will put the project in the state it needs to be in to run `docker-setup.sh`.
