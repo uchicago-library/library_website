@@ -97,15 +97,24 @@ login credentials for several websites and web applications, and
 therefore is excluded from this public repository by our `.gitignore`
 file.
 
-`secrets.py` is part of a separate repository hosted on
-`vault.lib.uchicago.edu`.  To install it, you need to:
+`secrets.py` is part of a separate repository called `lw-config`,
+which is hosted on `vault.lib.uchicago.edu`.  To install it, you need
+to:
 
 - obtain permission to clone repositories owned by the `wagtail` user
   on `vault`
-- clone the repository down: `git clone wagtail@vault.lib.uchicago.edu:/data/vault/lw-config`
+- clone the repository down: `cd ~ && git clone wagtail@vault.lib.uchicago.edu:/data/vault/lw-config`
+- install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make secrets`
 
 To obtain permission to clone repositories owned by the `wagtail` user
-on `vault`, please contact our system administrators.
+on `vault`, please contact our system administrators.  The `make
+secrets` rule does the following:
+
+- pulls down the latest changes from whatever branch in the
+  `lw-config` repository you have checked out on your machine
+- copies `secrets.py` from the `lw-config` repository into where our
+  Wagtail site expects it to be, which is `./library_website/settings`
+  within the `library_website` project
 
 
 ### Local Configuration File
