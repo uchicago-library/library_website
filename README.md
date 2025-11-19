@@ -12,7 +12,7 @@
 #### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
-3. **Create local config file**: `library_website/settings/local.py` (see Local Configuration File section below)
+3. **Install secrets**: `cd /path/to/library_website && make secrets` (see Setting Up Secrets Repo section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
@@ -88,6 +88,25 @@ export TURNSTILE_ENABLED=True
 ```
 
 Note that this will only affect the current session. When you log out and log back in, `TURNSTILE_ENABLED` will be set back to "False".
+
+### Setting Up Secrets Repository
+
+In order to run, the library website requires a file called
+`./library_website/settings/secrets.py` to exist.  This file contains
+login credentials for several websites and web applications, and
+therefore is excluded from this public repository by our `.gitignore`
+file.
+
+`secrets.py` is part of a separate repository hosted on
+`vault.lib.uchicago.edu`.  To install it, you need to:
+
+- obtain permission to clone repositories owned by the `wagtail` user
+  on `vault`
+- clone the repository down: `git clone wagtail@vault.lib.uchicago.edu:/data/vault/lw-config`
+
+To obtain permission to clone repositories owned by the `wagtail` user
+on `vault`, please contact our system administrators.
+
 
 ### Local Configuration File
 
