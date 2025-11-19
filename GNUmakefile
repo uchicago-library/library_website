@@ -1,19 +1,20 @@
-LOCAL_PY_PATH = ~/lw-config
+SECRETS_PY_PATH = ~/.lw-config
 SETTINGS_PATH = ./library_website/settings
+CURRENT_BRANCH = $$(git -C $(SECRETS_PY_PATH) symbolic-ref --short HEAD)
 
 .PHONY: docker
-docker: local clean docker-cache
+docker: secrets clean docker-cache
 
 .PHONY: docker-cache
-docker-cache: local
+docker-cache: secrets
 	./docker-setup.sh
 
 .PHONY: clean
 clean:
 	./docker-cleanup.sh
 
-.PHONY: local
-local:
-	git -C $(LOCAL_PY_PATH) pull
-	$(RM) $(SETTINGS_PATH)/local.py
-	install -m 444 $(LOCAL_PY_PATH)/local.py $(SETTINGS_PATH)
+.PHONY: secrets
+secrets:
+	git -C $(SECRETS_PY_PATH) pull origin $(CURRENT_BRANCH)
+	$(RM) $(SETTINGS_PATH)/secrets.py || true
+	install -m 444 $(SECRETS_PY_PATH)/secrets.py $(SETTINGS_PATH)

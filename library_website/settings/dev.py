@@ -76,6 +76,13 @@ FOLIO_BASE_URL = 'https://uchicago-test-okapi.folio.indexdata.com'
 # Tiny Tiny RSS Feed for development
 TTRSS_FEED = 'http://10.0.2.2/get_feed_atom'
 
+# Import secrets
+try:
+    from .secrets import *
+except ImportError:
+    pass
+
+# Import local overrides
 try:
     from .local import *
 except ImportError:

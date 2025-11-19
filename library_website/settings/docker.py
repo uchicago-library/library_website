@@ -1,6 +1,12 @@
 import os
 from .dev import *
 
+# Import secrets
+try:
+    from .secrets import *
+except ImportError:
+    pass
+
 # Import local settings to get any developer customizations
 try:
     from .local import *
