@@ -10,7 +10,7 @@ docker-cache: secrets
 	./docker-setup.sh
 
 .PHONY: docker-clean
-clean:
+docker-clean:
 	./docker-cleanup.sh
 
 .PHONY: secrets
