@@ -97,7 +97,7 @@ In order to run, the library website requires a file called `./library_website/s
 
 - obtain permission to clone repositories owned by the `wagtail` user
   on `vault`
-- clone the repository down: `cd ~ && git clone wagtail@vault.lib.uchicago.edu:/data/vault/lw-config`
+- clone the repository down: `cd ~ && git clone wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/lw-config`
 - install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make secrets`
 
 To obtain permission to clone repositories owned by the `wagtail` user on `vault`, please contact our system administrators.  The `make secrets` rule does the following:
