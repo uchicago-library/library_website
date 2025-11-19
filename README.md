@@ -91,7 +91,7 @@ Note that this will only affect the current session. When you log out and log ba
 
 ### Setting Up Secrets Repository
 
-In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This file contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.
+In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.
 
 `secrets.py` is part of a separate repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  To install it, you need to:
 
