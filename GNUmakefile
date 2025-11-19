@@ -1,4 +1,4 @@
-SECRETS_PY_PATH = ~/.lw-config
+SECRETS_PY_PATH = ~/lw-config
 SETTINGS_PATH = ./library_website/settings
 CURRENT_BRANCH = $$(git -C $(SECRETS_PY_PATH) symbolic-ref --short HEAD)
 
