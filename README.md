@@ -91,91 +91,21 @@ Note that this will only affect the current session. When you log out and log ba
 
 ### Setting Up Secrets Repository
 
-In order to run, the library website requires a file called
-`./library_website/settings/secrets.py` to exist.  This file contains
-login credentials for several websites and web applications, and
-therefore is excluded from this public repository by our `.gitignore`
-file.
+In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This file contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.
 
-`secrets.py` is part of a separate repository called `lw-config`,
-which is hosted on `vault.lib.uchicago.edu`.  To install it, you need
-to:
+`secrets.py` is part of a separate repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  To install it, you need to:
 
 - obtain permission to clone repositories owned by the `wagtail` user
   on `vault`
 - clone the repository down: `cd ~ && git clone wagtail@vault.lib.uchicago.edu:/data/vault/lw-config`
 - install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make secrets`
 
-To obtain permission to clone repositories owned by the `wagtail` user
-on `vault`, please contact our system administrators.  The `make
-secrets` rule does the following:
+To obtain permission to clone repositories owned by the `wagtail` user on `vault`, please contact our system administrators.  The `make secrets` rule does the following:
 
-- pulls down the latest changes from whatever branch in the
-  `lw-config` repository you have checked out on your machine
-- copies `secrets.py` from the `lw-config` repository into where our
-  Wagtail site expects it to be, which is `./library_website/settings`
-  within the `library_website` project
+- pulls down the latest changes from whatever branch in the `lw-config` repository you have checked out on your machine
+- copies `secrets.py` from the `lw-config` repository into where our Wagtail site expects it to be, which is `./library_website/settings` within the `library_website` project
 
-
-### Local Configuration File
-
-Create the file `library_website/settings/local.py` for local development settings and credentials. It should look something like this:
-
-```python
-import sys
-
-# Database configuration (Vagrant only - Docker handles this via docker-compose)
-if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-            'TEST': {
-                'NAME': ':memory:',
-            },
-        },
-    }
-else:
-     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'lib_www_dev',
-        }
-    }
-
-LOGGING = {
-     'version': 1,
-     'disable_existing_loggers': False,
-     'handlers': {
-         'file': {
-             'level': 'DEBUG',
-             'class': 'logging.FileHandler',
-             'formatter': 'default',
-             'filename': '/var/log/django-errors.log',
-         },
-     },
-     'loggers': {
-         'django.request': {
-             'handlers': ['file'],
-             'level': 'DEBUG',
-             'propagate': True,
-         },
-     },
-
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
-        }
-    }
-}
-
-# ** You will also need to add settings for the following. Get these from another developer. ** 
-
-DIRECTORY_USERNAME = #Get from another developer
-DIRECTORY_WEB_SERVICE = #Get from another developer
-DIRECTORY_PASSWORD = #Get from another developer
-OWNCLOUD_PASSWORD = #Get from another developer
-```
+This will put the project in the state it needs to be in to run `docker-setup.sh`.
 
 ## Bot IP Management
 The site uses the [Good-Bots package](https://github.com/bbusenius/Good-Bots) to automatically manage IP exclusions for legitimate search engine bots and crawlers. This ensures they aren't blocked by Turnstile protection.
