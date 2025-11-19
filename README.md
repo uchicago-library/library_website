@@ -93,7 +93,7 @@ Note that this will only affect the current session. When you log out and log ba
 
 In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.
 
-`secrets.py` is part of a separate repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  To install it, you need to:
+`secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  To install it, you need to:
 
 - obtain permission to clone repositories owned by the `wagtail` user
   on `vault`
