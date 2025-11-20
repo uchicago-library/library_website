@@ -1946,9 +1946,6 @@ class ExhibitPage(PublicBasePage):
         default='',
         help_text='Optional. Displays under thumbnail if NOT a web exhibit.',
     )
-    staff_contact = models.ForeignKey(
-        'staff.StaffPage', null=True, blank=True, on_delete=models.SET_NULL
-    )
     unit_contact = models.BooleanField(default=False)
     student_exhibit = models.BooleanField(default=False)
 
@@ -2171,7 +2168,6 @@ class ExhibitPage(PublicBasePage):
             ),
             MultiFieldPanel(
                 [
-                    FieldPanel('staff_contact'),
                     InlinePanel('exhibit_page_staff_contacts', label='Staff Contacts'),
                     FieldPanel('unit_contact'),
                 ],
@@ -2199,7 +2195,6 @@ class ExhibitPage(PublicBasePage):
         index.SearchField('publication_description'),
         index.SearchField('publication_price'),
         index.SearchField('publication_url'),
-        index.SearchField('staff_contact'),
     ]
 
     edit_handler = TabbedInterface(
