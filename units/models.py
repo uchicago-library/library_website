@@ -1,6 +1,5 @@
 from base.models import BasePage, Email, FaxNumber, LinkedText, PhoneNumber
 from django.db import models
-from library_website.settings import BUILDINGS
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
     FieldPanel, InlinePanel, ObjectList, PageChooserPanel, TabbedInterface
@@ -9,6 +8,19 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+
+
+# Building choices for UnitPage.building field
+BUILDINGS = (
+    (1, 'The John Crerar Library'),
+    (2, 'The D\'Angelo Law Library'),
+    (3, 'Eckhart Library'),
+    (4, 'The Joe and Rika Mansueto Library'),
+    (5, 'The Joseph Regenstein Library'),
+    (6, 'The Hanna Holborn Gray Special Collections Research Center'),
+    (7, 'The Social Work Library'),
+    (8, 'Ryerson Physical Laboratory'),
+)
 
 
 class Tree(object):
