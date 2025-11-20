@@ -1885,6 +1885,36 @@ class ExhibitPageDonorPagePlacement(Orderable, models.Model):
     )
 
 
+# Interstitial model for linking StaffPages to the ExhibitPage
+class ExhibitPageStaffContacts(Orderable, models.Model):
+    """
+    Create a through table for linking multiple staff contacts to exhibit pages
+    """
+
+    page = ParentalKey(
+        'lib_collections.ExhibitPage',
+        on_delete=models.CASCADE,
+        related_name='exhibit_page_staff_contacts',
+    )
+
+    staff = models.ForeignKey(
+        'staff.StaffPage',
+        on_delete=models.CASCADE,
+        related_name='exhibit_staff_placements',
+    )
+
+    class Meta:
+        verbose_name = "Staff Contact"
+        verbose_name_plural = "Staff Contacts"
+
+    panels = [
+        FieldPanel('staff'),
+    ]
+
+    def __str__(self):
+        return self.page.title + " -> " + self.staff.title
+
+
 class ExhibitPage(PublicBasePage):
     """
     Pages for individual exhibits.
@@ -2140,7 +2170,11 @@ class ExhibitPage(PublicBasePage):
                 classname='collapsible collapsed',
             ),
             MultiFieldPanel(
-                [FieldPanel('staff_contact'), FieldPanel('unit_contact')],
+                [
+                    FieldPanel('staff_contact'),
+                    InlinePanel('exhibit_page_staff_contacts', label='Staff Contacts'),
+                    FieldPanel('unit_contact'),
+                ],
                 heading='Staff or Unit Contact',
             ),
         ]
@@ -2278,13 +2312,18 @@ class ExhibitPage(PublicBasePage):
         return None
 
     def get_context(self, request):
-        staff_url = ''
-        try:
-            staff_url = StaffPublicPage.objects.get(
-                cnetid=self.staff_contact.cnetid
-            ).url
-        except:
-            pass
+        # Build list of staff contacts with their URLs
+        staff_contacts = []
+        for contact in self.exhibit_page_staff_contacts.all():
+            staff_info = {'staff': contact.staff}
+            try:
+                staff_info['url'] = StaffPublicPage.objects.get(
+                    cnetid=contact.staff.cnetid
+                ).url
+            except:
+                staff_info['url'] = ''
+            staff_contacts.append(staff_info)
+
         default_image = None
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
@@ -2321,7 +2360,7 @@ class ExhibitPage(PublicBasePage):
             self.location_and_hours['page_location'].id
         )  # must be set after context
         context['default_image'] = default_image
-        context['staff_url'] = staff_url
+        context['staff_contacts'] = staff_contacts
         context['branding_color'] = self.branding_color
         context['font_family'] = font
         context['font_kerning'] = font_kerning
