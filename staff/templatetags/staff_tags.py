@@ -1,7 +1,7 @@
 from django import template
-from library_website.settings import BUILDINGS
 from public.models import LocationPage, StaffPublicPage
 from staff.utils import libcal_id_by_email
+from units.models import BUILDINGS
 
 register = template.Library()
 

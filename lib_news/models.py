@@ -29,9 +29,9 @@ from base.models import (
 )
 from lib_collections.models import get_current_exhibits
 from library_website.settings import (
-    DRF_NEWS_FEED, LIBRA_ID, NEWS_CACHE_TTL, NEWS_FEED_DEFAULT_VISIBLE,
-    NEWS_FEED_INCREMENT_BY, STATIC_NEWS_FEED
+    DRF_NEWS_FEED, LIBRA_ID, NEWS_CACHE_TTL, STATIC_NEWS_FEED
 )
+from site_settings.models import NewsFeedSettings
 
 from .utils import get_first_feature_story
 
@@ -304,6 +304,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             libra = Page.objects.get(id=LIBRA_ID)
         except (Page.DoesNotExist):
             libra = None
+        news_settings = NewsFeedSettings.load()
         context = super(LibNewsIndexPage, self).get_context(request)
         context['categories'] = self.get_alpha_cats()
         context['category_url_base'] = self.base_url + 'category/'
@@ -317,8 +318,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         context['content_div_css'] = 'container-fluid main-container'
         context['right_sidebar_classes'] = 'coll-rightside'
         context['fallback_image'] = self.fallback_image
-        context['default_visible'] = NEWS_FEED_DEFAULT_VISIBLE
-        context['increment_by'] = NEWS_FEED_INCREMENT_BY
+        context['default_visible'] = news_settings.default_visible
+        context['increment_by'] = news_settings.increment_by
         context['nav'] = self.navigation
         context['libra'] = libra
         return context
