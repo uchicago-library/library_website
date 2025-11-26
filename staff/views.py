@@ -20,6 +20,7 @@ from subjects.models import Subject
 from units.views import get_staff_pages_for_unit
 from wagtail.models import Site
 from wagtail.images.models import Image
+from wagtailcache.cache import nocache_page
 
 
 def staff(request):
@@ -134,6 +135,7 @@ def staff(request):
     )
 
 
+@nocache_page
 @api_view(['GET'])
 @authentication_classes((SessionAuthentication, TokenAuthentication))
 @permission_classes((IsAuthenticated,))
