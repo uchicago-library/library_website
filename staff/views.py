@@ -1,4 +1,3 @@
-import requests
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
@@ -8,9 +7,9 @@ from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import render
 from intranetunits.models import IntranetUnitsPage
+from library_website.api import api_router
 from public.models import LocationPage
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
@@ -19,6 +18,7 @@ from rest_framework.decorators import (
 from rest_framework.permissions import IsAuthenticated
 from subjects.models import Subject
 from units.views import get_staff_pages_for_unit
+from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.images.models import Image
 from wagtail.models import Site
 from wagtailcache.cache import nocache_page
@@ -140,14 +140,13 @@ def staff_api(request):
     provide a user token in the headers. In order to make tokenization work,
     the Django Rest Framework requires us to use the @api_view decorator.
     Since we can't directly apply this to the Wagtail API (built on Django
-    Rest Framework) we apply it here and pass the request on to the default
-    Wagtail API. We return the response that Wagtail API gives us. To edit
-    or add fields to this API go to the StaffPage model.
+    Rest Framework) we apply it here and call the Wagtail API view directly.
+    To edit or add fields to this API go to the StaffPage model.
 
-    This view only passes the request to the Wagtail pages API and returns
-    the output. The view will only be rendered if the request headers contain
-    a token. Any user can have a token, however, we do not create them by
-    default.
+    This view calls the Wagtail pages API view directly without making an
+    HTTP request. The view will only be rendered if the request headers contain
+    a token or if the user is session authenticated. Any user can have a token,
+    however, we do not create them by default.
 
     Create and view a token for a given user:
     from rest_framework.authtoken.models import Token
@@ -164,33 +163,23 @@ def staff_api(request):
     """
 
     if request.method == 'GET':
-        copy = request.GET.copy()
-        params = copy.urlencode()
-        scheme = request.is_secure() and 'https' or 'http'
-        base_url = scheme + '://' + request.get_host()
-        rest_url = base_url + '/api/v2/pages/?' + params
+        # Get the Wagtail Pages API viewset and create a view instance for listing
+        # Note: Wagtail uses 'listing_view' instead of the standard DRF 'list' action
+        view_instance = PagesAPIViewSet.as_view({'get': 'listing_view'})
 
-        # Note: Invalid tokens are rejected by DRF's @authentication_classes decorator
-        # BEFORE this code executes. The KeyError below only happens when there's no
-        # Authorization header at all (session auth), not when there's a bad token.
-        # The except clause should only apply to an authenticated user trying to look
-        # at the API and even then, a token is still required.
-        try:
-            token = request.META['HTTP_AUTHORIZATION']
-            rest_headers = {'Authorization': token}
-        except KeyError:
-            # No Authorization header - check if user is session authenticated
-            if request.user.is_authenticated:
-                # Try to get the user's token
-                try:
-                    token = Token.objects.get(user=request.user)
-                    rest_headers = {'Authorization': f'Token {token.key}'}
-                except Token.DoesNotExist:
-                    raise PermissionDenied
-            else:
-                raise PermissionDenied
+        # Get the underlying Django request and add the router reference
+        # The @api_view decorator wraps the HttpRequest in a DRF Request,
+        # so we need to use request._request to get the original Django request.
+        # The Wagtail API requires a 'wagtailapi_router' attribute on the request.
+        django_request = request._request
+        django_request.wagtailapi_router = api_router
 
-        rest_response = requests.get(rest_url, headers=rest_headers)
-        return JsonResponse(rest_response.json())
+        # Call the view with the prepared request
+        # Authentication has already been handled by @authentication_classes,
+        # so django_request.user is properly set to the authenticated user.
+        response = view_instance(django_request)
+
+        # Return the response data as JSON
+        return JsonResponse(response.data)
 
     raise PermissionDenied
