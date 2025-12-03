@@ -13,6 +13,7 @@ from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from subjects.models import Subject
 from units.models import BUILDINGS
+from wagtail.admin.forms.pages import WagtailAdminPageForm
 from wagtail.admin.panels import (
     FieldPanel, HelpPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel,
     TabbedInterface
@@ -97,6 +98,75 @@ class StaffPagePhoneFacultyExchange(Orderable, models.Model):
     panels = [FieldPanel('phone_number'), FieldPanel('faculty_exchange')]
 
 
+class StaffPageForm(WagtailAdminPageForm):
+    """
+    Custom form for StaffPage that handles formset validation when
+    HR panels are hidden due to lack of permissions.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # If user doesn't have HR permission, remove HR fields from the form
+        user = kwargs.get('for_user')
+        if user and not user.has_perm('staff.change_staff_hr_info'):
+            hr_field_names = self._get_hr_field_names()
+            for field_name in hr_field_names:
+                if field_name in self.fields:
+                    del self.fields[field_name]
+
+    def _get_hr_field_names(self):
+        """
+        Extract all field names from the human_resources_panels.
+        Returns a set of field names that should be excluded when user
+        doesn't have HR permissions.
+        """
+        field_names = set()
+
+        def extract_fields_from_panel(panel):
+            """Recursively extract field names from a panel structure."""
+            # If it has a field_name, it's a field panel - add it
+            if hasattr(panel, 'field_name'):
+                field_names.add(panel.field_name)
+            # If it has children, recurse into them
+            if hasattr(panel, 'children'):
+                for child in panel.children:
+                    extract_fields_from_panel(child)
+
+        # Process all panels in human_resources_panels
+        for panel in self.instance.__class__.human_resources_panels:
+            extract_fields_from_panel(panel)
+
+        return field_names
+
+    def is_valid(self):
+        """
+        Override to remove hidden formsets before validation.
+
+        When the HR tab is hidden due to lack of permissions, the InlinePanels
+        (formsets) aren't rendered, so their management forms aren't in POST data.
+        This method removes those formsets before validation to prevent errors.
+        """
+        if not self.is_bound:
+            return False
+
+        # Run the form's own validation
+        self.full_clean()
+
+        # Remove formsets that don't have their management form in POST data
+        # (they're hidden due to permission restrictions)
+        formsets_to_remove = []
+        for formset_name, formset in self.formsets.items():
+            if formset.prefix + '-TOTAL_FORMS' not in self.data:
+                formsets_to_remove.append(formset_name)
+
+        for formset_name in formsets_to_remove:
+            del self.formsets[formset_name]
+
+        # Now validate remaining formsets normally
+        return not self.errors and all(formset.is_valid() for formset in self.formsets.values())
+
+
 class StaffPageManager(PageManager):
 
     def get_queryset(self):
@@ -111,6 +181,7 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
     Staff profile content type.
     """
 
+    base_form_class = StaffPageForm
     subpage_types = ['base.IntranetPlainPage']
     # editable by HR.
     cnetid = CharField(
@@ -251,6 +322,22 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
             for u in self.staff_page_units.values()
         ]
 
+    def get_serialized_supervisors(self):
+        """
+        Return a detailed list of supervisors for this staff member.
+
+        Returns:
+            List of dicts containing supervisor information
+        """
+        return [
+            {
+                'name': s.title,
+                'cnetid': s.cnetid,
+                'position_title': s.position_title or ''
+            }
+            for s in self.get_supervisors
+        ]
+
     api_fields = [
         APIField('cnetid'),
         APIField(
@@ -263,6 +350,10 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         APIField(
             'library_units',
             serializer=serializers.ListField(source='get_serialized_units')
+        ),
+        APIField(
+            'supervisors',
+            serializer=serializers.ListField(source='get_serialized_supervisors')
         ),
     ]
 

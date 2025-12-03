@@ -196,6 +196,7 @@ class StaffPageSupervisors(TestCase):
             cnetid='official_supervisor',
             slug='official-supervisor',
             title='Official Supervisor',
+            position_title='Head of Unit One',
         )
         welcome.add_child(instance=official_supervisor)
 
@@ -203,16 +204,23 @@ class StaffPageSupervisors(TestCase):
             cnetid='another_official_supervisor',
             slug='another-official-supervisor',
             title='Another Official Supervisor',
+            position_title='Head of Unit Two',
         )
         welcome.add_child(instance=another_official_supervisor)
 
-        director = StaffPage(cnetid='director', slug='director', title='Director')
+        director = StaffPage(
+            cnetid='director',
+            slug='director',
+            title='Director',
+            position_title='Library Director',
+        )
         welcome.add_child(instance=director)
 
         supervisor_override = StaffPage(
             cnetid='supervisor_override',
             slug='supervisor-override',
             title='Supervisor Override',
+            position_title='Special Supervisor',
         )
         welcome.add_child(instance=supervisor_override)
 
@@ -349,6 +357,39 @@ class StaffPageSupervisors(TestCase):
             UnitPage.objects.get(slug='unit-one').get_parent().specific,
             UnitPage.objects.get(slug='unit-division'),
         )
+
+    def test_get_serialized_supervisors(self):
+        # Test staff member with official supervisor
+        employee = StaffPage.objects.get(cnetid='employee_no_override')
+        serialized = employee.get_serialized_supervisors()
+        self.assertEqual(len(serialized), 1)
+        self.assertEqual(serialized[0]['name'], 'Official Supervisor')
+        self.assertEqual(serialized[0]['cnetid'], 'official_supervisor')
+        self.assertEqual(serialized[0]['position_title'], 'Head of Unit One')
+
+        # Test staff member with supervisor override
+        employee_override = StaffPage.objects.get(cnetid='employee_override')
+        serialized_override = employee_override.get_serialized_supervisors()
+        self.assertEqual(len(serialized_override), 1)
+        self.assertEqual(serialized_override[0]['name'], 'Supervisor Override')
+        self.assertEqual(serialized_override[0]['cnetid'], 'supervisor_override')
+        self.assertEqual(serialized_override[0]['position_title'], 'Special Supervisor')
+
+        # Test staff member with multiple supervisors
+        employee_two_units = StaffPage.objects.get(cnetid='employee_two_units')
+        serialized_two = employee_two_units.get_serialized_supervisors()
+        self.assertEqual(len(serialized_two), 2)
+        supervisor_cnetids = [s['cnetid'] for s in serialized_two]
+        self.assertIn('official_supervisor', supervisor_cnetids)
+        self.assertIn('another_official_supervisor', supervisor_cnetids)
+
+        # Test department head with supervisor
+        dept_head = StaffPage.objects.get(cnetid='official_supervisor')
+        serialized_dept = dept_head.get_serialized_supervisors()
+        self.assertEqual(len(serialized_dept), 1)
+        self.assertEqual(serialized_dept[0]['name'], 'Director')
+        self.assertEqual(serialized_dept[0]['cnetid'], 'director')
+        self.assertEqual(serialized_dept[0]['position_title'], 'Library Director')
 
 
 class ListStaffWagtail(TestCase):
