@@ -5,8 +5,6 @@ import urllib
 from datetime import datetime
 
 import pandas as pd
-from alerts.utils import get_alert
-from ask_a_librarian.utils import get_unit_chat_link
 from django import forms
 from django.apps import apps
 from django.conf.global_settings import LANGUAGES
@@ -17,27 +15,12 @@ from django.forms.utils import ErrorList
 from django.utils import translation
 from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
-from library_website.settings import (
-    BASE_DIR,
-    CGI_MAIL_SERVICE,
-    HOURS_PAGE,
-    ITEM_SERVLET,
-    LIBCAL_IID,
-    MEDIA_URL,
-    PHONE_ERROR_MSG,
-    PHONE_FORMAT,
-    POSTAL_CODE_ERROR_MSG,
-    POSTAL_CODE_FORMAT,
-    ROOT_UNIT,
-    SPRINGSHARE_PRIVACY_POLICY,
-)
 from localflavor.us.models import USStateField
 from localflavor.us.us_states import STATE_CHOICES
 from pygments import highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 from unidecode import unidecode
-from units.utils import get_default_unit
 from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
@@ -65,7 +48,6 @@ from wagtail.blocks import (
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.embeds import embeds
-from wagtail.embeds.blocks import EmbedBlock
 from wagtail.embeds.exceptions import EmbedException
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
@@ -76,41 +58,58 @@ from wagtailmedia.blocks import AbstractMediaChooserBlock
 from wagtailmedia.models import ALLOWED_EXTENSIONS_THUMBNAIL, AbstractMedia
 from wagtailmedia.settings import wagtailmedia_settings
 
+from alerts.utils import get_alert
+from ask_a_librarian.utils import get_unit_chat_link
 from base.utils import get_hours_and_location
+from library_website.settings import (
+    BASE_DIR,
+    CGI_MAIL_SERVICE,
+    HOURS_PAGE,
+    ITEM_SERVLET,
+    LIBCAL_IID,
+    MEDIA_URL,
+    PHONE_ERROR_MSG,
+    PHONE_FORMAT,
+    POSTAL_CODE_ERROR_MSG,
+    POSTAL_CODE_FORMAT,
+    ROOT_UNIT,
+    SPRINGSHARE_PRIVACY_POLICY,
+)
+from units.utils import get_default_unit
 
 # Helper functions and constants
 BUTTON_CHOICES = (
-    ('btn-primary', 'Primary'),
-    ('btn-default', 'Secondary'),
-    ('btn-reserve', 'Reservation'),
+    ("btn-primary", "Primary"),
+    ("btn-default", "Secondary"),
+    ("btn-reserve", "Reservation"),
 )
 
 NEWS_CHOICES = (
-    ('', '--------'),
-    ('library_kiosk', 'Library'),
-    ('law_kiosk', 'Law'),
-    ('sciences_kiosk', 'Sciences'),
-    ('scrc_kiosk', 'SCRC'),
-    ('cds_kiosk', 'CDS'),
+    ("", "--------"),
+    ("library_kiosk", "Library"),
+    ("law_kiosk", "Law"),
+    ("sciences_kiosk", "Sciences"),
+    ("scrc_kiosk", "SCRC"),
+    ("cds_kiosk", "CDS"),
 )
 
 # Friendly names that need "an" instead of "a"
-UNFRIENDLY_ARTICLES = set(['SSA'])
+UNFRIENDLY_ARTICLES = set(["SSA"])
 
-ENGLISH = 'en'
+ENGLISH = "en"
 LANG_DROP = sorted([lang for lang in LANGUAGES if len(lang[0]) < 3], key=lambda a: a[1])
 
 
-def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+def base36encode(number, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
     """Converts an integer to a base36 string."""
     if not isinstance(number, int):
-        raise TypeError('number must be an integer')
+        raise TypeError("number must be an integer")
 
-    base36 = ''
-    sign = ''
+    base36 = ""
+    sign = ""
 
     if number < 0:
-        sign = '-'
+        sign = "-"
         number = -number
 
     if 0 <= number < len(alphabet):
@@ -133,7 +132,7 @@ def base36decode(number):
 def get_available_path_under(path):
     child_pages = filter(
         lambda p: p.path.startswith(path) and len(p.path) == len(path) + 4,
-        apps.get_model('wagtailcore.Page').objects.all(),
+        apps.get_model("wagtailcore.Page").objects.all(),
     )
     child_paths = sorted(map(lambda c: c.path, child_pages))
     if child_paths:
@@ -151,22 +150,22 @@ def get_available_path_under(path):
 def make_slug(s):
     s = unidecode(s)
     s = s.lower()
-    s = ' '.join(s.split())  # replace multiple spaces with a single space.
+    s = " ".join(s.split())  # replace multiple spaces with a single space.
     s = s.strip()
-    s = s.replace('.', '')
-    s = s.replace(',', '')
-    s = s.replace('\'', '')
-    s = s.replace('(', '')
-    s = s.replace(')', '')
-    s = s.replace('&', 'and')
-    s = s.replace(' ', '-')
-    s = s.replace('---', '-')
+    s = s.replace(".", "")
+    s = s.replace(",", "")
+    s = s.replace("'", "")
+    s = s.replace("(", "")
+    s = s.replace(")", "")
+    s = s.replace("&", "and")
+    s = s.replace(" ", "-")
+    s = s.replace("---", "-")
     return s
 
 
 def get_breadcrumbs(page):
     breadcrumbs = list(
-        map(lambda p: {'title': p.title, 'url': p.url}, page.get_ancestors(True))
+        map(lambda p: {"title": p.title, "url": p.url}, page.get_ancestors(True))
     )
     # hack to remove the default root page.
     breadcrumbs.pop(0)
@@ -185,9 +184,9 @@ def recursively_add_children(page, current_site):
         current_site: site object
     """
     return {
-        'title': page.title,
-        'url': page.relative_url(current_site),
-        'children': list(
+        "title": page.title,
+        "url": page.relative_url(current_site),
+        "children": list(
             map(
                 lambda p: recursively_add_children(p, current_site),
                 page.get_children().live(),
@@ -209,7 +208,7 @@ def get_index_html(currentlevel):
         html, string
     """
     if not currentlevel:
-        return ''
+        return ""
     else:
         return (
             "<ul class='index-list'>"
@@ -217,11 +216,11 @@ def get_index_html(currentlevel):
                 list(
                     map(
                         lambda n: "<li><a href='"
-                        + n['url']
+                        + n["url"]
                         + "'>"
-                        + n['title']
+                        + n["title"]
                         + "</a>"
-                        + get_index_html(n['children'])
+                        + get_index_html(n["children"])
                         + "</li>",
                         currentlevel,
                     )
@@ -240,7 +239,7 @@ class Address(models.Model):
     address_1 = models.CharField(max_length=255, blank=True)
     address_2 = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True)
-    state = USStateField(choices=STATE_CHOICES, default='IL')
+    state = USStateField(choices=STATE_CHOICES, default="IL")
     country = models.CharField(max_length=255, blank=True)
     postal_code_regex = RegexValidator(
         regex=POSTAL_CODE_FORMAT, message=POSTAL_CODE_ERROR_MSG
@@ -252,13 +251,13 @@ class Address(models.Model):
     content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('address_1'),
-                FieldPanel('address_2'),
-                FieldPanel('city'),
-                FieldPanel('state'),
-                FieldPanel('postal_code'),
+                FieldPanel("address_1"),
+                FieldPanel("address_2"),
+                FieldPanel("city"),
+                FieldPanel("state"),
+                FieldPanel("postal_code"),
             ],
-            heading='Address',
+            heading="Address",
         ),
     ]
 
@@ -277,10 +276,10 @@ class Email(models.Model):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('email_label'),
-                FieldPanel('email'),
+                FieldPanel("email_label"),
+                FieldPanel("email"),
             ],
-            heading='Email',
+            heading="Email",
         ),
     ]
 
@@ -300,10 +299,10 @@ class PhoneNumber(models.Model):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('phone_label'),
-                FieldPanel('phone_number'),
+                FieldPanel("phone_label"),
+                FieldPanel("phone_number"),
             ],
-            heading='Phone Number',
+            heading="Phone Number",
         ),
     ]
 
@@ -320,7 +319,7 @@ class FaxNumber(models.Model):
     fax_number = models.CharField(validators=[phone_regex], max_length=12, blank=True)
 
     panels = [
-        FieldPanel('fax_number'),
+        FieldPanel("fax_number"),
     ]
 
     class Meta:
@@ -334,17 +333,17 @@ class LinkFields(models.Model):
 
     link_external = models.URLField("External link", blank=True)
     link_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
     )
     link_document = models.ForeignKey(
-        'wagtaildocs.Document',
+        "wagtaildocs.Document",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
     )
 
@@ -358,9 +357,9 @@ class LinkFields(models.Model):
             return self.link_external
 
     panels = [
-        FieldPanel('link_external'),
-        PageChooserPanel('link_page'),
-        FieldPanel('link_document'),
+        FieldPanel("link_external"),
+        PageChooserPanel("link_page"),
+        FieldPanel("link_document"),
     ]
 
     class Meta:
@@ -373,26 +372,26 @@ class CarouselItem(LinkFields):
     """
 
     image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        help_text='Suggested proportions: 1200px wide by 400px high ',
-        related_name='+',
+        help_text="Suggested proportions: 1200px wide by 400px high ",
+        related_name="+",
     )
     image_title = models.CharField(max_length=55, blank=True)
     image_subtitle = models.CharField(max_length=55, blank=True)
 
     panels = [  # WARNIG: do not rename content_panels! Won't work with InlinePanel
-        FieldPanel('image'),
-        FieldPanel('image_title'),
-        FieldPanel('image_subtitle'),
+        FieldPanel("image"),
+        FieldPanel("image_title"),
+        FieldPanel("image_subtitle"),
         MultiFieldPanel(
             [
-                FieldPanel('link_external'),
-                PageChooserPanel('link_page'),
+                FieldPanel("link_external"),
+                PageChooserPanel("link_page"),
             ],
-            heading='Link',
+            heading="Link",
         ),
     ]
 
@@ -406,19 +405,19 @@ class IconLinkItem(LinkFields):
     """
 
     icon = models.CharField(
-        max_length=55, blank=True, help_text='Add a Font Awesome icon name here'
+        max_length=55, blank=True, help_text="Add a Font Awesome icon name here"
     )
     link_label = models.CharField(max_length=55, blank=True)
 
     panels = [
-        FieldPanel('icon'),
-        FieldPanel('link_label'),
+        FieldPanel("icon"),
+        FieldPanel("link_label"),
         MultiFieldPanel(
             [
-                FieldPanel('link_external'),
-                PageChooserPanel('link_page'),
+                FieldPanel("link_external"),
+                PageChooserPanel("link_page"),
             ],
-            heading='Link',
+            heading="Link",
         ),
     ]
 
@@ -435,8 +434,8 @@ class ContactPerson(StructBlock):
 
     contact_person = PageChooserBlock(
         required=False,
-        page_type='staff.StaffPage',
-        help_text='Select a StaffPage (not a StaffPublicPage)',
+        page_type="staff.StaffPage",
+        help_text="Select a StaffPage (not a StaffPublicPage)",
     )
 
 
@@ -446,7 +445,7 @@ class ContactPersonBlock(StreamBlock):
     """
 
     contact = ContactPerson(
-        icon='view', required=False, template='public/blocks/contact.html'
+        icon="view", required=False, template="public/blocks/contact.html"
     )
 
 
@@ -458,8 +457,8 @@ class RelatedExhibit(StructBlock):
 
     exhibit = PageChooserBlock(
         required=False,
-        page_type='lib_collections.ExhibitPage',
-        help_text='Select an ExhibitPage',
+        page_type="lib_collections.ExhibitPage",
+        help_text="Select an ExhibitPage",
     )
 
 
@@ -469,7 +468,7 @@ class RelatedExhibitBlock(StreamBlock):
     """
 
     exhibit = RelatedExhibit(
-        icon='view', required=False, template='public/blocks/related_exhibit.html'
+        icon="view", required=False, template="public/blocks/related_exhibit.html"
     )
 
 
@@ -481,7 +480,7 @@ class LinkedText(LinkFields):
     link_text = models.CharField(max_length=255, blank=True)
 
     panels = [
-        FieldPanel('link_text'),
+        FieldPanel("link_text"),
     ] + LinkFields.panels
 
     class Meta:
@@ -494,10 +493,7 @@ class ContactFields(Email, PhoneNumber, FaxNumber, LinkedText):
     """
 
     content_panels = (
-        Email.panels
-        + PhoneNumber.panels
-        + FaxNumber.panels
-        + LinkedText.panels
+        Email.panels + PhoneNumber.panels + FaxNumber.panels + LinkedText.panels
     )
 
     class Meta:
@@ -513,7 +509,7 @@ class SocialMediaFields(models.Model):
     facebook_page = models.URLField(blank=True)
     hashtag = models.CharField(max_length=45, blank=True)
     hashtag_page = models.URLField(
-        blank=True, help_text='Link to twitter page using a hashtag'
+        blank=True, help_text="Link to twitter page using a hashtag"
     )
     instagram_page = models.URLField(blank=True)
     youtube_page = models.URLField(blank=True)
@@ -543,17 +539,17 @@ class SocialMediaFields(models.Model):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('twitter_page'),
-                FieldPanel('facebook_page'),
-                FieldPanel('hashtag'),
-                FieldPanel('hashtag_page'),
-                FieldPanel('instagram_page'),
-                FieldPanel('youtube_page'),
-                FieldPanel('blog_page'),
-                FieldPanel('tumblr_page'),
-                FieldPanel('snapchat_page'),
+                FieldPanel("twitter_page"),
+                FieldPanel("facebook_page"),
+                FieldPanel("hashtag"),
+                FieldPanel("hashtag_page"),
+                FieldPanel("instagram_page"),
+                FieldPanel("youtube_page"),
+                FieldPanel("blog_page"),
+                FieldPanel("tumblr_page"),
+                FieldPanel("snapchat_page"),
             ],
-            heading='Social media',
+            heading="Social media",
         ),
     ]
 
@@ -567,11 +563,11 @@ class LinkedTextOrLogo(LinkedText):
     """
 
     logo = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
     )
 
     @property
@@ -581,10 +577,10 @@ class LinkedTextOrLogo(LinkedText):
         elif self.link_text:
             return self.link_text
         else:
-            return ''
+            return ""
 
     panels = [
-        FieldPanel('logo'),
+        FieldPanel("logo"),
     ] + LinkedText.panels
 
     class Meta:
@@ -600,7 +596,7 @@ class AbstractButton(LinkFields):
     button_text = models.CharField(max_length=20, blank=False)
 
     panels = [
-        FieldPanel('button_text'),
+        FieldPanel("button_text"),
     ] + LinkFields.panels
 
     class Meta:
@@ -612,10 +608,10 @@ class Button(AbstractButton):
     A simple button.
     """
 
-    button_type = forms.ChoiceField(choices=BUTTON_CHOICES, initial='btn-primary')
+    button_type = forms.ChoiceField(choices=BUTTON_CHOICES, initial="btn-primary")
 
     panels = [
-        FieldPanel('button_type'),
+        FieldPanel("button_type"),
     ] + AbstractButton.panels
 
     class Meta:
@@ -631,13 +627,13 @@ class AbstractReport(LinkFields):
     summary = models.TextField(null=False, blank=False)
 
     panels = [
-        FieldPanel('date'),
-        FieldPanel('summary'),
+        FieldPanel("date"),
+        FieldPanel("summary"),
     ] + LinkFields.panels
 
     class Meta:
         abstract = True
-        ordering = ['-date']
+        ordering = ["-date"]
 
 
 class Report(AbstractReport):
@@ -657,28 +653,28 @@ class StaffPageForeignKeys(models.Model):
     """
 
     page_maintainer = models.ForeignKey(
-        'staff.StaffPage',
+        "staff.StaffPage",
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_maintainer',
+        related_name="%(app_label)s_%(class)s_maintainer",
     )
 
     editor = models.ForeignKey(
-        'staff.StaffPage',
+        "staff.StaffPage",
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_editor',
+        related_name="%(app_label)s_%(class)s_editor",
     )
 
     content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('page_maintainer'),
-                FieldPanel('editor'),
+                FieldPanel("page_maintainer"),
+                FieldPanel("editor"),
             ],
-            heading='Page Management',
+            heading="Page Management",
         )
     ]
 
@@ -695,22 +691,22 @@ class AbstractBaseWithoutStaffPageForeignKeys(models.Model):
 
     show_sidebar = models.BooleanField(default=False)
 
-    last_reviewed = models.DateField('Last Reviewed', null=True, blank=True)
+    last_reviewed = models.DateField("Last Reviewed", null=True, blank=True)
 
     # Searchable fields
     search_fields = []
 
     content_panels = [
-        FieldPanel('last_reviewed', None),
+        FieldPanel("last_reviewed", None),
     ]
 
     left_sidebar_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('start_sidebar_from_here'),
-                FieldPanel('show_sidebar'),
+                FieldPanel("start_sidebar_from_here"),
+                FieldPanel("show_sidebar"),
             ],
-            heading='Left Sidebar Menus',
+            heading="Left Sidebar Menus",
         ),
     ]
 
@@ -738,11 +734,11 @@ class ReusableContentBlock(StructBlock):
     Stream block for adding "reusable content" snippets.
     """
 
-    content = SnippetChooserBlock('reusable_content.ReusableContent')
+    content = SnippetChooserBlock("reusable_content.ReusableContent")
 
     class Meta:
-        icon = 'folder-inverse'
-        template = 'base/blocks/reusable_content.html'
+        icon = "folder-inverse"
+        template = "base/blocks/reusable_content.html"
 
 
 class ImageFormatChoiceBlock(FieldBlock):
@@ -752,9 +748,9 @@ class ImageFormatChoiceBlock(FieldBlock):
 
     field = forms.ChoiceField(
         choices=(
-            ('pull-left', 'Wrap left'),
-            ('pull-right', 'Wrap right'),
-            ('fullwidth', 'Full width'),
+            ("pull-left", "Wrap left"),
+            ("pull-right", "Wrap right"),
+            ("fullwidth", "Full width"),
         )
     )
 
@@ -768,30 +764,30 @@ class ImageBlock(StructBlock):
     title = CharBlock(required=False)
     citation = CharBlock(
         required=False,
-        help_text='Photographer, artist, or creator of image',
+        help_text="Photographer, artist, or creator of image",
     )
     caption = TextBlock(
         required=False,
-        help_text='Details about or description of image',
+        help_text="Details about or description of image",
     )
     alt_text = CharBlock(
         required=True,
-        help_text='Required for ADA compliance',
+        help_text="Required for ADA compliance",
     )
     alignment = ImageFormatChoiceBlock()
     source = URLBlock(
         required=False,
-        help_text='Link to image source (needed for Creative Commons)',
+        help_text="Link to image source (needed for Creative Commons)",
     )
     lightbox = BooleanBlock(
         default=False,
         required=False,
-        help_text='Link to a larger version of the image',
+        help_text="Link to a larger version of the image",
     )
 
     class Meta:
-        icon = 'image'
-        template = 'base/blocks/img.html'
+        icon = "image"
+        template = "base/blocks/img.html"
 
 
 class SoloImage(StructBlock):
@@ -804,12 +800,12 @@ class SoloImage(StructBlock):
     caption = RichTextBlock(blank=True, null=True, required=False)
     alt_text = CharBlock(
         required=False,
-        help_text='Required for ADA compliance if no caption or citation is provided',
+        help_text="Required for ADA compliance if no caption or citation is provided",
     )
 
     class Meta:
-        icon = 'image'
-        template = 'base/blocks/solo_img.html'
+        icon = "image"
+        template = "base/blocks/solo_img.html"
 
 
 class DuoImage(StructBlock):
@@ -819,17 +815,17 @@ class DuoImage(StructBlock):
     """
 
     image_one = SoloImage(
-        help_text='First of two images displayed \
-            side by side'
+        help_text="First of two images displayed \
+            side by side"
     )
     image_two = SoloImage(
-        help_text='Second of two images displayed \
-            side by side'
+        help_text="Second of two images displayed \
+            side by side"
     )
 
     class Meta:
-        icon = 'image'
-        template = 'base/blocks/duo_img.html'
+        icon = "image"
+        template = "base/blocks/duo_img.html"
 
 
 class ColumnsBlock(StreamBlock):
@@ -851,12 +847,12 @@ class BlockQuoteBlock(StructBlock):
     Blockquote streamfield block.
     """
 
-    quote = TextBlock('quote title')
+    quote = TextBlock("quote title")
     attribution = CharBlock(required=False)
 
     class Meta:
-        icon = 'openquote'
-        template = 'base/blocks/blockquote.html'
+        icon = "openquote"
+        template = "base/blocks/blockquote.html"
 
 
 class PullQuoteBlock(StructBlock):
@@ -867,8 +863,8 @@ class PullQuoteBlock(StructBlock):
     quote = RichTextBlock()
 
     class Meta:
-        icon = 'arrow-left'
-        template = 'base/blocks/pullquote.html'
+        icon = "arrow-left"
+        template = "base/blocks/pullquote.html"
 
 
 class ButtonBlock(StructBlock):
@@ -883,8 +879,8 @@ class ButtonBlock(StructBlock):
     link_document = DocumentChooserBlock(required=False)
 
     class Meta:
-        icon = 'plus-inverse'
-        template = 'base/blocks/button.html'
+        icon = "plus-inverse"
+        template = "base/blocks/button.html"
 
 
 class AnchorTargetBlock(StructBlock):
@@ -895,9 +891,9 @@ class AnchorTargetBlock(StructBlock):
     anchor_id_name = CharBlock(max_length=50)
 
     class Meta:
-        icon = 'tag'
-        template = 'base/blocks/anchor_target.html'
-        label = 'Anchor link target'
+        icon = "tag"
+        template = "base/blocks/anchor_target.html"
+        label = "Anchor link target"
 
 
 class ClearBlock(StructBlock):
@@ -906,8 +902,8 @@ class ClearBlock(StructBlock):
     """
 
     class Meta:
-        icon = 'horizontalrule'
-        template = 'base/blocks/clear.html'
+        icon = "horizontalrule"
+        template = "base/blocks/clear.html"
 
 
 class ParagraphBlock(StructBlock):
@@ -918,9 +914,9 @@ class ParagraphBlock(StructBlock):
     paragraph = RichTextBlock()
 
     class Meta:
-        icon = 'pilcrow'
-        form_classname = 'paragraph-block struct-block'
-        template = 'base/blocks/paragraph.html'
+        icon = "pilcrow"
+        form_classname = "paragraph-block struct-block"
+        template = "base/blocks/paragraph.html"
 
 
 class CodeBlock(StructBlock):
@@ -929,36 +925,36 @@ class CodeBlock(StructBlock):
     """
 
     LANGUAGE_CHOICES = (
-        ('bash', 'Bash/Shell'),
-        ('css', 'CSS'),
-        ('html', 'HTML'),
-        ('javascript', 'Javascript'),
-        ('json', 'JSON'),
-        ('ocaml', 'OCaml'),
-        ('php5', 'PHP'),
-        ('html+php', 'PHP/HTML'),
-        ('python', 'Python'),
-        ('scss', 'SCSS'),
-        ('yaml', 'YAML'),
+        ("bash", "Bash/Shell"),
+        ("css", "CSS"),
+        ("html", "HTML"),
+        ("javascript", "Javascript"),
+        ("json", "JSON"),
+        ("ocaml", "OCaml"),
+        ("php5", "PHP"),
+        ("html+php", "PHP/HTML"),
+        ("python", "Python"),
+        ("scss", "SCSS"),
+        ("yaml", "YAML"),
     )
 
     language = ChoiceBlock(choices=LANGUAGE_CHOICES)
     code = TextBlock()
 
     class Meta:
-        icon = 'cog'
-        label = '_SRC'
+        icon = "cog"
+        label = "_SRC"
 
     def render(self, value, context=None):
-        src = value['code'].strip('\n')
-        lang = value['language']
+        src = value["code"].strip("\n")
+        lang = value["language"]
 
         lexer = get_lexer_by_name(lang)
         formatter = get_formatter_by_name(
-            'html',
+            "html",
             linenos=None,
-            cssclass='codehilite',
-            style='default',
+            cssclass="codehilite",
+            style="default",
             noclasses=False,
         )
         return mark_safe(highlight(src, lexer, formatter))
@@ -970,11 +966,11 @@ class AgendaInnerBlock(StructBlock):
     portion of the AgendaItem streamfield.
     """
 
-    title = CharBlock(required=False, help_text='Talk title, workshop title, etc.')
+    title = CharBlock(required=False, help_text="Talk title, workshop title, etc.")
     presenters = CharBlock(
         required=False,
-        help_text='Comma separated list of presenters \
-            (if more than one)',
+        help_text="Comma separated list of presenters \
+            (if more than one)",
     )
     room_number = CharBlock(required=False)
     description = RichTextBlock(required=False)
@@ -985,20 +981,20 @@ class AgendaItemFields(StructBlock):
     Make the AgendaInnerBlock repeatable.
     """
 
-    start_time = TimeBlock(required=False, icon='time')
-    end_time = TimeBlock(required=False, icon='time')
+    start_time = TimeBlock(required=False, icon="time")
+    end_time = TimeBlock(required=False, icon="time")
     session_title = CharBlock(
         required=False,
-        icon='title',
-        help_text='Title of the session. \
-            Can be used as title of the talk in some situations.',
+        icon="title",
+        help_text="Title of the session. \
+            Can be used as title of the talk in some situations.",
     )
     event = ListBlock(
         AgendaInnerBlock(),
         icon="edit",
-        help_text='A talk or event with a title, presenter \
-            room number, and description',
-        label=' ',
+        help_text="A talk or event with a title, presenter \
+            room number, and description",
+        label=" ",
     )
 
 
@@ -1020,37 +1016,37 @@ class LinkQueueSpreadsheetBlock(DocumentChooserBlock):
     """
 
     def clean(self, value):
-        expected = '.xlsx'
+        expected = ".xlsx"
         errors = {}
         extension = os.path.splitext(value.filename)[1]
         if extension != expected:
-            errors['file_extension'] = ErrorList(
-                ['Your spreadsheet file must be an .xlsx']
+            errors["file_extension"] = ErrorList(
+                ["Your spreadsheet file must be an .xlsx"]
             )
 
         if extension == expected:
             df = pd.read_excel(BASE_DIR + MEDIA_URL + str(value.file))
             if df.empty:
-                errors['empty_spreadsheet'] = ErrorList(
-                    ['Empty spreadsheets are not allowed']
+                errors["empty_spreadsheet"] = ErrorList(
+                    ["Empty spreadsheets are not allowed"]
                 )
             if not df.empty:
                 df.columns = df.columns.str.lower()
-                required_headers = ['start date', 'end date', 'link text', 'url']
+                required_headers = ["start date", "end date", "link text", "url"]
                 msg = 'Your spreadsheet file must have "Start Date", "End Date", "Link Text", and "URL" column headers'
                 if not set(required_headers).issubset(df.columns):
-                    errors['required_headers'] = ErrorList([msg])
+                    errors["required_headers"] = ErrorList([msg])
         if errors:
             raise ValidationError(errors)
 
         return super().clean(value)
 
     class Meta:
-        icon = 'table'
+        icon = "table"
 
 
 class StaffPageChooserBlock(ChooserBlock):
-    target_model = 'staff.StaffPage'
+    target_model = "staff.StaffPage"
     widget = forms.Select
 
     class Meta:
@@ -1068,8 +1064,8 @@ class StaffListingFields(StructBlock):
     staff_listing = ListBlock(
         PageChooserBlock(),
         icon="edit",
-        help_text='Be sure to select staff pages from Loop.',
-        label='Staff listing',
+        help_text="Be sure to select staff pages from Loop.",
+        label="Staff listing",
     )
     show_photos = BooleanBlock(
         default=False, required=False, help_text="Show staff photographs."
@@ -1082,9 +1078,9 @@ class StaffListingFields(StructBlock):
     )
 
     class Meta:
-        template = 'blocks/staff_listing_block.html'
-        icon = 'form'
-        label = 'Staff Listing'
+        template = "blocks/staff_listing_block.html"
+        icon = "form"
+        label = "Staff Listing"
 
 
 class ImageLink(StructBlock):
@@ -1095,45 +1091,45 @@ class ImageLink(StructBlock):
     image = ImageChooserBlock(required=False)
     alt_text = CharBlock(
         required=False,
-        help_text='Required if no link text supplied for ADA compliance',
+        help_text="Required if no link text supplied for ADA compliance",
     )
     icon = CharBlock(
         required=False, help_text="Font Awesome icon name if you're not using an image"
     )
     link_text = CharBlock(
         required=False,
-        help_text='Text to display below the image or icon',
+        help_text="Text to display below the image or icon",
     )
     link_external = URLBlock(required=False)
     link_page = PageChooserBlock(required=False)
     link_document = DocumentChooserBlock(required=False)
 
     class Meta:
-        icon = 'image'
-        template = 'base/blocks/image_link.html'
+        icon = "image"
+        template = "base/blocks/image_link.html"
 
 
 class LocalMedia(AbstractMedia):
     admin_form_fields = (
-        'title',
-        'file',
-        'collection',
-        'duration',
-        'width',
-        'height',
-        'thumbnail',
-        'tags',
-        'aria_label',
-        'captions',
-        'caption_language',
-        'text_alternative',
+        "title",
+        "file",
+        "collection",
+        "duration",
+        "width",
+        "height",
+        "thumbnail",
+        "tags",
+        "aria_label",
+        "captions",
+        "caption_language",
+        "text_alternative",
     )
     aria_label = models.CharField(
         blank=True,
-        default='',
+        default="",
         max_length=100,
-        help_text='Textual description of the audio or video \
-            for ADA purposes.',
+        help_text="Textual description of the audio or video \
+            for ADA purposes.",
     )
     captions = models.FileField(
         upload_to="media_captions",
@@ -1156,7 +1152,7 @@ class LocalMedia(AbstractMedia):
             self.duration = 0
 
         if self.captions:
-            validate = FileExtensionValidator(['vtt'])
+            validate = FileExtensionValidator(["vtt"])
             validate(self.captions)
 
         if self.thumbnail:
@@ -1175,12 +1171,12 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
     def render_basic(self, value, context=None):
 
         if not value:
-            return ''
+            return ""
 
-        text_alt = ''
+        text_alt = ""
         if strip_tags(value.text_alternative):
-            cid = 'c-' + str(value.id)
-            text_alt = '''
+            cid = "c-" + str(value.id)
+            text_alt = """
             <div>
               <a class="btn btn-primary" data-toggle="collapse" href="#%s" role="button" aria-expanded="false" aria-controls="%s">
                 Alternative description
@@ -1191,22 +1187,22 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
                 %s
               </div>
             </div>
-            ''' % (
+            """ % (
                 cid,
                 cid,
                 cid,
                 value.text_alternative,
             )
 
-        track = ''
+        track = ""
         if value.captions:
             track = (
                 '<track srclang="%s" kind="captions" src="%s" type="text/vtt" default=""></track>'
                 % (value.caption_language, value.captions.url)
             )
 
-        if value.type == 'video':
-            player_code = '''
+        if value.type == "video":
+            player_code = """
             <div>
               <video width="320" height="240" aria-label="%s" controls>
                 <source src="{0}" type="video/mp4">
@@ -1215,13 +1211,13 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
               </video>
               %s
             </div>
-            ''' % (
+            """ % (
                 value.aria_label,
                 track,
                 text_alt,
             )
         else:
-            player_code = '''
+            player_code = """
             <div>
               <audio aria-label="%s" controls>
                 <source src="{0}" type="audio/mpeg">
@@ -1229,7 +1225,7 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
               </audio>
               %s
             </div>
-            ''' % (
+            """ % (
                 value.aria_label,
                 text_alt,
             )
@@ -1237,7 +1233,7 @@ class LocalMediaBlock(AbstractMediaChooserBlock):
         return format_html(player_code, value.file.url)
 
     class Meta:
-        icon = 'media'
+        icon = "media"
 
 
 class VideoEmbedBlock(StructBlock):
@@ -1246,52 +1242,40 @@ class VideoEmbedBlock(StructBlock):
     Addresses accessibility issues with external video embeds from YouTube/Vimeo.
     """
 
-    url = URLBlock(
-        required=True,
-        help_text='Video URL from YouTube or Vimeo'
-    )
+    url = URLBlock(required=True, help_text="Video URL from YouTube or Vimeo")
     title = CharBlock(
         required=True,
         max_length=255,
-        help_text='Descriptive title for screen readers (e.g., "Introduction to Python Programming")'
+        help_text='Descriptive title for screen readers (e.g., "Introduction to Python Programming")',
     )
 
     def render(self, value, context=None):
-        if not value or not value.get('url'):
-            return ''
+        if not value or not value.get("url"):
+            return ""
 
         try:
             # Get the embed HTML from Wagtail's embed service
-            embed = embeds.get_embed(value['url'])
+            embed = embeds.get_embed(value["url"])
             html = embed.html
 
             # Inject the title attribute into the iframe tag using regex
             # This handles iframes with or without existing title attributes
-            title = value.get('title', '').replace('"', '&quot;')  # Escape quotes
+            title = value.get("title", "").replace('"', "&quot;")  # Escape quotes
 
             # Replace existing title attribute or add new one
-            if 'title=' in html:
+            if "title=" in html:
                 # Replace existing title
-                html = re.sub(
-                    r'title="[^"]*"',
-                    f'title="{title}"',
-                    html
-                )
+                html = re.sub(r'title="[^"]*"', f'title="{title}"', html)
             else:
                 # Add title attribute after the opening <iframe tag
-                html = re.sub(
-                    r'<iframe\s',
-                    f'<iframe title="{title}" ',
-                    html,
-                    count=1
-                )
+                html = re.sub(r"<iframe\s", f'<iframe title="{title}" ', html, count=1)
 
             return mark_safe(html)
         except EmbedException:
-            return ''
+            return ""
 
     class Meta:
-        icon = 'media'
+        icon = "media"
 
 
 class DefaultBodyFields(StreamBlock):
@@ -1302,61 +1286,61 @@ class DefaultBodyFields(StreamBlock):
 
     paragraph = ParagraphBlock(group="Format and Text")
     h2 = CharBlock(
-        icon='title',
-        classname='title',
-        template='base/blocks/h2.html',
+        icon="title",
+        classname="title",
+        template="base/blocks/h2.html",
         group="Format and Text",
     )
     h3 = CharBlock(
-        icon='title',
-        classname='title',
-        template='base/blocks/h3.html',
+        icon="title",
+        classname="title",
+        template="base/blocks/h3.html",
         group="Format and Text",
     )
     h4 = CharBlock(
-        icon='title',
-        classname='title',
-        template='base/blocks/h4.html',
+        icon="title",
+        classname="title",
+        template="base/blocks/h4.html",
         group="Format and Text",
     )
     h5 = CharBlock(
-        icon='title',
-        classname='title',
-        template='base/blocks/h5.html',
+        icon="title",
+        classname="title",
+        template="base/blocks/h5.html",
         group="Format and Text",
     )
     columns_block = ColumnsBlock(group="Format and Text")
     blockquote = BlockQuoteBlock(group="Format and Text")
     pullquote = PullQuoteBlock(group="Format and Text")
     reusable_content = ReusableContentBlock(group="Format and Text")
-    image = ImageBlock(label='Image', group="Images and Media")
+    image = ImageBlock(label="Image", group="Images and Media")
     solo_image = SoloImage(
-        help_text='Single image with caption on the right', group="Images and Media"
+        help_text="Single image with caption on the right", group="Images and Media"
     )
     duo_image = DuoImage(
-        help_text='Two images side by side with captions below',
+        help_text="Two images side by side with captions below",
         group="Images and Media",
     )
     local_media = LocalMediaBlock(
         label="Video or Audio",
-        help_text='Audio or video files that have been uploaded into Wagtail',
+        help_text="Audio or video files that have been uploaded into Wagtail",
         group="Images and Media",
     )
     video_with_title = VideoEmbedBlock(
-        icon='media',
-        label='External Video with Title',
+        icon="media",
+        label="External Video with Title",
         group="Images and Media",
     )
     button = ButtonBlock(group="Links")
     image_link = ImageLink(
         label="Linked Image",
-        help_text='A fancy link made out of a thumbnail and simple text',
+        help_text="A fancy link made out of a thumbnail and simple text",
         group="Links",
     )
     staff_listing = StaffListingFields(
-        icon='group',
-        template='base/blocks/staff_listing.html',
-        help_text='Automatically displays selected staff with title, contact, and link to staff profile page',
+        icon="group",
+        template="base/blocks/staff_listing.html",
+        help_text="Automatically displays selected staff with title, contact, and link to staff profile page",
         group="Links",
     )
     anchor_target = AnchorTargetBlock(
@@ -1370,38 +1354,38 @@ class DefaultBodyFields(StreamBlock):
         language = language[:2]
 
     options = {
-        'minSpareRows': 0,
-        'startRows': 3,
-        'startCols': 3,
-        'colHeaders': False,
-        'rowHeaders': False,
-        'contextMenu': True,
-        'editor': 'text',
-        'stretchH': 'all',
-        'height': 108,
-        'language': language,
-        'renderer': 'html',
-        'autoColumnSize': False,
+        "minSpareRows": 0,
+        "startRows": 3,
+        "startCols": 3,
+        "colHeaders": False,
+        "rowHeaders": False,
+        "contextMenu": True,
+        "editor": "text",
+        "stretchH": "all",
+        "height": 108,
+        "language": language,
+        "renderer": "html",
+        "autoColumnSize": False,
     }
     table = TableBlock(
         table_options=options,
-        template='base/blocks/table.html',
+        template="base/blocks/table.html",
         help_text='Right + click in a table cell for more options. \
 Use <em>text</em> for italics, <strong>text</strong> for bold, and \
 <a href="https://duckduckgo.com">text</a> for links.',
         group="Layout and Data",
     )
     agenda_item = AgendaItemFields(
-        icon='date', template='base/blocks/agenda.html', group="Layout and Data"
+        icon="date", template="base/blocks/agenda.html", group="Layout and Data"
     )
     clear = ClearBlock(
         lable="Clear Formatting",
-        help_text='Resets layout before or after floated images.',
+        help_text="Resets layout before or after floated images.",
         group="Layout and Data",
     )
     code = CodeBlock(group="Layout and Data")
     html = RawHTMLBlock(
-        help_text='Display code as text for tutorial or documentation purposes',
+        help_text="Display code as text for tutorial or documentation purposes",
         group="Layout and Data",
     )
 
@@ -1443,8 +1427,8 @@ class BasePageWithoutStaffPageForeignKeys(
         Page.search_fields
         + AbstractBaseWithoutStaffPageForeignKeys.search_fields
         + [
-            index.AutocompleteField('search_description'),
-            index.AutocompleteField('title', boost=4),
+            index.AutocompleteField("search_description"),
+            index.AutocompleteField("title", boost=4),
         ]
     )
 
@@ -1458,16 +1442,16 @@ class BasePageWithoutStaffPageForeignKeys(
     def get_context(self, request):
         context = super(BasePageWithoutStaffPageForeignKeys, self).get_context(request)
 
-        context['breadcrumbs'] = get_breadcrumbs(self)
+        context["breadcrumbs"] = get_breadcrumbs(self)
 
-        context['sidebartitle'] = 'Browse this Section'
-        if self.specific_class.get_verbose_name() == 'Intranet Units Page':
+        context["sidebartitle"] = "Browse this Section"
+        if self.specific_class.get_verbose_name() == "Intranet Units Page":
             for p in list(reversed(self.get_ancestors(True))):
                 try:
                     if p.specific.start_sidebar_from_here:
-                        context['sidebartitle'] = p.title
+                        context["sidebartitle"] = p.title
                         break
-                except:
+                except:  # noqa: E722
                     pass
 
         # JEJ- fix this later to remove logic from the template.
@@ -1485,22 +1469,22 @@ class BasePageWithoutStaffPageForeignKeys(
             children = sidebar_parent.get_children().in_menu().live().specific()
             for child in children:
                 new_child = {
-                    'title': child.title,
-                    'url': child.relative_url(current_site),
-                    'children': [],
+                    "title": child.title,
+                    "url": child.relative_url(current_site),
+                    "children": [],
                 }
                 grandchildren = child.get_children().in_menu().live().specific()
                 for grandchild in grandchildren:
-                    new_child['children'].append(
+                    new_child["children"].append(
                         {
-                            'title': grandchild.title,
-                            'url': grandchild.relative_url(current_site),
-                            'children': [],
+                            "title": grandchild.title,
+                            "url": grandchild.relative_url(current_site),
+                            "children": [],
                         }
                     )
 
                 sidebar.append(new_child)
-        context['sidebar'] = sidebar
+        context["sidebar"] = sidebar
 
         return context
 
@@ -1532,7 +1516,7 @@ class PublicBasePage(BasePage):
     # Quicklinks fields
     quicklinks = RichTextField(blank=True)
     quicklinks_title = models.CharField(max_length=100, blank=True)
-    view_more_link = models.URLField(max_length=255, blank=True, default='')
+    view_more_link = models.URLField(max_length=255, blank=True, default="")
     view_more_link_label = models.CharField(max_length=100, blank=True)
     change_to_callout = models.BooleanField(default=False)
 
@@ -1546,37 +1530,37 @@ class PublicBasePage(BasePage):
     # Promote fields
     exclude_from_search_engines = models.BooleanField(
         default=False,
-        help_text='Tells search engines not to index the page with a meta robots noindex tag',
+        help_text="Tells search engines not to index the page with a meta robots noindex tag",
     )
     exclude_from_site_search = models.BooleanField(
-        default=False, help_text='Excludes the page from the public site search'
+        default=False, help_text="Excludes the page from the public site search"
     )
     exclude_from_sitemap_xml = models.BooleanField(
-        default=False, help_text='Excludes the page from the Google sitemap.xml'
+        default=False, help_text="Excludes the page from the Google sitemap.xml"
     )
 
     # Workshops and Events
     events_feed_url = models.URLField(
-        blank=True, help_text='Link to a Tiny Tiny RSS Feed'
+        blank=True, help_text="Link to a Tiny Tiny RSS Feed"
     )
 
     # Banner
     banner_title = models.CharField(max_length=100, blank=True)
     banner_subtitle = models.CharField(max_length=100, blank=True)
     banner_image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text="Banners should be approximately 1200 × 200 pixels",
     )
     banner_feature = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text="Banner feature images should be approximately 500 × 500 pixels",
     )
 
@@ -1585,66 +1569,66 @@ class PublicBasePage(BasePage):
         max_length=50,
         blank=True,
         choices=NEWS_CHOICES,
-        default='',
+        default="",
     )
     external_news_page = models.URLField(
-        blank=True, help_text='Link to an external news page, e.g. wordpress'
+        blank=True, help_text="Link to an external news page, e.g. wordpress"
     )
     internal_news_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        help_text='Link to an internal news page',
+        help_text="Link to an internal news page",
     )
 
     # Rich text
     rich_text_heading = models.CharField(max_length=25, blank=True)
     rich_text = RichTextField(
         blank=True,
-        help_text='Should be a bulleted list or combination of h3 \
-elements and bulleted lists',
+        help_text="Should be a bulleted list or combination of h3 \
+elements and bulleted lists",
     )
     rich_text_link = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
         on_delete=models.SET_NULL,
-        help_text='Optional link that displays next to the heading',
+        help_text="Optional link that displays next to the heading",
     )
     rich_text_external_link = models.URLField(
-        blank=True, help_text='Optional external link that displays next to the heading'
+        blank=True, help_text="Optional external link that displays next to the heading"
     )
     rich_text_link_text = models.CharField(
-        max_length=25, blank=True, help_text='Display text for the rich text link'
+        max_length=25, blank=True, help_text="Display text for the rich text link"
     )
 
     # Featured LibGuides
     link_queue = StreamField(
         [
-            ('spreadsheet', LinkQueueSpreadsheetBlock()),
+            ("spreadsheet", LinkQueueSpreadsheetBlock()),
         ],
-        default='',
+        default="",
         blank=True,
         help_text='Spreadsheets should be .xlsx files with the following headers: "Start Date", "End Date", "Link Text", and "URL"',
     )
 
     unit = models.ForeignKey(
-        'units.UnitPage',
+        "units.UnitPage",
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_related',
+        related_name="%(app_label)s_%(class)s_related",
     )
 
     content_specialist = models.ForeignKey(
-        'staff.StaffPage',
+        "staff.StaffPage",
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_content_specialist',
+        related_name="%(app_label)s_%(class)s_content_specialist",
     )
 
     # Current Web Exhibits
@@ -1656,30 +1640,30 @@ elements and bulleted lists',
     # CGIMail Form
     cgi_mail_form = models.TextField(
         blank=True,
-        help_text='JSON representing the fields of a form. Must \
-follow a strict schema. Contact DLDC for help with this',
+        help_text="JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this",
     )
 
     cgi_mail_form_thank_you_text = RichTextField(
-        blank=True, help_text='Text to display after the form has been submitted'
+        blank=True, help_text="Text to display after the form has been submitted"
     )
 
     content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('page_maintainer'),
-                FieldPanel('editor'),
-                FieldPanel('content_specialist'),
-                FieldPanel('unit'),
-                FieldPanel('last_reviewed', None),
+                FieldPanel("page_maintainer"),
+                FieldPanel("editor"),
+                FieldPanel("content_specialist"),
+                FieldPanel("unit"),
+                FieldPanel("last_reviewed", None),
             ],
-            heading='Page Management',
+            heading="Page Management",
         ),
     ]
 
     api_fields = BasePage.api_fields + [
-        APIField('quicklinks_title'),
-        APIField('quicklinks'),
+        APIField("quicklinks_title"),
+        APIField("quicklinks"),
     ]
 
     left_sidebar_panels = BasePage.left_sidebar_panels
@@ -1702,9 +1686,9 @@ follow a strict schema. Contact DLDC for help with this',
         try:
             current_site = Site.find_for_request(request)
             return Page.objects.get(id=HOURS_PAGE).relative_url(current_site)
-        except (IndexError):
-            msg = 'HOURS_PAGE in settings.base is configured incorrectly. \
-Either it is set to the ID of a non-existing page or it has an incorrect value.'
+        except IndexError:
+            msg = "HOURS_PAGE in settings.base is configured incorrectly. \
+Either it is set to the ID of a non-existing page or it has an incorrect value."
 
             raise IndexError(msg)
 
@@ -1725,8 +1709,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return (self.title, self.url)
             else:
                 return self.get_parent().specific.get_sidebar_title()
-        except:
-            return ('', '')
+        except:  # noqa: E722
+            return ("", "")
 
     def has_left_sidebar(self, context):
         """
@@ -1739,7 +1723,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         Returns:
             Boolean
         """
-        return bool(self.show_sidebar and context['sidebar'])
+        return bool(self.show_sidebar and context["sidebar"])
 
     def get_conditional_css_classes(self, divname, sidebar):
         """
@@ -1757,13 +1741,13 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             to a div.
         """
         css = {
-            'breadcrumbs': {
-                True: 'col-md-10 breadcrumbs hidden-xs hidden-sm',
-                False: 'col-md-12 breadcrumbs hidden-xs hidden-sm',
+            "breadcrumbs": {
+                True: "col-md-10 breadcrumbs hidden-xs hidden-sm",
+                False: "col-md-12 breadcrumbs hidden-xs hidden-sm",
             },
-            'content': {
-                True: 'container body-container col-xs-12 col-md-10',
-                False: 'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
+            "content": {
+                True: "container body-container col-xs-12 col-md-10",
+                False: "container body-container col-xs-12 col-lg-11 col-lg-offset-1",
             },
         }
         return css[divname][sidebar]
@@ -1778,18 +1762,18 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         """
         # TODO: move this to base.settings and use page ID instead of page title
         css = {
-            'The John Crerar Library': 'crerar',
-            'The D\'Angelo Law Library': 'law',
-            'Eckhart Library': 'eckhart',
-            'The Joe and Rika Mansueto Library': 'mansueto',
-            'The Joseph Regenstein Library': 'reg',
-            'Social Service Administration Library': 'ssa',
+            "The John Crerar Library": "crerar",
+            "The D'Angelo Law Library": "law",
+            "Eckhart Library": "eckhart",
+            "The Joe and Rika Mansueto Library": "mansueto",
+            "The Joseph Regenstein Library": "reg",
+            "Social Service Administration Library": "ssa",
         }
         try:
-            key = str(get_hours_and_location(self)['page_location'])
+            key = str(get_hours_and_location(self)["page_location"])
             return css[key]
-        except (KeyError):
-            return ''
+        except KeyError:
+            return ""
 
     def get_granular_libcal_lid(self, unit):
         """
@@ -1813,7 +1797,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return current_page_id
             else:
                 return self.get_granular_libcal_lid(self.get_parent().unit.location)
-        except (AttributeError):
+        except AttributeError:
             return get_default_unit().location.libcal_library_id
 
     def has_granular_hours(self):
@@ -1889,7 +1873,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         try:
             if self.reusable_content:
                 return True
-        except (AttributeError):
+        except AttributeError:
             return False
 
     def base_has_right_sidebar(self):
@@ -1901,7 +1885,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             boolean
         """
         fields = [strip_tags(self.quicklinks), self.events_feed_url]
-        has_social_media = hasattr(self, 'has_social_media') and self.has_social_media
+        has_social_media = hasattr(self, "has_social_media") and self.has_social_media
         return (
             self.has_field(fields)
             or self.has_granular_hours()
@@ -1942,8 +1926,8 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             else:
                 return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
-        except (AttributeError):
-            return (False, None, None, '', '', '', '')
+        except AttributeError:
+            return (False, None, None, "", "", "", "")
 
     def get_parent_of_type(self, t):
         """
@@ -1961,7 +1945,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
                 return self
             else:
                 return self.get_parent().specific.get_parent_of_type(t)
-        except (AttributeError):
+        except AttributeError:
             return None
 
     def get_directory_link_by_location(self, location, specialists=False):
@@ -1981,11 +1965,11 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             string, link into the public directory
             filtered by library.
         """
-        base = '/about/directory/?view=staff&library='
+        base = "/about/directory/?view=staff&library="
         url = base + urllib.parse.quote_plus(location)
 
         if specialists:
-            return url + '&subject=All+Subject+Specialists'
+            return url + "&subject=All+Subject+Specialists"
         else:
             return url
 
@@ -2006,27 +1990,27 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
         # Bail immediately if we don't need news
         empty_qs = LibNewsPage.objects.none()
-        if src == '':
+        if src == "":
             return empty_qs
 
         # Get the queryset once
         qs = (
             LibNewsPage.objects.live()
             .public()
-            .order_by('-published_at')
+            .order_by("-published_at")
             .exclude(thumbnail=None)
         )
 
         # Filter for selected kiosk pages
-        if src == 'library_kiosk':
+        if src == "library_kiosk":
             return qs.filter(library_kiosk=True)[:n]
-        elif src == 'law_kiosk':
+        elif src == "law_kiosk":
             return qs.filter(law_kiosk=True)[:n]
-        elif src == 'sciences_kiosk':
+        elif src == "sciences_kiosk":
             return qs.filter(sciences_kiosk=True)[:n]
-        elif src == 'scrc_kiosk':
+        elif src == "scrc_kiosk":
             return qs.filter(scrc_kiosk=True)[:n]
-        elif src == 'cds_kiosk':
+        elif src == "cds_kiosk":
             return qs.filter(cds_kiosk=True)[:n]
 
         # This should never happen but just in case
@@ -2055,7 +2039,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
         """
         df = pd.DataFrame()
         current_page = self
-        blocks = current_page.link_queue.blocks_by_name('spreadsheet')
+        blocks = current_page.link_queue.blocks_by_name("spreadsheet")
         links = {}
         for block in blocks:
             if block.value:
@@ -2064,156 +2048,155 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
 
                 if not df.empty:
                     df.columns = df.columns.str.lower()
-                    df['start date'] = pd.to_datetime(df['start date'])
-                    df['end date'] = pd.to_datetime(df['end date'])
+                    df["start date"] = pd.to_datetime(df["start date"])
+                    df["end date"] = pd.to_datetime(df["end date"])
                     now = datetime.now()
                     filtered_df = df[
-                        (df['start date'] <= now) & (df['end date'] >= now)
+                        (df["start date"] <= now) & (df["end date"] >= now)
                     ]
                     if len(filtered_df) > 0:
                         links[title] = []
                     for i, row in filtered_df.iterrows():
-                        link_text = row['link text']
-                        link_url = row['url']
+                        link_text = row["link text"]
+                        link_url = row["url"]
                         links[title].append((link_url, link_text))
         return links
 
     def get_context(self, request):
         context = super(PublicBasePage, self).get_context(request)
         self.location_and_hours = get_hours_and_location(self)
-        unit = self.location_and_hours['page_unit']
+        unit = self.location_and_hours["page_unit"]
         current_site = Site.find_for_request(request)
-        url_filter = '~()*!.\''
 
         try:
-            location_id = self.location_and_hours['page_location'].id
-            location = str(self.location_and_hours['page_location'])
+            location_id = self.location_and_hours["page_location"].id
+            location = str(self.location_and_hours["page_location"])
             is_law = False
             if location_id == 3393:
                 is_law = True
-            context['page_unit'] = str(unit)
-            context['page_location'] = location
-            context['page_location_id'] = location_id
+            context["page_unit"] = str(unit)
+            context["page_location"] = location
+            context["page_location_id"] = location_id
             # context['current_building_hours'] = self.location_and_hours['hours']
-            context['address'] = self.location_and_hours['address']
+            context["address"] = self.location_and_hours["address"]
             # context['all_building_hours'] = get_all_building_hours()
-            context['chat_url'] = get_unit_chat_link(unit, request)
+            context["chat_url"] = get_unit_chat_link(unit, request)
             if location:
-                context['directory_link'] = self.get_directory_link_by_location(
+                context["directory_link"] = self.get_directory_link_by_location(
                     location, True
                 )
-        except (AttributeError):
+        except AttributeError:
             logger = logging.getLogger(__name__)
-            logger.error('Context variables not set in PublicBasePage.')
+            logger.error("Context variables not set in PublicBasePage.")
 
-        context['libcalid'] = self.location_and_hours['libcalid']
-        context['granular_libcalid'] = self.get_granular_libcal_lid(self.unit)
-        context['libcaliid'] = LIBCAL_IID
-        context['has_granular_hours'] = self.has_granular_hours()
+        context["libcalid"] = self.location_and_hours["libcalid"]
+        context["granular_libcalid"] = self.get_granular_libcal_lid(self.unit)
+        context["libcaliid"] = LIBCAL_IID
+        context["has_granular_hours"] = self.has_granular_hours()
         (
-            context['all_spaces_link'],
-            context['quiet_spaces_link'],
-            context['collaborative_spaces_link'],
+            context["all_spaces_link"],
+            context["quiet_spaces_link"],
+            context["collaborative_spaces_link"],
         ) = self.get_spaces_links(self.location_and_hours)
 
         sidebar = self.has_left_sidebar(context)
         section_info = self.get_banner(current_site)
         branch_name = section_info[3]
         has_alert = False if not get_alert(current_site) else True
-        context['has_left_sidebar'] = sidebar
-        context['content_div_css'] = self.get_conditional_css_classes(
-            'content', sidebar
+        context["has_left_sidebar"] = sidebar
+        context["content_div_css"] = self.get_conditional_css_classes(
+            "content", sidebar
         )
-        context['breadcrumb_div_css'] = self.get_conditional_css_classes(
-            'breadcrumbs', sidebar
+        context["breadcrumb_div_css"] = self.get_conditional_css_classes(
+            "breadcrumbs", sidebar
         )
-        context['sidebartitle'] = self.get_sidebar_title()[0]
-        context['sidebartitleurl'] = self.get_sidebar_title()[1]
-        context['branch_lib_css'] = self.get_branch_lib_css_class()
-        context['hours_page_url'] = self.get_hours_page(request)
-        context['is_hours_page'] = self.id == HOURS_PAGE
-        context['has_banner'] = section_info[0]
-        context['banner'] = section_info[1]
-        context['banner_feature'] = section_info[2]
-        context['banner_title'] = section_info[3]
-        context['banner_subtitle'] = section_info[4]
-        context['banner_url'] = section_info[5]
-        context['branch_title'] = branch_name if branch_name is not self.title else ''
-        context['page_type'] = str(self.specific.__class__.__name__)
-        context['events_feed'] = self.events_feed_url
-        context['news_feed'] = self.get_news(self.news_feed_source, 4)
-        context['unfriendly_a'] = (
+        context["sidebartitle"] = self.get_sidebar_title()[0]
+        context["sidebartitleurl"] = self.get_sidebar_title()[1]
+        context["branch_lib_css"] = self.get_branch_lib_css_class()
+        context["hours_page_url"] = self.get_hours_page(request)
+        context["is_hours_page"] = self.id == HOURS_PAGE
+        context["has_banner"] = section_info[0]
+        context["banner"] = section_info[1]
+        context["banner_feature"] = section_info[2]
+        context["banner_title"] = section_info[3]
+        context["banner_subtitle"] = section_info[4]
+        context["banner_url"] = section_info[5]
+        context["branch_title"] = branch_name if branch_name is not self.title else ""
+        context["page_type"] = str(self.specific.__class__.__name__)
+        context["events_feed"] = self.events_feed_url
+        context["news_feed"] = self.get_news(self.news_feed_source, 4)
+        context["unfriendly_a"] = (
             True if self.friendly_name.strip() in UNFRIENDLY_ARTICLES else False
         )
-        context['is_law'] = is_law
-        context['has_alert'] = has_alert
+        context["is_law"] = is_law
+        context["has_alert"] = has_alert
         if has_alert:
             (
-                context['alert_message'],
-                context['alert_level'],
-                context['alert_more_info'],
-                context['alert_link'],
+                context["alert_message"],
+                context["alert_level"],
+                context["alert_more_info"],
+                context["alert_link"],
             ) = get_alert(current_site)
 
         try:
-            context['news_page'] = (
+            context["news_page"] = (
                 self.external_news_page
                 if self.external_news_page
                 else self.internal_news_page.relative_url(current_site)
             )
-        except (AttributeError):
-            context['news_page'] = ''
+        except AttributeError:
+            context["news_page"] = ""
 
         try:
             carousel = self.carousel_items.all()
-        except (AttributeError):
+        except AttributeError:
             carousel = []
-        context['carousel_items'] = carousel
-        context['carousel_multi'] = len(carousel) > 1
+        context["carousel_items"] = carousel
+        context["carousel_multi"] = len(carousel) > 1
 
         # Reusable Content Blocks for sidebar
         try:
             reusable_content = self.reusable_content.all()
-        except (AttributeError):
+        except AttributeError:
             reusable_content = []
-        context['reusable_content'] = reusable_content
+        context["reusable_content"] = reusable_content
 
         # Data structure for generating a
         # sitemap display of child pages
         index_pages = [
             {
-                'title': self.title,
-                'url': self.relative_url(current_site),
-                'children': [],
+                "title": self.title,
+                "url": self.relative_url(current_site),
+                "children": [],
             }
         ]
 
         # Build sitemap listing of child pages
         # in html format.
         if self.enable_index and self.display_hierarchical_listing:
-            index_pages[0]['children'] = list(
+            index_pages[0]["children"] = list(
                 map(
                     lambda p: recursively_add_children(p, current_site),
                     self.get_children().live(),
                 )
             )
         elif self.enable_index:
-            index_pages[0]['children'] = list(
+            index_pages[0]["children"] = list(
                 map(
                     lambda p: {
-                        'title': p.title,
-                        'url': p.relative_url(current_site),
-                        'children': [],
+                        "title": p.title,
+                        "url": p.relative_url(current_site),
+                        "children": [],
                     },
                     self.get_children().live(),
                 )
             )
-        index_pages_html = get_index_html(index_pages[0]['children'])
-        context['index_pages_html'] = index_pages_html
-        context['cgi_mail'] = CGI_MAIL_SERVICE
-        context['item_servlet'] = ITEM_SERVLET
-        context['springshare_pp'] = SPRINGSHARE_PRIVACY_POLICY
-        context['link_queue'] = self.get_link_queue()
+        index_pages_html = get_index_html(index_pages[0]["children"])
+        context["index_pages_html"] = index_pages_html
+        context["cgi_mail"] = CGI_MAIL_SERVICE
+        context["item_servlet"] = ITEM_SERVLET
+        context["springshare_pp"] = SPRINGSHARE_PRIVACY_POLICY
+        context["link_queue"] = self.get_link_queue()
 
         return context
 
@@ -2238,35 +2221,35 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             2. Quiet spaces link
             3. Collaborative spaces link
         """
-        base_url = '/spaces/'
+        base_url = "/spaces/"
 
         if self.unit.id == ROOT_UNIT:
             all_spaces = base_url
-            quiet_spaces = '%s?%s' % (
+            quiet_spaces = "%s?%s" % (
                 base_url,
-                urllib.parse.urlencode({'feature': 'is_quiet_zone'}),
+                urllib.parse.urlencode({"feature": "is_quiet_zone"}),
             )
-            collaborative_spaces = '%s?%s' % (
+            collaborative_spaces = "%s?%s" % (
                 base_url,
-                urllib.parse.urlencode({'feature': 'is_collaboration_zone'}),
+                urllib.parse.urlencode({"feature": "is_collaboration_zone"}),
             )
         else:
-            all_spaces = '%s?%s' % (
+            all_spaces = "%s?%s" % (
                 base_url,
-                urllib.parse.urlencode({'building': str(data['page_location'])}),
+                urllib.parse.urlencode({"building": str(data["page_location"])}),
             )
-            quiet_spaces = '%s?%s' % (
+            quiet_spaces = "%s?%s" % (
                 base_url,
                 urllib.parse.urlencode(
-                    {'building': str(data['page_location']), 'feature': 'is_quiet_zone'}
+                    {"building": str(data["page_location"]), "feature": "is_quiet_zone"}
                 ),
             )
-            collaborative_spaces = '%s?%s' % (
+            collaborative_spaces = "%s?%s" % (
                 base_url,
                 urllib.parse.urlencode(
                     {
-                        'building': str(data['page_location']),
-                        'feature': 'is_collaboration_zone',
+                        "building": str(data["page_location"]),
+                        "feature": "is_collaboration_zone",
                     }
                 ),
             )
@@ -2300,9 +2283,9 @@ Either it is set to the ID of a non-existing page or it has an incorrect value.'
             string if no friendly name is found.
         """
         try:
-            return self.unit.friendly_name + ' '
-        except (AttributeError):
-            return ''
+            return self.unit.friendly_name + " "
+        except AttributeError:
+            return ""
 
     @property
     def friendly_name(self):
@@ -2319,54 +2302,54 @@ class IntranetPlainPage(BasePage):
     )
 
     subpage_types = [
-        'base.IntranetIndexPage',
-        'base.IntranetPlainPage',
-        'intranettocs.TOCPage',
+        "base.IntranetIndexPage",
+        "base.IntranetPlainPage",
+        "intranettocs.TOCPage",
     ]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('body'),
+        index.SearchField("body"),
     ]
 
     # CGIMail Form
     cgi_mail_form = models.TextField(
         blank=True,
-        help_text='JSON representing the fields of a form. Must \
-follow a strict schema. Contact DLDC for help with this',
+        help_text="JSON representing the fields of a form. Must \
+follow a strict schema. Contact DLDC for help with this",
     )
 
     cgi_mail_form_thank_you_text = RichTextField(
-        blank=True, help_text='Text to display after the form has been submitted'
+        blank=True, help_text="Text to display after the form has been submitted"
     )
 
     content_panels = (
-        Page.content_panels + [FieldPanel('body')] + BasePage.content_panels
+        Page.content_panels + [FieldPanel("body")] + BasePage.content_panels
     )
 
     widget_content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('cgi_mail_form_thank_you_text'),
-                FieldPanel('cgi_mail_form'),
+                FieldPanel("cgi_mail_form_thank_you_text"),
+                FieldPanel("cgi_mail_form"),
             ],
-            heading='CGIMail Form',
+            heading="CGIMail Form",
         ),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
     def get_context(self, request):
         context = super(IntranetPlainPage, self).get_context(request)
 
-        context['cgi_mail'] = CGI_MAIL_SERVICE
-        context['item_servlet'] = ITEM_SERVLET
+        context["cgi_mail"] = CGI_MAIL_SERVICE
+        context["item_servlet"] = ITEM_SERVLET
 
         return context
 
@@ -2381,24 +2364,24 @@ class IntranetIndexPage(BasePage):
     )
 
     subpage_types = [
-        'base.IntranetIndexPage',
-        'base.IntranetPlainPage',
-        'intranettocs.TOCPage',
+        "base.IntranetIndexPage",
+        "base.IntranetPlainPage",
+        "intranettocs.TOCPage",
     ]
 
     content_panels = (
         Page.content_panels
         + [
-            FieldPanel('intro'),
-            FieldPanel('display_hierarchical_listing'),
-            FieldPanel('body'),
+            FieldPanel("intro"),
+            FieldPanel("display_hierarchical_listing"),
+            FieldPanel("body"),
         ]
         + BasePage.content_panels
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('intro'),
-        index.SearchField('body'),
+        index.SearchField("intro"),
+        index.SearchField("body"),
     ]
 
     def get_context(self, request):
@@ -2406,9 +2389,9 @@ class IntranetIndexPage(BasePage):
 
         pages = [
             {
-                'title': self.title,
-                'url': self.url,
-                'children': [],
+                "title": self.title,
+                "url": self.url,
+                "children": [],
             }
         ]
 
@@ -2416,9 +2399,9 @@ class IntranetIndexPage(BasePage):
 
             def recursively_add_children(page):
                 return {
-                    'title': page.title,
-                    'url': page.url,
-                    'children': list(
+                    "title": page.title,
+                    "url": page.url,
+                    "children": list(
                         map(
                             lambda p: recursively_add_children(p),
                             page.get_children().live(),
@@ -2426,28 +2409,28 @@ class IntranetIndexPage(BasePage):
                     ),
                 }
 
-            pages[0]['children'] = list(
+            pages[0]["children"] = list(
                 map(lambda p: recursively_add_children(p), self.get_children().live())
             )
 
         else:
-            pages[0]['children'] = list(
+            pages[0]["children"] = list(
                 map(
-                    lambda p: {'title': p.title, 'url': p.url, 'children': []},
+                    lambda p: {"title": p.title, "url": p.url, "children": []},
                     self.get_children().live(),
                 )
             )
 
         def alphabetize_pages(currentlevel):
             for node in currentlevel:
-                node['children'] = alphabetize_pages(node['children'])
-            return sorted(currentlevel, key=lambda c: c['title'])
+                node["children"] = alphabetize_pages(node["children"])
+            return sorted(currentlevel, key=lambda c: c["title"])
 
         pages = alphabetize_pages(pages)
 
         def get_html(currentlevel):
             if not currentlevel:
-                return ''
+                return ""
             else:
                 return (
                     "<ul class='index-list'>"
@@ -2455,11 +2438,11 @@ class IntranetIndexPage(BasePage):
                         list(
                             map(
                                 lambda n: "<li><a href='"
-                                + n['url']
+                                + n["url"]
                                 + "'>"
-                                + n['title']
+                                + n["title"]
                                 + "</a>"
-                                + get_html(n['children'])
+                                + get_html(n["children"])
                                 + "</li>",
                                 currentlevel,
                             )
@@ -2468,10 +2451,10 @@ class IntranetIndexPage(BasePage):
                     + "</ul>"
                 )
 
-        pages_html = get_html(pages[0]['children'])
+        pages_html = get_html(pages[0]["children"])
 
-        context['pages_html'] = pages_html
+        context["pages_html"] = pages_html
 
-        context['pages'] = pages[0]['children']
-        context['pages_html'] = pages_html
+        context["pages"] = pages[0]["children"]
+        context["pages_html"] = pages_html
         return context

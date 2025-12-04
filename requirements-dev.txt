@@ -1,7 +1,7 @@
 autopep8==2.0.1
 black==24.3.0
 curlylint==0.13.1
-djhtml==1.5.2
+djhtml==3.0.7
 flake8==6.0.0
 isort==5.11.4
 tblib

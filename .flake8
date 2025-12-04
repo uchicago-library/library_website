@@ -1,0 +1,12 @@
+[flake8]
+ignore = D100,D101,D202,D204,D205,D400,D401,E203,E303,E501,W503,N805,N806
+exclude =
+    .git,
+    __pycache__,
+    */migrations/*,
+    node_modules,
+    static/CACHE,
+    static/wagtailadmin,
+    venv,
+    .venv
+max-line-length = 88

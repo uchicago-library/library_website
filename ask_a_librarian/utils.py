@@ -4,7 +4,11 @@ import requests
 from wagtail.models import Site
 
 from library_website.settings import (
-    DEFAULT_UNIT, LIBCHAT_IDS, LIBCHAT_STATUS_URL, SCRC_ASK_PAGE, SCRC_MAIN_UNIT
+    DEFAULT_UNIT,
+    LIBCHAT_IDS,
+    LIBCHAT_STATUS_URL,
+    SCRC_ASK_PAGE,
+    SCRC_MAIN_UNIT,
 )
 
 
@@ -24,10 +28,10 @@ def get_chat_status(name):
         libid = LIBCHAT_IDS[name]
         response = requests.get(LIBCHAT_STATUS_URL + libid, timeout=12)
         data = json.loads(response.content)
-    except(requests.exceptions.Timeout, json.decoder.JSONDecodeError):
+    except (requests.exceptions.Timeout, json.decoder.JSONDecodeError):
         data = json.loads('{"online":false,"who":{}}')
 
-    return data['online']
+    return data["online"]
 
 
 def get_chat_status_css(name):
@@ -43,7 +47,7 @@ def get_chat_status_css(name):
     Returns:
         string, css class.
     """
-    status = {True: 'active', False: 'off'}
+    status = {True: "active", False: "off"}
     return status[get_chat_status(name)]
 
 
@@ -79,12 +83,12 @@ def get_chat_statuses():
         the Ask a Librarian chat widgets.
     """
     return {
-        'uofc-ask': get_chat_status_css('uofc-ask'),
-        'crerar': get_chat_status_css('crerar'),
-        'eckhart': get_chat_status_css('crerar'),
-        'law': get_chat_status_css('law'),
-        'ssa': get_chat_status_css('ssa'),
-        'dissertation-office': get_chat_status_css('dissertation-office')
+        "uofc-ask": get_chat_status_css("uofc-ask"),
+        "crerar": get_chat_status_css("crerar"),
+        "eckhart": get_chat_status_css("crerar"),
+        "law": get_chat_status_css("law"),
+        "ssa": get_chat_status_css("ssa"),
+        "dissertation-office": get_chat_status_css("dissertation-office"),
     }
 
 
@@ -102,15 +106,15 @@ def get_unit_chat_link(unit, request):
         string, url. Returns an empty string
         upon failure.
     """
-    from .models import AskPage
     from wagtail.models import Page
+
+    from .models import AskPage
+
     current_site = Site.find_for_request(request)
 
     try:
         if unit.id == SCRC_MAIN_UNIT:
-            return Page.objects.live().get(id=SCRC_ASK_PAGE
-                                           ).relative_url(current_site)
+            return Page.objects.live().get(id=SCRC_ASK_PAGE).relative_url(current_site)
         return AskPage.objects.live().get(unit=unit).relative_url(current_site)
-    except:
-        return AskPage.objects.live().get(unit=DEFAULT_UNIT
-                                          ).relative_url(current_site)
+    except:  # noqa: E722
+        return AskPage.objects.live().get(unit=DEFAULT_UNIT).relative_url(current_site)

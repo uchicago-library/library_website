@@ -27,9 +27,9 @@ class SearchableContent(index.Indexed, models.Model):
     content = models.TextField(verbose_name="content")
 
     search_fields = [
-        index.AutocompleteField('title', boost=4),
-        index.AutocompleteField('description'),
-        index.AutocompleteField('content'),
+        index.AutocompleteField("title", boost=4),
+        index.AutocompleteField("description"),
+        index.AutocompleteField("content"),
     ]
 
 
@@ -38,16 +38,16 @@ class LibGuidesSearchableContent(SearchableContent):
     subjects = models.TextField(verbose_name="subjects")
 
     search_fields = [
-        index.AutocompleteField('content', boost=0.5),
-        index.AutocompleteField('description'),
-        index.SearchField('subjects'),
-        index.SearchField('tags'),
-        index.AutocompleteField('title', boost=4),
+        index.AutocompleteField("content", boost=0.5),
+        index.AutocompleteField("description"),
+        index.SearchField("subjects"),
+        index.SearchField("tags"),
+        index.AutocompleteField("title", boost=4),
     ]
 
 
 class LibGuidesAssetsSearchableContent(SearchableContent):
     search_fields = [
-        index.SearchField('title', boost=4),
-        index.SearchField('description'),
+        index.SearchField("title", boost=4),
+        index.SearchField("description"),
     ]

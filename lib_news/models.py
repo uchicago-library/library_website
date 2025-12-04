@@ -10,26 +10,37 @@ from django.utils import text, timezone
 from modelcluster.fields import ParentalKey
 from rest_framework import serializers
 from wagtail.admin.panels import (
-    FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList,
-    PageChooserPanel, TabbedInterface
+    FieldPanel,
+    FieldRowPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
 )
 from wagtail.api import APIField
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.blocks import PageChooserBlock
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Orderable, Page
-from wagtail.signals import page_published, page_unpublished
 from wagtail.images.api.fields import ImageRenditionField
+from wagtail.models import Orderable, Page
 from wagtail.search import index
+from wagtail.signals import page_published, page_unpublished
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import clear_cache
 
 from base.models import (
-    ContactPersonBlock, DefaultBodyFields, PublicBasePage, RelatedExhibitBlock
+    ContactPersonBlock,
+    DefaultBodyFields,
+    PublicBasePage,
+    RelatedExhibitBlock,
 )
 from lib_collections.models import get_current_exhibits
 from library_website.settings import (
-    DRF_NEWS_FEED, LIBRA_ID, NEWS_CACHE_TTL, STATIC_NEWS_FEED
+    DRF_NEWS_FEED,
+    LIBRA_ID,
+    NEWS_CACHE_TTL,
+    STATIC_NEWS_FEED,
 )
 from site_settings.models import NewsFeedSettings
 
@@ -41,14 +52,14 @@ class PublicNewsCategories(models.Model, index.Indexed):
     text = models.CharField(max_length=255, blank=False)
 
     panels = [
-        FieldPanel('text'),
+        FieldPanel("text"),
     ]
 
     def __str__(self):
         return self.text
 
     search_fields = [
-        index.AutocompleteField('text'),
+        index.AutocompleteField("text"),
     ]
 
     class Meta:
@@ -60,30 +71,30 @@ class PublicNewsCategories(models.Model, index.Indexed):
 class PublicNewsAuthors(models.Model):
     author_name = models.CharField(max_length=255, blank=False)
     link_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
     link_external = models.URLField(max_length=400, null=True, blank=True)
 
     panels = [
-        FieldPanel('author_name'),
+        FieldPanel("author_name"),
         MultiFieldPanel(
             [
-                PageChooserPanel('link_page'),
-                FieldPanel('link_external'),
+                PageChooserPanel("link_page"),
+                FieldPanel("link_external"),
             ],
-            heading='Author Link'
-        )
+            heading="Author Link",
+        ),
     ]
 
     def __str__(self):
         return self.author_name
 
     search_fields = [
-        index.AutocompleteField('name'),
+        index.AutocompleteField("name"),
     ]
 
     class Meta:
@@ -93,18 +104,16 @@ class PublicNewsAuthors(models.Model):
 
 class LibNewsPageCategories(Orderable, models.Model):
     page = ParentalKey(
-        'lib_news.LibNewsPage',
+        "lib_news.LibNewsPage",
         on_delete=models.CASCADE,
-        related_name='lib_news_categories'
+        related_name="lib_news_categories",
     )
     category = models.ForeignKey(
-        'lib_news.PublicNewsCategories',
-        on_delete=models.CASCADE,
-        related_name='+'
+        "lib_news.PublicNewsCategories", on_delete=models.CASCADE, related_name="+"
     )
 
     panels = [
-        FieldPanel('category'),
+        FieldPanel("category"),
     ]
 
     def __str__(self):
@@ -114,12 +123,12 @@ class LibNewsPageCategories(Orderable, models.Model):
 class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
 
     max_count = 1
-    subpage_types = ['lib_news.LibNewsPage']
+    subpage_types = ["lib_news.LibNewsPage"]
 
     def __init__(self, *args, **kwargs):
         super(PublicBasePage, self).__init__(*args, **kwargs)
         self.is_unrouted = True
-        self.news_feed_api = '/static/lib_news/files/lib-news.json'
+        self.news_feed_api = "/static/lib_news/files/lib-news.json"
 
     contacts = StreamField(
         ContactPersonBlock(required=False),
@@ -129,10 +138,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     navigation = StreamField(
         [
             (
-                'navigation',
-                PageChooserBlock(
-                    required=False, page_type=['lib_news.LibNewsPage']
-                )
+                "navigation",
+                PageChooserBlock(required=False, page_type=["lib_news.LibNewsPage"]),
             ),
         ],
         default=[],
@@ -141,55 +148,58 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     )
 
     fallback_image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        help_text='Image to be used in browse display \
-        when no thumbnail is provided',
-        related_name='+'
+        help_text="Image to be used in browse display \
+        when no thumbnail is provided",
+        related_name="+",
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('fallback_image'),
-        FieldPanel('navigation'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("fallback_image"),
+            FieldPanel("navigation"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     widget_content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('banner_image'),
-                FieldPanel('banner_title'),
+                FieldPanel("banner_image"),
+                FieldPanel("banner_title"),
             ],
-            heading='Banner'
+            heading="Banner",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('events_feed_url'),
-            ], heading='Workshops and Events'
+                FieldPanel("events_feed_url"),
+            ],
+            heading="Workshops and Events",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('display_current_web_exhibits'),
+                FieldPanel("display_current_web_exhibits"),
             ],
-            heading='Current Web Exhibits'
+            heading="Current Web Exhibits",
         ),
-        FieldPanel('contacts'),
+        FieldPanel("contacts"),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('contacts'),
+        index.SearchField("contacts"),
     ]
 
     @property
@@ -203,7 +213,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         return True
 
-    @route(r'^category/(?P<slug>[-\w]+)/$')
+    @route(r"^category/(?P<slug>[-\w]+)/$")
     def category(self, request, *args, **kwargs):
         """
         Route to templete for browsing stories by
@@ -211,22 +221,22 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         self.is_unrouted = False
         try:
-            slug = kwargs['slug']
+            slug = kwargs["slug"]
             self.category = self.get_cat_from_slug(slug)
             self.slug = slug
-        except (KeyError):
-            self.category = ''
+        except KeyError:
+            self.category = ""
         return TemplateResponse(
             request, self.get_template(request), self.get_context(request)
         )
 
-    @route(r'^search/$')
+    @route(r"^search/$")
     def search(self, request, *args, **kwargs):
         """
         Search results view.
         """
-        self.search_query = request.GET.get('query', '')
-        self.news_feed_api = '/api/v2/pages/?search={}&format=json&type=lib_news.LibNewsPage&fields=*'.format(
+        self.search_query = request.GET.get("query", "")
+        self.news_feed_api = "/api/v2/pages/?search={}&format=json&type=lib_news.LibNewsPage&fields=*".format(
             self.search_query
         )
         self.is_unrouted = False
@@ -243,8 +253,8 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
             list of strings
         """
         return list(
-            s[0] for s in
-            PublicNewsCategories.objects.order_by('text').values_list('text')
+            s[0]
+            for s in PublicNewsCategories.objects.order_by("text").values_list("text")
         )
 
     def get_alpha_cats(self):
@@ -267,7 +277,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         if ff:
             return str(ff.id)
         else:
-            return ''
+            return ""
 
     def get_cat_from_slug_static(slug):
         """
@@ -293,7 +303,7 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
     def base_url(self):
         url_parts = self.get_url_parts()
         if url_parts is None:
-            return ''
+            return ""
         return url_parts[-1]
 
     def get_context(self, request):
@@ -302,26 +312,25 @@ class LibNewsIndexPage(RoutablePageMixin, PublicBasePage):
         """
         try:
             libra = Page.objects.get(id=LIBRA_ID)
-        except (Page.DoesNotExist):
+        except Page.DoesNotExist:
             libra = None
         news_settings = NewsFeedSettings.load()
         context = super(LibNewsIndexPage, self).get_context(request)
-        context['categories'] = self.get_alpha_cats()
-        context['category_url_base'] = self.base_url + 'category/'
-        context['news_feed_api'] = self.news_feed_api
-        context['feature'] = get_first_feature_story()
-        context['feature_id'] = self.get_first_feature_story_id()
-        context['current_exhibits'] = get_current_exhibits()
-        context['display_current_web_exhibits'
-                ] = self.display_current_web_exhibits
-        context['contacts'] = self.contacts
-        context['content_div_css'] = 'container-fluid main-container'
-        context['right_sidebar_classes'] = 'coll-rightside'
-        context['fallback_image'] = self.fallback_image
-        context['default_visible'] = news_settings.default_visible
-        context['increment_by'] = news_settings.increment_by
-        context['nav'] = self.navigation
-        context['libra'] = libra
+        context["categories"] = self.get_alpha_cats()
+        context["category_url_base"] = self.base_url + "category/"
+        context["news_feed_api"] = self.news_feed_api
+        context["feature"] = get_first_feature_story()
+        context["feature_id"] = self.get_first_feature_story_id()
+        context["current_exhibits"] = get_current_exhibits()
+        context["display_current_web_exhibits"] = self.display_current_web_exhibits
+        context["contacts"] = self.contacts
+        context["content_div_css"] = "container-fluid main-container"
+        context["right_sidebar_classes"] = "coll-rightside"
+        context["fallback_image"] = self.fallback_image
+        context["default_visible"] = news_settings.default_visible
+        context["increment_by"] = news_settings.increment_by
+        context["nav"] = self.navigation
+        context["libra"] = libra
         return context
 
 
@@ -329,18 +338,19 @@ class LibNewsPage(PublicBasePage):
 
     def __init__(self, *args, **kwargs):
         super(LibNewsPage, self).__init__(*args, **kwargs)
-        self.news_pages = LibNewsPage.objects.live(
-        ).prefetch_related('lib_news_categories')
+        self.news_pages = LibNewsPage.objects.live().prefetch_related(
+            "lib_news_categories"
+        )
 
     body = StreamField(
         DefaultBodyFields(),
     )
     thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
     alt_text = models.CharField(max_length=100, blank=True)
     is_feature_story = models.BooleanField(default=False)
@@ -351,23 +361,23 @@ class LibNewsPage(PublicBasePage):
         default=[],
     )
     by_staff_or_unit = models.ForeignKey(
-        'lib_news.PublicNewsAuthors',
+        "lib_news.PublicNewsAuthors",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
     custom_author_byline = models.CharField(max_length=360, blank=True)
     published_at = models.DateTimeField(default=timezone.now)
     library_kiosk = models.BooleanField(default=False)
     law_kiosk = models.BooleanField(default=False)
     sciences_kiosk = models.BooleanField(default=False)
-    scrc_kiosk = models.BooleanField(default=False, verbose_name='SCRC kiosk')
-    cds_kiosk = models.BooleanField(default=False, verbose_name='CDS kiosk')
+    scrc_kiosk = models.BooleanField(default=False, verbose_name="SCRC kiosk")
+    cds_kiosk = models.BooleanField(default=False, verbose_name="CDS kiosk")
     treat_as_webpage = models.BooleanField(
         default=False,
-        help_text='Functionally converts this page to a standard page. \
-        If checked, the page will not appear in news feeds'
+        help_text="Functionally converts this page to a standard page. \
+        If checked, the page will not appear in news feeds",
     )
     exhibit_story_hours_override = RichTextField(blank=True)
 
@@ -381,29 +391,28 @@ class LibNewsPage(PublicBasePage):
             list of strings
         """
         try:
-            dcache = caches['default']
+            dcache = caches["default"]
             cdict = {}
             pid = self.id
-            if 'news_cats' not in dcache:
-                dcache.set('news_cats', cdict, NEWS_CACHE_TTL)
-            if 'news_cats' in dcache:
-                cdict = dcache.get('news_cats')
+            if "news_cats" not in dcache:
+                dcache.set("news_cats", cdict, NEWS_CACHE_TTL)
+            if "news_cats" in dcache:
+                cdict = dcache.get("news_cats")
                 if pid in cdict:
                     cats = cdict[pid]
                 else:
                     cats = [
-                        str(cat)
-                        for cat in self.lib_news_categories.get_object_list()
+                        str(cat) for cat in self.lib_news_categories.get_object_list()
                     ]
                     cdict[pid] = cats
-                    dcache.set('news_cats', cdict, NEWS_CACHE_TTL)
+                    dcache.set("news_cats", cdict, NEWS_CACHE_TTL)
             return cats
         # This is a FakeQuerySet and we are probably in preview mode.
         # To handle this, we won't show any categories.
-        except (AttributeError):
+        except AttributeError:
             return [
-                'Can\'t load categories in PREVIEW',
-                'Check categories on the LIVE page'
+                "Can't load categories in PREVIEW",
+                "Check categories on the LIVE page",
             ]
 
     @property
@@ -411,13 +420,13 @@ class LibNewsPage(PublicBasePage):
         if self.excerpt:
             retval = self.excerpt
         else:
-            html = str(self.body).replace('</p>', '</p> ')
+            html = str(self.body).replace("</p>", "</p> ")
             retval = text.Truncator(html).words(100, html=True)
         # return retval
         return bleach.clean(
             retval,
-            tags=['a', 'b', 'i'],
-            attributes={'a': ['href', 'rel', 'data', 'id', 'linktype']},
+            tags=["a", "b", "i"],
+            attributes={"a": ["href", "rel", "data", "id", "linktype"]},
             strip=True,
             strip_comments=True,
         )
@@ -444,100 +453,101 @@ class LibNewsPage(PublicBasePage):
             field: string, field to be passed to a
             Django QuerySet filter, e.g. '-published_at'.
         """
-        return self.news_pages.order_by(field).exclude(thumbnail=None
-                                                       ).exclude(id=self.id)[:n]
+        return (
+            self.news_pages.order_by(field)
+            .exclude(thumbnail=None)
+            .exclude(id=self.id)[:n]
+        )
 
     subpage_types = []
 
-    ROW_CLASS = 'col4'
+    ROW_CLASS = "col4"
 
-    content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [
-                FieldPanel('thumbnail'),
-                FieldPanel('alt_text'),
-            ],
-            heading='Thumbnail',
-        ),
-        FieldPanel('is_feature_story'),
-        FieldPanel('excerpt'),
-        FieldPanel('body'),
-        InlinePanel('lib_news_categories', label='Categories'),
-        FieldPanel('published_at'),
-        MultiFieldPanel(
-            [
-                FieldPanel('by_staff_or_unit'),
-                FieldPanel('custom_author_byline'),
-            ],
-            heading='Author'
-        ),
-        MultiFieldPanel(
-            [
-                FieldRowPanel(
-                    [
-                        FieldPanel('law_kiosk', classname=ROW_CLASS),
-                        FieldPanel('sciences_kiosk', classname=ROW_CLASS),
-                        FieldPanel('scrc_kiosk', classname=ROW_CLASS),
-                        FieldPanel('library_kiosk', classname=ROW_CLASS),
-                        FieldPanel('cds_kiosk', classname=ROW_CLASS),
-                    ]
-                )
-            ],
-            heading='Publish to'
-        ),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            MultiFieldPanel(
+                [
+                    FieldPanel("thumbnail"),
+                    FieldPanel("alt_text"),
+                ],
+                heading="Thumbnail",
+            ),
+            FieldPanel("is_feature_story"),
+            FieldPanel("excerpt"),
+            FieldPanel("body"),
+            InlinePanel("lib_news_categories", label="Categories"),
+            FieldPanel("published_at"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("by_staff_or_unit"),
+                    FieldPanel("custom_author_byline"),
+                ],
+                heading="Author",
+            ),
+            MultiFieldPanel(
+                [
+                    FieldRowPanel(
+                        [
+                            FieldPanel("law_kiosk", classname=ROW_CLASS),
+                            FieldPanel("sciences_kiosk", classname=ROW_CLASS),
+                            FieldPanel("scrc_kiosk", classname=ROW_CLASS),
+                            FieldPanel("library_kiosk", classname=ROW_CLASS),
+                            FieldPanel("cds_kiosk", classname=ROW_CLASS),
+                        ]
+                    )
+                ],
+                heading="Publish to",
+            ),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     widget_content_panels = [
-        FieldPanel('related_exhibits'),
-        FieldPanel('treat_as_webpage'),
+        FieldPanel("related_exhibits"),
+        FieldPanel("treat_as_webpage"),
         MultiFieldPanel(
             [
-                FieldPanel('quicklinks_title'),
-                FieldPanel('quicklinks'),
-                FieldPanel('view_more_link_label'),
-                FieldPanel('view_more_link'),
-                FieldPanel('change_to_callout'),
+                FieldPanel("quicklinks_title"),
+                FieldPanel("quicklinks"),
+                FieldPanel("view_more_link_label"),
+                FieldPanel("view_more_link"),
+                FieldPanel("change_to_callout"),
             ],
-            heading='Rich Text'
+            heading="Rich Text",
         ),
-        FieldPanel('exhibit_story_hours_override'),
+        FieldPanel("exhibit_story_hours_override"),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.AutocompleteField('body'),
-        index.SearchField('alt_text'),
-        index.SearchField('excerpt'),
-        index.SearchField('related_exhibits'),
-        index.SearchField('custom_author_byline'),
-        index.SearchField('published_at'),
+        index.AutocompleteField("body"),
+        index.SearchField("alt_text"),
+        index.SearchField("excerpt"),
+        index.SearchField("related_exhibits"),
+        index.SearchField("custom_author_byline"),
+        index.SearchField("published_at"),
     ]
 
     api_fields = [
-        APIField('is_feature_story'),
+        APIField("is_feature_story"),
         APIField(
-            'categories',
-            serializer=serializers.ListField(source='get_categories')
+            "categories", serializer=serializers.ListField(source="get_categories")
         ),
+        APIField("thumbnail", serializer=ImageRenditionField("fill-500x425-c50")),
         APIField(
-            'thumbnail', serializer=ImageRenditionField('fill-500x425-c50')
+            "thumbnail_alt_text", serializer=serializers.CharField(source="alt_text")
         ),
-        APIField(
-            'thumbnail_alt_text',
-            serializer=serializers.CharField(source='alt_text')
-        ),
-        APIField('published_at'),
-        APIField('treat_as_webpage'),
+        APIField("published_at"),
+        APIField("treat_as_webpage"),
     ]
 
     def get_context(self, request):
@@ -545,23 +555,23 @@ class LibNewsPage(PublicBasePage):
         Override the page object's get context method.
         """
         context = super(LibNewsPage, self).get_context(request)
-        parent = self.get_parent_of_type('lib news index page')
+        parent = self.get_parent_of_type("lib news index page")
         parent_context = parent.get_context(request)
         self.events_feed_url = parent.events_feed_url
-        context['categories'] = parent.get_alpha_cats()
-        context['tagged'] = self.get_categories()
-        context['category_url_base'] = parent_context['category_url_base']
-        context['contacts'] = parent_context['contacts']
-        context['display_current_web_exhibits'] = parent_context[
-            'display_current_web_exhibits']
-        context['current_exhibits'] = parent_context['current_exhibits']
-        context['events_feed'] = parent_context['events_feed']
-        context['recent_stories'] = self.get_recent_stories(3, '-published_at')
-        context['content_div_css'] = parent_context['content_div_css']
-        context['right_sidebar_classes'] = parent_context[
-            'right_sidebar_classes']
-        context['nav'] = parent_context['nav']
-        context['libra'] = parent_context['libra']
+        context["categories"] = parent.get_alpha_cats()
+        context["tagged"] = self.get_categories()
+        context["category_url_base"] = parent_context["category_url_base"]
+        context["contacts"] = parent_context["contacts"]
+        context["display_current_web_exhibits"] = parent_context[
+            "display_current_web_exhibits"
+        ]
+        context["current_exhibits"] = parent_context["current_exhibits"]
+        context["events_feed"] = parent_context["events_feed"]
+        context["recent_stories"] = self.get_recent_stories(3, "-published_at")
+        context["content_div_css"] = parent_context["content_div_css"]
+        context["right_sidebar_classes"] = parent_context["right_sidebar_classes"]
+        context["nav"] = parent_context["nav"]
+        context["libra"] = parent_context["libra"]
         return context
 
 
@@ -581,14 +591,14 @@ def build_news_feed(sender, instance, **kwargs):
         None but writes a file to the static directory
     """
     clear_cache()
-    cache.delete('news_cats')
+    cache.delete("news_cats")
     drf_url = instance.get_site().root_url + DRF_NEWS_FEED
     try:
         serialized_data = urlopen(drf_url).read()
         data = json.loads(serialized_data)
-        with open(STATIC_NEWS_FEED, 'w', encoding='utf-8') as f:
+        with open(STATIC_NEWS_FEED, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=None)
-    except (URLError):
+    except URLError:
         # We are running unit tests
         return None
 

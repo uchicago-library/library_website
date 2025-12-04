@@ -2,17 +2,13 @@ import re
 
 from django import template
 from django.template.defaultfilters import stringfilter
-from base.models import IntranetPlainPage
-from group.models import GroupIndexPage, GroupPage
-from intranettocs.models import TOCPage
-from intranetunits.models import IntranetUnitsIndexPage, IntranetUnitsPage
-from news.models import NewsIndexPage, NewsPage
-from staff.models import StaffIndexPage, StaffPage
-from lib_news.models import LibNewsIndexPage, LibNewsPage
+
+from lib_news.models import LibNewsIndexPage
 
 register = template.Library()
 
-@register.simple_tag(name='pagetype', takes_context=True)
+
+@register.simple_tag(name="pagetype", takes_context=True)
 def pagetype(context, page):
     """
     Returns the top-level section/category for display in search results.
@@ -24,19 +20,22 @@ def pagetype(context, page):
         label = None
 
         # Check if this is LibGuides content (has searchable_content attribute)
-        if hasattr(page, 'searchable_content'):
-            if page.searchable_content == 'guides':
+        if hasattr(page, "searchable_content"):
+            if page.searchable_content == "guides":
                 label = "Research Guide"
-            elif page.searchable_content == 'assets':
+            elif page.searchable_content == "assets":
                 label = "Database"
         else:
             # Wagtail page logic
             # Special case: LibNewsIndexPage and its descendants should always show "News"
             try:
                 lib_news_index = LibNewsIndexPage.objects.first()
-                if lib_news_index and (page.id == lib_news_index.id or page.is_descendant_of(lib_news_index)):
+                if lib_news_index and (
+                    page.id == lib_news_index.id
+                    or page.is_descendant_of(lib_news_index)
+                ):
                     label = "News"
-            except:
+            except:  # noqa: E722
                 pass
 
             # Get ancestors excluding root (id=1) and Home page (depth <= 2)
@@ -51,12 +50,16 @@ def pagetype(context, page):
         if label:
             return f"<span class='page-type-label'>{label}</span>"
         return ""
-    except:
+    except:  # noqa: E722
         return ""
 
-@register.simple_tag(name='pagepath')
+
+@register.simple_tag(name="pagepath")
 def pagepath(page):
-    return " > ".join(list(page.get_ancestors(True).exclude(id=1).values_list('title', flat=True)))
+    return " > ".join(
+        list(page.get_ancestors(True).exclude(id=1).values_list("title", flat=True))
+    )
+
 
 @register.filter
 @stringfilter
@@ -72,6 +75,3 @@ def snippet(value):
         return value + "..."
     else:
         return value
-
-
-

@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 [Table of contents]
 
 Accessibility {Global Classes}
@@ -7,25 +7,25 @@ Colors
 Elements
 Mixins
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond');
-
-@import "media.scss";
+@import 'https://fonts.googleapis.com/css?family=Cormorant+Garamond';
+@import 'media.scss';
 
 /*
  * Accessibility {Global Classes}
  * --------------------------------------------------
  */
 
-.is-vishidden, .visually-hidden { // For ADA helper text
+.is-vishidden,
+.visually-hidden {
+  // For ADA helper text
   position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
 }
-
 
 /*
  * Fonts
@@ -35,49 +35,48 @@ Mixins
 $font-large: 2.5em;
 $font-medium: 1.5em;
 $font-small: 1.1em;
+$base-font: 'Helvetica Neue', helvetica, arial, sans-serif;
 
-$base-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
 // $accent-font: "Cormorant Garamond", "Times New Roman", serif;
 $accent-font: $base-font;
-
 
 /*
  * Colors
  * --------------------------------------------------
  */
 
-$default-link: #2A5DB0;
+$default-link: #2a5db0;
 $dark-link: #487286;
 
 // New Color System (ncs)
 // The University of Chicago Brand Identity Guidelines 10.2022 31
 // Primary
 $ncs-maroon: #800000;
-$ncs-greystone: #A6A6A6;
-$ncs-light-greystone: #D9D9D9;
+$ncs-greystone: #a6a6a6;
+$ncs-light-greystone: #d9d9d9;
 $ncs-dark-greystone: #737373;
 
 // Secondary
-$ncs-goldenrod: #EAAA00;
-$ncs-light-goldenrod: #F3D03E;
-$ncs-dark-goldenrod: #CC8A00;
-$ncs-terracotta: #DE7C00;
-$ncs-light-terracotta: #ECA154;
-$ncs-dark-terracotta: #A9431E;
-$ncs-ivy: #789D4A;
-$ncs-light-ivy: #A9C47F;
-$ncs-dark-ivy: #13301C;
-$ncs-forest: #275D38;
-$ncs-light-forest: #9CAF88;
+$ncs-goldenrod: #eaaa00;
+$ncs-light-goldenrod: #f3d03e;
+$ncs-dark-goldenrod: #cc8a00;
+$ncs-terracotta: #de7c00;
+$ncs-light-terracotta: #eca154;
+$ncs-dark-terracotta: #a9431e;
+$ncs-ivy: #789d4a;
+$ncs-light-ivy: #a9c47f;
+$ncs-dark-ivy: #13301c;
+$ncs-forest: #275d38;
+$ncs-light-forest: #9caf88;
 $ncs-dark-forest: #284734;
 $ncs-lake: #007396;
-$ncs-light-lake: #3EB1C8;
-$ncs-dark-lake: #002A3A;
-$ncs-violet: #59315F;
-$ncs-light-violet: #86647A;
-$ncs-dark-violet: #41273B;
-$ncs-brick: #A4343A;
-$ncs-light-brick: #B46A55;
+$ncs-light-lake: #3eb1c8;
+$ncs-dark-lake: #002a3a;
+$ncs-violet: #59315f;
+$ncs-light-violet: #86647a;
+$ncs-dark-violet: #41273b;
+$ncs-brick: #a4343a;
+$ncs-light-brick: #b46a55;
 $ncs-dark-brick: #643335;
 
 // Primary-accessory
@@ -85,54 +84,51 @@ $ncs-dark-maroon: #570000;
 $ncs-darker-brick: #592628;
 $ncs-lighter-greystone: #f2f2f2;
 $ncs-darker-greystone: #404040;
+
 // Secondary Accessory
-$ncs-bright-violet: #662f6f; 
-
-
+$ncs-bright-violet: #662f6f;
 
 // Unv Color Palette
 
 $darkgray: #767676;
-$lightgray: #D6D6CE;
+$lightgray: #d6d6ce;
 $darkred: $ncs-darker-brick; // #642822;
 $maroon: #800000;
 
 // Building-specific colors have been abandoned. Kept here for legacy during transition.
-$crerarblue: $ncs-lake; //#0F425C;
-$eckhartpurple: $ncs-violet; //#350E20;
+$crerarblue: $ncs-lake; // #0F425C;
+$eckhartpurple: $ncs-violet; // #350E20;
 $mansuetogreen: $ncs-forest; // #3E3E23;
-$reggreen: $ncs-ivy; //#616530; ??? no banner
-$ssaorange: $ncs-goldenrod; // #9A5324; 
+$reggreen: $ncs-ivy; // #616530; ??? no banner
+$ssaorange: $ncs-goldenrod; // #9A5324;
 // DAngelo
 // Social Work
 // Special Collections
-
 
 // Palette Variations
 
 $mid-dark: $ncs-darker-greystone;
 $darkneutral: $ncs-light-brick;
-$midneutral:     $ncs-light-greystone;
-$neutral:        $ncs-light-greystone;
-$lightneutral:   $ncs-light-greystone;
-$hovercalm:      $ncs-light-greystone;
+$midneutral: $ncs-light-greystone;
+$neutral: $ncs-light-greystone;
+$lightneutral: $ncs-light-greystone;
+$hovercalm: $ncs-light-greystone;
 $hovercalmlight: $ncs-light-greystone;
 $brightpurple: $ncs-bright-violet;
 $hoveraccent: $ncs-light-terracotta;
 $active: $ncs-maroon; // #8A9045;
 $active-hover: $ncs-dark-maroon; // #664d59; // #725663
 
-
 // Opacity Fun Times
 $ncs-transp: 0.7;
-$transparent:       rgba($ncs-dark-greystone,  $ncs-transp); // rgba(67, 67, 67, 0.95);
-$trans-red:         rgba($ncs-maroon,          $ncs-transp); // rgba(109, 50, 39, 0.8);
-$trans-red:         rgba($ncs-dark-maroon,     $ncs-transp); // rgba(109, 50, 39, 0.8);
-$trans-blue:        rgba($crerarblue,          $ncs-transp); // rgba(21, 95, 131, 0.8);
-$trans-purple:      rgba($eckhartpurple,       $ncs-transp); // rgba(53, 14, 32, 0.8);
-$trans-darkgreen:   rgba($mansuetogreen,       $ncs-transp); // rgba(70, 71, 51, 0.8);
-$trans-lightgreen:  rgba($reggreen,            $ncs-transp); // rgba(101, 105, 51, 0.8);
-$trans-orange:      rgba($ssaorange,           $ncs-transp); // rgba(154, 83, 46, 0.8);
+$transparent: rgba($ncs-dark-greystone, $ncs-transp); // rgba(67, 67, 67, 0.95);
+$trans-red: rgba($ncs-maroon, $ncs-transp); // rgba(109, 50, 39, 0.8);
+$trans-red: rgba($ncs-dark-maroon, $ncs-transp); // rgba(109, 50, 39, 0.8);
+$trans-blue: rgba($crerarblue, $ncs-transp); // rgba(21, 95, 131, 0.8);
+$trans-purple: rgba($eckhartpurple, $ncs-transp); // rgba(53, 14, 32, 0.8);
+$trans-darkgreen: rgba($mansuetogreen, $ncs-transp); // rgba(70, 71, 51, 0.8);
+$trans-lightgreen: rgba($reggreen, $ncs-transp); // rgba(101, 105, 51, 0.8);
+$trans-orange: rgba($ssaorange, $ncs-transp); // rgba(154, 83, 46, 0.8);
 
 // Elements colors
 $ncs-links: $ncs-lake;
@@ -142,9 +138,8 @@ $ncs-links-rightsidebar-hover: $ncs-maroon;
 
 // Table Color Scheme
 
-$table-main: $ncs-maroon; //#ADB17D;
+$table-main: $ncs-maroon; // #ADB17D;
 $table-accent: $ncs-dark-maroon;
-
 
 /*
  * Elements
@@ -152,46 +147,48 @@ $table-accent: $ncs-dark-maroon;
  */
 
 $divider: 1px solid $darkgray;
-$box-shadow-header: 0 2px 8px 0px rgba(0, 0, 0, .33);
+$box-shadow-header: 0 2px 8px 0 rgba(0, 0, 0, 0.33);
 $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
 
-.nopadding {  // For use when do not want to wrap in row 
-   padding-right: 0;
-   padding-left: 0;
-   margin-right: 0;
-   margin-left: 0;
+.nopadding {
+  // For use when do not want to wrap in row
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: 0;
+  margin-left: 0;
 }
 
-.btn-primary{
+.btn-primary {
   font-size: 1em;
   border-radius: 4px; /* undo override BS defaults */
   background: $ncs-maroon;
   color: $ncs-dark-maroon;
   color: white;
+
   // border: 1px solid $ncs-dark-maroon;
   border: none;
-  &:hover{
+  &:hover {
     background: $ncs-dark-maroon;
   }
 }
-.btn-secondary{
+.btn-secondary {
   background: white;
   color: $ncs-darker-greystone;
   border: 1.5px solid $ncs-darker-greystone;
   border-radius: 4px; /* undo override BS defaults */
-  &:hover{
+  &:hover {
     background: $ncs-lighter-greystone;
   }
 }
 
-.btn-tertiary{
+.btn-tertiary {
   font-size: 1em;
   border-radius: 4px; /* undo override BS defaults */
   font-weight: 400;
   background: white;
   color: $ncs-dark-maroon;
   border: 1px solid $ncs-dark-maroon;
-  &:hover{
+  &:hover {
     background: $ncs-lighter-greystone;
   }
 }
@@ -205,7 +202,7 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
   }
   li {
-  color: $brightpurple;
+    color: $brightpurple;
   }
   i {
     padding: 0;
@@ -215,16 +212,18 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
   }
   & h2 {
     color: $reggreen;
-    margin: 5px 0 10px 0;
+    margin: 5px 0 10px;
     font-size: 1.05em;
     padding-bottom: 5px;
     border-bottom: 1px solid #a0a282;
   }
+
   @include respond-to(medium) {
     border-top: 0;
     margin: 0;
     max-width: 350px;
   }
+
   @include respond-to(large) {
     max-width: 30em;
   }
@@ -241,61 +240,91 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
   border-width: 11px;
   left: 50%;
   transform: translateX(-50%);
-  top:100%;
+  top: 100%;
 }
-
 
 /*
  * Mixins
  * --------------------------------------------------
  */
 
-@mixin news-category-colors { // Using the UChicago colors
+@mixin news-category-colors {
+  // Using the UChicago colors
   padding: 0.5em 1em;
   background: #494949; /* $ncs-darker-greystone; */
   color: #fff;
   font-weight: 600;
 
-  &.from-the-dean {               background: $ncs-maroon;           }
-  &.spotlight {                   background: $ncs-brick;            }
-  &.people {                      background: $ncs-dark-brick;       }
+  &.from-the-dean {
+    background: $ncs-maroon;
+  }
+  &.spotlight {
+    background: $ncs-brick;
+  }
+  &.people {
+    background: $ncs-dark-brick;
+  }
 
-  &.special-collections {         background: $ncs-dark-maroon;      } 
+  &.special-collections {
+    background: $ncs-dark-maroon;
+  }
 
-  &.exhibit-news, &.exhibits,
-  &.library-in-the-news {         background: $ncs-dark-goldenrod;   }
-  &.events {                      background: $ncs-dark-terracotta;  }
+  &.exhibit-news,
+  &.exhibits,
+  &.library-in-the-news {
+    background: $ncs-dark-goldenrod;
+  }
+  &.events {
+    background: $ncs-dark-terracotta;
+  }
 
-  &.digital-scholarship {         background: $ncs-violet;           }
-  &.teaching {                    background: $ncs-dark-violet;      }
-  &.research {                    background: $ncs-light-violet;     }
+  &.digital-scholarship {
+    background: $ncs-violet;
+  }
+  &.teaching {
+    background: $ncs-dark-violet;
+  }
+  &.research {
+    background: $ncs-light-violet;
+  }
 
-  &.law {                         background: $ncs-dark-brick;       }
-  &.business-economics {          background: $ncs-dark-lake;        }
-  &.humanities-social-sciences {  background: $ncs-dark-forest;      }
-  &.science {                     background: $ncs-lake;             }
+  &.law {
+    background: $ncs-dark-brick;
+  }
+  &.business-economics {
+    background: $ncs-dark-lake;
+  }
+  &.humanities-social-sciences {
+    background: $ncs-dark-forest;
+  }
+  &.science {
+    background: $ncs-lake;
+  }
 
-  &.hours-access {                background: $ncs-forest            }
-  &.spaces {                      background: $ncs-ivy               }
-  &.resources {                   background: $ncs-dark-ivy;         }
+  &.hours-access {
+    background: $ncs-forest;
+  }
+  &.spaces {
+    background: $ncs-ivy;
+  }
+  &.resources {
+    background: $ncs-dark-ivy;
+  }
 }
 
-
-@mixin desaturate { // for images
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
+@mixin desaturate {
+  // for images
+  filter: grayscale(100%);
 }
 
 @mixin center {
-    display:block;
-    //margin-left: auto;
-    //margin-right: auto;
+  display: block;
 }
 
 @mixin flex {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin ellipsis($width: 100%) {
@@ -308,10 +337,11 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
 }
 
 @mixin borders {
-    border-bottom: 1px dotted $darkgray;
+  border-bottom: 1px dotted $darkgray;
 }
 
-@mixin visually-hidden { // For ADA helper text
+@mixin visually-hidden {
+  // For ADA helper text
   position: absolute;
   width: 1px;
   height: 1px;

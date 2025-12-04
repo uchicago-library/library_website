@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 
 > Styles that are only valid on public site <
 > Do not use for third party platforms <
@@ -11,54 +11,56 @@ Forms
 Tables: Base
 Index List Page
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "variables.scss";
-@import "media.scss";
-
+@import 'variables.scss';
+@import 'media.scss';
 
 /*
  * Global Elements {Public Site}
  * --------------------------------------------------
  */
 
-
-html, body {  /* The html and body elements cannot have any padding or margin. */
-  //overflow-y: scroll; /* has to be scroll, not auto */
+html,
+body {
+  // The html and body elements cannot have any padding or margin.
+  // overflow-y: scroll; /* has to be scroll, not auto
   -webkit-overflow-scrolling: touch;
   height: 100%;
   overflow-x: hidden; /* Off Canvas: Prevent scroll on narrow devices */
 }
 
 body {
-  color: #000000;
+  color: #000;
   margin-bottom: 0;
-  font-family: $base-font; 
-}
-
-html, body {
+  font-family: $base-font;
 }
 
 .valid {
-  color: $ncs-ivy; }
+  color: $ncs-ivy;
+}
 
 .error {
-  color: red; }
+  color: red;
+}
 
 .warning {
-  color: $ncs-goldenrod; }
+  color: $ncs-goldenrod;
+}
 
 .information {
-  color: $ncs-lake; }
+  color: $ncs-lake;
+}
 
 /* Links */
 a {
   color: $ncs-links;
   outline: 0;
   text-decoration: underline;
-    &:hover, &:focus {
-      color: $ncs-links-hover;
-    }
+  &:hover,
+  &:focus {
+    color: $ncs-links-hover;
+  }
   &.social {
     color: #767676;
   }
@@ -69,21 +71,50 @@ a {
  * --------------------------------------------------
  */
 
- h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, a:empty, p:empty, ul:empty {
-    display: none; // ADA: Hides empty header tags
+h1:empty,
+h2:empty,
+h3:empty,
+h4:empty,
+h5:empty,
+h6:empty,
+a:empty,
+p:empty,
+ul:empty {
+  display: none; // ADA: Hides empty header tags
 }
-.h1, .h2, .h3, .h4, .h5, .h6, 
-h1, h2, h3, h4, h5, h6{
-  color: $ncs-maroon; 
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $ncs-maroon;
   font-style: normal;
 }
+
 /* this might not be a good idea but it enforces consistency 
 *  some wagtail posts have a bold styling applied to a heading. */
-.h1, .h2, .h3, .h4, .h5, .h6, 
-h1, h2, h3, h4, h5, h6,
-h2>b,
-h3>b,
-h4>b{
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h2 > b,
+h3 > b,
+h4 > b {
   font-weight: 400;
 }
 
@@ -92,7 +123,8 @@ h1 {
   color: $ncs-darker-greystone;
   padding-bottom: 5px;
   border-bottom: 1px solid $lightgray;
-  margin: 0 0 0.2em 0;
+  margin: 0 0 0.2em;
+
   @include respond-to(medium) {
     padding-left: 0;
   }
@@ -103,9 +135,9 @@ h2 {
   line-height: 1.4em;
   .contentalert {
     line-height: 1.3em;
-    color: #FF3399;
+    color: #f39;
   }
-  &+h3 {
+  & + h3 {
     margin-top: 0;
   }
 }
@@ -115,18 +147,18 @@ h3 {
   font-size: 2.2rem;
   font-style: normal;
   line-height: 1.4em;
-  &+h4 {
+  & + h4 {
     margin-top: 0;
   }
 }
 
 h4 {
-  font-size:1.7rem;
+  font-size: 1.7rem;
   line-height: 1.4em;
   .newsblock & {
     margin-bottom: 3px;
   }
-  &+h5 {
+  & + h5 {
     margin-top: 0;
   }
 }
@@ -137,7 +169,7 @@ h5 {
   color: #800000;
   font-style: italic;
   line-height: 1.4em;
-  &+h6 {
+  & + h6 {
     margin-top: 0;
   }
 }
@@ -146,75 +178,98 @@ h6 {
   font-size: 1em;
   font-weight: 600;
   color: #525252;
-  margin: 15px 0 5px 0;
+  margin: 15px 0 5px;
 }
-
 
 p {
   font-size: 1.5rem;
   margin-bottom: 1em;
   line-height: 1.5em;
-    small {
-      color: #767676;
+  small {
+    color: #767676;
   }
 }
-
 
 /*
  * Forms
  * --------------------------------------------------
  */
 
-form ol, form ul {
+form ol,
+form ul {
   list-style: none;
-  margin-left: 0; }
+  margin-left: 0;
+}
 
 fieldset {
   border: 0;
   padding: 0;
-  margin: 0; }
+  margin: 0;
+}
 
 label {
   display: block;
-  padding-bottom: 0.5em; }
+  padding-bottom: 0.5em;
+}
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: 100%;
-  margin: 0 1px 0; }
+  margin: 0 1px;
+}
 
-input, textarea {
-  border: 1px solid gray; }
+input,
+textarea {
+  border: 1px solid gray;
+}
 
-input[type=text], input[type=search], input[type=url], input[type=number], textarea {
-  -webkit-appearance: none; }
+input[type='text'],
+input[type='search'],
+input[type='url'],
+input[type='number'],
+textarea {
+  appearance: none;
+}
 
-button, input[type="submit"] {
+button,
+input[type='submit'] {
   padding: 0.5em;
   color: #fff;
   background: #800000;
   border: none;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
-input[type="checkbox"],
-input[type="radio"] {
+input[type='checkbox'],
+input[type='radio'] {
   width: auto;
-  margin-right: 0.3em; }
+  margin-right: 0.3em;
+}
 
-input[type="search"] {
-  -webkit-appearance: none;
-  border-radius: 0; }
+input[type='search'] {
+  appearance: none;
+  border-radius: 0;
+}
 
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none; }
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration {
+  appearance: none;
+}
 
 .field-container {
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+}
 
-.inline-form fieldset, .inline-form .inline-container {
-  position: relative; }
-.inline-form input[type=submit], .inline-form button, .inline-form .btn {
+.inline-form fieldset,
+.inline-form .inline-container {
+  position: relative;
+}
+.inline-form input[type='submit'],
+.inline-form button,
+.inline-form .btn {
   font-size: 0.875em;
   padding: 0.65rem 1.3rem;
   background: $darkgray;
@@ -222,36 +277,47 @@ input[type="search"]::-webkit-search-decoration {
   top: 0;
   right: 0;
   z-index: 1;
-  width: auto; }
-  .inline-form input[type=submit]:hover, .inline-form input[type=submit]:focus, .inline-form button:hover, .inline-form button:focus, .inline-form .btn:hover, .inline-form .btn:focus {
-    background: gray;
-    color: white; }
+  width: auto;
+}
+.inline-form input[type='submit']:hover,
+.inline-form input[type='submit']:focus,
+.inline-form button:hover,
+.inline-form button:focus,
+.inline-form .btn:hover,
+.inline-form .btn:focus {
+  background: gray;
+  color: white;
+}
 
 /* Validation */
 .has-error {
-  border-color: red; }
+  border-color: red;
+}
 
 .is-valid {
-  border-color: #089e00; }
+  border-color: #089e00;
+}
 
-form#knowledgetracker { // Desk Tracker
+form#knowledgetracker {
+  // Desk Tracker
   & input#submit {
     padding: 0.5em 1.5em;
   }
-  & input[type="reset"] { // Hide "clear form" button
+  & input[type='reset'] {
+    // Hide "clear form" button
     display: none;
   }
 }
 
-.extract { // copyright info box
+.extract {
+  // copyright info box
   background-color: $hovercalm;
   margin: 20px 50px;
   padding: 5px 30px;
   border-left: 3px solid #ccc;
   border-right: 3px solid #ccc;
-  box-shadow: 5px 5px 5px #888888;
+  box-shadow: 5px 5px 5px #888;
 }
-
 
 /*
  * Tables: Base
@@ -264,11 +330,16 @@ table {
   }
 }
 
-table.table-striped, .table-striped>tbody {
-  @include respond-to(smallonly) { //mobile friendly magic
+table.table-striped,
+.table-striped > tbody {
+  @include respond-to(smallonly) {
+    // mobile friendly magic
     display: block;
     width: 100%;
-    & thead, & tr, & th, & td {
+    & thead,
+    & tr,
+    & th,
+    & td {
       display: block;
       padding: 0;
       text-align: left;
@@ -289,7 +360,6 @@ thead th {
   white-space: nowrap;
 }
 
-
 /*
  *  Index List Page
  * --------------------------------------------------
@@ -297,19 +367,21 @@ thead th {
 
 ul.index-list {
   list-style: none;
-    padding-left: 0;
-  &>li {
+  padding-left: 0;
+  & > li {
     margin: 1em 0;
     a {
       font-weight: 600;
     }
-    &>ul.index-list{ // 2nd Level & beyond
+    & > ul.index-list {
+      // 2nd Level & beyond
       padding-inline-start: 15px;
       border-left: 1px solid $ncs-light-greystone;
-      &>li {
+      & > li {
         a {
           font-weight: 400;
         }
+
         // &>ul.index-list>li { // 3rd Level
         //   a {
         //     // font-weight: 300;
@@ -325,7 +397,3 @@ ul.index-list {
     }
   }
 }
-
-
-
-

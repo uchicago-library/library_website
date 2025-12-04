@@ -6,10 +6,10 @@
 {% block content %}
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-12 col-md-12 swnews">
-  	  <article>
-    	<h1>{{ self.title }}</h1>
+      <article>
+        <h1>{{ self.title }}</h1>
         {{ self.intro }}
-    
+
         {% if location or phone or email %}
           <h2>Department Contact</h2>
           {% if location %}
@@ -17,82 +17,82 @@
           {% endif %}
           {% if phone or email %}
             <p>
-            {% if phone %}
-              {{ phone }}
-            {% endif %}
-            {% if phone and email %}
-              |
-            {% endif %}
-            {% if email %}
-              <a href="mailto:{{ email }}">{{ email }}</a>
-            {% endif %}
+              {% if phone %}
+                {{ phone }}
+              {% endif %}
+              {% if phone and email %}
+                |
+              {% endif %}
+              {% if email %}
+                <a href="mailto:{{ email }}">{{ email }}</a>
+              {% endif %}
             </p>
           {% endif %}
         {% endif %}
-    
+
         {% if show_departments %}
-        <h2>Sub-units</h2>
+          <h2>Sub-units</h2>
           {% for department_unit_row in department_unit_rows %}
             <div class="row">
               {% for department_unit in department_unit_row %}
-              <div class="col-md-3">
-                <h3 style="margin-top: 0px;"><a href="{{ department_unit.url }}">{{ department_unit.title }}</a></h3>
-                {% if department_unit.location or department_unit.phone_number or department_unit.email %}
-                <p>
-                  {% if department_unit.location %}
-                    {{ department_unit.location }}
-                    {% if department_unit.phone_number or department_unit.email %}<br/>{% endif %}
+                <div class="col-md-3">
+                  <h3 style="margin-top: 0px;"><a href="{{ department_unit.url }}">{{ department_unit.title }}</a></h3>
+                  {% if department_unit.location or department_unit.phone_number or department_unit.email %}
+                    <p>
+                      {% if department_unit.location %}
+                        {{ department_unit.location }}
+                        {% if department_unit.phone_number or department_unit.email %}<br/>{% endif %}
+                      {% endif %}
+                      {% if department_unit.phone_number %}
+                        {{ department_unit.phone_number }}
+                        {% if department_unit.email %}|{% endif %}
+                      {% endif %}
+                      {% if department_unit.email %}
+                        <a href="mailto:{{ department_unit.email }}">{{ department_unit.email }}</a>
+                      {% endif %}
+                    </p>
                   {% endif %}
-                  {% if department_unit.phone_number %}
-                    {{ department_unit.phone_number }}
-                    {% if department_unit.email %}|{% endif %}
+                  {% if department_unit.supervisors %}
+                    <p><strong>Supervisor:</strong>
+                      {% for supervisor in department_unit.supervisors %}
+                        <br/><a href="{{ supervisor.url }}">{{ supervisor.title }}</a><br/>{{ supervisor.phone_number }} | <a href="mailto:{{ supervisor.email }}">{{ supervisor.email }}</a>
+                      {% endfor %}
+                    </p>
                   {% endif %}
-                  {% if department_unit.email %}
-                    <a href="mailto:{{ department_unit.email }}">{{ department_unit.email }}</a>
-                  {% endif %}
-                </p>
-                {% endif %}
-                {% if department_unit.supervisors %}
-                  <p><strong>Supervisor:</strong>
-                  {% for supervisor in department_unit.supervisors %}
-                    <br/><a href="{{ supervisor.url }}">{{ supervisor.title }}</a><br/>{{ supervisor.phone_number }} | <a href="mailto:{{ supervisor.email }}">{{ supervisor.email }}</a>
-                  {% endfor %}
-                  </p>
-                {% endif %}
-              </div>
+                </div>
               {% endfor %}
             </div>
           {% endfor %}
         {% endif %}
-    
+
         {% if show_staff %}
-        <h2>Staff</h2>
-        <table class="table table-striped stafflist">
+          <h2>Staff</h2>
+          <table class="table table-striped stafflist">
             <tbody>
-            {% for s in department_members %}
+              {% for s in department_members %}
                 <tr>
-                    <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
-                    <td>{{ s.jobtitle|richtext }}</td>
-                    <td><a href="mailto:{{ s.email }}">{{ s.email }}</a></td>
-                    <td>{{ s.phone|richtext }}</td>
+                  <td><strong><a href="{{ s.url }}">{{ s.title }}</a></strong></td>
+                  <td>{{ s.jobtitle|richtext }}</td>
+                  <td><a href="mailto:{{ s.email }}">{{ s.email }}</a></td>
+                  <td>{{ s.phone|richtext }}</td>
                 </tr>
-            {% endfor %}
+              {% endfor %}
             </tbody>
-        </table>
+          </table>
         {% endif %}
-        
+
         {% if reports %}
           <h2>Recent Reports</h2>
           <ul>
-          {% for report in reports %}
-            <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
-          {% endfor %}
-          <li><a href="reports/">more...</a></li>
+            {% for report in reports %}
+              <li><a href="{{ report.url }}">{{ report.date }}- {{ report.summary }}</a></li>
+            {% endfor %}
+            <li><a href="reports/">more...</a></li>
           </ul>
         {% endif %}
-    
+
         {{ self.body }}
-  	  </article>
+      </article>
     </div>
   </div>
 {% endblock %}

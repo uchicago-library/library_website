@@ -176,7 +176,14 @@ Select.propTypes = {
   ariaDescribedBy: PropTypes.string,
   required: PropTypes.string,
   disabled: PropTypes.bool,
-  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      disabled: PropTypes.bool,
+      value: PropTypes.string,
+      selected: PropTypes.bool,
+      text: PropTypes.string,
+    }),
+  ).isRequired,
 }
 
 const Label = props => {

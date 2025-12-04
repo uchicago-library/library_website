@@ -24,30 +24,30 @@ class TestItemServletView(TestCase):
         """
         self.client = Client()
         self.dict_keys = [
-            'title',
-            'location',
-            'internalLocation',
-            'callNumber',
-            'callNumberPrefix',
-            'copyNumber',
-            'volumeNumber',
-            'author',
-            'bibId',
-            'barcode',
-            'publisher',
-            'placePublished',
-            'dateIssued',
-            'edition',
-            'issn',
-            'isbn',
-            'linking_issn',
+            "title",
+            "location",
+            "internalLocation",
+            "callNumber",
+            "callNumberPrefix",
+            "copyNumber",
+            "volumeNumber",
+            "author",
+            "bibId",
+            "barcode",
+            "publisher",
+            "placePublished",
+            "dateIssued",
+            "edition",
+            "issn",
+            "isbn",
+            "linking_issn",
         ]
 
     def test_item_servlet_with_no_params(self):
         """
         Should always be up, give a 200 and serve JSON.
         """
-        response = self.client.get(reverse('item-servlet'))
+        response = self.client.get(reverse("item-servlet"))
         response.status_code == 200
         content = json.loads(response.content)
         for key in self.dict_keys:
@@ -64,10 +64,10 @@ class TestItemServletView(TestCase):
 
 
 @override_settings(
-    FOLIO_USERNAME='Picard',
-    FOLIO_PASSWORD='BeverlyCrusher',
-    FOLIO_TENANT='Enterprise',
-    FOLIO_BASE_URL='https://siufhsari34hriwhrfishfksjfhnsf.com',
+    FOLIO_USERNAME="Picard",
+    FOLIO_PASSWORD="BeverlyCrusher",
+    FOLIO_TENANT="Enterprise",
+    FOLIO_BASE_URL="https://siufhsari34hriwhrfishfksjfhnsf.com",
 )
 class TestItemServletUtils(TestCase):
     """
@@ -76,20 +76,20 @@ class TestItemServletUtils(TestCase):
 
     def test_get_auth_with_bad_data(self):
         auth = get_auth()
-        self.assertTrue(auth == {"x-okapi-token": ''})
+        self.assertTrue(auth == {"x-okapi-token": ""})
 
     def test_get_instances_with_bad_data(self):
-        instances = get_instances('badbib', 'badtoken')
+        instances = get_instances("badbib", "badtoken")
         self.assertTrue(instances == {})
 
     def test_get_holdings_with_bad_data(self):
-        holdings = get_holdings('badinstanceid', 'badtoken')
+        holdings = get_holdings("badinstanceid", "badtoken")
         self.assertTrue(holdings == {})
 
     def test_get_item_with_bad_data(self):
-        item = get_item('badbarcode', 'badtoken')
+        item = get_item("badbarcode", "badtoken")
         self.assertTrue(item == {})
 
     def test_get_location_with_bad_data(self):
-        loc = get_location('badlocationid', 'badtoken')
+        loc = get_location("badlocationid", "badtoken")
         self.assertTrue(loc == {})

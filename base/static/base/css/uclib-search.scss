@@ -1,18 +1,18 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 [Table of contents]
 
 Search Type Tabs
 Search Field Row
 Other Search Row
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "variables.scss";
-@import "media.scss";
+@import 'variables.scss';
+@import 'media.scss';
 
-
-.bootstrap-select.btn-group .dropdown-toggle .filter-option { // ADA automation error silencer
-  overflow: visible!important; 
+.bootstrap-select.btn-group .dropdown-toggle .filter-option {
+  // ADA automation error silencer
+  overflow: visible !important;
 }
 
 /*
@@ -24,7 +24,7 @@ h3.searchbox-header {
   font-size: $font-small;
   font-family: $base-font;
   color: $ncs-maroon;
-  margin: 12px 0 10px .3em;
+  margin: 12px 0 10px 0.3em;
   padding-bottom: 3px;
   line-height: 1.1em;
   font-weight: 600;
@@ -40,6 +40,7 @@ h3.searchbox-header {
     padding: 0;
     margin: 0;
     border-bottom: 3px solid $ncs-light-greystone;
+
     @include respond-to(smallonly) {
       display: flex;
       flex-wrap: wrap;
@@ -53,7 +54,7 @@ h3.searchbox-header {
       display: inline-block;
       color: $ncs-dark-greystone;
       text-decoration: none;
-      padding: .3em 15px;
+      padding: 0.3em 15px;
       font-weight: 600;
       &:hover,
       &.active {
@@ -62,10 +63,13 @@ h3.searchbox-header {
         position: relative;
         bottom: -3px;
       }
-      &.active:after {
+      &.active::after {
+        // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
         @extend .menu-marker;
-        border-top-color: $ncs-maroon; 
+
+        border-top-color: $ncs-maroon;
       }
+
       @include respond-to(smallonly) {
         padding-top: 0;
       }
@@ -79,9 +83,8 @@ h3.searchbox-header {
     padding: 1em;
   }
   &.main-search {
-    background:  $ncs-lighter-greystone;
+    background: $ncs-lighter-greystone;
     margin-bottom: 10px;
-
   }
   > .active {
     display: block;
@@ -92,6 +95,7 @@ h3.searchbox-header {
   background-color: transparent;
   padding: 15px 40px 20px 30px;
   border-top: 4px solid $darkred;
+
   @include respond-to(small) {
     border-top: none;
   }
@@ -110,20 +114,22 @@ h3.searchbox-header {
 
 .btn-searchtype {
   border: none;
+
   @include respond-to(small) {
     min-width: 100px;
   }
-  &>button {
+  & > button {
     color: #fff;
     line-height: 1.2em;
     padding: 8px 25px 8px 10px;
   }
-  &>.btn-default {
+  & > .btn-default {
     margin-bottom: 0;
   }
 }
 
-.btn-searchtype>.dropdown-menu { //ALTS to work with javascript translation
+.btn-searchtype > .dropdown-menu {
+  // ALTS to work with javascript translation
   background-color: $ncs-dark-greystone;
   color: #fff;
   margin-top: -1px;
@@ -133,7 +139,8 @@ h3.searchbox-header {
     background-color: transparent;
     & > li > a {
       color: inherit;
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: $ncs-darker-greystone;
         text-decoration: none;
       }
@@ -150,30 +157,31 @@ h3.searchbox-header {
   padding: 0.6em;
   line-height: 0.45em;
   margin-top: 0;
+
   @include respond-to(medium) {
     padding: 0.8em;
   }
 }
 
-.btn-search:hover, 
-.btn-search:focus, 
-.btn-search:active{
+.btn-search:hover,
+.btn-search:focus,
+.btn-search:active {
   background-color: $ncs-dark-maroon;
 }
 
-.btn-searchtype>button:hover, 
-.btn-searchtype>button:focus, 
-.btn-searchtype>button:active, 
-.btn-searchtype>button.btn.dropdown-toggle.btn-default {
+.btn-searchtype > button:hover,
+.btn-searchtype > button:focus,
+.btn-searchtype > button:active,
+.btn-searchtype > button.btn.dropdown-toggle.btn-default {
   color: $ncs-darker-greystone;
   background: white;
   border: 1px solid $ncs-light-greystone;
 }
 
 .dropdown-menu-right {
-  margin: 0px;
-  border: 0px;
-  background-color: #F2F2F2;
+  margin: 0;
+  border: 0;
+  background-color: #f2f2f2;
 }
 
 /*
@@ -181,27 +189,31 @@ h3.searchbox-header {
  * --------------------------------------------------
  */
 
- .eoptions {
+.eoptions {
   padding: 0 0 0 5px;
   font-size: 0.9em;
   margin-bottom: 0;
   p {
     margin-bottom: 0;
   }
+
   @include respond-to(smallonly) {
     padding: 5px 0 0 5px;
   }
 }
 
 .advanced {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .eoptions;
+
   text-decoration: underline;
+
   @include respond-to(small) {
     text-align: right;
   }
 }
 
- .searchoptions {
+.searchoptions {
   color: #525252;
   padding: 10px 0 0 5px;
   margin-top: 10px;
@@ -223,18 +235,6 @@ h3.searchbox-header {
  * Browsers will ignore an entire selector group if even one pseudo-element
  * selector is invalid or unsupported in that browser.
  */
-
-.form-control::-webkit-input-placeholder {
-  color: #666;
-}
-
-.form-control::-moz-placeholder {
-  color: #666;
-}
-
-.form-control:-ms-input-placeholder {
-  color: #666;
-}
 
 .form-control::placeholder {
   color: #666;

@@ -1,6 +1,9 @@
 from wagtail.blocks import (
-    CharBlock, PageChooserBlock, RichTextBlock,
-    StreamBlock, StructBlock
+    CharBlock,
+    PageChooserBlock,
+    RichTextBlock,
+    StreamBlock,
+    StructBlock,
 )
 from wagtail.models import Page
 
@@ -10,13 +13,14 @@ class IconListBlock(StructBlock):
     A streamfield for aesthetically pleasing
     lists of links with an icon and heading.
     """
+
     icon = CharBlock(help_text="Add a Font Awesome icon name here")
     heading = CharBlock()
     text = RichTextBlock()
 
     class Meta:
-        icon = 'snippet'
-        template = 'intranettocs/blocks/icon_list.html'
+        icon = "snippet"
+        template = "intranettocs/blocks/icon_list.html"
 
 
 class IconAutoListBlock(StructBlock):
@@ -25,6 +29,7 @@ class IconAutoListBlock(StructBlock):
     automatically generated lists of links
     with an icon.
     """
+
     icon = CharBlock(help_text="Add a Font Awesome icon name here")
     starting_page = PageChooserBlock()
 
@@ -32,28 +37,28 @@ class IconAutoListBlock(StructBlock):
         context = super(IconAutoListBlock, self).get_context(value)
 
         d = []
-        if value['starting_page']:
-            url_path = value['starting_page'].url_path
+        if value["starting_page"]:
+            url_path = value["starting_page"].url_path
 
-            for child in Page.objects.get(
-                url_path=url_path
-            ).get_children().in_menu().live().specific():
-                c = {'title': child.title, 'url': child.url, 'children': []}
-                for grandchild in child.get_children().in_menu().live(
-                ).specific():
-                    c['children'].append(
-                        {
-                            'title': grandchild.title,
-                            'url': grandchild.url
-                        }
+            for child in (
+                Page.objects.get(url_path=url_path)
+                .get_children()
+                .in_menu()
+                .live()
+                .specific()
+            ):
+                c = {"title": child.title, "url": child.url, "children": []}
+                for grandchild in child.get_children().in_menu().live().specific():
+                    c["children"].append(
+                        {"title": grandchild.title, "url": grandchild.url}
                     )
                 d.append(c)
-        context['descendants'] = d
+        context["descendants"] = d
         return context
 
     class Meta:
-        icon = 'folder'
-        template = 'intranettocs/blocks/icon_automatic_directory_list.html'
+        icon = "folder"
+        template = "intranettocs/blocks/icon_automatic_directory_list.html"
 
 
 class IconListCluster(StreamBlock):
@@ -61,5 +66,6 @@ class IconListCluster(StreamBlock):
     Standard default streamfield options to be shared
     across content types.
     """
+
     list_block = IconListBlock()
     automatic_directory_list_block = IconAutoListBlock()

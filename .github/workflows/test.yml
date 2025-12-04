@@ -19,7 +19,6 @@ jobs:
       MARKLOGIC_LDR_PASSWORD: ${{ secrets.MARKLOGIC_LDR_PASSWORD }}
       MARKLOGIC_LDR_URL: 'http://marklogic.lib.uchicago.edu:8008/v1/graphs'
       SPARQL_ROOT: 'https://repository.lib.uchicago.edu/digital_collections'
-      OWNCLOUD_PASSWORD: ${{ secrets.OWNCLOUD_PASSWORD }}
       GITHUB: ${{ secrets.GITHUB }}
 
     steps:

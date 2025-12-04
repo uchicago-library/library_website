@@ -1,7 +1,6 @@
 import warnings
 
 import requests
-from base.tests import add_generic_request_meta_fields, boiler_plate
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -9,12 +8,13 @@ from django.http import HttpRequest
 from django.test import SimpleTestCase, TestCase
 from django.urls import clear_url_caches, reverse
 from elasticsearch import ElasticsearchWarning
-from library_website.settings import IDRESOLVE_URL
-from results.views import main_search_query, pages_to_exclude
 from wagtail.models import Page
 from wagtailcache.cache import clear_cache
 
+from base.tests import add_generic_request_meta_fields, boiler_plate
+from library_website.settings import IDRESOLVE_URL
 from public.utils import doi_lookup, doi_lookup_base_url, mk_url
+from results.views import main_search_query, pages_to_exclude
 
 example_doi1 = "10.1007/s11050-007-9022-y"
 example_doi2 = "10.1017/S0960129518000324"
@@ -24,7 +24,7 @@ bad_doi = "NOT_A_DOI"
 
 class IdresolveTest(SimpleTestCase):
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def test_idresolve_is_up(self):
         """
@@ -156,7 +156,7 @@ class TestStandardPageSitemapExcludeFieldFalse(TestCase):
         self.page.exclude_from_sitemap_xml = False
         self.page.save_revision().publish()
         response = self.client.get(
-            reverse('inventory'), HTTP_HOST='starfleet-academy.com'
+            reverse("inventory"), HTTP_HOST="starfleet-academy.com"
         )
         sitemap_url = self.page.get_sitemap_urls(response)
         # In parallel tests, URL generation can be unreliable
@@ -164,7 +164,7 @@ class TestStandardPageSitemapExcludeFieldFalse(TestCase):
         self.assertEqual(len(sitemap_url), 1)
         # Verify the page appears in the sitemap response if URLs are working
         # In parallel tests, URLs may be None, so we just check the page is present
-        self.assertIn(b'<url>', response.content)
+        self.assertIn(b"<url>", response.content)
 
 
 class TestStandardPageSitemapExcludeFieldTrue(TestCase):
@@ -182,7 +182,7 @@ class TestStandardPageSitemapExcludeFieldTrue(TestCase):
         self.page.exclude_from_sitemap_xml = True
         self.page.save_revision().publish()
         response = self.client.get(
-            reverse('inventory'), HTTP_HOST='starfleet-academy.com'
+            reverse("inventory"), HTTP_HOST="starfleet-academy.com"
         )
         sitemap_url = self.page.get_sitemap_urls(response)
         # Verify the page is excluded from sitemap

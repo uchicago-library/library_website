@@ -14,82 +14,82 @@
     {% endif %}
     <h2 class="staffpage-title">{{ position_title }}</h2>
     {% for unit in units %}
-          <span class="staffpage-department">
-          {% if unit.url %}
-            <a href="{{ unit.url }}">{{ unit.title }}</a>
-          {% else %}
-            {{ unit.title }}
-          {% endif %}
-          </span>
-          {% if not forloop.last %}
-            <br/>
-          {% endif %}
-      {% endfor %}
+      <span class="staffpage-department">
+        {% if unit.url %}
+          <a href="{{ unit.url }}">{{ unit.title }}</a>
+        {% else %}
+          {{ unit.title }}
+        {% endif %}
+      </span>
+      {% if not forloop.last %}
+        <br/>
+      {% endif %}
+    {% endfor %}
     <hr>
   </div>
 
   <div class="col-xs-12 col-md-9 centermain"> <!-- Center Content -->
-      <div class="col-xs-12 col-sm-3">
-        {% if self.profile_picture %}
-          {% image self.profile_picture width-200 class="img-responsive" %}
-        {% else %}
-          <img src="https://loop.lib.uchicago.edu/media/images/LoopTraining.width-200.jpg" class="img-responsive"/>
-        {% endif %}
-      </div>
+    <div class="col-xs-12 col-sm-3">
+      {% if self.profile_picture %}
+        {% image self.profile_picture width-200 class="img-responsive" %}
+      {% else %}
+        <img src="https://loop.lib.uchicago.edu/media/images/LoopTraining.width-200.jpg" class="img-responsive"/>
+      {% endif %}
+    </div>
 
-      <div class="col-xs-12 col-sm-9">      
+    <div class="col-xs-12 col-sm-9">
       {% if self.bio %}
         {% for block in self.bio %}
           {{ block }}
         {% endfor %}
       {% endif %}
-      </div>
+    </div>
 
 
   </div> <!-- END Center Content -->
 
-      <div class="col-xs-12 col-md-3 rightside" role="complementary"> <!-- Right Sidebar Content -->
-        <h2>Contact</h2>
-          {% for email in emails %}
-            <a href="mailto:{{ email }}">{{ email }}</a><br/>
-          {% endfor %}
-          {% staff_faculty_exchanges_phone_numbers self %}
+  <div class="col-xs-12 col-md-3 rightside" role="complementary"> <!-- Right Sidebar Content -->
+    <h2>Contact</h2>
+    {% for email in emails %}
+      <a href="mailto:{{ email }}">{{ email }}</a><br/>
+    {% endfor %}
+    {% staff_faculty_exchanges_phone_numbers self %}
 
-          {% if self.libguide_url or self.cv %}
-            {% if self.cv %}
-              <a href="{{ self.cv.url }}">CV</a>
-            {% endif %}
-            {% if self.libguide_url and self.cv %}&nbsp;&nbsp;|&nbsp;&nbsp;{% endif %}
-            {% if self.libguide_url %}
-              <a href="{{ self.libguide_url }}">LibGuides Profile</a>
-            {% endif %}
-          {% endif %}
+    {% if self.libguide_url or self.cv %}
+      {% if self.cv %}
+        <a href="{{ self.cv.url }}">CV</a>
+      {% endif %}
+      {% if self.libguide_url and self.cv %}&nbsp;&nbsp;|&nbsp;&nbsp;{% endif %}
+      {% if self.libguide_url %}
+        <a href="{{ self.libguide_url }}">LibGuides Profile</a>
+      {% endif %}
+    {% endif %}
 
-        {% if self.orcid %}
-          <p>ORCID: {{ self.orcid }}</p>
-        {% endif %}
+    {% if self.orcid %}
+      <p>ORCID: {{ self.orcid }}</p>
+    {% endif %}
 
-        {% if subjects %}
-          <h2>Subjects</h2>
-          <ul>
-            {% for subject in subjects %}
-            <li>{{ subject.name }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+    {% if subjects %}
+      <h2>Subjects</h2>
+      <ul>
+        {% for subject in subjects %}
+          <li>{{ subject.name }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
 
-        {% if group_memberships %}
-          <h2>Committees &amp; Groups</h2>
-            <ul>
-              {% for group_membership in group_memberships %}
-                <li><a href="{{ group_membership.group.url }}">
-                    {{ group_membership.group.title }}
-                    {% if group_membership.role %}{{ group_membership.role }}{% endif %}
-                </a></li>
-              {% endfor %}
-            </ul>
-        {% endif %}
+    {% if group_memberships %}
+      <h2>Committees &amp; Groups</h2>
+      <ul>
+        {% for group_membership in group_memberships %}
+          <li><a href="{{ group_membership.group.url }}">
+            {{ group_membership.group.title }}
+            {% if group_membership.role %}{{ group_membership.role }}{% endif %}
+          </a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
 
-        </div> <!-- END Right Sidebar Content -->
+  </div> <!-- END Right Sidebar Content -->
 
 {% endblock %}

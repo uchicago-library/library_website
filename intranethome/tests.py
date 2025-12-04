@@ -1,11 +1,6 @@
 from django.test import SimpleTestCase
 
-from .views import (
-    comparison,
-    convert_list_to_dict,
-    parse_file,
-    sort_aliases,
-)
+from .views import comparison, convert_list_to_dict, parse_file, sort_aliases
 
 
 class test_mail_aliases_view(SimpleTestCase):

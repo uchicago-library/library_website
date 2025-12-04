@@ -4,168 +4,168 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta charset="utf-8">
-  <title>
-    {% block title %}
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>
+      {% block title %}
         {% if self.seo_title %}
-            {{self.seo_title}}
-        {% else %} 
-            {{ self.title }}
+          {{self.seo_title}}
+        {% else %}
+          {{ self.title }}
         {% endif %}
-    {% endblock %} 
-  </title>
+      {% endblock %}
+    </title>
 
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7CS8BD4F7F"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-7CS8BD4F7F ');
-  </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7CS8BD4F7F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7CS8BD4F7F ');
+    </script>
 
-  {% if request.in_preview_panel %}
-    <base target="_blank">
-  {% endif %}
+    {% if request.in_preview_panel %}
+      <base target="_blank">
+    {% endif %}
 
-  <meta name="generator" content="Bootply" />
-  <meta name="viewport" content="width=device-width, user-scalable=yes">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, user-scalable=yes">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
   <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
-  <link href="{% static 'base/css/uclib_print.css' %}" rel="stylesheet">
-  {% compress css %}
+    <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/uclib_print.css' %}" rel="stylesheet">
+    {% compress css %}
     {# SCSS compilation relies on django compressor #}
-    <link href="{% static 'base/css/loop/loop-navigation.scss' %}" rel="stylesheet" type="text/x-scss">
-    <link href="{% static 'base/css/loop/loop.scss' %}" rel="stylesheet" type="text/x-scss">
-  {% endcompress %}
-  {% block extra_css %}
+      <link href="{% static 'base/css/loop/loop-navigation.scss' %}" rel="stylesheet" type="text/x-scss">
+      <link href="{% static 'base/css/loop/loop.scss' %}" rel="stylesheet" type="text/x-scss">
+    {% endcompress %}
+    {% block extra_css %}
     {# Override this in templates to add extra stylesheets #}
-  {% endblock %}
-  <link rel="icon" type="image/x-icon; charset=binary" href="{% static 'base/images/favicon.png' %}"/>
-</head>
+    {% endblock %}
+    <link rel="icon" type="image/x-icon; charset=binary" href="{% static 'base/images/favicon.png' %}"/>
+  </head>
 
-<body id="p-{{self.id}}" class="{% block body_class %}{% endblock %}">
-  {% wagtailuserbar %}
+  <body id="p-{{self.id}}" class="{% block body_class %}{% endblock %}">
+    {% wagtailuserbar %}
 
   <!-- Top Navigation -->
-  <nav class="navbar navbar-default">
-    <div class="container-fluid fluid-top"> <!-- Nav Div -->
-  
+    <nav class="navbar navbar-default">
+      <div class="container-fluid fluid-top"> <!-- Nav Div -->
+
       <!-- Brand and Toggle -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/"><img src="{% static 'base/images/loop-logo.png' %}" class="img-responsive" alt="staffweb logo"></a>
-      </div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="{% static 'base/images/loop-logo.png' %}" class="img-responsive" alt="staffweb logo"></a>
+        </div>
       <!-- // Brand and Toggle -->
-    
+
       <!-- top right nav -->
-      <form action="{% url 'search' %}" class="navbar-form navbar-right" role="search">
-        <div class="input-group">
-          <input type="text" name="query" class="form-control" placeholder="Search Loop"{% if search_query %} value="{{ search_query }}"{% endif %}>
-          <span class="input-group-btn">
-            <button class="btn btn-default">Find</button>
-          </span>
-        </div><!-- /input-group -->
-      </form>
+        <form action="{% url 'search' %}" class="navbar-form navbar-right" role="search">
+          <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Search Loop"{% if search_query %} value="{{ search_query }}"{% endif %}>
+            <span class="input-group-btn">
+              <button class="btn btn-default">Find</button>
+            </span>
+          </div><!-- /input-group -->
+        </form>
       <!-- / top right nav -->
-    
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" role="navigation" aria-label="Primary"><!-- Main Navigation -->
-        <ul class="nav navbar-nav">
-          <li><a href="/human-resources/">H<span class="hidden-sm">uman </span>R<span class="hidden-sm">esources</span></a></li>
-          <li><a href="/departments/">Departments</a></li>
-          <li><a href="/groups/">Committees &amp; Groups</a></li>
-          <li><a href="/documentation/">Doc<span class="hidden-sm">ument</span>s &amp; Policies</a></li>       
-          <li><a href="/technical-support/">Tech<span class="hidden-sm">nical</span> Support</a></li>
-        </ul>
-      </div> <!-- / Main Navigation -->
-  
-    </div><!-- Nav Div -->
-  </nav>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" role="navigation" aria-label="Primary"><!-- Main Navigation -->
+          <ul class="nav navbar-nav">
+            <li><a href="/human-resources/">H<span class="hidden-sm">uman </span>R<span class="hidden-sm">esources</span></a></li>
+            <li><a href="/departments/">Departments</a></li>
+            <li><a href="/groups/">Committees &amp; Groups</a></li>
+            <li><a href="/documentation/">Doc<span class="hidden-sm">ument</span>s &amp; Policies</a></li>
+            <li><a href="/technical-support/">Tech<span class="hidden-sm">nical</span> Support</a></li>
+          </ul>
+        </div> <!-- / Main Navigation -->
+
+      </div><!-- Nav Div -->
+    </nav>
   <!-- // Top Navigation -->
 
-  <div class="container-fluid"> <!-- main container -->
+    <div class="container-fluid"> <!-- main container -->
 
-    <div class="row-fluid">
-{% if page.show_sidebar and sidebar %}
-    <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
-      <div class="col-xs-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar" role="navigation" aria-label="Secondary"> <!-- Start side div -->
-        <h3>{{ sidebartitle }}</h3>
-        <ul>
-  {% for child in sidebar %}
-          <li><a href="{{ child.url }}">{{ child.title }}</a>
-    {% if child.children %}
-            <ul>
-      {% for grandchild in child.children %}
-              <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
-      {% endfor %}
-            </ul>
-    {% endif %}
-          </li>
-  {% endfor %}
-        </ul>
-      </div><!-- // End #sidebar -->
+      <div class="row-fluid">
+        {% if page.show_sidebar and sidebar %}
+          <div class="row row-offcanvas row-offcanvas-left"> <!-- Off Canvas Wrapper Row -->
+            <div class="col-xs-12 col-md-3 sidebar-offcanvas sidebar swside" id="sidebar" role="navigation" aria-label="Secondary"> <!-- Start side div -->
+              <h3>{{ sidebartitle }}</h3>
+              <ul>
+                {% for child in sidebar %}
+                  <li><a href="{{ child.url }}">{{ child.title }}</a>
+                    {% if child.children %}
+                      <ul>
+                        {% for grandchild in child.children %}
+                          <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div><!-- // End #sidebar -->
 
-      <div class="row visible-xs toggle-side">
-        <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
-      </div>
+            <div class="row visible-xs toggle-side">
+              <p><button type="button" class="btn btn-sidebar btn-xs" data-toggle="offcanvas"><i class="fa fa-caret-square-o-right fa-lg"></i></button></p>
+            </div>
 
 
-      <div class="col-xs-12 col-md-offset-1 col-md-8 unit-body" role="main">
-        <div class="col-xs-12 breadcrumbs hidden-xs">
-        <small>
-          {% for crumb in breadcrumbs %}
-            {% if crumb.url == self.url %}
-              {{ crumb.title }}
-            {% else %}
-              <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
-            {% endif %}
-          {% endfor %}
-        </small>
-      </div><!-- / breadcrumbs -->
+            <div class="col-xs-12 col-md-offset-1 col-md-8 unit-body" role="main">
+              <div class="col-xs-12 breadcrumbs hidden-xs">
+                <small>
+                  {% for crumb in breadcrumbs %}
+                    {% if crumb.url == self.url %}
+                      {{ crumb.title }}
+                    {% else %}
+                      <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
+                    {% endif %}
+                  {% endfor %}
+                </small>
+              </div><!-- / breadcrumbs -->
 
-{% else %}
+        {% else %}
 
-      <div class="col-xs-12 col-md-offset-1 col-md-11 unit-body" role="main">
-        <div class="col-xs-12 breadcrumbs hidden-xs">
-        <small>
-          {% for crumb in breadcrumbs %}
-            {% if crumb.url == self.url %}
-              {{ crumb.title }}
-            {% else %}
-              <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
-            {% endif %}
-          {% endfor %}
-        </small>
-      </div><!-- / breadcrumbs -->
+          <div class="col-xs-12 col-md-offset-1 col-md-11 unit-body" role="main">
+            <div class="col-xs-12 breadcrumbs hidden-xs">
+              <small>
+                {% for crumb in breadcrumbs %}
+                  {% if crumb.url == self.url %}
+                    {{ crumb.title }}
+                  {% else %}
+                    <a href="{{ crumb.url }}">{{ crumb.title }}</a> &gt;
+                  {% endif %}
+                {% endfor %}
+              </small>
+            </div><!-- / breadcrumbs -->
 
-{% endif %}
-{% block content %}{% endblock %}
-      </div><!-- /.col --> 
-{% if page.show_sidebar and sidebar %}
-    </div> <!-- // End Off Canvas Wrapper Row -->
-{% endif %}
+        {% endif %}
+        {% block content %}{% endblock %}
+      </div><!-- /.col -->
+      {% if page.show_sidebar and sidebar %}
+        </div> <!-- // End Off Canvas Wrapper Row -->
+      {% endif %}
     </div><!-- /.row-fluid -->
   </div> <!-- /main container -->
   <!-- Footer Section -->
-  <footer class="container-fluid footer" role="contentinfo"> 
+  <footer class="container-fluid footer" role="contentinfo">
     <span class="footer-brand"><a href="https://www.lib.uchicago.edu/"><img src="https://www.lib.uchicago.edu/web-resources/img/white-logo.png" alt="Loop logo"></a></span>
-      <ul>
-        <li><a href="/mailaliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
-        <li><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>
+    <ul>
+      <li><a href="/mailaliases/"><span class="hidden-xs">Library </span>Email Aliases</a></li>
+      <li><a href="/staff/"><span class="hidden-xs">Library Staff</span> Directory</a></li>
         <!--<li class="divider-vertical"><a href="#"><span class="hidden-xs">Library Building </span>Addresses</a></li>-->
-        <li><a href="mailto:intranet@lib.uchicago.edu">Contact <span class="hidden-xs">Site Maintainer</span></a></li>
-      </ul>
+      <li><a href="mailto:intranet@lib.uchicago.edu">Contact <span class="hidden-xs">Site Maintainer</span></a></li>
+    </ul>
   </footer>
 
   {# Global javascript #}
