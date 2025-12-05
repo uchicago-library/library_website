@@ -103,7 +103,7 @@ jobs:
       run: |
         # Exclude migrations and legacy templates with structural issues
         # (regex pattern: div tags that open in conditional blocks but close outside them)
-        curlylint --exclude "(migrations|intranet_base\.html|public_base\.html|dir_browse_page\.html|finding_aids_page\.html|home_page\.html|404\.html|loop_search\.html)" .
+        curlylint --exclude "(migrations|intranet_base\.html|public_base\.html|finding_aids_page\.html|404\.html)" .
 
     - name: Check djhtml formatting
       run: |

@@ -41,11 +41,11 @@
 
                 <div class="page-turn">
                     {% if search_results.has_previous %}
-                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}"><< Previous page</a> &nbsp; | &nbsp;
+                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">&lt;&lt; Previous page</a> &nbsp; | &nbsp;
                     {% endif %}
 
                     {% if search_results.has_next %}
-                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">More results >></a>
+                        <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">More results &gt;&gt;</a>
                     {% endif %}
                 </div>
 
