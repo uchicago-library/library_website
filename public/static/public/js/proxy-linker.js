@@ -1,7 +1,7 @@
 const proxify = (link) => {
   const uri = encodeURIComponent (link.trim());
   const scheme = "https";
-  const hostname = "proxy-redirector-test.lib.uchicago.edu";
+  const hostname = "proxy-redirector.lib.uchicago.edu";
   const route = "login";
   const querystring = "url=" + uri;
   const output = scheme + "://" + hostname + "/" + route + "?" + querystring;
