@@ -51,6 +51,12 @@ LOGIN_URL = "/Shibboleth.sso/Login?forceAuthn=true"
 # https://wiki.shibboleth.net/confluence/display/CONCEPT/SLOIssues
 SHIBBOLETH_LOGOUT_URL = "https://shibboleth2.uchicago.edu/idp/logout.html?target=%s"
 
+# Import secrets
+try:
+    from .secrets import *
+except ImportError:
+    pass
+
 try:
     from .local import *  # noqa: F403 F401
 except ImportError:
