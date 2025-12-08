@@ -19,10 +19,10 @@
     <div class="nice-padding">
         <h2>Test Your Loop News Notification Email</h2>
         <p>Make sure your Loop News notification message looks the way it's supposed to.</p>
-    
+
         <form action="{% url 'loopnotifications' %}" method="POST">
             {% csrf_token %}
-    
+
             <section id="account" class="active nice-padding">
                 <ul class="fields">
                     {% block fields %}

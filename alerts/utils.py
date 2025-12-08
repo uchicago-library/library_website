@@ -16,9 +16,10 @@ def get_alert(current_site):
         the third item is rich text, and the fourth item is a url.
     """
     from .models import AlertPage
-    info_alert = AlertPage.objects.live().filter(alert_level='alert-info')
-    low_alert = AlertPage.objects.live().filter(alert_level='alert-low')
-    high_alert = AlertPage.objects.live().filter(alert_level='alert-high')
+
+    info_alert = AlertPage.objects.live().filter(alert_level="alert-info")
+    low_alert = AlertPage.objects.live().filter(alert_level="alert-low")
+    high_alert = AlertPage.objects.live().filter(alert_level="alert-high")
 
     if not high_alert and not low_alert and not info_alert:
         return None
@@ -30,11 +31,13 @@ def get_alert(current_site):
         else:
             alert = info_alert[0]
         msg = bleach.clean(
-            alert.banner_message, tags=['p', 'b', 'a', 'strong'], strip=True
+            alert.banner_message, tags=["p", "b", "a", "strong"], strip=True
         )
         return (
-            msg, alert.alert_level, alert.more_info,
-            alert.relative_url(current_site)
+            msg,
+            alert.alert_level,
+            alert.more_info,
+            alert.relative_url(current_site),
         )
 
 

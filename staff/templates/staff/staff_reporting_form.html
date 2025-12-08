@@ -21,7 +21,7 @@
         <p>Download a staff report in Microsoft Excel format.</p>
         <form action="{% url 'list_staff_wagtail' %}" method="POST">
             {% csrf_token %}
-    
+
             <section id="account" class="active nice-padding">
                 <ul class="fields">
                     {% block fields %}

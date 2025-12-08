@@ -10,18 +10,18 @@
         <h1>{{ self.title }}</h1>
         {{ self.intro }}
         <p><strong>Group contact:</strong> <a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
-   
-        {% if self.meeting_frequency or self.meeting_location or self.meeting_start_time %} 
-            <h2>Meetings</h2>
-            <p>{{ self.meeting_frequency }}</p>
-            <p>{% if self.meeting_location %}
-                 {{ self.meeting_location }}, 
-               {% endif %}
-               {% if self.meeting_start_time and self.meeting_end_time %}
-                 {{ self.meeting_start_time }}-{{ self.meeting_end_time }}
-               {% endif %}</p>
+
+        {% if self.meeting_frequency or self.meeting_location or self.meeting_start_time %}
+          <h2>Meetings</h2>
+          <p>{{ self.meeting_frequency }}</p>
+          <p>{% if self.meeting_location %}
+            {{ self.meeting_location }},
+          {% endif %}
+            {% if self.meeting_start_time and self.meeting_end_time %}
+              {{ self.meeting_start_time }}-{{ self.meeting_end_time }}
+            {% endif %}</p>
         {% endif %}
-   
+
         {% if group_members %}
           <h2>Current Members</h2>
           <table class="table table-striped">
@@ -56,7 +56,7 @@
             <li><a href="meeting-minutes/">more...</a></li>
           </ul>
         {% endif %}
-    
+
         {% if reports %}
           <h2>Recent Reports</h2>
           <ul>
@@ -66,7 +66,7 @@
             <li><a href="reports/">more...</a></li>
           </ul>
         {% endif %}
-        {{ self.body }} 
+        {{ self.body }}
       </article>
     </div>
   </div>

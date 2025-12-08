@@ -7,10 +7,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache, caches
 from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.urls import clear_url_caches
-from public.models import LocationPage, StaffPublicPage
-from staff.models import StaffPage, StaffPageSubjectPlacement
-from subjects.models import Subject
-from units.models import UnitPage
 from wagtail.models import Page, Site
 from wagtail.search.backends import get_search_backend
 from wagtailcache.cache import clear_cache
@@ -19,10 +15,14 @@ from lib_collections.marklogic import get_record_for_display
 from lib_collections.models import CollectingAreaPage, CollectionPage, ExhibitPage
 from lib_collections.utils import CBrowseURL, DisplayBrowse, IIIFDisplay, Testing
 from lib_collections.views import collections
+from public.models import LocationPage, StaffPublicPage
+from staff.models import StaffPage, StaffPageSubjectPlacement
+from subjects.models import Subject
+from units.models import UnitPage
 
 
 class test_lib_collections_view(TestCase):
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -32,25 +32,25 @@ class test_lib_collections_view(TestCase):
 
     def tearDown(self):
 
-        caches['default'].clear()
+        caches["default"].clear()
         # clear cache
 
     def test_view(self):
-        request = self.factory.get('/collection/')
+        request = self.factory.get("/collection/")
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_view_collections(self):
-        request = self.factory.get('/collection/?view=collections')
+        request = self.factory.get("/collection/?view=collections")
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_collections_digital(self):
-        request = self.factory.get('/collection/?view=collections&digital=on')
+        request = self.factory.get("/collection/?view=collections&digital=on")
         request.user = self.user
         response = collections(request)
 
@@ -63,11 +63,11 @@ class test_lib_collections_view(TestCase):
     def test_collections_format(self):
         """Test format filtering with representative samples."""
         # Test a few representative formats instead of all 11
-        test_formats = ['Archives & Manuscripts', 'Audio', 'Video']
+        test_formats = ["Archives & Manuscripts", "Audio", "Video"]
 
         for format_name in test_formats:
             request = self.factory.get(
-                f'/collection/?view=collections&format={format_name}'
+                f"/collection/?view=collections&format={format_name}"
             )
             request.user = self.user
             response = collections(request)
@@ -76,7 +76,7 @@ class test_lib_collections_view(TestCase):
 
     def test_collections_format_invalid(self):
         """Test that invalid format is handled gracefully."""
-        request = self.factory.get('/collection/?view=collections&format=InvalidFormat')
+        request = self.factory.get("/collection/?view=collections&format=InvalidFormat")
         request.user = self.user
         response = collections(request)
 
@@ -86,13 +86,13 @@ class test_lib_collections_view(TestCase):
     def test_collections_location(self):
         """Test location filtering with representative samples."""
         # Get first 3 live locations instead of all 73
-        sample_locations = LocationPage.objects.live().values_list('title', flat=True)[
+        sample_locations = LocationPage.objects.live().values_list("title", flat=True)[
             :3
         ]
 
         for location in sample_locations:
             request = self.factory.get(
-                f'/collection/?view=collections&location={location}'
+                f"/collection/?view=collections&location={location}"
             )
             request.user = self.user
             response = collections(request)
@@ -102,7 +102,7 @@ class test_lib_collections_view(TestCase):
     def test_collections_location_invalid(self):
         """Test that invalid location is handled gracefully."""
         request = self.factory.get(
-            '/collection/?view=collections&location=NonexistentLocation'
+            "/collection/?view=collections&location=NonexistentLocation"
         )
         request.user = self.user
         response = collections(request)
@@ -117,7 +117,7 @@ class test_lib_collections_view(TestCase):
 
         for subject in sample_subjects:
             request = self.factory.get(
-                f'/collection/?view=collections&subject={subject}'
+                f"/collection/?view=collections&subject={subject}"
             )
             request.user = self.user
             response = collections(request)
@@ -127,7 +127,7 @@ class test_lib_collections_view(TestCase):
     def test_collections_subject_invalid(self):
         """Test that invalid subject is handled gracefully."""
         request = self.factory.get(
-            '/collection/?view=collections&subject=NonexistentSubject'
+            "/collection/?view=collections&subject=NonexistentSubject"
         )
         request.user = self.user
         response = collections(request)
@@ -136,49 +136,49 @@ class test_lib_collections_view(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_view_exhibit(self):
-        request = self.factory.get('/collection/?view=exhibits')
+        request = self.factory.get("/collection/?view=exhibits")
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_exhibit_location_none(self):
-        request = self.factory.get('/collection/?view=exhibits&location=%s' % None)
+        request = self.factory.get("/collection/?view=exhibits&location=%s" % None)
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_exhibit_subject_none(self):
-        request = self.factory.get('/collection/?view=exhibits&subject=%s' % None)
+        request = self.factory.get("/collection/?view=exhibits&subject=%s" % None)
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_exhibit_digital_none(self):
-        request = self.factory.get('/collection/?view=exhibits&digital=%s' % None)
+        request = self.factory.get("/collection/?view=exhibits&digital=%s" % None)
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_view_subjects(self):
-        request = self.factory.get('/collection/?view=subjects')
+        request = self.factory.get("/collection/?view=subjects")
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_view_none(self):
-        request = self.factory.get('/collection/?view=%s' % None)
+        request = self.factory.get("/collection/?view=%s" % None)
         request.user = self.user
         response = collections(request)
 
         self.assertEqual(response.status_code, 200)
 
     def test_view_invalid(self):
-        request = self.factory.get('/collection/?view=gibberish')
+        request = self.factory.get("/collection/?view=gibberish")
         request.user = self.user
         response = collections(request)
 
@@ -191,52 +191,52 @@ class TestCollectingAreaPages(TestCase):
     def setUpTestData(cls):
         # Delete the default localhost site created by Wagtail migrations
         # to prevent conflicts with our test site
-        Site.objects.filter(hostname='localhost').delete()
+        Site.objects.filter(hostname="localhost").delete()
 
         # Configuration for subjects (runs once for all tests in this class)
         subjects_json = {
-            'tng': {
-                'name': 'Star Trek: The Next Generation',
-                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            "tng": {
+                "name": "Star Trek: The Next Generation",
+                "json": '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
             },
-            'ds9': {
-                'name': 'Star Trek: Deep Space Nine',
-                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            "ds9": {
+                "name": "Star Trek: Deep Space Nine",
+                "json": '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
             },
-            'original': {
-                'name': 'Star Trek: The Original Series',
-                'json': '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
+            "original": {
+                "name": "Star Trek: The Original Series",
+                "json": '{"display_in_dropdown": false, "parent_subject": [], "libguide_url": null, "see_also": [], "pk": %s, "name": "%s"}',
             },
-            'tribbles': {
-                'name': 'Tribbles',
-                'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}, {"sort_order": 1, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
+            "tribbles": {
+                "name": "Tribbles",
+                "json": '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}, {"sort_order": 1, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
             },
-            'quadrotriticale': {
-                'name': 'Quadrotriticale',
-                'json': '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
+            "quadrotriticale": {
+                "name": "Quadrotriticale",
+                "json": '{"display_in_dropdown": false, "parent_subject": [{"sort_order": 0, "parent": %s, "pk": %s, "child": %s}], "libguide_url": "", "see_also": [], "pk": %s, "name": "%s"}',
             },
         }
 
         # Create subjects to operate on
-        Subject.objects.create(name=subjects_json['tng']['name']).save()
-        Subject.objects.create(name=subjects_json['ds9']['name']).save()
-        Subject.objects.create(name=subjects_json['original']['name']).save()
-        Subject.objects.create(name=subjects_json['tribbles']['name']).save()
-        Subject.objects.create(name=subjects_json['quadrotriticale']['name']).save()
+        Subject.objects.create(name=subjects_json["tng"]["name"]).save()
+        Subject.objects.create(name=subjects_json["ds9"]["name"]).save()
+        Subject.objects.create(name=subjects_json["original"]["name"]).save()
+        Subject.objects.create(name=subjects_json["tribbles"]["name"]).save()
+        Subject.objects.create(name=subjects_json["quadrotriticale"]["name"]).save()
 
         # Load the subjects into variables
         subjects = Subject.objects.all()
-        cls.tng = subjects.get(name=subjects_json['tng']['name'])
-        cls.ds9 = subjects.get(name=subjects_json['ds9']['name'])
-        cls.original = subjects.get(name=subjects_json['original']['name'])
-        cls.tribbles = subjects.get(name=subjects_json['tribbles']['name'])
+        cls.tng = subjects.get(name=subjects_json["tng"]["name"])
+        cls.ds9 = subjects.get(name=subjects_json["ds9"]["name"])
+        cls.original = subjects.get(name=subjects_json["original"]["name"])
+        cls.tribbles = subjects.get(name=subjects_json["tribbles"]["name"])
         cls.quadrotriticale = subjects.get(
-            name=subjects_json['quadrotriticale']['name']
+            name=subjects_json["quadrotriticale"]["name"]
         )
 
         # Create parent / child relationships for subjects
         cls.tribbles.from_json(
-            subjects_json['tribbles']['json']
+            subjects_json["tribbles"]["json"]
             % (
                 cls.ds9.pk,
                 cls.ds9.pk,
@@ -249,7 +249,7 @@ class TestCollectingAreaPages(TestCase):
             )
         ).save()
         cls.quadrotriticale.from_json(
-            subjects_json['quadrotriticale']['json']
+            subjects_json["quadrotriticale"]["json"]
             % (
                 cls.tribbles.pk,
                 cls.tribbles.pk,
@@ -260,37 +260,37 @@ class TestCollectingAreaPages(TestCase):
         ).save()
 
         # Create a fresh homepage (don't reuse existing pages)
-        root = Page.objects.get(path='0001')
-        cls.space = Page(slug='test-collections-home', title='Test Collections Home')
+        root = Page.objects.get(path="0001")
+        cls.space = Page(slug="test-collections-home", title="Test Collections Home")
         root.add_child(instance=cls.space)
 
         # Create a site
         cls.site = Site.objects.create(
-            hostname='localhost',
+            hostname="localhost",
             is_default_site=True,
             port=80,
             root_page=cls.space,
-            site_name='test site',
+            site_name="test site",
         )
 
         # Create StaffPages
         cls.captain = StaffPage(
-            title='Jean-Luc Picard',
-            cnetid='picard',
-            position_title='Captain of the USS Enterprise',
+            title="Jean-Luc Picard",
+            cnetid="picard",
+            position_title="Captain of the USS Enterprise",
         )
         cls.space.add_child(instance=cls.captain)
 
         cls.doctor = StaffPage(
-            title='Leonard McCoy',
-            cnetid='grumpydoctor',
-            position_title='Doctor on the USS Enterprise',
+            title="Leonard McCoy",
+            cnetid="grumpydoctor",
+            position_title="Doctor on the USS Enterprise",
         )
         cls.space.add_child(instance=cls.doctor)
 
         # Create UnitPage
         cls.ship = UnitPage(
-            title='USS Enterprise (NCC-1701-D)',
+            title="USS Enterprise (NCC-1701-D)",
             page_maintainer=cls.captain,
             editor=cls.captain,
             display_in_dropdown=True,
@@ -305,7 +305,7 @@ class TestCollectingAreaPages(TestCase):
             editor=cls.captain,
             content_specialist=cls.captain,
             unit=cls.ship,
-            slug='jean-luc-picard-public',
+            slug="jean-luc-picard-public",
         )
         cls.space.add_child(instance=cls.captain_public_page)
 
@@ -316,38 +316,38 @@ class TestCollectingAreaPages(TestCase):
             editor=cls.doctor,
             content_specialist=cls.doctor,
             unit=cls.ship,
-            slug='grumpy-leonard-mccoy',
+            slug="grumpy-leonard-mccoy",
         )
         cls.space.add_child(instance=cls.doctor_public_page)
 
         # Create a staff page email and append it
         cls.captain.staff_page_email.create(
-            email='picard@starfleet.io',
+            email="picard@starfleet.io",
         )
         cls.captain.staff_page_phone_faculty_exchange.create(
-            phone_number='012-345-6789',
-            faculty_exchange='Bridge',
+            phone_number="012-345-6789",
+            faculty_exchange="Bridge",
         )
         cls.captain.save()
 
         # Collection pages
         cls.collection_sisko = CollectionPage(
-            title='Benjamin Sisko',
+            title="Benjamin Sisko",
             page_maintainer=cls.captain,
             editor=cls.captain,
             content_specialist=cls.captain,
             unit=cls.ship,
-            short_abstract='As a Starfleet officer coming up through the ranks, Sisko was mentored by Curzon Dax, a joined Trill serving as Federation ambassador to the Klingon Empire, when the two were stationed aboard the USS Livingston early in Sisko\'s career.',
+            short_abstract="As a Starfleet officer coming up through the ranks, Sisko was mentored by Curzon Dax, a joined Trill serving as Federation ambassador to the Klingon Empire, when the two were stationed aboard the USS Livingston early in Sisko's career.",
         )
         cls.space.add_child(instance=cls.collection_sisko)
 
         cls.collection_darvin = CollectionPage(
-            title='Arne Darvin',
+            title="Arne Darvin",
             page_maintainer=cls.captain,
             editor=cls.captain,
             content_specialist=cls.captain,
             unit=cls.ship,
-            short_abstract='Darvin is a Klingon who poses as a Federation official to sabotage Federation attempts to colonize Sherman\'s Planet.',
+            short_abstract="Darvin is a Klingon who poses as a Federation official to sabotage Federation attempts to colonize Sherman's Planet.",
         )
         cls.space.add_child(instance=cls.collection_darvin)
 
@@ -368,22 +368,22 @@ class TestCollectingAreaPages(TestCase):
 
         # Exhibit pages
         cls.exhibit_worf = ExhibitPage(
-            title='Lieutenant Commander Worf',
+            title="Lieutenant Commander Worf",
             page_maintainer=cls.captain,
             editor=cls.captain,
             content_specialist=cls.captain,
             unit=cls.ship,
-            short_abstract='In 2364, Worf was assigned to the USS Enterprise-D as relief flight control and tactical officer with the rank of lieutenant junior grade.',
+            short_abstract="In 2364, Worf was assigned to the USS Enterprise-D as relief flight control and tactical officer with the rank of lieutenant junior grade.",
         )
         cls.space.add_child(instance=cls.exhibit_worf)
 
         cls.exhibit_koloth = ExhibitPage(
-            title='Captain Koloth',
+            title="Captain Koloth",
             page_maintainer=cls.captain,
             editor=cls.captain,
             content_specialist=cls.captain,
             unit=cls.ship,
-            short_abstract='Captain Koloth requested permission for his crew to board K7 for shore leave.',
+            short_abstract="Captain Koloth requested permission for his crew to board K7 for shore leave.",
         )
         cls.space.add_child(instance=cls.exhibit_koloth)
 
@@ -410,7 +410,7 @@ class TestCollectingAreaPages(TestCase):
         # Make a CollectingAreaPage
         # Set the default subject to ds9
         cls.collecting_area = CollectingAreaPage(
-            title='Star Trek',
+            title="Star Trek",
             subject=cls.ds9,
             page_maintainer=cls.captain,
             editor=cls.captain,
@@ -434,7 +434,7 @@ class TestCollectingAreaPages(TestCase):
         """
         Clear the cache between every test.
         """
-        caches['default'].clear()
+        caches["default"].clear()
 
     def test_get_subjects_children_false_only_returns_one_top_level_subject(self):
         subject = self.collecting_area.get_subjects(children=False)
@@ -482,7 +482,7 @@ class TestCollectingAreaPages(TestCase):
         # subject is a required field. Let's handle
         # for it anyhow
         void = CollectingAreaPage(
-            title='Nagilum',
+            title="Nagilum",
             page_maintainer=self.captain,
             editor=self.captain,
             content_specialist=self.captain,
@@ -495,22 +495,22 @@ class TestCollectingAreaPages(TestCase):
         page = self.collecting_area
         link = page._build_related_link(self.captain.id, self.site)
         # Verify title is correct (URL may be empty in parallel tests)
-        self.assertEqual(link[0], 'Jean-Luc Picard')
+        self.assertEqual(link[0], "Jean-Luc Picard")
         # Verify we got a tuple of length 2
         self.assertEqual(len(link), 2)
 
     def test_build_related_link_no_page_does_not_blow_up(self):
         page = self.collecting_area
         link = page._build_related_link(999, self.site)
-        self.assertEqual(link, ('', ''))
+        self.assertEqual(link, ("", ""))
 
     def test_build_subject_specialist_normal(self):
         page = self.collecting_area
         subject_specialist = page._build_subject_specialist(self.captain, self.site)
-        self.assertEqual(subject_specialist[0], 'Jean-Luc Picard')
-        self.assertEqual(subject_specialist[1], 'Captain of the USS Enterprise')
-        self.assertEqual(subject_specialist[3], 'picard@starfleet.io')
-        self.assertEqual(subject_specialist[4], (('012-345-6789', 'Bridge'),))
+        self.assertEqual(subject_specialist[0], "Jean-Luc Picard")
+        self.assertEqual(subject_specialist[1], "Captain of the USS Enterprise")
+        self.assertEqual(subject_specialist[3], "picard@starfleet.io")
+        self.assertEqual(subject_specialist[4], (("012-345-6789", "Bridge"),))
 
     def test_build_subject_specialist_with_wrong_page_type(self):
         page = self.collecting_area
@@ -524,46 +524,46 @@ class TestCollectingAreaPages(TestCase):
 
         # Verify structure - should have 3 keys
         self.assertEqual(
-            set(related.keys()), {'collections', 'exhibits', 'subject_specialists'}
+            set(related.keys()), {"collections", "exhibits", "subject_specialists"}
         )
 
         # Verify collections - check title only (URLs may be empty in parallel tests)
-        collections = related['collections']
+        collections = related["collections"]
         self.assertEqual(len(collections), 1)
         collection_titles = [item[0] for item in collections]
-        self.assertIn('Benjamin Sisko', collection_titles)
+        self.assertIn("Benjamin Sisko", collection_titles)
 
         # Verify exhibits - check title only (URLs may be empty in parallel tests)
-        exhibits = related['exhibits']
+        exhibits = related["exhibits"]
         self.assertEqual(len(exhibits), 1)
         exhibit_titles = [item[0] for item in exhibits]
-        self.assertIn('Lieutenant Commander Worf', exhibit_titles)
+        self.assertIn("Lieutenant Commander Worf", exhibit_titles)
 
         # Verify subject specialists - check structure and content
-        specialists = related['subject_specialists']
+        specialists = related["subject_specialists"]
         self.assertEqual(len(specialists), 1)
         specialist = list(specialists)[0]
-        self.assertEqual(specialist[0], 'Jean-Luc Picard')  # name
-        self.assertEqual(specialist[1], 'Captain of the USS Enterprise')  # title
+        self.assertEqual(specialist[0], "Jean-Luc Picard")  # name
+        self.assertEqual(specialist[1], "Captain of the USS Enterprise")  # title
         # specialist[2] is URL - skip checking exact value
         # specialist[3] is email
-        self.assertEqual(specialist[4], (('012-345-6789', 'Bridge'),))  # phone/fac
+        self.assertEqual(specialist[4], (("012-345-6789", "Bridge"),))  # phone/fac
         self.assertIsNone(specialist[5])  # thumb
 
     def test_get_related_with_children(self):
         page = self.collecting_area
         related = page.get_related(self.site, children=True)
-        specialists = set(r[0] for r in related['subject_specialists'])
-        collections = set(r[0] for r in related['collections'])
-        exhibits = set(r[0] for r in related['exhibits'])
+        specialists = set(r[0] for r in related["subject_specialists"])
+        collections = set(r[0] for r in related["collections"])
+        exhibits = set(r[0] for r in related["exhibits"])
         self.assertTrue(
-            'Leonard McCoy' in specialists and 'Jean-Luc Picard' in specialists
+            "Leonard McCoy" in specialists and "Jean-Luc Picard" in specialists
         )
         self.assertTrue(
-            'Arne Darvin' in collections and 'Benjamin Sisko' in collections
+            "Arne Darvin" in collections and "Benjamin Sisko" in collections
         )
         self.assertTrue(
-            'Lieutenant Commander Worf' in exhibits and 'Captain Koloth' in exhibits
+            "Lieutenant Commander Worf" in exhibits and "Captain Koloth" in exhibits
         )
         self.assertEqual(len(specialists), 2)
         self.assertEqual(len(collections), 2)
@@ -1096,31 +1096,31 @@ class TestExhibitFiltering(TestCase):
     def setUpTestData(cls):
         # Delete the default localhost site created by Wagtail migrations
         # to prevent conflicts with our test site
-        Site.objects.filter(hostname='localhost').delete()
+        Site.objects.filter(hostname="localhost").delete()
 
         # Create a fresh homepage (don't reuse existing pages)
-        root = Page.objects.get(path='0001')
-        cls.space = Page(slug='test-exhibit-home', title='Test Exhibit Home')
+        root = Page.objects.get(path="0001")
+        cls.space = Page(slug="test-exhibit-home", title="Test Exhibit Home")
         root.add_child(instance=cls.space)
 
         # Create a site
         cls.site = Site.objects.create(
-            hostname='localhost',
+            hostname="localhost",
             is_default_site=True,
             port=80,
             root_page=cls.space,
-            site_name='test site',
+            site_name="test site",
         )
 
         # Create a staff page to use as page_maintainer, editor, etc.
         cls.staff = StaffPage(
-            title='Test Staff', cnetid='teststaff', position_title='Test Position'
+            title="Test Staff", cnetid="teststaff", position_title="Test Position"
         )
         cls.space.add_child(instance=cls.staff)
 
         # Create a unit page
         cls.unit = UnitPage(
-            title='Test Unit',
+            title="Test Unit",
             page_maintainer=cls.staff,
             editor=cls.staff,
             display_in_dropdown=True,
@@ -1161,7 +1161,7 @@ class TestExhibitFiltering(TestCase):
 
     def tearDown(self):
         # Clear cache after each test
-        caches['default'].clear()
+        caches["default"].clear()
 
     def test_filter_web_exhibits(self):
         """Test filtering exhibits by web_exhibit field"""
@@ -1188,7 +1188,7 @@ class TestExhibitFiltering(TestCase):
 
         # Check that web_exhibit is in the list of indexed fields
         self.assertIn(
-            'web_exhibit',
+            "web_exhibit",
             search_fields,
             "web_exhibit FilterField is missing from ExhibitPage.search_fields",
         )
@@ -1197,10 +1197,10 @@ class TestExhibitFiltering(TestCase):
         filter_fields = [
             f.field_name
             for f in ExhibitPage.search_fields
-            if f.__class__.__name__ == 'FilterField'
+            if f.__class__.__name__ == "FilterField"
         ]
         self.assertIn(
-            'web_exhibit',
+            "web_exhibit",
             filter_fields,
             "web_exhibit should be indexed as a FilterField",
         )
@@ -1222,7 +1222,7 @@ class TestExhibitFiltering(TestCase):
         self.assertNotIn(self.web_exhibit, physical_exhibits)
 
     @unittest.skipIf(
-        os.environ.get('GITHUB_ACTIONS') == 'true',
+        os.environ.get("GITHUB_ACTIONS") == "true",
         "Search indexing is unreliable in CI",
     )
     def test_combined_search_and_filter(self):

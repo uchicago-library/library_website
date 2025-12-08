@@ -5,14 +5,14 @@ from django.contrib.auth.models import Group, Permission, User
 from django.core import management
 from django.test import TestCase
 from openpyxl import load_workbook
-from public.models import StaffPublicPage, StandardPage
-from units.models import UnitPage
 from wagtail.models import Page
 
+from public.models import StaffPublicPage, StandardPage
 from staff.utils import (
     get_all_library_cnetids_from_directory,
     get_individual_info_from_directory,
 )
+from units.models import UnitPage
 
 from .models import (
     StaffPage,
@@ -82,15 +82,15 @@ class UniversityDirectoryTestCase(TestCase):
 
         cnetids = get_all_library_cnetids_from_directory(xml_string)
 
-        self.assertEqual(set(cnetids), set(('lovelee', 'danger')))
+        self.assertEqual(set(cnetids), set(("lovelee", "danger")))
 
     def assertInfoEqual(self, a, b):
-        for field in ['cnetid', 'officialName', 'displayName']:
+        for field in ["cnetid", "officialName", "displayName"]:
             if not a[field] == b[field]:
                 return False
 
-        tds_a = sorted([a['title_department_subdepartments']])
-        tds_b = sorted([b['title_department_subdepartments']])
+        tds_a = sorted([a["title_department_subdepartments"]])
+        tds_b = sorted([b["title_department_subdepartments"]])
 
         if not len(tds_a) == len(tds_b):
             return False
@@ -102,12 +102,12 @@ class UniversityDirectoryTestCase(TestCase):
             t = t + 1
 
         tds_a = sorted(
-            a['title_department_subdepartments_dicts'],
-            key=lambda t: t['title'] + t['department'],
+            a["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
         )
         tds_b = sorted(
-            b['title_department_subdepartments_dicts'],
-            key=lambda t: t['title'] + t['department'],
+            b["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
         )
 
         if not len(tds_a) == len(tds_b):
@@ -115,7 +115,7 @@ class UniversityDirectoryTestCase(TestCase):
 
         t = 0
         while t < len(tds_a):
-            for field in ['department', 'title', 'email', 'facultyexchange', 'phone']:
+            for field in ["department", "title", "email", "facultyexchange", "phone"]:
                 if not tds_a[t][field] == tds_b[t][field]:
                     return False
             t = t + 1
@@ -160,18 +160,18 @@ class UniversityDirectoryTestCase(TestCase):
         """
 
         info = {
-            'cnetid': 'scootermcdanger',
-            'officialName': 'Scooter McDanger',
-            'displayName': 'Scooter McDanger',
-            'title_department_subdepartments': {
-                'Programmer Analyst\nLibrary\nJRL 220\n773-702-1234'
+            "cnetid": "scootermcdanger",
+            "officialName": "Scooter McDanger",
+            "displayName": "Scooter McDanger",
+            "title_department_subdepartments": {
+                "Programmer Analyst\nLibrary\nJRL 220\n773-702-1234"
             },
-            'title_department_subdepartments_dicts': [
+            "title_department_subdepartments_dicts": [
                 {
-                    'title': 'Programmer Analyst',
-                    'email': 'scootermcdanger@uchicago.edu',
-                    'facultyexchange': 'JRL 220',
-                    'phone': '773-702-1234',
+                    "title": "Programmer Analyst",
+                    "email": "scootermcdanger@uchicago.edu",
+                    "facultyexchange": "JRL 220",
+                    "phone": "773-702-1234",
                 }
             ],
         }
@@ -184,72 +184,80 @@ class StaffPageSupervisors(TestCase):
     def setUpTestData(cls):
         # Create page hierarchy (runs once for all tests in this class)
         try:
-            welcome = Page.objects.get(path='00010001')
-        except:
-            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
+            welcome = Page.objects.get(path="00010001")
+        except:  # noqa: E722
+            root = Page.objects.create(depth=1, path="0001", slug="root", title="Root")
 
-            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            welcome = Page(path="00010001", slug="welcome", title="Welcome")
             root.add_child(instance=welcome)
 
         # StaffPages
         official_supervisor = StaffPage(
-            cnetid='official_supervisor',
-            slug='official-supervisor',
-            title='Official Supervisor',
+            cnetid="official_supervisor",
+            slug="official-supervisor",
+            title="Official Supervisor",
+            position_title="Head of Unit One",
         )
         welcome.add_child(instance=official_supervisor)
 
         another_official_supervisor = StaffPage(
-            cnetid='another_official_supervisor',
-            slug='another-official-supervisor',
-            title='Another Official Supervisor',
+            cnetid="another_official_supervisor",
+            slug="another-official-supervisor",
+            title="Another Official Supervisor",
+            position_title="Head of Unit Two",
         )
         welcome.add_child(instance=another_official_supervisor)
 
-        director = StaffPage(cnetid='director', slug='director', title='Director')
+        director = StaffPage(
+            cnetid="director",
+            slug="director",
+            title="Director",
+            position_title="Library Director",
+        )
         welcome.add_child(instance=director)
 
         supervisor_override = StaffPage(
-            cnetid='supervisor_override',
-            slug='supervisor-override',
-            title='Supervisor Override',
+            cnetid="supervisor_override",
+            slug="supervisor-override",
+            title="Supervisor Override",
+            position_title="Special Supervisor",
         )
         welcome.add_child(instance=supervisor_override)
 
         employee_override = StaffPage(
-            cnetid='employee_override',
-            slug='employee_override',
+            cnetid="employee_override",
+            slug="employee_override",
             supervisor_override=supervisor_override,
-            title='Employee Override',
+            title="Employee Override",
         )
         welcome.add_child(instance=employee_override)
 
         employee_no_override = StaffPage(
-            cnetid='employee_no_override',
-            slug='employee_no_override',
-            title='Employee No Override',
+            cnetid="employee_no_override",
+            slug="employee_no_override",
+            title="Employee No Override",
         )
         welcome.add_child(instance=employee_no_override)
 
         employee_two_units = StaffPage(
-            cnetid='employee_two_units',
-            slug='employee_two_units',
-            title='Employee Two Units',
+            cnetid="employee_two_units",
+            slug="employee_two_units",
+            title="Employee Two Units",
         )
         welcome.add_child(instance=employee_two_units)
 
         content_specialist = StaffPage(
-            cnetid='content_specialist',
-            slug='content-specialist',
-            title='Content Specialist',
+            cnetid="content_specialist",
+            slug="content-specialist",
+            title="Content Specialist",
         )
         welcome.add_child(instance=content_specialist)
 
-        editor = StaffPage(cnetid='editor', slug='editor', title='Editor')
+        editor = StaffPage(cnetid="editor", slug="editor", title="Editor")
         welcome.add_child(instance=editor)
 
         page_maintainer = StaffPage(
-            cnetid='page_maintainer', slug='page-maintainer', title='Page Maintainer'
+            cnetid="page_maintainer", slug="page-maintainer", title="Page Maintainer"
         )
         welcome.add_child(instance=page_maintainer)
 
@@ -258,8 +266,8 @@ class StaffPageSupervisors(TestCase):
             department_head=director,
             editor=editor,
             page_maintainer=page_maintainer,
-            slug='unit-division',
-            title='Unit Division',
+            slug="unit-division",
+            title="Unit Division",
         )
         welcome.add_child(instance=unit_division)
 
@@ -268,8 +276,8 @@ class StaffPageSupervisors(TestCase):
             display_in_dropdown=True,
             editor=editor,
             page_maintainer=page_maintainer,
-            slug='unit-one',
-            title='Unit One',
+            slug="unit-one",
+            title="Unit One",
         )
         unit_division.add_child(instance=unit_one)
 
@@ -277,8 +285,8 @@ class StaffPageSupervisors(TestCase):
             department_head=another_official_supervisor,
             editor=editor,
             page_maintainer=page_maintainer,
-            slug='unit-two',
-            title='Unit Two',
+            slug="unit-two",
+            title="Unit Two",
         )
         unit_division.add_child(instance=unit_two)
 
@@ -287,8 +295,8 @@ class StaffPageSupervisors(TestCase):
             content_specialist=content_specialist,
             editor=editor,
             page_maintainer=page_maintainer,
-            slug='standard-page',
-            title='Standard Page',
+            slug="standard-page",
+            title="Standard Page",
             unit=unit_one,
         )
         welcome.add_child(instance=standard_page)
@@ -319,36 +327,69 @@ class StaffPageSupervisors(TestCase):
     def test_supervisor_relationships(self):
         # official supervisor
         self.assertEqual(
-            StaffPage.objects.get(cnetid='employee_no_override').get_supervisors,
-            [StaffPage.objects.get(cnetid='official_supervisor')],
+            StaffPage.objects.get(cnetid="employee_no_override").get_supervisors,
+            [StaffPage.objects.get(cnetid="official_supervisor")],
         )
 
         # supervisor override
         self.assertEqual(
-            StaffPage.objects.get(cnetid='employee_override').get_supervisors,
-            [StaffPage.objects.get(cnetid='supervisor_override')],
+            StaffPage.objects.get(cnetid="employee_override").get_supervisors,
+            [StaffPage.objects.get(cnetid="supervisor_override")],
         )
 
         # employee in two units
         self.assertEqual(
-            StaffPage.objects.get(cnetid='employee_two_units').get_supervisors,
+            StaffPage.objects.get(cnetid="employee_two_units").get_supervisors,
             [
-                StaffPage.objects.get(cnetid='official_supervisor'),
-                StaffPage.objects.get(cnetid='another_official_supervisor'),
+                StaffPage.objects.get(cnetid="official_supervisor"),
+                StaffPage.objects.get(cnetid="another_official_supervisor"),
             ],
         )
 
         # department head supervisor
         self.assertEqual(
-            StaffPage.objects.get(cnetid='official_supervisor').get_supervisors,
-            [StaffPage.objects.get(cnetid='director')],
+            StaffPage.objects.get(cnetid="official_supervisor").get_supervisors,
+            [StaffPage.objects.get(cnetid="director")],
         )
 
         # one child of division.
         self.assertEqual(
-            UnitPage.objects.get(slug='unit-one').get_parent().specific,
-            UnitPage.objects.get(slug='unit-division'),
+            UnitPage.objects.get(slug="unit-one").get_parent().specific,
+            UnitPage.objects.get(slug="unit-division"),
         )
+
+    def test_get_serialized_supervisors(self):
+        # Test staff member with official supervisor
+        employee = StaffPage.objects.get(cnetid="employee_no_override")
+        serialized = employee.get_serialized_supervisors()
+        self.assertEqual(len(serialized), 1)
+        self.assertEqual(serialized[0]["name"], "Official Supervisor")
+        self.assertEqual(serialized[0]["cnetid"], "official_supervisor")
+        self.assertEqual(serialized[0]["position_title"], "Head of Unit One")
+
+        # Test staff member with supervisor override
+        employee_override = StaffPage.objects.get(cnetid="employee_override")
+        serialized_override = employee_override.get_serialized_supervisors()
+        self.assertEqual(len(serialized_override), 1)
+        self.assertEqual(serialized_override[0]["name"], "Supervisor Override")
+        self.assertEqual(serialized_override[0]["cnetid"], "supervisor_override")
+        self.assertEqual(serialized_override[0]["position_title"], "Special Supervisor")
+
+        # Test staff member with multiple supervisors
+        employee_two_units = StaffPage.objects.get(cnetid="employee_two_units")
+        serialized_two = employee_two_units.get_serialized_supervisors()
+        self.assertEqual(len(serialized_two), 2)
+        supervisor_cnetids = [s["cnetid"] for s in serialized_two]
+        self.assertIn("official_supervisor", supervisor_cnetids)
+        self.assertIn("another_official_supervisor", supervisor_cnetids)
+
+        # Test department head with supervisor
+        dept_head = StaffPage.objects.get(cnetid="official_supervisor")
+        serialized_dept = dept_head.get_serialized_supervisors()
+        self.assertEqual(len(serialized_dept), 1)
+        self.assertEqual(serialized_dept[0]["name"], "Director")
+        self.assertEqual(serialized_dept[0]["cnetid"], "director")
+        self.assertEqual(serialized_dept[0]["position_title"], "Library Director")
 
 
 class ListStaffWagtail(TestCase):
@@ -356,60 +397,60 @@ class ListStaffWagtail(TestCase):
     def setUpTestData(cls):
         # Create page hierarchy (runs once for all tests in this class)
         try:
-            welcome = Page.objects.get(path='00010001')
-        except:
-            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
+            welcome = Page.objects.get(path="00010001")
+        except:  # noqa: E722
+            root = Page.objects.create(depth=1, path="0001", slug="root", title="Root")
 
-            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            welcome = Page(path="00010001", slug="welcome", title="Welcome")
             root.add_child(instance=welcome)
 
         chas = StaffPage(
-            cnetid='chas',
+            cnetid="chas",
             employee_type=3,
-            slug='charles-blair',
+            slug="charles-blair",
             position_eliminated=False,
-            position_title='Director, Digital Library Development Center',
+            position_title="Director, Digital Library Development Center",
             supervises_students=True,
-            title='Charles Blair',
+            title="Charles Blair",
         )
         welcome.add_child(instance=chas)
 
         bbusenius = StaffPage(
-            cnetid='bbusenius',
+            cnetid="bbusenius",
             employee_type=3,
-            slug='brad-busenius',
+            slug="brad-busenius",
             position_eliminated=False,
-            position_title='Web Administrator',
+            position_title="Web Administrator",
             supervisor_override=chas,
             supervises_students=False,
-            title='Brad Busenius',
+            title="Brad Busenius",
         )
         welcome.add_child(instance=bbusenius)
 
         byrne = StaffPage(
-            cnetid='byrne',
+            cnetid="byrne",
             employee_type=3,
-            slug='maura-byrne',
+            slug="maura-byrne",
             position_eliminated=False,
-            position_title='Applications Systems Analyst/Programmer',
+            position_title="Applications Systems Analyst/Programmer",
             supervises_students=False,
-            title='Maura Byrne',
+            title="Maura Byrne",
         )
         welcome.add_child(instance=byrne)
 
         eliminated_position = StaffPage(
-            cnetid='eliminated-position',
-            slug='eliminated-position',
+            cnetid="eliminated-position",
+            slug="eliminated-position",
             position_eliminated=False,
-            title='Eliminated Position',
+            title="Eliminated Position",
         )
         welcome.add_child(instance=eliminated_position)
 
         elong = StaffPage(
-            cnetid='elong',
-            slug='elisabeth-long',
+            cnetid="elong",
+            slug="elisabeth-long",
             position_eliminated=False,
-            title='Elisabeth Long',
+            title="Elisabeth Long",
         )
         welcome.add_child(instance=elong)
 
@@ -417,8 +458,8 @@ class ListStaffWagtail(TestCase):
             department_head=elong,
             editor=elong,
             page_maintainer=elong,
-            slug='digital-services',
-            title='Digital Services',
+            slug="digital-services",
+            title="Digital Services",
         )
         welcome.add_child(instance=digital_services)
 
@@ -426,33 +467,33 @@ class ListStaffWagtail(TestCase):
             department_head=chas,
             editor=chas,
             page_maintainer=chas,
-            slug='dldc',
-            title='Digital Library Development Center',
+            slug="dldc",
+            title="Digital Library Development Center",
         )
         digital_services.add_child(instance=dldc)
 
         jej = StaffPage(
-            cnetid='jej',
+            cnetid="jej",
             employee_type=3,
-            slug='john-jung',
+            slug="john-jung",
             position_eliminated=False,
-            position_title='Programmer/Analyst',
+            position_title="Programmer/Analyst",
             supervisor_override=chas,
             supervises_students=False,
-            title='John Jung',
+            title="John Jung",
         )
         welcome.add_child(instance=jej)
 
-        StaffPageEmailAddresses.objects.create(page=jej, email='jej@uchicago.edu')
+        StaffPageEmailAddresses.objects.create(page=jej, email="jej@uchicago.edu")
 
-        StaffPageEmailAddresses.objects.create(page=jej, email='jej@jej.com')
+        StaffPageEmailAddresses.objects.create(page=jej, email="jej@jej.com")
 
         StaffPagePhoneFacultyExchange.objects.create(
-            page=jej, phone_number='773-702-1234', faculty_exchange='JRL 100'
+            page=jej, phone_number="773-702-1234", faculty_exchange="JRL 100"
         )
 
         StaffPagePhoneFacultyExchange.objects.create(
-            page=jej, phone_number='773-834-1234', faculty_exchange='JRL 101'
+            page=jej, phone_number="773-834-1234", faculty_exchange="JRL 101"
         )
 
         StaffPageLibraryUnits.objects.create(page=jej, library_unit=dldc)
@@ -460,33 +501,33 @@ class ListStaffWagtail(TestCase):
         StaffPageLibraryUnits.objects.create(page=jej, library_unit=digital_services)
 
         kzadrozny = StaffPage(
-            cnetid='kzadrozny',
+            cnetid="kzadrozny",
             employee_type=3,
-            slug='kathy-zadrozny',
+            slug="kathy-zadrozny",
             position_eliminated=False,
-            position_title='Web Developer and Graphic Design Specialist',
+            position_title="Web Developer and Graphic Design Specialist",
             supervisor_override=chas,
             supervises_students=True,
-            title='Kathy Zadrozny',
+            title="Kathy Zadrozny",
         )
         welcome.add_child(instance=kzadrozny)
 
         tyler = StaffPage(
-            cnetid='tyler',
+            cnetid="tyler",
             employee_type=3,
-            slug='tyler-danstrom',
+            slug="tyler-danstrom",
             position_eliminated=False,
-            position_title='Programmer/Analyst',
+            position_title="Programmer/Analyst",
             supervisor_override=chas,
             supervises_students=False,
-            title='Tyler Danstrom',
+            title="Tyler Danstrom",
         )
         welcome.add_child(instance=tyler)
 
     def run_command(self, **options):
-        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
-        options.update({'filename': tempfile.name, 'output_format': 'excel'})
-        management.call_command('list_staff_wagtail', **options)
+        tempfile = NamedTemporaryFile(delete=False, suffix=".xlsx")
+        options.update({"filename": tempfile.name, "output_format": "excel"})
+        management.call_command("list_staff_wagtail", **options)
 
         wb = load_workbook(tempfile.name)
         ws = wb.active
@@ -495,7 +536,7 @@ class ListStaffWagtail(TestCase):
         return [[cell.value for cell in row] for row in ws.iter_rows(min_row=2)]
 
     def test_report_columns(self):
-        records = self.run_command(cnetid='jej')
+        records = self.run_command(cnetid="jej")
 
         # column count
         self.assertEqual(len(records[0]), 13)
@@ -504,52 +545,52 @@ class ListStaffWagtail(TestCase):
         self.assertEqual(len(records), 1)
 
         # name and cnetid
-        self.assertEqual(records[0][2], 'John Jung (jej)')
+        self.assertEqual(records[0][2], "John Jung (jej)")
 
         # position title
-        self.assertEqual(records[0][3], 'Programmer/Analyst')
+        self.assertEqual(records[0][3], "Programmer/Analyst")
 
         # emails
         self.assertEqual(
-            set(records[0][4].split('|')), set(('jej@uchicago.edu', 'jej@jej.com'))
+            set(records[0][4].split("|")), set(("jej@uchicago.edu", "jej@jej.com"))
         )
 
         # faculty exchange, phone number pairs
         self.assertEqual(
-            set(records[0][5].split('|')),
-            set(('JRL 100,773-702-1234', 'JRL 101,773-834-1234')),
+            set(records[0][5].split("|")),
+            set(("JRL 100,773-702-1234", "JRL 101,773-834-1234")),
         )
 
         # units
         self.assertEqual(
-            set(records[0][6].split('|')),
+            set(records[0][6].split("|")),
             set(
                 [
-                    'Digital Services - Digital Library Development Center',
-                    'Digital Services',
+                    "Digital Services - Digital Library Development Center",
+                    "Digital Services",
                 ]
             ),
         )
 
         # employee type
-        self.assertEqual(records[0][9], 'IT')
+        self.assertEqual(records[0][9], "IT")
 
         # supervises students
-        self.assertEqual(records[0][10], 'False')
+        self.assertEqual(records[0][10], "False")
 
         # position eliminated
-        self.assertEqual(records[0][11], 'False')
+        self.assertEqual(records[0][11], "False")
 
         # supervisor
-        self.assertEqual(records[0][12].rstrip(), 'Charles Blair (chas)')
+        self.assertEqual(records[0][12].rstrip(), "Charles Blair (chas)")
 
     def test_report_queries(self):
         # position title
-        records = self.run_command(position_title='Programmer/Analyst')
+        records = self.run_command(position_title="Programmer/Analyst")
         self.assertEqual(len(records), 2)
 
         # supervisor
-        records = self.run_command(supervisor_cnetid='chas')
+        records = self.run_command(supervisor_cnetid="chas")
         self.assertEqual(len(records), 4)
 
         # supervises students
@@ -562,22 +603,22 @@ class ListStaffWagtail(TestCase):
         in the reporting commands. Regression test for issue #702.
         """
         # Get a staff member
-        staff = StaffPage.objects.get(cnetid='jej')
+        staff = StaffPage.objects.get(cnetid="jej")
 
         # Add an empty library unit (None) - this reproduces the bug
         StaffPageLibraryUnits.objects.create(page=staff, library_unit=None)
 
         # The staff report should not crash
-        records = self.run_command(cnetid='jej')
+        records = self.run_command(cnetid="jej")
         self.assertEqual(len(records), 1)
 
         # Out of sync report should also not crash
-        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        tempfile = NamedTemporaryFile(delete=False, suffix=".xlsx")
         management.call_command(
-            'list_staff_wagtail',
+            "list_staff_wagtail",
             filename=tempfile.name,
-            output_format='excel',
-            report_out_of_sync_staff=True
+            output_format="excel",
+            report_out_of_sync_staff=True,
         )
 
         wb = load_workbook(tempfile.name)
@@ -597,36 +638,36 @@ class StaffPageHRPermissionsTestCase(TestCase):
         """Set up test users, groups, and a staff page."""
         # Create root and welcome pages
         try:
-            welcome = Page.objects.get(path='00010001')
+            welcome = Page.objects.get(path="00010001")
         except Page.DoesNotExist:
-            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
-            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            root = Page.objects.create(depth=1, path="0001", slug="root", title="Root")
+            welcome = Page(path="00010001", slug="welcome", title="Welcome")
             root.add_child(instance=welcome)
 
         # Create a test StaffPage
         self.staff_page = StaffPage(
-            cnetid='testuser',
-            slug='test-user',
-            title='Test User',
-            position_title='Test Position',
+            cnetid="testuser",
+            slug="test-user",
+            title="Test User",
+            position_title="Test Position",
         )
         welcome.add_child(instance=self.staff_page)
 
         # Create test users
         self.regular_user = User.objects.create_user(
-            username='regular', password='password'
+            username="regular", password="password"
         )
 
-        self.hr_user = User.objects.create_user(username='hruser', password='password')
+        self.hr_user = User.objects.create_user(username="hruser", password="password")
 
         self.superuser = User.objects.create_superuser(
-            username='admin', password='password', email='admin@example.com'
+            username="admin", password="password", email="admin@example.com"
         )
 
         # Create HR group with the custom permission
-        self.hr_group = Group.objects.create(name='HR Staff')
+        self.hr_group = Group.objects.create(name="HR Staff")
         self.hr_permission = Permission.objects.get(
-            codename='change_staff_hr_info', content_type__app_label='staff'
+            codename="change_staff_hr_info", content_type__app_label="staff"
         )
         self.hr_group.permissions.add(self.hr_permission)
         self.hr_user.groups.add(self.hr_group)
@@ -634,24 +675,24 @@ class StaffPageHRPermissionsTestCase(TestCase):
     def test_hr_permission_exists(self):
         """Test that the custom HR permission was created."""
         permission = Permission.objects.filter(
-            codename='change_staff_hr_info', content_type__app_label='staff'
+            codename="change_staff_hr_info", content_type__app_label="staff"
         )
         self.assertEqual(permission.count(), 1)
         self.assertEqual(
-            permission.first().name, 'Can edit Human Resources Info for staff pages'
+            permission.first().name, "Can edit Human Resources Info for staff pages"
         )
 
     def test_regular_user_lacks_hr_permission(self):
         """Test that regular users don't have HR permission."""
-        self.assertFalse(self.regular_user.has_perm('staff.change_staff_hr_info'))
+        self.assertFalse(self.regular_user.has_perm("staff.change_staff_hr_info"))
 
     def test_hr_user_has_hr_permission(self):
         """Test that HR users have the custom permission."""
-        self.assertTrue(self.hr_user.has_perm('staff.change_staff_hr_info'))
+        self.assertTrue(self.hr_user.has_perm("staff.change_staff_hr_info"))
 
     def test_superuser_has_hr_permission(self):
         """Test that superusers have the HR permission."""
-        self.assertTrue(self.superuser.has_perm('staff.change_staff_hr_info'))
+        self.assertTrue(self.superuser.has_perm("staff.change_staff_hr_info"))
 
     def test_hr_permission_in_group(self):
         """Test that the permission can be assigned to groups."""
@@ -660,7 +701,7 @@ class StaffPageHRPermissionsTestCase(TestCase):
     def test_staffpage_has_permission_in_meta(self):
         """Test that StaffPage model defines the custom permission."""
         self.assertIn(
-            ('change_staff_hr_info', 'Can edit Human Resources Info for staff pages'),
+            ("change_staff_hr_info", "Can edit Human Resources Info for staff pages"),
             StaffPage._meta.permissions,
         )
 
@@ -676,26 +717,26 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Set up test users and staff pages."""
         # Create root and welcome pages
         try:
-            welcome = Page.objects.get(path='00010001')
+            welcome = Page.objects.get(path="00010001")
         except Page.DoesNotExist:
-            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
-            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            root = Page.objects.create(depth=1, path="0001", slug="root", title="Root")
+            welcome = Page(path="00010001", slug="welcome", title="Welcome")
             root.add_child(instance=welcome)
 
         cls.welcome = welcome
 
         # Create a staff page to use as editor/maintainer/content specialist
         admin_staff = StaffPage(
-            cnetid='admin',
-            slug='admin-staff',
-            title='Admin Staff',
+            cnetid="admin",
+            slug="admin-staff",
+            title="Admin Staff",
         )
         welcome.add_child(instance=admin_staff)
 
         # Create a unit page for required unit field
         cls.unit = UnitPage(
-            slug='test-unit',
-            title='Test Unit',
+            slug="test-unit",
+            title="Test Unit",
             display_in_dropdown=True,
             editor=admin_staff,
             page_maintainer=admin_staff,
@@ -708,24 +749,24 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Set up per-test data."""
         # Create test user
         self.user = User.objects.create_user(
-            username='teststaff', password='password', is_active=True
+            username="teststaff", password="password", is_active=True
         )
 
         # Create Loop staff page
         self.staff_page = StaffPage(
-            cnetid='teststaff',
-            slug='test-staff',
-            title='Test Staff',
-            position_title='Test Position',
+            cnetid="teststaff",
+            slug="test-staff",
+            title="Test Staff",
+            position_title="Test Position",
         )
         self.welcome.add_child(instance=self.staff_page)
         self.staff_page.save_revision().publish()
 
         # Create public staff page
         self.public_page = StaffPublicPage(
-            cnetid='teststaff',
-            slug='test-staff-public',
-            title='Test Staff Public',
+            cnetid="teststaff",
+            slug="test-staff-public",
+            title="Test Staff Public",
             editor=self.admin_staff,
             page_maintainer=self.admin_staff,
             content_specialist=self.admin_staff,
@@ -778,22 +819,22 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Test that activating an existing inactive user publishes their unpublished pages."""
         # Create an inactive user
         inactive_user = User.objects.create_user(
-            username='inactiveuser', password='password', is_active=False
+            username="inactiveuser", password="password", is_active=False
         )
 
         # Create unpublished staff pages for this user
         unpublished_staff = StaffPage(
-            cnetid='inactiveuser',
-            slug='inactive-user-staff',
-            title='Inactive User Staff',
+            cnetid="inactiveuser",
+            slug="inactive-user-staff",
+            title="Inactive User Staff",
         )
         self.welcome.add_child(instance=unpublished_staff)
         unpublished_staff.unpublish()
 
         unpublished_public = StaffPublicPage(
-            cnetid='inactiveuser',
-            slug='inactive-user-public',
-            title='Inactive User Public',
+            cnetid="inactiveuser",
+            slug="inactive-user-public",
+            title="Inactive User Public",
             editor=self.admin_staff,
             page_maintainer=self.admin_staff,
             content_specialist=self.admin_staff,
@@ -822,7 +863,7 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Test that deactivating a user with no staff pages doesn't raise errors."""
         # Create user without staff pages
         user_no_pages = User.objects.create_user(
-            username='nostaff', password='password', is_active=True
+            username="nostaff", password="password", is_active=True
         )
 
         # This should not raise an exception
@@ -845,22 +886,22 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         # This should NOT unpublish the existing pages because the signal only fires
         # when is_active changes from True to False, not when a new user is created as inactive
         User.objects.create_user(
-            username='teststaff2', password='password', is_active=False
+            username="teststaff2", password="password", is_active=False
         )
 
         # Create additional published staff pages for this new user
         new_staff_page = StaffPage(
-            cnetid='teststaff2',
-            slug='test-staff-2',
-            title='Test Staff 2',
+            cnetid="teststaff2",
+            slug="test-staff-2",
+            title="Test Staff 2",
         )
         self.welcome.add_child(instance=new_staff_page)
         new_staff_page.save_revision().publish()
 
         new_public_page = StaffPublicPage(
-            cnetid='teststaff2',
-            slug='test-staff-2-public',
-            title='Test Staff 2 Public',
+            cnetid="teststaff2",
+            slug="test-staff-2-public",
+            title="Test Staff 2 Public",
             editor=self.admin_staff,
             page_maintainer=self.admin_staff,
             content_specialist=self.admin_staff,
@@ -886,16 +927,16 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Test that creating a new active user publishes their unpublished staff pages."""
         # Create unpublished staff pages with a cnetid that doesn't have a user yet
         unpublished_staff = StaffPage(
-            cnetid='newactive', slug='new-active-staff', title='New Active Staff'
+            cnetid="newactive", slug="new-active-staff", title="New Active Staff"
         )
         self.welcome.add_child(instance=unpublished_staff)
         unpublished_staff.unpublish()
 
         # Create an unpublished public page too
         unpublished_public = StaffPublicPage(
-            cnetid='newactive',
-            slug='new-active-public',
-            title='New Active Public',
+            cnetid="newactive",
+            slug="new-active-public",
+            title="New Active Public",
             editor=self.admin_staff,
             page_maintainer=self.admin_staff,
             content_specialist=self.admin_staff,
@@ -912,7 +953,7 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
 
         # Create a new active user with matching cnetid
         User.objects.create_user(
-            username='newactive', password='password', is_active=True
+            username="newactive", password="password", is_active=True
         )
 
         # The unpublished pages should now be published automatically
@@ -925,16 +966,16 @@ class UserActiveStateStaffPagePublishingTestCase(TestCase):
         """Test that only live pages are affected when user is deactivated."""
         # Create an already unpublished staff page
         unpublished_staff = StaffPage(
-            cnetid='teststaff2',
-            slug='test-staff-2',
-            title='Test Staff 2',
+            cnetid="teststaff2",
+            slug="test-staff-2",
+            title="Test Staff 2",
         )
         self.welcome.add_child(instance=unpublished_staff)
         # Don't publish it
 
         # Create user and deactivate
         user2 = User.objects.create_user(
-            username='teststaff2', password='password', is_active=True
+            username="teststaff2", password="password", is_active=True
         )
         user2.is_active = False
         user2.save()

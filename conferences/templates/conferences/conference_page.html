@@ -7,25 +7,25 @@
 {% load wagtailcore_tags %}
 
 {% block styles %}
-    {% compress css %}
-        <link href="{% static "conferences/css/conf.scss" %}" rel="stylesheet" type="text/x-scss"/>
-    {% endcompress %}
-    <style>
+  {% compress css %}
+    <link href="{% static "conferences/css/conf.scss" %}" rel="stylesheet" type="text/x-scss"/>
+  {% endcompress %}
+  <style>
     {% inlinecompile "scss" %}
-    {% if primary_branding_color %}
+      {% if primary_branding_color %}
         $base-color: {{primary_branding_color}};
-    {% else %}
+      {% else %}
         $base-color: #800000;
-    {% endif %}
-    {% if secondary_branding_color %}
+      {% endif %}
+      {% if secondary_branding_color %}
         $accent-color: {{secondary_branding_color}};
-    {% else %}
+      {% else %}
         $accent-color: #9a5324;
-    {% endif %}
-    $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    $font-large: 2.5em;
-    $font-medium: 1.5em;
-    $font-small: 1.1em;
+      {% endif %}
+      $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      $font-large: 2.5em;
+      $font-medium: 1.5em;
+      $font-small: 1.1em;
 
     /*
      * Media Queries
@@ -36,130 +36,130 @@
      *        @include respond-to(large) { ... }
      */
 
-    @mixin respond-to($breakpoint) {
+      @mixin respond-to($breakpoint) {
       // Extra small devices (phones, 544px and up)
-      @if $breakpoint == "xsmall" {
-        @media (min-width: 34em) {
-          @content;
+        @if $breakpoint == "xsmall" {
+          @media (min-width: 34em) {
+            @content;
+          }
         }
-      }
 
       // Small devices (landscape phones, 768px and up)
-      @else if $breakpoint == "small" {
-        @media (min-width: 48em) {
-          @content;
+        @else if $breakpoint == "small" {
+          @media (min-width: 48em) {
+            @content;
+          }
         }
-      }
       // Medium devices (crappy laptops, tablets, 992px and up)
-      @else if $breakpoint == "medium" {
-        @media (min-width: 62em) {
-          @content;
+        @else if $breakpoint == "medium" {
+          @media (min-width: 62em) {
+            @content;
+          }
         }
-      }
       // Large devices (desktops, 1200px and up)
-      @else if $breakpoint == "large" {
-        @media (min-width: 75em) {
-          @content;
+        @else if $breakpoint == "large" {
+          @media (min-width: 75em) {
+            @content;
+          }
         }
-      }
 
       //Extra large devices (large desktops, 1900px and up)
-      @else if $breakpoint == "xlarge" {
-        @media (min-width: 118em) {
-          @content;
+        @else if $breakpoint == "xlarge" {
+          @media (min-width: 118em) {
+            @content;
+          }
         }
-      }
-      
+
       // Short-cut to target extra small devices *only* (phones, 544px and up)
-      @else if $breakpoint == "smallonly" {
-        @media (max-width: 34em) {
-          @content;
+        @else if $breakpoint == "smallonly" {
+          @media (max-width: 34em) {
+            @content;
+          }
         }
       }
-    }
-    .conferencepage .jumbotron, 
-    .conferencesubpage .jumbotron {
+      .conferencepage .jumbotron,
+      .conferencesubpage .jumbotron {
         {% if banner_image %}
-            background: url("{{banner.url}}");
+          background: url("{{banner.url}}");
         {% elif primary_branding_color %}
-            background:{{primary_branding_color}};
+          background:{{primary_branding_color}};
         {% else %}
-            background: url("{% static "conferences/images/conference-page-banner.gif" %}");
+          background: url("{% static "conferences/images/conference-page-banner.gif" %}");
         {% endif %}
 
         background-size: cover;
-    }
-    {% if secondary_branding_color %}
+      }
+      {% if secondary_branding_color %}
         .conferencepage .jumbotron .overlaywrap,
-        .conferencesubpage .jumbotron .overlaywrap { 
-            background:{{secondary_branding_color}};
+        .conferencesubpage .jumbotron .overlaywrap {
+          background:{{secondary_branding_color}};
         }
-    {% endif %}
+      {% endif %}
 
-    h1, h2 {
-      color: $base-color;
-      font-family: $display-font;
-      font-style: normal;
-      font-size: $font-medium;
-      font-weight: 400;
-    }
+      h1, h2 {
+        color: $base-color;
+        font-family: $display-font;
+        font-style: normal;
+        font-size: $font-medium;
+        font-weight: 400;
+      }
 
-    h3 {
-      color: $accent-color;
-      font-style: normal;
-      font-size: $font-small;
-      font-weight: 600;
-    }
+      h3 {
+        color: $accent-color;
+        font-style: normal;
+        font-size: $font-small;
+        font-weight: 600;
+      }
 
-    h4 {
-      color: $base-color;
-      font-style: italic;
-      font-size: $font-small;
-      font-weight: 600;
-    }
+      h4 {
+        color: $base-color;
+        font-style: italic;
+        font-size: $font-small;
+        font-weight: 600;
+      }
 
-    .sidebar {
-      background-color: #fff;
-      border-right: 1px solid #ddd;
-      @include respond-to(small) {    
+      .sidebar {
         background-color: #fff;
-        border-right: 1px dotted #767676;
-      }
-      h2 a {
-        color: lighten($base-color, 20%);
-      }
-      > ul {
-        > li { // Direct child page
-          a {
-            font-weight: 200;
-            color: $base-color;
-            &:hover {
-              color: lighten($base-color, 25%);
-              text-decoration: none;
+        border-right: 1px solid #ddd;
+        @include respond-to(small) {
+          background-color: #fff;
+          border-right: 1px dotted #767676;
+        }
+        h2 a {
+          color: lighten($base-color, 20%);
+        }
+        > ul {
+          > li { // Direct child page
+            a {
+              font-weight: 200;
+              color: $base-color;
+              &:hover {
+                color: lighten($base-color, 25%);
+                text-decoration: none;
+              }
             }
-          }
-          &.active { // Active direct child page
-            background-color: lighten($base-color, 75%);
-            margin-left: -2em; // Bleed background color past div
-            margin-right: -1em; // Bleed background color past div
-            padding: 0.5em 0.5em 0.5em 2em; // Fix text padding from bleeding background color past div
-            >a {
-              font-weight: 600;
+            &.active { // Active direct child page
+              background-color: lighten($base-color, 75%);
+              margin-left: -2em; // Bleed background color past div
+              margin-right: -1em; // Bleed background color past div
+              padding: 0.5em 0.5em 0.5em 2em; // Fix text padding from bleeding background color past div
+              >a {
+                font-weight: 600;
+              }
             }
-          }
-          > ul { // Grandchild page
-            padding-left: 1.5em;
-            border-left: 3px solid lighten($base-color, 75%);
-            li a {
-              font-style: italic;
-              color: lighten($base-color, 10%);
+            > ul { // Grandchild page
+              padding-left: 1.5em;
+              border-left: 3px solid lighten($base-color, 75%);
+              li a {
+                font-style: italic;
+                color: lighten($base-color, 10%);
+              }
             }
           }
         }
       }
-    }
 
-    .rightside {
+      .rightside {
         h2, h2 a {
           color: $accent-color;
           border-bottom-color: $accent-color;
@@ -167,68 +167,68 @@
         a {
           color: $base-color;
         }
-    }
+      }
     {% endinlinecompile %}
-    </style>
+  </style>
 {% endblock %}
 
 {% block content %}
-    {{self.body}}
+  {{self.body}}
 {% endblock %}
 
 {% block right_sidebar %}
-    {% if conference_logo %}
-        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-            {% image conference_logo width-400 as logo %}
-            <img class="conf-logo img-responsive" src="{{logo.url}}" alt="{{logo.alt}}"/>
-        </div>
-    {% endif %}
+  {% if conference_logo %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      {% image conference_logo width-400 as logo %}
+      <img class="conf-logo img-responsive" src="{{logo.url}}" alt="{{logo.alt}}"/>
+    </div>
+  {% endif %}
 
-    {% if sponsors %}
-        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-            <h2>Sponsors</h2>
-            <ul>
-            {% for sponsor in sponsors%}
-                <li><a href="{{sponsor.link}}">{{sponsor.content}}</a></li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %}  
+  {% if sponsors %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Sponsors</h2>
+      <ul>
+        {% for sponsor in sponsors%}
+          <li><a href="{{sponsor.link}}">{{sponsor.content}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 
-    {% if organizers %}
-       <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-            <h2>Organizers</h2>
-            <ul>
-            {% for organizer in organizers%}
-                <li><a href="{{organizer.link}}">{{organizer.content}}</a></li>
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+  {% if organizers %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+      <h2>Organizers</h2>
+      <ul>
+        {% for organizer in organizers%}
+          <li><a href="{{organizer.link}}">{{organizer.content}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 
-    {% for button in main_registration %}
-        <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
-    {% endfor %}     
+  {% for button in main_registration %}
+    <a href="{{button.link}}" class="btn btn-reserve">{{button.button_text}}</a>
+  {% endfor %}
 
-    {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
-        <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
-    {% endif %}
-    {% if secondary_registration_heading %}
-            <h2>{{secondary_registration_heading}}</h2>
-    {% endif %}
-    {% if secondary_registration_description %}
-            <p>{{secondary_registration_description}}</p>
-    {% endif %}
-    {% for btn in secondary_registration %}
-        <a href="{{btn.link}}" class="btn btn-morelink">{{btn.button_text}}</a><br/>
-    {% endfor %}
-    {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
-        </div>
-    {% endif %}
+  {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
+    <div class="rightside-mod col-xs-12 col-sm-6 col-md-12">
+  {% endif %}
+  {% if secondary_registration_heading %}
+    <h2>{{secondary_registration_heading}}</h2>
+  {% endif %}
+  {% if secondary_registration_description %}
+    <p>{{secondary_registration_description}}</p>
+  {% endif %}
+  {% for btn in secondary_registration %}
+    <a href="{{btn.link}}" class="btn btn-morelink">{{btn.button_text}}</a><br/>
+  {% endfor %}
+  {% if secondary_registration_heading or secondary_registration_description or secondary_registration %}
+    </div>
+  {% endif %}
 
 {% endblock %}
 
-        
+
 
 
 

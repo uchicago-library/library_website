@@ -1,6 +1,5 @@
 import logging
 
-from base.utils import save_virtual_workbook
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
 from django.db.models.signals import post_save
@@ -8,10 +7,11 @@ from django.dispatch import receiver
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import re_path, reverse
-from public.models import StaffPublicPage
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
+from base.utils import save_virtual_workbook
+from public.models import StaffPublicPage
 from staff.models import StaffPage
 from staff.utils import WagtailStaffReport
 
@@ -21,34 +21,34 @@ logger = logging.getLogger(__name__)
 def admin_view(request):
     from staff.forms import StaffReportingForm
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = StaffReportingForm(request.POST)
         options = {
-            'filename': form.data.get('filename', 'staff_report'),
-            'cnetid': form.data.get('cnetid', None),
-            'department': form.data.get('department', None),
-            'department_and_subdepartments': form.data.get(
-                'department_and_subdepartments', None
+            "filename": form.data.get("filename", "staff_report"),
+            "cnetid": form.data.get("cnetid", None),
+            "department": form.data.get("department", None),
+            "department_and_subdepartments": form.data.get(
+                "department_and_subdepartments", None
             ),
-            'group': form.data.get('group', None),
-            'live': form.data.get('live', None),
-            'latest_revision_created_at': form.data.get(
-                'latest_revision_created_at', None
+            "group": form.data.get("group", None),
+            "live": form.data.get("live", None),
+            "latest_revision_created_at": form.data.get(
+                "latest_revision_created_at", None
             ),
-            'position_eliminated': form.data.get('position_eliminated', None),
-            'supervises_students': form.data.get('supervises_students', False),
-            'supervisor_cnetid': form.data.get('supervisor_cnetid', None),
-            'supervisor_override': form.data.get('supervisor_override', None),
-            'position_title': form.data.get('position_title', None),
+            "position_eliminated": form.data.get("position_eliminated", None),
+            "supervises_students": form.data.get("supervises_students", False),
+            "supervisor_cnetid": form.data.get("supervisor_cnetid", None),
+            "supervisor_override": form.data.get("supervisor_override", None),
+            "position_title": form.data.get("position_title", None),
         }
 
-        for i in ('live', 'supervises_students', 'supervisor_override'):
+        for i in ("live", "supervises_students", "supervisor_override"):
             try:
                 if options[i]:
                     options[i] = True
             except KeyError:
                 continue
-        options['all'] = not (bool(options['live']))
+        options["all"] = not (bool(options["live"]))
 
         if form.is_valid():
             staff_report = WagtailStaffReport(
@@ -57,46 +57,46 @@ def admin_view(request):
             virtual_workbook = save_virtual_workbook(staff_report.workbook())
             response = HttpResponse(
                 virtual_workbook,
-                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
-            response['content-disposition'] = (
-                'attachment; filename="' + options['filename'] + '.xlsx"'
+            response["content-disposition"] = (
+                'attachment; filename="' + options["filename"] + '.xlsx"'
             )
             return response
         else:
-            return render(request, 'staff/staff_reporting_form.html', {'form': form})
+            return render(request, "staff/staff_reporting_form.html", {"form": form})
     else:
-        form = StaffReportingForm({'live': True, 'filename': 'staff_report'})
-    return render(request, 'staff/staff_reporting_form.html', {'form': form})
+        form = StaffReportingForm({"live": True, "filename": "staff_report"})
+    return render(request, "staff/staff_reporting_form.html", {"form": form})
 
 
-@hooks.register('register_admin_urls')
+@hooks.register("register_admin_urls")
 def urlconf_time():
-    return [re_path(r'^list_staff_wagtail/$', admin_view, name='list_staff_wagtail')]
+    return [re_path(r"^list_staff_wagtail/$", admin_view, name="list_staff_wagtail")]
 
 
-@hooks.register('register_settings_menu_item')
+@hooks.register("register_settings_menu_item")
 def register_frank_menu_item():
     return MenuItem(
-        'Staff Reporting',
-        reverse('list_staff_wagtail'),
-        classname='icon icon-mail',
+        "Staff Reporting",
+        reverse("list_staff_wagtail"),
+        classname="icon icon-mail",
         order=9990,
     )
 
 
-@hooks.register('register_permissions')
+@hooks.register("register_permissions")
 def register_staff_hr_permission():
     """
     Register the custom staff HR permission so it appears
     in the Wagtail Groups administration interface.
     """
     return Permission.objects.filter(
-        content_type__app_label='staff', codename='change_staff_hr_info'
+        content_type__app_label="staff", codename="change_staff_hr_info"
     )
 
 
-@hooks.register('before_edit_user')
+@hooks.register("before_edit_user")
 def show_user_edit_help(request, user):
     """
     Display an info message on the user edit form explaining the automatic
@@ -104,8 +104,8 @@ def show_user_edit_help(request, user):
     """
     messages.info(
         request,
-        'Note: Marking a user as inactive will automatically unpublish their staff pages (both Loop and public). '
-        'Reactivating will republish them. This only works when editing individual users, not with bulk actions.',
+        "Note: Marking a user as inactive will automatically unpublish their staff pages (both Loop and public). "
+        "Reactivating will republish them. This only works when editing individual users, not with bulk actions.",
     )
 
 

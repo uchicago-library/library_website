@@ -155,10 +155,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     touch $VAGRANT_HOME/.vimrc
     echo "let g:ale_linters_explicit = 1" >> $VAGRANT_HOME/.vimrc
     echo "let g:ale_linters = { 'python': ['flake8'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_flake8_options = '--ignore=D100,D101,D202,D204,D205,D400,D401,E303,E501,W503,N805,N806'" >> $VAGRANT_HOME/.vimrc
     echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_black_options = '--skip-string-normalization'" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_isort_options = '--profile black'" >> $VAGRANT_HOME/.vimrc
+    # Note: flake8 options are read from .flake8
+    # Note: black and isort options are read from pyproject.toml
 
     # Install UChicago dependencies
     echo ""

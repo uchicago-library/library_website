@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 
 [Table of contents]
 
@@ -26,19 +26,23 @@ Directory Listing
 Staff Profile Page
 Forms (CGI)
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "variables.scss";
-@import "media.scss";
-
+@import 'variables.scss';
+@import 'media.scss';
 
 /*
  * Page Specific Alterations
  * --------------------------------------------------
  */
 
-.block-paragraph > .rich-text { // Giving Pages
-  #p-3413 &, #p-3415 &, #p-3417 &, #p-3418 &, #p-3419 & {
+.block-paragraph > .rich-text {
+  // Giving Pages
+  #p-3413 &,
+  #p-3415 &,
+  #p-3417 &,
+  #p-3418 &,
+  #p-3419 & {
     @include respond-to(small) {
       overflow: hidden;
     }
@@ -49,7 +53,16 @@ Forms (CGI)
   padding: 30px 15px;
   padding-top: 42px;
   max-width: 1200px;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, #p-1757 &, &.directory {  // Exception for Home pages and directory pages
+  #p-3378 &,
+  #p-1752 &,
+  #p-1754 &,
+  #p-1755 &,
+  #p-1753 &,
+  #p-1756 &,
+  #p-1758 &,
+  #p-1757 &,
+  &.directory {
+    // Exception for Home pages and directory pages
     max-width: 2000px;
   }
   .sidebar ~ & {
@@ -63,22 +76,36 @@ Forms (CGI)
   }
 }
 
-body.libnewspage .breadcrumbs, body.libnewsindexpage .breadcrumbs, .h1-banner .breadcrumbs, #p-3378 .breadcrumbs, #p-1752 .breadcrumbs, #p-1754 .breadcrumbs, #p-1755 .breadcrumbs, #p-1753 .breadcrumbs, #p-1756 .breadcrumbs, #p-1758 .breadcrumbs, #p-1757 .breadcrumbs { // Hide breadcrumbs on homepages with banners
-   @include visually-hidden;
-}
-
-body.libnewsindexpage article .img-object .preload span {
-  color: #000000;
-}
-
- .h1-banner, #p-4898 h1, #p-3378 h1:not(.searchbox-header) {  // Hide h1 on homepages with banners
+body.libnewspage .breadcrumbs,
+body.libnewsindexpage .breadcrumbs,
+.h1-banner .breadcrumbs,
+#p-3378 .breadcrumbs,
+#p-1752 .breadcrumbs,
+#p-1754 .breadcrumbs,
+#p-1755 .breadcrumbs,
+#p-1753 .breadcrumbs,
+#p-1756 .breadcrumbs,
+#p-1758 .breadcrumbs,
+#p-1757 .breadcrumbs {
+  // Hide breadcrumbs on homepages with banners
   @include visually-hidden;
 }
 
-#p-1754 button[id^='mysched'] { // Hides schedule button from Law Homepage
-  display: none; // hides from screen readers too
+body.libnewsindexpage article .img-object .preload span {
+  color: #000;
 }
 
+.h1-banner,
+#p-4898 h1,
+#p-3378 h1:not(.searchbox-header) {
+  // Hide h1 on homepages with banners
+  @include visually-hidden;
+}
+
+#p-1754 button[id^='mysched'] {
+  // Hides schedule button from Law Homepage
+  display: none; // hides from screen readers too
+}
 
 /*
  * Fancy Splash Image (Jumbotron)
@@ -87,29 +114,30 @@ body.libnewsindexpage article .img-object .preload span {
 
 .jumbotron {
   max-height: 50px;
-  padding-top: 0px;
+  padding-top: 0;
   margin-bottom: 0;
-  background-color: $darkred; //fallback if all else fails
-  background-image: url("../images/banner.gif"); //fallback if no image uploaded
+  background-color: $darkred; // fallback if all else fails
+  background-image: url('../images/banner.gif'); // fallback if no image uploaded
   background-size: cover;
   h2 {
     color: #fff;
   }
   .container {
-    padding: 0px;
+    padding: 0;
   }
-  @include respond-to(small) { 
+
+  @include respond-to(small) {
     min-height: 75px;
     .container {
       position: relative;
-      margin: 0px;
+      margin: 0;
     }
   }
 }
 
 .overlaywrap {
   background-color: $trans-red; // Also applies to Law. Default if location is not specified
-  color: #E7E5E2;
+  color: #e7e5e2;
   left: 0;
   top: 0;
   a {
@@ -127,6 +155,7 @@ body.libnewsindexpage article .img-object .preload span {
     margin-top: 0;
     padding: 10px 15px;
   }
+
   // &.crerar {
   //   background-color: $trans-blue;
   // }
@@ -159,29 +188,39 @@ body.libnewsindexpage article .img-object .preload span {
  * --------------------------------------------------
  */
 
- a:focus {  // For SiteImprove ADA; Overrides `-webkit-focus-ring-color` from Bootstrap
-  outline: auto!important;
-  outline-offset: unset!important;
+a:focus {
+  // For SiteImprove ADA; Overrides `-webkit-focus-ring-color` from Bootstrap
+  outline: auto !important;
+  outline-offset: unset !important;
 }
 
 .breadcrumbs {
   padding-top: 5px;
   padding-left: 30px;
   font-size: 85%;
- }
-
+}
 
 .centermain {
   max-width: 900px;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  #p-3378 &, #p-1752 &, #p-1754 &, #p-1755 &, #p-1753 &, #p-1756 &, #p-1758 &, .floorplanpage &, .directory & {  // Exception for Home pages
+  #p-3378 &,
+  #p-1752 &,
+  #p-1754 &,
+  #p-1755 &,
+  #p-1753 &,
+  #p-1756 &,
+  #p-1758 &,
+  .floorplanpage &,
+  .directory & {
+    // Exception for Home pages
     max-width: 1200px;
   }
   .collectionpage & {
     padding-top: 1.75em;
   }
+
   @include respond-to(small) {
     padding: 0 30px 0 15px;
   }
@@ -193,11 +232,10 @@ body.libnewsindexpage article .img-object .preload span {
     padding-left: 0;
   }
   & h4 {
-      margin: 20px 0 0 0;
-      a {
-        @extend h4;
-        text-decoration: underline;
-      }
+    margin: 20px 0 0;
+    a {
+      text-decoration: underline;
+    }
   }
   & p {
     color: $darkgray;
@@ -216,14 +254,13 @@ body.libnewsindexpage article .img-object .preload span {
   }
 }
 
-
 /*
  * Text
  * --------------------------------------------------
  */
 
 #footnotes {
-  font-family: Helvetica, Arial, sans-serif; 
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 0.8em;
 }
 
@@ -236,6 +273,8 @@ body.libnewsindexpage article .img-object .preload span {
   border-left: 5px solid #c8c8c8;
   padding-left: 1em;
   margin-left: 1em;
+  font-family: Georgia, Times, 'Times New Roman', serif;
+  font-size: 1.4375em;
 }
 
 @include respond-to(small) {
@@ -246,7 +285,7 @@ body.libnewsindexpage article .img-object .preload span {
       flex: 1;
     }
   }
-  .column+.column {
+  .column + .column {
     margin-left: 1.5em; // workaround because gap is not supported in Safari
   }
 }
@@ -255,10 +294,10 @@ blockquote {
   margin: 0 50px;
   padding: 0;
   text-indent: -2em;
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: '\201C' '\201D' '\2018' '\2019';
   line-height: 2.2em;
-  border-left: 0px;
-  &:before {
+  border-left: 0;
+  &::before {
     color: $darkgray;
     content: open-quote;
     font-size: 4em;
@@ -266,7 +305,7 @@ blockquote {
     margin-right: 0.1em;
     vertical-align: -0.4em;
   }
-  &:after{
+  &::after {
     color: $darkgray;
     content: close-quote;
     font-size: 4em;
@@ -281,48 +320,48 @@ blockquote {
 
 .citation {
   color: $darkgray;
-  font-size: .9em;
+  font-size: 0.9em;
   margin: 0 0 2em 4em;
 }
 
 .intro {
   font-size: 1.0625em;
-  font-family: Helvetica, Arial, sans-serif;  }
+  font-family: Helvetica, Arial, sans-serif;
+}
 
-.pullquote {
-  font-family: Georgia, Times, "Times New Roman", serif;
-  font-size: 1.4375em; }
-
-p q { //Inline Quote
-  quotes: "\201C""\201D""\2018""\2019";
-  &:before {
+p q {
+  // Inline Quote
+  quotes: '\201C' '\201D' '\2018' '\2019';
+  &::before {
     content: open-quote;
     font-size: 1.2em;
   }
-  &:after{
+  &::after {
     content: close-quote;
     font-size: 1.2em;
   }
 }
-
 
 /*
  * Images, Video, and other Media
  * --------------------------------------------------
  */
 
-.block-video > div { //override Wagtail's weird padding
-    padding-bottom: 20px!important;
+.block-video > div {
+  // override Wagtail's weird padding
+  padding-bottom: 20px !important;
 }
 
 .block-image + div {
   margin-top: 1em;
 }
 
-img.richtext-image {  //images placed in richtext streamfield
+img.richtext-image {
+  // images placed in richtext streamfield
   &.left {
     float: left;
     margin: 0 1.2em 0.7em 0;
+
     @include respond-to(small) {
       margin: 0 1.5em 0.7em 0;
     }
@@ -330,6 +369,7 @@ img.richtext-image {  //images placed in richtext streamfield
   &.right {
     float: right;
     margin: 0 0 0.7em 1.2em;
+
     @include respond-to(small) {
       margin: 0 0 0.7em 1.5em;
     }
@@ -341,10 +381,11 @@ img.richtext-image {  //images placed in richtext streamfield
   }
 }
 
-figure.imgcaption { //image in streamfield
+figure.imgcaption {
+  // image in streamfield
   max-width: 100%;
   padding: 0;
-  display:table; // keeps caption within img width 1/3
+  display: table; // keeps caption within img width 1/3
   &.pull-left {
     margin: 10px 20px 10px 0;
   }
@@ -355,8 +396,8 @@ figure.imgcaption { //image in streamfield
     padding: 0.7em 1em;
     font-size: 0.8em;
     color: $mid-dark;
-    display:table-caption; // keeps caption withing img width 2/3
-    caption-side:bottom; // keeps caption withing img width 3/3
+    display: table-caption; // keeps caption withing img width 2/3
+    caption-side: bottom; // keeps caption withing img width 3/3
     background: $midneutral;
   }
 }
@@ -382,33 +423,37 @@ a.img-src {
 }
 
 figure.coll-thumb {
-    margin-right: auto;
-    margin-left: auto;
-    max-width: 25em;
-    margin-bottom: 1.5em;
-    @include respond-to(small) {
-        float: left!important;
-        margin-right: 2em;
-    }
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 25em;
+  margin-bottom: 1.5em;
+
+  @include respond-to(small) {
+    float: left !important;
+    margin-right: 2em;
+  }
 }
 
 // Solo, Duo, and Trio Image Stylings
 .collexbase {
-    padding: 2em 1em;
-    & figure {
-       @include respond-to(medium) {
-           display: flex;
-       }
+  padding: 2em 1em;
+  & figure {
+    @include respond-to(medium) {
+      display: flex;
     }
+  }
 }
 
 .collex-solo {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .collexbase;
+
   border-bottom: 1px dotted $darkgray;
   img {
-    padding-bottom: 1em ;
+    padding-bottom: 1em;
     max-height: 40em;
     width: auto;
+
     @include respond-to(medium) {
       float: right;
       padding-bottom: 0;
@@ -416,9 +461,12 @@ figure.coll-thumb {
   }
 }
 
-.collex-solo, .collex-duo, .collex-trio, .collex-verso {
+.collex-solo,
+.collex-duo,
+.collex-trio,
+.collex-verso {
   img {
-      border: 3px solid #c8c8c8;
+    border: 3px solid #c8c8c8;
   }
   .img-title {
     color: $mid-dark;
@@ -449,29 +497,26 @@ figure.coll-thumb {
   }
 }
 
-
 /*
  * Lightbox Styling
  * --------------------------------------------------
  */
 
 .modal-content {
-  -webkit-box-shadow: 0 5px 35px rgba(0,0,0,.8);
-  box-shadow: 0 5px 35px rgba(0,0,0,.8);
+  box-shadow: 0 5px 35px rgba(0, 0, 0, 0.8);
 }
 
 .modal-header {
-    padding: 15px 20px 0px 15px;
-    border-bottom: none;
-    &> .close {
-      font-size: 2em;
-      opacity: .6;
-      &:hover {
-        opacity: .5;
-      }
+  padding: 15px 20px 0 15px;
+  border-bottom: none;
+  & > .close {
+    font-size: 2em;
+    opacity: 0.6;
+    &:hover {
+      opacity: 0.5;
     }
+  }
 }
-
 
 /*
  * Carousel
@@ -483,18 +528,23 @@ figure.coll-thumb {
 }
 
 .carousel-indicators {
-    bottom: 0px;
+  bottom: 0;
 }
 
 .carousel-inner {
   background-color: #575757;
-  &>.item>a>img, &>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
-    width: 100%
+  & > .item > a > img,
+  & > .item > img,
+  .img-responsive,
+  .thumbnail a > img,
+  .thumbnail > img {
+    width: 100%;
   }
   .hero-image {
     img {
       max-height: 250px;
       object-fit: cover;
+
       @include respond-to(small) {
         max-height: unset;
         max-width: 100%;
@@ -505,11 +555,12 @@ figure.coll-thumb {
   .hero-image::after {
     display: block;
     position: relative;
-    background-image: linear-gradient(to bottom, rgba(0,0,0, 0) 0, #000 100%);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #000 100%);
     margin-top: -250px;
     height: 250px;
     width: 100%;
     content: '';
+
     @include respond-to(small) {
       margin-top: -175px;
       height: 175px;
@@ -519,18 +570,20 @@ figure.coll-thumb {
 
 .carousel-caption {
   padding-top: 0;
-  text-shadow: 1px 1px 30px rgba(0, 0, 0, 1.0);
+  text-shadow: 1px 1px 30px rgba(0, 0, 0, 1);
   z-index: 5;
   padding-bottom: 25px;
   .image-title {
     font-size: 1.5em;
     display: block;
+
     @include respond-to(small) {
       font-size: 2em;
     }
   }
   .image-subtitle {
-    font-size: 1.2em; 
+    font-size: 1.2em;
+
     @include respond-to(small) {
       font-size: 1.5em;
     }
@@ -545,13 +598,13 @@ figure.coll-thumb {
   }
 }
 
-
 /*
  * Homepage Modules / Widgets
  * --------------------------------------------------
  */
 
-.widget-reusable-content-block { // sidebar widget styling
+.widget-reusable-content-block {
+  // sidebar widget styling
   & > .rich-text > p:empty {
     display: none;
   }
@@ -559,23 +612,27 @@ figure.coll-thumb {
     color: $maroon;
     background-color: #f7ebeb;
     padding: 1em;
-    h2, h3 {
-      color:darken($maroon, 10%)!important;
-      border-color: darken($maroon, 5%)!important;
+    h2,
+    h3 {
+      color: darken($maroon, 10%) !important;
+      border-color: darken($maroon, 5%) !important;
     }
   }
   &.info-box {
     color: darken($ncs-links, 15%);
     background-color: #eef6fc;
     padding: 1em;
-    h2, h3 {
-      color: darken($ncs-links, 15%)!important;
-      border-color: darken($ncs-links, 15%)!important
+    h2,
+    h3 {
+      color: darken($ncs-links, 15%) !important;
+      border-color: darken($ncs-links, 15%) !important;
     }
   }
 }
 
-.block-reusable_content, .block-reusable_content_block { // in-page content styling
+.block-reusable_content,
+.block-reusable_content_block {
+  // in-page content styling
   margin-bottom: 0.5em;
   h2 {
     margin-top: 0;
@@ -600,13 +657,14 @@ figure.coll-thumb {
   }
 }
 
-.studymod { //Study Spaces
+.studymod {
+  // Study Spaces
   p {
     text-align: center;
   }
   a {
     color: $eckhartpurple;
-    text-decoration: none;  
+    text-decoration: none;
     &:hover {
       color: $default-link;
       text-decoration: underline;
@@ -619,19 +677,22 @@ figure.coll-thumb {
   .material-icons {
     vertical-align: middle;
     font-size: 2em;
-
   }
-  .fa {  // to make-up for the size difference between the two icon families
-    font-size:1.5em;
+  .fa {
+    // to make-up for the size difference between the two icon families
+    font-size: 1.5em;
     padding-top: 10px;
-    padding-bottom:7px;
+    padding-bottom: 7px;
   }
 }
 
 .icon-widget {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .studymod;
+
   text-align: center;
-  & .fa, & .material-icons {
+  & .fa,
+  & .material-icons {
     display: block;
     padding-left: 0;
   }
@@ -661,7 +722,6 @@ div#widget-featured-library-expert {
   }
 }
 
-
 /*
  * Workshops & Events Homepage Module
  * --------------------------------------------------
@@ -672,7 +732,8 @@ div#widget-featured-library-expert {
   a.active {
     color: #fff;
     background-color: $active-hover;
-    .date, .month {
+    .date,
+    .month {
       color: #fff;
     }
   }
@@ -694,22 +755,20 @@ a.event-header {
 .btn-register {
   color: $active;
   background-color: transparent;
-  padding: 5px 0 0 0!important;
+  padding: 5px 0 0 !important;
   font-weight: 600;
   margin: 0;
-  &:after {
-    content: "\f274";
-    font-family: FontAwesome;
+  &::after {
+    content: '\f274';
+    font-family: FontAwesome, sans-serif;
     font-size: 1em;
     line-height: 0.1em;
     margin-left: 0.5em;
   }
   &:hover {
-    color: $active-hover;     
+    color: $active-hover;
   }
 }
-
-
 
 /*
  * News Homepage Module
@@ -717,10 +776,8 @@ a.event-header {
  */
 
 .news-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  display: -webkit-flex;  // Safari fix
-  -webkit-flex-wrap: wrap;  // Safari fix
+  display: flex; // Safari fix
+  flex-wrap: wrap; // Safari fix
   margin-left: -5px;
   margin-right: -5px;
 }
@@ -736,7 +793,7 @@ a.event-header {
     }
   }
   p {
-    clear:both;
+    clear: both;
     padding: 0 15px 0 0;
   }
 }
@@ -749,30 +806,28 @@ div.embed {
   font-size: 0.9em;
   background: transparent;
   overflow: hidden;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   .newsblock & {
-    clear:both;
+    clear: both;
   }
   img {
     object-fit: cover;
     min-width: 100%;
     min-height: auto;
-    height: 125px; // for centering the image
-    width: 200px; // for centering the image
+    height: 125px; // for centering the image // for centering the image
     display: block; // corrects inline gap in enclosing div
     width: auto\9; // ie8+9
-    -ms-interpolation-mode: bicubic; // lt ie8
   }
-  div.capt {  //category tags on news images
+  div.capt {
+    // category tags on news images
     width: 100%;
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     &.exhibitdate {
       position: absolute !important;
       bottom: 30px;
     }
+
     @include news-category-colors; // located in _variables.scss
     .newsblock & {
       position: inherit;
@@ -786,7 +841,6 @@ div.embed {
   height: 125px;
   overflow: hidden;
 }
-
 
 /*
  * Buttons
@@ -804,28 +858,33 @@ div.embed {
   margin-bottom: 10px;
   &:hover {
     background: $lightgray;
-    color: $maroon; 
+    color: $maroon;
   }
 }
 
 .btn-morecoll {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .btn-tertiary;
 }
-.btn-morelink {  // "View more ..." link for sidebar
+.btn-morelink {
+  // "View more ..." link for sidebar
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .btn-tertiary;
-  &:after {
-    content: "\0020\f101";
-    font-family: FontAwesome;
+  &::after {
+    content: '\0020\f101';
+    font-family: FontAwesome, sans-serif;
   }
 }
 
 .spaces-toggle {
+  padding: 15px 0;
   a {
     text-decoration: none;
   }
 }
 
-.btn-list-toggle {  //Behavior togglers with maroon lines
+.btn-list-toggle {
+  // Behavior togglers with maroon lines
   color: $darkgray;
   background-color: #fff;
   border-top: 2px solid #ddd;
@@ -837,17 +896,16 @@ div.embed {
     background-color: $ncs-maroon;
     border-top: 2px solid $ncs-maroon;
     border-bottom: 2px solid $ncs-maroon;
-    -webkit-box-shadow: none;
-    box-shadow: none;   
-    &:after {
+    box-shadow: none;
+    &::after {
+      // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
       @extend .menu-marker;
     }
   }
   &:hover {
     border-top: 2px solid $maroon;
     border-bottom: 2px solid $maroon;
-    -webkit-box-shadow: none;
-    box-shadow: none; 
+    box-shadow: none;
   }
   &:focus {
     box-shadow: $box-shadow-focus;
@@ -856,32 +914,45 @@ div.embed {
   }
 }
 
-.btn-textonly { // Dropdowns - no borders, rtc
+.btn-textonly {
+  // Dropdowns - no borders, rtc
   color: $darkgray;
   background-color: transparent;
-  border:0;
+  border: 0;
   padding: 5px 10px 5px 5px;
   border-radius: 0;
-  margin-bottom: 0px;
+  margin-bottom: 0;
+
   @include respond-to(small) {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px;
   }
 }
 
-.btn-obvious { // testing for directory
+.btn-obvious {
+  // testing for directory
   color: $mid-dark;
   background-color: #fff;
   border-color: #ccc;
-  padding: 0.5em 1em; 
+  padding: 0.5em 1em;
+  &:hover {
+    background-color: $hovercalmlight;
+  }
+  &:focus {
+    box-shadow: $box-shadow-focus;
+    background-color: $hovercalmlight;
+  }
 }
 
-.open>.dropdown-toggle.btn-textonly:focus, .open>.dropdown-toggle.btn-textonly:hover {
+.open > .dropdown-toggle.btn-textonly:focus,
+.open > .dropdown-toggle.btn-textonly:hover {
   background-color: $hovercalm;
 }
 
-.btn-alpha {  //Finding Aids Search Page
-  padding: 20px 0 0 0;
+.btn-alpha {
+  // Finding Aids Search Page
+  padding: 20px 0 0;
   text-align: center;
+
   @include respond-to(smallonly) {
     display: flex;
     flex-wrap: wrap;
@@ -896,10 +967,12 @@ div.embed {
     &:last-child {
       border-right: none;
     }
+
     @include respond-to(smallonly) {
       flex: 1;
       width: 10%;
     }
+
     @include respond-to(medium) {
       padding: 0.5em 0.75em;
     }
@@ -911,9 +984,10 @@ div.embed {
  * --------------------------------------------------
  */
 
- // Table base (mobile friendly magic) is in global.scss
+// Table base (mobile friendly magic) is in global.scss
 
- .distinct-list { //table base
+.distinct-list {
+  // table base
   a {
     color: $default-link;
     text-decoration: underline;
@@ -927,18 +1001,20 @@ div.embed {
       outline-offset: 2px;
     }
   }
-  .material-icons, .fa {
+  .material-icons,
+  .fa {
     padding-right: 10px;
     &.floorplan {
       font-size: 1.1em;
       padding-right: 5px;
     }
   }
-  &>tbody>tr {
+  & > tbody > tr {
     &:last-child {
       border-bottom: 2px solid $table-main;
     }
   }
+
   @include respond-to(medium) {
     margin-top: 0;
   }
@@ -956,15 +1032,15 @@ tbody a {
 }
 
 .etable {
-  a[href*="events.uchicago"] {
+  a[href*='events.uchicago'] {
     font-size: 1.05em;
     font-weight: 600;
-    a[href*=register] {
+    a[href*='register'] {
       color: red;
     }
-    &:after {
-      content: "\0020\F08E";
-      font-family: FontAwesome;
+    &::after {
+      content: '\0020\F08E';
+      font-family: FontAwesome, sans-serif;
       font-size: 0.8em;
       padding-left: 0.5em;
       display: inline-block;
@@ -972,69 +1048,80 @@ tbody a {
   }
 }
 
-tr.etable-header>th, th.etable-header, table.etable thead {
-  border-top: none!important;
+tr.etable-header > th,
+th.etable-header,
+table.etable thead {
+  border-top: none !important;
   border-bottom: 2px solid $ncs-maroon;
   font-size: 1.1em;
   color: $ncs-maroon;
   font-weight: 600;
   background: $ncs-lighter-greystone;
+
   @include respond-to(smallonly) {
     display: inline-block;
     width: inherit;
   }
 }
 
-table.etable>thead>tr>th {
+table.etable > thead > tr > th {
   border-bottom: 0;
 }
 
-.coll-list.table>thead>tr>th {
+.coll-list.table > thead > tr > th {
   border-bottom-color: $table-main;
 }
 
-table.etable>tbody>tr {
+table.etable > tbody > tr {
   &:last-child {
     border-bottom: 2px solid $table-main;
   }
-  &>td:last-child {
-    vertical-align:middle;
-    white-space:nowrap;
+  & > td:last-child {
+    vertical-align: middle;
+    white-space: nowrap;
+
     @include respond-to(medium) {
       padding-right: 10px;
     }
+
     @include respond-to(large) {
       padding-right: 10px;
     }
   }
 }
 
-.quicktable { // "Quick reference" on top of direcotry table/list
+.quicktable {
+  // "Quick reference" on top of direcotry table/list
   margin: 10px 0 0;
-  &>tbody>tr {
+  & > tbody > tr {
+    // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
     @extend .currentlist;
-    &>td:first-child {
-      color:$maroon;
-      font-weight:600;
+    & > td:first-child {
+      color: $maroon;
+      font-weight: 600;
     }
   }
 }
 
-.headline { // Headers for "Browse" and "Limit" dropdowns and toggles
-  color:$maroon;
-  font-weight:600;
+.headline {
+  // Headers for "Browse" and "Limit" dropdowns and toggles
+  color: $maroon;
+  font-weight: 600;
 }
 
 .scrc-list {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-list;
+
   margin-top: 1em;
+
   @include respond-to(small) {
-    &>tbody>tr>td:first-child {
-        width: 30%;
-        padding: 15px 30px;
+    & > tbody > tr > td:first-child {
+      width: 30%;
+      padding: 15px 30px;
     }
-    &>tbody>tr>td:nth-child(2) {
-        padding-left: 15px;
+    & > tbody > tr > td:nth-child(2) {
+      padding-left: 15px;
     }
   }
 }
@@ -1049,55 +1136,56 @@ table.etable>tbody>tr {
   }
 }
 
-//East Asia table
+// East Asia table
 
-#p-3765 .table { 
+#p-3765 .table {
   @include respond-to(small) {
-     width: 25em;
+    width: 25em;
   }
-  &>tbody>tr>td {
+  & > tbody > tr > td {
     @include respond-to(small) {
       width: 50%;
     }
   }
 }
 
-#p-3765 .table>tbody>tr>td:first-child, #p-3765 .table>thead>tr>th:first-child {
+#p-3765 .table > tbody > tr > td:first-child,
+#p-3765 .table > thead > tr > th:first-child {
   @include respond-to(small) {
     padding-right: 3em;
     text-align: right;
   }
 }
 
-
 /*
  * Mini Search (For Browse / Lists / Tables)
  * --------------------------------------------------
  */
 
-.searchbox{
-  position:relative;
-  min-width:30px;
-  margin:5px 0 10px 0;
+.searchbox {
+  position: relative;
+  min-width: 30px;
+  margin: 5px 0 10px;
   width: 100%;
-  height:30px;
-  float:right;
+  height: 30px;
+  float: right;
+
   @include respond-to(small) {
-    margin:15px 0 10px 0;
+    margin: 15px 0 10px;
   }
 }
 
-.searchbox-input{
-  top:0;
-  right:0;
-  border:0;
-  outline:0;
+.searchbox-input {
+  top: 0;
+  right: 0;
+  border: 0;
+  outline: 0;
   background: $ncs-lighter-greystone;
-  width:100%;
-  height:30px;
-  margin:0;
-  padding:0px 55px 0px 20px;
-  font-size:1em;
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  padding: 0 55px 0 20px;
+  font-size: 1em;
   color: black;
   &:focus {
     box-shadow: $box-shadow-focus;
@@ -1107,24 +1195,24 @@ table.etable>tbody>tr {
 
 .searchbox-icon,
 .searchbox-submit,
-.searchbox > input[type="submit"] {
-  content: "\f002";
-  width:30px;
-  height:30px;
-  display:block;
-  position:absolute;
-  top:0;
-  font-family:verdana;
-  font-size:1em;
-  right:0;
-  padding:0;
-  margin:0;
-  border:0;
-  outline:0;
-  line-height:30px;
-  text-align:center;
-  cursor:pointer;
-  color:#fff;
+.searchbox > input[type='submit'] {
+  content: '\f002';
+  width: 30px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  top: 0;
+  font-family: verdana, sans-serif;
+  font-size: 1em;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
   background: $ncs-maroon;
   &:hover {
     color: black;
@@ -1136,40 +1224,39 @@ table.etable>tbody>tr {
   }
 }
 
-.byline{
-  position:absolute;
-  top:150px;
-  left:30%;
-  text-align:center;
-  font-size:18px;
+.byline {
+  position: absolute;
+  top: 150px;
+  left: 30%;
+  text-align: center;
+  font-size: 18px;
 }
-.byline a{
-  text-decoration:none;
+.byline a {
+  text-decoration: none;
   color: $maroon;
 }
 
 .distinct-search {
   padding: 15px 30px;
   background-color: rgba(210, 205, 204, 0.5);
-  border-top: 3px solid #D6D6CE;
+  border-top: 3px solid #d6d6ce;
   & input.searchbox-input {
     background-color: #fff;
     border: 1px solid #ccc;
   }
+
   @include respond-to(smallonly) {
     max-width: 90%;
     margin: 0 15px;
   }
 }
 
-
-
 /*
  * Ask A Librarian Pages
  * --------------------------------------------------
  */
 
- //Ask a Librarian menu item from global nave is in "navigation.scss"
+// Ask a Librarian menu item from global nave is in "navigation.scss"
 
 .s-la-widget .btn-chat {
   background-color: #6e7337;
@@ -1189,11 +1276,14 @@ table.etable>tbody>tr {
 }
 
 .ask-rightside {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-rightside;
+
   background-color: #fff;
+
   @include respond-to(medium) {
     background-color: $hovercalmlight;
-    border-left: none!important;
+    border-left: none !important;
     margin-top: 10px;
   }
   ul {
@@ -1211,51 +1301,52 @@ table.etable>tbody>tr {
 }
 
 table.ask {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-list;
   a {
     color: $brightpurple;
   }
-  &>tbody>tr>td {
+  & > tbody > tr > td {
     line-height: 1.8em;
-    &:last-child { // Targeting "ask button" cells
+    &:last-child {
+      // Targeting "ask button" cells
       text-align: center;
     }
   }
 }
 
 a.btn-ask {
-  color: #fff!important;
+  color: #fff !important;
   background-color: $darkgray;
-  border-right: 0px;
+  border-right: 0;
   padding: 10px 20px;
   margin: 10px 0;
   text-decoration: none;
-  &:before {
-    content: "\f0e5";
-    font-family: FontAwesome;
+  &::before {
+    content: '\f0e5';
+    font-family: FontAwesome, sans-serif;
     font-size: 1.2em;
     margin-right: 0.5em;
- }
-  &:after {
-    content: "Chat Offline";
+  }
+  &::after {
+    content: 'Chat Offline';
   }
   &.active {
     background-color: $active;
     &:hover {
-      background-color: $reggreen;     
+      background-color: $reggreen;
     }
-    &:before {
-      content: "\f075";
+    &::before {
+      content: '\f075';
     }
-    &:after {
-      content: "Chat Now";
+    &::after {
+      content: 'Chat Now';
     }
   }
   &:hover {
-    background-color: $darkneutral;     
+    background-color: $darkneutral;
   }
 }
-
 
 /*
  * Hours (Mods to LibCal Feed)
@@ -1263,7 +1354,6 @@ a.btn-ask {
  */
 
 // ** Springshare requires us to have two different widgets for mobile and desktop.  ** //
-
 
 // >> Desktop Widget << //
 
@@ -1280,7 +1370,7 @@ a.btn-ask {
   & thead {
     background-color: $table-main;
     color: white;
-    &>tr>th {
+    & > tr > th {
       vertical-align: bottom;
       border-bottom: 2px solid $table-main;
       padding: 5px;
@@ -1291,14 +1381,15 @@ a.btn-ask {
     border-bottom: none;
     border-right: none;
   }
-  &>tbody>tr {
+  & > tbody > tr {
     &:hover {
       background-color: unset; // Removes hover color on table row that is not clickable
     }
-    &>td {
+    & > td {
       padding: 5px;
       &:first-child {
         border-right: 1px solid #c5c8a4;
+
         @include respond-to(medium) {
           min-width: 150px;
         }
@@ -1311,7 +1402,7 @@ a.btn-ask {
       background-color: $ncs-lighter-greystone;
     }
     &:last-child {
-      border-bottom:2px solid $table-main;
+      border-bottom: 2px solid $table-main;
     }
   }
 }
@@ -1322,7 +1413,7 @@ a.btn-ask {
 }
 
 // .s-lc-whw-today-h>.s-lc-whw-head-date,
-.s-lc-whw-today-h{
+.s-lc-whw-today-h {
   background-color: $table-accent;
 }
 
@@ -1339,14 +1430,13 @@ a.btn-ask {
     list-style: none;
     &:first-child {
       color: $active-hover;
-      padding: 5px 0 3px 0;
+      padding: 5px 0 3px;
     }
     &:last-child {
-      padding: 0 0 5px 0;
+      padding: 0 0 5px;
     }
   }
 }
-
 
 // >> Mobile "Today" Widget  << //
 // A little wonky to work with Springshare's code
@@ -1354,14 +1444,14 @@ a.btn-ask {
 .s-lc-w-today {
   width: 100%;
   margin-bottom: 20px;
-    & thead {
+  & thead {
     background-color: $table-main;
     color: white;
-    &>tr>th {
+    & > tr > th {
       vertical-align: middle;
       border-bottom: 2px solid $table-main;
       padding: 5px;
-      text-align: center!important;
+      text-align: center !important;
       font-size: 0.9em;
       line-height: 2em;
     }
@@ -1372,10 +1462,10 @@ a.btn-ask {
   .s-lc-w-location {
     font-weight: 600;
   }
-  .s-lc-w-previous, .s-lc-w-next {
+  .s-lc-w-previous,
+  .s-lc-w-next {
     padding: 5px 10px;
     font-size: 12px;
-    line-height: 1.5;
     border-radius: 3px;
     color: #333;
     background-color: #fff;
@@ -1389,8 +1479,8 @@ a.btn-ask {
     background-image: none;
     border: 1px solid transparent;
     white-space: nowrap;
-    text-indent: -9999px;  // Swapping out button text, part 1
-    line-height: 0;   // Swapping out button text, part 2
+    text-indent: -9999px; // Swapping out button text, part 1
+    line-height: 0; // Swapping out button text, part 2
     &:disabled {
       background-color: #efefef;
     }
@@ -1398,18 +1488,20 @@ a.btn-ask {
   .s-lc-w-previous {
     margin-left: 1em;
     float: left;
-    &:after {   // Swapping out button text, part 3a
-      content: "\00ab";
+    &::after {
+      // Swapping out button text, part 3a
+      content: '\00ab';
       text-indent: 0;
       display: block;
       line-height: initial;
     }
   }
-  .s-lc-w-next {   // Swapping out button text, part 3b
-    margin-right:1em;
+  .s-lc-w-next {
+    // Swapping out button text, part 3b
+    margin-right: 1em;
     float: right;
-    &:after {
-      content: "\00bb";
+    &::after {
+      content: '\00bb';
       text-indent: 0;
       display: block;
       line-height: initial;
@@ -1430,28 +1522,29 @@ a.btn-ask {
       background-color: #f9f9f9;
     }
     &:last-child {
-      border-bottom:2px solid $table-main;
+      border-bottom: 2px solid $table-main;
     }
   }
 }
 
 .s-lc-w-today-view-all {
-    display: none;
+  display: none;
 }
 
 .s-lc-whw-sublocname {
-  padding-left: 10px!important;
+  padding-left: 10px !important;
 }
 
 .s-lc-whw-footnote {
   color: #555;
   font-size: 80%;
   & td:hover {
-    background-color:#fff!important;
+    background-color: #fff !important;
   }
 }
 
-.s-lc-whw-pr, .s-lc-whw-ne {
+.s-lc-whw-pr,
+.s-lc-whw-ne {
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
@@ -1468,27 +1561,28 @@ a.btn-ask {
   background-image: none;
   white-space: nowrap;
 }
-.s-lc-whw-pr:hover, .s-lc-whw-ne:hover {
+.s-lc-whw-pr:hover,
+.s-lc-whw-ne:hover {
   background-color: $ncs-light-brick;
   color: white;
 }
 
-.s-lc-whw-pr:disabled, .s-lc-whw-ne:disabled {
+.s-lc-whw-pr:disabled,
+.s-lc-whw-ne:disabled {
   background-color: $ncs-dark-brick;
 }
 
-
-.sr-only, .s-lc-w-sr-only {
+.sr-only,
+.s-lc-w-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   border: 0;
 }
-
 
 /*
  * Agenda (Conferences)
@@ -1506,16 +1600,21 @@ a.btn-ask {
 }
 
 .end-time {
- padding-right: 10px;
- &:before {
-   content: "\2013\0020";
- }
+  padding-right: 10px;
+  &::before {
+    content: '\2013\0020';
+  }
 }
 
 .agenda-body {
   padding: 0;
-  &>.row {
+  padding-left: 2.2em;
+  & > .row {
     padding-top: 10px;
+  }
+
+  @include respond-to(small) {
+    padding-left: 0;
   }
 }
 
@@ -1529,11 +1628,11 @@ a.btn-ask {
 
 .session-title {
   padding-left: 15px;
+
   @include respond-to(small) {
     padding-left: 0;
     margin-left: -10px;
   }
-
 }
 
 .session-subtitle {
@@ -1543,32 +1642,26 @@ a.btn-ask {
   padding-right: 20px;
 }
 
-.agenda-body {
-  padding-left: 2.2em;
-  @include respond-to(small) {
-    padding-left: 0;
-  }
-}
-
 .agenda-presenters {
-  color: #635D5A;
+  color: #635d5a;
   font-size: 1em;
   font-weight: 600;
   padding-right: 20px;
 }
-
 
 /*
  * Event Calendar List
  * --------------------------------------------------
  */
 
-td.time, td.event-nav {
-    white-space: nowrap;
+td.time,
+td.event-nav {
+  white-space: nowrap;
 }
 
 .event-nav {
   padding-bottom: 15px;
+
   @include respond-to(small) {
     text-align: right;
   }
@@ -1583,7 +1676,6 @@ td.time, td.event-nav {
   font-style: italic;
 }
 
-
 /*
  * Spaces
  * --------------------------------------------------
@@ -1595,7 +1687,8 @@ td.time, td.event-nav {
   & a {
     color: $reggreen;
   }
-  .material-icons, .fa {
+  .material-icons,
+  .fa {
     padding: 0 3px 0 15px;
     font-size: 1.2em;
     color: $active;
@@ -1609,11 +1702,8 @@ td.time, td.event-nav {
   padding-top: 15px;
 }
 
-.spaces-toggle {
-    padding: 15px 0;
-}
-
-.img-spaces { // Div holding photos in individual space pages
+.img-spaces {
+  // Div holding photos in individual space pages
   padding: 0 10px 0 0;
   img {
     margin-bottom: 15px;
@@ -1621,10 +1711,13 @@ td.time, td.event-nav {
 }
 
 .spacelist {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-list;
+
   @include respond-to(small) {
-    &>tbody>tr>td {
-      &:nth-child(2), &:nth-child(3) {
+    & > tbody > tr > td {
+      &:nth-child(2),
+      &:nth-child(3) {
         width: 25%;
       }
       &:last-child {
@@ -1634,16 +1727,19 @@ td.time, td.event-nav {
   }
   img {
     max-width: 150px;
+
     @include respond-to(small) {
       max-width: 100px;
     }
+
     @include respond-to(medium) {
       max-width: 200px;
     }
   }
 }
 
-.space-computers { // computers available
+.space-computers {
+  // computers available
   font-weight: 600;
   color: $reggreen;
   line-height: 3em;
@@ -1657,7 +1753,7 @@ td.time, td.event-nav {
 
 .locations-list {
   border-bottom: 1px solid #b8aab1;
-  &>div {
+  & > div {
     padding: 0 1em 0 0;
   }
   img {
@@ -1665,24 +1761,25 @@ td.time, td.event-nav {
   }
 }
 
-.btn-reserve {  //Reserve a room link
-  color: #fff!important;
+.btn-reserve {
+  // Reserve a room link
+  color: #fff !important;
   letter-spacing: 0.1em;
-  background-color: #58593F;
-  border-right: 0px;
+  background-color: #58593f;
+  border-right: 0;
   margin: 5px 0 15px;
   padding: 5px 20px;
-  &:before {
-      color: #fff;
-      content: "\f271";
-      font-family: FontAwesome;
-      font-size: 1.2em;
-      line-height: 0.1em;
-      margin-right: 0.5em;
-    }
+  &::before {
+    color: #fff;
+    content: '\f271';
+    font-family: FontAwesome, sans-serif;
+    font-size: 1.2em;
+    line-height: 0.1em;
+    margin-right: 0.5em;
+  }
   &:hover {
-      color: #fff;
-      background-color: $active-hover;
+    color: #fff;
+    background-color: $active-hover;
   }
 }
 
@@ -1699,23 +1796,13 @@ h2.spaces {
  * --------------------------------------------------
  */
 
- .btn-obvious {
-  &:hover {
-    background-color: $hovercalmlight;
-  }
-  &:focus {
-    box-shadow: $box-shadow-focus;
-    background-color: $hovercalmlight;
-  }
- }
-
 .listings-dropdown {
   margin-top: 0;
   background-color: $hovercalm;
   min-width: 200px;
   color: #000;
   border-radius: 0;
-  &>ul>li>a {
+  & > ul > li > a {
     color: #262626;
     font-size: 1em;
     &:hover {
@@ -1728,18 +1815,19 @@ h2.spaces {
 
 .coll-dropdown {
   margin-bottom: 15px;
+
   @include respond-to(medium) {
-    padding: 0px 14px 10px 14px;
+    padding: 0 14px 10px;
   }
 }
 
 .coll-checkbox {
-padding: 10px 0px 0px 15px;
+  padding: 10px 0 0 15px;
+
   @include respond-to(small) {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px;
   }
 }
-
 
 .btn-coll-link {
   font-size: 0.9em;
@@ -1751,16 +1839,19 @@ padding: 10px 0px 0px 15px;
 }
 
 .coll-list {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-list;
+
   @include respond-to(small) {
     & img {
       max-width: 100px;
     }
-    &>tbody>tr>td:nth-child(2) {
-        padding-left: 15px;
+    & > tbody > tr > td:nth-child(2) {
+      padding-left: 15px;
     }
-    &>tbody>tr>td:nth-child(3), &>tbody>tr>td:nth-child(4) {
-        width: 25%;
+    & > tbody > tr > td:nth-child(3),
+    & > tbody > tr > td:nth-child(4) {
+      width: 25%;
     }
   }
 }
@@ -1768,12 +1859,12 @@ padding: 10px 0px 0px 15px;
 .currentlist {
   background-color: $hovercalm;
   &:nth-of-type(odd) {
-      background-color: $hovercalmlight!important;
+    background-color: $hovercalmlight !important;
   }
 }
 
 tr.seealso {
-  background-color: #eeeeeb!important;
+  background-color: #eeeeeb !important;
   td {
     font-style: italic;
   }
@@ -1786,9 +1877,9 @@ p.acknowledgments {
 }
 
 a.coll-access {
-  &:after {
-    content: "\0020\f101";
-    font-family: FontAwesome;
+  &::after {
+    content: '\0020\f101';
+    font-family: FontAwesomem, sans-serif;
   }
 }
 
@@ -1797,38 +1888,45 @@ a.coll-access {
  * --------------------------------------------------
  */
 
- .directory-list {
+.directory-list {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .distinct-list;
   & img {
     max-width: 7em;
   }
-  &>tbody>tr>td {
+  & > tbody > tr > td {
     &:nth-child(2) {
       padding-left: 15px;
     }
+
     @include respond-to(small) {
-      &:nth-child(3), &:nth-child(4) {
+      &:nth-child(3),
+      &:nth-child(4) {
         width: 25%;
       }
     }
+
     @include respond-to(smallonly) {
       padding-left: 15px;
     }
   }
- }
+}
 
 .guide-link {
-  line-height:2.2em;
-  &:before {
-    content: "\f0f6";
-    font-family: FontAwesome;
+  line-height: 2.2em;
+  &::before {
+    content: '\f0f6';
+    font-family: FontAwesome, sans-serif;
     font-size: 1em;
     margin-right: 0.5em;
   }
 }
 
-.list-view, .coll-limit { // "Switch to [...] view"
+.list-view,
+.coll-limit {
+  // "Switch to [...] view"
   padding: 5px 15px;
+
   @include respond-to(small) {
     text-align: right;
     padding: 5px 15px 10px 0;
@@ -1839,7 +1937,7 @@ a.coll-access {
 }
 
 .sdir {
-  margin: 2em 0 0.25em 0;
+  margin: 2em 0 0.25em;
   padding-left: 0;
   h2 {
     color: $ncs-maroon;
@@ -1849,46 +1947,56 @@ a.coll-access {
     margin-bottom: 0.25em;
     border-bottom: 2px solid $ncs-maroon;
     font-weight: 600;
-    a, a:active, a:focus, a:hover {
+    a,
+    a:active,
+    a:focus,
+    a:hover {
       color: $ncs-dark-maroon;
       text-decoration: none;
     }
   }
   article {
+    // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
     @extend .distinct-list;
+
     padding: 1em;
     display: grid;
-    grid-gap: 1vw; //width of screen unit
+    grid-gap: 1vw; // width of screen unit
     margin-right: -15px;
     margin-left: -15px;
+
     @include respond-to(small) {
       grid-template-columns: 1fr 1fr;
       grid-row-gap: 1em;
     }
+
     @include respond-to(medium) {
       grid-template-columns: 100px 3fr 2fr 2fr;
     }
     &:nth-child(odd) {
       background: #f6f6f6;
     }
-    &+article {
-      border-top: 1px solid #D2CDCC;
+    & + article {
+      border-top: 1px solid #d2cdcc;
     }
     & p {
       max-width: 200px;
+
       @include respond-to(large) {
         max-width: unset;
       }
     }
-    h3, h4 {
+    h3,
+    h4 {
       font-family: $base-font;
-      font-size: 1em !important; 
+      font-size: 1em !important;
       font-weight: 600;
       font-style: normal;
       display: block;
       padding-top: 1em;
       margin-top: 0;
       margin-bottom: 0.25em;
+
       @include respond-to(small) {
         padding-top: 0;
       }
@@ -1913,12 +2021,14 @@ a.coll-access {
       padding-bottom: 1em;
       grid-row-start: 1;
       grid-column-start: 1;
+
       @include respond-to(small) {
         padding-bottom: 0;
       }
     }
     ul {
       list-style: none;
+
       @include respond-to(small) {
         padding-left: 1em;
         text-indent: -1em;
@@ -1932,13 +2042,17 @@ a.coll-access {
 }
 
 .sdir-wrap {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .news-wrap;
+
   padding: 0;
   h3 {
     font-size: 1.1em;
     margin-bottom: 0;
   }
-  a, a:active, a:hover {
+  a,
+  a:active,
+  a:hover {
     color: $ncs-links;
     text-decoration: underline;
     font-weight: 600;
@@ -1950,8 +2064,9 @@ a.coll-access {
   .col-xs-12 {
     padding-bottom: 1em;
     margin-top: 1em;
+
     @include respond-to(medium) {
-      &:nth-child(3n+2) {
+      &:nth-child(3n + 2) {
         border-right: 1px solid #eee;
         border-left: 1px solid #eee;
       }
@@ -1964,15 +2079,19 @@ a.coll-access {
  * --------------------------------------------------
  */
 
-button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
+button[id^='mysched'] {
+  // Springshare MyScheduler button styling for staff browse view
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .btn-secondary;
+
   margin-top: 0.5em;
   font-weight: 600;
 }
 
-.staff-profile { //Staff Page, Photo
+.staff-profile {
+  // Staff Page, Photo
   @include respond-to(smallonly) {
-    padding: 0 3em 1.2em 3em;
+    padding: 0 3em 1.2em;
   }
 }
 
@@ -1988,8 +2107,8 @@ body.staffpublicpage {
     padding-left: 0.25em;
   }
   h2.position-title {
-    border-bottom: 1px solid #D6D6CE;
-    margin-top: 0px;
+    border-bottom: 1px solid #d6d6ce;
+    margin-top: 0;
     padding-bottom: 5px;
     font-weight: 400;
   }
@@ -2000,12 +2119,10 @@ body.staffpublicpage {
   display: block;
 }
 
-
 /*
  * Forms (CGI)
  * --------------------------------------------------
  */
-
 
 .form-container {
   form {
@@ -2024,7 +2141,8 @@ body.staffpublicpage {
     padding: 1em;
     margin-bottom: 1em;
   }
-  h2, section > fieldset:only-child > legend {
+  h2,
+  section > fieldset:only-child > legend {
     color: $darkred;
     margin-top: 0;
     margin-bottom: 10px;
@@ -2056,7 +2174,7 @@ body.staffpublicpage {
       order: 2;
     }
   }
-  input[type="submit"] {
+  input[type='submit'] {
     padding: 0.5em 1em;
     margin: 1em;
     color: #fff;
@@ -2065,10 +2183,11 @@ body.staffpublicpage {
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 600;
-    line-height: 1.42857143;
+    line-height: 1.4286;
     border-radius: 4px;
   }
-  input[type="checkbox"], input[type="radio"] {
+  input[type='checkbox'],
+  input[type='radio'] {
     margin-bottom: 1em;
   }
   .ty-message {
@@ -2082,6 +2201,3 @@ body.staffpublicpage {
     }
   }
 }
-
-
-
