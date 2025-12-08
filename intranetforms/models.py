@@ -1,35 +1,38 @@
-from base.models import AbstractBase, get_breadcrumbs
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
 from wagtail.fields import RichTextField
 
+from base.models import AbstractBase, get_breadcrumbs
+
 
 class IntranetFormField(AbstractFormField):
-    page = ParentalKey('IntranetFormPage', related_name='form_fields')
+    page = ParentalKey("IntranetFormPage", related_name="form_fields")
 
 
 class IntranetFormPage(AbstractEmailForm, AbstractBase):
     intro = RichTextField(blank=True)
     thank_you_text = RichTextField(blank=True)
 
-    content_panels = AbstractEmailForm.content_panels + [
-        FieldPanel('intro'),
-        InlinePanel('form_fields', label="Form fields"),
-        FieldPanel('thank_you_text'),
-        MultiFieldPanel(
-            [
-                FieldPanel('to_address'),
-                FieldPanel('from_address'),
-                FieldPanel('subject'),
-            ], "Email"
-        )
-    ] + AbstractBase.content_panels
+    content_panels = (
+        AbstractEmailForm.content_panels
+        + [
+            FieldPanel("intro"),
+            InlinePanel("form_fields", label="Form fields"),
+            FieldPanel("thank_you_text"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("to_address"),
+                    FieldPanel("from_address"),
+                    FieldPanel("subject"),
+                ],
+                "Email",
+            ),
+        ]
+        + AbstractBase.content_panels
+    )
 
-    promote_panels = AbstractEmailForm.promote_panels + \
-        AbstractBase.left_sidebar_panels
+    promote_panels = AbstractEmailForm.promote_panels + AbstractBase.left_sidebar_panels
 
     search_fields = []
 
@@ -37,5 +40,5 @@ class IntranetFormPage(AbstractEmailForm, AbstractBase):
 
     def get_context(self, request):
         context = super(IntranetFormPage, self).get_context(request)
-        context['breadcrumbs'] = get_breadcrumbs(self)
+        context["breadcrumbs"] = get_breadcrumbs(self)
         return context

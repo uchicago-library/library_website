@@ -1,18 +1,19 @@
 import json
 import re
 from functools import cmp_to_key
+from string import ascii_lowercase, ascii_uppercase
+
+from django.db.utils import OperationalError, ProgrammingError
+from django.shortcuts import render
+from wagtail.models import Site
 
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
     redirect_users_without_permissions,
 )
-from django.db.utils import ProgrammingError, OperationalError
-from django.shortcuts import render
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
-from string import ascii_uppercase, ascii_lowercase
-from wagtail.models import Site
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -157,8 +158,8 @@ def figure_out_email(unparsed_email):
             paren_match[0],
         ]
 
-    triangle_match = re.search("(.*)<(.*)>", unparsed_email)
-    paren_match = re.search("(.*)\s*\((.*)\)", unparsed_email)
+    triangle_match = re.search(r"(.*)<(.*)>", unparsed_email)
+    paren_match = re.search(r"(.*)\s*\((.*)\)", unparsed_email)
     bare_email_match = re.search(".*@.*", unparsed_email)
 
     if triangle_match:

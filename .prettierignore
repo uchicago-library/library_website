@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs - these are generated bundles, not source
+**/bundles/**
+**/CACHE/**
+
+# Django collected static files (root static/ directory)
+# We only want to lint source files in app/static/ directories
+static/**
+
+# Minified/vendor files
+**/*.min.js
+**/*.min.css
+**/vendor/**
+
+# Specific vendor JS files
+base/static/base/js/bootstrap.js
+base/static/base/js/typeahead.js
+base/static/base/css/calendar/res-timeline.js
+public/static/public/js/bootstrap-select.js
+
+# Vendor CSS/SCSS files
+base/static/base/css/bootstrap.css
+base/static/base/css/font-awesome-4.6.3/
+base/static/base/css/calendar/
+base/static/base/css/iconfont/
+base/static/base/css/normalize.css
+base/static/base/css/third-party/
+
+# Django migrations
+**/migrations/**
+
+# Git
+.git/
+
+# Package files
+package-lock.json
+
+# Legacy jQuery files - use ESLint indentation only, not Prettier
+**/static/**/js/*.js
+!**/static/**/js/NewsFeed.js
+!**/static/**/js/CGIMailForm.js

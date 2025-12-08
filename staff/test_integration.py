@@ -1,9 +1,9 @@
 from io import StringIO
 
-from base.utils import get_xml_from_directory_api
 from django.test import TestCase
 from lxml import etree
 
+from base.utils import get_xml_from_directory_api
 from staff.utils import get_all_library_cnetids_from_directory
 
 
@@ -42,7 +42,7 @@ class UniversityDirectoryTestCase(TestCase):
 
         root = etree.XML(
             get_xml_from_directory_api(
-                'https://directory.uchicago.edu/api/v2/divisions/16.xml'
+                "https://directory.uchicago.edu/api/v2/divisions/16.xml"
             )
         )
         self.assertEqual(dtd.validate(root), True)
@@ -79,9 +79,9 @@ class UniversityDirectoryTestCase(TestCase):
         cnetids = get_all_library_cnetids_from_directory()
         root = etree.XML(
             get_xml_from_directory_api(
-                'https://directory.uchicago.edu/api/v2/individuals/'
+                "https://directory.uchicago.edu/api/v2/individuals/"
                 + cnetids[0]
-                + '.xml'
+                + ".xml"
             )
         )
         self.assertEqual(dtd.validate(root), True)
@@ -145,15 +145,15 @@ class UniversityDirectoryTestCase(TestCase):
 
         cnetids = get_all_library_cnetids_from_directory(xml_string)
 
-        self.assertEqual(set(cnetids), set(('lovelee', 'danger')))
+        self.assertEqual(set(cnetids), set(("lovelee", "danger")))
 
     def assertInfoEqual(self, a, b):
-        for field in ['cnetid', 'officialName', 'displayName']:
+        for field in ["cnetid", "officialName", "displayName"]:
             if not a[field] == b[field]:
                 return False
 
-        tds_a = sorted([a['title_department_subdepartments']])
-        tds_b = sorted([b['title_department_subdepartments']])
+        tds_a = sorted([a["title_department_subdepartments"]])
+        tds_b = sorted([b["title_department_subdepartments"]])
 
         if not len(tds_a) == len(tds_b):
             return False
@@ -165,12 +165,12 @@ class UniversityDirectoryTestCase(TestCase):
             t = t + 1
 
         tds_a = sorted(
-            a['title_department_subdepartments_dicts'],
-            key=lambda t: t['title'] + t['department'],
+            a["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
         )
         tds_b = sorted(
-            b['title_department_subdepartments_dicts'],
-            key=lambda t: t['title'] + t['department'],
+            b["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
         )
 
         if not len(tds_a) == len(tds_b):
@@ -178,7 +178,7 @@ class UniversityDirectoryTestCase(TestCase):
 
         t = 0
         while t < len(tds_a):
-            for field in ['department', 'title', 'email', 'facultyexchange', 'phone']:
+            for field in ["department", "title", "email", "facultyexchange", "phone"]:
                 if not tds_a[t][field] == tds_b[t][field]:
                     return False
             t = t + 1

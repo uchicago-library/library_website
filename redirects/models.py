@@ -1,4 +1,3 @@
-from base.models import BasePage, DefaultBodyFields, LinkFields, PublicBasePage
 from django.shortcuts import redirect
 from wagtail.admin.panels import (
     FieldPanel,
@@ -10,6 +9,8 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.fields import StreamField
 from wagtail.models import Page
+
+from base.models import BasePage, DefaultBodyFields, LinkFields, PublicBasePage
 
 
 class RedirectPage(PublicBasePage, LinkFields):
@@ -30,11 +31,11 @@ class RedirectPage(PublicBasePage, LinkFields):
         + [
             MultiFieldPanel(
                 [
-                    PageChooserPanel('link_page'),
-                    FieldPanel('link_external'),
-                    FieldPanel('link_document'),
+                    PageChooserPanel("link_page"),
+                    FieldPanel("link_external"),
+                    FieldPanel("link_document"),
                 ],
-                heading='Redirect to',
+                heading="Redirect to",
             )
         ]
         + PublicBasePage.content_panels
@@ -43,24 +44,24 @@ class RedirectPage(PublicBasePage, LinkFields):
     admin_content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('quicklinks_title'),
-                FieldPanel('quicklinks'),
+                FieldPanel("quicklinks_title"),
+                FieldPanel("quicklinks"),
             ],
-            heading='Quicklinks',
+            heading="Quicklinks",
         ),
-        FieldPanel('body'),
+        FieldPanel("body"),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-            ObjectList(admin_content_panels, heading='Admin'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(admin_content_panels, heading="Admin"),
         ]
     )
 
-    api_fields = PublicBasePage.api_fields + [APIField('body')]
+    api_fields = PublicBasePage.api_fields + [APIField("body")]
 
     search_fields = []
 
@@ -84,11 +85,11 @@ class LoopRedirectPage(BasePage, LinkFields):
         + [
             MultiFieldPanel(
                 [
-                    PageChooserPanel('link_page'),
-                    FieldPanel('link_external'),
-                    FieldPanel('link_document'),
+                    PageChooserPanel("link_page"),
+                    FieldPanel("link_external"),
+                    FieldPanel("link_document"),
                 ],
-                heading='Redirect to',
+                heading="Redirect to",
             )
         ]
         + BasePage.content_panels

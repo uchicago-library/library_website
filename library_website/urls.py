@@ -1,9 +1,14 @@
-from base.views import chat_status, external_include, json_events, json_hours
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, re_path
 from django.views.generic.base import RedirectView
+from wagtail import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.contrib.sitemaps.views import sitemap
+from wagtail.documents import urls as wagtaildocs_urls
+
+from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
 from intranethome.views import mail_aliases_view
 from item_servlet.views import item_servlet
@@ -18,10 +23,6 @@ from search.views import ebooks_search
 from search.views import loop_search as search_view
 from staff.views import staff, staff_api
 from units.views import units as unit_view
-from wagtail import urls as wagtail_urls
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.contrib.sitemaps.views import sitemap
-from wagtail.documents import urls as wagtaildocs_urls
 
 from .api import api_router
 
@@ -58,11 +59,10 @@ urlpatterns = [
         mail_aliases_view,
         name="mail_aliases",
     ),
-    re_path(r'^turnstile/', include('django_turnstile_site_protect.urls')),
+    re_path(r"^turnstile/", include("django_turnstile_site_protect.urls")),
     re_path(r"^citation_display$", citation_display, name="citation_display"),
     re_path(r"^collex/collections/$", RedirectView.as_view(url="/collex/")),
     re_path(r"^collex/exhibits/$", RedirectView.as_view(url="/collex/?view=exhibits")),
-    re_path(r"^workflowautomator/", include("workflowautomator.urls")),
     re_path(r"rss/(?P<slug>[-\w]+)/$", RSSFeeds()),
     re_path(r"", include(wagtail_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,118 +1,118 @@
 {% if browses %}
-<div id="accordion" role="tablist" aria-multiselectable="true">
-    {% for item_name, item_link in browses.items %}
-    <div class="card">
-        <div class="card-header" role="tab" id="{{ item_name }}">
-            <h3 class="mb-0">
-		<a href="{{ item_link }}"
-		   aria-expanded="false"
-		   aria-controls="{{ subject }}">
-		    <i class="fa" aria-hidden="true"></i> {{ item_name }}
-		</a>
-            </h3>
-        </div>
+    <div id="accordion" role="tablist" aria-multiselectable="true">
+        {% for item_name, item_link in browses.items %}
+            <div class="card">
+                <div class="card-header" role="tab" id="{{ item_name }}">
+                    <h3 class="mb-0">
+                        <a href="{{ item_link }}"
+                           aria-expanded="false"
+                           aria-controls="{{ subject }}">
+                            <i class="fa" aria-hidden="true"></i> {{ item_name }}
+                        </a>
+                    </h3>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 {% endif %}
 
 {% if objects %}
-{% for object in objects %}
-<figure class="figure">
-    {% if object.image_link %}
-    <a href="{{ object.wagtail_link }}">
-	<img src="{{ object.image_link }}" alt="{{ object.title }}">
-    </a>
-    {% endif %}
-    <figcaption>
-	<a href="{{ object.wagtail_link }}">
-	    <h3>{{ object.title }}</h3>
-	</a>
-	<ul>
-	    <li>Creator: {{ object.creator }}</li>
-	    <li>Publisher: {{ object.publisher }}</li>
-	    <li>Date: {{ object.date }}</li>
-	    <li>Language: {{ object.language }}</li>
-	</ul>
-    </figcaption>
-</figure>
-{% endfor %}
+    {% for object in objects %}
+        <figure class="figure">
+            {% if object.image_link %}
+                <a href="{{ object.wagtail_link }}">
+                    <img src="{{ object.image_link }}" alt="{{ object.title }}">
+                </a>
+            {% endif %}
+            <figcaption>
+                <a href="{{ object.wagtail_link }}">
+                    <h3>{{ object.title }}</h3>
+                </a>
+                <ul>
+                    <li>Creator: {{ object.creator }}</li>
+                    <li>Publisher: {{ object.publisher }}</li>
+                    <li>Date: {{ object.date }}</li>
+                    <li>Language: {{ object.language }}</li>
+                </ul>
+            </figcaption>
+        </figure>
+    {% endfor %}
 {% endif %}
 
 {% if list_objects %}
 
-{% if list_objects.has_other_pages %}
-<ul class="pagination">
+    {% if list_objects.has_other_pages %}
+        <ul class="pagination">
 
-    {% if list_objects.has_previous %}
-	<li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
-    {% else %}
-	<li class="disabled"><span>&laquo;</span></li>
+            {% if list_objects.has_previous %}
+                <li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% for i in list_objects.paginator.page_range %}
+                {% if list_objects.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if list_objects.has_next %}
+                <li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
     {% endif %}
-
-    {% for i in list_objects.paginator.page_range %}
-	{% if list_objects.number == i %}
-	    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-	{% else %}
-	    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
-	{% endif %}
-    {% endfor %}
-
-    {% if list_objects.has_next %}
-	<li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
-    {% else %}
-	<li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-</ul>
-{% endif %}
 
 
 <!-- TODO: eliminate this duplication -->
-{% for object in list_objects %}
-<figure class="figure">
-    {% if object.image_link %}
-    <a href="{{ object.wagtail_link }}">
-	<img src="{{ object.image_link }}" alt="{{ object.title }}">
-    </a>
-    {% endif %}
-    <figcaption>
-	<a href="{{ object.wagtail_link }}">
-	    <h3>{{ object.title }}</h3>
-	</a>
-	<ul>
-	    <li>Creator: {{ object.creator }}</li>
-	    <li>Publisher: {{ object.publisher }}</li>
-	    <li>Date: {{ object.date }}</li>
-	    <li>Language: {{ object.language }}</li>
-	</ul>
-    </figcaption>
-</figure>
-{% endfor %}
-
-{% if list_objects.has_other_pages %}
-<ul class="pagination">
-
-    {% if list_objects.has_previous %}
-	<li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
-    {% else %}
-	<li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-
-    {% for i in list_objects.paginator.page_range %}
-	{% if list_objects.number == i %}
-	    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-	{% else %}
-	    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
-	{% endif %}
+    {% for object in list_objects %}
+        <figure class="figure">
+            {% if object.image_link %}
+                <a href="{{ object.wagtail_link }}">
+                    <img src="{{ object.image_link }}" alt="{{ object.title }}">
+                </a>
+            {% endif %}
+            <figcaption>
+                <a href="{{ object.wagtail_link }}">
+                    <h3>{{ object.title }}</h3>
+                </a>
+                <ul>
+                    <li>Creator: {{ object.creator }}</li>
+                    <li>Publisher: {{ object.publisher }}</li>
+                    <li>Date: {{ object.date }}</li>
+                    <li>Language: {{ object.language }}</li>
+                </ul>
+            </figcaption>
+        </figure>
     {% endfor %}
 
-    {% if list_objects.has_next %}
-	<li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
-    {% else %}
-	<li class="disabled"><span>&raquo;</span></li>
+    {% if list_objects.has_other_pages %}
+        <ul class="pagination">
+
+            {% if list_objects.has_previous %}
+                <li><a href="{{ root_link }}{{ previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% for i in list_objects.paginator.page_range %}
+                {% if list_objects.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="{{ root_link }}{{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if list_objects.has_next %}
+                <li><a href="{{ root_link }}{{ list_objects.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
     {% endif %}
-</ul>
-{% endif %}
 
 
 {% endif %}

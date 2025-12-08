@@ -8,7 +8,7 @@
 {% block content %}
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-12 col-md-12 swnews">
-  	  <article>
+      <article>
         <div class="media">
           {% if thumbnail %}
             <div class="push-left">
@@ -23,12 +23,12 @@
             {% for block in self.body %}
               {{ block }}
             {% endfor %}
-      
+
             <hr/>
             <p>Read more <a href="/">news stories</a>.</p>
           </div>
         </div>
-  	  </article>
+      </article>
     </div>
   </div>
 {% endblock %}

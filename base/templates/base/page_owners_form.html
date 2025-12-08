@@ -38,14 +38,14 @@
 
     <div class="nice-padding">
         <h2>Page Owners Report</h2>
-        <p>Download a report of pages and ownership information in CSV format. The report will tell you 
-        who is the Page Maintainer, Editor, and Content Specialist for every page. Data can be downloaded
-        for all pages on the site or restricted by site (Loop/Public) or cnetid and role. Upon submission,
-        your download will begin promptly, however, it might take awhile to complete.</p>
+        <p>Download a report of pages and ownership information in CSV format. The report will tell you
+            who is the Page Maintainer, Editor, and Content Specialist for every page. Data can be downloaded
+            for all pages on the site or restricted by site (Loop/Public) or cnetid and role. Upon submission,
+            your download will begin promptly, however, it might take awhile to complete.</p>
         <ul>
-          <li>If no limits are selected, ownership data will be downloadad for all pages in the system.</li>
-          <li>If only a staff member is selected, all pages will be returned if <em>any</em> role matches the given staff member.</li>
-          <li>If a staff member and role are both selected, only pages where the role is assigned to the given staff member will be returned.</li>
+            <li>If no limits are selected, ownership data will be downloadad for all pages in the system.</li>
+            <li>If only a staff member is selected, all pages will be returned if <em>any</em> role matches the given staff member.</li>
+            <li>If a staff member and role are both selected, only pages where the role is assigned to the given staff member will be returned.</li>
         </ul>
         <form action="{% url 'page_owners_report' %}" method="POST">
             {% csrf_token %}
@@ -55,7 +55,7 @@
                     {% block fields %}
                         <li>{% include "wagtailadmin/shared/field.html" with field=form.site %}</li>
                         <li>{% include "wagtailadmin/shared/field.html" with field=form.cnetid %}</li>
-                        <li>{% include "wagtailadmin/shared/field.html" with field=form.role %}</li>  
+                        <li>{% include "wagtailadmin/shared/field.html" with field=form.role %}</li>
                     {% endblock fields %}
                     <li><input type="submit" value="{% trans 'Download Report' %}" class="button" /></li>
                 </ul>

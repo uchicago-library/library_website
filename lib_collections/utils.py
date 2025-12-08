@@ -2,34 +2,32 @@
 iiifcollectionbrowse
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals
-)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
-import os
 import re
 from urllib.parse import urlencode
 
 import requests
+
 # from citeproc import (
 #     Citation, CitationItem, CitationStylesBibliography, CitationStylesStyle,
 #     formatter
 # )
 # from citeproc.source.json import CiteProcJSON
 from django.utils.text import slugify
+
 from library_website.settings import (
+    CITATION_ROOT,
     IIIF_PREFIX,
     IIIF_VIEWER_PREFIX,
-    WAGTAIL_PREFIX,
     LANGUAGE_ABBREVS,
-    CITATION_ROOT,
-    TURTLE_ROOT
+    TURTLE_ROOT,
+    WAGTAIL_PREFIX,
 )
-from collections import OrderedDict
 
 
-class GeneralPurpose():
+class GeneralPurpose:
     """
     Namespace class containing some general-purpose functions.  In the
     context of this module, they're here to help with unit testing.
@@ -71,20 +69,21 @@ class GeneralPurpose():
         Returns:
             A constant function to the input.
         """
+
         def partial(y):
             return x
+
         return partial
 
 
-class CBrowseURL():
+class CBrowseURL:
     """
     Namespace class containing utility functions for creating cluster
     browse URLs for both Wagtail and IIIF
     """
 
     def mk_cbrowse_url(
-        prefix: str, slug: str, browse_type: str, browse_name: str,
-        extension: str
+        prefix: str, slug: str, browse_type: str, browse_name: str, extension: str
     ) -> str:
         """
         Create a local route to a digital collections cluster browse.
@@ -104,12 +103,14 @@ class CBrowseURL():
             URL string
         """
         return "%s/%s/cluster-browse/%s/%s%s" % (
-            prefix, slug, browse_type, browse_name, extension
+            prefix,
+            slug,
+            browse_type,
+            browse_name,
+            extension,
         )
 
-    def mk_cbrowse_url_iiif(
-        slug: str, browse_name: str, browse_type: str
-    ) -> str:
+    def mk_cbrowse_url_iiif(slug: str, browse_name: str, browse_type: str) -> str:
         """
         mk_cbrowse_url, specialized to the IIIF host
         """
@@ -118,10 +119,7 @@ class CBrowseURL():
         )
 
     def mk_cbrowse_url_wagtail(
-        slug: str,
-        browse_type: str,
-        browse_name: str,
-        full: bool = False
+        slug: str, browse_type: str, browse_name: str, full: bool = False
     ) -> str:
         """
         mk_cbrowse_url, specialized to the Wagtail host
@@ -167,9 +165,7 @@ class CBrowseURL():
         Returns:
             URL string
         """
-        return "%s/%s/cluster-browse/%s%s" % (
-            prefix, slug, browse_type, extension
-        )
+        return "%s/%s/cluster-browse/%s%s" % (prefix, slug, browse_type, extension)
 
     def mk_cbrowse_type_url_iiif(slug: str, browse_type: str) -> str:
         """
@@ -183,9 +179,7 @@ class CBrowseURL():
         Returns:
             URL string
         """
-        return CBrowseURL.mk_cbrowse_type_url(
-            IIIF_PREFIX, slug, browse_type, ".json"
-        )
+        return CBrowseURL.mk_cbrowse_type_url(IIIF_PREFIX, slug, browse_type, ".json")
 
     def mk_cbrowse_type_url_wagtail(
         slug: str, browse_type: str, full: bool = False
@@ -200,24 +194,20 @@ class CBrowseURL():
         Returns:
             URL string
         """
-        url = CBrowseURL.mk_cbrowse_type_url(
-            WAGTAIL_PREFIX, slug, browse_type, ""
-        )
+        url = CBrowseURL.mk_cbrowse_type_url(WAGTAIL_PREFIX, slug, browse_type, "")
         if full:
             return "https://www.lib.uchicago.edu" + url
         else:
             return url
 
 
-class LBrowseURL():
+class LBrowseURL:
     """
     Namespace class containing utility functions for creating list
     browse URLs for both Wagtail and IIIF
     """
 
-    def mk_lbrowse_url(
-        prefix: str, slug: str, browse_name: str, extension: str
-    ) -> str:
+    def mk_lbrowse_url(prefix: str, slug: str, browse_name: str, extension: str) -> str:
         """
         Create a local route to a digital collections list browse.
 
@@ -233,10 +223,7 @@ class LBrowseURL():
         Returns:
             URL string
         """
-        return "%s/%s/list-browse/%s%s" % (prefix,
-                                           slug,
-                                           browse_name,
-                                           extension)
+        return "%s/%s/list-browse/%s%s" % (prefix, slug, browse_name, extension)
 
     def mk_lbrowse_url_iiif(slug: str, browse_name: str) -> str:
         """
@@ -250,9 +237,7 @@ class LBrowseURL():
         Returns:
             URL string
         """
-        return LBrowseURL.mk_lbrowse_url(
-            IIIF_PREFIX, slug, browse_name, ".json"
-        )
+        return LBrowseURL.mk_lbrowse_url(IIIF_PREFIX, slug, browse_name, ".json")
 
     def mk_lbrowse_url_wagtail(slug: str, browse_name: str) -> str:
         """
@@ -261,7 +246,7 @@ class LBrowseURL():
         return LBrowseURL.mk_lbrowse_url(WAGTAIL_PREFIX, slug, browse_name, "")
 
 
-class DisplayBrowse():
+class DisplayBrowse:
     """
     Namespace class containing code for generating digital collection
     object listings, intermediate cluster browses, and object page
@@ -280,13 +265,13 @@ class DisplayBrowse():
         Returns:
             string representing the name of the browse
         """
-        slug_list = slug.split('-')
-        spaces = ' '.join([x.capitalize() for x in slug_list])
+        slug_list = slug.split("-")
+        spaces = " ".join([x.capitalize() for x in slug_list])
         return spaces
 
-    def get_iiif_labels_language(url: str,
-                                 lang: str,
-                                 modify=GeneralPurpose.noop) -> list:
+    def get_iiif_labels_language(
+        url: str, lang: str, modify=GeneralPurpose.noop
+    ) -> list:
         """
         Helper function for get_iiif_labels.
 
@@ -309,16 +294,14 @@ class DisplayBrowse():
             return []
         else:
             j = r.json()
-            d = j['items']
+            d = j["items"]
             return [
-                (x['label'][lang][0], x['metadata'][0]['value'][lang][0])
-                for x in d
+                (x["label"][lang][0], x["metadata"][0]["value"][lang][0]) for x in d
             ]
 
-    def get_iiif_labels(url: str,
-                        browse_type: str,
-                        slug: str,
-                        modify=GeneralPurpose.noop) -> dict:
+    def get_iiif_labels(
+        url: str, browse_type: str, slug: str, modify=GeneralPurpose.noop
+    ) -> dict:
         """
         Get IIIF data corresponding to a list of browses, package it up in
         JSON data for display in the Wagtail browse template
@@ -342,8 +325,7 @@ class DisplayBrowse():
         # assume English as the default language for now; the language
         # abbreviation can be parameterized later
         try:
-            pairs = DisplayBrowse.get_iiif_labels_language(
-                url, 'en', modify=modify)
+            pairs = DisplayBrowse.get_iiif_labels_language(url, "en", modify=modify)
         except requests.exceptions.RequestException:
             pairs = []
 
@@ -354,11 +336,11 @@ class DisplayBrowse():
 
         # output dictionary for display in browse template
         return lists_to_dict(
-            render_count(pairs), [
-                CBrowseURL.mk_cbrowse_url_wagtail(
-                    slug, browse_type, slugify(label)
-                ) for label in labels
-            ]
+            render_count(pairs),
+            [
+                CBrowseURL.mk_cbrowse_url_wagtail(slug, browse_type, slugify(label))
+                for label in labels
+            ],
         )
 
     def mk_wagtail_object_url(collection_slug: str, manifid: str) -> str:
@@ -374,10 +356,7 @@ class DisplayBrowse():
         Returns:
             Wagtail URL for the object with the relevant NOID
         """
-        return (
-            "/collex/collections/%s/object/%s" %
-            (collection_slug, manifid)
-        )
+        return "/collex/collections/%s/object/%s" % (collection_slug, manifid)
 
     def create_field(name: str, dct: dict) -> list:
         """
@@ -429,11 +408,11 @@ class DisplayBrowse():
             values as values
         """
         output: dict = {}
-        for x in j['metadata']:
+        for x in j["metadata"]:
             DisplayBrowse.iiif_field_update(
                 output,
-                x['label']['en'][0].lower(),
-                x['value']['en'][0],
+                x["label"]["en"][0].lower(),
+                x["value"]["en"][0],
             )
         return output
 
@@ -449,11 +428,11 @@ class DisplayBrowse():
             Collection object NOID
 
         """
-        rexp = re.search(r'.*\/ark\%3A61001\%2F([\d|\w]+)/', url)
+        rexp = re.search(r".*\/ark\%3A61001\%2F([\d|\w]+)/", url)
         try:
             return rexp[1]
         except TypeError:
-            return ''
+            return ""
 
     def comma_join(lst):
         """
@@ -484,48 +463,39 @@ class DisplayBrowse():
             a collection item in each browse
 
         """
-        manifid = DisplayBrowse.extract_manifid_thumbnail(
-            j['thumbnail'][0]['id']
-        )
+        manifid = DisplayBrowse.extract_manifid_thumbnail(j["thumbnail"][0]["id"])
 
         metadata = DisplayBrowse.pull_metadata_labels(j)
         create_field = DisplayBrowse.create_field
 
-        title = create_field('title', metadata)
-        publisher = create_field('publisher', metadata)
-        creator = create_field('creator', metadata)
-        date = create_field('date', metadata)
-        language = create_field('language', metadata)
+        title = create_field("title", metadata)
+        publisher = create_field("publisher", metadata)
+        creator = create_field("creator", metadata)
+        date = create_field("date", metadata)
+        language = create_field("language", metadata)
 
         output = {
-            'title':
-            joiner(title),
-            'creator':
-            joiner(creator),
-            'date':
-            joiner(date),
-            'publisher':
-            joiner(publisher),
-            'language':
-            joiner([LANGUAGE_ABBREVS[x] for x in language]),
-            'image_link':
-            j['thumbnail'][0]['id'],
-            'manifest':
-            j['id'],
-            'manifid':
-            manifid,
-            'wagtail_link':
-            DisplayBrowse.mk_wagtail_object_url(
-                'social-scientists-map-chicago', manifid
+            "title": joiner(title),
+            "creator": joiner(creator),
+            "date": joiner(date),
+            "publisher": joiner(publisher),
+            "language": joiner([LANGUAGE_ABBREVS[x] for x in language]),
+            "image_link": j["thumbnail"][0]["id"],
+            "manifest": j["id"],
+            "manifid": manifid,
+            "wagtail_link": DisplayBrowse.mk_wagtail_object_url(
+                "social-scientists-map-chicago", manifid
             ),
         }
         return output
 
-    def get_cbrowse_items(collection_slug: str,
-                          browse: str,
-                          browse_type: str,
-                          modify=GeneralPurpose.noop,
-                          func=GeneralPurpose.identity) -> list:
+    def get_cbrowse_items(
+        collection_slug: str,
+        browse: str,
+        browse_type: str,
+        modify=GeneralPurpose.noop,
+        func=GeneralPurpose.identity,
+    ) -> list:
         """
         Retrieve cluster browse links from IIIF server.
 
@@ -557,18 +527,22 @@ class DisplayBrowse():
             modify(r)
             if r.status_code >= 200 and r.status_code < 300:
                 j = func(r.json())
-                objects = [DisplayBrowse.prepare_browse_json(
-                    x, DisplayBrowse.comma_join) for x in j['items']]
+                objects = [
+                    DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
+                    for x in j["items"]
+                ]
                 return objects
             else:
-                return ''
+                return ""
         except requests.exceptions.RequestException:
-            return ''
+            return ""
 
-    def get_lbrowse_items(collection_slug: str,
-                          browse: str,
-                          modify=GeneralPurpose.noop,
-                          func=GeneralPurpose.identity) -> list:
+    def get_lbrowse_items(
+        collection_slug: str,
+        browse: str,
+        modify=GeneralPurpose.noop,
+        func=GeneralPurpose.identity,
+    ) -> list:
         """
         Retrieve list browse links from IIIF server.
 
@@ -598,16 +572,18 @@ class DisplayBrowse():
             modify(r)
             if r.status_code >= 200 and r.status_code < 300:
                 j = func(r.json())
-                objects = [DisplayBrowse.prepare_browse_json(
-                    x, DisplayBrowse.comma_join) for x in j['items']]
+                objects = [
+                    DisplayBrowse.prepare_browse_json(x, DisplayBrowse.comma_join)
+                    for x in j["items"]
+                ]
                 return objects
             else:
-                return ''
+                return ""
         except requests.exceptions.RequestException:
-            return ''
+            return ""
 
 
-class CitationInfo():
+class CitationInfo:
     """
     Namespace class containing utility functions/constants for interacting with
     the citation restful service
@@ -616,30 +592,29 @@ class CitationInfo():
     # citation config that gets autopopulated in the Wagtail admin
     # panel when you create a new collection
     default_config = (
-        'base=http://ark.lib.uchicago.edu/ark:/61001\n'
-        '\n'
-        '[dc]\n'
-        '\turi=http://purl.org/dc/elements/1.1/\n'
-        '\ttype=type\n'
-        '\tidentifier=id\n'
-        '\tlanguage=language\n'
-        '\tcreator=author\n'
-        '\tformat=medium\n'
-        '\tpublisher=publisher\n'
-        '\ttitle=title\n'
-        '[dcterms]\n'
-        '\turi=http://purl.org/dc/terms/\n'
-        '\tissued=issued\n'
-        '\tisPartOf=collection-title\n'
-        '[bf]\n'
-        '\turi=http://id.loc.gov/ontologies/bibframe/\n'
-        '\tClassificationLcc=call-number\n'
-        '\tDoi=DOI\n\tplace=pubisher-place\n'
-        '\tscale=scale'
+        "base=http://ark.lib.uchicago.edu/ark:/61001\n"
+        "\n"
+        "[dc]\n"
+        "\turi=http://purl.org/dc/elements/1.1/\n"
+        "\ttype=type\n"
+        "\tidentifier=id\n"
+        "\tlanguage=language\n"
+        "\tcreator=author\n"
+        "\tformat=medium\n"
+        "\tpublisher=publisher\n"
+        "\ttitle=title\n"
+        "[dcterms]\n"
+        "\turi=http://purl.org/dc/terms/\n"
+        "\tissued=issued\n"
+        "\tisPartOf=collection-title\n"
+        "[bf]\n"
+        "\turi=http://id.loc.gov/ontologies/bibframe/\n"
+        "\tClassificationLcc=call-number\n"
+        "\tDoi=DOI\n\tplace=pubisher-place\n"
+        "\tscale=scale"
     )
 
-    def get_turtle_data(manifid: str,
-                        modify=GeneralPurpose.noop) -> str:
+    def get_turtle_data(manifid: str, modify=GeneralPurpose.noop) -> str:
         """
         Given a collection object NOID, query the primary ARK resolver to
         obtain the Turtle data for the object, serialized in the form
@@ -665,14 +640,13 @@ class CitationInfo():
             if r.status_code >= 200 and r.status_code < 300:
                 return str(r.content, "utf-8")
             else:
-                return ''
-        except (requests.exceptions.RequestException):
-            return ''
+                return ""
+        except requests.exceptions.RequestException:
+            return ""
 
-    def get_citation(mode: str,
-                     turtle_data: str,
-                     config: str,
-                     modify=GeneralPurpose.noop) -> str:
+    def get_citation(
+        mode: str, turtle_data: str, config: str, modify=GeneralPurpose.noop
+    ) -> str:
         """
         Query the citation restful service for citation info.  Mode can be
         bibtex, csl, ris, or xml, and the two inputs are the
@@ -699,17 +673,15 @@ class CitationInfo():
                 "mode": mode,
                 "turtle": turtle_data,
                 "config": config,
-            }
+            },
         )
         modify(r)
         if r.status_code >= 200 and r.status_code < 300:
             return str(r.content, "utf-8")
         else:
-            return ''
+            return ""
 
-    def get_csl(turtle_data: str,
-                config: str,
-                modify=GeneralPurpose.noop) -> dict:
+    def get_csl(turtle_data: str, config: str, modify=GeneralPurpose.noop) -> dict:
         """
         Main function to query the citation service for CSL-JSON info in
         models.py.  This is used to live-display the collection object
@@ -726,14 +698,10 @@ class CitationInfo():
         try:
             c = CitationInfo.get_citation("csl", turtle_data, config, modify)
             return json.loads(c)
-        except (json.JSONDecodeError,
-                TypeError,
-                requests.exceptions.RequestException):
-            return ''
+        except (json.JSONDecodeError, TypeError, requests.exceptions.RequestException):
+            return ""
 
-    def get_zotero(turtle_data: str,
-                   config: str,
-                   modify=GeneralPurpose.noop) -> str:
+    def get_zotero(turtle_data: str, config: str, modify=GeneralPurpose.noop) -> str:
         """
         Main function to query the citation service for Zotero harvesting
         meta tags in models.py.
@@ -747,12 +715,11 @@ class CitationInfo():
             Zotero harvesting HTML
         """
         try:
-            return CitationInfo.get_citation("zotero",
-                                             turtle_data,
-                                             config,
-                                             modify=modify)
+            return CitationInfo.get_citation(
+                "zotero", turtle_data, config, modify=modify
+            )
         except requests.exceptions.RequestException:
-            return ''
+            return ""
 
     # def csl_json_to_html(csl_json: dict, style: str) -> str:
     #     """
@@ -795,10 +762,9 @@ class CitationInfo():
     #         except (AttributeError, TypeError):
     #             return ''
 
-    def citation_export(mode: str,
-                        turtle_data: str,
-                        config: str,
-                        modify=GeneralPurpose.noop):
+    def citation_export(
+        mode: str, turtle_data: str, config: str, modify=GeneralPurpose.noop
+    ):
         """
         Create link to display BibTeX or RIS citation as plaintext in the
         browser by forwarding citation information to the
@@ -817,17 +783,14 @@ class CitationInfo():
         Returns:
             URL to display the relevant citation in plaintext
         """
-        c = CitationInfo.get_citation(mode,
-                                      turtle_data,
-                                      config,
-                                      modify=modify)
+        c = CitationInfo.get_citation(mode, turtle_data, config, modify=modify)
         if c:
             query_params = {"content": c}
             query_string = urlencode(query_params)
             output = "/citation_display?" + query_string
             return output
         else:
-            return ''
+            return ""
 
     def get_bibtex(turtle_data, config, modify=GeneralPurpose.noop):
         """
@@ -845,16 +808,13 @@ class CitationInfo():
             BibTeX viewing URL
         """
         try:
-            return CitationInfo.citation_export("bibtex",
-                                                turtle_data,
-                                                config,
-                                                modify=modify)
+            return CitationInfo.citation_export(
+                "bibtex", turtle_data, config, modify=modify
+            )
         except requests.exceptions.RequestException:
-            return ''
+            return ""
 
-    def get_ris(turtle_data,
-                config,
-                modify=GeneralPurpose.noop):
+    def get_ris(turtle_data, config, modify=GeneralPurpose.noop):
         """
         Main function to create link to display RIS citation in models.py.
 
@@ -869,12 +829,11 @@ class CitationInfo():
             RIS viewing URL
         """
         try:
-            return CitationInfo.citation_export("ris",
-                                                turtle_data,
-                                                config,
-                                                modify=modify)
+            return CitationInfo.citation_export(
+                "ris", turtle_data, config, modify=modify
+            )
         except requests.exceptions.RequestException:
-            return ''
+            return ""
 
 
 class IIIFDisplay:
@@ -903,8 +862,7 @@ class IIIFDisplay:
         """
         return IIIF_VIEWER_PREFIX + IIIFDisplay.mk_manifest_url(manifid)
 
-    def test_url(url: str,
-                 modify=GeneralPurpose.noop) -> str:
+    def test_url(url: str, modify=GeneralPurpose.noop) -> str:
         """
         Test that an object manifest exists.
 
@@ -922,12 +880,11 @@ class IIIFDisplay:
             if r.status_code >= 200 and r.status_code < 300:
                 return url
             else:
-                return ''
+                return ""
         except (requests.exceptions.RequestException, AttributeError):
-            return ''
+            return ""
 
-    def get_viewer_url(manifid: str,
-                       modify=GeneralPurpose.noop) -> str:
+    def get_viewer_url(manifid: str, modify=GeneralPurpose.noop) -> str:
         """
         Test manifest URL and if it is valid, return a URL for the
         Universal Viewer for that object.
@@ -938,17 +895,15 @@ class IIIFDisplay:
             modify: testing-only function for modifying responses
         """
 
-        test = IIIFDisplay.test_url(IIIFDisplay
-                                    .mk_manifest_url(manifid),
-                                    modify=modify)
+        test = IIIFDisplay.test_url(IIIFDisplay.mk_manifest_url(manifid), modify=modify)
         if test:
             url = IIIFDisplay.mk_viewer_url(manifid)
             return IIIFDisplay.test_url(url)
         else:
-            return ''
+            return ""
 
 
-class Testing():
+class Testing:
     """
     Namespace class containing helper functions and constants for
     testing purposes only.  The functions in this class are intended
@@ -958,49 +913,49 @@ class Testing():
 
     # sample turtle data for testing
     example = (
-        '@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n'
-        '@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n'
-        '@prefix dc: <http://purl.org/dc/elements/1.1/> .\n'
-        '@prefix dcterms: <http://purl.org/dc/terms/> .\n'
-        '@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n'
-        '@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n'
-        '@prefix ore: <http://www.openarchives.org/ore/terms/> .\n'
-        '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
-        '\n'
-        '</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n'
+        "@base <http://ark.lib.uchicago.edu/ark:/61001/> .\n"
+        "@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .\n"
+        "@prefix dc: <http://purl.org/dc/elements/1.1/> .\n"
+        "@prefix dcterms: <http://purl.org/dc/terms/> .\n"
+        "@prefix edm: <http://www.europeana.eu/schemas/edm/> .\n"
+        "@prefix erc: <http://purl.org/kernel/elements/1.1/> .\n"
+        "@prefix ore: <http://www.openarchives.org/ore/terms/> .\n"
+        "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+        "\n"
+        "</digital_collections/IIIF_Files/social_scientists_maps/G4104-C6-2W9-1920z-U5/G4104-C6-2W9-1920z-U5.dc.xml> a ore:Proxy ;\n"
         '    dc:format "application/xml" ;\n'
-        '    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
-        '    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n'
+        "    ore:proxyFor </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n"
+        "    ore:proxyIn </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n"
+        "\n"
+        "</rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:ResourceMap ;\n"
         '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    dcterms:creator <http://library.uchicago.edu> ;\n'
+        "    dcterms:creator <http://library.uchicago.edu> ;\n"
         '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>'
-        'dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n'
+        "    ore:describes </aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n"
+        "\n"
+        "<https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc>"
+        "dcterms:hasPart </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n"
+        "\n"
+        "</aggregation/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a ore:Aggregation ;\n"
         '    dcterms:created "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
         '    dcterms:modified "2020-06-22T15:39:04.791815"^^xsd:dateTime ;\n'
-        '    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+        "    edm:aggregatedCHO </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n"
         '    edm:dataProvider "The University of Chicago Library" ;\n'
         '    edm:isShownAt "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
-        '    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n;'
-        '    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n'
+        "    edm:isShownBy </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n;"
+        "    edm:object </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5.tif> ;\n"
         '    edm:provider "The University of Chicago Library" ;\n'
-        '    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n'
-        '    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n'
-        '\n'
-        '</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n'
+        "    edm:rights <https://rightsstatements.org/page/InC/1.0/?language=en> ;\n"
+        "    ore:isDescribedBy </rem/digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> .\n"
+        "\n"
+        "</digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> a edm:ProvidedCHO ;\n"
         '    bf:ClassificationLcc "G4104.C6:2W9 1920z .U5" ;\n'
         '    bf:Local "http://pi.lib.uchicago.edu/1001/cat/bib/3451312" ;\n'
         '    bf:scale "Scale [ca. 1:8,000]" ;\n'
         '    dc:date "1920/1929" ;\n'
         '    dc:description "Blue line print.",\n'
         '        "Master and use copy. Digital master created according to Benchmark for '
-        'Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, '
+        "Faithful Reproductions of Monographs and Serials, Version 1. Digital Library Federation, "
         'December 2002. http://www.diglib.org/standards/bmarkfin.htm",\n'
         '        "Shows residential area, vacant area, commercial frontage, railroad property, '
         'and transit lines." ;\n'
@@ -1009,19 +964,19 @@ class Testing():
         '    dc:identifier "http://pi.lib.uchicago.edu/1001/maps/chisoc/G4104-C6-2W9-1920z-U5" ;\n'
         '    dc:language "English" ;\n'
         '    dc:publisher "Dept. of Sociology" ;\n'
-        '    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n'
+        "    dc:rights <http://creativecommons.org/licenses/by-sa/4.0/> ;\n"
         '    dc:title "Woodlawn Community /" ;\n'
         '    dc:type "Maps" ;\n'
         '    dcterms:hasFormat "Print version" ;\n'
-        '    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n'
+        "    dcterms:isPartOf <https://repository.lib.uchicago.edu/digitalcollections/maps/chisoc> ;\n"
         '    erc:what "Woodlawn Community /" ;\n'
         '    erc:when "1920/1929" ;\n'
-        '    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n'
+        "    erc:where </digital_collections/IIIF_Files/maps/chisoc/G4104-C6-2W9-1920z-U5> ;\n"
         '    erc:who "University of Chicago. Department of Sociology." ;\n'
         '    edm:currentLocation "Map Collection Reading Room (Room 370)" ;\n'
         '    edm:type "IMAGE" ;\n'
         '    edm:year "1920/1929" .\n'
-        '\n'
+        "\n"
     )
 
     # default config from CitationInfo is also useful for testing
@@ -1055,8 +1010,10 @@ class Testing():
             Side effect-ful; no return value.
 
         """
+
         def partial(response):
             response.status_code = code
+
         return partial
 
     def break_json(response):
@@ -1070,7 +1027,7 @@ class Testing():
         Returns:
             Side effect-ful; no return value.
         """
-        response._content += b'}'
+        response._content += b"}"
 
     def unexpected_json(response):
         """
@@ -1093,6 +1050,4 @@ class Testing():
     #     anything
 
     # Returns: an unexpected JSON dictionary
-    empty_sparql = GeneralPurpose.k(
-        {'head': {'vars': []}, 'results': {'bindings': []}}
-    )
+    empty_sparql = GeneralPurpose.k({"head": {"vars": []}, "results": {"bindings": []}})
