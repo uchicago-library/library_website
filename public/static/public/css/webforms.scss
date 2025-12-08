@@ -33,7 +33,7 @@ form.webforms {
   .btn-submit {
     margin: 1em 2em 2em;
     box-shadow:
-      0 4px 6px rgb(50 50 93 / 11%),
-      0 1px 3px rgb(0 0 0 / 8%);
+      0 4px 6px rgba(50, 50, 93, 0.11),
+      0 1px 3px rgba(0, 0, 0, 0.08);
   }
 }
