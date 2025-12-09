@@ -12,10 +12,11 @@
 #### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
-3. **Install secrets**: `cd /path/to/library_website && make secrets` (see Setting Up Secrets Repo section below)
+3. **Install secrets**: `cd /path/to/library_website && make create-repo install` (see Setting Up Secrets Repo section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
+- **Sync Secrets**: `make secrets`
 - **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
 - **Access shell**: `docker compose exec web bash`
 - **View help**: `./docker-setup.sh --help`
@@ -97,8 +98,10 @@ In order to run, the library website requires a file called `./library_website/s
 
 - obtain permission to clone repositories owned by the `wagtail` user
   on `vault`
-- clone the repository down: `cd ~ && git clone wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/lw-config`
-- install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make secrets`
+- clone the repository down: `cd /path/to/library_website && make create-repo`
+- install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make install`
+
+The `create-repo` make rule will clone the secrets repository down to `~/lw-config` by default.  If you'd like to override the path, run 
 
 To obtain permission to clone repositories owned by the `wagtail` user on `vault`, please contact our system administrators.  The `make secrets` rule does the following:
 
