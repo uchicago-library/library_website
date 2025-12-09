@@ -16,7 +16,7 @@
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
-- **Sync Secrets**: `make secrets`
+- **Install Secrets**: `make secrets`
 - **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
 - **Access shell**: `docker compose exec web bash`
 - **View help**: `./docker-setup.sh --help`
@@ -92,27 +92,62 @@ Note that this will only affect the current session. When you log out and log ba
 
 ### Setting Up Secrets Repository
 
-In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.
+In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  We provide a Makefile which will clone that repository down, and install `secrets.py` from the secrets repository into this `library_website` repository, in the place where the Wagtail application will expect it to be.
 
-`secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  To install it, you need to:
+To clone the secrets repository to your machine, you can use our makefile:
 
-- obtain permission to clone repositories owned by the `wagtail` user
-  on `vault`
-- clone the repository down: `cd /path/to/library_website && make create-repo`
-- install `secrets.py` into the `library_website` project: `cd /path/to/library_website && make install`
+```
+$ cd /path/to/library_website && make create-repo
+```
 
-The `create-repo` make rule will clone the secrets repository down to `~/lw-config` by default.  If you'd like to override the path, run 
+Some observations:
 
-To obtain permission to clone repositories owned by the `wagtail` user on `vault`, please contact our system administrators.  The `make secrets` rule does the following:
+- you will need to obtain permission from our sysadmins to clone repositories owned by the `wagtail` user on `vault`
+- by default, our makefile will assume that `~/lw-config` is the path to the secrets repository both for cloning and for installing the secrets
+- it is possible to override this path either using environment variables or using Make variables
 
-- pulls down the latest changes to `secrets.py` from whatever branch in the `lw-config` repository you have checked out on your machine
-- copies `secrets.py` from the `lw-config` repository into where our Wagtail site expects it to be, which is `./library_website/settings` within the `library_website` project
-- sets the permissions on the copy of `secrets.py` to 444 to remind any developer doing Wagtail development to edit the original in `lw-config` rather than the copy in `library_website`
+Once the repository has been cloned down, run one of the following Make rules from the root of the `library_website` project:
+
+```
+$ make install
+$ make secrets
+```
+
+`make install` copies the `secrets.py` file from the secrets repository over into this repository, setting the permissions on the file to 444 to remind any developer doing Wagtail development to edit the original in the secrets repository rather than this copy.  `make secrets` does the same thing, but before installing `secrets.py` it pulls down the latest changes from the branch that is checked out in the secrets repository on the user's machine.
 
 This will put the `library_website` project in the state it needs to be in to run `docker-setup.sh`.
 
+#### Overriding The Path
+
+If you are running our makefile as part of a script, especially while
+provisioning a production environment for the Wagtail site, you will
+likely want the secrets repository to live somewhere other than
+`~/lw-config`.
+
+Our makefile provides two ways to override the path to the secrets repository.
+The first is to pass a Make variable called `SECRETS_REPO_PATH` in
+when running every Make rule, e.g.:
+
+```
+$ make create-repo SECRETS_REPO_PATH=/data/local/secret-repos
+$ make secrets SECRETS_REPO_PATH=/data/local/secret-repos
+```
+
+The other way is to customize the `SECRETS_REPO_PATH` environment variable, which only requires exporting it once before running our Make rules:
+
+```
+$ export SECRETS_REPO_PATH=/data/local/secret-repos
+$ make create-repo
+$ make secrets
+```
+
+In both of these examples, the makefile will operate under the assumption that the secrets repository is located at `/data/local/secret-repos/lw-config`.
+
 ## Bot IP Management
-The site uses the [Good-Bots package](https://github.com/bbusenius/Good-Bots) to automatically manage IP exclusions for legitimate search engine bots and crawlers. This ensures they aren't blocked by Turnstile protection.
+The site uses the [Good-Bots
+package](https://github.com/bbusenius/Good-Bots) to automatically
+manage IP exclusions for legitimate search engine bots and
+crawlers. This ensures they aren't blocked by Turnstile protection.
 
 The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that gets updated daily via cron. This file is automatically imported in Django settings and excluded from version control.
 
