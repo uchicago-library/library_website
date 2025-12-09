@@ -12,7 +12,7 @@
 #### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
-3. **Set Up Secrets**: `cd /path/to/library_website && make create-repo install` (see Setting Up Secrets Repo section below)
+3. **Set Up Secrets**: `cd /path/to/library_website && make create-repo install` (see [Setting Up Secrets Repo](#setting-up-secrets-repository) section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
@@ -93,9 +93,9 @@ Note that this will only affect the current session. When you log out and log ba
 
 ### Setting Up Secrets Repository
 
-In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  In this project, we provide a Makefile which will clone that repository down, then install `secrets.py` from the secrets repository into this `library_website` repository, so that the Wagtail site can make use of it.  The makefile requires `git` to be installed on the machine from which it is being run.
+In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  In this project, we provide a makefile which will clone that repository down, then install `secrets.py` from the secrets repository into this `library_website` repository, so that the Wagtail site can make use of it.
 
-To clone the secrets repository to your machine, you can use our makefile:
+To clone the secrets repository to your machine:
 
 ```
 $ cd /path/to/library_website && make create-repo
@@ -115,8 +115,6 @@ $ make secrets
 ```
 
 `make install` copies the `secrets.py` file from the secrets repository over into this repository, setting the permissions on the file to 444 to remind any developer doing Wagtail development to edit the original in the secrets repository rather than this copy.  `make secrets` does the same thing, but before installing `secrets.py` it pulls down the latest changes from the branch that is checked out in the secrets repository on the user's machine.
-
-This will put the `library_website` project in the state it needs to be in to run `docker-setup.sh`.
 
 #### Overriding The Path
 
