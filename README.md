@@ -123,16 +123,14 @@ provisioning a production environment for the Wagtail site, you will
 likely want the secrets repository to live somewhere other than
 `~/lw-config`.
 
-Our makefile provides two ways to override the path to the secrets repository.
-The first is to pass a Make variable called `SECRETS_REPO_PATH` in
-when running every Make rule, e.g.:
+Our makefile provides two ways to override the path to the secrets repository.  So if you want to override the path to be `/data/local/secret-repos`, you can pass a Make variable called `SECRETS_REPO_PATH` in when running every Make rule:
 
 ```
 $ make create-repo SECRETS_REPO_PATH=/data/local/secret-repos
 $ make secrets SECRETS_REPO_PATH=/data/local/secret-repos
 ```
 
-The other way is to customize the `SECRETS_REPO_PATH` environment variable, which only requires exporting it once before running our Make rules:
+Alternatively, you can customize the `SECRETS_REPO_PATH` environment variable, which only requires exporting it once before running our Make rules:
 
 ```
 $ export SECRETS_REPO_PATH=/data/local/secret-repos
@@ -140,7 +138,7 @@ $ make create-repo
 $ make secrets
 ```
 
-In both of these examples, the makefile will operate under the assumption that the secrets repository is located at `/data/local/secret-repos/lw-config`.
+In both of the above two examples, the makefile will operate under the assumption that the secrets repository is located at `/data/local/secret-repos/lw-config`.
 
 ## Bot IP Management
 The site uses the [Good-Bots
