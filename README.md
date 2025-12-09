@@ -93,7 +93,7 @@ Note that this will only affect the current session. When you log out and log ba
 
 ### Setting Up Secrets Repository
 
-In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  We provide a Makefile which will clone that repository down, and install `secrets.py` from the secrets repository into this `library_website` repository, in the place where the Wagtail application will expect it to be.
+In order to run, the library website requires a file called `./library_website/settings/secrets.py` to exist.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  In this project, we provide a Makefile which will clone that repository down, and install `secrets.py` from the secrets repository into this `library_website` repository, in the place where the Wagtail application will expect it to be.
 
 To clone the secrets repository to your machine, you can use our makefile:
 
