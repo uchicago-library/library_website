@@ -12,7 +12,7 @@
 #### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
-3. **Install secrets**: `cd /path/to/library_website && make create-repo install` (see Setting Up Secrets Repo section below)
+3. **Set Up Secrets**: `cd /path/to/library_website && make create-repo install` (see Setting Up Secrets Repo section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
@@ -84,6 +84,7 @@ If you need to test or develop with Turnstile enabled in the Vagrant environment
 
 1. SSH into the Vagrant machine: `vagrant ssh`
 2. Set the environment variable for your current session:
+
 ```
 export TURNSTILE_ENABLED=True
 ```
@@ -99,6 +100,8 @@ To clone the secrets repository to your machine, you can use our makefile:
 ```
 $ cd /path/to/library_website && make create-repo
 ```
+
+These make rules require `git` to be installed.
 
 Some observations:
 
