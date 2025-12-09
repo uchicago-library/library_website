@@ -105,7 +105,7 @@ Some observations:
 
 - you will need to obtain permission from our sysadmins to clone repositories owned by the `wagtail` user on `vault`
 - by default, our makefile will assume that `~/lw-config` is the path to the secrets repository both for cloning and for installing the secrets
-- it is possible to override this path either using environment variables or using Make variables
+- it is possible to override this path either using environment variables or using Make variables ([see below](#overriding-the-path) for more info)
 
 Once the repository has been cloned down, run one of the following Make rules from the root of the `library_website` project:
 
