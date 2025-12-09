@@ -5,7 +5,7 @@ endif
 SECRETS_REPO_NAME = lw-config
 SECRETS_REPO_PATH = $(SECRETS_REPO_DIR)/$(SECRETS_REPO_NAME)
 SETTINGS_PATH = ./library_website/settings
-CURRENT_BRANCH = $$(git -C $(SECRETS_REPO_PATH) symbolic-ref --short HEAD)
+CURRENT_BRANCH = $(shell git -C $(SECRETS_REPO_PATH) symbolic-ref --short HEAD)
 CLONE_PATH = wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/$(SECRETS_REPO_NAME)
 
 .PHONY: docker
