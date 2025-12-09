@@ -24,8 +24,7 @@ update-secrets:
 	git -C $(SECRETS_REPO_PATH) pull origin $(CURRENT_BRANCH)
 
 .PHONY: install
-install: 
-	$(RM) $(SETTINGS_PATH)/secrets.py || true
+install: clean
 	install -m 444 $(SECRETS_REPO_PATH)/secrets.py $(SETTINGS_PATH)
 
 .PHONY: secrets
