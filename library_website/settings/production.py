@@ -53,7 +53,7 @@ SHIBBOLETH_LOGOUT_URL = "https://shibboleth2.uchicago.edu/idp/logout.html?target
 
 # Import secrets
 try:
-    from .secrets import *
+    from .secrets import *  # noqa: F403
 except ImportError:
     pass
 

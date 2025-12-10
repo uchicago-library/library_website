@@ -52,7 +52,6 @@ if os.getenv("GITHUB_ACTIONS") != "true":
     }
 
 # Database configuration for development
-# Override in local.py if needed (e.g., for production secrets)
 if "test" in sys.argv:
     DATABASES = {
         "default": {
@@ -79,7 +78,7 @@ TTRSS_FEED = "http://10.0.2.2/get_feed_atom"
 
 # Import secrets
 try:
-    from .secrets import *
+    from .secrets import *  # noqa: F403
 except ImportError:
     pass
 

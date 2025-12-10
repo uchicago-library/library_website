@@ -4,7 +4,7 @@ from .dev import *  # noqa: F403
 
 # Import secrets
 try:
-    from .secrets import *
+    from .secrets import *  # noqa: F403
 except ImportError:
     pass
 
