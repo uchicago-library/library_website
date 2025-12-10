@@ -127,17 +127,17 @@ $ make secrets
 
 If you are running our makefile as part of a script, especially while provisioning a production environment for the Wagtail site, you will likely want the secrets repository to live somewhere other than `~/lw-config`.
 
-Our makefile provides two ways to override the path to the secrets repository.  So if you want to override the path to be `/data/local/secret-repos`, you can pass a Make variable called `SECRETS_REPO_PATH` in when running every Make rule:
+Our makefile provides two ways to override the path to the secrets repository.  So if you want to override the path to be `/data/local/secret-repos`, you can pass a Make variable called `SECRETS_REPO_DIR` in when running every Make rule:
 
 ```
-$ make create-repo SECRETS_REPO_PATH=/data/local/secret-repos
-$ make secrets SECRETS_REPO_PATH=/data/local/secret-repos
+$ make create-repo SECRETS_REPO_DIR=/data/local/secret-repos
+$ make secrets SECRETS_REPO_DIR=/data/local/secret-repos
 ```
 
-Alternatively, you can customize the `SECRETS_REPO_PATH` environment variable, which only requires exporting it once before running our Make rules:
+Alternatively, you can customize the `SECRETS_REPO_DIR` environment variable, which only requires exporting it once before running our Make rules:
 
 ```
-$ export SECRETS_REPO_PATH=/data/local/secret-repos
+$ export SECRETS_REPO_DIR=/data/local/secret-repos
 $ make create-repo
 $ make secrets
 ```
