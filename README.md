@@ -101,6 +101,13 @@ To clone the secrets repository to your machine:
 $ cd /path/to/library_website && make create-repo
 ```
 
+Or, if you'd prefer to run the clone command yourself:
+
+```
+$ cd ~
+$ git clone wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/lw-config
+```
+
 Some observations:
 
 - you will need to obtain permission from our sysadmins to clone repositories owned by the `wagtail` user on `vault`
