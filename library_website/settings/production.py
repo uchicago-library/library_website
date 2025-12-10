@@ -1,4 +1,4 @@
-from .base import *  # noqa: F403 F401
+from .base import *  # noqa: F401,F403
 
 DEBUG = False
 TEMPLATE_DEBUG = False
@@ -53,12 +53,12 @@ SHIBBOLETH_LOGOUT_URL = "https://shibboleth2.uchicago.edu/idp/logout.html?target
 
 # Import secrets
 try:
-    from .secrets import *  # noqa: F403
+    from .secrets import *  # noqa: F401,F403
 except ImportError:
     pass
 
 try:
-    from .local import *  # noqa: F403 F401
+    from .local import *  # noqa: F401,F403
 except ImportError:
     pass
 

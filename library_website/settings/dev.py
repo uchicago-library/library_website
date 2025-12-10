@@ -1,7 +1,7 @@
 import os
 import sys
 
-from .base import *  # noqa: F403
+from .base import *  # noqa: F401,F403
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,13 +78,13 @@ TTRSS_FEED = "http://10.0.2.2/get_feed_atom"
 
 # Import secrets
 try:
-    from .secrets import *  # noqa: F403
+    from .secrets import *  # noqa: F401,F403
 except ImportError:
     pass
 
 # Import local overrides
 try:
-    from .local import *  # noqa: F403 F401
+    from .local import *  # noqa: F401,F403
 except ImportError:
     pass
 

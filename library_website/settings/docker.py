@@ -4,13 +4,13 @@ from .dev import *  # noqa: F403
 
 # Import secrets
 try:
-    from .secrets import *  # noqa: F403
+    from .secrets import *  # noqa: F401,F403
 except ImportError:
     pass
 
 # Import local settings to get any developer customizations
 try:
-    from .local import *  # noqa: F403
+    from .local import *  # noqa: F401,F403
 except ImportError:
     pass
 
