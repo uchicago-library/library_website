@@ -17,6 +17,23 @@ RESTRICTED = 7163
 SECURE_REFERRER_POLICY = "origin"
 CGI_MAIL_SERVICE = "https://www.lib.uchicago.edu/cgi-bin/cgimail/cgimail"
 
+# CGIMail Editor (Rebecca) - fallback surrogates for local development
+# This list is used when the CGI_SURROGATES_API is not accessible
+CGI_SURROGATES_FALLBACK = [
+    "askus",
+    "circ",
+    "crerar",
+    "dangelo",
+    "dissertation",
+    "eckhart",
+    "ill",
+    "law",
+    "mansueto",
+    "regenstein",
+    "scrc",
+    "ssa",
+]
+
 # Use database backend for search in dev (no Elasticsearch required)
 WAGTAILSEARCH_BACKENDS = {
     "default": {
