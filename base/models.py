@@ -2367,6 +2367,7 @@ class IntranetIndexPage(BasePage):
     subpage_types = [
         "base.IntranetIndexPage",
         "base.IntranetPlainPage",
+        "cgimail_editor.CGIMailFormEditorPage",
         "intranettocs.TOCPage",
     ]
 
