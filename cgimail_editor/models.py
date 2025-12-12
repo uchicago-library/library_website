@@ -133,7 +133,11 @@ Key requirements:
 
     # Page configuration
     subpage_types = []
-    parent_page_types = ["intranethome.IntranetHomePage", "base.IntranetPlainPage"]
+    parent_page_types = [
+        "intranethome.IntranetHomePage",
+        "base.IntranetPlainPage",
+        "base.IntranetIndexPage",
+    ]
 
     content_panels = (
         Page.content_panels
