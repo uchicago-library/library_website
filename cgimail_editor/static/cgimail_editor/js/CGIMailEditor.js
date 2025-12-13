@@ -396,6 +396,35 @@ function CGIMailEditor() {
   const [documentation, setDocumentation] = useState([])
   const [isLoadingSurrogates, setIsLoadingSurrogates] = useState(true)
 
+  // Handler for existing JSON textarea - syncs form fields when JSON is pasted/edited
+  const handleExistingJSONChange = (newJSON) => {
+    setExistingJSON(newJSON)
+
+    // Try to extract recipient and subject from the pasted JSON
+    try {
+      const parsed = JSON.parse(newJSON)
+      const hiddenElements = parsed.form?.sections?.[0]?.elements
+
+      if (Array.isArray(hiddenElements)) {
+        // Read rcpt value from JSON and update surrogate dropdown
+        const rcptField = hiddenElements.find(el => el.name === 'rcpt')
+        if (rcptField?.value) {
+          // Always set the surrogate from JSON, even if not in the list
+          // (the dropdown will show it as the selected value)
+          setSelectedSurrogate({ value: rcptField.value, label: rcptField.value })
+        }
+
+        // Read subject from JSON and update subject field
+        const subjectField = hiddenElements.find(el => el.name === 'subject')
+        if (subjectField?.value) {
+          setSubject(subjectField.value)
+        }
+      }
+    } catch (e) {
+      // Invalid JSON, ignore silently
+    }
+  }
+
   // Load surrogates on mount
   useEffect(() => {
     async function loadSurrogates() {
@@ -441,40 +470,6 @@ function CGIMailEditor() {
     setGeneratedJSON(null)
   }, [mode])
 
-  // In edit mode, sync form fields from JSON when first entering edit mode
-  // (This populates fields when switching modes or loading initial JSON)
-  useEffect(() => {
-    if (mode === 'edit' && existingJSON) {
-      try {
-        const parsed = JSON.parse(existingJSON)
-        const hiddenElements = parsed.form?.sections?.[0]?.elements
-
-        if (Array.isArray(hiddenElements)) {
-          // Read rcpt value from JSON and update surrogate dropdown
-          const rcptField = hiddenElements.find(el => el.name === 'rcpt')
-          if (rcptField?.value) {
-            const currentSurrogate = selectedSurrogate?.value
-            if (currentSurrogate !== rcptField.value) {
-              const matchingSurrogate = surrogates.find(s => s === rcptField.value)
-              if (matchingSurrogate) {
-                setSelectedSurrogate({ value: matchingSurrogate, label: matchingSurrogate })
-              }
-            }
-          }
-
-          // Read subject from JSON and update subject field
-          const subjectField = hiddenElements.find(el => el.name === 'subject')
-          if (subjectField?.value && subject !== subjectField.value) {
-            setSubject(subjectField.value)
-          }
-        }
-      } catch (e) {
-        // Invalid JSON, ignore silently
-      }
-    }
-    // Only run when switching to edit mode, not on every JSON change
-  }, [mode])
-
   // In edit mode, sync JSON from form fields when fields change
   useEffect(() => {
     if (mode === 'edit' && existingJSON) {
@@ -512,7 +507,7 @@ function CGIMailEditor() {
         // Invalid JSON, ignore silently
       }
     }
-  }, [mode, selectedSurrogate, subject, existingJSON])
+  }, [mode, selectedSurrogate, subject])
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -628,7 +623,7 @@ function CGIMailEditor() {
                 id="existing-json"
                 className="form-control code-textarea"
                 value={existingJSON}
-                onChange={e => setExistingJSON(e.target.value)}
+                onChange={e => handleExistingJSONChange(e.target.value)}
                 placeholder="Paste your existing CGIMail form JSON here..."
                 rows={8}
               />
