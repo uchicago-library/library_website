@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "alerts",
     "ask_a_librarian",
     "base",
+    "cgimail_editor",
     "conferences",
     "dirbrowse",
     "events",
@@ -453,6 +454,12 @@ LIBCAL_CREDENTIALS = {
 CGI_MAIL_SERVICE = "/cgi-bin/cgimail/cgimail"
 ITEM_SERVLET = "/item-servlet/?p=true"
 SPRINGSHARE_PRIVACY_POLICY = "https://springshare.com/privacy.html"
+
+# CGIMail Editor (Rebecca) settings
+CGI_SURROGATES_API = ""  # Set in production settings
+CGI_SURROGATES_FALLBACK = []  # Set in dev.py for local development
+OPENAI_CGIMAIL_KEY = ""  # Set in local.py (secret)
+OPENAI_API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 # Override settings in test
 # -------------------------------

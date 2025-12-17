@@ -17,11 +17,13 @@ import {
 import schema from './CGIMailFormSchema'
 
 const DOM_ELEMENT = document.getElementById('cgi-mail-form')
-const CGI_MAIL_SERVICE = DOM_ELEMENT.getAttribute('data-cgi-mail') || ''
-const ITEM_SERVLET = DOM_ELEMENT.getAttribute('data-item-servlet') || ''
-const SPRINGSHARE_PP = DOM_ELEMENT.getAttribute('data-springshare-pp') || ''
-const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json'))
-const THANK_YOU_TXT = DOM_ELEMENT.getAttribute('data-thank-you') || ''
+const CGI_MAIL_SERVICE = DOM_ELEMENT?.getAttribute('data-cgi-mail') || ''
+const ITEM_SERVLET = DOM_ELEMENT?.getAttribute('data-item-servlet') || ''
+const SPRINGSHARE_PP = DOM_ELEMENT?.getAttribute('data-springshare-pp') || ''
+const FORM_JSON = DOM_ELEMENT
+  ? JSON.parse(DOM_ELEMENT.getAttribute('data-json'))
+  : null
+const THANK_YOU_TXT = DOM_ELEMENT?.getAttribute('data-thank-you') || ''
 const QUERYSTRING = window.location.search
 const URLPARAMS = new URLSearchParams(QUERYSTRING)
 
@@ -616,5 +618,9 @@ class FormContainer extends React.Component {
   }
 }
 
-const root = ReactDOM.createRoot(DOM_ELEMENT)
-root.render(<FormContainer />)
+if (DOM_ELEMENT) {
+  const root = ReactDOM.createRoot(DOM_ELEMENT)
+  root.render(<FormContainer />)
+}
+
+export { evaluateDisabled, Section, FormElements, Sections }
