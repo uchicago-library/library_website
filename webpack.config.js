@@ -13,6 +13,7 @@ module.exports = {
     main: './base/static/base/js/index',
     NewsFeed: './lib_news/static/lib_news/js/NewsFeed',
     CGIMailForm: './base/static/base/js/CGIMailForm',
+    CGIMailEditor: './cgimail_editor/static/cgimail_editor/js/CGIMailEditor',
   },
 
   output: {
