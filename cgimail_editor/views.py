@@ -327,8 +327,8 @@ def _build_prompt(
                 prompt_parts.append(f"## {doc.get('source', 'Unknown')}")
                 # Truncate very long docs to avoid token limits
                 content = doc["content"]
-                if len(content) > 5000:
-                    content = content[:5000] + "\n... (truncated)"
+                if len(content) > 30000:
+                    content = content[:30000] + "\n... (truncated)"
                 prompt_parts.append(content)
         prompt_parts.append("\n---\n")
 
