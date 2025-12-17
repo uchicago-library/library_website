@@ -655,7 +655,7 @@ function CGIMailEditor() {
               {isGenerating ? 'Generating...' : 'Generate Form JSON'}
             </button>
 
-            {TEMPLATE && (
+            {TEMPLATE && mode === 'create' && (
               <button
                 type="button"
                 className="btn btn-default"
