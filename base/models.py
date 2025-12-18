@@ -2358,10 +2358,12 @@ follow a strict schema. Contact DLDC for help with this",
 class IntranetIndexPage(BasePage):
     intro = StreamField(
         DefaultBodyFields(),
+        blank=True,
     )
     display_hierarchical_listing = models.BooleanField(default=False)
     body = StreamField(
         DefaultBodyFields(),
+        blank=True,
     )
 
     subpage_types = [
