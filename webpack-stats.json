@@ -1,6 +1,14 @@
 {
   "status": "done",
   "assets": {
+    "CGIMailEditor-bundle.js": {
+      "name": "CGIMailEditor-bundle.js",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailEditor-bundle.js"
+    },
+    "CGIMailEditor-bundle.js.LICENSE.txt": {
+      "name": "CGIMailEditor-bundle.js.LICENSE.txt",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailEditor-bundle.js.LICENSE.txt"
+    },
     "CGIMailForm-bundle.js": {
       "name": "CGIMailForm-bundle.js",
       "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailForm-bundle.js"
@@ -27,6 +35,9 @@
     }
   },
   "chunks": {
+    "CGIMailEditor": [
+      "CGIMailEditor-bundle.js"
+    ],
     "CGIMailForm": [
       "CGIMailForm-bundle.js"
     ],

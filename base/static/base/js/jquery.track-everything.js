@@ -52,6 +52,8 @@
   const ignoreDeferUrls = [
     "rooms.lib.uchicago.edu/appointments-auth/prepare",
     // "/media/images/",
+    "blob:",  // Don't interfere with blob URL downloads
+    "data:",  // Don't interfere with data URL downloads
   ];
 
   // Rules for applyHtmlProperties
