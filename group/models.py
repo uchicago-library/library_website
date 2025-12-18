@@ -236,7 +236,6 @@ class GroupPage(BasePage, Email):
         DefaultBodyFields(),
         blank=True,
     )
-    is_active = models.BooleanField(default=True)
     body = StreamField(
         DefaultBodyFields(),
     )
@@ -256,7 +255,6 @@ class GroupPage(BasePage, Email):
             ),
             FieldPanel("intro"),
             InlinePanel("group_members", label="Group Members"),
-            FieldPanel("is_active"),
             FieldPanel("body"),
         ]
         + BasePage.content_panels
@@ -603,9 +601,25 @@ class GroupIndexPage(BasePage):
             {
                 "title": self.title,
                 "url": self.url,
+                "id": self.id,
                 "children": [],
             }
         ]
+
+        # Get all child GroupIndexPages (excluding self)
+        child_index_pages = (
+            GroupIndexPage.objects.live().descendant_of(self).exclude(pk=self.pk)
+        )
+
+        # Start with all live GroupPage descendants
+        all_groups = GroupPage.objects.live().descendant_of(self)
+
+        # Exclude descendants of child GroupIndexPages
+        # Note: Django querysets are lazy, so this loop chains .not_descendant_of()
+        # filters together without executing the query. The final queryset will
+        # exclude GroupPages that are descendants of ANY child GroupIndexPage.
+        for child_index in child_index_pages:
+            all_groups = all_groups.not_descendant_of(child_index)
 
         # for each group page get a list of the page's "group page" or "group
         # index page" ancestors. Check to see if this particular ancestor
@@ -613,9 +627,7 @@ class GroupIndexPage(BasePage):
         # create it. Then continue on, one descendant at a time, either adding
         # new levels or using the existing ones if they're already there
         # from previous group pages.
-        for grouppage in (
-            GroupPage.objects.live().descendant_of(self).filter(is_active=True)
-        ):
+        for grouppage in all_groups:
             ancestors = (
                 [self] + list(GroupPage.objects.ancestor_of(grouppage)) + [grouppage]
             )
@@ -624,7 +636,7 @@ class GroupIndexPage(BasePage):
                 ancestor = ancestors.pop(0)
                 if str(ancestor.content_type) in GROUP_PAGE_CONTENT_TYPES:
                     nextlevels = list(
-                        filter(lambda g: g["url"] == ancestor.url, currentlevel)
+                        filter(lambda g: g["id"] == ancestor.id, currentlevel)
                     )
                     if nextlevels:
                         currentlevel = nextlevels[0]["children"]
@@ -632,6 +644,7 @@ class GroupIndexPage(BasePage):
                         newnode = {
                             "title": ancestor.title,
                             "url": ancestor.url,
+                            "id": ancestor.id,
                             "children": [],
                         }
                         currentlevel.append(newnode)
@@ -654,7 +667,7 @@ class GroupIndexPage(BasePage):
                         list(
                             map(
                                 lambda n: "<li><a href='"
-                                + n["url"]
+                                + (n["url"] or "")
                                 + "'>"
                                 + n["title"]
                                 + "</a>"
@@ -669,26 +682,6 @@ class GroupIndexPage(BasePage):
 
         groups_active_html = get_html(groups_active[0]["children"])
 
-        inactive_children = (
-            GroupPage.objects.live()
-            .descendant_of(self)
-            .filter(is_active=False)
-            .order_by("title")
-        )
-        index_children = GroupIndexPage.objects.live().descendant_of(self)
-        for index_child in index_children:
-            for inactive_child in inactive_children:
-                if inactive_child.is_descendant_of(index_child):
-                    inactive_children = inactive_children.not_descendant_of(index_child)
-
-        inactive_children = list(
-            map(
-                lambda g: {"title": g.title, "url": g.url},
-                inactive_children,
-            )
-        )
-
         context["groups_active_html"] = groups_active_html
-        context["groups_inactive"] = inactive_children
 
         return context
