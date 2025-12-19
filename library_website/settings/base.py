@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "wagtail.images",
     "wagtail.documents",
     "wagtailmedia",
+    "wagtailmarkdown",
     "wagtail.snippets",
     "wagtail.users",
     "wagtail.sites",
@@ -230,6 +231,12 @@ STATIC_PRECOMPILER_COMPILERS = (
 
 # Wagtail settings
 WAGTAIL_SITE_NAME = "library_website"
+
+# Wagtail Markdown settings
+WAGTAILMARKDOWN = {
+    "extensions": ["extra", "codehilite", "attr_list", "toc", "sane_lists"],
+    "extensions_settings_mode": "extend",
+}
 
 WAGTAILSEARCH_BACKENDS = {
     "default": {

@@ -325,6 +325,34 @@ form#knowledgetracker {
  */
 
 table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: transparent;
+
+  & > thead > tr > th,
+  & > tbody > tr > th,
+  & > tfoot > tr > th,
+  & > thead > tr > td,
+  & > tbody > tr > td,
+  & > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.4286;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+  }
+
+  & > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+  }
+
+  & > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+
   @include respond-to(smallonly) {
     margin-top: 15px;
   }

@@ -691,34 +691,39 @@ select {
  * --------------------------------------------------
  */
 
-table,
-tbody {
-  & a {
-    color: #5b8fa8;
+table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: transparent;
+
+  & > thead > tr > th,
+  & > tbody > tr > th,
+  & > tfoot > tr > th,
+  & > thead > tr > td,
+  & > tbody > tr > td,
+  & > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.4286;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
   }
 
-  @include respond-to(mobileonly) {
-    display: block;
-    width: 100%;
-    & tr,
-    & th,
-    & td {
-      display: block;
-      padding: 0;
-      text-align: left;
-      white-space: normal;
-    }
-    & tr {
-      border-bottom: 1px solid #eee;
-      padding-bottom: 11px;
-      margin-bottom: 11px;
-    }
-    & td {
-      border: none;
-      margin-bottom: 6px;
-      color: #444;
-    }
+  & > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
   }
+
+  & > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
+}
+
+table a,
+tbody a {
+  color: #5b8fa8;
 }
 
 .stafflist > tbody > tr > td {

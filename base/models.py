@@ -54,6 +54,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page, Site
 from wagtail.search import index
 from wagtail.snippets.blocks import SnippetChooserBlock
+from wagtailmarkdown.blocks import MarkdownBlock
 from wagtailmedia.blocks import AbstractMediaChooserBlock
 from wagtailmedia.models import ALLOWED_EXTENSIONS_THUMBNAIL, AbstractMedia
 from wagtailmedia.settings import wagtailmedia_settings
@@ -1388,6 +1389,7 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
         help_text="Display code as text for tutorial or documentation purposes",
         group="Layout and Data",
     )
+    markdown = MarkdownBlock(icon="code", label="Markdown", group="Layout and Data")
 
     class Meta:
         required = False
