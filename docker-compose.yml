@@ -51,7 +51,7 @@ services:
       - library_network
 
   elasticsearch:
-    image: elasticsearch:7.17.13
+    image: elasticsearch:8.19.0
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
