@@ -22,6 +22,7 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 from base.models import BasePage, BasePageWithoutStaffPageForeignKeys, DefaultBodyFields
+from group.models import GroupIndexPage
 from library_website.settings.base import (
     ORCID_ERROR_MSG,
     ORCID_FORMAT,
@@ -576,25 +577,51 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
         for subject in self.staff_subject_placements.all():
             subjects.append({"name": subject.subject.name, "url": ""})
 
-        group_memberships = []
+        grouped_memberships = {}
+
         for group_membership in self.member.all():
-            if group_membership.parent.is_active:
-                group_memberships.append(
-                    {
-                        "group": {
-                            "title": group_membership.parent.title,
-                            "url": group_membership.parent.url,
+            group_page = group_membership.parent
+
+            # Find the closest GroupIndexPage ancestor
+            group_index_ancestors = (
+                group_page.get_ancestors().type(GroupIndexPage).specific()
+            )
+
+            # Get the closest one (last in the queryset, which is closest to the group_page)
+            group_index_ancestor = (
+                group_index_ancestors.last() if group_index_ancestors.exists() else None
+            )
+
+            # Group under the GroupIndexPage ancestor
+            if group_index_ancestor:
+                index_id = group_index_ancestor.id
+
+                if index_id not in grouped_memberships:
+                    grouped_memberships[index_id] = {
+                        "index_page": {
+                            "title": group_index_ancestor.title,
+                            "url": group_index_ancestor.url,
                         },
+                        "groups": [],
+                    }
+
+                grouped_memberships[index_id]["groups"].append(
+                    {
+                        "title": group_page.title,
+                        "url": group_page.url,
                         "role": group_membership.role,
                     }
                 )
+
+        # Convert dict to list for template
+        hierarchical_group_memberships = list(grouped_memberships.values())
 
         context = super(StaffPage, self).get_context(request)
         context["position_title"] = position_title
         context["emails"] = emails
         context["units"] = units
         context["subjects"] = subjects
-        context["group_memberships"] = group_memberships
+        context["hierarchical_group_memberships"] = hierarchical_group_memberships
         return context
 
 
