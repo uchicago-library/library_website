@@ -613,10 +613,13 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                     }
                 )
 
+        # Sort groups within each section alphabetically
+        for group_data in grouped_memberships.values():
+            group_data["groups"].sort(key=lambda x: x["title"])
+
         # Convert dict to list for template and sort by index page title
         hierarchical_group_memberships = sorted(
-            grouped_memberships.values(),
-            key=lambda x: x["index_page"]["title"]
+            grouped_memberships.values(), key=lambda x: x["index_page"]["title"]
         )
 
         context = super(StaffPage, self).get_context(request)
