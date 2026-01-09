@@ -613,8 +613,11 @@ class StaffPage(BasePageWithoutStaffPageForeignKeys):
                     }
                 )
 
-        # Convert dict to list for template
-        hierarchical_group_memberships = list(grouped_memberships.values())
+        # Convert dict to list for template and sort by index page title
+        hierarchical_group_memberships = sorted(
+            grouped_memberships.values(),
+            key=lambda x: x["index_page"]["title"]
+        )
 
         context = super(StaffPage, self).get_context(request)
         context["position_title"] = position_title
