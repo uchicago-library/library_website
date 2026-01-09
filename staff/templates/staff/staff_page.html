@@ -78,16 +78,19 @@
       </ul>
     {% endif %}
 
-    {% if group_memberships %}
+    {% if hierarchical_group_memberships %}
       <h2>Committees &amp; Groups</h2>
-      <ul>
-        {% for group_membership in group_memberships %}
-          <li><a href="{{ group_membership.group.url }}">
-            {{ group_membership.group.title }}
-            {% if group_membership.role %}{{ group_membership.role }}{% endif %}
-          </a></li>
-        {% endfor %}
-      </ul>
+      {% for index_group in hierarchical_group_memberships %}
+        <h3><a href="{{ index_group.index_page.url }}">{{ index_group.index_page.title }}</a></h3>
+        <ul>
+          {% for group in index_group.groups %}
+            <li>
+              <a href="{{ group.url }}">{{ group.title }}</a>
+              {% if group.role %} - {{ group.role }}{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
     {% endif %}
 
   </div> <!-- END Right Sidebar Content -->
