@@ -1,0 +1,112 @@
+name: Linting
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  python-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+
+    - name: Run flake8
+      run: |
+        flake8 .
+
+    - name: Check black formatting
+      run: |
+        black --check --diff .
+
+    - name: Check isort import sorting
+      run: |
+        isort --check-only --diff .
+
+  javascript-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Node dependencies
+      run: |
+        npm ci
+
+    - name: Run ESLint
+      run: |
+        npx eslint . --ext .js
+
+    - name: Check Prettier formatting
+      run: |
+        npx prettier --check "**/*.js"
+
+  scss-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Node dependencies
+      run: |
+        npm ci
+
+    - name: Run Stylelint
+      run: |
+        npx stylelint "**/*.{css,scss}"
+
+    - name: Check Prettier formatting for SCSS
+      run: |
+        npx prettier --check "**/*.{css,scss}"
+
+  template-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+
+    - name: Run curlylint
+      run: |
+        # Exclude migrations and legacy templates with structural issues
+        # (regex pattern: div tags that open in conditional blocks but close outside them)
+        curlylint --exclude "(migrations|intranet_base\.html|public_base\.html|finding_aids_page\.html|404\.html)" .
+
+    - name: Check djhtml formatting
+      run: |
+        # Exclude static directory (collected static files / build artifacts)
+        # and node_modules (third-party dependencies)
+        find . -name "*.html" -not -path "*/static/*" -not -path "*/node_modules/*" -exec djhtml --check {} +

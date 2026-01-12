@@ -5,6 +5,9 @@ from tempfile import NamedTemporaryFile
 
 import requests
 from django.utils.text import slugify
+from wagtail.documents.models import Document
+from wagtail.models import Page
+
 from library_website.settings import (
     ADDRESS_TEMPLATE,
     CRERAR_HOMEPAGE,
@@ -17,8 +20,6 @@ from library_website.settings import (
     SCRC_HOMEPAGE,
     SSA_HOMEPAGE,
 )
-from wagtail.documents.models import Document
-from wagtail.models import Page
 
 try:
     from library_website.settings import (
@@ -26,26 +27,26 @@ try:
         DIRECTORY_USERNAME,
         DIRECTORY_WEB_SERVICE,
     )
-except (ImportError):
+except ImportError:
     import os
 
-    DIRECTORY_USERNAME = os.environ['DIRECTORY_USERNAME']
-    DIRECTORY_WEB_SERVICE = os.environ['DIRECTORY_WEB_SERVICE']
-    DIRECTORY_PASSWORD = os.environ['DIRECTORY_PASSWORD']
+    DIRECTORY_USERNAME = os.environ["DIRECTORY_USERNAME"]
+    DIRECTORY_WEB_SERVICE = os.environ["DIRECTORY_WEB_SERVICE"]
+    DIRECTORY_PASSWORD = os.environ["DIRECTORY_PASSWORD"]
 
-HOURS_UNAVAILABLE = 'Unavailable'
+HOURS_UNAVAILABLE = "Unavailable"
 
 
 def get_xml_from_directory_api(url):
-    assert url.startswith('https://')
+    assert url.startswith("https://")
 
-    xml_path = url.replace('https://', '')
-    xml_path = xml_path.replace(DIRECTORY_WEB_SERVICE, '')
+    xml_path = url.replace("https://", "")
+    xml_path = xml_path.replace(DIRECTORY_WEB_SERVICE, "")
     c = HTTPSConnection(DIRECTORY_WEB_SERVICE)
-    b = bytes(DIRECTORY_USERNAME + ':' + DIRECTORY_PASSWORD, 'utf-8')
+    b = bytes(DIRECTORY_USERNAME + ":" + DIRECTORY_PASSWORD, "utf-8")
     userAndPass = base64.b64encode(b).decode("ascii")
-    headers = {'Authorization': 'Basic %s' % userAndPass}
-    c.request('GET', xml_path, headers=headers)
+    headers = {"Authorization": "Basic %s" % userAndPass}
+    c.request("GET", xml_path, headers=headers)
     result = c.getresponse()
     return result.read()
 
@@ -62,16 +63,16 @@ def get_json_for_library(lid):
         string, json
     """
     json = requests.get(
-        'https://api3.libcal.com/api_hours_today.php?iid='
+        "https://api3.libcal.com/api_hours_today.php?iid="
         + str(LIBCAL_IID)
-        + '&lid='
+        + "&lid="
         + str(lid)
-        + '&format=json'
+        + "&format=json"
     ).json()
 
     if json:
-        for item in json['locations']:
-            if item['lid'] == lid:
+        for item in json["locations"]:
+            if item["lid"] == lid:
                 return item
 
 
@@ -87,13 +88,13 @@ def get_json_for_libraries(lids):
     Returns:
         dict, json data
     """
-    lids = ','.join([str(i) for i in lids])
+    lids = ",".join([str(i) for i in lids])
     url = (
-        'https://api3.libcal.com/api_hours_today.php?iid='
+        "https://api3.libcal.com/api_hours_today.php?iid="
         + str(LIBCAL_IID)
-        + '&lids='
+        + "&lids="
         + str(lids)
-        + '&format=json'
+        + "&format=json"
     )
 
     try:
@@ -118,12 +119,12 @@ def get_hours_by_id(lid):
     data = get_json_for_library(int(lid))
     msg = HOURS_UNAVAILABLE
     try:
-        hours = data['rendered']
-        if hours != '':
+        hours = data["rendered"]
+        if hours != "":
             return hours
         else:
             return msg
-    except:
+    except:  # noqa: E722
         return msg
 
 
@@ -135,7 +136,7 @@ def process_hours(hours):
         hours: string, json array
     """
     msg = HOURS_UNAVAILABLE
-    if hours != '':
+    if hours != "":
         return hours
     else:
         return msg
@@ -227,16 +228,16 @@ def get_building_hours_and_lid(current_site):
             llids.append(library_id)
             data = {}
             libname = str(library)
-            data['name'] = libname
-            data['url'] = base_url + '#' + slugify(libname)
+            data["name"] = libname
+            data["url"] = base_url + "#" + slugify(libname)
             library_data[library_id] = data
 
     library_hours = get_json_for_libraries(llids)
-    for page in library_hours['locations']:
-        llid = int(page['lid'])
+    for page in library_hours["locations"]:
+        llid = int(page["lid"])
         if llid in llids:
-            hours = HOURS_TEMPLATE % (page['name'], process_hours(page['rendered']))
-            buildings.append((str(llid), str(hours), library_data[llid]['url']))
+            hours = HOURS_TEMPLATE % (page["name"], process_hours(page["rendered"]))
+            buildings.append((str(llid), str(hours), library_data[llid]["url"]))
     return buildings
 
 
@@ -306,7 +307,7 @@ def get_hours_and_location(obj):
         location = recursive_get_parent_building(unit.location)
         libcalid = location.libcal_library_id
         # hours = HOURS_TEMPLATE % (str(location), get_hours_by_id(location.libcal_library_id))
-    except (AttributeError):
+    except AttributeError:
         from units.utils import get_default_unit
 
         unit = get_default_unit()
@@ -316,17 +317,17 @@ def get_hours_and_location(obj):
 
     # Set address
     if location.address_2:
-        address = location.address_1 + ', ' + location.address_2
+        address = location.address_1 + ", " + location.address_2
     else:
         address = location.address_1
 
     # Return everything at once
     return {
-        'page_location': location,
-        'page_unit': unit,
+        "page_location": location,
+        "page_unit": unit,
         # 'hours': hours,
-        'libcalid': libcalid,
-        'address': ADDRESS_TEMPLATE
+        "libcalid": libcalid,
+        "address": ADDRESS_TEMPLATE
         % (address, location.city, location.state, str(location.postal_code)),
     }
 
@@ -373,7 +374,7 @@ def sort_buildings(spaces):
     )
     new_list = []
     pages = StandardPage.objects.live()
-    id_list = spaces.values_list('parent_building', flat=True)
+    id_list = spaces.values_list("parent_building", flat=True)
     # If locationpage id in list of ids of parent buildings, grab StandardPage object
     if REG in id_list:
         # pages.get(id=REGENSTEIN_HOMEPAGE).unit.location)
@@ -407,7 +408,7 @@ def get_field_for_indexing(field, iterable):
         string of concatonated values to be used
         for indexing.
     """
-    return ' '.join(item['summary'] for item in iterable)
+    return " ".join(item["summary"] for item in iterable)
 
 
 def get_doc_titles_for_indexing(id_field, iterable):
@@ -424,11 +425,11 @@ def get_doc_titles_for_indexing(id_field, iterable):
         Concatonated string of all document titles for document links
         in a given iterable. Used for indexing purposes.
     """
-    retval = ''
+    retval = ""
     for item in iterable:
         try:
             title = Document.objects.get(id=item[id_field]).title
-            retval += ' %s' % (title,)
+            retval += " %s" % (title,)
         except (KeyError, Document.DoesNotExist):
             pass
     return retval

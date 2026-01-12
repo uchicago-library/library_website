@@ -1,14 +1,14 @@
 {% load wagtailimages_tags %}
 
 {% for latest_story in latest_stories %}
-	<article>
-		<a href="{{ latest_story.url }}">
-			{% image latest_story.thumbnail_image fill-150x150 as thumbnail_image %}
-			<img class="img-responsive" src="{{ thumbnail_image.url }}" alt="{{ thumbnail_image.alt }}">
-		</a>
-		<div>
-			<p><a href="{{ latest_story.url }}">{{ latest_story.title }}</a></p>
-			<p class="home-excerpt">{{ latest_story.excerpt }}</p>
-		</div>  
-	</article>
+    <article>
+        <a href="{{ latest_story.url }}">
+            {% image latest_story.thumbnail_image fill-150x150 as thumbnail_image %}
+            <img class="img-responsive" src="{{ thumbnail_image.url }}" alt="{{ thumbnail_image.alt }}">
+        </a>
+        <div>
+            <p><a href="{{ latest_story.url }}">{{ latest_story.title }}</a></p>
+            <p class="home-excerpt">{{ latest_story.excerpt }}</p>
+        </div>
+    </article>
 {% endfor %}

@@ -1,4 +1,5 @@
 from django import template
+
 from public.models import LocationPage, StaffPublicPage
 from staff.utils import libcal_id_by_email
 from units.models import BUILDINGS
@@ -11,40 +12,35 @@ def ofKey(value, arg):
     if value:
         return value.get(arg)
     else:
-        return ''
+        return ""
 
 
-@register.inclusion_tag('staff/library_unit_links.html')
+@register.inclusion_tag("staff/library_unit_links.html")
 def library_unit_links(library_unit):
     try:
-        library_unit_pieces = library_unit.get_full_name().split(' - ')
+        library_unit_pieces = library_unit.get_full_name().split(" - ")
     except AttributeError:
-        return {'units': []}
+        return {"units": []}
     units = []
     i = 0
     while i < len(library_unit_pieces):
-        link_param = ' - '.join(library_unit_pieces[:i + 1])
+        link_param = " - ".join(library_unit_pieces[: i + 1])
         link_text = library_unit_pieces[i]
         units.append([link_param, link_text])
         i = i + 1
-    return {'units': units}
+    return {"units": units}
 
 
-@register.inclusion_tag('staff/staff_email_addresses.html')
+@register.inclusion_tag("staff/staff_email_addresses.html")
 def staff_email_addresses(staff_page):
     return {
-        'emails':
-        list(
-            set(
-                staff_page.staff_page_email.all().values_list(
-                    'email', flat=True
-                )
-            )
+        "emails": list(
+            set(staff_page.staff_page_email.all().values_list("email", flat=True))
         )
     }
 
 
-@register.inclusion_tag('staff/staff_libcal_schedules.html')
+@register.inclusion_tag("staff/staff_libcal_schedules.html")
 def staff_libcal_schedules(staff_page):
     """
     Passes staff libcal information into the context for the Staff Page index
@@ -59,15 +55,15 @@ def staff_libcal_schedules(staff_page):
 
     """
     emails = list(
-        set(staff_page.staff_page_email.all().values_list('email', flat=True))
+        set(staff_page.staff_page_email.all().values_list("email", flat=True))
     )
 
     return {
-        'emails': emails,
+        "emails": emails,
     }
 
 
-@register.inclusion_tag('staff/libcal_button.html')
+@register.inclusion_tag("staff/libcal_button.html")
 def libcal_button(staff_page, email):
     """
     Given a staff page and an email address, inserts a libcal scheduler button
@@ -83,34 +79,34 @@ def libcal_button(staff_page, email):
     libcal_id = libcal_id_by_email(email)
 
     return {
-        'libcal_id': libcal_id,
+        "libcal_id": libcal_id,
     }
 
 
-@register.inclusion_tag('staff/staff_faculty_exchanges_phone_numbers.html')
+@register.inclusion_tag("staff/staff_faculty_exchanges_phone_numbers.html")
 def staff_faculty_exchanges_phone_numbers(staff_page):
     libraries = {
-        'JCL': LocationPage.objects.get(title=BUILDINGS[0][1]),
-        'JRL': LocationPage.objects.get(title=BUILDINGS[4][1]),
-        'LBQ': LocationPage.objects.get(title=BUILDINGS[1][1]),
-        'Mansueto': LocationPage.objects.get(title=BUILDINGS[3][1]),
-        'MAN': LocationPage.objects.get(title=BUILDINGS[3][1]),
-        'SSA': LocationPage.objects.get(title=BUILDINGS[6][1]),
-        'RY': LocationPage.objects.get(title=BUILDINGS[7][1]),
-        'E': LocationPage.objects.get(title=BUILDINGS[2][1]),
-        'ECK': LocationPage.objects.get(title=BUILDINGS[2][1]),
+        "JCL": LocationPage.objects.get(title=BUILDINGS[0][1]),
+        "JRL": LocationPage.objects.get(title=BUILDINGS[4][1]),
+        "LBQ": LocationPage.objects.get(title=BUILDINGS[1][1]),
+        "Mansueto": LocationPage.objects.get(title=BUILDINGS[3][1]),
+        "MAN": LocationPage.objects.get(title=BUILDINGS[3][1]),
+        "SSA": LocationPage.objects.get(title=BUILDINGS[6][1]),
+        "RY": LocationPage.objects.get(title=BUILDINGS[7][1]),
+        "E": LocationPage.objects.get(title=BUILDINGS[2][1]),
+        "ECK": LocationPage.objects.get(title=BUILDINGS[2][1]),
     }
 
     lib_room_phone = []
     for p in staff_page.staff_page_phone_faculty_exchange.all():
-        library_abbreviation = p.faculty_exchange.split(' ')[0]
+        library_abbreviation = p.faculty_exchange.split(" ")[0]
         if library_abbreviation in libraries:
             lib = libraries[library_abbreviation]
         else:
             lib = None
 
         try:
-            room = p.faculty_exchange.split(' ')[1]
+            room = p.faculty_exchange.split(" ")[1]
         except IndexError:
             room = None
 
@@ -120,23 +116,23 @@ def staff_faculty_exchanges_phone_numbers(staff_page):
 
         lib_room_phone.append([lib, room, phone])
 
-    return {'lib_room_phone': lib_room_phone}
+    return {"lib_room_phone": lib_room_phone}
 
 
-@register.inclusion_tag('staff/staff_subjects.html')
+@register.inclusion_tag("staff/staff_subjects.html")
 def staff_subjects(staff_page):
     subjects = []
     for s in staff_page.staff_subject_placements.all():
         subjects.append(s.subject.name)
 
-    return {'subjects': sorted(subjects)}
+    return {"subjects": sorted(subjects)}
 
 
-@register.inclusion_tag('staff/staff_public_page_link.html')
+@register.inclusion_tag("staff/staff_public_page_link.html")
 def staff_public_page_link(staff_page):
     try:
         href = StaffPublicPage.objects.get(cnetid=staff_page.cnetid).url
-    except(AttributeError, StaffPublicPage.DoesNotExist):
-        href = ''
+    except (AttributeError, StaffPublicPage.DoesNotExist):
+        href = ""
 
-    return {'href': href, 'title': staff_page.title}
+    return {"href": href, "title": staff_page.title}

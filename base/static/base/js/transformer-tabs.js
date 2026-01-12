@@ -75,28 +75,28 @@ var Tabs = {
 
   changeTab: function(hash) {
     if (hash) {
-        var anchor = $("[href=" + hash + "]");
-        var div = $(hash);
-        var anchor_siblings = anchor.parent().siblings().find("a");
+      var anchor = $("[href=" + hash + "]");
+      var div = $(hash);
+      var anchorSiblings = anchor.parent().siblings().find("a");
 
-        // activate correct anchor (visually)
-        anchor.addClass("active");
-        anchor.attr("aria-selected", "true");
-        anchor.focus()
-        //anchor.removeAttr("tabindex");
-        anchor_siblings.removeClass("active");
-        anchor_siblings.attr("aria-selected", "false");
-        anchor_siblings.attr("tabindex", "-1");
+      // activate correct anchor (visually)
+      anchor.addClass("active");
+      anchor.attr("aria-selected", "true");
+      anchor.focus()
+      //anchor.removeAttr("tabindex");
+      anchorSiblings.removeClass("active");
+      anchorSiblings.attr("aria-selected", "false");
+      anchorSiblings.attr("tabindex", "-1");
 
-        // activate correct div (visually)
-        div.addClass("active").siblings().removeClass("active");
+      // activate correct div (visually)
+      div.addClass("active").siblings().removeClass("active");
 
-        // update URL, no history addition
-        // You'd have this active in a real situation, but it causes issues in an <iframe> (like here on CodePen) in Firefox. So commenting out.
-        // window.history.replaceState("", "", hash);
+      // update URL, no history addition
+      // You'd have this active in a real situation, but it causes issues in an <iframe> (like here on CodePen) in Firefox. So commenting out.
+      // window.history.replaceState("", "", hash);
 
-        // Close menu, in case mobile
-        anchor.closest("ul").removeClass("open");
+      // Close menu, in case mobile
+      anchor.closest("ul").removeClass("open");
     }
   },
 
@@ -115,20 +115,20 @@ Tabs.init();
 
 // propagate an input element's content to all the other forms in the
 // search box
-const propagate = (element) => {
+const propagate = (element) => { // eslint-disable-line no-unused-vars
 
-    // get all the forms on the search box page
-    const form1 = document.getElementById("search_form1");
-    const form2 = document.getElementById("ebscohostsearchtext");
-    const form3 = document.getElementById("search_form3");
-    const form4 = document.getElementById("search_form4");
-    const form5 = document.getElementById("search_form5");
+  // get all the forms on the search box page
+  const form1 = document.getElementById("search_form1");
+  const form2 = document.getElementById("ebscohostsearchtext");
+  const form3 = document.getElementById("search_form3");
+  const form4 = document.getElementById("search_form4");
+  const form5 = document.getElementById("search_form5");
 
-    const all_the_forms = [ form1, form2, form3, form4, form5 ];
+  const allTheForms = [ form1, form2, form3, form4, form5 ];
 
-    // propagate content of input element out to other forms
-    var i;
-    for (i = 0; i < all_the_forms.length; i++) {
-	all_the_forms[i].value = element.value
-    }
+  // propagate content of input element out to other forms
+  var i;
+  for (i = 0; i < allTheForms.length; i++) {
+    allTheForms[i].value = element.value
+  }
 };

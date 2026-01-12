@@ -6,14 +6,14 @@ from django.shortcuts import redirect, render
 from django.templatetags.static import static
 from django.urls import re_path, reverse
 from django.utils.html import format_html
-from library_website.settings.base import (
-    NO_PERMISSIONS_REDIRECT_URL,
-    PERMISSIONS_MAPPING,
-)
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
 from base.management.commands.report_page_maintainers_and_editors import Command
+from library_website.settings.base import (
+    NO_PERMISSIONS_REDIRECT_URL,
+    PERMISSIONS_MAPPING,
+)
 
 
 class Echo:
@@ -64,7 +64,7 @@ def has_permission(user, required_groups):
     return user_groups.issuperset(required_groups)
 
 
-@hooks.register('insert_global_admin_css')
+@hooks.register("insert_global_admin_css")
 def editor_css():
     """
     Modify the admin css in order to hide
@@ -75,7 +75,7 @@ def editor_css():
     )
 
 
-@hooks.register('before_serve_page')
+@hooks.register("before_serve_page")
 def redirect_users_without_permissions(page, request, serve_args, serve_kwargs):
     """
     Redirect users of a site if they do not have
@@ -85,12 +85,12 @@ def redirect_users_without_permissions(page, request, serve_args, serve_kwargs):
         return redirect(NO_PERMISSIONS_REDIRECT_URL)
 
 
-@hooks.register('insert_global_admin_css')
+@hooks.register("insert_global_admin_css")
 def global_admin_css():
     """
     Override the main admin css.
     """
-    return format_html('<link rel="stylesheet" href="{}">', static('css/admin.css'))
+    return format_html('<link rel="stylesheet" href="{}">', static("css/admin.css"))
 
 
 def admin_view(request):
@@ -99,14 +99,14 @@ def admin_view(request):
     """
     from base.forms import PageOwnersForm
 
-    if request.method == 'POST':
+    if request.method == "POST":
         c = Command()
         form = PageOwnersForm(request.POST)
 
         options = {
-            'cnetid': form.data.get('cnetid', None),
-            'site_name': form.data.get('site', None),
-            'role': form.data.get('role', None),
+            "cnetid": form.data.get("cnetid", None),
+            "site_name": form.data.get("site", None),
+            "role": form.data.get("role", None),
         }
 
         if form.is_valid():
@@ -116,7 +116,7 @@ def admin_view(request):
             response = StreamingHttpResponse(
                 (writer.writerow(row) for row in rows), content_type="text/csv"
             )
-            response['Content-Disposition'] = (
+            response["Content-Disposition"] = (
                 'attachment; filename="page-owners-report.csv"'
             )
 
@@ -124,19 +124,19 @@ def admin_view(request):
 
     else:
         form = PageOwnersForm()
-        return render(request, 'base/page_owners_form.html', {'form': form})
+        return render(request, "base/page_owners_form.html", {"form": form})
 
 
-@hooks.register('register_admin_urls')
+@hooks.register("register_admin_urls")
 def urlconf_time():
-    return [re_path(r'^page_owners_report/$', admin_view, name='page_owners_report')]
+    return [re_path(r"^page_owners_report/$", admin_view, name="page_owners_report")]
 
 
-@hooks.register('register_settings_menu_item')
+@hooks.register("register_settings_menu_item")
 def register_frank_menu_item():
     return MenuItem(
-        'Page Owners Report',
-        reverse('page_owners_report'),
-        classname='icon icon-download',
-        order=10009
+        "Page Owners Report",
+        reverse("page_owners_report"),
+        classname="icon icon-download",
+        order=10009,
     )

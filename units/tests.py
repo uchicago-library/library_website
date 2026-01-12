@@ -6,12 +6,13 @@ from django.core import management
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
-from django.test import Client, TestCase
-from library_website.settings import PUBLIC_HOMEPAGE
+from django.test import Client, TestCase, override_settings
 from openpyxl import load_workbook
+from wagtail.models import Page, Site
+
+from library_website.settings import PUBLIC_HOMEPAGE
 from site_settings.models import QuickNumber, QuickNumberGroup
 from staff.models import StaffPage
-from wagtail.models import Page, Site
 
 from .models import UnitPage
 from .utils import (
@@ -28,7 +29,7 @@ class TestLibraryDirectory(TestCase):
     Tests for the staff browse.
     """
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def test_subject_browse_dropdown(self):
         """
@@ -39,30 +40,45 @@ class TestLibraryDirectory(TestCase):
         client = Client()
         session = client.session
         session.save()
-        response = client.get('/about/directory/?view=staff')
-        qs = response.context['subjects']
+        response = client.get("/about/directory/?view=staff")
+        qs = response.context["subjects"]
         is_qs = isinstance(qs, QuerySet)
         self.assertEqual(is_qs, True)
 
 
+@override_settings(
+    CACHES={
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "test-quick-numbers",
+        },
+        "pagecache": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "test-pagecache",
+        },
+    }
+)
 class TestQuickNumberUtils(TestCase):
     """
     Tests for utilities used for adding quick numbers
     to the public staff directory.
+
+    Uses local memory cache to prevent race conditions in parallel tests
+    where multiple workers share Redis but have separate databases.
     """
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     @classmethod
     def setUpTestData(cls):
-        cls.quick_num = {'label': 'Foobar', 'number': '773-702-8740', 'link': None}
-        cls.quick_link = {'label': 'Foobar', 'number': '', 'link': PUBLIC_HOMEPAGE}
+        cls.quick_num = {"label": "Foobar", "number": "773-702-8740", "link": None}
+        cls.quick_link = {"label": "Foobar", "number": "", "link": PUBLIC_HOMEPAGE}
         cls.dlist = [
-            {'label': 'Captain Janeway', 'number': '00100', 'link': None},
-            {'label': 'B\'Elanna Torres', 'number': '11000', 'link': None},
-            {'label': 'Seven of Nine', 'number': '01001', 'link': None},
+            {"label": "Captain Janeway", "number": "00100", "link": None},
+            {"label": "B'Elanna Torres", "number": "11000", "link": None},
+            {"label": "Seven of Nine", "number": "01001", "link": None},
         ]
-        cls.dlist_expected = '<td><strong>Captain Janeway</strong> 00100</td><td><strong>B\'Elanna Torres</strong> 11000</td><td><strong>Seven of Nine</strong> 01001</td>'
+        cls.dlist_expected = "<td><strong>Captain Janeway</strong> 00100</td><td><strong>B'Elanna Torres</strong> 11000</td><td><strong>Seven of Nine</strong> 01001</td>"
 
     def test_get_quick_num_or_link(self):
         """
@@ -71,17 +87,17 @@ class TestQuickNumberUtils(TestCase):
         """
 
         # For testing dict keys
-        a = {'text': 'Foobar', 'number': '773-702-8740', 'link': None}
-        b = {'label': 'Foobar', 'link': None}
+        a = {"text": "Foobar", "number": "773-702-8740", "link": None}
+        b = {"label": "Foobar", "link": None}
 
         # For testing dict key -> values
-        c = {'label': '', 'number': '773-702-8740', 'link': None}
-        d = {'label': 'Foobar', 'number': '773-702-8740', 'link': '/'}
+        c = {"label": "", "number": "773-702-8740", "link": None}
+        d = {"label": "Foobar", "number": "773-702-8740", "link": "/"}
 
         # For testing return values
-        e = {'label': 'Foobar', 'number': '773-702-8740', 'link': None}
-        f = {'label': 'Foobar', 'number': '', 'link': PUBLIC_HOMEPAGE}
-        g = {'label': 'Foobar', 'number': '', 'link': None}
+        e = {"label": "Foobar", "number": "773-702-8740", "link": None}
+        f = {"label": "Foobar", "number": "", "link": PUBLIC_HOMEPAGE}
+        g = {"label": "Foobar", "number": "", "link": None}
 
         # Test dict keys
         self.assertTrue(assert_assertion_error(get_quick_num_or_link, a))
@@ -92,8 +108,8 @@ class TestQuickNumberUtils(TestCase):
         self.assertTrue(assert_assertion_error(get_quick_num_or_link, d))
 
         # Test return values
-        self.assertEqual(get_quick_num_or_link(e), (0, 'Foobar', '773-702-8740'))
-        self.assertEqual(get_quick_num_or_link(f), (1, 'Foobar', '/'))
+        self.assertEqual(get_quick_num_or_link(e), (0, "Foobar", "773-702-8740"))
+        self.assertEqual(get_quick_num_or_link(f), (1, "Foobar", "/"))
         self.assertRaises(ValueError, get_quick_num_or_link, g)
 
     def test_get_quick_num_html(self):
@@ -101,7 +117,7 @@ class TestQuickNumberUtils(TestCase):
         Test the expected HTML output.
         """
         # Expected HTML
-        expected_num = '<td><strong>Foobar</strong>773-702-8740</td>'
+        expected_num = "<td><strong>Foobar</strong>773-702-8740</td>"
         expected_link = '<td><strong><a href="/">Foobar</a></strong></td>'
 
         # Returned HTML
@@ -119,17 +135,17 @@ class TestQuickNumberUtils(TestCase):
         """
         # Create test quick number group
         group = QuickNumberGroup.objects.create(
-            slug='test-library', display_name='Test Library', is_default=True
+            slug="test-library", display_name="Test Library", is_default=True
         )
         QuickNumber.objects.create(
-            group=group, label='Main Telephone', number='773-702-8740', link=None
+            group=group, label="Main Telephone", number="773-702-8740", link=None
         )
 
         quick_nums = get_quick_nums_dict()
 
         # Should get data from database
         self.assertIsInstance(quick_nums, dict)
-        self.assertIn('test-library', quick_nums)
+        self.assertIn("test-library", quick_nums)
 
         # Test that each number dict has the required structure
         for library in quick_nums:
@@ -141,13 +157,13 @@ class TestQuickNumberUtils(TestCase):
         Test that only one QuickNumberGroup can be set as default.
         """
         # Create first default group
-        group1 = QuickNumberGroup.objects.create(
-            slug='library-one', display_name='Library One', is_default=True
+        group1 = QuickNumberGroup.objects.create(  # noqa: F841
+            slug="library-one", display_name="Library One", is_default=True
         )
 
         # Try to create second default group - should fail validation
         group2 = QuickNumberGroup(
-            slug='library-two', display_name='Library Two', is_default=True
+            slug="library-two", display_name="Library Two", is_default=True
         )
 
         with self.assertRaises(ValidationError):
@@ -157,38 +173,43 @@ class TestQuickNumberUtils(TestCase):
         """
         Test the output of get_quick_nums_for_library_or_dept.
         """
-        # Clear cache to ensure we get fresh data from database
-        cache.clear()
+        # Remove fixture's default group to avoid fallback interference
+        QuickNumberGroup.objects.filter(is_default=True).delete()
 
         client = Client()
         site = Site.objects.filter(is_default_site=True)[0]
 
         # Create test quick number groups in database
         enterprise = QuickNumberGroup.objects.create(
-            slug='enterprise', display_name='Enterprise'
+            slug="enterprise", display_name="Enterprise"
         )
         QuickNumber.objects.create(
-            group=enterprise, label='Captain Picard', number='11100'
+            group=enterprise, label="Captain Picard", number="11100", sort_order=0
         )
         QuickNumber.objects.create(
-            group=enterprise, label='Worf Rozhenko', number='00001'
+            group=enterprise, label="Worf Rozhenko", number="00001", sort_order=1
         )
-        QuickNumber.objects.create(group=enterprise, label='Data', number='10111')
+        QuickNumber.objects.create(
+            group=enterprise, label="Data", number="10111", sort_order=2
+        )
 
         defiant = QuickNumberGroup.objects.create(
-            slug='defiant', display_name='Defiant'
+            slug="defiant", display_name="Defiant"
         )
         QuickNumber.objects.create(
-            group=defiant, label='Benjamin Sisko', number='101001'
+            group=defiant, label="Benjamin Sisko", number="101001", sort_order=0
         )
         QuickNumber.objects.create(
-            group=defiant, label='Quark', number='', link=site.root_page
+            group=defiant, label="Quark", number="", link=site.root_page, sort_order=1
         )
 
+        # Clear cache after creating test data to force fresh DB queries
+        cache.clear()
+
         # Normal quick numbers
-        expected = '<td><strong>Captain Picard</strong> 11100</td><td><strong>Worf Rozhenko</strong> 00001</td><td><strong>Data</strong> 10111</td>'
+        expected = "<td><strong>Captain Picard</strong> 11100</td><td><strong>Worf Rozhenko</strong> 00001</td><td><strong>Data</strong> 10111</td>"
         response = client.get(
-            '/about/directory/?view=staff&department=Enterprise',
+            "/about/directory/?view=staff&department=Enterprise",
             HTTP_HOST=site.hostname,
         )
         request = response.wsgi_request
@@ -198,7 +219,7 @@ class TestQuickNumberUtils(TestCase):
         # Link instead of number
         expected = '<td><strong>Benjamin Sisko</strong> 101001</td><td><strong><a href="/">Quark</a></strong></td>'
         response = client.get(
-            '/about/directory/?view=staff&department=Defiant',
+            "/about/directory/?view=staff&department=Defiant",
             HTTP_HOST=site.hostname,
         )
         request = response.wsgi_request
@@ -207,16 +228,20 @@ class TestQuickNumberUtils(TestCase):
 
         # Test library parameter
         voyager = QuickNumberGroup.objects.create(
-            slug='voyager', display_name='Voyager'
+            slug="voyager", display_name="Voyager"
         )
-        for item in self.dlist:
+        for idx, item in enumerate(self.dlist):
             QuickNumber.objects.create(
-                group=voyager, label=item['label'], number=item['number'], link=None
+                group=voyager,
+                label=item["label"],
+                number=item["number"],
+                link=None,
+                sort_order=idx,
             )
 
         expected = self.dlist_expected
         response = client.get(
-            '/about/directory/?view=staff&library=Voyager', HTTP_HOST=site.hostname
+            "/about/directory/?view=staff&library=Voyager", HTTP_HOST=site.hostname
         )
         request = response.wsgi_request
         html = get_quick_nums_for_library_or_dept(request)
@@ -227,20 +252,23 @@ class TestQuickNumberUtils(TestCase):
         QuickNumberGroup.objects.filter(is_default=True).delete()
 
         default_group = QuickNumberGroup.objects.create(
-            slug='test-default',
-            display_name='Test Default Library',
+            slug="test-default",
+            display_name="Test Default Library",
             is_default=True,
         )
         QuickNumber.objects.create(
-            group=default_group, label='Captain Long', number='00100'
+            group=default_group, label="Captain Long", number="00100", sort_order=0
         )
         QuickNumber.objects.create(
-            group=default_group, label='Lieutenant Commander Blair', number='11000'
+            group=default_group,
+            label="Lieutenant Commander Blair",
+            number="11000",
+            sort_order=1,
         )
 
-        expected = '<td><strong>Captain Long</strong> 00100</td><td><strong>Lieutenant Commander Blair</strong> 11000</td>'
+        expected = "<td><strong>Captain Long</strong> 00100</td><td><strong>Lieutenant Commander Blair</strong> 11000</td>"
         response = client.get(
-            '/about/directory/?view=staff&department=Borg Cube',
+            "/about/directory/?view=staff&department=Borg Cube",
             HTTP_HOST=site.hostname,
         )
         request = response.wsgi_request
@@ -257,9 +285,9 @@ class TestQuickNumberUtils(TestCase):
 class ListUnitsWagtail(TestCase):
 
     def run_command(self, **options):
-        tempfile = NamedTemporaryFile(delete=False, suffix='.xlsx')
-        options.update({'filename': tempfile.name, 'output_format': 'excel'})
-        management.call_command('list_units_wagtail', **options)
+        tempfile = NamedTemporaryFile(delete=False, suffix=".xlsx")
+        options.update({"filename": tempfile.name, "output_format": "excel"})
+        management.call_command("list_units_wagtail", **options)
 
         wb = load_workbook(tempfile.name)
         ws = wb[wb.sheetnames[0]]
@@ -269,15 +297,15 @@ class ListUnitsWagtail(TestCase):
 
     def setUp(self):
         try:
-            welcome = Page.objects.get(path='00010001')
-        except:
-            root = Page.objects.create(depth=1, path='0001', slug='root', title='Root')
+            welcome = Page.objects.get(path="00010001")
+        except:  # noqa: E722
+            root = Page.objects.create(depth=1, path="0001", slug="root", title="Root")
 
-            welcome = Page(path='00010001', slug='welcome', title='Welcome')
+            welcome = Page(path="00010001", slug="welcome", title="Welcome")
             root.add_child(instance=welcome)
 
         staff_person = StaffPage(
-            cnetid='staff-person', slug='staff-person', title='Staff Person'
+            cnetid="staff-person", slug="staff-person", title="Staff Person"
         )
         welcome.add_child(instance=staff_person)
 
@@ -285,15 +313,15 @@ class ListUnitsWagtail(TestCase):
             editor=staff_person,
             department_head=staff_person,
             page_maintainer=staff_person,
-            slug='some-unit',
-            title='Some Unit',
+            slug="some-unit",
+            title="Some Unit",
         )
         welcome.add_child(instance=some_unit)
 
     def test_report_column_count(self):
-        records = self.run_command(all='True')
+        records = self.run_command(all="True")
         self.assertEqual(len(records[0]), 4)
 
     def test_report_record_count(self):
-        records = self.run_command(all='True')
+        records = self.run_command(all="True")
         self.assertEqual(len(records), 1)

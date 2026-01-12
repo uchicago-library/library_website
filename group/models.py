@@ -2,8 +2,6 @@ import re
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
-from base.models import AbstractReport, BasePage, DefaultBodyFields, Email, Report
-from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.fields import CharField
@@ -20,7 +18,10 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
-GROUP_PAGE_CONTENT_TYPES = ['Group | group page', 'Group | group index page']
+from base.models import AbstractReport, BasePage, DefaultBodyFields, Email, Report
+from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
+
+GROUP_PAGE_CONTENT_TYPES = ["Group | group page", "Group | group index page"]
 
 
 def default_end_time():
@@ -40,14 +41,14 @@ class GroupMemberRole(models.Model, index.Indexed):
     text = models.CharField(max_length=255, blank=False)
 
     panels = [
-        FieldPanel('text'),
+        FieldPanel("text"),
     ]
 
     def __str__(self):
         return self.text
 
     search_fields = [
-        index.AutocompleteField('text'),
+        index.AutocompleteField("text"),
     ]
 
 
@@ -57,12 +58,12 @@ def enforce_name_as_year(title):
     page titles adhere to a strict
     formatting policy.
     """
-    if not re.match('^[0-9]{4}$', title):
+    if not re.match("^[0-9]{4}$", title):
         raise ValidationError(
             {
-                'title': (
-                    'Please enter the year as \
-            a four digit number, e.g. 2016'
+                "title": (
+                    "Please enter the year as \
+            a four digit number, e.g. 2016"
                 )
             }
         )
@@ -84,17 +85,17 @@ def get_page_objects_grouped_by_date(obj):
         OrderedDict
     """
     retval = OrderedDict()
-    for i in obj.order_by('-date'):
-        if not hasattr(i, 'link') and not hasattr(i, 'document'):
+    for i in obj.order_by("-date"):
+        if not hasattr(i, "link") and not hasattr(i, "document"):
             continue
 
         date = i.date.strftime("%b. %-d, %Y")
-        item = {'summary': i.summary}
+        item = {"summary": i.summary}
 
-        if hasattr(i, 'link'):
-            item['url'] = i.link
-        elif hasattr(i, 'document'):
-            item['url'] = i.document.url
+        if hasattr(i, "link"):
+            item["url"] = i.link
+        elif hasattr(i, "document"):
+            item["url"] = i.document.url
 
         if date in retval:
             retval[date].append(item)
@@ -118,14 +119,14 @@ def get_page_objects_as_list(obj):
     Returns: list
     """
     retval = []
-    for i in obj.order_by('-date'):
+    for i in obj.order_by("-date"):
         if not i.link and not i.document.url:
             continue
-        item = {'summary': i.summary, 'date': i.date.strftime("%b. %-d, %Y")}
+        item = {"summary": i.summary, "date": i.date.strftime("%b. %-d, %Y")}
         if i.link:
-            item['url'] = i.link
+            item["url"] = i.link
         elif i.document.url:
-            item['url'] = i.document.url
+            item["url"] = i.document.url
         retval.append(item)
 
     return retval
@@ -145,9 +146,9 @@ class MeetingMinutes(AbstractReport):
     )
 
     panels = [
-        FieldPanel('date'),
-        FieldPanel('summary'),
-        PageChooserPanel('link_page'),
+        FieldPanel("date"),
+        FieldPanel("summary"),
+        PageChooserPanel("link_page"),
     ]
 
     class Meta:
@@ -159,7 +160,7 @@ class GroupMeetingMinutesPageTable(Orderable, MeetingMinutes):
     Meeting minutes for group pages.
     """
 
-    page = ParentalKey('group.GroupMeetingMinutesPage', related_name='meeting_minutes')
+    page = ParentalKey("group.GroupMeetingMinutesPage", related_name="meeting_minutes")
 
 
 class GroupReportsPageTable(Orderable, Report):
@@ -167,7 +168,7 @@ class GroupReportsPageTable(Orderable, Report):
     Reports for group pages.
     """
 
-    page = ParentalKey('group.GroupReportsPage', related_name='group_reports')
+    page = ParentalKey("group.GroupReportsPage", related_name="group_reports")
 
 
 class GroupMembers(Orderable, models.Model):
@@ -177,31 +178,31 @@ class GroupMembers(Orderable, models.Model):
     """
 
     parent = ParentalKey(
-        'group.GroupPage',
-        related_name='group_members',
+        "group.GroupPage",
+        related_name="group_members",
         null=True,
         blank=False,
         on_delete=models.CASCADE,
     )
 
     group_member = models.ForeignKey(
-        'staff.StaffPage',
-        related_name='member',
+        "staff.StaffPage",
+        related_name="member",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
     role = models.ForeignKey(
-        'group.GroupMemberRole',
+        "group.GroupMemberRole",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='+',
+        related_name="+",
     )
 
     class Meta:
-        verbose_name = 'Member'
-        verbose_name_plural = 'Members'
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
 
 
 class GroupPage(BasePage, Email):
@@ -210,14 +211,14 @@ class GroupPage(BasePage, Email):
     """
 
     subpage_types = [
-        'base.IntranetIndexPage',
-        'base.IntranetPlainPage',
-        'group.GroupPage',
-        'group.GroupMeetingMinutesIndexPage',
-        'group.GroupReportsIndexPage',
-        'intranetforms.IntranetFormPage',
-        'projects.ProjectPage',
-        'redirects.LoopRedirectPage',
+        "base.IntranetIndexPage",
+        "base.IntranetPlainPage",
+        "group.GroupPage",
+        "group.GroupMeetingMinutesIndexPage",
+        "group.GroupReportsIndexPage",
+        "intranetforms.IntranetFormPage",
+        "projects.ProjectPage",
+        "redirects.LoopRedirectPage",
     ]
     meeting_location = CharField(blank=True, max_length=255)
     meeting_start_time = models.TimeField(
@@ -235,7 +236,6 @@ class GroupPage(BasePage, Email):
         DefaultBodyFields(),
         blank=True,
     )
-    is_active = models.BooleanField(default=True)
     body = StreamField(
         DefaultBodyFields(),
     )
@@ -246,26 +246,25 @@ class GroupPage(BasePage, Email):
         + [
             MultiFieldPanel(
                 [
-                    FieldPanel('meeting_start_time'),
-                    FieldPanel('meeting_end_time'),
-                    FieldPanel('meeting_location'),
-                    FieldPanel('meeting_frequency'),
+                    FieldPanel("meeting_start_time"),
+                    FieldPanel("meeting_end_time"),
+                    FieldPanel("meeting_location"),
+                    FieldPanel("meeting_frequency"),
                 ],
-                heading='Meeting Information',
+                heading="Meeting Information",
             ),
-            FieldPanel('intro'),
-            InlinePanel('group_members', label='Group Members'),
-            FieldPanel('is_active'),
-            FieldPanel('body'),
+            FieldPanel("intro"),
+            InlinePanel("group_members", label="Group Members"),
+            FieldPanel("body"),
         ]
         + BasePage.content_panels
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('meeting_location'),
-        index.SearchField('meeting_frequency'),
-        index.SearchField('intro'),
-        index.SearchField('body'),
+        index.SearchField("meeting_location"),
+        index.SearchField("meeting_frequency"),
+        index.SearchField("intro"),
+        index.SearchField("body"),
     ]
 
     def get_context(self, request):
@@ -277,11 +276,11 @@ class GroupPage(BasePage, Email):
         group_member_chairs = []
         non_group_member_chairs = []
         for g in group_members:
-            if g.group_member == None:
+            if g.group_member is None:
                 continue
-            if g.group_member.live == False:
+            if g.group_member.live is False:
                 continue
-            if g.role and g.role.text in ['Chair', 'Co-Chair']:
+            if g.role and g.role.text in ["Chair", "Co-Chair"]:
                 group_member_chairs.append(g)
             else:
                 non_group_member_chairs.append(g)
@@ -305,16 +304,16 @@ class GroupPage(BasePage, Email):
                 except AttributeError:
                     continue
                 minute = {
-                    'summary': m.summary,
-                    'date': m.date.strftime("%b. %-d, %Y"),
-                    'sortdate': m.date.strftime("%Y%m%d"),
+                    "summary": m.summary,
+                    "date": m.date.strftime("%b. %-d, %Y"),
+                    "sortdate": m.date.strftime("%Y%m%d"),
                 }
                 if m.link:
-                    minute['url'] = m.link
+                    minute["url"] = m.link
                 elif m.document.url:
-                    minute['url'] = m.document.url
+                    minute["url"] = m.document.url
                 tmp.append(minute)
-        minutes = sorted(tmp, key=lambda m: m['sortdate'], reverse=True)[:3]
+        minutes = sorted(tmp, key=lambda m: m["sortdate"], reverse=True)[:3]
 
         # reports
         tmp = []
@@ -327,24 +326,24 @@ class GroupPage(BasePage, Email):
                 except AttributeError:
                     continue
                 report = {
-                    'summary': r.summary,
-                    'date': r.date.strftime("%b. %-d, %Y"),
-                    'sortdate': r.date.strftime("%Y%m%d"),
+                    "summary": r.summary,
+                    "date": r.date.strftime("%b. %-d, %Y"),
+                    "sortdate": r.date.strftime("%Y%m%d"),
                 }
                 if r.link:
-                    report['url'] = r.link
+                    report["url"] = r.link
                 elif r.document.url:
-                    report['url'] = r.document.url
+                    report["url"] = r.document.url
                 tmp.append(report)
-        reports = sorted(tmp, key=lambda r: r['sortdate'], reverse=True)[:3]
+        reports = sorted(tmp, key=lambda r: r["sortdate"], reverse=True)[:3]
 
-        context['minutes'] = minutes
-        context['reports'] = reports
-        context['group_members'] = list(
+        context["minutes"] = minutes
+        context["reports"] = reports
+        context["group_members"] = list(
             map(
                 lambda m: {
-                    'title': m.group_member.title,
-                    'unit': '<br/>'.join(
+                    "title": m.group_member.title,
+                    "unit": "<br/>".join(
                         sorted(
                             map(
                                 lambda u: u.library_unit.get_full_name(),
@@ -352,8 +351,8 @@ class GroupPage(BasePage, Email):
                             )
                         )
                     ),
-                    'url': m.group_member.url,
-                    'role': m.role,
+                    "url": m.group_member.url,
+                    "role": m.role,
                 },
                 group_members,
             )
@@ -367,7 +366,7 @@ class GroupMeetingMinutesIndexPage(BasePage):
     """
 
     content_panels = Page.content_panels + BasePage.content_panels
-    subpage_types = ['group.GroupMeetingMinutesPage']
+    subpage_types = ["group.GroupMeetingMinutesPage"]
 
     def clean(self):
         """
@@ -375,7 +374,7 @@ class GroupMeetingMinutesIndexPage(BasePage):
         formatting policy.
         """
         if not self.title.strip() == "Meeting Minutes":
-            raise ValidationError({'title': ('The title should be "Meeting Minutes"')})
+            raise ValidationError({"title": ('The title should be "Meeting Minutes"')})
 
     def get_context(self, request):
         """
@@ -383,7 +382,7 @@ class GroupMeetingMinutesIndexPage(BasePage):
         """
         context = super(GroupMeetingMinutesIndexPage, self).get_context(request)
 
-        year_pages = self.get_children().order_by('-title')
+        year_pages = self.get_children().order_by("-title")
 
         data = []
         for page in year_pages:
@@ -393,7 +392,7 @@ class GroupMeetingMinutesIndexPage(BasePage):
             )
             data.append((year_title, year_minutes))
 
-        context['data'] = data
+        context["data"] = data
         return context
 
 
@@ -408,17 +407,17 @@ class GroupMeetingMinutesPage(BasePage):
     content_panels = (
         Page.content_panels
         + [
-            InlinePanel('meeting_minutes', label='Meeting Minutes'),
+            InlinePanel("meeting_minutes", label="Meeting Minutes"),
         ]
         + BasePage.content_panels
     )
 
     search_fields = BasePage.search_fields + [
-        index.AutocompleteField('get_mm_summaries_for_indexing'),
-        index.AutocompleteField('get_mm_doc_links_for_indexing'),
+        index.AutocompleteField("get_mm_summaries_for_indexing"),
+        index.AutocompleteField("get_mm_doc_links_for_indexing"),
     ]
 
-    subpage_types = ['base.IntranetPlainPage']
+    subpage_types = ["base.IntranetPlainPage"]
 
     def clean(self):
         """
@@ -450,7 +449,7 @@ class GroupMeetingMinutesPage(BasePage):
         """
         context = super(GroupMeetingMinutesPage, self).get_context(request)
         minutes = self.get_meeting_minutes()
-        context['minutes'] = minutes
+        context["minutes"] = minutes
         return context
 
     def get_mm_summaries_for_indexing(self):
@@ -461,7 +460,7 @@ class GroupMeetingMinutesPage(BasePage):
             Concatonated string of all meeting minute sumaries for
             indexing purposes.
         """
-        return get_field_for_indexing('summary', self.meeting_minutes.values())
+        return get_field_for_indexing("summary", self.meeting_minutes.values())
 
     def get_mm_doc_links_for_indexing(self):
         """
@@ -472,7 +471,7 @@ class GroupMeetingMinutesPage(BasePage):
             document links. Used for indexing purposes.
         """
         return get_doc_titles_for_indexing(
-            'link_document_id', self.meeting_minutes.values()
+            "link_document_id", self.meeting_minutes.values()
         )
 
 
@@ -482,7 +481,7 @@ class GroupReportsIndexPage(BasePage):
     """
 
     content_panels = Page.content_panels + BasePage.content_panels
-    subpage_types = ['group.GroupReportsPage']
+    subpage_types = ["group.GroupReportsPage"]
 
     def get_context(self, request):
         """
@@ -490,7 +489,7 @@ class GroupReportsIndexPage(BasePage):
         """
         context = super(GroupReportsIndexPage, self).get_context(request)
 
-        year_pages = self.get_children().order_by('-title')
+        year_pages = self.get_children().order_by("-title")
 
         data = []
         for page in year_pages:
@@ -498,7 +497,7 @@ class GroupReportsIndexPage(BasePage):
             year_reports = page.groupreportspage.get_reports_grouped_by_date()
             data.append((year_title, year_reports))
 
-        context['data'] = data
+        context["data"] = data
         return context
 
 
@@ -513,17 +512,17 @@ class GroupReportsPage(BasePage):
     content_panels = (
         Page.content_panels
         + [
-            InlinePanel('group_reports', label='Reports'),
+            InlinePanel("group_reports", label="Reports"),
         ]
         + BasePage.content_panels
     )
 
     search_fields = BasePage.search_fields + [
-        index.AutocompleteField('get_report_summaries_for_indexing'),
-        index.AutocompleteField('get_report_doc_links_for_indexing'),
+        index.AutocompleteField("get_report_summaries_for_indexing"),
+        index.AutocompleteField("get_report_doc_links_for_indexing"),
     ]
 
-    subpage_types = ['base.IntranetPlainPage']
+    subpage_types = ["base.IntranetPlainPage"]
 
     def get_context(self, request):
         """
@@ -531,7 +530,7 @@ class GroupReportsPage(BasePage):
         """
         context = super(GroupReportsPage, self).get_context(request)
         reports = self.get_reports_grouped_by_date()
-        context['reports'] = reports
+        context["reports"] = reports
         return context
 
     def get_reports(self):
@@ -560,7 +559,7 @@ class GroupReportsPage(BasePage):
             Concatonated string of all meeting minute sumaries for
             indexing purposes.
         """
-        return get_field_for_indexing('summary', self.group_reports.values())
+        return get_field_for_indexing("summary", self.group_reports.values())
 
     def get_report_doc_links_for_indexing(self):
         """
@@ -571,7 +570,7 @@ class GroupReportsPage(BasePage):
             document links. Used for indexing purposes.
         """
         return get_doc_titles_for_indexing(
-            'link_document_id', self.group_reports.values()
+            "link_document_id", self.group_reports.values()
         )
 
 
@@ -581,18 +580,18 @@ class GroupIndexPage(BasePage):
     """
 
     subpage_types = [
-        'group.GroupPage',
-        'group.GroupIndexPage',
-        'base.IntranetPlainPage',
+        "group.GroupPage",
+        "group.GroupIndexPage",
+        "base.IntranetPlainPage",
     ]
     intro = RichTextField()
 
     content_panels = (
-        Page.content_panels + [FieldPanel('intro')] + BasePage.content_panels
+        Page.content_panels + [FieldPanel("intro")] + BasePage.content_panels
     )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
+        index.SearchField("intro"),
     ]
 
     def get_context(self, request):
@@ -600,11 +599,27 @@ class GroupIndexPage(BasePage):
 
         groups_active = [
             {
-                'title': self.title,
-                'url': self.url,
-                'children': [],
+                "title": self.title,
+                "url": self.url,
+                "id": self.id,
+                "children": [],
             }
         ]
+
+        # Get all child GroupIndexPages (excluding self)
+        child_index_pages = (
+            GroupIndexPage.objects.live().descendant_of(self).exclude(pk=self.pk)
+        )
+
+        # Start with all live GroupPage descendants
+        all_groups = GroupPage.objects.live().descendant_of(self)
+
+        # Exclude descendants of child GroupIndexPages
+        # Note: Django querysets are lazy, so this loop chains .not_descendant_of()
+        # filters together without executing the query. The final queryset will
+        # exclude GroupPages that are descendants of ANY child GroupIndexPage.
+        for child_index in child_index_pages:
+            all_groups = all_groups.not_descendant_of(child_index)
 
         # for each group page get a list of the page's "group page" or "group
         # index page" ancestors. Check to see if this particular ancestor
@@ -612,9 +627,7 @@ class GroupIndexPage(BasePage):
         # create it. Then continue on, one descendant at a time, either adding
         # new levels or using the existing ones if they're already there
         # from previous group pages.
-        for grouppage in (
-            GroupPage.objects.live().descendant_of(self).filter(is_active=True)
-        ):
+        for grouppage in all_groups:
             ancestors = (
                 [self] + list(GroupPage.objects.ancestor_of(grouppage)) + [grouppage]
             )
@@ -623,29 +636,30 @@ class GroupIndexPage(BasePage):
                 ancestor = ancestors.pop(0)
                 if str(ancestor.content_type) in GROUP_PAGE_CONTENT_TYPES:
                     nextlevels = list(
-                        filter(lambda g: g['url'] == ancestor.url, currentlevel)
+                        filter(lambda g: g["id"] == ancestor.id, currentlevel)
                     )
                     if nextlevels:
-                        currentlevel = nextlevels[0]['children']
+                        currentlevel = nextlevels[0]["children"]
                     else:
                         newnode = {
-                            'title': ancestor.title,
-                            'url': ancestor.url,
-                            'children': [],
+                            "title": ancestor.title,
+                            "url": ancestor.url,
+                            "id": ancestor.id,
+                            "children": [],
                         }
                         currentlevel.append(newnode)
-                        currentlevel = newnode['children']
+                        currentlevel = newnode["children"]
 
         def alphabetize_groups(currentlevel):
             for node in currentlevel:
-                node['children'] = alphabetize_groups(node['children'])
-            return sorted(currentlevel, key=lambda c: c['title'])
+                node["children"] = alphabetize_groups(node["children"])
+            return sorted(currentlevel, key=lambda c: c["title"])
 
         groups_active = alphabetize_groups(groups_active)
 
         def get_html(currentlevel):
             if not currentlevel:
-                return ''
+                return ""
             else:
                 return (
                     "<ul>"
@@ -653,11 +667,11 @@ class GroupIndexPage(BasePage):
                         list(
                             map(
                                 lambda n: "<li><a href='"
-                                + n['url']
+                                + (n["url"] or "")
                                 + "'>"
-                                + n['title']
+                                + n["title"]
                                 + "</a>"
-                                + get_html(n['children'])
+                                + get_html(n["children"])
                                 + "</li>",
                                 currentlevel,
                             )
@@ -666,28 +680,8 @@ class GroupIndexPage(BasePage):
                     + "</ul>"
                 )
 
-        groups_active_html = get_html(groups_active[0]['children'])
+        groups_active_html = get_html(groups_active[0]["children"])
 
-        inactive_children = (
-            GroupPage.objects.live()
-            .descendant_of(self)
-            .filter(is_active=False)
-            .order_by('title')
-        )
-        index_children = GroupIndexPage.objects.live().descendant_of(self)
-        for index_child in index_children:
-            for inactive_child in inactive_children:
-                if inactive_child.is_descendant_of(index_child):
-                    inactive_children = inactive_children.not_descendant_of(index_child)
-
-        inactive_children = list(
-            map(
-                lambda g: {'title': g.title, 'url': g.url},
-                inactive_children,
-            )
-        )
-
-        context['groups_active_html'] = groups_active_html
-        context['groups_inactive'] = inactive_children
+        context["groups_active_html"] = groups_active_html
 
         return context

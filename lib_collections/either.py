@@ -5,12 +5,13 @@
 
 
 from functools import reduce
+
 import requests
 
 
 class Either:
 
-    class Ok():
+    class Ok:
 
         def __init__(self):
             self.is_ok = True
@@ -19,7 +20,7 @@ class Either:
         def __repr__(self):
             return "ok"
 
-    class Error():
+    class Error:
 
         def __init__(self):
             self.is_error = True
@@ -45,6 +46,7 @@ class Either:
     def kleisli_fish(mf, mg):
         def partial(x):
             return Either.bind(mf(x), mg)
+
         return partial
 
     def multibind(mx, *kleislis):
@@ -66,10 +68,11 @@ class Either:
             raise Exception("Either: invalid data formatting")
 
 
-class Examples():
+class Examples:
     """
     Namespace class containing values for testing only.
     """
+
     def safeDiv(n, m):
         if m == 0:
             return Either.error("Error: divide by zero")

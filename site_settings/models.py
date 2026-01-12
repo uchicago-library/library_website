@@ -61,20 +61,20 @@ class ExcludedCNetID(Orderable, models.Model):
     """
 
     settings = ParentalKey(
-        'StaffSyncSettings', on_delete=models.CASCADE, related_name='excluded_cnetids'
+        "StaffSyncSettings", on_delete=models.CASCADE, related_name="excluded_cnetids"
     )
     cnetid = models.CharField(
-        max_length=25, help_text='CNetID to exclude from staff directory sync'
+        max_length=25, help_text="CNetID to exclude from staff directory sync"
     )
     note = models.CharField(
         max_length=300,
         blank=True,
-        help_text='Optional note explaining why this person is excluded from sync',
+        help_text="Optional note explaining why this person is excluded from sync",
     )
 
     panels = [
-        FieldPanel('cnetid'),
-        FieldPanel('note'),
+        FieldPanel("cnetid"),
+        FieldPanel("note"),
     ]
 
     def __str__(self):
@@ -89,7 +89,7 @@ class StaffSyncSettings(BaseGenericSetting, ClusterableModel):
     """
 
     panels = [
-        InlinePanel('excluded_cnetids', label="Excluded CNetIDs"),
+        InlinePanel("excluded_cnetids", label="Excluded CNetIDs"),
     ]
 
 
@@ -102,7 +102,7 @@ class NewsFeedSettings(BaseGenericSetting):
 
     default_visible = models.PositiveIntegerField(
         default=9,
-        help_text='Number of news items to display initially on the news index page',
+        help_text="Number of news items to display initially on the news index page",
     )
     increment_by = models.PositiveIntegerField(
         default=12,
@@ -126,7 +126,7 @@ class QuickNumber(Orderable, models.Model):
     """
 
     group = ParentalKey(
-        'QuickNumberGroup', on_delete=models.CASCADE, related_name='numbers'
+        "QuickNumberGroup", on_delete=models.CASCADE, related_name="numbers"
     )
     label = models.CharField(
         max_length=100,
@@ -136,17 +136,17 @@ class QuickNumber(Orderable, models.Model):
         max_length=20, blank=True, help_text='Phone number (e.g., "773-702-8740")'
     )
     link = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        help_text='Optional page link instead of phone number',
+        help_text="Optional page link instead of phone number",
     )
 
     panels = [
-        FieldPanel('label'),
-        FieldPanel('number'),
-        FieldPanel('link'),
+        FieldPanel("label"),
+        FieldPanel("number"),
+        FieldPanel("link"),
     ]
 
     def __str__(self):
@@ -166,18 +166,18 @@ class QuickNumberGroup(ClusterableModel):
     )
     display_name = models.CharField(
         max_length=255,
-        help_text='Human-readable name for this group',
+        help_text="Human-readable name for this group",
     )
     is_default = models.BooleanField(
         default=False,
-        help_text='Use this group as the default fallback when no specific quick numbers are found',
+        help_text="Use this group as the default fallback when no specific quick numbers are found",
     )
 
     panels = [
-        FieldPanel('slug'),
-        FieldPanel('display_name'),
-        FieldPanel('is_default'),
-        InlinePanel('numbers', label="Quick Numbers"),
+        FieldPanel("slug"),
+        FieldPanel("display_name"),
+        FieldPanel("is_default"),
+        InlinePanel("numbers", label="Quick Numbers"),
     ]
 
     def clean(self):
@@ -191,7 +191,7 @@ class QuickNumberGroup(ClusterableModel):
                 from django.core.exceptions import ValidationError
 
                 raise ValidationError(
-                    'Another group is already set as default. Please unset that one first.'
+                    "Another group is already set as default. Please unset that one first."
                 )
 
     def __str__(self):
@@ -209,4 +209,4 @@ class QuickNumberGroup(ClusterableModel):
 @receiver(post_delete, sender=QuickNumber)
 def invalidate_quick_nums_cache(sender, **kwargs):
     """Invalidate quick numbers cache when data changes."""
-    cache.delete('quick_nums_dict')
+    cache.delete("quick_nums_dict")

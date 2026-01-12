@@ -17,11 +17,13 @@ import {
 import schema from './CGIMailFormSchema'
 
 const DOM_ELEMENT = document.getElementById('cgi-mail-form')
-const CGI_MAIL_SERVICE = DOM_ELEMENT.getAttribute('data-cgi-mail') || ''
-const ITEM_SERVLET = DOM_ELEMENT.getAttribute('data-item-servlet') || ''
-const SPRINGSHARE_PP = DOM_ELEMENT.getAttribute('data-springshare-pp') || ''
-const FORM_JSON = JSON.parse(DOM_ELEMENT.getAttribute('data-json'))
-const THANK_YOU_TXT = DOM_ELEMENT.getAttribute('data-thank-you') || ''
+const CGI_MAIL_SERVICE = DOM_ELEMENT?.getAttribute('data-cgi-mail') || ''
+const ITEM_SERVLET = DOM_ELEMENT?.getAttribute('data-item-servlet') || ''
+const SPRINGSHARE_PP = DOM_ELEMENT?.getAttribute('data-springshare-pp') || ''
+const FORM_JSON = DOM_ELEMENT
+  ? JSON.parse(DOM_ELEMENT.getAttribute('data-json'))
+  : null
+const THANK_YOU_TXT = DOM_ELEMENT?.getAttribute('data-thank-you') || ''
 const QUERYSTRING = window.location.search
 const URLPARAMS = new URLSearchParams(QUERYSTRING)
 
@@ -146,7 +148,12 @@ const InvalidJSON = props => {
 }
 
 InvalidJSON.propTypes = {
-  errors: PropTypes.arrayOf(PropTypes.object).isRequired,
+  errors: PropTypes.arrayOf(
+    PropTypes.shape({
+      field: PropTypes.string,
+      message: PropTypes.string,
+    }),
+  ).isRequired,
 }
 
 const buildField = (elm, state, handleChange, isDisabled = false) => {
@@ -365,6 +372,17 @@ const FormElements = props => {
   })
 }
 
+FormElements.propTypes = {
+  elements: PropTypes.arrayOf(PropTypes.object).isRequired, // eslint-disable-line react/forbid-prop-types
+  handleChange: PropTypes.func.isRequired,
+  state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  hiddenButVisible: PropTypes.bool,
+}
+
+FormElements.defaultProps = {
+  hiddenButVisible: false,
+}
+
 const SectionTitle = props => {
   const { title } = props
   return <h2>{title}</h2> || ''
@@ -448,7 +466,7 @@ Section.defaultProps = {
 Section.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
-  elements: PropTypes.arrayOf(PropTypes.object).isRequired,
+  elements: PropTypes.arrayOf(PropTypes.object).isRequired, // eslint-disable-line react/forbid-prop-types
   handleChange: PropTypes.func.isRequired,
   state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   hidden: PropTypes.bool,
@@ -476,6 +494,14 @@ const LoadingItemInfo = props => {
     return <p className="text-success">Retrieving item information...</p>
   }
   return ''
+}
+
+LoadingItemInfo.propTypes = {
+  loading: PropTypes.bool,
+}
+
+LoadingItemInfo.defaultProps = {
+  loading: false,
 }
 
 class FormContainer extends React.Component {
@@ -592,5 +618,9 @@ class FormContainer extends React.Component {
   }
 }
 
-const root = ReactDOM.createRoot(DOM_ELEMENT)
-root.render(<FormContainer />)
+if (DOM_ELEMENT) {
+  const root = ReactDOM.createRoot(DOM_ELEMENT)
+  root.render(<FormContainer />)
+}
+
+export { evaluateDisabled, Section, FormElements, Sections }

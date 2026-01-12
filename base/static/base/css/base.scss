@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 
 > Styles can be used on public site and third party platforms <
 
@@ -8,37 +8,36 @@ Accessibility
 Icons
 Alerts
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "variables.scss";
-@import "media.scss";
+@import 'variables.scss';
+@import 'media.scss';
 
 /*
  * Accessibility
  * --------------------------------------------------
  */
 
-#skip  {
+#skip {
   background: #f5f5f5;
   color: #222;
-  a { 
-    position:absolute;
+  a {
+    position: absolute;
     padding: 1em 0 1em 3em;
     line-height: 2em;
-    left:-10000px; 
-    top:auto; 
-    width:1px; 
-    height:1px; 
-    overflow:hidden;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
     color: #222;
-    &:focus { 
-      position:static; 
-      width:auto; 
-      height:auto; 
-    } 
+    &:focus {
+      position: static;
+      width: auto;
+      height: auto;
+    }
   }
 }
-
 
 /*
  * Icons
@@ -49,15 +48,17 @@ Alerts
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(/static/base/css/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+  src:
+    local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url('/static/base/css/iconfont/MaterialIcons-Regular.ttf')
+      format('truetype');
 }
 
 .material-icons {
   font-size: 1.2em;
   line-height: 1.2em;
-  font-family: 'Material Icons';
+  font-family: 'Material Icons', sans-serif;
   font-weight: normal;
   font-style: normal;
   display: inline-block;
@@ -67,11 +68,10 @@ Alerts
   white-space: nowrap;
   direction: ltr;
   -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.
-  text-rendering: optimizeLegibility; // Support for Safari and Chrome.
+  text-rendering: optimizelegibility; // Support for Safari and Chrome.
   -moz-osx-font-smoothing: grayscale; // Support for Firefox.
   font-feature-settings: 'liga'; // Support for IE.
 }
-
 
 /*
  * Alerts
@@ -103,16 +103,19 @@ Alerts
   background: #ffbebe;
 }
 
-.alert-banner-base { // styling for @extend purposes only
+.alert-banner-base {
+  // styling for @extend purposes only
   font-size: 1em;
   text-align: center;
   padding: 0.5em;
-  margin-bottom: 0em;
+  margin-bottom: 0;
   border-radius: 0;
 }
 
 .alert-high {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .alert-banner-base;
+
   font-weight: 600;
   color: #000;
   background-color: #f9b64e;
@@ -120,6 +123,7 @@ Alerts
     color: #575757;
     text-decoration: underline;
   }
+
   @include respond-to(small) {
     font-size: 1.2em;
     padding: 1em;
@@ -127,13 +131,16 @@ Alerts
 }
 
 .alert-low {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .alert-banner-base;
+
   color: #fff;
-  background-color: #9A5324;
+  background-color: #9a5324;
   a {
     color: #f9f9f9;
     text-decoration: underline;
   }
+
   @include respond-to(small) {
     font-size: 1.1em;
     padding: 1em;
@@ -141,7 +148,9 @@ Alerts
 }
 
 .alert-info {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .alert-banner-base;
+
   color: #31708f;
   background-color: #d9edf7;
   padding: 0.5em;
@@ -166,14 +175,14 @@ Alerts
       font-weight: bold;
       display: inline-block;
       margin-right: 0.5em;
-      &:after {
+      &::after {
         content: ':';
       }
     }
     dd {
       display: inline;
       margin: 0;
-      &:after {
+      &::after {
         content: '\A';
         white-space: pre;
       }

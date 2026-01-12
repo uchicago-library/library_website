@@ -1,31 +1,35 @@
-from base.models import BasePage, Email, FaxNumber, LinkedText, PhoneNumber
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, ObjectList, PageChooserPanel, TabbedInterface
+    FieldPanel,
+    InlinePanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
 )
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
+from base.models import BasePage, Email, FaxNumber, LinkedText, PhoneNumber
 
 # Building choices for UnitPage.building field
 BUILDINGS = (
-    (1, 'The John Crerar Library'),
-    (2, 'The D\'Angelo Law Library'),
-    (3, 'Eckhart Library'),
-    (4, 'The Joe and Rika Mansueto Library'),
-    (5, 'The Joseph Regenstein Library'),
-    (6, 'The Hanna Holborn Gray Special Collections Research Center'),
-    (7, 'The Social Work Library'),
-    (8, 'Ryerson Physical Laboratory'),
+    (1, "The John Crerar Library"),
+    (2, "The D'Angelo Law Library"),
+    (3, "Eckhart Library"),
+    (4, "The Joe and Rika Mansueto Library"),
+    (5, "The Joseph Regenstein Library"),
+    (6, "The Hanna Holborn Gray Special Collections Research Center"),
+    (7, "The Social Work Library"),
+    (8, "Ryerson Physical Laboratory"),
 )
 
 
 class Tree(object):
 
-    def __init__(self, name='root', unit_page=None, children=None):
+    def __init__(self, name="root", unit_page=None, children=None):
         self.name = name
         self.unit_page = unit_page
         self.children = []
@@ -56,21 +60,22 @@ class Role(models.Model, index.Indexed):
     """
     Snippet for roles.
     """
+
     text = models.CharField(max_length=255, blank=False)
 
     panels = [
-        FieldPanel('text'),
+        FieldPanel("text"),
     ]
 
     class Meta:
-        verbose_name = 'Unit Role'
-        verbose_name_plural = 'Unit Roles'
+        verbose_name = "Unit Role"
+        verbose_name_plural = "Unit Roles"
 
     def __str__(self):
         return self.text
 
     search_fields = [
-        index.AutocompleteField('text'),
+        index.AutocompleteField("text"),
     ]
 
 
@@ -78,29 +83,26 @@ class UnitPageRolePlacement(Orderable, models.Model):
     """
     Through table for linking Role snippets to UnitPages.
     """
+
     page = ParentalKey(
-        'units.UnitPage',
-        on_delete=models.CASCADE,
-        related_name='unit_role_placements'
+        "units.UnitPage", on_delete=models.CASCADE, related_name="unit_role_placements"
     )
-    role = models.ForeignKey(
-        'units.Role', on_delete=models.CASCADE, related_name='+'
-    )
+    role = models.ForeignKey("units.Role", on_delete=models.CASCADE, related_name="+")
 
     class Meta:
-        verbose_name = 'Unit Placement'
-        verbose_name_plural = 'Unit Placements'
+        verbose_name = "Unit Placement"
+        verbose_name_plural = "Unit Placements"
 
     panels = [
-        FieldPanel('role'),
+        FieldPanel("role"),
     ]
 
     def __str__(self):
-        return self.page.title + ' -> ' + self.role.text
+        return self.page.title + " -> " + self.role.text
 
 
 class UnitPagePhoneNumbers(Orderable, PhoneNumber):
-    page = ParentalKey('units.UnitPage', related_name='unit_page_phone_number')
+    page = ParentalKey("units.UnitPage", related_name="unit_page_phone_number")
     panels = PhoneNumber.panels
 
 
@@ -108,6 +110,7 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     """
     Basic structure for units and departments.
     """
+
     contact_point_title = models.CharField(max_length=255, blank=True)
     alphabetical_directory_name = models.CharField(max_length=255, blank=True)
     friendly_name = models.CharField(
@@ -118,53 +121,53 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     )
     display_in_library_directory = models.BooleanField(
         default=True,
-        help_text='Display this unit in the library\'s departmental \
-                   directory.'
+        help_text="Display this unit in the library's departmental \
+                   directory.",
     )
     display_in_dropdown = models.BooleanField(
         default=False,
-        help_text='Display this unit in the Wagtail admin when a UnitPage \
-                   is selectable in a dropdown menu.'
+        help_text="Display this unit in the Wagtail admin when a UnitPage \
+                   is selectable in a dropdown menu.",
     )
     room_number = models.CharField(
         blank=True,
-        help_text='This will appear in the departmental directory on the \
-                   library website.',
-        max_length=32
+        help_text="This will appear in the departmental directory on the \
+                   library website.",
+        max_length=32,
     )
     public_web_page = models.ForeignKey(
-        'wagtailcore.Page',
+        "wagtailcore.Page",
         blank=True,
-        help_text='The name of this department will hyperlink to this page in \
-                   the departmental directory on the library website.',
+        help_text="The name of this department will hyperlink to this page in \
+                   the departmental directory on the library website.",
         null=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
     )
     location = models.ForeignKey(
-        'public.LocationPage',
+        "public.LocationPage",
         blank=True,
-        help_text='Controls the address, hours and quick numbers that will \
-                   appear on various web pages.',
+        help_text="Controls the address, hours and quick numbers that will \
+                   appear on various web pages.",
         null=True,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_related'
+        related_name="%(app_label)s_%(class)s_related",
     )
     department_head = models.ForeignKey(
-        'staff.StaffPage',
+        "staff.StaffPage",
         blank=True,
-        help_text='Sorts to the top in staff listings.',
+        help_text="Sorts to the top in staff listings.",
         on_delete=models.SET_NULL,
         null=True,
-        related_name='department_head_of'
+        related_name="department_head_of",
     )
     department_head_is_interim = models.BooleanField(
-        default=False, help_text='For HR reports.'
+        default=False, help_text="For HR reports."
     )
     building = models.IntegerField(
         choices=BUILDINGS,
         default=5,
-        help_text='The physical building where this unit is located.'
+        help_text="The physical building where this unit is located.",
     )
     street_address = models.CharField(max_length=255, blank=True)
     internal_email = models.EmailField(max_length=255, blank=True)
@@ -174,42 +177,46 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
     is_a_division = models.BooleanField(default=False)
     display_in_campus_directory = models.BooleanField(
         default=True,
-        help_text='This unit will appear in reports showing where Wagtail \
-                   UnitPages differ from campus directory units.'
+        help_text="This unit will appear in reports showing where Wagtail \
+                   UnitPages differ from campus directory units.",
     )
 
     content_panels = Page.content_panels + BasePage.content_panels
 
-    human_resources_panels = [
-        PageChooserPanel('department_head'),
-        FieldPanel('department_head_is_interim'),
-        FieldPanel('display_in_library_directory'),
-        FieldPanel('display_in_campus_directory'),
-        FieldPanel('display_in_dropdown'),
-        FieldPanel('friendly_name'),
-        PageChooserPanel('location'),
-        FieldPanel('building'),
-        PageChooserPanel('public_web_page'),
-        FieldPanel('room_number')
-    ] + Email.panels + [
-        InlinePanel('unit_page_phone_number', label='Phone Numbers'),
-    ] + FaxNumber.panels + LinkedText.panels
+    human_resources_panels = (
+        [
+            PageChooserPanel("department_head"),
+            FieldPanel("department_head_is_interim"),
+            FieldPanel("display_in_library_directory"),
+            FieldPanel("display_in_campus_directory"),
+            FieldPanel("display_in_dropdown"),
+            FieldPanel("friendly_name"),
+            PageChooserPanel("location"),
+            FieldPanel("building"),
+            PageChooserPanel("public_web_page"),
+            FieldPanel("room_number"),
+        ]
+        + Email.panels
+        + [
+            InlinePanel("unit_page_phone_number", label="Phone Numbers"),
+        ]
+        + FaxNumber.panels
+        + LinkedText.panels
+    )
 
-    subpage_types = ['units.UnitPage']
+    subpage_types = ["units.UnitPage"]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('alphabetical_directory_name'),
-        index.FilterField('display_in_library_directory')
+        index.SearchField("alphabetical_directory_name"),
+        index.FilterField("display_in_library_directory"),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(Page.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, classname="settings", heading='Settings'
-            ),
-            ObjectList(human_resources_panels, heading='Human Resources Info'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, classname="settings", heading="Settings"),
+            ObjectList(human_resources_panels, heading="Human Resources Info"),
         ]
     )
 
@@ -221,15 +228,13 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
             for b in BUILDINGS:
                 if self.building == b[0]:
                     return b[1]
-        return ''
+        return ""
 
     @staticmethod
     def hierarchical_units():
         records = []
-        for u in UnitPage.objects.live().filter(
-            display_in_library_directory=True
-        ):
-            records.append([u.get_full_name().split(' - '), u])
+        for u in UnitPage.objects.live().filter(display_in_library_directory=True):
+            records.append([u.get_full_name().split(" - "), u])
 
         # sort records by full name.
         records = sorted(records, key=lambda r: r[1].get_full_name())
@@ -262,9 +267,8 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
 
         Compare this method's output with get_campus_directory_full_name().
         """
-        return ' - '.join(
-            self.get_ancestors(True).type(UnitPage
-                                          ).values_list('title', flat=True)
+        return " - ".join(
+            self.get_ancestors(True).type(UnitPage).values_list("title", flat=True)
         )
 
     def get_campus_directory_full_name(self):
@@ -294,44 +298,45 @@ class UnitPage(BasePage, Email, FaxNumber, LinkedText):
         The campus directory full name for Access Services should be "Access
         Services".
         """
-        return ' - '.join(
-            self.get_ancestors(True).type(UnitPage).filter(
-                unitpage__display_in_campus_directory=True
-            ).values_list('title', flat=True)
+        return " - ".join(
+            self.get_ancestors(True)
+            .type(UnitPage)
+            .filter(unitpage__display_in_campus_directory=True)
+            .values_list("title", flat=True)
         )
 
     class Meta:
-        ordering = ['title']
+        ordering = ["title"]
 
 
 class UnitIndexPage(BasePage):
     max_count = 1
-    subpage_types = ['units.UnitPage']
+    subpage_types = ["units.UnitPage"]
     intro = RichTextField()
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro')
-    ] + BasePage.content_panels
+    content_panels = (
+        Page.content_panels + [FieldPanel("intro")] + BasePage.content_panels
+    )
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
+        index.SearchField("intro"),
     ]
 
     def get_context(self, request):
         context = super(UnitIndexPage, self).get_context(request)
 
-        context['units_hierarchical'] = []
+        context["units_hierarchical"] = []
         for u in UnitPage.objects.filter(display_in_library_directory=True):
             if u.contact_point_title:
-                unit_page_full_name = ' - '.join(
+                unit_page_full_name = " - ".join(
                     [u.get_full_name(), u.contact_point_title]
                 )
             else:
                 unit_page_full_name = u.get_full_name()
 
-            context['units_hierarchical'].append(
+            context["units_hierarchical"].append(
                 {
-                    'full_name': unit_page_full_name,
+                    "full_name": unit_page_full_name,
                 }
             )
 

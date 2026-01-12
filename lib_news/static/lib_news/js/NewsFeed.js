@@ -26,8 +26,6 @@ const filterItems = res =>
     ? res.items.filter(i => i.categories.includes(CATEGORY))
     : res.items.filter(i => i.id !== FFID)
 
-const OFFSET_LIMIT = '34'
-
 const PreLoader = () => (
   <article>
     <span className="img-object">
@@ -72,8 +70,10 @@ Article.propTypes = {
     }),
     categories: PropTypes.arrayOf(PropTypes.string),
     title: PropTypes.string,
-    tumbnail: PropTypes.string,
-    tumbnail_alt_text: PropTypes.string,
+    thumbnail: PropTypes.shape({
+      url: PropTypes.string,
+    }),
+    thumbnail_alt_text: PropTypes.string,
   }).isRequired,
   category: PropTypes.string,
 }

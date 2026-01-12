@@ -3,9 +3,9 @@ from django import template
 register = template.Library()
 
 
-@register.filter('break')
+@register.filter("break")
 def break_(loop):
-    '''Breaks from a loop.
+    """Breaks from a loop.
 
     The 'break' filter is used within a loop and takes as input a loop variable,
     e.g. 'forloop' in case of a for loop. For example, to display the items
@@ -22,13 +22,13 @@ def break_(loop):
 
     Breaking from nested loops is also supported by passing the appropriate loop
     variable, e.g. ``forloop.parentloop|break``.
-    '''
+    """
     raise StopLoopException(loop, False)
 
 
-@register.filter('continue')
+@register.filter("continue")
 def continue_(loop):
-    '''Continues a loop by jumping to its beginning.
+    """Continues a loop by jumping to its beginning.
 
     The 'continue' filter is used within a loop and takes as input a loop
     variable, e.g. 'forloop' in case of a for loop. It can also be used (and is
@@ -45,20 +45,22 @@ def continue_(loop):
             {% endfor %}
             {{ key }}: No value divisible by 3<br/>
         {% endfor %}
-    '''
+    """
     raise StopLoopException(loop, True)
 
 
 class StopLoopException(Exception):
     def __init__(self, loop, continue_, nodelist=None):
         if not isinstance(loop, Loop):
-            raise TypeError('Loop instance expected, %s given' % loop.__class__.__name__)
+            raise TypeError(
+                "Loop instance expected, %s given" % loop.__class__.__name__
+            )
         super(StopLoopException, self).__init__(loop, continue_, nodelist)
         self.loop, self.continue_, self.nodelist = self.args
 
 
 class Loop(dict):
-    '''Base class of loop variables passed in the context (e.g. 'forloop').
+    """Base class of loop variables passed in the context (e.g. 'forloop').
 
     A loop instance holds and keeps up to date the attributes exposed in the
     context. This class exposes ``counter``, ``counter0``, ``first`` and
@@ -69,7 +71,7 @@ class Loop(dict):
     the loop and accumulates the rendered strings on every call to :meth:`next`.
     :meth:`next` also handles continuing or breaking from the loop and informs
     the caller accordingly.
-    '''
+    """
 
     PASS = object()
     BREAK = object()
@@ -80,39 +82,42 @@ class Loop(dict):
         self._context = context
         self._nodelist = nodelist
         self._rendered_nodelist = template.NodeList()
-        self['parentloop'] = context.get(name)
+        self["parentloop"] = context.get(name)
         context.push()
         context[name] = self
 
     def render(self, close=False):
-        '''Renders the accumulated nodelist for this loop.
+        """Renders the accumulated nodelist for this loop.
 
         As a convenience, if ``close`` is true, the loop is also :meth:`close`d.
-        '''
+        """
         if close:
             self.close()
         return self._rendered_nodelist.render(self._context)
+
     render.alters_data = True
 
     def next(self):
-        '''Updates this loop for one iteration step.
+        """Updates this loop for one iteration step.
 
         :returns: The status of the loop after this step: :attr:`CONTINUE` if a
             ``continue`` targeting this loop was encountered, :attr:`BREAK` for
             a break, or :attr:`PASS` otherwise.
         :raises StopLoopException: If a ``break`` or ``continue`` for a loop
             other than this one (presumably an ancestor) was encountered.
-        '''
+        """
         if self._nodelist is None:
-            raise RuntimeError('This loop is inactive')
-        try: # update the exposed attributes
-            counter = self['counter']
-            self.update(counter0=counter, counter=counter+1, first=False)
+            raise RuntimeError("This loop is inactive")
+        try:  # update the exposed attributes
+            counter = self["counter"]
+            self.update(counter0=counter, counter=counter + 1, first=False)
         except KeyError:
             # initialize the exposed attributes the first time this is called
             self.update(counter0=0, counter=1, first=True)
         try:
-            _render_nodelist_items(self._nodelist, self._context, self._rendered_nodelist)
+            _render_nodelist_items(
+                self._nodelist, self._context, self._rendered_nodelist
+            )
             status = self.PASS
         except StopLoopException as ex:
             # if this is not the target loop, keep bubbling up the exception
@@ -122,18 +127,20 @@ class Loop(dict):
             self._pop_context_until_self(inclusive=False)
             status = ex.continue_ and self.CONTINUE or self.BREAK
         return status
+
     next.alters_data = True
 
     def close(self):
-        '''Mark this loop as closed.
+        """Mark this loop as closed.
 
         After a loop is closed, subsequent calls to :meth:`next` are not allowed.
         This should be called when the loop is "done" to remove any loop-specific
         context entries.
-        '''
+        """
         if self._nodelist:
             self._pop_context_until_self(inclusive=True)
             self._nodelist = None
+
     close.alters_data = True
 
     def _pop_context_until_self(self, inclusive):
@@ -148,29 +155,36 @@ class Loop(dict):
 
 
 class BoundedLoop(Loop):
-    '''A :class:`Loop` of known length.
+    """A :class:`Loop` of known length.
 
     ``BoundedLoop`` instances expose ``revcounter``, ``revcounter0`` and ``last``,
     in addition to the attributes exposed by ``Loop`` itself.
-    '''
+    """
 
     def __init__(self, name, context, nodelist, length):
         if length < 1:
-            raise ValueError('Length must be at least 1')
+            raise ValueError("Length must be at least 1")
         self._length = length
         super(BoundedLoop, self).__init__(name, context, nodelist)
 
     def next(self):
-        try: # update the exposed attributes
-            revcounter0 = self['revcounter0']
+        try:  # update the exposed attributes
+            revcounter0 = self["revcounter0"]
             if revcounter0 <= 0:
-                raise RuntimeError('Attempted to call `next()` more than %d times' % self._length)
-            self.update(revcounter0=revcounter0-1, revcounter=revcounter0, last=revcounter0==1)
+                raise RuntimeError(
+                    "Attempted to call `next()` more than %d times" % self._length
+                )
+            self.update(
+                revcounter0=revcounter0 - 1,
+                revcounter=revcounter0,
+                last=revcounter0 == 1,
+            )
         except KeyError:
             # initialize the exposed attributes the first time this is called
             length = self._length
-            self.update(revcounter0=length-1, revcounter=length, last=length==1)
+            self.update(revcounter0=length - 1, revcounter=length, last=length == 1)
         return super(BoundedLoop, self).next()
+
     next.alters_data = True
 
 
@@ -185,7 +199,7 @@ def _render_nodelist_items(nodelist, context, result=None):
                 result.append(nodelist.render_node(node, context))
             except Exception as ex:
                 # get the wrapped exception if settings.DEBUG is True
-                if hasattr(ex, 'exc_info'):
+                if hasattr(ex, "exc_info"):
                     ex = ex.exc_info[1]
                 # let every exception other than StopLoopException propagate
                 if not isinstance(ex, StopLoopException):

@@ -1,32 +1,43 @@
 {
   "status": "done",
   "assets": {
+    "CGIMailEditor-bundle.js": {
+      "name": "CGIMailEditor-bundle.js",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailEditor-bundle.js"
+    },
+    "CGIMailEditor-bundle.js.LICENSE.txt": {
+      "name": "CGIMailEditor-bundle.js.LICENSE.txt",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailEditor-bundle.js.LICENSE.txt"
+    },
     "CGIMailForm-bundle.js": {
       "name": "CGIMailForm-bundle.js",
-      "path": "/app/base/static/bundles/CGIMailForm-bundle.js"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailForm-bundle.js"
     },
     "CGIMailForm-bundle.js.LICENSE.txt": {
       "name": "CGIMailForm-bundle.js.LICENSE.txt",
-      "path": "/app/base/static/bundles/CGIMailForm-bundle.js.LICENSE.txt"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/CGIMailForm-bundle.js.LICENSE.txt"
     },
     "main-bundle.js": {
       "name": "main-bundle.js",
-      "path": "/app/base/static/bundles/main-bundle.js"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/main-bundle.js"
     },
     "main-bundle.js.LICENSE.txt": {
       "name": "main-bundle.js.LICENSE.txt",
-      "path": "/app/base/static/bundles/main-bundle.js.LICENSE.txt"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/main-bundle.js.LICENSE.txt"
     },
     "NewsFeed-bundle.js": {
       "name": "NewsFeed-bundle.js",
-      "path": "/app/base/static/bundles/NewsFeed-bundle.js"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/NewsFeed-bundle.js"
     },
     "NewsFeed-bundle.js.LICENSE.txt": {
       "name": "NewsFeed-bundle.js.LICENSE.txt",
-      "path": "/app/base/static/bundles/NewsFeed-bundle.js.LICENSE.txt"
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/NewsFeed-bundle.js.LICENSE.txt"
     }
   },
   "chunks": {
+    "CGIMailEditor": [
+      "CGIMailEditor-bundle.js"
+    ],
     "CGIMailForm": [
       "CGIMailForm-bundle.js"
     ],

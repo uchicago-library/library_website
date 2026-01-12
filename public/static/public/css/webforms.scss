@@ -1,5 +1,5 @@
-abbr[title=required] {
-  color: #FF3399;
+abbr[title='required'] {
+  color: #f39;
   cursor: unset;
   font-size: 1.3em;
   margin-left: 0.25em;
@@ -8,29 +8,32 @@ abbr[title=required] {
 }
 
 form.webforms {
-	background: #f3f4ed;
-    border-radius: 8px;
+  background: #f3f4ed;
+  border-radius: 8px;
 
-    h2, h3 {
-    	color: #4c3b3a;
+  h2,
+  h3 {
+    color: #4c3b3a;
+  }
+
+  section {
+    padding: 1em;
+    .form-group {
+      margin-bottom: 1.5em;
     }
-
-    section {
-    	padding: 1em;
-    	.form-group {
-		    margin-bottom: 1.5em;
-		}
-    	label {
-    		padding-bottom: 0;
-    	}
+    label {
+      padding-bottom: 0;
     }
+  }
 
-	section + section {
-	  border-top: 2px solid #fff;
-	}
+  section + section {
+    border-top: 2px solid #fff;
+  }
 
-	.btn-submit {
-		margin: 1em 2em 2em;
-		box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
-	}
+  .btn-submit {
+    margin: 1em 2em 2em;
+    box-shadow:
+      0 4px 6px rgba(50, 50, 93, 0.11),
+      0 1px 3px rgba(0, 0, 0, 0.08);
+  }
 }

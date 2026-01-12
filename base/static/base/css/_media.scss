@@ -1,3 +1,5 @@
+/* stylelint-disable media-feature-range-notation */
+
 /*
  * Media Queries
  * --------------------------------------------------
@@ -9,52 +11,53 @@
 
 @mixin respond-to($breakpoint) {
   // Extra small devices (phones, 544px and up)
-  @if $breakpoint == "xsmall" {
+  @if $breakpoint == 'xsmall' {
     @media (min-width: 34em) {
       @content;
     }
   }
 
   // Small devices (landscape phones, 768px and up)
-  @else if $breakpoint == "small" {
+  @else if $breakpoint == 'small' {
     @media (min-width: 48em) {
       @content;
     }
   }
+
   // Medium devices (crappy laptops, tablets, 992px and up)
-  @else if $breakpoint == "medium" {
+  @else if $breakpoint == 'medium' {
     @media (min-width: 62em) {
       @content;
     }
   }
+
   // Large devices (desktops, 1200px and up)
-  @else if $breakpoint == "large" {
+  @else if $breakpoint == 'large' {
     @media (min-width: 75em) {
       @content;
     }
   }
 
-  //Extra large devices (large desktops, 1900px and up)
-  @else if $breakpoint == "xlarge" {
+  // Extra large devices (large desktops, 1900px and up)
+  @else if $breakpoint == 'xlarge' {
     @media (min-width: 118em) {
       @content;
     }
   }
-  
+
   // Short-cut to target extra small devices *only* (544px and below)
-  @else if $breakpoint == "smallonly" {
+  @else if $breakpoint == 'smallonly' {
     @media (max-width: 34em) {
       @content;
     }
   }
 
   // Short-cut to target extra small AND small devices *only* (768px and below)
-  @else if $breakpoint == "mobileonly" {
+  @else if $breakpoint == 'mobileonly' {
     @media (max-width: 48em) {
       @content;
     }
   }
 }
-
 
 // Print style sheet is uclib_print.scss

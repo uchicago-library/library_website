@@ -8,75 +8,75 @@
 
 {% block content %}
 
-  <div class="row-fluid">
-    <div class="col-xs-12 col-sm-12 col-md-12">
+    <div class="row-fluid">
+        <div class="col-xs-12 col-sm-12 col-md-12">
 
-<br>
+            <br>
 
- <form action="/switchboard/" method="post">
-	      <div class="col-xs-9 col-sm-5 nopadding">
-		<input name="query" type="text" class="form-control" value="{{search_query}}" id="search_form5">
-		<input type="hidden" name="which-form" value="website">
-	{% csrf_token %}
-	      </div>
-                             
-	      <div class="col-xs-3 col-sm-2 search-btn-wrapper">
-		<button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
-	      </div>
-	    </form>
+            <form action="/switchboard/" method="post">
+                <div class="col-xs-9 col-sm-5 nopadding">
+                    <input name="query" type="text" class="form-control" value="{{search_query}}" id="search_form5">
+                    <input type="hidden" name="which-form" value="website">
+                    {% csrf_token %}
+                </div>
 
-      <div class="search-results">
+                <div class="col-xs-3 col-sm-2 search-btn-wrapper">
+                    <button class="btn btn-search btn-default" type="submit"><span class="hidden-md hidden-lg glyphicon glyphicon-search"></span><span class="hidden-xs hidden-sm">Search</span></button>
+                </div>
+            </form>
 
-<br>
-<br>
+            <div class="search-results">
 
-        {% if search_picks %}
-             <ul>
-                {% for pick in search_picks %}
-                    <li>
-                        <h2><a href="{{ pick.page.url }}">{{ pick.page }}</a></h2>
-                        <p>{{ pick.description }}</p>
-                    </li>
-                 {% endfor %}
-             </ul>
-        {% endif %}
-    
-        {% if search_results %}
-            <ul>
-                {% for result in search_results %}
-                    <li>
-                        {% if result.searchable_content %}
-                            <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
-                            <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.datestamp }}</p>
-                            {{ result.description|snippet }}
-                        {% else %}
-                            <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-                            <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong>{% if result.latest_revision_created_at %} {{ result.latest_revision_created_at }}{% endif %}</p>
-                            {% if result.search_description %}
-                                {{ result.search_description|safe }}
-                            {% elif result.specific.intro %}
-                                {{ result.specific.intro|snippet }}
-                            {% elif result.specific.body %}
-                                {{ result.specific.body|snippet }}
-                            {% endif %}
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-    
-            {% if search_results.has_previous %}
-                <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
-            {% endif %}
-    
-            {% if search_results.has_next %}
-                <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
-            {% endif %}
-        {% elif search_query %}
-		<br>
-		No results found
-        {% endif %}
+                <br>
+                <br>
 
-      </div>
+                {% if search_picks %}
+                    <ul>
+                        {% for pick in search_picks %}
+                            <li>
+                                <h2><a href="{{ pick.page.url }}">{{ pick.page }}</a></h2>
+                                <p>{{ pick.description }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if search_results %}
+                    <ul>
+                        {% for result in search_results %}
+                            <li>
+                                {% if result.searchable_content %}
+                                    <h4><a href="{{ result.url }}">{{ result.title }}</a></h4>
+                                    <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong> {{ result.datestamp }}</p>
+                                    {{ result.description|snippet }}
+                                {% else %}
+                                    <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
+                                    <p><strong>{% autoescape off %}{% pagetype result %}{% endautoescape %}</strong>{% if result.latest_revision_created_at %} {{ result.latest_revision_created_at }}{% endif %}</p>
+                                    {% if result.search_description %}
+                                        {{ result.search_description|safe }}
+                                    {% elif result.specific.intro %}
+                                        {{ result.specific.intro|snippet }}
+                                    {% elif result.specific.body %}
+                                        {{ result.specific.body|snippet }}
+                                    {% endif %}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if search_results.has_previous %}
+                        <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    {% if search_results.has_next %}
+                        <a href="{% url 'results' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+                    {% endif %}
+                {% elif search_query %}
+                    <br>
+                    No results found
+                {% endif %}
+
+            </div>
+        </div>
     </div>
-  </div>
 {% endblock %}

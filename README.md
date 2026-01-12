@@ -12,10 +12,11 @@
 #### Initial Setup:
 1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
 2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
-3. **Create local config file**: `library_website/settings/local.py` (see Local Configuration File section below)
+3. **Set Up Secrets**: `cd /path/to/library_website && make create-repo install` (see [Setting Up Secrets Repo](#setting-up-secrets-repository) section below)
 4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
 
 #### Daily Development:
+- **Install Secrets**: `make secrets`
 - **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
 - **Access shell**: `docker compose exec web bash`
 - **View help**: `./docker-setup.sh --help`
@@ -83,74 +84,71 @@ If you need to test or develop with Turnstile enabled in the Vagrant environment
 
 1. SSH into the Vagrant machine: `vagrant ssh`
 2. Set the environment variable for your current session:
+
 ```
 export TURNSTILE_ENABLED=True
 ```
 
 Note that this will only affect the current session. When you log out and log back in, `TURNSTILE_ENABLED` will be set back to "False".
 
-### Local Configuration File
+### Setting Up Secrets Repository
 
-Create the file `library_website/settings/local.py` for local development settings and credentials. It should look something like this:
+The library website obtains secrets from a file called `./library_website/settings/secrets.py`.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  In this project, we provide a makefile which will clone that repository down, then install `secrets.py` from the secrets repository into this `library_website` repository, so that the Wagtail site can make use of it.
 
-```python
-import sys
+To clone the secrets repository to your machine:
 
-# Database configuration (Vagrant only - Docker handles this via docker-compose)
-if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-            'TEST': {
-                'NAME': ':memory:',
-            },
-        },
-    }
-else:
-     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'lib_www_dev',
-        }
-    }
-
-LOGGING = {
-     'version': 1,
-     'disable_existing_loggers': False,
-     'handlers': {
-         'file': {
-             'level': 'DEBUG',
-             'class': 'logging.FileHandler',
-             'formatter': 'default',
-             'filename': '/var/log/django-errors.log',
-         },
-     },
-     'loggers': {
-         'django.request': {
-             'handlers': ['file'],
-             'level': 'DEBUG',
-             'propagate': True,
-         },
-     },
-
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
-        }
-    }
-}
-
-# ** You will also need to add settings for the following. Get these from another developer. ** 
-
-DIRECTORY_USERNAME = #Get from another developer
-DIRECTORY_WEB_SERVICE = #Get from another developer
-DIRECTORY_PASSWORD = #Get from another developer
-OWNCLOUD_PASSWORD = #Get from another developer
+```
+$ cd /path/to/library_website && make create-repo
 ```
 
+Or, if you'd prefer to run the clone command yourself:
+
+```
+$ cd ~
+$ git clone wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/lw-config
+```
+
+Some observations:
+
+- you will need to obtain permission from our sysadmins to clone repositories owned by the `wagtail` user on `vault`
+- by default, our makefile will assume that `~/lw-config` is the path to the secrets repository both for cloning and for installing the secrets
+- it is possible to override this path when running `make` ([see below](#overriding-the-path) for more info)
+
+Once the repository has been cloned down, run one of the following Make rules from the root of the `library_website` project:
+
+```
+$ make install
+$ make secrets
+```
+
+`make install` copies the `secrets.py` file from the secrets repository over into this repository, setting the permissions on the file to 444 to remind any developer doing Wagtail development to edit the original in the secrets repository rather than this copy.  `make secrets` does the same thing, but before installing `secrets.py` it pulls down the latest changes from the branch that is checked out in the secrets repository on the user's machine.
+
+#### Overriding The Path
+
+If you are running our makefile as part of a script, especially while provisioning a production environment for the Wagtail site, you will likely want the secrets repository to live somewhere other than `~/lw-config`.
+
+Our makefile provides two ways to override the path to the secrets repository.  So if you want to override the path to be `/data/local/secret-repos`, you can pass a Make variable called `SECRETS_REPO_DIR` in when running every Make rule:
+
+```
+$ make create-repo SECRETS_REPO_DIR=/data/local/secret-repos
+$ make secrets SECRETS_REPO_DIR=/data/local/secret-repos
+```
+
+Alternatively, you can customize the `SECRETS_REPO_DIR` environment variable, which only requires exporting it once before running our Make rules:
+
+```
+$ export SECRETS_REPO_DIR=/data/local/secret-repos
+$ make create-repo
+$ make secrets
+```
+
+In both of the above two examples, the makefile will operate under the assumption that the secrets repository is located at `/data/local/secret-repos/lw-config`.
+
 ## Bot IP Management
-The site uses the [Good-Bots package](https://github.com/bbusenius/Good-Bots) to automatically manage IP exclusions for legitimate search engine bots and crawlers. This ensures they aren't blocked by Turnstile protection.
+The site uses the [Good-Bots
+package](https://github.com/bbusenius/Good-Bots) to automatically
+manage IP exclusions for legitimate search engine bots and
+crawlers. This ensures they aren't blocked by Turnstile protection.
 
 The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that gets updated daily via cron. This file is automatically imported in Django settings and excluded from version control.
 

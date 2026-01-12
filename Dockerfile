@@ -41,19 +41,18 @@ RUN mkdir -p /root/.vim/pack/git-plugins/start && \
     git clone --depth 1 https://github.com/dense-analysis/ale.git /root/.vim/pack/git-plugins/start/ale && \
     echo "let g:ale_linters_explicit = 1" >> /root/.vimrc && \
     echo "let g:ale_linters = { 'python': ['flake8'], 'javascript': ['eslint'] }" >> /root/.vimrc && \
-    echo "let g:ale_python_flake8_options = '--ignore=D100,D101,D202,D204,D205,D400,D401,E303,E501,W503,N805,N806'" >> /root/.vimrc && \
-    echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> /root/.vimrc && \
-    echo "let g:ale_python_black_options = '--skip-string-normalization'" >> /root/.vimrc && \
-    echo "let g:ale_python_isort_options = '--profile black'" >> /root/.vimrc
+    echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> /root/.vimrc
+# Note: flake8 options are read from .flake8
+# Note: black and isort options are read from pyproject.toml
 
 # Conditionally install Java and Elasticsearch
 RUN if [ "$ELASTICSEARCH" != "false" ]; then \
     apt-get install -y openjdk-11-jre-headless ca-certificates-java wget && \
-    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb && \
-    dpkg -i elasticsearch-7.17.13-amd64.deb && \
+    wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.19.0-amd64.deb && \
+    dpkg -i elasticsearch-8.19.0-amd64.deb && \
     sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options && \
-    rm elasticsearch-7.17.13-amd64.deb && \
-    echo "xpack.security.enabled: false" >> /etc/elasticsearch/elasticsearch.yml; \
+    rm elasticsearch-8.19.0-amd64.deb && \
+    sed -i 's/^xpack.security.enabled:.*$/xpack.security.enabled: false/' /etc/elasticsearch/elasticsearch.yml; \
     fi
 
 # Conditionally install Node.js

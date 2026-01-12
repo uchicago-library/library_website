@@ -114,7 +114,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            
+
             {# Main navigation #}
             {% include "base/includes/header.html" %}
 
@@ -182,9 +182,9 @@
                     <!-- // Left Sidebar -->
 
                     {% if page_type|slugify != 'libnewspage' and page_type|slugify != 'libnewsindexpage' %}
-                    <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
-                        {% include "base/includes/public_site_breadcrumbs.html" %}
-                    </div>
+                        <div class="{{breadcrumb_div_css}}" role="navigation" aria-label="breadcrumb">
+                            {% include "base/includes/public_site_breadcrumbs.html" %}
+                        </div>
                     {% endif %}
                     {% block above_main_content %}{% endblock %}
                     <div class="{{content_div_css}}" id="content" role="main">
@@ -604,8 +604,6 @@
         <script src="{% static "base/js/library_website.js" %}"></script>
         <script src="{% static "base/js/render_hours.js" %}"></script>
         <script src='/static/base/js/jquery.track-everything.js' defer></script>
-        <script src='https://www.lib.uchicago.edu/clickheat/js/clickheat.js'></script>
-        <script src='/static/base/js/clickheat-config.js'></script>
 
         {% block extra_scripts %}
             {# for the libcal "schedule an appointment" button #}

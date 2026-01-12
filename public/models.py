@@ -1,33 +1,47 @@
 from datetime import date
 from urllib.parse import quote
 
-from base.models import (
-    Address, CarouselItem, DefaultBodyFields, Email, IconLinkItem, LinkBlock,
-    PhoneNumber, PublicBasePage, RawHTMLBlock, RawHTMLBodyField,
-    ReusableContentBlock, SocialMediaFields
-)
-from base.utils import unfold
 from django.db import models
 from django.db.models.fields import CharField
 from modelcluster.fields import ParentalKey
+from wagtail import blocks
+from wagtail.admin.panels import (
+    FieldPanel,
+    FieldRowPanel,
+    HelpPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    PageChooserPanel,
+    TabbedInterface,
+)
+from wagtail.api import APIField
+from wagtail.blocks import RichTextBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.images.models import Image
+from wagtail.models import Orderable, Page, Site
+from wagtail.search import index
+
+from base.models import (
+    Address,
+    CarouselItem,
+    DefaultBodyFields,
+    Email,
+    IconLinkItem,
+    LinkBlock,
+    PhoneNumber,
+    PublicBasePage,
+    RawHTMLBlock,
+    RawHTMLBodyField,
+    ReusableContentBlock,
+    SocialMediaFields,
+)
+from base.utils import unfold
+from public.utils import get_features
 from staff.models import StaffPage
 from staff.utils import libcal_id_by_email
 from subjects.utils import get_subjects_html
 from units.models import BUILDINGS, UnitIndexPage
-from wagtail.admin.panels import (
-    FieldPanel, FieldRowPanel, HelpPanel, InlinePanel, MultiFieldPanel,
-    ObjectList, PageChooserPanel, TabbedInterface
-)
-from wagtail.api import APIField
-from wagtail import blocks
-from wagtail.blocks import RichTextBlock
-from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Orderable, Page, Site
-from wagtail.images.models import Image
-from wagtail.search import index
-
-from public.utils import get_features
-
 from units.utils import get_default_unit
 
 # TEMPORARY: Fix issue # 2267:https://github.com/torchbox/wagtail/issues/2267
@@ -43,16 +57,19 @@ class FeaturedLibraryExpertBaseBlock(blocks.StructBlock):
     """
     Base streamfield block for "Featured Library Experts".
     """
+
     library_expert = blocks.PageChooserBlock(  # In the future Wagtail plans to allow the limiting of PageChooserBlock by page type. This will improve when we have that.
-        required=False, help_text='Be sure to select a StaffPage (not a StaffPublicPage)',
+        required=False,
+        help_text="Be sure to select a StaffPage (not a StaffPublicPage)",
     )
-    libguides = blocks.ListBlock(LinkBlock(), icon='link')
+    libguides = blocks.ListBlock(LinkBlock(), icon="link")
 
 
 class FeaturedLibraryExpertBlock(FeaturedLibraryExpertBaseBlock):
     """
     Streamfield block for "Featured Library Experts".
     """
+
     start_date = blocks.DateBlock(blank=True, null=True)
     end_date = blocks.DateBlock(blank=True, null=True)
 
@@ -61,10 +78,11 @@ class FeaturedLibraryExpertBaseFields(blocks.StreamBlock):
     """
     Base fields for a Featured Library Expert.
     """
+
     person = FeaturedLibraryExpertBaseBlock(
-        icon='view',
+        icon="view",
         required=False,
-        template='public/blocks/featured_library_expert.html'
+        template="public/blocks/featured_library_expert.html",
     )
 
 
@@ -72,10 +90,11 @@ class FeaturedLibraryExpertFields(blocks.StreamBlock):
     """
     All fields for a Featured Library Expert.
     """
+
     person = FeaturedLibraryExpertBlock(
-        icon='view',
+        icon="view",
         required=False,
-        template='public/blocks/featured_library_expert.html'
+        template="public/blocks/featured_library_expert.html",
     )
 
 
@@ -83,16 +102,15 @@ class StandardPageSidebarReusableContent(Orderable, models.Model):
     """
     Repeatable, reusable content widget for sidebar
     """
+
     page = ParentalKey(
-        'public.StandardPage',
-        on_delete=models.CASCADE,
-        related_name='reusable_content'
+        "public.StandardPage", on_delete=models.CASCADE, related_name="reusable_content"
     )
     content = models.ForeignKey(
-        'reusable_content.ReusableContent',
+        "reusable_content.ReusableContent",
         default=None,
         on_delete=models.CASCADE,
-        related_name='+'
+        related_name="+",
     )
 
     class Meta:
@@ -100,7 +118,7 @@ class StandardPageSidebarReusableContent(Orderable, models.Model):
         verbose_name_plural = "Content"
 
     panels = [
-        FieldPanel('content'),
+        FieldPanel("content"),
     ]
 
 
@@ -108,20 +126,23 @@ class StandardPageCarouselItem(Orderable, CarouselItem):
     """
     Carousel widgets for standard pages
     """
-    page = ParentalKey('public.StandardPage', related_name='carousel_items')
+
+    page = ParentalKey("public.StandardPage", related_name="carousel_items")
 
 
 class StandardPageIconLinkItem(Orderable, IconLinkItem):
     """
     Custom icon links widget for standard pages
     """
-    page = ParentalKey('public.StandardPage', related_name='icon_link_items')
+
+    page = ParentalKey("public.StandardPage", related_name="icon_link_items")
 
 
 class StandardPage(PublicBasePage, SocialMediaFields):
     """
     A standard basic page.
     """
+
     # Page content
     body = StreamField(
         DefaultBodyFields(),
@@ -133,24 +154,24 @@ class StandardPage(PublicBasePage, SocialMediaFields):
 
     # Find spaces fields
     enable_find_spaces = models.BooleanField(default=False)
-    book_a_room_link = models.URLField(max_length=255, blank=True, default='')
+    book_a_room_link = models.URLField(max_length=255, blank=True, default="")
 
     # Custom icons fields
     widget_title = models.CharField(max_length=100, blank=True)
     more_icons_link = models.URLField(
-        max_length=255, blank=True, default='', verbose_name='View More Link'
+        max_length=255, blank=True, default="", verbose_name="View More Link"
     )
     more_icons_link_label = models.CharField(
-        max_length=100, blank=True, verbose_name='View More Link Label'
+        max_length=100, blank=True, verbose_name="View More Link Label"
     )
 
     # Featured collections
     collection_page = models.ForeignKey(
-        'lib_collections.CollectionPage',
+        "lib_collections.CollectionPage",
         null=True,
         blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
 
     # Featured Library Expert
@@ -161,7 +182,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     expert_link = models.CharField(
-        max_length=400, default="/about/directory/?view=staff", verbose_name="Featured Expert Link"
+        max_length=400,
+        default="/about/directory/?view=staff",
+        verbose_name="Featured Expert Link",
     )
 
     featured_library_experts = StreamField(
@@ -171,149 +194,147 @@ class StandardPage(PublicBasePage, SocialMediaFields):
     )
 
     subpage_types = [
-        'alerts.AlertIndexPage',
-        'public.StandardPage',
-        'public.LocationPage',
-        'public.DonorPage',
-        'lib_collections.CollectingAreaPage',
-        'lib_collections.CollectionPage',
-        'lib_collections.ExhibitPage',
-        'lib_news.LibNewsIndexPage',
-        'redirects.RedirectPage',
-        'units.UnitPage',
-        'ask_a_librarian.AskPage',
-        'units.UnitIndexPage',
-        'conferences.ConferenceIndexPage',
-        'base.IntranetPlainPage',
-        'dirbrowse.DirBrowsePage',
-        'public.StaffPublicPage',
+        "alerts.AlertIndexPage",
+        "public.StandardPage",
+        "public.LocationPage",
+        "public.DonorPage",
+        "lib_collections.CollectingAreaPage",
+        "lib_collections.CollectionPage",
+        "lib_collections.ExhibitPage",
+        "lib_news.LibNewsIndexPage",
+        "redirects.RedirectPage",
+        "units.UnitPage",
+        "ask_a_librarian.AskPage",
+        "units.UnitIndexPage",
+        "conferences.ConferenceIndexPage",
+        "base.IntranetPlainPage",
+        "dirbrowse.DirBrowsePage",
+        "public.StaffPublicPage",
     ]
 
-    content_panels = Page.content_panels + [
-        FieldPanel('body'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("body"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     widget_content_panels = [
-        MultiFieldPanel(
-            [FieldPanel('enable_search_widget')], heading='Search Widget'
-        ),
+        MultiFieldPanel([FieldPanel("enable_search_widget")], heading="Search Widget"),
         MultiFieldPanel(
             [
-                FieldPanel('quicklinks_title'),
-                FieldPanel('quicklinks'),
-                FieldPanel('view_more_link_label'),
-                FieldPanel('view_more_link'),
-                FieldPanel('change_to_callout'),
+                FieldPanel("quicklinks_title"),
+                FieldPanel("quicklinks"),
+                FieldPanel("view_more_link_label"),
+                FieldPanel("view_more_link"),
+                FieldPanel("change_to_callout"),
             ],
-            heading='Quicklinks'
+            heading="Quicklinks",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('enable_index'),
-                FieldPanel('display_hierarchical_listing'),
+                FieldPanel("enable_index"),
+                FieldPanel("display_hierarchical_listing"),
             ],
-            heading='Auto-generated Sitemap'
+            heading="Auto-generated Sitemap",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('display_hours_in_right_sidebar'),
+                FieldPanel("display_hours_in_right_sidebar"),
             ],
-            heading='Granular hours'
+            heading="Granular hours",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('banner_image'),
-                FieldPanel('banner_title'),
+                FieldPanel("banner_image"),
+                FieldPanel("banner_title"),
             ],
-            heading='Banner'
+            heading="Banner",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('events_feed_url'),
-            ], heading='Workshops and Events'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('news_feed_source'),
-                FieldPanel('external_news_page'),
-                PageChooserPanel('internal_news_page'),
+                FieldPanel("events_feed_url"),
             ],
-            heading='News'
+            heading="Workshops and Events",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('enable_find_spaces'),
-                FieldPanel('book_a_room_link'),
+                FieldPanel("news_feed_source"),
+                FieldPanel("external_news_page"),
+                PageChooserPanel("internal_news_page"),
             ],
-            heading='Find Spaces'
+            heading="News",
         ),
         MultiFieldPanel(
             [
-                PageChooserPanel(
-                    'collection_page', 'lib_collections.CollectionPage'
-                ),
+                FieldPanel("enable_find_spaces"),
+                FieldPanel("book_a_room_link"),
             ],
-            heading='Featured Collection'
+            heading="Find Spaces",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('rich_text_heading'),
-                FieldPanel('rich_text'),
-                PageChooserPanel('rich_text_link'),
-                FieldPanel('rich_text_external_link'),
-                FieldPanel('rich_text_link_text'),
-                FieldPanel('link_queue'),
+                PageChooserPanel("collection_page", "lib_collections.CollectionPage"),
             ],
-            heading='Rich Text'
+            heading="Featured Collection",
         ),
-        InlinePanel('carousel_items', label='Carousel items'),
         MultiFieldPanel(
             [
-                FieldPanel('widget_title'),
-                InlinePanel(
-                    'icon_link_items', max_num=3, label='Icon Link items'
-                ),
-                FieldPanel('more_icons_link'),
-                FieldPanel('more_icons_link_label'),
+                FieldPanel("rich_text_heading"),
+                FieldPanel("rich_text"),
+                PageChooserPanel("rich_text_link"),
+                FieldPanel("rich_text_external_link"),
+                FieldPanel("rich_text_link_text"),
+                FieldPanel("link_queue"),
             ],
-            heading='Custom Icon Links'
+            heading="Rich Text",
         ),
-        InlinePanel('reusable_content', label='Reusable Content Blocks'),
-        FieldPanel('expert_link'),
-        FieldPanel('featured_library_expert_fallback'),
-        FieldPanel('featured_library_experts'),
+        InlinePanel("carousel_items", label="Carousel items"),
         MultiFieldPanel(
             [
-                FieldPanel('cgi_mail_form_thank_you_text'),
-                FieldPanel('cgi_mail_form'),
+                FieldPanel("widget_title"),
+                InlinePanel("icon_link_items", max_num=3, label="Icon Link items"),
+                FieldPanel("more_icons_link"),
+                FieldPanel("more_icons_link_label"),
             ],
-            heading='CGIMail Form'
+            heading="Custom Icon Links",
+        ),
+        InlinePanel("reusable_content", label="Reusable Content Blocks"),
+        FieldPanel("expert_link"),
+        FieldPanel("featured_library_expert_fallback"),
+        FieldPanel("featured_library_experts"),
+        MultiFieldPanel(
+            [
+                FieldPanel("cgi_mail_form_thank_you_text"),
+                FieldPanel("cgi_mail_form"),
+            ],
+            heading="CGIMail Form",
         ),
     ] + SocialMediaFields.panels
 
     search_fields = PublicBasePage.search_fields + [
-        index.AutocompleteField('body'),
-        index.FilterField('exclude_from_site_search'),
+        index.AutocompleteField("body"),
+        index.FilterField("exclude_from_site_search"),
     ]
 
     promote_fields = PublicBasePage.promote_panels + [
         MultiFieldPanel(
             [
-                FieldPanel('exclude_from_search_engines'),
-                FieldPanel('exclude_from_site_search'),
-                FieldPanel('exclude_from_sitemap_xml'),
-            ], heading='Exclude Fields'
+                FieldPanel("exclude_from_search_engines"),
+                FieldPanel("exclude_from_site_search"),
+                FieldPanel("exclude_from_sitemap_xml"),
+            ],
+            heading="Exclude Fields",
         ),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(promote_fields, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(promote_fields, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
@@ -332,9 +353,9 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         """
         block_list = streamblock.value.get(field)
         for block in block_list:
-            val1 = block.get('link_text')
-            val2 = block.get('link_external')
-            val3 = block.get('link_page')
+            val1 = block.get("link_text")
+            val2 = block.get("link_external")
+            val3 = block.get("link_page")
             if not (val1 and val2) and not (val1 and val3):
                 return False
         return True
@@ -369,11 +390,11 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         """
         try:
             return self.streamblock_has_all_fields(
-                self.featured_library_expert_fallback[0], ['library_expert']
+                self.featured_library_expert_fallback[0], ["library_expert"]
             ) and self.streamblock_has_link(
-                self.featured_library_expert_fallback[0], 'libguides'
+                self.featured_library_expert_fallback[0], "libguides"
             )
-        except (IndexError):
+        except IndexError:
             return False
 
     def get_featured_lib_expert(self):
@@ -397,16 +418,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         for block in self.featured_library_experts:
             # print(block.value.get('library_expert'))
             has_fields = self.streamblock_has_all_fields(
-                block, ['library_expert', 'start_date', 'end_date']
+                block, ["library_expert", "start_date", "end_date"]
             )
             # Could misfire, just an estimation
-            has_links = self.streamblock_has_link(block, 'libguides')
-            in_range = block.value.get(
-                'start_date'
-            ) <= today and block.value.get('end_date') >= today
+            has_links = self.streamblock_has_link(block, "libguides")
+            in_range = (
+                block.value.get("start_date") <= today
+                and block.value.get("end_date") >= today
+            )
             if (fallback and (has_fields and has_links)) and in_range:
                 return (True, block)
-        if (fallback):
+        if fallback:
             return (True, self.featured_library_expert_fallback[0])
         return (False, None)
 
@@ -433,32 +455,33 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             person (StaffPage object), image (object),
             profile (string url), links (list of html strings).
         """
-        person = block.value.get('library_expert')
-        libguides = block.value.get('libguides')
+        person = block.value.get("library_expert")
+        libguides = block.value.get("libguides")
         image = person.specific.profile_picture
         email = person.specific.staff_page_email.first().email
         try:
             public_person = StaffPublicPage.objects.get(title=str(person))
-        except:
+        except:  # noqa: E722
             public_person = None
-        profile = public_person.relative_url(
-            current_site
-        ) if public_person else None
+        profile = public_person.relative_url(current_site) if public_person else None
 
         links = []
         for guide in libguides:
-            link_text = guide['link_text']
-            url = guide['link_external'] if guide['link_external'] else guide[
-                'link_page'].relative_url(current_site)
+            link_text = guide["link_text"]
+            url = (
+                guide["link_external"]
+                if guide["link_external"]
+                else guide["link_page"].relative_url(current_site)
+            )
             html = '<a href="%s">%s</a>' % (url, link_text)
             links.append(html)
 
         return {
-            'person': person,
-            'image': image,
-            'profile': profile,
-            'links': links,
-            'email': email
+            "person": person,
+            "image": image,
+            "profile": profile,
+            "links": links,
+            "email": email,
         }
 
     @property
@@ -515,19 +538,17 @@ class StandardPage(PublicBasePage, SocialMediaFields):
             lib_expert_block = self.unpack_lib_expert_block(
                 self.get_featured_lib_expert()[1], current_site
             )
-            has_libcal_schedule = libcal_id_by_email(
-                lib_expert_block['email']
-            ) != ''
-            context['has_featured_lib_expert'] = has_featured_lib_expert
-            context['has_libcal_schedule'] = has_libcal_schedule
-            context['featured_lib_expert'] = self.get_featured_lib_expert()[1]
-            context['featured_lib_expert_name'] = lib_expert_block['person']
-            context['featured_lib_expert_image'] = lib_expert_block['image']
-            context['featured_lib_expert_profile'] = lib_expert_block['profile']
-            context['featured_lib_expert_links'] = lib_expert_block['links']
-            context['email'] = lib_expert_block['email']
+            has_libcal_schedule = libcal_id_by_email(lib_expert_block["email"]) != ""
+            context["has_featured_lib_expert"] = has_featured_lib_expert
+            context["has_libcal_schedule"] = has_libcal_schedule
+            context["featured_lib_expert"] = self.get_featured_lib_expert()[1]
+            context["featured_lib_expert_name"] = lib_expert_block["person"]
+            context["featured_lib_expert_image"] = lib_expert_block["image"]
+            context["featured_lib_expert_profile"] = lib_expert_block["profile"]
+            context["featured_lib_expert_links"] = lib_expert_block["links"]
+            context["email"] = lib_expert_block["email"]
 
-        context['has_search_widget'] = self.enable_search_widget
+        context["has_search_widget"] = self.enable_search_widget
 
         return context
 
@@ -536,20 +557,21 @@ class LocationPageDonorPlacement(Orderable, models.Model):
     """
     Create a through table for linking donor pages to location pages.
     """
+
     parent = ParentalKey(
-        'public.LocationPage',
-        related_name='location_donor_page_placements',
+        "public.LocationPage",
+        related_name="location_donor_page_placements",
         null=True,
         blank=False,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     donor = models.ForeignKey(
-        'public.DonorPage',
-        related_name='location_donor_page',
+        "public.DonorPage",
+        related_name="location_donor_page",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -557,20 +579,21 @@ class LocationPageFloorPlacement(Orderable, models.Model):
     """
     Create a through table for linking location pages to floors.
     """
+
     parent = ParentalKey(
-        'public.LocationPage',
-        related_name='location_floor_placements',
+        "public.LocationPage",
+        related_name="location_floor_placements",
         null=True,
         blank=False,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     floor = models.ForeignKey(
-        'public.FloorPlanPage',
-        related_name='location_floor',
+        "public.FloorPlanPage",
+        related_name="location_floor",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
 
@@ -578,35 +601,36 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     """
     Location and building pages.
     """
+
     # Model fields
     short_description = models.TextField(null=False, blank=False)
     page_alerts = StreamField(
         [
-            ('paragraph', RichTextBlock()),
-            ('reusable_content_block', ReusableContentBlock()),
-            ('html', RawHTMLBlock()),
+            ("paragraph", RichTextBlock()),
+            ("reusable_content_block", ReusableContentBlock()),
+            ("html", RawHTMLBlock()),
         ],
         null=True,
         blank=True,
     )
     long_description = RichTextField(null=False, blank=False)
     parent_building = models.ForeignKey(
-        'self',
+        "self",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        limit_choices_to={'is_building': True}
+        limit_choices_to={"is_building": True},
     )
     location_photo = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
     libcal_library_id = models.IntegerField(blank=True, null=True)
-    google_map_link = models.URLField(max_length=200, blank=True, default='')
-    reservation_url = models.URLField(max_length=200, blank=True, default='')
+    google_map_link = models.URLField(max_length=200, blank=True, default="")
+    reservation_url = models.URLField(max_length=200, blank=True, default="")
     reservation_display_text = models.CharField(max_length=45, blank=True)
 
     # Boolean fields
@@ -641,106 +665,111 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
     has_all_gender_restrooms = models.BooleanField(default=False)
 
     # Set what appears in the admin
-    content_panels = Page.content_panels + [
-        FieldPanel('short_description'),
-        FieldPanel('long_description'),
-        FieldPanel('parent_building'),
-        InlinePanel('location_floor_placements', label='Floor'),
-        FieldPanel('libcal_library_id'),
-        FieldPanel('google_map_link'),
-        MultiFieldPanel(
-            [
-                FieldPanel('reservation_url'),
-                FieldPanel('reservation_display_text'),
-            ],
-            heading='Room Reservation Link'
-        ),
-        FieldPanel('location_photo'),
-        FieldRowPanel(
-            [
-                FieldPanel('is_building'),
-                FieldPanel('is_phone_zone'),
-                FieldPanel('is_collaboration_zone'),
-                FieldPanel('is_meal_zone'),
-                FieldPanel('is_quiet_zone'),
-                FieldPanel('is_study_space'),
-                FieldPanel('is_teaching_space'),
-                FieldPanel('is_event_space'),
-                FieldPanel('is_special_use'),
-                FieldPanel('is_open_space'),
-                FieldPanel('is_24_hours'),
-                FieldPanel('is_reservable'),
-                FieldPanel('has_carrels'),
-                FieldPanel('has_board'),
-                FieldPanel('has_printing'),
-                FieldPanel('has_soft_seating'),
-                FieldPanel('has_dual_monitors'),
-                FieldPanel('has_single_tables'),
-                FieldPanel('has_large_tables'),
-                FieldPanel('has_screen'),
-                FieldPanel('has_natural_light'),
-                FieldPanel('is_no_food_allowed'),
-                FieldPanel('has_book_scanner'),
-                FieldPanel('has_public_computer'),
-                FieldPanel('is_snacks_allowed'),
-                FieldPanel('has_standing_desk'),
-                FieldPanel('has_lockers'),
-                FieldPanel('has_day_lockers'),
-                FieldPanel('has_all_gender_restrooms'),
-            ], classname='location-booleans'
-        ),
-        MultiFieldPanel(PhoneNumber.panels, heading='Phone Number'),
-        InlinePanel('location_donor_page_placements', label='Donor'),
-    ] + Email.panels + Address.content_panels + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("short_description"),
+            FieldPanel("long_description"),
+            FieldPanel("parent_building"),
+            InlinePanel("location_floor_placements", label="Floor"),
+            FieldPanel("libcal_library_id"),
+            FieldPanel("google_map_link"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("reservation_url"),
+                    FieldPanel("reservation_display_text"),
+                ],
+                heading="Room Reservation Link",
+            ),
+            FieldPanel("location_photo"),
+            FieldRowPanel(
+                [
+                    FieldPanel("is_building"),
+                    FieldPanel("is_phone_zone"),
+                    FieldPanel("is_collaboration_zone"),
+                    FieldPanel("is_meal_zone"),
+                    FieldPanel("is_quiet_zone"),
+                    FieldPanel("is_study_space"),
+                    FieldPanel("is_teaching_space"),
+                    FieldPanel("is_event_space"),
+                    FieldPanel("is_special_use"),
+                    FieldPanel("is_open_space"),
+                    FieldPanel("is_24_hours"),
+                    FieldPanel("is_reservable"),
+                    FieldPanel("has_carrels"),
+                    FieldPanel("has_board"),
+                    FieldPanel("has_printing"),
+                    FieldPanel("has_soft_seating"),
+                    FieldPanel("has_dual_monitors"),
+                    FieldPanel("has_single_tables"),
+                    FieldPanel("has_large_tables"),
+                    FieldPanel("has_screen"),
+                    FieldPanel("has_natural_light"),
+                    FieldPanel("is_no_food_allowed"),
+                    FieldPanel("has_book_scanner"),
+                    FieldPanel("has_public_computer"),
+                    FieldPanel("is_snacks_allowed"),
+                    FieldPanel("has_standing_desk"),
+                    FieldPanel("has_lockers"),
+                    FieldPanel("has_day_lockers"),
+                    FieldPanel("has_all_gender_restrooms"),
+                ],
+                classname="location-booleans",
+            ),
+            MultiFieldPanel(PhoneNumber.panels, heading="Phone Number"),
+            InlinePanel("location_donor_page_placements", label="Donor"),
+        ]
+        + Email.panels
+        + Address.content_panels
+        + PublicBasePage.content_panels
+    )
 
     widget_content_panels = [
-        FieldPanel('page_alerts'),
+        FieldPanel("page_alerts"),
         MultiFieldPanel(
             [
-                FieldPanel('quicklinks_title'),
-                FieldPanel('quicklinks'),
-                FieldPanel('view_more_link_label'),
-                FieldPanel('view_more_link'),
+                FieldPanel("quicklinks_title"),
+                FieldPanel("quicklinks"),
+                FieldPanel("view_more_link_label"),
+                FieldPanel("view_more_link"),
             ],
-            heading='Quicklinks'
+            heading="Quicklinks",
         ),
         MultiFieldPanel(
             [
-                FieldPanel('display_hours_in_right_sidebar'),
+                FieldPanel("display_hours_in_right_sidebar"),
             ],
-            heading='Granular hours'
+            heading="Granular hours",
         ),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
-    subpage_types = ['public.StandardPage', 'public.FloorPlanPage']
+    subpage_types = ["public.StandardPage", "public.FloorPlanPage"]
 
     def mk_search_field(self):
-        return ' '.join(i[0] for i in get_features())
+        return " ".join(i[0] for i in get_features())
 
     search_fields = PublicBasePage.search_fields + [
-        index.AutocompleteField('short_description'),
-        index.AutocompleteField('long_description'),
-        index.SearchField('parent_building'),
-        index.SearchField('location_photo'),
-        index.SearchField('reservation_url'),
-        index.SearchField('mk_search_field'),
+        index.AutocompleteField("short_description"),
+        index.AutocompleteField("long_description"),
+        index.SearchField("parent_building"),
+        index.SearchField("location_photo"),
+        index.SearchField("reservation_url"),
+        index.SearchField("mk_search_field"),
     ]
 
     api_fields = [
-        APIField('libcal_library_id'),
-        APIField('google_map_link'),
-        APIField('reservation_url'),
+        APIField("libcal_library_id"),
+        APIField("google_map_link"),
+        APIField("reservation_url"),
     ]
 
     def has_any_features(self):
@@ -751,7 +780,7 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             Boolean
         """
         for item in get_features():
-            field = 'self.' + item[0]
+            field = "self." + item[0]
             if eval(field):
                 return True
         return False
@@ -778,15 +807,16 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
         html = '<ul class="features-list">'
         if self.has_any_features():
             for item in get_features():
-                field = 'self.' + item[0]
+                field = "self." + item[0]
                 if eval(field):
-                    html += '<li><a href="/spaces/?space_type=None&feature=%s">%s %s</a></li>' % (
-                        item[0], item[2], item[1]
+                    html += (
+                        '<li><a href="/spaces/?space_type=None&feature=%s">%s %s</a></li>'
+                        % (item[0], item[2], item[1])
                     )
-            html += '</ul>'
+            html += "</ul>"
             return html
         else:
-            return ''
+            return ""
 
     @property
     def features_html(self):
@@ -809,8 +839,11 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
             Boolean
         """
         self.has_floorplans()
-        return self.base_has_right_sidebar() or self.has_any_features(
-        ) or self.has_floorplans
+        return (
+            self.base_has_right_sidebar()
+            or self.has_any_features()
+            or self.has_floorplans
+        )
 
     def has_floorplans(self):
         """
@@ -835,9 +868,9 @@ class LocationPage(PublicBasePage, Email, Address, PhoneNumber):
 
         default_image = Image.objects.get(title="Default Placeholder Photo")
 
-        context['default_image'] = default_image
-        context['features_html'] = self.get_features_html()
-        context['has_floorplans'] = self.has_floorplans()
+        context["default_image"] = default_image
+        context["features_html"] = self.get_features_html()
+        context["has_floorplans"] = self.has_floorplans()
 
         return context
 
@@ -846,25 +879,30 @@ class DonorPage(PublicBasePage):
     """
     Donor page model.
     """
+
     description = models.TextField(null=False, blank=False)
     image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
 
-    subpage_types = ['public.StandardPage']
+    subpage_types = ["public.StandardPage"]
 
-    content_panels = Page.content_panels + [
-        FieldPanel('description'),
-        FieldPanel('image'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("description"),
+            FieldPanel("image"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('description'),
-        index.SearchField('image'),
+        index.SearchField("description"),
+        index.SearchField("image"),
     ]
 
 
@@ -874,26 +912,30 @@ class FloorPlanPage(PublicBasePage):
     """
 
     def __str__(self):
-        return '%s, %s' % (self.title, self.unit.location.parent_building)
+        return "%s, %s" % (self.title, self.unit.location.parent_building)
 
     intro = RichTextField(null=True, blank=True)
     image = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
 
-    subpage_types = ['public.StandardPage']
+    subpage_types = ["public.StandardPage"]
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro'),
-        FieldPanel('image'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("intro"),
+            FieldPanel("image"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('image'),
+        index.SearchField("image"),
     ]
 
 
@@ -901,16 +943,21 @@ class StaffPublicPage(PublicBasePage):
     """
     A public page for staff members.
     """
+
     cnetid = CharField(max_length=255, blank=False, null=True)
 
-    subpage_types = ['public.StandardPage']
-    content_panels = Page.content_panels + [
-        HelpPanel(
-            heading='Editing your staff page',
-            template='public/blocks/staffpage_helppanel.html',
-        ),
-        FieldPanel('cnetid')
-    ] + PublicBasePage.content_panels
+    subpage_types = ["public.StandardPage"]
+    content_panels = (
+        Page.content_panels
+        + [
+            HelpPanel(
+                heading="Editing your staff page",
+                template="public/blocks/staffpage_helppanel.html",
+            ),
+            FieldPanel("cnetid"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     def get_staff_page_id(self):
         """
@@ -921,8 +968,8 @@ class StaffPublicPage(PublicBasePage):
         """
         try:
             return StaffPage.objects.all().filter(cnetid=self.cnetid)[0].id
-        except (IndexError):
-            return ''
+        except IndexError:
+            return ""
 
     def get_bio(self):
         """
@@ -933,8 +980,8 @@ class StaffPublicPage(PublicBasePage):
         """
         try:
             return StaffPage.objects.live().filter(cnetid=self.cnetid)[0].bio
-        except (IndexError):
-            return ''
+        except IndexError:
+            return ""
 
     def has_right_sidebar(self):
         return True
@@ -950,7 +997,7 @@ class StaffPublicPage(PublicBasePage):
         try:
             cv = s.cv.file.url
         except AttributeError:
-            cv = ''
+            cv = ""
 
         expertises = []
         for expertise in s.expertise_placements.all():
@@ -966,8 +1013,9 @@ class StaffPublicPage(PublicBasePage):
             department_name = None
 
         try:
-            department_full_name = s.staff_page_units.first(
-            ).library_unit.get_full_name()
+            department_full_name = (
+                s.staff_page_units.first().library_unit.get_full_name()
+            )
         except AttributeError:
             department_full_name = None
 
@@ -978,9 +1026,7 @@ class StaffPublicPage(PublicBasePage):
 
         try:
             building_int = s.staff_page_units.first().library_unit.building
-            building_str = list(
-                filter(lambda b: b[0] == building_int, BUILDINGS)
-            )[0][1]
+            building_str = list(filter(lambda b: b[0] == building_int, BUILDINGS))[0][1]
         except AttributeError:
             building_str = None
 
@@ -1005,8 +1051,9 @@ class StaffPublicPage(PublicBasePage):
         index = 1
 
         while index < len(parent_unit_list):
-            parent_unit_list[index] = parent_unit_list[
-                index - 1] + " - " + parent_unit_list[index]
+            parent_unit_list[index] = (
+                parent_unit_list[index - 1] + " - " + parent_unit_list[index]
+            )
             index += 1
 
         parent_unit_list.reverse()
@@ -1014,38 +1061,34 @@ class StaffPublicPage(PublicBasePage):
         second_index = 0
 
         for u in parent_units:
-            parent_units[u] = quote(
-                parent_unit_list[second_index].encode('utf8')
-            )
+            parent_units[u] = quote(parent_unit_list[second_index].encode("utf8"))
             second_index += 1
 
         context.update(
             {
-                'bio': self.get_bio(),
-                'breadcrumb_div_css':
-                'col-md-12 breadcrumbs hidden-xs hidden-sm',
-                'content_div_css':
-                'container body-container col-xs-12 col-lg-11 col-lg-offset-1',
-                'cv': cv,
-                'default_image': default_image,
-                'department_name': department_name,
-                'department_full_name': department_full_name,
-                'email': email,
-                'expertises': expertises,
-                'libguide_url': libguide_url,
-                'library': building_str,
-                'orcid': s.orcid,
-                'profile_picture': s.profile_picture,
-                'staff_page': s,
-                'subjects': get_subjects_html(s.staff_subject_placements.all()),
-                'positiontitle': s.position_title,
-                'parent_units': parent_units
+                "bio": self.get_bio(),
+                "breadcrumb_div_css": "col-md-12 breadcrumbs hidden-xs hidden-sm",
+                "content_div_css": "container body-container col-xs-12 col-lg-11 col-lg-offset-1",
+                "cv": cv,
+                "default_image": default_image,
+                "department_name": department_name,
+                "department_full_name": department_full_name,
+                "email": email,
+                "expertises": expertises,
+                "libguide_url": libguide_url,
+                "library": building_str,
+                "orcid": s.orcid,
+                "profile_picture": s.profile_picture,
+                "staff_page": s,
+                "subjects": get_subjects_html(s.staff_subject_placements.all()),
+                "positiontitle": s.position_title,
+                "parent_units": parent_units,
             }
         )
         return context
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('cnetid'),
+        index.SearchField("cnetid"),
     ]
 
 
@@ -1053,37 +1096,36 @@ class PublicRawHTMLPage(PublicBasePage):
     """
     A public page for raw HTML.
     """
+
     html = StreamField(
         RawHTMLBodyField(),
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('html')
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels + [FieldPanel("html")] + PublicBasePage.content_panels
+    )
 
     widget_content_panels = [
         MultiFieldPanel(
             [
-                FieldPanel('cgi_mail_form_thank_you_text'),
-                FieldPanel('cgi_mail_form'),
+                FieldPanel("cgi_mail_form_thank_you_text"),
+                FieldPanel("cgi_mail_form"),
             ],
-            heading='CGIMail Form'
+            heading="CGIMail Form",
         ),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(content_panels, heading='Content'),
-            ObjectList(PublicBasePage.promote_panels, heading='Promote'),
-            ObjectList(
-                Page.settings_panels, heading='Settings', classname="settings"
-            ),
-            ObjectList(widget_content_panels, heading='Widgets'),
+            ObjectList(content_panels, heading="Content"),
+            ObjectList(PublicBasePage.promote_panels, heading="Promote"),
+            ObjectList(Page.settings_panels, heading="Settings", classname="settings"),
+            ObjectList(widget_content_panels, heading="Widgets"),
         ]
     )
 
     search_fields = PublicBasePage.search_fields + [
-        index.AutocompleteField('html'),
+        index.AutocompleteField("html"),
     ]
 
-    subpage_types = ['public.StandardPage', 'public.PublicRawHTMLPage']
+    subpage_types = ["public.StandardPage", "public.PublicRawHTMLPage"]

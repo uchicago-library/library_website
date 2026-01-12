@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 
 [Table of contents]
 
@@ -11,10 +11,10 @@ Intranet Index Page
 Dept Home Page
 Group Home Page
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "loop-variables.scss";
-@import "../media.scss";
+@import 'loop-variables.scss';
+@import '../media.scss';
 
 /*
  * Typefaces & Links
@@ -24,14 +24,22 @@ Group Home Page
 @font-face {
   font-family: 'Glyphicons Halflings';
   src: url('fonts/glyphicons-halflings-regular.eot');
-  src: url('fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded- opentype'), url('Content/fonts/glyphicons-halflings-regular.woff') format('woff'), url('Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+  src:
+    url('fonts/glyphicons-halflings-regular.eot?#iefix')
+      format('embedded- opentype'),
+    url('Content/fonts/glyphicons-halflings-regular.woff') format('woff'),
+    url('Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+    url('Content/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular')
+      format('svg');
 }
 
 .font-secondary {
-  font-family: Garamond, Baskerville, 'Baskerville Old Face', "Times New Roman", serif; }
+  font-family:
+    Garamond, Baskerville, 'Baskerville Old Face', 'Times New Roman', serif;
+}
 
 body {
-  font-family: "Arial", sans-serif;
+  font-family: Arial, sans-serif;
   margin-bottom: 100px;
   background: #fbfbfa;
 }
@@ -42,19 +50,21 @@ a {
     color: $darkaccent;
     text-decoration: underline;
   }
-  p &, .rich-text &, &.view-more {
-      color: #5B8FA8;
-      text-decoration: underline;
+  p &,
+  .rich-text &,
+  &.view-more {
+    color: #5b8fa8;
+    text-decoration: underline;
   }
   &.list-group-item:hover {
-      background-color: $accentlink-light;
-      color: #fff;
+    background-color: $accentlink-light;
+    color: #fff;
   }
 }
 
 .swside-home {
   .divider {
-    border-bottom:1px solid #ADB17D;
+    border-bottom: 1px solid #adb17d;
     margin-top: 1em;
     margin-bottom: 1em !important;
   }
@@ -85,33 +95,32 @@ h1 {
 h2 {
   font-weight: 400;
   font-size: 1.3em;
-  margin: 2em 0 5px 0;
-  color:#9A5324;
+  margin: 2em 0 5px;
+  color: #9a5324;
   .swside-home & {
-    color: $darkaccent
+    color: $darkaccent;
   }
 }
-
 
 h3 {
   font-weight: 100;
   font-size: 1.25em;
-  margin: 30px 0 15px 0;
+  margin: 30px 0 15px;
   color: $darkaccent;
-    .swside-home & {
-      color: $darkgray;
-      font-size: 1.2em;
-    }
-    &.description {
-      margin-top: 0px;
-      padding-bottom: 10px;
-    }
+  .swside-home & {
+    color: $darkgray;
+    font-size: 1.2em;
+  }
+  &.description {
+    margin-top: 0;
+    padding-bottom: 10px;
+  }
 }
 
 h4 {
   font-weight: 400;
   font-size: 1.1em;
-  color:#725663;
+  color: #725663;
   margin-top: 2em;
 }
 
@@ -124,10 +133,14 @@ h5 {
 h6 {
   font-weight: 600;
   font-size: 1.1em;
-  color: #9A5324;
+  color: #9a5324;
 }
 
-h1+h2, h2+h3, h3+h4, h4+h5, h5+h6 {
+h1 + h2,
+h2 + h3,
+h3 + h4,
+h4 + h5,
+h5 + h6 {
   margin-top: 0.5em;
 }
 
@@ -146,10 +159,11 @@ p {
   font-size: 1em;
 }
 
-.rich-text ul, .rich-text ol {
+.rich-text ul,
+.rich-text ol {
   line-height: 1.7em;
   max-width: 50em;
-    li {
+  li {
     margin-bottom: 0.25em;
     &:last-child {
       margin-bottom: 1em;
@@ -183,15 +197,15 @@ p {
 /* Blockquote */
 
 blockquote {
-  margin: 30px 50px 0 50px;
+  margin: 30px 50px 0;
   padding: 0.5em 5px;
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: '\201C' '\201D' '\2018' '\2019';
   line-height: 1.7em;
   padding-right: 4em;
-  border-left: 0px;
+  border-left: 0;
 }
 
-blockquote:before {
+blockquote::before {
   color: #767676;
   content: open-quote;
   font-size: 4em;
@@ -200,7 +214,7 @@ blockquote:before {
   vertical-align: -0.4em;
 }
 
-blockquote:after {
+blockquote::after {
   color: #767676;
   content: close-quote;
   font-size: 4em;
@@ -218,7 +232,6 @@ blockquote p {
   text-align: center;
 }
 
-
 /* Dictionary List */
 
 dt {
@@ -230,16 +243,14 @@ dt {
   color: #725663;
 }
 
-dt:after {
-  content: ":";
+dt::after {
+  content: ':';
 }
 
 dd {
   margin: 0 0 0 110px;
-  padding: 0 0 0.5em 0;
+  padding: 0 0 0.5em;
 }
-
-
 
 /*
  * Images, Video, and other Media
@@ -249,45 +260,48 @@ dd {
 img {
   max-width: 250px;
   height: auto;
+
   @include respond-to(small) {
-      max-width: 500px;
-      height: auto;     
+    max-width: 500px;
+    height: auto;
   }
 }
 
 figure.imgcaption {
-      max-width: 270px;
-      border: 1px solid #8A8B79;
-      padding: 15px;
-      float: left;
-      &.fullwidth {
-        max-width: 100%;
-        border: 0px;
-        float: none;
-      }
-      figcaption {
-        padding-top:15px;
-        color: #58593F;
-      }
+  max-width: 270px;
+  border: 1px solid #8a8b79;
+  padding: 15px;
+  float: left;
+  &.fullwidth {
+    max-width: 100%;
+    border: 0;
+    float: none;
+  }
+  figcaption {
+    padding-top: 15px;
+    color: #58593f;
+  }
 }
 
 figure {
-    &.pull-right {
-        margin: 10px 0 10px 20px;
-    }
-    &.pull-left {
-        margin: 10px 20px 10px 0;
-    }
-    &.center-block {
-        margin: 10px;
-    }
+  &.pull-right {
+    margin: 10px 0 10px 20px;
+  }
+  &.pull-left {
+    margin: 10px 20px 10px 0;
+  }
+  &.center-block {
+    margin: 10px;
+  }
 }
 
 .responsive-object {
   position: relative;
 }
 
-.responsive-object iframe, .responsive-object object, .responsive-object embed {
+.responsive-object iframe,
+.responsive-object object,
+.responsive-object embed {
   position: absolute;
   top: 0;
   left: 0;
@@ -315,7 +329,6 @@ figure {
  * --------------------------------------------------
  */
 
-
 .block-paragraph {
   max-width: 46em;
   p,
@@ -324,50 +337,52 @@ figure {
     font-size: 16px;
     line-height: 22px;
   }
-  a{
+  a {
     overflow-wrap: break-word;
   }
 }
 
 .sw-toc {
-    display: flex;
-    flex-wrap: wrap;
-    padding-top: 2em;
-    .toc-icon {
-      display: none;
-      @include respond-to(small) {
-        display: unset;
-        padding-bottom: 1em;
-      }
-      @include respond-to(medium) {
-        padding: 0;
-      }
-      .fa {
-        color: $accentlink-light;
-      }
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 2em;
+  .toc-icon {
+    display: none;
+
+    @include respond-to(small) {
+      display: unset;
+      padding-bottom: 1em;
     }
-    h2 {
-      margin-top: 0;
+
+    @include respond-to(medium) {
+      padding: 0;
     }
-    .rich-text {
-      margin-bottom: 2.5em;
+    .fa {
+      color: $accentlink-light;
     }
-    p {
+  }
+  h2 {
+    margin-top: 0;
+  }
+  .rich-text {
+    margin-bottom: 2.5em;
+  }
+  p {
+    margin-bottom: 0.5em;
+  }
+  & a {
+    color: $darkgray;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  ul {
+    @include plainlist;
+    li {
       margin-bottom: 0.5em;
     }
-    & a {
-      color: $darkgray;
-      text-decoration: none;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-    ul {
-        @include plainlist;
-        li {
-          margin-bottom: 0.5em;
-        }
-    }
+  }
 }
 
 .swnews {
@@ -382,8 +397,11 @@ figure {
   border-bottom: 1px solid #eee;
 }
 
-.media-body, .media-left, .media-right {
-  @include respond-to(mobileonly) { // mobile only
+.media-body,
+.media-left,
+.media-right {
+  @include respond-to(mobileonly) {
+    // mobile only
     display: block;
   }
 }
@@ -392,9 +410,9 @@ figure {
   h2 {
     margin-top: 5px;
     margin-bottom: 3px;
-    color: #9A5324;
+    color: #9a5324;
     & a {
-      color: #9A5324;
+      color: #9a5324;
     }
   }
   .author {
@@ -406,14 +424,20 @@ figure {
     line-height: 1.7em;
     max-width: 46em;
   }
-  @include respond-to(mobileonly) { // mobile only
+
+  @include respond-to(mobileonly) {
+    // mobile only
     width: initial;
   }
 }
 
 .sticky {
-  background-color: lighten($accentlink-light, 20% );
-  background-image: linear-gradient(to right, lighten($accentlink-light, 25% ), lighten($accentlink-light, 20% ));
+  background-color: lighten($accentlink-light, 20%);
+  background-image: linear-gradient(
+    to right,
+    lighten($accentlink-light, 25%),
+    lighten($accentlink-light, 20%)
+  );
   padding: 15px;
   margin-bottom: 2.5em;
   border-bottom: none;
@@ -421,37 +445,38 @@ figure {
 }
 
 .list-group {
-    @include respond-to(small) {
-        width: 80%;
-        padding-bottom: 10px;
-    }
-    .badge {
-        margin-left: 5px;
-    }
+  @include respond-to(small) {
+    width: 80%;
+    padding-bottom: 10px;
+  }
+  .badge {
+    margin-left: 5px;
+  }
 }
 
 .btn-bugzilla {
-    background-color: #800000;
-    background-image: linear-gradient(to bottom, #800000, #642822);
-    color: #fff!important;
-    width: 100%;
-    letter-spacing: 2px;
-    font-size: 1.2em;
-    margin: 10px 0 10px 0;
-    a {
-      color: #fff;
-    }
-    &:hover {
-      color: #fff;
-      background: #B1746F;
-      background-image: linear-gradient(to bottom, #642822, #B1746F);
-    }
-    @include respond-to(small) {
-        width: 50%;
-    }
+  background-color: #800000;
+  background-image: linear-gradient(to bottom, #800000, #642822);
+  color: #fff !important;
+  width: 100%;
+  letter-spacing: 2px;
+  font-size: 1.2em;
+  margin: 10px 0;
+  a {
+    color: #fff;
+  }
+  &:hover {
+    color: #fff;
+    background: #b1746f;
+    background-image: linear-gradient(to bottom, #642822, #b1746f);
+  }
+
+  @include respond-to(small) {
+    width: 50%;
+  }
 }
 
- /*
+/*
  * Forms
  * --------------------------------------------------
  */
@@ -468,19 +493,19 @@ figure {
   }
 }
 
- input[type=checkbox], input[type=radio] {
-    margin: 4px 10px 0 0;
+input[type='checkbox'],
+input[type='radio'] {
+  margin: 4px 10px 0 0;
 }
 
-
-
- /*
+/*
  * Directory / Staff Profile
  * --------------------------------------------------
  */
 
- button[id^='mysched'] { // Springshare MyScheduler button styling for staff browse view
-  color: #ffffff;
+button[id^='mysched'] {
+  // Springshare MyScheduler button styling for staff browse view
+  color: #fff;
   background: #6e7337;
   margin-top: 0.5em;
   border: none;
@@ -488,10 +513,11 @@ figure {
   border-bottom-right-radius: 4px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  &:hover, &:focus {
-    color: #2A5DB0;
+  &:hover,
+  &:focus {
+    color: #2a5db0;
     background: transparent;
-    border: 1px solid #2A5DB0;
+    border: 1px solid #2a5db0;
   }
 }
 
@@ -514,22 +540,23 @@ figure {
 }
 
 .bg-directory {
-  padding: 15px 0 15px 0;
-  border-bottom: 1px solid #eeeeee;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
   margin-bottom: 20px;
 }
 
 .bg-filter {
-  padding: 0 10px 20px 10px;
+  padding: 0 10px 20px;
+
   @include respond-to(small) {
-      padding: 0 0 20px 0;
+    padding: 0 0 20px;
   }
 }
 
 .dir-header {
   @include respond-to(small) {
     padding-right: 20px;
-    text-align:right;
+    text-align: right;
     display: inline;
   }
 }
@@ -540,14 +567,15 @@ figure {
   font-size: 1.1em;
   color: #725663;
   font-weight: 600;
+
   @include respond-to(small) {
-    display:inline;
+    display: inline;
     padding: 0 10px 0 0;
   }
 }
 
 .guide-link {
-  line-height:2.2em;
+  line-height: 2.2em;
 }
 
 select {
@@ -560,14 +588,15 @@ select {
   background-color: #fff;
   border: 1px solid #8a9045;
   padding: 5px 15px;
-    &:hover, &.active {
-      color: #fff;
-      background-color: #ADB17D;     
-    }
+  &:hover,
+  &.active {
+    color: #fff;
+    background-color: #adb17d;
+  }
 }
 
 .sdir {
-  margin: 2em 0 0.25em 0;
+  margin: 2em 0 0.25em;
   padding-left: 0;
   h2 {
     font-family: $accent-font;
@@ -576,8 +605,11 @@ select {
     padding-left: 15px;
     margin-right: 2em;
     margin-bottom: 0.25em;
-    border-bottom: 2px solid #ADB17D;
-      a, a:active, a:focus, a:hover {
+    border-bottom: 2px solid #adb17d;
+    a,
+    a:active,
+    a:focus,
+    a:hover {
       color: $mid-dark;
       text-decoration: none;
     }
@@ -585,21 +617,23 @@ select {
   article {
     padding: 1em;
     display: grid;
-    grid-gap: 1vw; //width of screen unit
+    grid-gap: 1vw; // width of screen unit
     margin-right: -15px;
     margin-left: -15px;
+
     @include respond-to(small) {
       grid-template-columns: 1fr 1fr;
       grid-row-gap: 1em;
     }
+
     @include respond-to(medium) {
       grid-template-columns: 100px 3fr 2fr 2fr;
     }
     &:nth-child(odd) {
       background: #f6f6f6;
     }
-    &+article {
-      border-top: 1px solid #D2CDCC;
+    & + article {
+      border-top: 1px solid #d2cdcc;
     }
     h3 {
       font-family: $base-font;
@@ -609,6 +643,7 @@ select {
     }
     & p {
       max-width: 200px;
+
       @include respond-to(large) {
         max-width: unset;
       }
@@ -621,13 +656,15 @@ select {
       padding-top: 1em;
       margin-top: 0;
       margin-bottom: 0.25em;
+
       @include respond-to(small) {
         padding-top: 0;
       }
       a {
         color: $accentlink;
         text-decoration: underline;
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
           color: $darkaccent;
           text-decoration: none;
         }
@@ -637,12 +674,13 @@ select {
       padding-bottom: 1em;
       grid-row-start: 1;
       grid-column-start: 1;
+
       @include respond-to(small) {
         padding-bottom: 0;
       }
     }
     ul {
-      padding-left: 0px;
+      padding-left: 0;
       list-style: none;
     }
   }
@@ -653,75 +691,81 @@ select {
  * --------------------------------------------------
  */
 
-table, tbody {
-    & a {
-        color: #5B8FA8;
-    }
-    @include respond-to(mobileonly) {
-        display: block;
-        width: 100%;
-        & tr, & th, & td {
-            display: block;
-            padding: 0;
-            text-align: left;
-            white-space: normal;
-        }
-        & tr {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 11px;
-            margin-bottom: 11px;
-        }
-        & td {
-            border: none;
-            margin-bottom: 6px;
-            color: #444;
-        }
-    }
+table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: transparent;
+
+  & > thead > tr > th,
+  & > tbody > tr > th,
+  & > tfoot > tr > th,
+  & > thead > tr > td,
+  & > tbody > tr > td,
+  & > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.4286;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+  }
+
+  & > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+  }
+
+  & > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+  }
 }
 
-.stafflist>tbody>tr>td {
-    @include respond-to(xsmall) {
-        width: 25%;
-    }
+table a,
+tbody a {
+  color: #5b8fa8;
 }
 
+.stafflist > tbody > tr > td {
+  @include respond-to(xsmall) {
+    width: 25%;
+  }
+}
 
 /*
  *  Intranet Index Page
  * --------------------------------------------------
  */
- ul.index-list {
+ul.index-list {
   font-size: 16px;
   line-height: 1.8em;
-  &>li {
+  & > li {
     a {
       font-weight: 600;
-      color:$darkgray;
+      color: $darkgray;
       text-decoration: none;
     }
-    &>ul>li {
+    & > ul > li {
       a {
         font-weight: 400;
-        color:$darkaccent;
+        color: $darkaccent;
       }
-      &>ul>li {
+      & > ul > li {
         a {
           font-weight: 300;
-          color: #5B8FA8;
+          color: #5b8fa8;
         }
-        &>ul>li {
+        & > ul > li {
           a {
             font-weight: 300;
-            color:$darkergray;
+            color: $darkergray;
             font-style: italic;
           }
         }
       }
     }
   }
- }
-
-
+}
 
 /*
  *  Dept Home Page
@@ -729,37 +773,43 @@ table, tbody {
  */
 
 .deptlist {
-  ul { // Main ul
+  ul {
+    // Main ul
     list-style: none;
     padding-left: 0;
     font-size: 16px;
-    &>li { // first level
-      margin: 15px 0 0 0;
+    & > li {
+      // first level
+      margin: 15px 0 0;
       a {
         font-weight: 600;
-        color:#9A5324;
+        color: #9a5324;
         padding-bottom: 3px;
       }
-      &>ul>li { // second level
-      margin: 0 0;
-      padding-left: 1em;
+      & > ul > li {
+        // second level
+        margin: 0;
+        padding-left: 1em;
         a {
-          color:$darkgray;
+          color: $darkgray;
           line-height: 2em;
         }
-        &>ul>li { // third level
+        & > ul > li {
+          // third level
           a {
-            color: #5B8FA8;
+            color: #5b8fa8;
             line-height: 1.5em;
           }
-          &>ul>li { // fourth level
+          & > ul > li {
+            // fourth level
             a {
-              color:$darkergray;
+              color: $darkergray;
               line-height: 1.5em;
             }
-            &>ul>li { // fifth level
+            & > ul > li {
+              // fifth level
               a {
-                color:$darkaccent;
+                color: $darkaccent;
                 line-height: 1.5em;
               }
             }
@@ -770,57 +820,56 @@ table, tbody {
   }
 }
 
- /*
+/*
  *  Group Home Page
  * --------------------------------------------------
  */
 
 .grouplist ul {
-    list-style: none;
-    padding-left: 20px;
-    &>li {
-        margin: 15px 0 0 0;
-        a {
-          font-size: 1.1em;
-          font-weight: 400;
-          color:$darkgray;
-          padding-bottom: 3px;
-        }
-        &>ul>li {
-        margin: 0 0;
-            a {
-              font-size: 1em;
-              font-weight: 400;
-              color:#5B8FA8;
-              line-height: 2em;
-            }
-        }
+  list-style: none;
+  padding-left: 20px;
+  & > li {
+    margin: 15px 0 0;
+    a {
+      font-size: 1.1em;
+      font-weight: 400;
+      color: $darkgray;
+      padding-bottom: 3px;
     }
+    & > ul > li {
+      margin: 0;
+      a {
+        font-size: 1em;
+        font-weight: 400;
+        color: #5b8fa8;
+        line-height: 2em;
+      }
+    }
+  }
 }
 
 .inactive-groups ul {
-    list-style: none;
-    padding-left: 20px;
-    &>li {
-        margin: 15px 0 0 0;
-        a {
-          font-size: 1em;
-          font-weight: 400;
-          color:$darkaccent;
-          padding-bottom: 5px;
-        }
-        &>ul>li {
-        margin: 0 0;
-            a {
-              font-size: 1em;
-              font-weight: 400;
-              color:$darkergray;
-              line-height: 2em;
-            }
-        }
+  list-style: none;
+  padding-left: 20px;
+  & > li {
+    margin: 15px 0 0;
+    a {
+      font-size: 1em;
+      font-weight: 400;
+      color: $darkaccent;
+      padding-bottom: 5px;
     }
+    & > ul > li {
+      margin: 0;
+      a {
+        font-size: 1em;
+        font-weight: 400;
+        color: $darkergray;
+        line-height: 2em;
+      }
+    }
+  }
 }
-
 
 /*
  *  Search
@@ -829,7 +878,7 @@ table, tbody {
 
 .template-searchresults {
   h2 a {
-    color: #9A5324;
+    color: #9a5324;
   }
   .result-number {
     font-weight: 600;
@@ -864,7 +913,8 @@ table, tbody {
  * --------------------------------------------------
  */
 
-.widget-reusable-content-block { // sidebar widget styling
+.widget-reusable-content-block {
+  // sidebar widget styling
   & > .rich-text > p:empty {
     display: none;
   }
@@ -872,23 +922,27 @@ table, tbody {
     color: #800000;
     background-color: #f7ebeb;
     padding: 1em;
-    h2, h3 {
+    h2,
+    h3 {
       color: #4d0000 !important;
-      border-color: #660000 !important;
+      border-color: #600 !important;
     }
   }
   &.info-box {
     color: #003849;
     background-color: #eef6fc;
     padding: 1em;
-    h2, h3 {
+    h2,
+    h3 {
       color: #003849 !important;
       border-color: #003849 !important;
     }
   }
 }
 
-.block-reusable_content, .block-reusable_content_block { // in-page content styling
+.block-reusable_content,
+.block-reusable_content_block {
+  // in-page content styling
   margin-bottom: 0.5em;
   h2 {
     margin-top: 0;
@@ -897,7 +951,7 @@ table, tbody {
     color: #007396;
     text-decoration: underline;
     &:hover {
-      color: #59315F;
+      color: #59315f;
       font-weight: 600;
     }
   }
@@ -912,9 +966,3 @@ table, tbody {
     padding: 1em;
   }
 }
-
-
-
-
-
-

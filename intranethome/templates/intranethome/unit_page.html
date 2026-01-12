@@ -4,28 +4,28 @@
 {% block body_class %}template-{{ self.get_verbose_name|slugify }}{% endblock %}
 
 {% block content %}
-	{% if self.get_ancestors|length > 1 %}
-		<p>
-		{% for page in self.get_ancestors %}
-			{% if page.is_root == False %}
-				<a href="{% pageurl page %}">{{ page.title }}</a> &gt;
-			{% endif %}
-		{% endfor %}
-		{{ self.title }}
-		</p>
-	{% endif %}
-	<article>
-		<h1>{{ self.title }}</h1>
-		<p><a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
-		<p>{{ self.phone }}</p>
-		<p>{{ self.building }} {{ self.room_number }}</p>
-	</article>
-	{% if self.get_children|length > 0 %}
-		<h2>Sub Units</h2>
-		<ul>
-			{% for page in self.get_children %}
-				<li><a href="{% pageurl page %}">{{ page.title }}</a></li>
-			{% endfor %}
-		</ul>
-	{% endif %}
+    {% if self.get_ancestors|length > 1 %}
+        <p>
+            {% for page in self.get_ancestors %}
+                {% if page.is_root == False %}
+                    <a href="{% pageurl page %}">{{ page.title }}</a> &gt;
+                {% endif %}
+            {% endfor %}
+            {{ self.title }}
+        </p>
+    {% endif %}
+    <article>
+        <h1>{{ self.title }}</h1>
+        <p><a href="mailto:{{ self.email }}">{{ self.email }}</a></p>
+        <p>{{ self.phone }}</p>
+        <p>{{ self.building }} {{ self.room_number }}</p>
+    </article>
+    {% if self.get_children|length > 0 %}
+        <h2>Sub Units</h2>
+        <ul>
+            {% for page in self.get_children %}
+                <li><a href="{% pageurl page %}">{{ page.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

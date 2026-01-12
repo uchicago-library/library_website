@@ -1,12 +1,13 @@
 import re
 
 from django import template
+
 from staff.models import StaffPage
 
 register = template.Library()
 
 
-@register.inclusion_tag('news/news_author.html')
+@register.inclusion_tag("news/news_author.html")
 def news_author(news_page):
     if news_page.author:
         author_title = news_page.author.title
@@ -16,20 +17,18 @@ def news_author(news_page):
             cnetid = news_page.owner.username
             author_title = StaffPage.objects.filter(cnetid=cnetid)[0].title
             author_url = StaffPage.objects.filter(cnetid=cnetid)[0].url
-        except:
-            author_title = ''
-            author_url = ''
-    return {
-        'author_title': author_title,
-        'author_url': author_url
-    }
+        except:  # noqa: E722
+            author_title = ""
+            author_url = ""
+    return {"author_title": author_title, "author_url": author_url}
 
 
-@register.inclusion_tag('news/news_excerpt.html')
+@register.inclusion_tag("news/news_excerpt.html")
 def news_excerpt(news_page):
     """
     Output an excerpt for a Loop news page.
     """
+
     def simplify_text(s):
         # strip out every HTML tag except opening and closing <a> tags.
         s = re.sub(r"<(?!\/?a(?=>|\s.*>))\/?.*?>", " ", s)
@@ -43,8 +42,4 @@ def news_excerpt(news_page):
         excerpt = news_page.body
         richtext = False
 
-    return {
-        'excerpt': excerpt,
-        'news_page_url': news_page.url,
-        'rt': richtext
-    }
+    return {"excerpt": excerpt, "news_page_url": news_page.url, "rt": richtext}
