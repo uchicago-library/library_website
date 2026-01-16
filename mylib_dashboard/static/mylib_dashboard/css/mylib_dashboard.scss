@@ -1,0 +1,25 @@
+/**
+ * MyLib Dashboard Styles
+ *
+ * Styles for the patron dashboard interface.
+ * Uses Bootstrap classes from the existing site framework.
+ */
+
+.mylib-dashboard {
+  // Placeholder styles - will be expanded as components are built
+
+  &__loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+  }
+
+  &__error {
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+}

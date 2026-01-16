@@ -18,6 +18,9 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 WAGTAILADMIN_BASE_URL = "https://www.lib.uchicago.edu"
 
+# MyLib Dashboard - FOLIO API
+FOLIO_BASE_URL = "https://uchicago-okapi.folio.indexdata.com"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -86,6 +89,7 @@ INSTALLED_APPS = [
     "lib_news",
     "library_website",
     "macros",
+    "mylib_dashboard",
     "news",
     "public",
     "projects",

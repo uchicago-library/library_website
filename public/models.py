@@ -202,6 +202,7 @@ class StandardPage(PublicBasePage, SocialMediaFields):
         "lib_collections.CollectionPage",
         "lib_collections.ExhibitPage",
         "lib_news.LibNewsIndexPage",
+        "mylib_dashboard.MyLibDashboardPage",
         "redirects.RedirectPage",
         "units.UnitPage",
         "ask_a_librarian.AskPage",

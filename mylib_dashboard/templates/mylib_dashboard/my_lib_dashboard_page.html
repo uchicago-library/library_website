@@ -1,0 +1,31 @@
+{% extends "base/public_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load compress static %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-mylib-dashboard{% endblock %}
+
+{# Styles #}
+{% block styles %}
+    {% compress css %}
+        <link href="{% static "mylib_dashboard/css/mylib_dashboard.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
+{# Content #}
+{% block content %}
+    {# React mount point - data attributes pass configuration to the app #}
+    <div
+        id="mylib-dashboard"
+        data-api-base-url="/api/mylib"
+        data-vufind-account-url="https://catalog.lib.uchicago.edu/vufind/MyResearch/Home"
+        data-illiad-url="https://requests.lib.uchicago.edu/illiad/"
+        data-libcal-url="https://rooms.lib.uchicago.edu/"
+    ></div>
+    {% render_bundle 'MyLibDashboard' %}
+{% endblock %}
+
+{# Override right sidebar - dashboard has its own sidebar in React #}
+{% block right_sidebar %}
+    {# Sidebar is rendered by React as part of the dashboard layout #}
+{% endblock %}
