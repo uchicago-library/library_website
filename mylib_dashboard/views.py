@@ -4,9 +4,14 @@ API views for the MyLib Dashboard.
 All views return JSON responses for consumption by the React frontend.
 """
 
+import logging
+
 from django.http import JsonResponse
 
+from .services.folio import FOLIOError, FOLIOUserNotFoundError, get_folio_service
 from .utils import get_current_cnetid
+
+logger = logging.getLogger(__name__)
 
 
 def require_cnetid(view_func):
@@ -32,10 +37,18 @@ def profile(request):
     Get user profile information.
     Returns: name, email, department, account status
     """
-    # TODO: Implement in Step 2 with FOLIO service
-    return JsonResponse(
-        {"cnetid": request.cnetid, "message": "Profile endpoint - not yet implemented"}
-    )
+    try:
+        folio = get_folio_service()
+        profile_data = folio.get_user_profile(request.cnetid)
+        return JsonResponse(profile_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error for user {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve profile information"}, status=503
+        )
 
 
 @require_cnetid

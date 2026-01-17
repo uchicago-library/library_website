@@ -91,8 +91,8 @@ else:
 FOLIO_BASE_URL = "https://uchicago-test-okapi.folio.indexdata.com"
 
 # FOLIO proxy for local development (via SSH tunnel to dldc2)
-# Start tunnel with: ssh -D 1080 -f -C -q -N dldc2
-# For Docker, this is overridden in docker.py to use host.docker.internal
+# Start tunnel: ssh -D 0.0.0.0:1080 -f -C -q -N dldc2
+# Docker overrides this in docker.py to use host.docker.internal
 FOLIO_PROXY = "socks5h://localhost:1080"
 
 # Tiny Tiny RSS Feed for development
