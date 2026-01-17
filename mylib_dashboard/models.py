@@ -38,6 +38,8 @@ class MyLibDashboardPage(PublicBasePage):
         + PublicBasePage.content_panels
     )
 
+    search_fields = PublicBasePage.search_fields
+
     class Meta:
         verbose_name = "MyLib Dashboard Page"
         verbose_name_plural = "MyLib Dashboard Pages"
