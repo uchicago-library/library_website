@@ -379,6 +379,163 @@ class FOLIOService:
             "dueSoonCount": due_soon_count,
         }
 
+    def get_user_holds(self, cnetid):
+        """
+        Get items available for pickup for a user.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            dict: {
+                "holds": [...],
+                "totalHolds": int,
+            }
+        """
+        user = self.get_user_by_cnetid(cnetid)
+        user_uuid = user["id"]
+
+        # Query for requests awaiting pickup
+        endpoint = (
+            f"/request-storage/requests?query="
+            f"(requesterId=={user_uuid}%20or%20proxyUserId=={user_uuid})"
+            f"%20and%20status==%22Open%20-%20Awaiting%20pickup%22&limit=1000"
+        )
+        data = self._request("GET", endpoint)
+        requests_list = data.get("requests", [])
+
+        holds = []
+        for req in requests_list:
+            title = req.get("instance", {}).get("title") or req.get("item", {}).get(
+                "title", "Unknown Title"
+            )
+            holds.append(
+                {
+                    "id": req.get("id"),
+                    "title": title,
+                    "requestType": req.get("requestType"),
+                    "pickupServicePointId": req.get("pickupServicePointId"),
+                    "holdShelfExpirationDate": req.get("holdShelfExpirationDate"),
+                    "position": req.get("position"),
+                }
+            )
+
+        # Sort by expiration date (soonest first)
+        holds.sort(key=lambda h: h.get("holdShelfExpirationDate") or "")
+
+        return {
+            "holds": holds,
+            "totalHolds": len(holds),
+        }
+
+    def get_user_fines(self, cnetid):
+        """
+        Get open fines/fees for a user.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            dict: {
+                "fines": [...],
+                "totalAmount": float,
+                "totalFines": int,
+            }
+        """
+        user = self.get_user_by_cnetid(cnetid)
+        user_uuid = user["id"]
+
+        endpoint = (
+            f"/accounts?query=userId=={user_uuid}"
+            f"%20and%20status.name==Open&limit=1000"
+        )
+        data = self._request("GET", endpoint)
+        accounts = data.get("accounts", [])
+
+        fines = []
+        total_amount = 0.0
+
+        for account in accounts:
+            remaining = account.get("remaining", 0)
+            total_amount += remaining
+
+            fines.append(
+                {
+                    "id": account.get("id"),
+                    "amount": account.get("amount"),
+                    "remaining": remaining,
+                    "feeFineType": account.get("feeFineType"),
+                    "title": account.get("title", ""),
+                    "createdDate": account.get("metadata", {}).get("createdDate"),
+                }
+            )
+
+        return {
+            "fines": fines,
+            "totalAmount": total_amount,
+            "totalFines": len(fines),
+        }
+
+    def get_user_blocks(self, cnetid):
+        """
+        Get account blocks for a user.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            dict: {
+                "blocks": [...],
+                "hasBlocks": bool,
+            }
+        """
+        user = self.get_user_by_cnetid(cnetid)
+        user_uuid = user["id"]
+
+        blocks = []
+
+        # Get automated blocks
+        try:
+            endpoint = f"/automated-patron-blocks/{user_uuid}"
+            data = self._request("GET", endpoint)
+            for block in data.get("automatedPatronBlocks", []):
+                blocks.append(
+                    {
+                        "type": "automated",
+                        "message": block.get("message", "Account has restrictions"),
+                        "blockBorrowing": block.get("blockBorrowing", False),
+                        "blockRenewals": block.get("blockRenewals", False),
+                        "blockRequests": block.get("blockRequests", False),
+                    }
+                )
+        except FOLIOError:
+            logger.warning(f"Could not fetch automated blocks for {cnetid}")
+
+        # Get manual blocks
+        try:
+            endpoint = f"/manualblocks?query=userId=={user_uuid}"
+            data = self._request("GET", endpoint)
+            for block in data.get("manualblocks", []):
+                message = block.get("patronMessage") or block.get(
+                    "desc", "Account has restrictions"
+                )
+                blocks.append(
+                    {
+                        "type": "manual",
+                        "message": message,
+                        "blockBorrowing": block.get("borrowing", False),
+                        "blockRenewals": block.get("renewals", False),
+                        "blockRequests": block.get("requests", False),
+                    }
+                )
+        except FOLIOError:
+            logger.warning(f"Could not fetch manual blocks for {cnetid}")
+
+        return {
+            "blocks": blocks,
+            "hasBlocks": len(blocks) > 0,
+        }
+
 
 # Module-level instance for convenience
 _folio_service = None

@@ -77,10 +77,18 @@ def holds(request):
     Get user's items available for pickup.
     Returns: holds array with pickup locations and deadlines
     """
-    # TODO: Implement in Step 4 with FOLIO service
-    return JsonResponse(
-        {"holds": [], "message": "Holds endpoint - not yet implemented"}
-    )
+    try:
+        folio = get_folio_service()
+        holds_data = folio.get_user_holds(request.cnetid)
+        return JsonResponse(holds_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error fetching holds for {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve holds information"}, status=503
+        )
 
 
 @require_cnetid
@@ -89,10 +97,18 @@ def fines(request):
     Get user's fines and fees.
     Returns: total amount and list of fines
     """
-    # TODO: Implement in Step 4 with FOLIO service
-    return JsonResponse(
-        {"total": 0, "fines": [], "message": "Fines endpoint - not yet implemented"}
-    )
+    try:
+        folio = get_folio_service()
+        fines_data = folio.get_user_fines(request.cnetid)
+        return JsonResponse(fines_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error fetching fines for {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve fines information"}, status=503
+        )
 
 
 @require_cnetid
@@ -101,11 +117,13 @@ def account_blocks(request):
     Get user's account blocks.
     Returns: list of block messages if any
     """
-    # TODO: Implement in Step 4 with FOLIO service
-    return JsonResponse(
-        {
-            "blocks": [],
-            "hasBlocks": False,
-            "message": "Account blocks endpoint - not yet implemented",
-        }
-    )
+    try:
+        folio = get_folio_service()
+        blocks_data = folio.get_user_blocks(request.cnetid)
+        return JsonResponse(blocks_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error fetching blocks for {request.cnetid}: {e}")
+        return JsonResponse({"error": "Unable to retrieve account blocks"}, status=503)
