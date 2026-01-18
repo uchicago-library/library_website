@@ -289,7 +289,11 @@ class FOLIOService:
             "id": loan.get("id"),
             "itemId": loan.get("itemId"),
             "title": item.get("title", "Unknown Title"),
-            "author": item.get("contributors", [{}])[0].get("name", "") if item.get("contributors") else "",
+            "author": (
+                item.get("contributors", [{}])[0].get("name", "")
+                if item.get("contributors")
+                else ""
+            ),
             "barcode": item.get("barcode", ""),
             "dueDate": loan.get("dueDate"),
             "renewalCount": loan.get("renewalCount", 0),
