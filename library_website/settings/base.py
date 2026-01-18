@@ -18,9 +18,6 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 WAGTAILADMIN_BASE_URL = "https://www.lib.uchicago.edu"
 
-# MyLib Dashboard - FOLIO API
-FOLIO_BASE_URL = "https://uchicago-okapi.folio.indexdata.com"
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -533,6 +530,7 @@ CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
 COLLECTION_OBJECT_TRUNCATE = 25
 
 # Folio API
+FOLIO_BASE_URL = "https://uchicago-okapi.folio.indexdata.com"
 FOLIO_USERNAME = ""
 FOLIO_PASSWORD = ""
 FOLIO_TENANT = ""
@@ -542,6 +540,9 @@ FOLIO_BASE_URL = ""
 FOLIO_TYPE_ISBN_ID = "8261054f-be78-422d-bd51-4ed9f33c3422"
 FOLIO_TYPE_ISSN_ID = "913300b2-03ed-469a-8179-c1092c991227"
 FOLIO_TYPE_LINKING_ISSN_ID = "5860f255-a27f-4916-a830-262aa900a6b9"
+
+# Loan policy IDs that are considered "short-term" (e.g., TechBar, room keys)
+FOLIO_SHORT_TERM_LOAN_POLICY_IDS = []
 
 MAIL_ALIASES_PATH = "/data/web/aliases/data.json"
 

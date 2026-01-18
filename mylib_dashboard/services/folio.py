@@ -6,6 +6,7 @@ Uses the shared get_auth() from item_servlet with dashboard-specific configurati
 """
 
 import logging
+from datetime import datetime, timedelta, timezone
 
 import requests
 from django.conf import settings
@@ -15,6 +16,9 @@ from item_servlet.utils import FOLIOAuthError, get_auth
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 30
+
+# Hours threshold for "due soon" warning
+DUE_SOON_HOURS = 24
 
 
 class FOLIOError(Exception):
@@ -208,6 +212,167 @@ class FOLIOService:
             "department": user["department"],
             "active": user["active"],
             "expirationDate": user["expirationDate"],
+        }
+
+    def get_user_loans(self, user_uuid):
+        """
+        Get all open loans for a user.
+
+        Args:
+            user_uuid: The user's FOLIO UUID
+
+        Returns:
+            list: List of loan objects from FOLIO
+        """
+        endpoint = (
+            f"/circulation/loans?query=userId=={user_uuid}"
+            f"%20and%20status.name==Open&limit=1000"
+        )
+        data = self._request("GET", endpoint)
+        return data.get("loans", [])
+
+    def _parse_due_date(self, due_date_str):
+        """Parse FOLIO due date string to datetime."""
+        if not due_date_str:
+            return None
+        try:
+            # FOLIO returns ISO format dates
+            return datetime.fromisoformat(due_date_str.replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            logger.warning(f"Could not parse due date: {due_date_str}")
+            return None
+
+    def _compute_loan_status(self, loan):
+        """
+        Compute status flags for a loan.
+
+        Args:
+            loan: The loan object from FOLIO
+
+        Returns:
+            dict: Status flags (isOverdue, isDueSoon, isRecalled)
+        """
+        now = datetime.now(timezone.utc)
+        due_date = self._parse_due_date(loan.get("dueDate"))
+
+        is_overdue = False
+        is_due_soon = False
+
+        if due_date:
+            is_overdue = now > due_date
+            if not is_overdue:
+                due_soon_threshold = now + timedelta(hours=DUE_SOON_HOURS)
+                is_due_soon = due_date <= due_soon_threshold
+
+        is_recalled = loan.get("action") == "recallrequested"
+
+        return {
+            "isOverdue": is_overdue,
+            "isDueSoon": is_due_soon,
+            "isRecalled": is_recalled,
+        }
+
+    def _format_loan(self, loan, status):
+        """
+        Format a loan for the frontend.
+
+        Args:
+            loan: The loan object from FOLIO
+            status: Status flags from _compute_loan_status
+
+        Returns:
+            dict: Formatted loan data
+        """
+        item = loan.get("item", {})
+
+        return {
+            "id": loan.get("id"),
+            "itemId": loan.get("itemId"),
+            "title": item.get("title", "Unknown Title"),
+            "author": item.get("contributors", [{}])[0].get("name", "") if item.get("contributors") else "",
+            "barcode": item.get("barcode", ""),
+            "dueDate": loan.get("dueDate"),
+            "renewalCount": loan.get("renewalCount", 0),
+            "loanPolicyId": loan.get("loanPolicyId"),
+            **status,
+        }
+
+    def get_user_loans_categorized(self, cnetid):
+        """
+        Get user's loans categorized as standard or short-term.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            dict: {
+                "standardLoans": [...],
+                "shortTermLoans": [...],
+                "totalLoans": int,
+                "recalledCount": int,
+                "overdueCount": int,
+                "dueSoonCount": int,
+            }
+        """
+        # Get user UUID first
+        user = self.get_user_by_cnetid(cnetid)
+        user_uuid = user["id"]
+
+        # Fetch loans
+        loans = self.get_user_loans(user_uuid)
+
+        if not loans:
+            return {
+                "standardLoans": [],
+                "shortTermLoans": [],
+                "totalLoans": 0,
+                "recalledCount": 0,
+                "overdueCount": 0,
+                "dueSoonCount": 0,
+            }
+
+        # Get short-term policy IDs from settings
+        short_term_policy_ids = set(
+            getattr(settings, "FOLIO_SHORT_TERM_LOAN_POLICY_IDS", [])
+        )
+
+        standard_loans = []
+        short_term_loans = []
+        recalled_count = 0
+        overdue_count = 0
+        due_soon_count = 0
+
+        for loan in loans:
+            # Recall status is embedded in loan.action (no separate API call needed)
+            status = self._compute_loan_status(loan)
+            formatted_loan = self._format_loan(loan, status)
+
+            # Update counts
+            if status["isRecalled"]:
+                recalled_count += 1
+            if status["isOverdue"]:
+                overdue_count += 1
+            if status["isDueSoon"]:
+                due_soon_count += 1
+
+            # Categorize by policy ID
+            loan_policy_id = loan.get("loanPolicyId")
+            if short_term_policy_ids and loan_policy_id in short_term_policy_ids:
+                short_term_loans.append(formatted_loan)
+            else:
+                standard_loans.append(formatted_loan)
+
+        # Sort by due date (soonest first)
+        standard_loans.sort(key=lambda loan: loan.get("dueDate"))
+        short_term_loans.sort(key=lambda loan: loan.get("dueDate"))
+
+        return {
+            "standardLoans": standard_loans,
+            "shortTermLoans": short_term_loans,
+            "totalLoans": len(loans),
+            "recalledCount": recalled_count,
+            "overdueCount": overdue_count,
+            "dueSoonCount": due_soon_count,
         }
 
 

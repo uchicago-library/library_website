@@ -57,14 +57,18 @@ def loans(request):
     Get user's checked out items (loans).
     Returns: standardLoans, shortTermLoans arrays with status flags
     """
-    # TODO: Implement in Step 3 with FOLIO service
-    return JsonResponse(
-        {
-            "standardLoans": [],
-            "shortTermLoans": [],
-            "message": "Loans endpoint - not yet implemented",
-        }
-    )
+    try:
+        folio = get_folio_service()
+        loans_data = folio.get_user_loans_categorized(request.cnetid)
+        return JsonResponse(loans_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error fetching loans for {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve loan information"}, status=503
+        )
 
 
 @require_cnetid
