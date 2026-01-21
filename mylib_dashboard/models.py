@@ -1,4 +1,5 @@
-from wagtail.admin.panels import HelpPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel
+from wagtail.fields import RichTextField
 from wagtail.models import Page
 
 from public.models import PublicBasePage
@@ -11,14 +12,21 @@ class MyLibDashboardPage(PublicBasePage):
     populated from API endpoints.
     """
 
-    # No additional content fields - dashboard is entirely dynamic
-    # The React app handles all content rendering
+    auto_renewal_notice = RichTextField(
+        blank=True,
+        default="<b>Auto-renewal is enabled.</b> Items will be automatically "
+        "renewed up to 5 times unless recalled or you have fines over $25.",
+        help_text="Dismissible notice shown at top of dashboard. "
+        "Leave blank to hide the notice.",
+        features=["bold", "italic", "link"],
+    )
 
     subpage_types = []
 
     content_panels = (
         Page.content_panels
         + [
+            FieldPanel("auto_renewal_notice"),
             HelpPanel(
                 heading="About the MyLib Dashboard",
                 content="""

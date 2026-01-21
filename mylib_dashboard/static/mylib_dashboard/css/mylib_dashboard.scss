@@ -1,25 +1,322 @@
 /**
  * MyLib Dashboard Styles
  *
- * Styles for the patron dashboard interface.
- * Uses Bootstrap classes from the existing site framework.
+ * Structural styles for the patron dashboard interface.
  */
 
-.mylib-dashboard {
-  // Placeholder styles - will be expanded as components are built
+// Variables
+$primary-color: #800;
+$danger-color: #d9534f;
+$warning-color: #f0ad4e;
+$info-color: #5bc0de;
+$text-muted: #666;
+$border-color: #ddd;
+$background-light: #f5f5f5;
 
-  &__loading {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
+// Main Dashboard Container
+.mylib-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+
+  &--loading,
+  &--error {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  &__error {
-    color: #a94442;
-    background-color: #f2dede;
-    border: 1px solid #ebccd1;
-    padding: 1rem;
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__main {
+    min-width: 0;
+  }
+
+  &__panels {
+    margin-top: 1rem;
+  }
+}
+
+// Loading State
+.mylib-loading {
+  text-align: center;
+  padding: 2rem;
+  color: $text-muted;
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Error State
+.mylib-error {
+  text-align: center;
+  padding: 2rem;
+  color: $danger-color;
+
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: $primary-color;
+    color: white;
+    border: none;
     border-radius: 4px;
-    margin-bottom: 1rem;
+    cursor: pointer;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Block Warning
+.mylib-block-warning {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: lighten($danger-color, 35%);
+  border: 1px solid $danger-color;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+
+  &__icon {
+    color: $danger-color;
+  }
+
+  &__content {
+    flex: 1;
+
+    strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+}
+
+// Notice Banner (auto-renewal)
+.mylib-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: lighten($info-color, 30%);
+  border: 1px solid $info-color;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+
+  &__content {
+    flex: 1;
+  }
+
+  &__dismiss {
+    background: none;
+    border: none;
+    line-height: 1;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+// Alert Banners
+.mylib-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mylib-alert {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+
+  &--danger {
+    background: lighten($danger-color, 35%);
+    color: darken($danger-color, 15%);
+  }
+
+  &--warning {
+    background: lighten($warning-color, 30%);
+    color: darken($warning-color, 25%);
+  }
+
+  &--info {
+    background: lighten($info-color, 30%);
+    color: darken($info-color, 25%);
+  }
+}
+
+// Tab Navigation
+.mylib-tabs {
+  display: flex;
+  border-bottom: 2px solid $border-color;
+
+  &__tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: $text-muted;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &--active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+      font-weight: 500;
+    }
+  }
+
+  &__badge {
+    display: inline-block;
+    min-width: 20px;
+    padding: 0.125rem 0.5rem;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    background: $background-light;
+    border-radius: 10px;
+    text-align: center;
+  }
+}
+
+// Tab Panels
+.mylib-panel {
+  padding: 1rem 0;
+
+  &__placeholder {
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+// Sidebar
+.mylib-sidebar {
+  background: $background-light;
+  border-radius: 4px;
+  padding: 1.5rem;
+
+  @media (max-width: 768px) {
+    order: -1;
+  }
+
+  &__section {
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__heading {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-muted;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  &__department,
+  &__patron-group {
+    color: $text-muted;
+  }
+
+  &__stats {
+    margin: 0;
+  }
+
+  &__stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid lighten($border-color, 5%);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    dt {
+      font-weight: normal;
+    }
+
+    dd {
+      font-weight: 600;
+      margin: 0;
+    }
+
+    &--warning dd {
+      color: $danger-color;
+    }
+
+    &--alert {
+      color: $danger-color;
+    }
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &::after {
+      content: ' \2192';
+    }
   }
 }
