@@ -37,5 +37,5 @@ wagtail==7.0.3
 wagtailmedia==0.15.2
 wagtail-cache==3.0.0
 wagtail-markdown==0.13.0
-wheel==0.38.1
+wheel==0.46.2
 zope.interface==4.1.2
