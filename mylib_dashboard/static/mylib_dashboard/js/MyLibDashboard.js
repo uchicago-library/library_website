@@ -13,6 +13,7 @@ import {
   MyAccountSidebar,
   CategoryCard,
   LoanItem,
+  PickupItem,
 } from './components'
 
 // Get the mount element and extract configuration from data attributes
@@ -134,10 +135,19 @@ function Dashboard() {
                 aria-labelledby="tab-available-pickup"
                 className="mylib-panel"
               >
-                {/* Available for Pickup */}
-                <p className="mylib-panel__placeholder">
-                  {holdsQuery.data?.totalHolds || 0} items available for pickup
-                </p>
+                <div className="mylib-card-grid">
+                  <CategoryCard
+                    title="Pickups"
+                    count={holdsQuery.data?.holds?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={holdsQuery.isLoading}
+                  >
+                    {holdsQuery.data?.holds?.map(hold => (
+                      <PickupItem key={hold.id} hold={hold} />
+                    ))}
+                  </CategoryCard>
+                </div>
               </div>
             )}
           </div>

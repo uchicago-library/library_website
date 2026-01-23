@@ -512,4 +512,13 @@ $background-light: #f5f5f5;
   &__due {
     color: $text-muted;
   }
+
+  &__location {
+    color: $text-muted;
+    margin-bottom: 0.125rem;
+  }
+
+  &__pickup-by {
+    color: $text-muted;
+  }
 }

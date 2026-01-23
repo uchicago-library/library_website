@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 from django.conf import settings
+from django.core.cache import cache
 
 from item_servlet.utils import FOLIOAuthError, get_auth
 
@@ -379,6 +380,31 @@ class FOLIOService:
             "dueSoonCount": due_soon_count,
         }
 
+    def get_service_points(self):
+        """
+        Get all service points (pickup locations).
+
+        Returns a dict mapping service point IDs to their names.
+        Results are cached in Django's cache for 24 hours.
+
+        Returns:
+            dict: {service_point_id: name, ...}
+        """
+        cache_key = "folio_service_points"
+        service_points = cache.get(cache_key)
+
+        if service_points is None:
+            endpoint = "/service-points?limit=1000"
+            data = self._request("GET", endpoint)
+            service_points = {
+                sp["id"]: sp.get("discoveryDisplayName") or sp.get("name", "Unknown")
+                for sp in data.get("servicepoints", [])
+            }
+            # Cache for 24 hours
+            cache.set(cache_key, service_points, 60 * 60 * 24)
+
+        return service_points
+
     def get_user_holds(self, cnetid):
         """
         Get items available for pickup for a user.
@@ -395,6 +421,9 @@ class FOLIOService:
         user = self.get_user_by_cnetid(cnetid)
         user_uuid = user["id"]
 
+        # Get service points for location name lookup
+        service_points = self.get_service_points()
+
         # Query for requests awaiting pickup
         endpoint = (
             f"/request-storage/requests?query="
@@ -409,12 +438,14 @@ class FOLIOService:
             title = req.get("instance", {}).get("title") or req.get("item", {}).get(
                 "title", "Unknown Title"
             )
+            pickup_sp_id = req.get("pickupServicePointId")
             holds.append(
                 {
                     "id": req.get("id"),
                     "title": title,
                     "requestType": req.get("requestType"),
-                    "pickupServicePointId": req.get("pickupServicePointId"),
+                    "pickupServicePointId": pickup_sp_id,
+                    "pickupLocation": service_points.get(pickup_sp_id, ""),
                     "holdShelfExpirationDate": req.get("holdShelfExpirationDate"),
                     "position": req.get("position"),
                 }
