@@ -22,6 +22,41 @@ function CardLoadingState() {
   )
 }
 
+function CardErrorState({ message, onRetry }) {
+  return (
+    <div className="mylib-card__error">
+      <p>{message || 'Unable to load data'}</p>
+      {onRetry && (
+        <button type="button" onClick={onRetry} className="mylib-card__retry">
+          Try again
+        </button>
+      )}
+    </div>
+  )
+}
+
+CardErrorState.propTypes = {
+  message: PropTypes.string,
+  onRetry: PropTypes.func,
+}
+
+CardErrorState.defaultProps = {
+  message: 'Unable to load data',
+  onRetry: null,
+}
+
+function CardEmptyState({ message }) {
+  return <div className="mylib-card__empty">{message || 'No items'}</div>
+}
+
+CardEmptyState.propTypes = {
+  message: PropTypes.string,
+}
+
+CardEmptyState.defaultProps = {
+  message: 'No items',
+}
+
 function CategoryCard({
   title,
   count,
@@ -29,6 +64,9 @@ function CategoryCard({
   manageLabel,
   maxItems,
   isLoading,
+  error,
+  onRetry,
+  emptyMessage,
   children,
 }) {
   // Track how many items are currently visible (starts at maxItems or all)
@@ -43,6 +81,7 @@ function CategoryCard({
   const displayedChildren = childArray.slice(0, effectiveLimit)
   const remainingItems = totalItems - effectiveLimit
   const hasMore = remainingItems > 0
+  const isEmpty = !isLoading && !error && totalItems === 0
 
   // Show more handler - increment by the initial maxItems value
   const handleShowMore = () => {
@@ -50,11 +89,23 @@ function CategoryCard({
     setVisibleCount(prev => Math.min(prev + increment, totalItems))
   }
 
+  // Determine content to render
+  let content
+  if (isLoading) {
+    content = <CardLoadingState />
+  } else if (error) {
+    content = <CardErrorState message={error} onRetry={onRetry} />
+  } else if (isEmpty) {
+    content = <CardEmptyState message={emptyMessage} />
+  } else {
+    content = displayedChildren
+  }
+
   return (
     <div className="mylib-card">
       <div className="mylib-card__header">
         <h3 className="mylib-card__title">{title}</h3>
-        {!isLoading && count !== undefined && (
+        {!isLoading && !error && count !== undefined && (
           <span className="mylib-card__count">{count}</span>
         )}
         {isLoading && (
@@ -66,10 +117,8 @@ function CategoryCard({
           {manageLabel}
         </a>
       )}
-      <div className="mylib-card__content">
-        {isLoading ? <CardLoadingState /> : displayedChildren}
-      </div>
-      {!isLoading && hasMore && (
+      <div className="mylib-card__content">{content}</div>
+      {!isLoading && !error && !isEmpty && hasMore && (
         <button
           type="button"
           className="mylib-card__show-more"
@@ -101,6 +150,9 @@ CategoryCard.propTypes = {
   manageLabel: PropTypes.string,
   maxItems: PropTypes.number,
   isLoading: PropTypes.bool,
+  error: PropTypes.string,
+  onRetry: PropTypes.func,
+  emptyMessage: PropTypes.string,
   children: PropTypes.node,
 }
 
@@ -110,6 +162,9 @@ CategoryCard.defaultProps = {
   manageLabel: 'View all and manage',
   maxItems: 0,
   isLoading: false,
+  error: null,
+  onRetry: null,
+  emptyMessage: 'No items',
   children: null,
 }
 

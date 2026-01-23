@@ -108,6 +108,9 @@ function Dashboard() {
                     manageUrl={CONFIG.catalogAccountUrl}
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={loansQuery.isLoading}
+                    error={loansQuery.error?.message}
+                    onRetry={() => loansQuery.refetch()}
+                    emptyMessage="No standard loans"
                   >
                     {loansQuery.data?.standardLoans?.map(loan => (
                       <LoanItem key={loan.id} loan={loan} />
@@ -119,6 +122,9 @@ function Dashboard() {
                     manageUrl={CONFIG.catalogAccountUrl}
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={loansQuery.isLoading}
+                    error={loansQuery.error?.message}
+                    onRetry={() => loansQuery.refetch()}
+                    emptyMessage="No short term loans"
                   >
                     {loansQuery.data?.shortTermLoans?.map(loan => (
                       <LoanItem key={loan.id} loan={loan} />
@@ -142,6 +148,9 @@ function Dashboard() {
                     manageUrl={CONFIG.catalogAccountUrl}
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={holdsQuery.isLoading}
+                    error={holdsQuery.error?.message}
+                    onRetry={() => holdsQuery.refetch()}
+                    emptyMessage="No items available for pickup"
                   >
                     {holdsQuery.data?.holds?.map(hold => (
                       <PickupItem key={hold.id} hold={hold} />
