@@ -69,6 +69,16 @@ $background-light: #f5f5f5;
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 // Error State
 .mylib-error {
   text-align: center;
@@ -259,23 +269,16 @@ $background-light: #f5f5f5;
     border-bottom: 1px solid $border-color;
   }
 
-  &__name {
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  &__department,
-  &__patron-group {
-    color: $text-muted;
-  }
-
-  &__stats {
+  &__list {
+    list-style: none;
     margin: 0;
+    padding: 0;
   }
 
-  &__stat {
+  &__item {
     display: flex;
-    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
     padding: 0.5rem 0;
     border-bottom: 1px solid lighten($border-color, 5%);
 
@@ -283,28 +286,18 @@ $background-light: #f5f5f5;
       border-bottom: none;
     }
 
-    dt {
-      font-weight: normal;
-    }
-
-    dd {
-      font-weight: 600;
-      margin: 0;
-    }
-
-    &--warning dd {
-      color: $danger-color;
-    }
-
-    &--alert {
-      color: $danger-color;
+    &--expandable {
+      flex-direction: column;
+      gap: 0;
     }
   }
 
-  &__links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  &__icon {
+    width: 1rem;
+    text-align: center;
+    color: $text-muted;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
   }
 
   &__link {
@@ -314,9 +307,209 @@ $background-light: #f5f5f5;
     &:hover {
       text-decoration: underline;
     }
+  }
 
-    &::after {
-      content: ' \2192';
+  &__warning {
+    color: $danger-color;
+  }
+
+  &__expand-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    text-align: left;
+    color: inherit;
+
+    &:hover {
+      color: $primary-color;
     }
+  }
+
+  &__chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+
+  &__expanded-content {
+    margin-left: 1.75rem;
+    padding: 0.5rem 0;
+    color: $text-muted;
+  }
+
+  &__loading {
+    display: inline-block;
+    height: 1em;
+    background: linear-gradient(
+      90deg,
+      $background-light 25%,
+      lighten($background-light, 3%) 50%,
+      $background-light 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    vertical-align: middle;
+  }
+}
+
+// Card Grid
+.mylib-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+// Category Card
+.mylib-card {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 1rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__count {
+    background: $background-light;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  &__manage-link {
+    display: block;
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &--bottom {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid $border-color;
+    }
+  }
+
+  &__content {
+    margin-top: 1rem;
+  }
+
+  &__show-more {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    background: $background-light;
+    border: 1px dashed $border-color;
+    border-radius: 4px;
+    color: $primary-color;
+    cursor: pointer;
+    font-size: inherit;
+    text-align: center;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      background: darken($background-light, 3%);
+      border-color: $primary-color;
+    }
+  }
+
+  &__loading {
+    padding: 0.5rem 0;
+  }
+
+  &__loading-item {
+    height: 60px;
+    background: linear-gradient(
+      90deg,
+      $background-light 25%,
+      lighten($background-light, 3%) 50%,
+      $background-light 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__count--loading {
+    width: 24px;
+    height: 20px;
+    background: $background-light;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+// Loan Item (within a card)
+.mylib-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__status {
+    margin-bottom: 0.25rem;
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+
+    &--recalled {
+      background: $danger-color;
+      color: white;
+    }
+
+    &--overdue {
+      background: $warning-color;
+      color: white;
+    }
+
+    &--due-soon {
+      background: $info-color;
+      color: white;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    margin-bottom: 0.125rem;
+  }
+
+  &__author {
+    color: $text-muted;
+    margin-bottom: 0.125rem;
+  }
+
+  &__due {
+    color: $text-muted;
   }
 }

@@ -11,6 +11,8 @@ import {
   AutoRenewalNotice,
   AccountBlockWarning,
   MyAccountSidebar,
+  CategoryCard,
+  LoanItem,
 } from './components'
 
 // Get the mount element and extract configuration from data attributes
@@ -18,10 +20,11 @@ const DOM_ELEMENT = document.getElementById('mylib-dashboard')
 
 const CONFIG = {
   apiBaseUrl: DOM_ELEMENT.getAttribute('data-api-base-url') || '/api/mylib',
-  vufindAccountUrl: DOM_ELEMENT.getAttribute('data-vufind-account-url') || '',
-  illiadUrl: DOM_ELEMENT.getAttribute('data-illiad-url') || '',
-  libcalUrl: DOM_ELEMENT.getAttribute('data-libcal-url') || '',
+  catalogAccountUrl: DOM_ELEMENT.getAttribute('data-catalog-account-url') || '',
+  accountsFaqUrl: DOM_ELEMENT.getAttribute('data-accounts-faq-url') || '',
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
+  // Max items to show per card (0 or empty = show all)
+  maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
 }
 
 // Create API instance
@@ -52,36 +55,12 @@ function Dashboard() {
   const finesQuery = useQuery({ queryKey: ['fines'], queryFn: api.fetchFines })
   const blocksQuery = useQuery({ queryKey: ['blocks'], queryFn: api.fetchBlocks })
 
-  // Compute derived data
+  // Compute derived data (returns zeros/empty when data not yet loaded)
   const alerts = useLoanAlerts(loansQuery.data)
   const tabCounts = useTabCounts(loansQuery.data, holdsQuery.data)
 
-  // Loading state
-  const isLoading = profileQuery.isLoading || loansQuery.isLoading
-
-  // Error state - show if profile fails (critical)
-  if (profileQuery.error) {
-    return (
-      <div className="mylib-dashboard mylib-dashboard--error">
-        <div className="mylib-error">
-          <h2>Unable to load your account</h2>
-          <p>{profileQuery.error.message}</p>
-          <button type="button" onClick={() => profileQuery.refetch()}>Try Again</button>
-        </div>
-      </div>
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <div className="mylib-dashboard mylib-dashboard--loading">
-        <div className="mylib-loading">
-          <div className="mylib-loading__spinner" aria-hidden="true" />
-          <p>Loading your library account...</p>
-        </div>
-      </div>
-    )
-  }
+  // Note: We render the layout immediately - no blocking loading state.
+  // Each section handles its own loading state for progressive rendering.
 
   return (
     <div className="mylib-dashboard">
@@ -121,10 +100,30 @@ function Dashboard() {
                 aria-labelledby="tab-checked-out"
                 className="mylib-panel"
               >
-                {/* Checked Out Items */}
-                <p className="mylib-panel__placeholder">
-                  {loansQuery.data?.totalLoans || 0} items checked out
-                </p>
+                <div className="mylib-card-grid">
+                  <CategoryCard
+                    title="Standard Loans"
+                    count={loansQuery.data?.standardLoans?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={loansQuery.isLoading}
+                  >
+                    {loansQuery.data?.standardLoans?.map(loan => (
+                      <LoanItem key={loan.id} loan={loan} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Short Term Loans"
+                    count={loansQuery.data?.shortTermLoans?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={loansQuery.isLoading}
+                  >
+                    {loansQuery.data?.shortTermLoans?.map(loan => (
+                      <LoanItem key={loan.id} loan={loan} />
+                    ))}
+                  </CategoryCard>
+                </div>
               </div>
             )}
 
@@ -147,13 +146,11 @@ function Dashboard() {
         {/* Sidebar */}
         <MyAccountSidebar
           profile={profileQuery.data}
+          profileLoading={profileQuery.isLoading}
           finesTotal={finesQuery.data?.totalAmount || 0}
+          finesLoading={finesQuery.isLoading}
           recalledCount={alerts.recalledCount}
-          externalLinks={{
-            vufindAccountUrl: CONFIG.vufindAccountUrl,
-            illiadUrl: CONFIG.illiadUrl,
-            libcalUrl: CONFIG.libcalUrl,
-          }}
+          accountsFaqUrl={CONFIG.accountsFaqUrl}
         />
       </div>
     </div>

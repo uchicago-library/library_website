@@ -18,10 +18,10 @@
     <div
         id="mylib-dashboard"
         data-api-base-url="/api/mylib"
-        data-vufind-account-url="https://catalog.lib.uchicago.edu/vufind/MyResearch/Home"
-        data-illiad-url="https://requests.lib.uchicago.edu/illiad/"
-        data-libcal-url="https://rooms.lib.uchicago.edu/"
+        data-catalog-account-url="{{ page.catalog_account_url }}"
+        data-accounts-faq-url="{{ page.accounts_faq_url }}"
         data-auto-renewal-notice="{{ page.auto_renewal_notice }}"
+        data-max-items-per-card="{{ page.max_items_per_card }}"
     ></div>
     {% render_bundle 'MyLibDashboard' %}
 {% endblock %}

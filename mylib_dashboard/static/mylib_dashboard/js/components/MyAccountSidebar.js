@@ -1,97 +1,133 @@
 /**
- * MyAccountSidebar - Profile info, fines, recalled count, and external links.
+ * MyAccountSidebar - My Account section with profile, fines, recalled items, and links.
  */
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { formatCurrency } from '../hooks'
 
+function LoadingPlaceholder({ width }) {
+  return (
+    <span
+      className="mylib-sidebar__loading"
+      style={{ width: width || '80%' }}
+      aria-hidden="true"
+    />
+  )
+}
+
+LoadingPlaceholder.propTypes = {
+  width: PropTypes.string,
+}
+
+LoadingPlaceholder.defaultProps = {
+  width: '80%',
+}
+
 function MyAccountSidebar({
   profile,
+  profileLoading,
   finesTotal,
+  finesLoading,
   recalledCount,
-  externalLinks,
+  accountsFaqUrl,
 }) {
+  const [departmentExpanded, setDepartmentExpanded] = useState(false)
+
   return (
     <aside className="mylib-sidebar">
-      {/* Profile Section */}
-      {profile && (
-        <div className="mylib-sidebar__section">
-          <h3 className="mylib-sidebar__heading">My Account</h3>
-          <div className="mylib-sidebar__profile">
-            <div className="mylib-sidebar__name">{profile.displayName}</div>
-            {profile.department && (
-              <div className="mylib-sidebar__department">
-                {profile.department}
-              </div>
-            )}
-            {profile.patronGroup && (
-              <div className="mylib-sidebar__patron-group">
-                {profile.patronGroup}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Account Summary */}
       <div className="mylib-sidebar__section">
-        <h3 className="mylib-sidebar__heading">Account Summary</h3>
-        <dl className="mylib-sidebar__stats">
-          <div className="mylib-sidebar__stat">
-            <dt>Fines</dt>
-            <dd
-              className={finesTotal > 0 ? 'mylib-sidebar__stat--warning' : ''}
-            >
-              {formatCurrency(finesTotal)}
-            </dd>
-          </div>
-          {recalledCount > 0 && (
-            <div className="mylib-sidebar__stat mylib-sidebar__stat--alert">
-              <dt>Recalled Items</dt>
-              <dd>{recalledCount}</dd>
-            </div>
-          )}
-        </dl>
-      </div>
+        <h3 className="mylib-sidebar__heading">My Account</h3>
+        <ul className="mylib-sidebar__list">
+          {/* Profile */}
+          <li className="mylib-sidebar__item">
+            <i className="fa fa-user mylib-sidebar__icon" aria-hidden="true" />
+            {profileLoading ? (
+              <LoadingPlaceholder width="100px" />
+            ) : (
+              <span>Profile</span>
+            )}
+          </li>
 
-      {/* External Links */}
-      {externalLinks && (
-        <div className="mylib-sidebar__section">
-          <h3 className="mylib-sidebar__heading">Other Services</h3>
-          <nav className="mylib-sidebar__links">
-            {externalLinks.vufindAccountUrl && (
-              <a
-                href={externalLinks.vufindAccountUrl}
-                className="mylib-sidebar__link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Full Catalog Account
-              </a>
+          {/* Fines */}
+          <li className="mylib-sidebar__item">
+            <i className="fa fa-usd mylib-sidebar__icon" aria-hidden="true" />
+            {finesLoading ? (
+              <LoadingPlaceholder width="120px" />
+            ) : finesTotal > 0 ? (
+              <span className="mylib-sidebar__warning">
+                You have {formatCurrency(finesTotal)} in fines.
+              </span>
+            ) : (
+              <span>No fines</span>
             )}
-            {externalLinks.illiadUrl && (
-              <a
-                href={externalLinks.illiadUrl}
-                className="mylib-sidebar__link"
-                target="_blank"
-                rel="noopener noreferrer"
+          </li>
+
+          {/* Recalled Items */}
+          {recalledCount > 0 && (
+            <li className="mylib-sidebar__item">
+              <i
+                className="fa fa-exclamation-circle mylib-sidebar__icon"
+                aria-hidden="true"
+              />
+              <span className="mylib-sidebar__warning">
+                You have {recalledCount} item{recalledCount !== 1 ? 's' : ''}{' '}
+                recalled
+              </span>
+            </li>
+          )}
+
+          {/* Log Out */}
+          <li className="mylib-sidebar__item">
+            <i
+              className="fa fa-sign-out mylib-sidebar__icon"
+              aria-hidden="true"
+            />
+            <a href="/accounts/logout/" className="mylib-sidebar__link">
+              Log Out
+            </a>
+          </li>
+
+          {/* Department Affiliation - Expandable */}
+          {profile?.department && (
+            <li className="mylib-sidebar__item mylib-sidebar__item--expandable">
+              <button
+                type="button"
+                className="mylib-sidebar__expand-btn"
+                onClick={() => setDepartmentExpanded(!departmentExpanded)}
+                aria-expanded={departmentExpanded}
               >
-                Interlibrary Loan (ILLiad)
+                <i
+                  className="fa fa-university mylib-sidebar__icon"
+                  aria-hidden="true"
+                />
+                <span>My Lib department affiliation</span>
+                <i
+                  className={`fa fa-chevron-${departmentExpanded ? 'up' : 'down'} mylib-sidebar__chevron`}
+                  aria-hidden="true"
+                />
+              </button>
+              {departmentExpanded && (
+                <div className="mylib-sidebar__expanded-content">
+                  {profile.department}
+                </div>
+              )}
+            </li>
+          )}
+
+          {/* Accounts FAQ */}
+          {accountsFaqUrl && (
+            <li className="mylib-sidebar__item">
+              <i
+                className="fa fa-question-circle mylib-sidebar__icon"
+                aria-hidden="true"
+              />
+              <a href={accountsFaqUrl} className="mylib-sidebar__link">
+                Accounts FAQ
               </a>
-            )}
-            {externalLinks.libcalUrl && (
-              <a
-                href={externalLinks.libcalUrl}
-                className="mylib-sidebar__link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Room Reservations (LibCal)
-              </a>
-            )}
-          </nav>
-        </div>
-      )}
+            </li>
+          )}
+        </ul>
+      </div>
     </aside>
   )
 }
@@ -102,20 +138,20 @@ MyAccountSidebar.propTypes = {
     department: PropTypes.string,
     patronGroup: PropTypes.string,
   }),
+  profileLoading: PropTypes.bool,
   finesTotal: PropTypes.number,
+  finesLoading: PropTypes.bool,
   recalledCount: PropTypes.number,
-  externalLinks: PropTypes.shape({
-    vufindAccountUrl: PropTypes.string,
-    illiadUrl: PropTypes.string,
-    libcalUrl: PropTypes.string,
-  }),
+  accountsFaqUrl: PropTypes.string,
 }
 
 MyAccountSidebar.defaultProps = {
   profile: null,
+  profileLoading: false,
   finesTotal: 0,
+  finesLoading: false,
   recalledCount: 0,
-  externalLinks: null,
+  accountsFaqUrl: '',
 }
 
 export default MyAccountSidebar

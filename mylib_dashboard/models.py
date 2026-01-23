@@ -1,3 +1,4 @@
+from django.db import models
 from wagtail.admin.panels import FieldPanel, HelpPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
@@ -21,12 +22,33 @@ class MyLibDashboardPage(PublicBasePage):
         features=["bold", "italic", "link"],
     )
 
+    max_items_per_card = models.PositiveIntegerField(
+        default=0,
+        help_text="Maximum items to show per category card before showing "
+        "'+X more items'. Set to 0 to show all items.",
+    )
+
+    catalog_account_url = models.URLField(
+        blank=True,
+        default="https://catalog.lib.uchicago.edu/vufind/MyResearch/Home",
+        help_text="URL to the library catalog account page (e.g., VuFind My Account).",
+    )
+
+    accounts_faq_url = models.URLField(
+        blank=True,
+        default="https://www.lib.uchicago.edu/borrow/borrowing/my-accounts/",
+        help_text="URL to the Accounts FAQ page.",
+    )
+
     subpage_types = []
 
     content_panels = (
         Page.content_panels
         + [
             FieldPanel("auto_renewal_notice"),
+            FieldPanel("max_items_per_card"),
+            FieldPanel("catalog_account_url"),
+            FieldPanel("accounts_faq_url"),
             HelpPanel(
                 heading="About the MyLib Dashboard",
                 content="""
