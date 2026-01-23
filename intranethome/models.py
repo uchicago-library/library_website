@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
+from django.db import models
 from django.core.paginator import EmptyPage
 from wagtail.models import Page
+from wagtail.documents import get_document_model
 
 from base.models import BasePage
 from group.models import GroupIndexPage
@@ -23,6 +25,7 @@ class IntranetHomePage(BasePage):
         "units.UnitIndexPage",
         "intranettocs.TOCPage",
         "redirects.LoopRedirectPage",
+        "intranethome.AGSUploadPage",
     ]
 
     def get_context(self, request):
@@ -44,7 +47,7 @@ class IntranetHomePage(BasePage):
             sticky_stories = sticky_pages.page(page).object_list
         except EmptyPage:
             sticky_stories = NewsPage.objects.none()
-        news_pages = NewsPage.get_stories()
+            news_pages = NewsPage.get_stories()
         try:
             news_stories = news_pages.page(page).object_list
         except EmptyPage:
@@ -53,7 +56,7 @@ class IntranetHomePage(BasePage):
         prev_link = None
         if page > 1:
             prev_link = "/?page=%s" % (str(page - 1))
-        next_link = None
+            next_link = None
         if page < max(news_pages.page_range):
             next_link = "/?page=%s" % (str(page + 1))
 
@@ -71,3 +74,12 @@ class IntranetHomePage(BasePage):
         context["next_link"] = next_link
 
         return context
+
+class AGSUploadPage(BasePage):
+
+    document = models.ForeignKey(
+        get_document_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
