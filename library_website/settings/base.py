@@ -544,6 +544,12 @@ FOLIO_TYPE_LINKING_ISSN_ID = "5860f255-a27f-4916-a830-262aa900a6b9"
 # Loan policy IDs that are considered "short-term" (e.g., TechBar, room keys)
 FOLIO_SHORT_TERM_LOAN_POLICY_IDS = []
 
+# ILLiad API
+ILLIAD_API_URL = "https://requests.lib.uchicago.edu/ILLiadWebPlatform"
+ILLIAD_WEB_BASE_URL = "https://requests.lib.uchicago.edu/illiad"
+ILLIAD_API_KEY = ""
+ILLIAD_TIMEOUT = 30
+
 MAIL_ALIASES_PATH = "/data/web/aliases/data.json"
 
 # LibGuides API endpoints

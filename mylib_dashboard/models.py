@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from wagtail.admin.panels import FieldPanel, HelpPanel
 from wagtail.fields import RichTextField
@@ -69,6 +70,11 @@ class MyLibDashboardPage(PublicBasePage):
     )
 
     search_fields = PublicBasePage.search_fields
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context["illiad_web_url"] = getattr(settings, "ILLIAD_WEB_BASE_URL", "")
+        return context
 
     class Meta:
         verbose_name = "MyLib Dashboard Page"

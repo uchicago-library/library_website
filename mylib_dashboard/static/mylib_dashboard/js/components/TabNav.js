@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 export const TABS = {
   CHECKED_OUT: 'checked-out',
   AVAILABLE_PICKUP: 'available-pickup',
+  IN_PROCESS: 'in-process',
 }
 
 function TabNav({ activeTab, onTabChange, counts }) {
@@ -20,6 +21,11 @@ function TabNav({ activeTab, onTabChange, counts }) {
       id: TABS.AVAILABLE_PICKUP,
       label: 'Available for Pickup',
       count: counts.availableForPickup,
+    },
+    {
+      id: TABS.IN_PROCESS,
+      label: 'In Process',
+      count: counts.inProcess,
     },
   ]
 
@@ -49,6 +55,7 @@ TabNav.propTypes = {
   counts: PropTypes.shape({
     checkedOut: PropTypes.number,
     availableForPickup: PropTypes.number,
+    inProcess: PropTypes.number,
   }).isRequired,
 }
 

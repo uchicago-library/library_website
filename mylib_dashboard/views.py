@@ -9,7 +9,8 @@ import logging
 from django.http import JsonResponse
 
 from .services.folio import FOLIOError, FOLIOUserNotFoundError, get_folio_service
-from .utils import get_current_cnetid
+from .services.illiad import ILLiadError, get_illiad_service
+from .utils import get_current_cnetid, get_current_email
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,30 @@ def require_cnetid(view_func):
             return JsonResponse({"error": "Authentication required"}, status=401)
         # Add cnetid to request for use in view
         request.cnetid = cnetid
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def require_email(view_func):
+    """
+    Decorator that ensures the user has a valid email from authentication.
+    Returns 400 if email is not available.
+
+    Should be used after @require_cnetid for ILLiad views that need email.
+    """
+
+    def wrapper(request, *args, **kwargs):
+        email = get_current_email(request)
+        if not email:
+            logger.warning(
+                f"Email not available for user: {getattr(request, 'cnetid', 'unknown')}"
+            )
+            return JsonResponse(
+                {"error": "Email address not available from authentication"}, status=400
+            )
+        # Add email to request for use in view
+        request.email = email
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -127,3 +152,65 @@ def account_blocks(request):
     except FOLIOError as e:
         logger.error(f"FOLIO error fetching blocks for {request.cnetid}: {e}")
         return JsonResponse({"error": "Unable to retrieve account blocks"}, status=503)
+
+
+# ILLiad views
+# Note: ILLiad uses email addresses as usernames. Email is obtained from
+# authentication attributes (Shibboleth/Okta), not from FOLIO, so ILLiad
+# integration works independently of the ILS.
+
+
+@require_cnetid
+@require_email
+def downloads(request):
+    """
+    Get electronic copies ready for download (ILL articles and Scan & Deliver).
+    Returns: copies array with download URLs
+    """
+    try:
+        illiad = get_illiad_service()
+        copies_data = illiad.get_copies_ready(request.email)
+        return JsonResponse(copies_data)
+    except ILLiadError as e:
+        logger.error(f"ILLiad error fetching downloads for {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve download information"}, status=503
+        )
+
+
+@require_cnetid
+@require_email
+def ill_in_process(request):
+    """
+    Get ILL requests in process (physical items from other libraries).
+    Returns: requests array with status
+    """
+    try:
+        illiad = get_illiad_service()
+        requests_data = illiad.get_ill_in_process(request.email)
+        return JsonResponse(requests_data)
+    except ILLiadError as e:
+        logger.error(f"ILLiad error fetching ILL requests for {request.cnetid}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve ILL request information"}, status=503
+        )
+
+
+@require_cnetid
+@require_email
+def scan_deliver_in_process(request):
+    """
+    Get Scan & Deliver requests in process.
+    Returns: requests array with status
+    """
+    try:
+        illiad = get_illiad_service()
+        requests_data = illiad.get_scan_deliver_in_process(request.email)
+        return JsonResponse(requests_data)
+    except ILLiadError as e:
+        logger.error(
+            f"ILLiad error fetching Scan & Deliver requests for {request.cnetid}: {e}"
+        )
+        return JsonResponse(
+            {"error": "Unable to retrieve Scan & Deliver information"}, status=503
+        )

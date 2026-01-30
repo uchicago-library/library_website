@@ -14,6 +14,9 @@ import {
   CategoryCard,
   LoanItem,
   PickupItem,
+  DownloadItem,
+  ILLRequestItem,
+  ScanDeliverItem,
 } from './components'
 
 // Get the mount element and extract configuration from data attributes
@@ -26,6 +29,8 @@ const CONFIG = {
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
   // Max items to show per card (0 or empty = show all)
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
+  // ILLiad web interface URL for "Manage requests" links
+  illiadWebUrl: DOM_ELEMENT.getAttribute('data-illiad-web-url') || '',
 }
 
 // Create API instance
@@ -49,16 +54,27 @@ const queryClient = new QueryClient({
 function Dashboard() {
   const [activeTab, setActiveTab] = useState(TABS.CHECKED_OUT)
 
-  // Fetch all data
+  // Fetch all data - FOLIO
   const profileQuery = useQuery({ queryKey: ['profile'], queryFn: api.fetchProfile })
   const loansQuery = useQuery({ queryKey: ['loans'], queryFn: api.fetchLoans })
   const holdsQuery = useQuery({ queryKey: ['holds'], queryFn: api.fetchHolds })
   const finesQuery = useQuery({ queryKey: ['fines'], queryFn: api.fetchFines })
   const blocksQuery = useQuery({ queryKey: ['blocks'], queryFn: api.fetchBlocks })
 
+  // Fetch all data - ILLiad
+  const downloadsQuery = useQuery({ queryKey: ['downloads'], queryFn: api.fetchDownloads })
+  const illInProcessQuery = useQuery({ queryKey: ['illInProcess'], queryFn: api.fetchIllInProcess })
+  const scanDeliverQuery = useQuery({ queryKey: ['scanDeliverInProcess'], queryFn: api.fetchScanDeliverInProcess })
+
   // Compute derived data (returns zeros/empty when data not yet loaded)
   const alerts = useLoanAlerts(loansQuery.data)
-  const tabCounts = useTabCounts(loansQuery.data, holdsQuery.data)
+  const tabCounts = useTabCounts(
+    loansQuery.data,
+    holdsQuery.data,
+    downloadsQuery.data,
+    illInProcessQuery.data,
+    scanDeliverQuery.data
+  )
 
   // Note: We render the layout immediately - no blocking loading state.
   // Each section handles its own loading state for progressive rendering.
@@ -154,6 +170,63 @@ function Dashboard() {
                   >
                     {holdsQuery.data?.holds?.map(hold => (
                       <PickupItem key={hold.id} hold={hold} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Downloads"
+                    count={downloadsQuery.data?.copies?.length || 0}
+                    manageUrl={CONFIG.illiadWebUrl}
+                    manageLabel="View all in ILLiad"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={downloadsQuery.isLoading}
+                    error={downloadsQuery.error?.message}
+                    onRetry={() => downloadsQuery.refetch()}
+                    emptyMessage="No downloads available"
+                  >
+                    {downloadsQuery.data?.copies?.map(copy => (
+                      <DownloadItem key={copy.id} copy={copy} />
+                    ))}
+                  </CategoryCard>
+                </div>
+              </div>
+            )}
+
+            {activeTab === TABS.IN_PROCESS && (
+              <div
+                id="panel-in-process"
+                role="tabpanel"
+                aria-labelledby="tab-in-process"
+                className="mylib-panel"
+              >
+                <div className="mylib-card-grid">
+                  <CategoryCard
+                    title="Interlibrary Loan"
+                    count={illInProcessQuery.data?.requests?.length || 0}
+                    manageUrl={CONFIG.illiadWebUrl}
+                    manageLabel="View all in ILLiad"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={illInProcessQuery.isLoading}
+                    error={illInProcessQuery.error?.message}
+                    onRetry={() => illInProcessQuery.refetch()}
+                    emptyMessage="No ILL requests in process"
+                  >
+                    {illInProcessQuery.data?.requests?.map(request => (
+                      <ILLRequestItem key={request.id} request={request} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Scan & Deliver"
+                    count={scanDeliverQuery.data?.requests?.length || 0}
+                    manageUrl={CONFIG.illiadWebUrl}
+                    manageLabel="View all in ILLiad"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={scanDeliverQuery.isLoading}
+                    error={scanDeliverQuery.error?.message}
+                    onRetry={() => scanDeliverQuery.refetch()}
+                    emptyMessage="No scan requests in process"
+                  >
+                    {scanDeliverQuery.data?.requests?.map(request => (
+                      <ScanDeliverItem key={request.id} request={request} />
                     ))}
                   </CategoryCard>
                 </div>

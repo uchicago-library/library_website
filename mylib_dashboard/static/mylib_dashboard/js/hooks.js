@@ -24,16 +24,22 @@ export function useLoanAlerts(loansData) {
  * Compute tab counts from all data sources.
  * Returns counts for each tab badge.
  */
-export function useTabCounts(loansData, holdsData) {
+export function useTabCounts(loansData, holdsData, downloadsData, illInProcessData, scanDeliverData) {
   return useMemo(() => {
     const checkedOutCount = loansData?.totalLoans || 0
-    const availableForPickupCount = holdsData?.totalHolds || 0
+    // Available for Pickup includes FOLIO holds + ILLiad downloads
+    const availableForPickupCount =
+      (holdsData?.totalHolds || 0) + (downloadsData?.totalCopies || 0)
+    // In Process includes ILL requests + Scan & Deliver requests
+    const inProcessCount =
+      (illInProcessData?.totalRequests || 0) + (scanDeliverData?.totalRequests || 0)
 
     return {
       checkedOut: checkedOutCount,
       availableForPickup: availableForPickupCount,
+      inProcess: inProcessCount,
     }
-  }, [loansData, holdsData])
+  }, [loansData, holdsData, downloadsData, illInProcessData, scanDeliverData])
 }
 
 /**

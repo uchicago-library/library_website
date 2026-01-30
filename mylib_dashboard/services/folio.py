@@ -139,6 +139,9 @@ class FOLIOService:
         """
         Look up a user by their CNetID (username).
 
+        Results are cached for 5 minutes to avoid redundant API calls
+        when multiple dashboard sections need user data.
+
         Args:
             cnetid: The user's CNetID
 
@@ -156,6 +159,12 @@ class FOLIOService:
             FOLIOUserNotFoundError: If the user is not found
             FOLIOError: If the request fails
         """
+        # Check cache first
+        cache_key = f"folio_user_{cnetid}"
+        cached_user = cache.get(cache_key)
+        if cached_user is not None:
+            return cached_user
+
         endpoint = f'/users?query=username=="{cnetid}"'
         data = self._request("GET", endpoint)
 
@@ -178,7 +187,7 @@ class FOLIOService:
         # Use preferred name if available
         first_name = personal.get("preferredFirstName") or personal.get("firstName", "")
 
-        return {
+        user_data = {
             "id": user.get("id"),
             "firstName": first_name,
             "lastName": personal.get("lastName", ""),
@@ -188,6 +197,11 @@ class FOLIOService:
             "expirationDate": user.get("expirationDate"),
             "patronGroup": user.get("patronGroup"),
         }
+
+        # Cache for 5 minutes
+        cache.set(cache_key, user_data, 300)
+
+        return user_data
 
     def get_user_profile(self, cnetid):
         """
@@ -214,6 +228,25 @@ class FOLIOService:
             "active": user["active"],
             "expirationDate": user["expirationDate"],
         }
+
+    def get_user_email(self, cnetid):
+        """
+        Get a user's email address from their CNetID.
+
+        Used for ILLiad lookups which require email instead of CNetID.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            str: The user's email address
+
+        Raises:
+            FOLIOUserNotFoundError: If the user is not found
+            FOLIOError: If the request fails
+        """
+        user = self.get_user_by_cnetid(cnetid)
+        return user["email"]
 
     def get_user_loans(self, user_uuid):
         """

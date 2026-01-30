@@ -21,10 +21,15 @@ async function fetchJson(url) {
  */
 export default function createApi(baseUrl) {
   return {
+    // FOLIO endpoints
     fetchProfile: () => fetchJson(`${baseUrl}/profile/`),
     fetchLoans: () => fetchJson(`${baseUrl}/loans/`),
     fetchHolds: () => fetchJson(`${baseUrl}/holds/`),
     fetchFines: () => fetchJson(`${baseUrl}/fines/`),
     fetchBlocks: () => fetchJson(`${baseUrl}/account-blocks/`),
+    // ILLiad endpoints
+    fetchDownloads: () => fetchJson(`${baseUrl}/downloads/`),
+    fetchIllInProcess: () => fetchJson(`${baseUrl}/ill-in-process/`),
+    fetchScanDeliverInProcess: () => fetchJson(`${baseUrl}/scan-deliver-in-process/`),
   }
 }

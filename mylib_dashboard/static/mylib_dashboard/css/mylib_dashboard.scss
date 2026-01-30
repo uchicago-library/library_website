@@ -513,6 +513,7 @@ $background-light: #f5f5f5;
     padding: 0.125rem 0.5rem;
     border-radius: 4px;
     font-weight: 500;
+    font-size: 0.875rem;
 
     &--recalled {
       background: $danger-color;
@@ -527,6 +528,11 @@ $background-light: #f5f5f5;
     &--due-soon {
       background: $info-color;
       color: white;
+    }
+
+    &--info {
+      background: lighten($info-color, 25%);
+      color: darken($info-color, 30%);
     }
   }
 
@@ -551,5 +557,38 @@ $background-light: #f5f5f5;
 
   &__pickup-by {
     color: $text-muted;
+  }
+
+  &__source {
+    color: $text-muted;
+    font-style: italic;
+    margin-bottom: 0.125rem;
+  }
+
+  &__request-date {
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
+
+  &__available-until {
+    color: $text-muted;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__download-link {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: $primary-color;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      color: white;
+    }
   }
 }
