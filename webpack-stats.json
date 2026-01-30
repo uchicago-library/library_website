@@ -25,6 +25,14 @@
       "name": "main-bundle.js.LICENSE.txt",
       "path": "/home/teichman/stuff/github/library_website/base/static/bundles/main-bundle.js.LICENSE.txt"
     },
+    "MyLibDashboard-bundle.js": {
+      "name": "MyLibDashboard-bundle.js",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/MyLibDashboard-bundle.js"
+    },
+    "MyLibDashboard-bundle.js.LICENSE.txt": {
+      "name": "MyLibDashboard-bundle.js.LICENSE.txt",
+      "path": "/home/brad/Documents/Business/UChicago/Code/library_website/base/static/bundles/MyLibDashboard-bundle.js.LICENSE.txt"
+    },
     "NewsFeed-bundle.js": {
       "name": "NewsFeed-bundle.js",
       "path": "/home/teichman/stuff/github/library_website/base/static/bundles/NewsFeed-bundle.js"
@@ -43,6 +51,9 @@
     ],
     "main": [
       "main-bundle.js"
+    ],
+    "MyLibDashboard": [
+      "MyLibDashboard-bundle.js"
     ],
     "NewsFeed": [
       "NewsFeed-bundle.js"
