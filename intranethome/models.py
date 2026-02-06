@@ -25,7 +25,6 @@ class IntranetHomePage(BasePage):
         "units.UnitIndexPage",
         "intranettocs.TOCPage",
         "redirects.LoopRedirectPage",
-        "intranethome.AGSUploadPage",
     ]
 
     def get_context(self, request):
@@ -74,12 +73,3 @@ class IntranetHomePage(BasePage):
         context["next_link"] = next_link
 
         return context
-
-class AGSUploadPage(BasePage):
-
-    document = models.ForeignKey(
-        get_document_model(),
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )

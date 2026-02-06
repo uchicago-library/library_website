@@ -9,14 +9,12 @@
 <h2> Article Galaxy Index </h2>
 
 <div>
-    <form action="/ags" method="post" enctype="multipart/form-data">
+    <form action="/ags/" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	<label for="uploadFile">Select an .xlsx file to upload:</label>
-	<input type="file" accept=".xlsx" name="uploadFile" required="true" id="uploadFile">
+	<input type="file" name="uploadFile" required="true" id="uploadFile" accept=".xlsx" formenctype="multipart/form-data">
 	<input type="submit" value="Upload Article Galaxy" name="submit">
     </form>
 </div>
-
-{{ dude2 }}
 
 {% endblock %}

@@ -6,6 +6,7 @@ from string import ascii_lowercase, ascii_uppercase
 
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
+from django.core.files.base import ContentFile
 from wagtail.models import Site
 
 from base.wagtail_hooks import (
@@ -279,23 +280,23 @@ def ags_upload_page(request):
 
     def create_document(bytz, filename):
         Document = get_document_model()
-        uploaded_file = SimpleUploadedFile(filename, bytz, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        document = Document(title="dudebro", file=uploaded_file)
-        document.save()
+        doc = Document(title=filename)
+        doc.file.save(filename, ContentFile(bytz))
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
-    try:
-        dude = request.FILES["uploadFile"]
-        dude2 = xlsx_to_json(dude, "data1")
-        create_document(dude, "dudebro")
-    except:
-        dude = ""
-        dude2 = ""
+    f = request.FILES['uploadFile'].open(mode="rw")
+    new_data = f.read()
+    f.close()
+
+    if new_data:
+        create_document(new_data, "stuff.xlsx")
+    else:
+        pass
 
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
         template_path = "intranethome/ags_upload_page.html"
-        context = { "dude": dude, "dude2": dude2 }
+        context = { "new_data" : new_data }
         return TemplateResponse(request, template_path, context)
