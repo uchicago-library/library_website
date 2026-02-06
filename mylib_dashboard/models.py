@@ -74,6 +74,7 @@ class MyLibDashboardPage(PublicBasePage):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context["illiad_web_url"] = getattr(settings, "ILLIAD_WEB_BASE_URL", "")
+        context["libcal_web_url"] = getattr(settings, "LIBCAL_WEB_URL", "")
         return context
 
     class Meta:

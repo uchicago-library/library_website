@@ -600,6 +600,105 @@ class FOLIOService:
             "hasBlocks": len(blocks) > 0,
         }
 
+    def get_locations(self):
+        """
+        Get all locations.
+
+        Returns a dict mapping location IDs to their data.
+        Results are cached in Django's cache for 24 hours.
+
+        Returns:
+            dict: {location_id: {"name": str, "code": str, "libraryId": str}, ...}
+        """
+        cache_key = "folio_locations"
+        locations = cache.get(cache_key)
+
+        if locations is None:
+            endpoint = "/locations?limit=1000"
+            data = self._request("GET", endpoint)
+            locations = {
+                loc["id"]: {
+                    "name": loc.get("name", "Unknown"),
+                    "code": loc.get("code", ""),
+                    "libraryId": loc.get("libraryId", ""),
+                }
+                for loc in data.get("locations", [])
+            }
+            # Cache for 24 hours
+            cache.set(cache_key, locations, 60 * 60 * 24)
+
+        return locations
+
+    def get_paging_requests(self, cnetid):
+        """
+        Get all paging requests for a user.
+
+        These are FOLIO Page requests for items being retrieved from
+        stacks or storage.
+
+        Args:
+            cnetid: The user's CNetID
+
+        Returns:
+            dict: {
+                "requests": [...],
+                "totalRequests": int,
+            }
+        """
+        user = self.get_user_by_cnetid(cnetid)
+        user_uuid = user["id"]
+
+        # Get service points and locations for display names
+        service_points = self.get_service_points()
+        locations = self.get_locations()
+
+        # Query for open page requests (not yet filled)
+        endpoint = (
+            f"/request-storage/requests?query="
+            f"requesterId=={user_uuid}"
+            f"%20and%20status==%22Open%20-%20Not%20yet%20filled%22"
+            f"%20and%20requestType==Page"
+            f"&limit=1000"
+        )
+        data = self._request("GET", endpoint)
+        requests_list = data.get("requests", [])
+
+        paging_requests = []
+        for req in requests_list:
+            item = req.get("item", {})
+            item_location_id = item.get("locationId")
+
+            # Look up the location for display name
+            location_data = locations.get(item_location_id, {})
+
+            title = req.get("instance", {}).get("title") or item.get(
+                "title", "Unknown Title"
+            )
+            pickup_sp_id = req.get("pickupServicePointId")
+            location_name = location_data.get("name", "")
+
+            paging_requests.append(
+                {
+                    "id": req.get("id"),
+                    "title": title,
+                    "callNumber": item.get("callNumber", ""),
+                    "locationId": item_location_id,
+                    "locationName": location_name,
+                    "pickupServicePointId": pickup_sp_id,
+                    "pickupLocation": service_points.get(pickup_sp_id, ""),
+                    "requestDate": req.get("requestDate"),
+                    "status": req.get("status"),
+                }
+            )
+
+        # Sort by request date (oldest first)
+        paging_requests.sort(key=lambda r: r.get("requestDate") or "")
+
+        return {
+            "requests": paging_requests,
+            "totalRequests": len(paging_requests),
+        }
+
 
 # Module-level instance for convenience
 _folio_service = None

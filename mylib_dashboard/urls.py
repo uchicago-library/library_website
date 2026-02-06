@@ -23,4 +23,11 @@ urlpatterns = [
         views.scan_deliver_in_process,
         name="scan_deliver_in_process",
     ),
+    # LibCal endpoints
+    path("reservations/", views.reservations, name="reservations"),
+    path("special-collections/seats/", views.sc_seats, name="sc_seats"),
+    # Paging requests (items being retrieved from stacks/storage)
+    path("paging-requests/", views.paging_requests, name="paging_requests"),
+    # Aeon endpoints
+    path("special-collections/materials/", views.sc_materials, name="sc_materials"),
 ]

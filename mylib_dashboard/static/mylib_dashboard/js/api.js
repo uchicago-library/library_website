@@ -27,9 +27,15 @@ export default function createApi(baseUrl) {
     fetchHolds: () => fetchJson(`${baseUrl}/holds/`),
     fetchFines: () => fetchJson(`${baseUrl}/fines/`),
     fetchBlocks: () => fetchJson(`${baseUrl}/account-blocks/`),
+    fetchPagingRequests: () => fetchJson(`${baseUrl}/paging-requests/`),
     // ILLiad endpoints
     fetchDownloads: () => fetchJson(`${baseUrl}/downloads/`),
     fetchIllInProcess: () => fetchJson(`${baseUrl}/ill-in-process/`),
     fetchScanDeliverInProcess: () => fetchJson(`${baseUrl}/scan-deliver-in-process/`),
+    // LibCal endpoints
+    fetchReservations: () => fetchJson(`${baseUrl}/reservations/`),
+    fetchScSeats: () => fetchJson(`${baseUrl}/special-collections/seats/`),
+    // Aeon endpoints
+    fetchScMaterials: () => fetchJson(`${baseUrl}/special-collections/materials/`),
   }
 }

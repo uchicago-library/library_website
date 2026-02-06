@@ -17,6 +17,9 @@ import {
   DownloadItem,
   ILLRequestItem,
   ScanDeliverItem,
+  ReservationItem,
+  PagingRequestItem,
+  ScMaterialItem,
 } from './components'
 
 // Get the mount element and extract configuration from data attributes
@@ -31,6 +34,8 @@ const CONFIG = {
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
   // ILLiad web interface URL for "Manage requests" links
   illiadWebUrl: DOM_ELEMENT.getAttribute('data-illiad-web-url') || '',
+  // LibCal web interface URL for "Manage reservations" links
+  libcalWebUrl: DOM_ELEMENT.getAttribute('data-libcal-web-url') || '',
 }
 
 // Create API instance
@@ -66,6 +71,16 @@ function Dashboard() {
   const illInProcessQuery = useQuery({ queryKey: ['illInProcess'], queryFn: api.fetchIllInProcess })
   const scanDeliverQuery = useQuery({ queryKey: ['scanDeliverInProcess'], queryFn: api.fetchScanDeliverInProcess })
 
+  // Fetch all data - LibCal
+  const reservationsQuery = useQuery({ queryKey: ['reservations'], queryFn: api.fetchReservations })
+  const scSeatsQuery = useQuery({ queryKey: ['scSeats'], queryFn: api.fetchScSeats })
+
+  // Fetch all data - FOLIO paging requests
+  const pagingRequestsQuery = useQuery({ queryKey: ['pagingRequests'], queryFn: api.fetchPagingRequests })
+
+  // Fetch all data - Aeon (Special Collections materials)
+  const scMaterialsQuery = useQuery({ queryKey: ['scMaterials'], queryFn: api.fetchScMaterials })
+
   // Compute derived data (returns zeros/empty when data not yet loaded)
   const alerts = useLoanAlerts(loansQuery.data)
   const tabCounts = useTabCounts(
@@ -73,7 +88,11 @@ function Dashboard() {
     holdsQuery.data,
     downloadsQuery.data,
     illInProcessQuery.data,
-    scanDeliverQuery.data
+    scanDeliverQuery.data,
+    reservationsQuery.data,
+    pagingRequestsQuery.data,
+    scSeatsQuery.data,
+    scMaterialsQuery.data
   )
 
   // Note: We render the layout immediately - no blocking loading state.
@@ -200,6 +219,20 @@ function Dashboard() {
               >
                 <div className="mylib-card-grid">
                   <CategoryCard
+                    title="Paging Requests"
+                    count={pagingRequestsQuery.data?.requests?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={pagingRequestsQuery.isLoading}
+                    error={pagingRequestsQuery.error?.message}
+                    onRetry={() => pagingRequestsQuery.refetch()}
+                    emptyMessage="No paging requests in process"
+                  >
+                    {pagingRequestsQuery.data?.requests?.map(request => (
+                      <PagingRequestItem key={request.id} request={request} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
                     title="Interlibrary Loan"
                     count={illInProcessQuery.data?.requests?.length || 0}
                     manageUrl={CONFIG.illiadWebUrl}
@@ -227,6 +260,73 @@ function Dashboard() {
                   >
                     {scanDeliverQuery.data?.requests?.map(request => (
                       <ScanDeliverItem key={request.id} request={request} />
+                    ))}
+                  </CategoryCard>
+                </div>
+              </div>
+            )}
+
+            {activeTab === TABS.ROOM_RESERVATIONS && (
+              <div
+                id="panel-room-reservations"
+                role="tabpanel"
+                aria-labelledby="tab-room-reservations"
+                className="mylib-panel"
+              >
+                <div className="mylib-card-grid">
+                  <CategoryCard
+                    title="Room Reservations"
+                    count={reservationsQuery.data?.reservations?.length || 0}
+                    manageUrl={CONFIG.libcalWebUrl}
+                    manageLabel="Manage in LibCal"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={reservationsQuery.isLoading}
+                    error={reservationsQuery.error?.message}
+                    onRetry={() => reservationsQuery.refetch()}
+                    emptyMessage="No upcoming room reservations"
+                  >
+                    {reservationsQuery.data?.reservations?.map(reservation => (
+                      <ReservationItem key={reservation.id} reservation={reservation} />
+                    ))}
+                  </CategoryCard>
+                </div>
+              </div>
+            )}
+
+            {activeTab === TABS.SPECIAL_COLLECTIONS && (
+              <div
+                id="panel-special-collections"
+                role="tabpanel"
+                aria-labelledby="tab-special-collections"
+                className="mylib-panel"
+              >
+                <div className="mylib-card-grid">
+                  <CategoryCard
+                    title="Reading Room Reservations"
+                    count={scSeatsQuery.data?.reservations?.length || 0}
+                    manageUrl={CONFIG.libcalWebUrl}
+                    manageLabel="Manage in LibCal"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={scSeatsQuery.isLoading}
+                    error={scSeatsQuery.error?.message}
+                    onRetry={() => scSeatsQuery.refetch()}
+                    emptyMessage="No upcoming reading room reservations"
+                  >
+                    {scSeatsQuery.data?.reservations?.map(reservation => (
+                      <ReservationItem key={reservation.id} reservation={reservation} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Material Requests"
+                    count={scMaterialsQuery.data?.requests?.length || 0}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={scMaterialsQuery.isLoading}
+                    error={scMaterialsQuery.error?.message}
+                    onRetry={() => scMaterialsQuery.refetch()}
+                    emptyMessage="No material requests"
+                  >
+                    {scMaterialsQuery.data?.requests?.map(request => (
+                      <ScMaterialItem key={request.id} request={request} />
                     ))}
                   </CategoryCard>
                 </div>

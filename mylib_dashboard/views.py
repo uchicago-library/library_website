@@ -8,8 +8,10 @@ import logging
 
 from django.http import JsonResponse
 
+from .services.aeon import AeonError, get_aeon_service
 from .services.folio import FOLIOError, FOLIOUserNotFoundError, get_folio_service
 from .services.illiad import ILLiadError, get_illiad_service
+from .services.libcal import LibCalError, get_libcal_service
 from .utils import get_current_cnetid, get_current_email
 
 logger = logging.getLogger(__name__)
@@ -213,4 +215,83 @@ def scan_deliver_in_process(request):
         )
         return JsonResponse(
             {"error": "Unable to retrieve Scan & Deliver information"}, status=503
+        )
+
+
+# LibCal views
+# Note: LibCal uses email addresses for filtering bookings. Email is obtained from
+# authentication attributes (Shibboleth/Okta).
+
+
+@require_email
+def reservations(request):
+    """
+    Get user's room reservations (excluding Special Collections).
+    Returns: reservations array with room name, times, etc.
+    """
+    try:
+        libcal = get_libcal_service()
+        reservations_data = libcal.get_room_reservations(request.email)
+        return JsonResponse(reservations_data)
+    except LibCalError as e:
+        logger.error(f"LibCal error fetching reservations for {request.email}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve room reservations"}, status=503
+        )
+
+
+@require_email
+def sc_seats(request):
+    """
+    Get user's Special Collections reading room seat reservations.
+    Returns: reservations array with room name, times, etc.
+    """
+    try:
+        libcal = get_libcal_service()
+        reservations_data = libcal.get_special_collections_seats(request.email)
+        return JsonResponse(reservations_data)
+    except LibCalError as e:
+        logger.error(f"LibCal error fetching SC seats for {request.email}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve Special Collections reservations"}, status=503
+        )
+
+
+@require_cnetid
+def paging_requests(request):
+    """
+    Get user's paging requests (items being retrieved from stacks/storage).
+    Returns: requests array with title, location, status
+    """
+    try:
+        folio = get_folio_service()
+        requests_data = folio.get_paging_requests(request.cnetid)
+        return JsonResponse(requests_data)
+    except FOLIOUserNotFoundError:
+        logger.warning(f"User not found in FOLIO: {request.cnetid}")
+        return JsonResponse({"error": "User not found in library system"}, status=404)
+    except FOLIOError as e:
+        logger.error(f"FOLIO error fetching paging requests for {request.cnetid}: {e}")
+        return JsonResponse({"error": "Unable to retrieve paging requests"}, status=503)
+
+
+# Aeon views
+# Note: Aeon uses email addresses as usernames. Email is obtained from
+# authentication attributes (Shibboleth/Okta).
+
+
+@require_email
+def sc_materials(request):
+    """
+    Get user's Special Collections material requests from Aeon.
+    Returns: requests array with title, call number, scheduled date, status
+    """
+    try:
+        aeon = get_aeon_service()
+        materials_data = aeon.get_user_requests(request.email)
+        return JsonResponse(materials_data)
+    except AeonError as e:
+        logger.error(f"Aeon error fetching SC materials for {request.email}: {e}")
+        return JsonResponse(
+            {"error": "Unable to retrieve Special Collections requests"}, status=503
         )

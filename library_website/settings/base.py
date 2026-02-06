@@ -550,6 +550,21 @@ ILLIAD_WEB_BASE_URL = "https://requests.lib.uchicago.edu/illiad"
 ILLIAD_API_KEY = ""
 ILLIAD_TIMEOUT = 30
 
+# LibCal API (Springshare)
+LIBCAL_API_BASE_URL = "https://rooms.lib.uchicago.edu/api/1.1"
+LIBCAL_WEB_URL = "https://rooms.lib.uchicago.edu"
+LIBCAL_CLIENT_ID = ""
+LIBCAL_CLIENT_SECRET = ""
+LIBCAL_TIMEOUT = 30
+# Special Collections location IDs for filtering reading room seats
+# TODO: Confirm these location IDs are correct
+LIBCAL_SPECIAL_COLLECTIONS_LOCATION_IDS = [14995, 11873]
+
+# Aeon API (Special Collections material requests)
+AEON_API_BASE_URL = "https://scrcrequests.lib.uchicago.edu/aeonapi"
+AEON_API_KEY = ""
+AEON_TIMEOUT = 30
+
 MAIL_ALIASES_PATH = "/data/web/aliases/data.json"
 
 # LibGuides API endpoints

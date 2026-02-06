@@ -8,6 +8,8 @@ export const TABS = {
   CHECKED_OUT: 'checked-out',
   AVAILABLE_PICKUP: 'available-pickup',
   IN_PROCESS: 'in-process',
+  ROOM_RESERVATIONS: 'room-reservations',
+  SPECIAL_COLLECTIONS: 'special-collections',
 }
 
 function TabNav({ activeTab, onTabChange, counts }) {
@@ -26,6 +28,16 @@ function TabNav({ activeTab, onTabChange, counts }) {
       id: TABS.IN_PROCESS,
       label: 'In Process',
       count: counts.inProcess,
+    },
+    {
+      id: TABS.ROOM_RESERVATIONS,
+      label: 'Room Reservations',
+      count: counts.roomReservations,
+    },
+    {
+      id: TABS.SPECIAL_COLLECTIONS,
+      label: 'Special Collections',
+      count: counts.specialCollections,
     },
   ]
 
@@ -56,6 +68,8 @@ TabNav.propTypes = {
     checkedOut: PropTypes.number,
     availableForPickup: PropTypes.number,
     inProcess: PropTypes.number,
+    roomReservations: PropTypes.number,
+    specialCollections: PropTypes.number,
   }).isRequired,
 }
 
