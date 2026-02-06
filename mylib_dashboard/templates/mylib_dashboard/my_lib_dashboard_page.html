@@ -1,0 +1,34 @@
+{% extends "base/public_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load compress static %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-mylib-dashboard{% endblock %}
+
+{# Styles #}
+{% block styles %}
+    {% compress css %}
+        <link href="{% static "mylib_dashboard/css/mylib_dashboard.scss" %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
+{# Content #}
+{% block content %}
+    {# React mount point - data attributes pass configuration to the app #}
+    <div
+        id="mylib-dashboard"
+        data-api-base-url="/api/mylib"
+        data-catalog-account-url="{{ page.catalog_account_url }}"
+        data-accounts-faq-url="{{ page.accounts_faq_url }}"
+        data-auto-renewal-notice="{{ page.auto_renewal_notice }}"
+        data-max-items-per-card="{{ page.max_items_per_card }}"
+        data-illiad-web-url="{{ illiad_web_url }}"
+        data-libcal-web-url="{{ libcal_web_url }}"
+    ></div>
+    {% render_bundle 'MyLibDashboard' %}
+{% endblock %}
+
+{# Override right sidebar - dashboard has its own sidebar in React #}
+{% block right_sidebar %}
+    {# Sidebar is rendered by React as part of the dashboard layout #}
+{% endblock %}

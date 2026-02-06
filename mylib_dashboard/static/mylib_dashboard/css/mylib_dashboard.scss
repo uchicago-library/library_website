@@ -1,0 +1,594 @@
+/**
+ * MyLib Dashboard Styles
+ *
+ * Structural styles for the patron dashboard interface.
+ */
+
+// Variables
+$primary-color: #800;
+$danger-color: #d9534f;
+$warning-color: #f0ad4e;
+$info-color: #5bc0de;
+$text-muted: #666;
+$border-color: #ddd;
+$background-light: #f5f5f5;
+
+// Main Dashboard Container
+.mylib-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+
+  &--loading,
+  &--error {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__main {
+    min-width: 0;
+  }
+
+  &__panels {
+    margin-top: 1rem;
+  }
+}
+
+// Loading State
+.mylib-loading {
+  text-align: center;
+  padding: 2rem;
+  color: $text-muted;
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $border-color;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Error State
+.mylib-error {
+  text-align: center;
+  padding: 2rem;
+  color: $danger-color;
+
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Block Warning
+.mylib-block-warning {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: lighten($danger-color, 35%);
+  border: 1px solid $danger-color;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+
+  &__icon {
+    color: $danger-color;
+  }
+
+  &__content {
+    flex: 1;
+
+    strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+}
+
+// Notice Banner (auto-renewal)
+.mylib-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: lighten($info-color, 30%);
+  border: 1px solid $info-color;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+
+  &__content {
+    flex: 1;
+  }
+
+  &__dismiss {
+    background: none;
+    border: none;
+    line-height: 1;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+// Alert Banners
+.mylib-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mylib-alert {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+
+  &--danger {
+    background: lighten($danger-color, 35%);
+    color: darken($danger-color, 15%);
+  }
+
+  &--warning {
+    background: lighten($warning-color, 30%);
+    color: darken($warning-color, 25%);
+  }
+
+  &--info {
+    background: lighten($info-color, 30%);
+    color: darken($info-color, 25%);
+  }
+}
+
+// Tab Navigation
+.mylib-tabs {
+  display: flex;
+  border-bottom: 2px solid $border-color;
+
+  &__tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: $text-muted;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &--active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+      font-weight: 500;
+    }
+  }
+
+  &__badge {
+    display: inline-block;
+    min-width: 20px;
+    padding: 0.125rem 0.5rem;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    background: $background-light;
+    border-radius: 10px;
+    text-align: center;
+  }
+}
+
+// Tab Panels
+.mylib-panel {
+  padding: 1rem 0;
+
+  &__placeholder {
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+// Sidebar
+.mylib-sidebar {
+  background: $background-light;
+  border-radius: 4px;
+  padding: 1.5rem;
+
+  @media (max-width: 768px) {
+    order: -1;
+  }
+
+  &__section {
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__heading {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-muted;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid lighten($border-color, 5%);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--expandable {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  &__icon {
+    width: 1rem;
+    text-align: center;
+    color: $text-muted;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  &__link {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__warning {
+    color: $danger-color;
+  }
+
+  &__expand-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    text-align: left;
+    color: inherit;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &__chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+
+  &__expanded-content {
+    margin-left: 1.75rem;
+    padding: 0.5rem 0;
+    color: $text-muted;
+  }
+
+  &__loading {
+    display: inline-block;
+    height: 1em;
+    background: linear-gradient(
+      90deg,
+      $background-light 25%,
+      lighten($background-light, 3%) 50%,
+      $background-light 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    vertical-align: middle;
+  }
+}
+
+// Card Grid
+.mylib-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+// Category Card
+.mylib-card {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 1rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__count {
+    background: $background-light;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  &__manage-link {
+    display: block;
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &--bottom {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid $border-color;
+    }
+  }
+
+  &__content {
+    margin-top: 1rem;
+  }
+
+  &__show-more {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    background: $background-light;
+    border: 1px dashed $border-color;
+    border-radius: 4px;
+    color: $primary-color;
+    cursor: pointer;
+    font-size: inherit;
+    text-align: center;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      background: darken($background-light, 3%);
+      border-color: $primary-color;
+    }
+  }
+
+  &__error {
+    padding: 1rem;
+    text-align: center;
+    color: $danger-color;
+
+    p {
+      margin: 0 0 0.5rem;
+    }
+  }
+
+  &__retry {
+    padding: 0.375rem 0.75rem;
+    background: $danger-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: inherit;
+
+    &:hover {
+      background: darken($danger-color, 10%);
+    }
+  }
+
+  &__empty {
+    padding: 1rem;
+    text-align: center;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &__loading {
+    padding: 0.5rem 0;
+  }
+
+  &__loading-item {
+    height: 60px;
+    background: linear-gradient(
+      90deg,
+      $background-light 25%,
+      lighten($background-light, 3%) 50%,
+      $background-light 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__count--loading {
+    width: 24px;
+    height: 20px;
+    background: $background-light;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+// Loan Item (within a card)
+.mylib-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__status {
+    margin-bottom: 0.25rem;
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.875rem;
+
+    &--recalled {
+      background: $danger-color;
+      color: white;
+    }
+
+    &--overdue {
+      background: $warning-color;
+      color: white;
+    }
+
+    &--due-soon {
+      background: $info-color;
+      color: white;
+    }
+
+    &--info {
+      background: lighten($info-color, 25%);
+      color: darken($info-color, 30%);
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    margin-bottom: 0.125rem;
+  }
+
+  &__author {
+    color: $text-muted;
+    margin-bottom: 0.125rem;
+  }
+
+  &__due {
+    color: $text-muted;
+  }
+
+  &__location {
+    color: $text-muted;
+    margin-bottom: 0.125rem;
+  }
+
+  &__pickup-by {
+    color: $text-muted;
+  }
+
+  &__source {
+    color: $text-muted;
+    font-style: italic;
+    margin-bottom: 0.125rem;
+  }
+
+  &__request-date {
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
+
+  &__available-until {
+    color: $text-muted;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__download-link {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: $primary-color;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      color: white;
+    }
+  }
+}
