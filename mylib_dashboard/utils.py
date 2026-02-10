@@ -28,15 +28,13 @@ def get_current_cnetid(request):
     if dev_username and settings.DEBUG:
         return dev_username
 
-    # Production: get CNetID from Shibboleth attributes
-    # Based on SHIBBOLETH_ATTRIBUTE_MAP, 'uid' contains the CNetID
-    # Check common ways Shibboleth attributes appear in request.META
-    cnetid = (
-        request.META.get("uid")
-        or request.META.get("HTTP_UID")
-        or request.META.get("REMOTE_USER")
-        or request.META.get("HTTP_REMOTE_USER")
-    )
+    # Production: get CNetID from Shibboleth uid attribute set by the server.
+    #
+    # SECURITY: Only use server-set META keys (no HTTP_ prefix). In Django,
+    # HTTP_-prefixed META keys (e.g. HTTP_UID) are populated from client-sent
+    # HTTP headers and can be trivially forged to impersonate any user.
+    # Server-set keys like "uid" can only be set by Apache/mod_shib.
+    cnetid = request.META.get("uid")
 
     return cnetid
 
@@ -63,14 +61,12 @@ def get_current_email(request):
     if dev_email and settings.DEBUG:
         return dev_email
 
-    # Production: get email from Shibboleth/Okta attributes
-    # Check common ways email attributes appear in request.META
-    email = (
-        request.META.get("mail")
-        or request.META.get("HTTP_MAIL")
-        or request.META.get("email")
-        or request.META.get("HTTP_EMAIL")
-        or request.META.get("HTTP_EPPN")  # eduPersonPrincipalName (often email format)
-    )
+    # Production: get email from Shibboleth mail attribute set by the server.
+    #
+    # SECURITY: Only use server-set META keys (no HTTP_ prefix). In Django,
+    # HTTP_-prefixed META keys (e.g. HTTP_MAIL) are populated from client-sent
+    # HTTP headers and can be trivially forged to impersonate any user.
+    # Server-set keys like "mail" can only be set by Apache/mod_shib.
+    email = request.META.get("mail")
 
     return email
