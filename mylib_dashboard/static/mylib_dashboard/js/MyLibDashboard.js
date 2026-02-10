@@ -219,21 +219,7 @@ function Dashboard() {
               >
                 <div className="mylib-card-grid">
                   <CategoryCard
-                    title="Paging Requests"
-                    count={pagingRequestsQuery.data?.requests?.length || 0}
-                    manageUrl={CONFIG.catalogAccountUrl}
-                    maxItems={CONFIG.maxItemsPerCard}
-                    isLoading={pagingRequestsQuery.isLoading}
-                    error={pagingRequestsQuery.error?.message}
-                    onRetry={() => pagingRequestsQuery.refetch()}
-                    emptyMessage="No paging requests in process"
-                  >
-                    {pagingRequestsQuery.data?.requests?.map(request => (
-                      <PagingRequestItem key={request.id} request={request} />
-                    ))}
-                  </CategoryCard>
-                  <CategoryCard
-                    title="Interlibrary Loan"
+                    title="Interlibrary Loan (ILL)"
                     count={illInProcessQuery.data?.requests?.length || 0}
                     manageUrl={CONFIG.illiadWebUrl}
                     manageLabel="View all in ILLiad"
@@ -260,6 +246,20 @@ function Dashboard() {
                   >
                     {scanDeliverQuery.data?.requests?.map(request => (
                       <ScanDeliverItem key={request.id} request={request} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Paging Requests"
+                    count={pagingRequestsQuery.data?.requests?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={pagingRequestsQuery.isLoading}
+                    error={pagingRequestsQuery.error?.message}
+                    onRetry={() => pagingRequestsQuery.refetch()}
+                    emptyMessage="No paging requests in process"
+                  >
+                    {pagingRequestsQuery.data?.requests?.map(request => (
+                      <PagingRequestItem key={request.id} request={request} />
                     ))}
                   </CategoryCard>
                 </div>
@@ -302,6 +302,19 @@ function Dashboard() {
               >
                 <div className="mylib-card-grid">
                   <CategoryCard
+                    title="Material Requests"
+                    count={scMaterialsQuery.data?.requests?.length || 0}
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={scMaterialsQuery.isLoading}
+                    error={scMaterialsQuery.error?.message}
+                    onRetry={() => scMaterialsQuery.refetch()}
+                    emptyMessage="No material requests"
+                  >
+                    {scMaterialsQuery.data?.requests?.map(request => (
+                      <ScMaterialItem key={request.id} request={request} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
                     title="Reading Room Reservations"
                     count={scSeatsQuery.data?.reservations?.length || 0}
                     manageUrl={CONFIG.libcalWebUrl}
@@ -314,19 +327,6 @@ function Dashboard() {
                   >
                     {scSeatsQuery.data?.reservations?.map(reservation => (
                       <ReservationItem key={reservation.id} reservation={reservation} />
-                    ))}
-                  </CategoryCard>
-                  <CategoryCard
-                    title="Material Requests"
-                    count={scMaterialsQuery.data?.requests?.length || 0}
-                    maxItems={CONFIG.maxItemsPerCard}
-                    isLoading={scMaterialsQuery.isLoading}
-                    error={scMaterialsQuery.error?.message}
-                    onRetry={() => scMaterialsQuery.refetch()}
-                    emptyMessage="No material requests"
-                  >
-                    {scMaterialsQuery.data?.requests?.map(request => (
-                      <ScMaterialItem key={request.id} request={request} />
                     ))}
                   </CategoryCard>
                 </div>

@@ -39,8 +39,8 @@ function ReservationItem({ reservation }) {
       {locationName && (
         <div className="mylib-item__location">{locationName}</div>
       )}
-      <div className="mylib-item__time">
-        {formatDateTime(startTime)} - {formatTime(endTime)}
+      <div className="mylib-item__request-date">
+        Booked for {formatDateTime(startTime)} - {formatTime(endTime)}
       </div>
       {status && status !== 'Confirmed' && (
         <div className="mylib-item__status">{status}</div>

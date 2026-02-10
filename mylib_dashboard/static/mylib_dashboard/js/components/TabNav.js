@@ -30,14 +30,14 @@ function TabNav({ activeTab, onTabChange, counts }) {
       count: counts.inProcess,
     },
     {
-      id: TABS.ROOM_RESERVATIONS,
-      label: 'Room Reservations',
-      count: counts.roomReservations,
-    },
-    {
       id: TABS.SPECIAL_COLLECTIONS,
       label: 'Special Collections',
       count: counts.specialCollections,
+    },
+    {
+      id: TABS.ROOM_RESERVATIONS,
+      label: 'Room Reservations',
+      count: counts.roomReservations,
     },
   ]
 
