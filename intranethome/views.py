@@ -1,9 +1,10 @@
 import json
 import re
 import os
+import pandas
 from functools import cmp_to_key
 from string import ascii_lowercase, ascii_uppercase
-
+from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from django.core.files.base import ContentFile
@@ -19,15 +20,17 @@ from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponse
 from .utils import xlsx_to_json
 import json
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
 from string import ascii_uppercase, ascii_lowercase
 from wagtail.models import Site
-# from wagtail.documents.models import Document
 from wagtail.documents import get_document_model
+
 from django.core.files.uploadedfile import SimpleUploadedFile
+from openpyxl import load_workbook
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -283,24 +286,23 @@ def ags_upload_page(request):
         doc = Document(title=filename)
         doc.file.save(filename, ContentFile(bytz))
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
-
-    if 'uploadFile' in request.FILES:
+    if request.method == 'POST' and 'uploadFile' in request.FILES:
         upload_file = request.FILES['uploadFile']
-        try:
-            with upload_file.open(mode="rw") as f:
-                xlsx_data = f.read()
-                f.close()
-        except:
-            pass
+        with upload_file.open(mode="rw") as f:
+            xlsx_data = f.read()
+            workbook = load_workbook(filename=f)
+            f.close()
     else:
         upload_file = None
         xlsx_data = ''
+        workbook = ''
 
     if xlsx_data:
-        create_document(new_data, "ags_spreadsheet.xlsx")
+        create_document(xlsx_data, "ags_spreadsheet.xlsx")
     else:
         pass
+
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
 
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
@@ -308,3 +310,25 @@ def ags_upload_page(request):
         template_path = "intranethome/ags_upload_page.html"
         context = { "xlsx_data" : xlsx_data }
         return TemplateResponse(request, template_path, context)
+
+
+def display_js(request):
+
+    try:
+        D = get_document_model()
+        ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+    except D.DoesNotExist:
+        return HttpResponse("TODO: error response here")
+
+    def gimme_the_rows(handle):
+        output = pandas.read_excel(handle, sheet_name="data1")
+        return output
+
+    def gimme_the_json(dataframe):
+        return { row[4]: [row[6], row[7]] for row in dataframe.values }
+
+    with ags_xlsx.file.open() as f:
+        dataframe = gimme_the_rows(f)
+        ags_json = gimme_the_json(dataframe)
+
+    return HttpResponse(json.dumps(ags_json), content_type="application/json")
