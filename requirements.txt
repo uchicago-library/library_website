@@ -2,7 +2,7 @@ bleach==3.3.0
 DateTime>=4,<5
 defusedxml
 git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python
-Django==5.2.9
+Django==5.2.11
 django-appconf==1.0.4
 django-bleach==0.6.1
 django-compressor>=4.0,<5.0
@@ -33,7 +33,7 @@ simplejson==3.11.1
 sqlparse==0.5.0
 Unidecode==1.1.1
 urllib3==2.6.3
-wagtail==7.0.3
+wagtail==7.0.4
 wagtailmedia==0.15.2
 wagtail-cache==3.0.0
 wagtail-markdown==0.13.0
