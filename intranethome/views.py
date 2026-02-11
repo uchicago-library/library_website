@@ -285,12 +285,20 @@ def ags_upload_page(request):
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
-    f = request.FILES['uploadFile'].open(mode="rw")
-    new_data = f.read()
-    f.close()
+    if 'uploadFile' in request.FILES:
+        upload_file = request.FILES['uploadFile']
+        try:
+            with upload_file.open(mode="rw") as f:
+                xlsx_data = f.read()
+                f.close()
+        except:
+            pass
+    else:
+        upload_file = None
+        xlsx_data = ''
 
-    if new_data:
-        create_document(new_data, "stuff.xlsx")
+    if xlsx_data:
+        create_document(new_data, "ags_spreadsheet.xlsx")
     else:
         pass
 
@@ -298,5 +306,5 @@ def ags_upload_page(request):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
         template_path = "intranethome/ags_upload_page.html"
-        context = { "new_data" : new_data }
+        context = { "xlsx_data" : xlsx_data }
         return TemplateResponse(request, template_path, context)
