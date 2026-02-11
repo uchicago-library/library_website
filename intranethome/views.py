@@ -318,7 +318,9 @@ def display_js(request):
         D = get_document_model()
         ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
     except D.DoesNotExist:
-        return HttpResponse("TODO: error response here")
+        error_dict = { "error" : "no AGS spreadsheet" }
+        error_json = json.dumps(error_dict)
+        return HttpResponse(error_json, status=400, content_type="application/json")
 
     def gimme_the_rows(handle):
         output = pandas.read_excel(handle, sheet_name="data1")
