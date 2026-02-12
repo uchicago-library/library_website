@@ -27,6 +27,7 @@ html2text>=2025.4.15,<2026
 pandas>=2,<3
 pocli==0.1.10
 psycopg2
+requests[socks]
 Pygments==2.15.0
 python-dateutil
 simplejson==3.11.1

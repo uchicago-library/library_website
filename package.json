@@ -45,6 +45,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.18",
     "eslint-utils": "^3.0.0",
     "htmr": "^1.0.2",
     "ini": "^3.0.1",

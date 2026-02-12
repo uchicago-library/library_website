@@ -14,6 +14,8 @@ module.exports = {
     NewsFeed: './lib_news/static/lib_news/js/NewsFeed',
     CGIMailForm: './base/static/base/js/CGIMailForm',
     CGIMailEditor: './cgimail_editor/static/cgimail_editor/js/CGIMailEditor',
+    MyLibDashboard:
+      './mylib_dashboard/static/mylib_dashboard/js/MyLibDashboard',
   },
 
   output: {

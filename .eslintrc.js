@@ -20,6 +20,7 @@ module.exports = {
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
     'import/no-absolute-path': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
+    'react/require-default-props': 'off',
     'react/function-component-definition': 0,
     'jsx-a11y/label-has-for': 'off',
     'jsx-a11y/anchor-is-valid': [
