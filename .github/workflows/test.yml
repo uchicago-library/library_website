@@ -23,22 +23,29 @@ jobs:
 
     steps:
 
-    - name: Configure sysctl limits
+    - name: Start Elasticsearch
       run: |
         sudo swapoff -a
         sudo sysctl -w vm.swappiness=1
         sudo sysctl -w fs.file-max=262144
         sudo sysctl -w vm.max_map_count=262144
-    - uses: elastic/elastic-github-actions/elasticsearch@master
-      with:
-        stack-version: 7.17.13
+        docker rm -f es 2>/dev/null || true
+        docker network create elastic 2>/dev/null || true
+        docker run -d --name es --network elastic \
+          -p 9200:9200 \
+          -e discovery.type=single-node \
+          -e xpack.security.enabled=false \
+          -e ES_JAVA_OPTS="-Xms512m -Xmx512m" \
+          docker.elastic.co/elasticsearch/elasticsearch:7.17.13
+        until curl -s http://localhost:9200 | grep -q cluster_name; do sleep 5; done
 
     - uses: actions/checkout@v3
 
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.2.0
-      with: 
-         redis-version: 6
+      run: |
+        docker rm -f redis 2>/dev/null || true
+        docker run -d --name redis -p 6379:6379 redis:6
+        until docker exec redis redis-cli ping | grep -q PONG; do sleep 1; done
 
     - name: Set up Python '3.11'
       uses: actions/setup-python@v3
