@@ -4,7 +4,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-function AccountBlockWarning({ blocks }) {
+function AccountBlockWarning({ blocks = [] }) {
   if (!blocks || blocks.length === 0) {
     return null
   }
@@ -38,8 +38,4 @@ AccountBlockWarning.propTypes = {
       blockRequests: PropTypes.bool,
     }),
   ),
-}
-
-AccountBlockWarning.defaultProps = {
-  blocks: [],
 }

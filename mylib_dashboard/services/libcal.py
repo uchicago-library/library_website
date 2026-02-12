@@ -5,6 +5,7 @@ Handles room reservations and Special Collections reading room seat data retriev
 """
 
 import logging
+from functools import lru_cache
 
 import requests
 from django.conf import settings
@@ -169,6 +170,9 @@ class LibCalService:
         """
         Get all bookings for a user by email.
 
+        Results are cached for 60 seconds to avoid duplicate API calls
+        when multiple views (reservations, sc_seats) need the same data.
+
         Args:
             email: The user's email address
             days: Number of days to look ahead (required by API, default 7)
@@ -176,6 +180,11 @@ class LibCalService:
         Returns:
             list: List of booking objects
         """
+        cache_key = f"libcal_bookings_{email}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         endpoint = "/space/bookings"
         params = {"email": email, "days": days}
 
@@ -186,6 +195,7 @@ class LibCalService:
             logger.warning(f"Unexpected LibCal response type: {type(bookings)}")
             return []
 
+        cache.set(cache_key, bookings, 60)
         return bookings
 
     def get_room_reservations(self, email):
@@ -245,13 +255,7 @@ class LibCalService:
         }
 
 
-# Module-level instance for convenience
-_libcal_service = None
-
-
+@lru_cache(maxsize=1)
 def get_libcal_service():
-    """Get or create the LibCal service singleton."""
-    global _libcal_service
-    if _libcal_service is None:
-        _libcal_service = LibCalService()
-    return _libcal_service
+    """Get a cached LibCalService instance."""
+    return LibCalService()

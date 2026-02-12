@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { formatCurrency } from '../hooks'
 
-function LoadingPlaceholder({ width }) {
+function LoadingPlaceholder({ width = '80%' }) {
   return (
     <span
       className="mylib-sidebar__loading"
@@ -19,17 +19,13 @@ LoadingPlaceholder.propTypes = {
   width: PropTypes.string,
 }
 
-LoadingPlaceholder.defaultProps = {
-  width: '80%',
-}
-
 function MyAccountSidebar({
-  profile,
-  profileLoading,
-  finesTotal,
-  finesLoading,
-  recalledCount,
-  accountsFaqUrl,
+  profile = null,
+  profileLoading = false,
+  finesTotal = 0,
+  finesLoading = false,
+  recalledCount = 0,
+  accountsFaqUrl = '',
 }) {
   const [departmentExpanded, setDepartmentExpanded] = useState(false)
 
@@ -143,15 +139,6 @@ MyAccountSidebar.propTypes = {
   finesLoading: PropTypes.bool,
   recalledCount: PropTypes.number,
   accountsFaqUrl: PropTypes.string,
-}
-
-MyAccountSidebar.defaultProps = {
-  profile: null,
-  profileLoading: false,
-  finesTotal: 0,
-  finesLoading: false,
-  recalledCount: 0,
-  accountsFaqUrl: '',
 }
 
 export default MyAccountSidebar

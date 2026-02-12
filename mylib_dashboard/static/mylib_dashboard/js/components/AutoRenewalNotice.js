@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 
 const STORAGE_KEY = 'mylib-auto-renewal-dismissed'
 
-function AutoRenewalNotice({ content }) {
+function AutoRenewalNotice({ content = '' }) {
   const [isDismissed, setIsDismissed] = useState(true) // Start hidden to avoid flash
 
   useEffect(() => {
@@ -29,7 +29,7 @@ function AutoRenewalNotice({ content }) {
     <div className="mylib-notice" role="note">
       <div
         className="mylib-notice__content"
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: content }} //eslint-disable-line react/no-danger
       />
       <button
         type="button"
@@ -45,10 +45,6 @@ function AutoRenewalNotice({ content }) {
 
 AutoRenewalNotice.propTypes = {
   content: PropTypes.string,
-}
-
-AutoRenewalNotice.defaultProps = {
-  content: '',
 }
 
 export default AutoRenewalNotice

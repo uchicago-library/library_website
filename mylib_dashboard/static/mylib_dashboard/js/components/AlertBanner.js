@@ -4,7 +4,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-function AlertBanner({ recalledCount, overdueCount, dueSoonCount }) {
+function AlertBanner({
+  recalledCount = 0,
+  overdueCount = 0,
+  dueSoonCount = 0,
+}) {
   const alerts = []
 
   if (recalledCount > 0) {
@@ -54,12 +58,6 @@ AlertBanner.propTypes = {
   recalledCount: PropTypes.number,
   overdueCount: PropTypes.number,
   dueSoonCount: PropTypes.number,
-}
-
-AlertBanner.defaultProps = {
-  recalledCount: 0,
-  overdueCount: 0,
-  dueSoonCount: 0,
 }
 
 export default AlertBanner

@@ -6,6 +6,7 @@ Handles interlibrary loan and scan & deliver data retrieval from ILLiad.
 
 import logging
 from datetime import datetime
+from functools import lru_cache
 
 import requests
 from django.conf import settings
@@ -288,13 +289,7 @@ class ILLiadService:
         }
 
 
-# Module-level instance for convenience
-_illiad_service = None
-
-
+@lru_cache(maxsize=1)
 def get_illiad_service():
-    """Get or create the ILLiad service singleton."""
-    global _illiad_service
-    if _illiad_service is None:
-        _illiad_service = ILLiadService()
-    return _illiad_service
+    """Get a cached ILLiadService instance."""
+    return ILLiadService()

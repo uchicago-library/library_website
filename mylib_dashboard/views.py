@@ -7,6 +7,7 @@ All views return JSON responses for consumption by the React frontend.
 import logging
 
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 from .services.aeon import AeonError, get_aeon_service
 from .services.folio import FOLIOError, FOLIOUserNotFoundError, get_folio_service
@@ -58,6 +59,7 @@ def require_email(view_func):
     return wrapper
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def profile(request):
     """
@@ -78,6 +80,7 @@ def profile(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def loans(request):
     """
@@ -98,6 +101,7 @@ def loans(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def holds(request):
     """
@@ -118,6 +122,7 @@ def holds(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def fines(request):
     """
@@ -138,6 +143,7 @@ def fines(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def account_blocks(request):
     """
@@ -162,6 +168,7 @@ def account_blocks(request):
 # integration works independently of the ILS.
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 @require_email
 def downloads(request):
@@ -180,6 +187,7 @@ def downloads(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 @require_email
 def ill_in_process(request):
@@ -198,6 +206,7 @@ def ill_in_process(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 @require_email
 def scan_deliver_in_process(request):
@@ -223,6 +232,7 @@ def scan_deliver_in_process(request):
 # authentication attributes (Shibboleth/Okta).
 
 
+@require_http_methods(["GET"])
 @require_email
 def reservations(request):
     """
@@ -240,6 +250,7 @@ def reservations(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_email
 def sc_seats(request):
     """
@@ -257,6 +268,7 @@ def sc_seats(request):
         )
 
 
+@require_http_methods(["GET"])
 @require_cnetid
 def paging_requests(request):
     """
@@ -280,6 +292,7 @@ def paging_requests(request):
 # authentication attributes (Shibboleth/Okta).
 
 
+@require_http_methods(["GET"])
 @require_email
 def sc_materials(request):
     """

@@ -7,6 +7,7 @@ Uses the shared get_auth() from item_servlet with dashboard-specific configurati
 
 import logging
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
 
 import requests
 from django.conf import settings
@@ -700,13 +701,7 @@ class FOLIOService:
         }
 
 
-# Module-level instance for convenience
-_folio_service = None
-
-
+@lru_cache(maxsize=1)
 def get_folio_service():
-    """Get or create the FOLIO service singleton."""
-    global _folio_service
-    if _folio_service is None:
-        _folio_service = FOLIOService()
-    return _folio_service
+    """Get a cached FOLIOService instance."""
+    return FOLIOService()

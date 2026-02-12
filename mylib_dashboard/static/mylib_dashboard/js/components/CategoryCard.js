@@ -22,7 +22,7 @@ function CardLoadingState() {
   )
 }
 
-function CardErrorState({ message, onRetry }) {
+function CardErrorState({ message = 'Unable to load data', onRetry = null }) {
   return (
     <div className="mylib-card__error">
       <p>{message || 'Unable to load data'}</p>
@@ -40,12 +40,7 @@ CardErrorState.propTypes = {
   onRetry: PropTypes.func,
 }
 
-CardErrorState.defaultProps = {
-  message: 'Unable to load data',
-  onRetry: null,
-}
-
-function CardEmptyState({ message }) {
+function CardEmptyState({ message = 'No items' }) {
   return <div className="mylib-card__empty">{message || 'No items'}</div>
 }
 
@@ -53,21 +48,17 @@ CardEmptyState.propTypes = {
   message: PropTypes.string,
 }
 
-CardEmptyState.defaultProps = {
-  message: 'No items',
-}
-
 function CategoryCard({
   title,
   count,
-  manageUrl,
-  manageLabel,
-  maxItems,
-  isLoading,
-  error,
-  onRetry,
-  emptyMessage,
-  children,
+  manageUrl = '',
+  manageLabel = 'View all and manage',
+  maxItems = 0,
+  isLoading = false,
+  error = null,
+  onRetry = null,
+  emptyMessage = 'No items',
+  children = null,
 }) {
   // Track how many items are currently visible (starts at maxItems or all)
   const [visibleCount, setVisibleCount] = useState(maxItems || 0)
@@ -154,18 +145,6 @@ CategoryCard.propTypes = {
   onRetry: PropTypes.func,
   emptyMessage: PropTypes.string,
   children: PropTypes.node,
-}
-
-CategoryCard.defaultProps = {
-  count: undefined,
-  manageUrl: '',
-  manageLabel: 'View all and manage',
-  maxItems: 0,
-  isLoading: false,
-  error: null,
-  onRetry: null,
-  emptyMessage: 'No items',
-  children: null,
 }
 
 export default CategoryCard
