@@ -61,6 +61,7 @@ urlpatterns = [
     ),
     re_path(r"^turnstile/", include("django_turnstile_site_protect.urls")),
     re_path(r"^cgimail-editor/", include("cgimail_editor.urls")),
+    re_path(r"^api/mylib/", include("mylib_dashboard.urls")),
     re_path(r"^citation_display$", citation_display, name="citation_display"),
     re_path(r"^collex/collections/$", RedirectView.as_view(url="/collex/")),
     re_path(r"^collex/exhibits/$", RedirectView.as_view(url="/collex/?view=exhibits")),
