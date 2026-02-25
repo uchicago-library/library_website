@@ -194,6 +194,8 @@ $background-light: #f5f5f5;
 // Tab Navigation
 .mylib-tabs {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
   border-bottom: 2px solid $border-color;
 
   &__tab {
