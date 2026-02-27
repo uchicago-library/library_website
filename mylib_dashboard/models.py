@@ -4,6 +4,7 @@ from wagtail.admin.panels import FieldPanel, HelpPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 
+from mylib_dashboard.utils import get_current_cnetid
 from public.models import PublicBasePage
 
 
@@ -75,6 +76,7 @@ class MyLibDashboardPage(PublicBasePage):
         context = super().get_context(request, *args, **kwargs)
         context["illiad_web_url"] = getattr(settings, "ILLIAD_WEB_BASE_URL", "")
         context["libcal_web_url"] = getattr(settings, "LIBCAL_WEB_URL", "")
+        context["is_authenticated"] = bool(get_current_cnetid(request))
         return context
 
     class Meta:

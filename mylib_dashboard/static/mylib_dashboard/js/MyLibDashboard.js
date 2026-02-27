@@ -36,6 +36,8 @@ const CONFIG = {
   illiadWebUrl: DOM_ELEMENT.getAttribute('data-illiad-web-url') || '',
   // LibCal web interface URL for "Manage reservations" links
   libcalWebUrl: DOM_ELEMENT.getAttribute('data-libcal-web-url') || '',
+  // Whether the user has an active Shibboleth session
+  isAuthenticated: DOM_ELEMENT.getAttribute('data-is-authenticated') === 'true',
 }
 
 // Create API instance
@@ -343,6 +345,7 @@ function Dashboard() {
           finesLoading={finesQuery.isLoading}
           recalledCount={alerts.recalledCount}
           accountsFaqUrl={CONFIG.accountsFaqUrl}
+          isAuthenticated={CONFIG.isAuthenticated}
         />
       </div>
     </div>

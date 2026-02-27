@@ -24,6 +24,7 @@
         data-max-items-per-card="{{ page.max_items_per_card }}"
         data-illiad-web-url="{{ illiad_web_url }}"
         data-libcal-web-url="{{ libcal_web_url }}"
+        data-is-authenticated="{{ is_authenticated|yesno:'true,false' }}"
     ></div>
     {% render_bundle 'MyLibDashboard' %}
 {% endblock %}

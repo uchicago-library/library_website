@@ -26,6 +26,7 @@ function MyAccountSidebar({
   finesLoading = false,
   recalledCount = 0,
   accountsFaqUrl = '',
+  isAuthenticated = false,
 }) {
   const [departmentExpanded, setDepartmentExpanded] = useState(false)
 
@@ -72,16 +73,21 @@ function MyAccountSidebar({
             </li>
           )}
 
-          {/* Log Out */}
-          <li className="mylib-sidebar__item">
-            <i
-              className="fa fa-sign-out mylib-sidebar__icon"
-              aria-hidden="true"
-            />
-            <a href="/accounts/logout/" className="mylib-sidebar__link">
-              Log Out
-            </a>
-          </li>
+          {/* Log In */}
+          {!isAuthenticated && (
+            <li className="mylib-sidebar__item">
+              <i
+                className="fa fa-sign-in mylib-sidebar__icon"
+                aria-hidden="true"
+              />
+              <a
+                href={`/Shibboleth.sso/Login?target=${encodeURIComponent(window.location.href)}`}
+                className="mylib-sidebar__link"
+              >
+                Log In
+              </a>
+            </li>
+          )}
 
           {/* Department Affiliation - Expandable */}
           {profile?.department && (
@@ -139,6 +145,7 @@ MyAccountSidebar.propTypes = {
   finesLoading: PropTypes.bool,
   recalledCount: PropTypes.number,
   accountsFaqUrl: PropTypes.string,
+  isAuthenticated: PropTypes.bool,
 }
 
 export default MyAccountSidebar
