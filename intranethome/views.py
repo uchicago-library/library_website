@@ -1,7 +1,6 @@
 import json
 import re
 import os
-import pandas
 from functools import cmp_to_key
 from string import ascii_lowercase, ascii_uppercase
 from io import BytesIO
@@ -9,6 +8,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from django.core.files.base import ContentFile
 from wagtail.models import Site
+from .utils import handle_to_df, df_to_dict, df_to_list
 
 from base.wagtail_hooks import (
     get_required_groups,
@@ -21,7 +21,6 @@ from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponse
-from .utils import xlsx_to_json
 import json
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
@@ -322,15 +321,9 @@ def display_js(request):
         error_json = json.dumps(error_dict)
         return HttpResponse(error_json, status=400, content_type="application/json")
 
-    def gimme_the_rows(handle):
-        output = pandas.read_excel(handle, sheet_name="data1")
-        return output
-
-    def gimme_the_json(dataframe):
-        return { row[4]: [row[6], row[7]] for row in dataframe.values }
-
     with ags_xlsx.file.open() as f:
-        dataframe = gimme_the_rows(f)
-        ags_json = gimme_the_json(dataframe)
+        dataframe = handle_to_df(f)
+        ags_dict = df_to_dict(dataframe)
+        json_string = json.dumps(ags_dict)
 
-    return HttpResponse(json.dumps(ags_json), content_type="application/json")
+    return HttpResponse(json_string, content_type="application/json")
