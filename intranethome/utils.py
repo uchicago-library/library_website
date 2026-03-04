@@ -43,7 +43,7 @@ def handle_to_list(handle):
     return df_to_list(handle_to_df(handle))
 
 def document_model_to_doc(mod, title):
-    docs_by_name = D.objects.filter(title=title)
+    docs_by_name = mod.objects.filter(title=title)
     sort_em = sorted(
         docs_by_name,
         key=lambda doc: doc.created_at,

@@ -1,4 +1,3 @@
-import json
 import re
 import os
 from functools import cmp_to_key
@@ -8,7 +7,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from django.core.files.base import ContentFile
 from wagtail.models import Site
-from .utils import handle_to_list, handle_to_df, df_to_dict
+from .utils import handle_to_list, handle_to_df, df_to_dict, document_model_to_doc
 
 from base.wagtail_hooks import (
     get_required_groups,
@@ -30,6 +29,9 @@ from wagtail.documents import get_document_model
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from openpyxl import load_workbook
+
+# todo: move this into the config base.py
+AGS_SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -303,14 +305,13 @@ def ags_upload_page(request):
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
-    try:
-        D = get_document_model()
-        ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+    D = get_document_model()
+    doc = document_model_to_doc(D, AGS_SPREADSHEET_NAME)
 
-        with ags_xlsx.file.open() as f:
+    if doc:
+        with doc.file.open() as f:
             table_rows = handle_to_list(f)
-
-    except D.DoesNotExist:
+    else:
         table_rows = []
 
     if not has_permission(request.user, get_required_groups(loop_homepage)):
