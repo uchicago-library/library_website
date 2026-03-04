@@ -17,4 +17,44 @@
     </form>
 </div>
 
+{% if table_rows %}
+
+<h2>
+    The current AGS spreadsheet looks like this:
+</h2>
+
+<table>
+    <tr>
+	<th>
+	    PublicationName
+	</th>
+	<th>
+	    StandardNumber
+	</th>
+	<th>
+	    YearStart
+	</th>
+	<th>
+	    YearEnd
+	</th>
+    </tr>
+    {% for row in table_rows %}
+    <tr>
+	{% for entry in row %}
+	<td>
+	    {{ entry }}
+	</td>
+	{% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+
+<h2>
+    No AGS spreadsheet is currently uploaded.
+</h2>
+
+{% endif %}
+
 {% endblock %}

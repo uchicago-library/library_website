@@ -18,15 +18,25 @@ def handle_to_df(handle):
     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
     return output
 
+def project(dataframe):
+    try:
+        cols = dataframe[['PublicationName',
+                          'StandardNumber',
+                          'YearStart',
+                          'YearEnd']]
+        return cols
+    except KeyError:
+        return pd.DataFrame()
+
 def df_to_dict(dataframe):
-    return { row[4]: [row[6], row[7]] for row in dataframe.values }
+    cols = project(dataframe)
+    return { row["StandardNumber"] : [row["YearStart"], row["YearEnd"]]
+             for row in dataframe.to_dict('records') }
+    # return { row[4]: [row[6], row[7]] for row in dataframe.values }
 
 def df_to_list(dataframe):
-    cols = dataframe[['PublicationName',
-                      'StandardNumber',
-                      'YearStart',
-                      'YearEnd']]
+    cols = project(dataframe)
     return cols.values.tolist()
 
-def file_to_list():
-    pass
+def handle_to_list(handle):
+    return df_to_list(handle_to_df(handle))

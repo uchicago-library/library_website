@@ -8,7 +8,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from django.core.files.base import ContentFile
 from wagtail.models import Site
-from .utils import handle_to_df, df_to_dict, df_to_list
+from .utils import handle_to_list, handle_to_df, df_to_dict
 
 from base.wagtail_hooks import (
     get_required_groups,
@@ -303,11 +303,21 @@ def ags_upload_page(request):
 
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
+    try:
+        D = get_document_model()
+        ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+
+        with ags_xlsx.file.open() as f:
+            table_rows = handle_to_list(f)
+
+    except D.DoesNotExist:
+        table_rows = []
+
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
         template_path = "intranethome/ags_upload_page.html"
-        context = { "xlsx_data" : xlsx_data }
+        context = { "table_rows": table_rows }
         return TemplateResponse(request, template_path, context)
 
 
