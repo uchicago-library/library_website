@@ -12,35 +12,39 @@ def xlsx_to_df(data, sheet_name=DEFAULT_SHEET):
 def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
     return df_to_dict(xlsx_to_df(data, sheet_name))
 
+
 def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
     return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
+
 
 def handle_to_df(handle):
     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
     return output
 
-def project(dataframe):
-    try:
-        cols = dataframe[['PublicationName',
-                          'StandardNumber',
-                          'YearStart',
-                          'YearEnd']]
-        return cols
-    except KeyError:
-        return pd.DataFrame()
 
 def df_to_dict(dataframe):
-    # cols = project(dataframe)
-    return { row["StandardNumber"] : [row["YearStart"], row["YearEnd"]]
+    return { row["StandardNumber"]:
+             [ row["YearStart"], row["YearEnd"] ]
              for row in dataframe.to_dict('records') }
-    # return { row[4]: [row[6], row[7]] for row in dataframe.values }
+
 
 def df_to_list(dataframe):
+    def project(dataframe):
+        try:
+            cols = dataframe[['PublicationName',
+                              'StandardNumber',
+                              'YearStart',
+                              'YearEnd']]
+            return cols
+        except KeyError:
+            return pd.DataFrame()
     cols = project(dataframe)
     return cols.values.tolist()
 
+
 def handle_to_list(handle):
     return df_to_list(handle_to_df(handle))
+
 
 def document_model_to_doc(mod, title):
     docs_by_name = mod.objects.filter(title=title)
@@ -50,6 +54,6 @@ def document_model_to_doc(mod, title):
         reverse=True
     )
     if sort_em:
-        return sort_em[1]
+        return sort_em[0]
     else:
         return None
