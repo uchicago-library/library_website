@@ -63,7 +63,7 @@
     "react-dom": "^18.2.0",
     "react-select": "^5.10.2",
     "react-slugify": "^3.0.0",
-    "serialize-javascript": "^6.0.0",
+    "serialize-javascript": "^7.0.4",
     "set-value": "^4.1.0",
     "styled-components": "^5.3.6",
     "terser": "^5.16.1",
