@@ -454,7 +454,7 @@ class TestFormatLoan(TestCase):
 
 @override_settings(
     **FOLIO_SETTINGS,
-    FOLIO_SHORT_TERM_LOAN_POLICY_IDS=["short-policy-1"],
+    FOLIO_NON_RENEWABLE_LOAN_POLICY_IDS=["short-policy-1"],
 )
 class TestGetUserLoansCategorized(TestCase):
     """Tests for FOLIOService.get_user_loans_categorized."""
@@ -468,7 +468,9 @@ class TestGetUserLoansCategorized(TestCase):
 
     @patch.object(FOLIOService, "get_user_loans")
     @patch.object(FOLIOService, "get_user_by_cnetid")
-    def test_categorizes_standard_and_short_term(self, mock_get_user, mock_get_loans):
+    def test_categorizes_standard_and_non_renewable(
+        self, mock_get_user, mock_get_loans
+    ):
         mock_get_user.return_value = {"id": "uuid-1"}
         mock_get_loans.return_value = [
             {
@@ -481,17 +483,17 @@ class TestGetUserLoansCategorized(TestCase):
                 "id": "loan-2",
                 "loanPolicyId": "short-policy-1",
                 "dueDate": "2026-03-20T10:00:00+00:00",
-                "item": {"title": "Short Term Book"},
+                "item": {"title": "Non-Renewable Book"},
             },
         ]
 
         result = self.service.get_user_loans_categorized("testuser")
 
         self.assertEqual(len(result["standardLoans"]), 1)
-        self.assertEqual(len(result["shortTermLoans"]), 1)
+        self.assertEqual(len(result["nonRenewableLoans"]), 1)
         self.assertEqual(result["totalLoans"], 2)
         self.assertEqual(result["standardLoans"][0]["title"], "Standard Book")
-        self.assertEqual(result["shortTermLoans"][0]["title"], "Short Term Book")
+        self.assertEqual(result["nonRenewableLoans"][0]["title"], "Non-Renewable Book")
 
     @patch.object(FOLIOService, "get_user_loans")
     @patch.object(FOLIOService, "get_user_by_cnetid")
@@ -502,7 +504,7 @@ class TestGetUserLoansCategorized(TestCase):
         result = self.service.get_user_loans_categorized("testuser")
 
         self.assertEqual(result["standardLoans"], [])
-        self.assertEqual(result["shortTermLoans"], [])
+        self.assertEqual(result["nonRenewableLoans"], [])
         self.assertEqual(result["totalLoans"], 0)
 
     @patch("mylib_dashboard.services.folio.datetime")
@@ -545,6 +547,42 @@ class TestGetUserLoansCategorized(TestCase):
         self.assertEqual(result["overdueCount"], 1)
         self.assertEqual(result["recalledCount"], 1)
         self.assertEqual(result["dueSoonCount"], 1)
+
+    @patch("mylib_dashboard.services.folio.datetime")
+    @patch.object(FOLIOService, "get_user_loans")
+    @patch.object(FOLIOService, "get_user_by_cnetid")
+    def test_recalled_items_categorized_as_non_renewable(
+        self, mock_get_user, mock_get_loans, mock_datetime
+    ):
+        mock_datetime.now.return_value = datetime(
+            2026, 3, 15, 12, 0, tzinfo=timezone.utc
+        )
+        mock_datetime.fromisoformat = datetime.fromisoformat
+        mock_datetime.side_effect = lambda *a, **kw: datetime(*a, **kw)
+
+        mock_get_user.return_value = {"id": "uuid-1"}
+        mock_get_loans.return_value = [
+            {
+                "id": "loan-standard",
+                "loanPolicyId": "standard-policy",
+                "dueDate": "2026-06-01T10:00:00+00:00",
+                "item": {"title": "Standard Book"},
+            },
+            {
+                "id": "loan-recalled",
+                "loanPolicyId": "standard-policy",
+                "dueDate": "2026-04-01T10:00:00+00:00",
+                "action": "recallrequested",
+                "item": {"title": "Recalled Book"},
+            },
+        ]
+
+        result = self.service.get_user_loans_categorized("testuser")
+
+        self.assertEqual(len(result["standardLoans"]), 1)
+        self.assertEqual(result["standardLoans"][0]["title"], "Standard Book")
+        self.assertEqual(len(result["nonRenewableLoans"]), 1)
+        self.assertEqual(result["nonRenewableLoans"][0]["title"], "Recalled Book")
 
     @patch.object(FOLIOService, "get_user_loans")
     @patch.object(FOLIOService, "get_user_by_cnetid")
@@ -982,8 +1020,8 @@ class TestGetPagingRequests(TestCase):
 
         result = self.service.get_paging_requests("testuser")
 
-        self.assertEqual(result["requests"][0]["title"], "Older Request")
-        self.assertEqual(result["requests"][1]["title"], "Newer Request")
+        self.assertEqual(result["requests"][0]["title"], "Newer Request")
+        self.assertEqual(result["requests"][1]["title"], "Older Request")
 
 
 class TestGetFolioServiceLruCache(TestCase):

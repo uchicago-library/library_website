@@ -52,7 +52,7 @@ function CategoryCard({
   title,
   count,
   manageUrl = '',
-  manageLabel = 'View all and manage',
+  manageLabel = 'View all',
   maxItems = 0,
   isLoading = false,
   error = null,
@@ -74,10 +74,9 @@ function CategoryCard({
   const hasMore = remainingItems > 0
   const isEmpty = !isLoading && !error && totalItems === 0
 
-  // Show more handler - increment by the initial maxItems value
+  // Show more handler - always reveal 10 additional items regardless of initial limit
   const handleShowMore = () => {
-    const increment = maxItems || totalItems
-    setVisibleCount(prev => Math.min(prev + increment, totalItems))
+    setVisibleCount(prev => Math.min(prev + 10, totalItems))
   }
 
   // Determine content to render
@@ -105,7 +104,7 @@ function CategoryCard({
       </div>
       {manageUrl && (
         <a href={manageUrl} className="mylib-card__manage-link">
-          {manageLabel}
+          {manageLabel} <i className="fa fa-external-link" aria-hidden="true" />
         </a>
       )}
       <div className="mylib-card__content">{content}</div>
@@ -115,11 +114,8 @@ function CategoryCard({
           className="mylib-card__show-more"
           onClick={handleShowMore}
         >
-          + Show {Math.min(remainingItems, maxItems || remainingItems)} more
-          item
-          {Math.min(remainingItems, maxItems || remainingItems) !== 1
-            ? 's'
-            : ''}
+          + Show {Math.min(remainingItems, 10)} more item
+          {Math.min(remainingItems, 10) !== 1 ? 's' : ''}
         </button>
       )}
       {manageUrl && (
@@ -127,7 +123,7 @@ function CategoryCard({
           href={manageUrl}
           className="mylib-card__manage-link mylib-card__manage-link--bottom"
         >
-          {manageLabel}
+          {manageLabel} <i className="fa fa-external-link" aria-hidden="true" />
         </a>
       )}
     </div>

@@ -85,7 +85,7 @@ def profile(request):
 def loans(request):
     """
     Get user's checked out items (loans).
-    Returns: standardLoans, shortTermLoans arrays with status flags
+    Returns: standardLoans, nonRenewableLoans arrays with status flags
     """
     try:
         folio = get_folio_service()

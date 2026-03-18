@@ -32,8 +32,6 @@ const CONFIG = {
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
   // Max items to show per card (0 or empty = show all)
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
-  // ILLiad web interface URL for "Manage requests" links
-  illiadWebUrl: DOM_ELEMENT.getAttribute('data-illiad-web-url') || '',
   // LibCal web interface URL for "Manage reservations" links
   libcalWebUrl: DOM_ELEMENT.getAttribute('data-libcal-web-url') || '',
   // Whether the user has an active Shibboleth session
@@ -140,9 +138,25 @@ function Dashboard() {
               >
                 <div className="mylib-card-grid">
                   <CategoryCard
+                    title="Non-Renewable Loans"
+                    count={loansQuery.data?.nonRenewableLoans?.length || 0}
+                    manageUrl={CONFIG.catalogAccountUrl}
+                    manageLabel="View all and sort"
+                    maxItems={CONFIG.maxItemsPerCard}
+                    isLoading={loansQuery.isLoading}
+                    error={loansQuery.error?.message}
+                    onRetry={() => loansQuery.refetch()}
+                    emptyMessage="No non-renewable loans"
+                  >
+                    {loansQuery.data?.nonRenewableLoans?.map(loan => (
+                      <LoanItem key={loan.id} loan={loan} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
                     title="Standard Loans"
                     count={loansQuery.data?.standardLoans?.length || 0}
                     manageUrl={CONFIG.catalogAccountUrl}
+                    manageLabel="View all and sort"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={loansQuery.isLoading}
                     error={loansQuery.error?.message}
@@ -150,20 +164,6 @@ function Dashboard() {
                     emptyMessage="No standard loans"
                   >
                     {loansQuery.data?.standardLoans?.map(loan => (
-                      <LoanItem key={loan.id} loan={loan} />
-                    ))}
-                  </CategoryCard>
-                  <CategoryCard
-                    title="Short Term Loans"
-                    count={loansQuery.data?.shortTermLoans?.length || 0}
-                    manageUrl={CONFIG.catalogAccountUrl}
-                    maxItems={CONFIG.maxItemsPerCard}
-                    isLoading={loansQuery.isLoading}
-                    error={loansQuery.error?.message}
-                    onRetry={() => loansQuery.refetch()}
-                    emptyMessage="No short term loans"
-                  >
-                    {loansQuery.data?.shortTermLoans?.map(loan => (
                       <LoanItem key={loan.id} loan={loan} />
                     ))}
                   </CategoryCard>
@@ -196,8 +196,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Downloads"
                     count={downloadsQuery.data?.copies?.length || 0}
-                    manageUrl={CONFIG.illiadWebUrl}
-                    manageLabel="View all in ILLiad"
+                    manageUrl="https://requests.lib.uchicago.edu/illiad/illiad.dll?Action=10&Form=64"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={downloadsQuery.isLoading}
                     error={downloadsQuery.error?.message}
@@ -223,8 +222,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Interlibrary Loan (ILL)"
                     count={illInProcessQuery.data?.requests?.length || 0}
-                    manageUrl={CONFIG.illiadWebUrl}
-                    manageLabel="View all in ILLiad"
+                    manageUrl="https://requests.lib.uchicago.edu/illiad/illiad.dll?Action=10&Form=62"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={illInProcessQuery.isLoading}
                     error={illInProcessQuery.error?.message}
@@ -238,8 +236,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Scan & Deliver"
                     count={scanDeliverQuery.data?.requests?.length || 0}
-                    manageUrl={CONFIG.illiadWebUrl}
-                    manageLabel="View all in ILLiad"
+                    manageUrl="https://requests.lib.uchicago.edu/illiad/illiad.dll?Action=10&Form=62"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={scanDeliverQuery.isLoading}
                     error={scanDeliverQuery.error?.message}
@@ -280,8 +277,7 @@ function Dashboard() {
                     title="Room Reservations"
                     count={reservationsQuery.data?.reservations?.length || 0}
                     manageUrl={CONFIG.libcalWebUrl}
-                    manageLabel="Manage in LibCal"
-                    maxItems={CONFIG.maxItemsPerCard}
+                    manageLabel="Make a new reservation"
                     isLoading={reservationsQuery.isLoading}
                     error={reservationsQuery.error?.message}
                     onRetry={() => reservationsQuery.refetch()}
@@ -320,7 +316,7 @@ function Dashboard() {
                     title="Reading Room Reservations"
                     count={scSeatsQuery.data?.reservations?.length || 0}
                     manageUrl={CONFIG.libcalWebUrl}
-                    manageLabel="Manage in LibCal"
+                    manageLabel="Make a new reservation"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={scSeatsQuery.isLoading}
                     error={scSeatsQuery.error?.message}

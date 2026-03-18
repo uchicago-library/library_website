@@ -165,7 +165,7 @@ class TestLoansView(TestCase):
     def test_success(self, mock_get_svc):
         mock_get_svc.return_value.get_user_loans_categorized.return_value = {
             "standardLoans": [],
-            "shortTermLoans": [],
+            "nonRenewableLoans": [],
             "totalLoans": 0,
         }
         request = _make_request(self.factory, uid="testuser")

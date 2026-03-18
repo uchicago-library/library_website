@@ -24,7 +24,7 @@ function DownloadItem({ copy }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Download PDF
+          Download PDF <i className="fa fa-external-link" aria-hidden="true" />
         </a>
       )}
     </div>

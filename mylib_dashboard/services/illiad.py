@@ -5,7 +5,7 @@ Handles interlibrary loan and scan & deliver data retrieval from ILLiad.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import lru_cache
 
 import requests
@@ -151,8 +151,26 @@ class ILLiadService:
             "requestDate": self._parse_date(transaction.get("CreationDate")),
             "transactionDate": self._parse_date(transaction.get("TransactionDate")),
             "downloadUrl": self._build_download_url(transaction),
-            "dueDate": self._parse_date(transaction.get("DueDate")),
+            "dueDate": self._compute_expiration(transaction),
         }
+
+    def _compute_expiration(self, transaction):
+        """Compute expiration date as 30 days from TransactionDate.
+
+        ILLiad does not return an expiration date in the API for
+        'Delivered to Web' items, but the web interface shows one
+        calculated as TransactionDate + 30 days.
+        """
+        date_str = transaction.get("TransactionDate")
+        if not date_str:
+            return None
+        try:
+            dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+            expiration = dt + timedelta(days=30)
+            return expiration.isoformat()
+        except (ValueError, AttributeError):
+            logger.warning(f"Could not compute expiration from: {date_str}")
+            return None
 
     def _format_loan_request(self, transaction):
         """

@@ -39,6 +39,10 @@ $background-light: #f5f5f5;
 
   &__main {
     min-width: 0;
+
+    @media (max-width: 768px) {
+      order: -1;
+    }
   }
 
   &__panels {
@@ -518,18 +522,18 @@ $background-light: #f5f5f5;
     font-size: 0.875rem;
 
     &--recalled {
-      background: $danger-color;
-      color: white;
+      background: lighten($danger-color, 35%);
+      color: darken($danger-color, 15%);
     }
 
     &--overdue {
-      background: $warning-color;
-      color: white;
+      background: lighten($warning-color, 30%);
+      color: darken($warning-color, 25%);
     }
 
     &--due-soon {
-      background: $info-color;
-      color: white;
+      background: lighten($info-color, 30%);
+      color: darken($info-color, 25%);
     }
 
     &--info {
@@ -550,6 +554,7 @@ $background-light: #f5f5f5;
 
   &__due {
     color: $text-muted;
+    font-style: italic;
   }
 
   &__location {
@@ -559,6 +564,7 @@ $background-light: #f5f5f5;
 
   &__pickup-by {
     color: $text-muted;
+    font-style: italic;
   }
 
   &__source {
@@ -569,13 +575,18 @@ $background-light: #f5f5f5;
 
   &__request-date {
     color: $text-muted;
-    font-size: 0.875rem;
+    font-style: italic;
   }
 
   &__available-until {
     color: $text-muted;
-    font-size: 0.875rem;
+    font-style: italic;
     margin-bottom: 0.5rem;
+  }
+
+  &__scheduled-date {
+    color: $text-muted;
+    font-style: italic;
   }
 
   &__download-link {

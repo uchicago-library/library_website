@@ -338,7 +338,7 @@ class FOLIOService:
 
     def get_user_loans_categorized(self, cnetid):
         """
-        Get user's loans categorized as standard or short-term.
+        Get user's loans categorized as standard or non-renewable.
 
         Args:
             cnetid: The user's CNetID
@@ -346,7 +346,7 @@ class FOLIOService:
         Returns:
             dict: {
                 "standardLoans": [...],
-                "shortTermLoans": [...],
+                "nonRenewableLoans": [...],
                 "totalLoans": int,
                 "recalledCount": int,
                 "overdueCount": int,
@@ -363,20 +363,20 @@ class FOLIOService:
         if not loans:
             return {
                 "standardLoans": [],
-                "shortTermLoans": [],
+                "nonRenewableLoans": [],
                 "totalLoans": 0,
                 "recalledCount": 0,
                 "overdueCount": 0,
                 "dueSoonCount": 0,
             }
 
-        # Get short-term policy IDs from settings
-        short_term_policy_ids = set(
-            getattr(settings, "FOLIO_SHORT_TERM_LOAN_POLICY_IDS", [])
+        # Get non-renewable policy IDs from settings
+        non_renewable_policy_ids = set(
+            getattr(settings, "FOLIO_NON_RENEWABLE_LOAN_POLICY_IDS", [])
         )
 
         standard_loans = []
-        short_term_loans = []
+        non_renewable_loans = []
         recalled_count = 0
         overdue_count = 0
         due_soon_count = 0
@@ -394,20 +394,27 @@ class FOLIOService:
             if status["isDueSoon"]:
                 due_soon_count += 1
 
-            # Categorize by policy ID
+            # Categorize: recalled items and non-renewable policies go to
+            # non-renewable; everything else is standard
             loan_policy_id = loan.get("loanPolicyId")
-            if short_term_policy_ids and loan_policy_id in short_term_policy_ids:
-                short_term_loans.append(formatted_loan)
+            if status["isRecalled"] or (
+                non_renewable_policy_ids and loan_policy_id in non_renewable_policy_ids
+            ):
+                non_renewable_loans.append(formatted_loan)
             else:
                 standard_loans.append(formatted_loan)
 
-        # Sort by due date (soonest first)
-        standard_loans.sort(key=lambda loan: loan.get("dueDate"))
-        short_term_loans.sort(key=lambda loan: loan.get("dueDate"))
+        # Sort by due date (soonest first), then alphabetically by title
+        standard_loans.sort(
+            key=lambda loan: (loan.get("dueDate"), loan.get("title", "").lower())
+        )
+        non_renewable_loans.sort(
+            key=lambda loan: (loan.get("dueDate"), loan.get("title", "").lower())
+        )
 
         return {
             "standardLoans": standard_loans,
-            "shortTermLoans": short_term_loans,
+            "nonRenewableLoans": non_renewable_loans,
             "totalLoans": len(loans),
             "recalledCount": recalled_count,
             "overdueCount": overdue_count,
@@ -692,8 +699,8 @@ class FOLIOService:
                 }
             )
 
-        # Sort by request date (oldest first)
-        paging_requests.sort(key=lambda r: r.get("requestDate") or "")
+        # Sort by request date (newest first)
+        paging_requests.sort(key=lambda r: r.get("requestDate") or "", reverse=True)
 
         return {
             "requests": paging_requests,

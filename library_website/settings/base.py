@@ -541,8 +541,8 @@ FOLIO_TYPE_ISBN_ID = "8261054f-be78-422d-bd51-4ed9f33c3422"
 FOLIO_TYPE_ISSN_ID = "913300b2-03ed-469a-8179-c1092c991227"
 FOLIO_TYPE_LINKING_ISSN_ID = "5860f255-a27f-4916-a830-262aa900a6b9"
 
-# Loan policy IDs that are considered "short-term" (e.g., TechBar, room keys)
-FOLIO_SHORT_TERM_LOAN_POLICY_IDS = [
+# Loan policy IDs that are considered "non-renewable" (e.g., TechBar, room keys)
+FOLIO_NON_RENEWABLE_LOAN_POLICY_IDS = [
     "a1e26512-ba2e-4690-a0cf-12b6988e4ae7",  # 21daynorenew
     "866c672e-1433-40da-9794-71d831ce7501",  # 7daynrdll
     "4503ab2c-0b5b-46f9-8366-95fa4924af78",  # 7dayrenew
