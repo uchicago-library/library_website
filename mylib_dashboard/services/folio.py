@@ -639,10 +639,10 @@ class FOLIOService:
 
     def get_paging_requests(self, cnetid):
         """
-        Get all paging requests for a user.
+        Get all paging and hold requests for a user.
 
         These are FOLIO Page requests for items being retrieved from
-        stacks or storage.
+        stacks or storage, and Hold requests for items not yet available.
 
         Args:
             cnetid: The user's CNetID
@@ -660,12 +660,12 @@ class FOLIOService:
         service_points = self.get_service_points()
         locations = self.get_locations()
 
-        # Query for open page requests (not yet filled)
+        # Query for open page and hold requests (not yet filled)
         endpoint = (
             f"/request-storage/requests?query="
             f"requesterId=={user_uuid}"
             f"%20and%20status==%22Open%20-%20Not%20yet%20filled%22"
-            f"%20and%20requestType==Page"
+            f"%20and%20(requestType==Page%20or%20requestType==Hold)"
             f"&limit=1000"
         )
         data = self._request("GET", endpoint)

@@ -1023,6 +1023,49 @@ class TestGetPagingRequests(TestCase):
         self.assertEqual(result["requests"][0]["title"], "Newer Request")
         self.assertEqual(result["requests"][1]["title"], "Older Request")
 
+    @patch.object(FOLIOService, "get_locations")
+    @patch.object(FOLIOService, "get_service_points")
+    @patch.object(FOLIOService, "_request")
+    @patch.object(FOLIOService, "get_user_by_cnetid")
+    def test_includes_hold_requests(
+        self, mock_get_user, mock_request, mock_sp, mock_loc
+    ):
+        mock_get_user.return_value = {"id": "uuid-1"}
+        mock_sp.return_value = {"sp-1": "Regenstein Circ Desk"}
+        mock_loc.return_value = {
+            "loc-1": {"name": "Regenstein Stacks", "code": "reg", "libraryId": "lib-1"}
+        }
+        mock_request.return_value = {
+            "requests": [
+                {
+                    "id": "page-1",
+                    "instance": {"title": "Paged Book"},
+                    "item": {"callNumber": "QA76.73", "locationId": "loc-1"},
+                    "pickupServicePointId": "sp-1",
+                    "requestType": "Page",
+                    "requestDate": "2026-03-10",
+                    "status": "Open - Not yet filled",
+                },
+                {
+                    "id": "hold-1",
+                    "instance": {"title": "Held Book"},
+                    "item": {"callNumber": "PR6045", "locationId": "loc-1"},
+                    "pickupServicePointId": "sp-1",
+                    "requestType": "Hold",
+                    "requestDate": "2026-03-12",
+                    "status": "Open - Not yet filled",
+                },
+            ]
+        }
+
+        result = self.service.get_paging_requests("testuser")
+
+        self.assertEqual(len(result["requests"]), 2)
+        self.assertEqual(result["totalRequests"], 2)
+        # Sorted by request date newest first
+        self.assertEqual(result["requests"][0]["title"], "Held Book")
+        self.assertEqual(result["requests"][1]["title"], "Paged Book")
+
 
 class TestGetFolioServiceLruCache(TestCase):
     """Tests for get_folio_service LRU cache."""
