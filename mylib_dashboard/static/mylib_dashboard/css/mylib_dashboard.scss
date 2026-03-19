@@ -307,7 +307,6 @@ $background-light: #f5f5f5;
   }
 
   &__link {
-    color: $primary-color;
     text-decoration: none;
 
     &:hover {
@@ -400,7 +399,6 @@ $background-light: #f5f5f5;
 
   &__manage-link {
     display: block;
-    color: $primary-color;
     text-decoration: none;
 
     &:hover {
