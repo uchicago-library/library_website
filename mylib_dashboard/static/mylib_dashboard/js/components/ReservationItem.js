@@ -31,7 +31,8 @@ function formatTime(dateString) {
 }
 
 function ReservationItem({ reservation }) {
-  const { roomName, locationName, startTime, endTime, status } = reservation
+  const { roomName, locationName, startTime, endTime, status, checkInCode } =
+    reservation
 
   return (
     <div className="mylib-item">
@@ -45,6 +46,18 @@ function ReservationItem({ reservation }) {
       {status && status !== 'Confirmed' && (
         <div className="mylib-item__status">{status}</div>
       )}
+      {checkInCode && (
+        <div className="mylib-item__check-in">
+          <a
+            href="https://rooms.lib.uchicago.edu/r/checkin"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Check in
+          </a>{' '}
+          with code: <strong>{checkInCode}</strong>
+        </div>
+      )}
     </div>
   )
 }
@@ -57,6 +70,7 @@ ReservationItem.propTypes = {
     startTime: PropTypes.string.isRequired,
     endTime: PropTypes.string.isRequired,
     status: PropTypes.string,
+    checkInCode: PropTypes.string,
   }).isRequired,
 }
 
