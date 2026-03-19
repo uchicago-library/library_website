@@ -508,6 +508,10 @@ $background-light: #f5f5f5;
     border-bottom: none;
   }
 
+  &--cancelled {
+    opacity: 0.6;
+  }
+
   &__status {
     margin-bottom: 0.25rem;
   }
@@ -537,6 +541,11 @@ $background-light: #f5f5f5;
     &--info {
       background: lighten($info-color, 25%);
       color: darken($info-color, 30%);
+    }
+
+    &--cancelled {
+      background: lighten($text-muted, 40%);
+      color: darken($text-muted, 15%);
     }
   }
 

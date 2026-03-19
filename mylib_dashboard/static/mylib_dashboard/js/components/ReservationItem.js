@@ -34,8 +34,10 @@ function ReservationItem({ reservation }) {
   const { roomName, locationName, startTime, endTime, status, checkInCode } =
     reservation
 
+  const isCancelled = status && status.toLowerCase().includes('cancelled')
+
   return (
-    <div className="mylib-item">
+    <div className={`mylib-item${isCancelled ? ' mylib-item--cancelled' : ''}`}>
       <div className="mylib-item__title">{roomName}</div>
       {locationName && (
         <div className="mylib-item__location">{locationName}</div>
@@ -44,9 +46,16 @@ function ReservationItem({ reservation }) {
         Booked for {formatDateTime(startTime)} - {formatTime(endTime)}
       </div>
       {status && status !== 'Confirmed' && (
-        <div className="mylib-item__status">{status}</div>
+        <div className="mylib-item__status">
+          {isCancelled && (
+            <span className="mylib-item__badge mylib-item__badge--cancelled">
+              Cancelled
+            </span>
+          )}
+          {!isCancelled && status}
+        </div>
       )}
-      {checkInCode && (
+      {checkInCode && !isCancelled && (
         <div className="mylib-item__check-in">
           <a
             href="https://rooms.lib.uchicago.edu/r/checkin"
