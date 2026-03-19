@@ -313,6 +313,245 @@ class TestGetSpecialCollectionsSeats(TestCase):
         self.assertEqual(result["totalReservations"], 0)
 
 
+@override_settings(**LIBCAL_SETTINGS)
+class TestGetAppointmentUsers(TestCase):
+    """Tests for LibCalService.get_appointment_users."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.service = LibCalService()
+
+    def setUp(self):
+        cache.clear()
+
+    @patch.object(LibCalService, "_request")
+    def test_fetches_and_caches_users(self, mock_request):
+        mock_request.return_value = [
+            {
+                "id": 1,
+                "first_name": "Justin",
+                "last_name": "Time",
+                "email": "jt@lib.edu",
+            },
+            {
+                "id": 2,
+                "first_name": "Paige",
+                "last_name": "Turner",
+                "email": "pt@lib.edu",
+            },
+        ]
+
+        result = self.service.get_appointment_users()
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[1]["firstName"], "Justin")
+        self.assertEqual(result[2]["lastName"], "Turner")
+        mock_request.assert_called_once_with("/appointments/users")
+
+    @patch("mylib_dashboard.services.libcal.cache")
+    @patch.object(LibCalService, "_request")
+    def test_returns_cached_on_second_call(self, mock_request, mock_cache):
+        cached_users = {
+            1: {"firstName": "Justin", "lastName": "Time", "email": "jt@lib.edu"}
+        }
+
+        # First call: cache miss
+        mock_cache.get.return_value = None
+        mock_request.return_value = [
+            {
+                "id": 1,
+                "first_name": "Justin",
+                "last_name": "Time",
+                "email": "jt@lib.edu",
+            },
+        ]
+        self.service.get_appointment_users()
+
+        # Second call: cache hit
+        mock_cache.get.return_value = cached_users
+        result = self.service.get_appointment_users()
+
+        self.assertEqual(result, cached_users)
+        mock_request.assert_called_once()
+
+    @patch.object(LibCalService, "_request")
+    def test_handles_non_list_response(self, mock_request):
+        mock_request.return_value = {"error": "something"}
+
+        result = self.service.get_appointment_users()
+
+        self.assertEqual(result, {})
+
+
+@override_settings(**LIBCAL_SETTINGS)
+class TestFormatAppointment(TestCase):
+    """Tests for LibCalService._format_appointment."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.service = LibCalService()
+
+    def test_formats_appointment_with_librarian(self):
+        appointment = {
+            "id": 9001,
+            "fromDate": "2026-03-20T14:00:00",
+            "toDate": "2026-03-20T15:00:00",
+            "location": "Regenstein Library, Room 301",
+            "group": "Research Help",
+            "directions": "3rd floor, turn left",
+            "userId": 1,
+        }
+        users = {1: {"firstName": "Justin", "lastName": "Time", "email": "jt@lib.edu"}}
+
+        result = self.service._format_appointment(appointment, users)
+
+        self.assertEqual(result["id"], "9001")
+        self.assertEqual(result["startTime"], "2026-03-20T14:00:00")
+        self.assertEqual(result["endTime"], "2026-03-20T15:00:00")
+        self.assertEqual(result["location"], "Regenstein Library, Room 301")
+        self.assertEqual(result["group"], "Research Help")
+        self.assertEqual(result["directions"], "3rd floor, turn left")
+        self.assertEqual(result["librarianName"], "Justin Time")
+
+    def test_formats_appointment_without_users(self):
+        appointment = {
+            "id": 9002,
+            "fromDate": "2026-03-21T10:00:00",
+            "toDate": "2026-03-21T11:00:00",
+            "location": "Harper Library",
+            "userId": 99,
+        }
+
+        result = self.service._format_appointment(appointment)
+
+        self.assertEqual(result["librarianName"], "")
+
+    def test_formats_appointment_with_unknown_user(self):
+        appointment = {
+            "id": 9003,
+            "fromDate": "2026-03-22T09:00:00",
+            "toDate": "2026-03-22T10:00:00",
+            "userId": 999,
+        }
+        users = {1: {"firstName": "Justin", "lastName": "Time", "email": "jt@lib.edu"}}
+
+        result = self.service._format_appointment(appointment, users)
+
+        self.assertEqual(result["librarianName"], "")
+
+
+@override_settings(**LIBCAL_SETTINGS)
+class TestGetAppointments(TestCase):
+    """Tests for LibCalService.get_appointments."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.service = LibCalService()
+
+    def setUp(self):
+        cache.clear()
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_fetches_and_formats_appointments(self, mock_request, mock_users):
+        mock_request.return_value = [
+            {
+                "id": 1,
+                "fromDate": "2026-03-20T14:00:00",
+                "toDate": "2026-03-20T15:00:00",
+                "location": "Reg 301",
+                "group": "Research Help",
+                "userId": 1,
+            },
+        ]
+        mock_users.return_value = {
+            1: {"firstName": "Justin", "lastName": "Time", "email": "jt@lib.edu"},
+        }
+
+        result = self.service.get_appointments("user@uchicago.edu")
+
+        self.assertEqual(len(result["appointments"]), 1)
+        self.assertEqual(result["totalAppointments"], 1)
+        self.assertEqual(result["appointments"][0]["librarianName"], "Justin Time")
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_sorts_by_start_time(self, mock_request, mock_users):
+        mock_request.return_value = [
+            {
+                "id": 2,
+                "fromDate": "2026-03-21T14:00:00",
+                "toDate": "2026-03-21T15:00:00",
+            },
+            {
+                "id": 1,
+                "fromDate": "2026-03-20T10:00:00",
+                "toDate": "2026-03-20T11:00:00",
+            },
+        ]
+        mock_users.return_value = {}
+
+        result = self.service.get_appointments("user@uchicago.edu")
+
+        self.assertEqual(result["appointments"][0]["id"], "1")
+        self.assertEqual(result["appointments"][1]["id"], "2")
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_handles_non_list_response(self, mock_request, mock_users):
+        mock_request.return_value = {"error": "something"}
+        mock_users.return_value = {}
+
+        with self.assertLogs("mylib_dashboard.services.libcal", level="WARNING"):
+            result = self.service.get_appointments("user@uchicago.edu")
+
+        self.assertEqual(result["appointments"], [])
+        self.assertEqual(result["totalAppointments"], 0)
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_handles_user_fetch_error(self, mock_request, mock_users):
+        mock_request.return_value = [
+            {
+                "id": 1,
+                "fromDate": "2026-03-20T14:00:00",
+                "toDate": "2026-03-20T15:00:00",
+                "userId": 1,
+            },
+        ]
+        mock_users.side_effect = LibCalError("user fetch failed")
+
+        with self.assertLogs("mylib_dashboard.services.libcal", level="WARNING"):
+            result = self.service.get_appointments("user@uchicago.edu")
+
+        self.assertEqual(len(result["appointments"]), 1)
+        self.assertEqual(result["appointments"][0]["librarianName"], "")
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_empty_appointments(self, mock_request, mock_users):
+        mock_request.return_value = []
+        mock_users.return_value = {}
+
+        result = self.service.get_appointments("user@uchicago.edu")
+
+        self.assertEqual(result["appointments"], [])
+        self.assertEqual(result["totalAppointments"], 0)
+
+    @patch.object(LibCalService, "get_appointment_users")
+    @patch.object(LibCalService, "_request")
+    def test_passes_correct_params(self, mock_request, mock_users):
+        mock_request.return_value = []
+        mock_users.return_value = {}
+
+        self.service.get_appointments("user@uchicago.edu", days=30)
+
+        mock_request.assert_called_once_with(
+            "/appointments/bookings",
+            {"email": "user@uchicago.edu", "days": 30, "include_cancellations": 1},
+        )
+
+
 class TestGetLibcalServiceLruCache(TestCase):
     """Tests for get_libcal_service LRU cache."""
 

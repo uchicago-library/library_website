@@ -31,6 +31,7 @@ export function useTabCounts(
   illInProcessData,
   scanDeliverData,
   reservationsData,
+  appointmentsData,
   pagingRequestsData,
   scSeatsData,
   scMaterialsData
@@ -45,8 +46,10 @@ export function useTabCounts(
       (illInProcessData?.totalRequests || 0) +
       (scanDeliverData?.totalRequests || 0) +
       (pagingRequestsData?.totalRequests || 0)
-    // Room Reservations from LibCal
-    const roomReservationsCount = reservationsData?.totalReservations || 0
+    // Room Reservations + Appointments from LibCal
+    const roomReservationsCount =
+      (reservationsData?.totalReservations || 0) +
+      (appointmentsData?.totalAppointments || 0)
     // Special Collections: LibCal seats + Aeon material requests
     const specialCollectionsCount =
       (scSeatsData?.totalReservations || 0) + (scMaterialsData?.totalRequests || 0)
@@ -65,6 +68,7 @@ export function useTabCounts(
     illInProcessData,
     scanDeliverData,
     reservationsData,
+    appointmentsData,
     pagingRequestsData,
     scSeatsData,
     scMaterialsData,

@@ -15,6 +15,7 @@ from mylib_dashboard.services.illiad import ILLiadError, get_illiad_service
 from mylib_dashboard.services.libcal import LibCalError, get_libcal_service
 from mylib_dashboard.views import (
     account_blocks,
+    appointments,
     downloads,
     fines,
     holds,
@@ -491,6 +492,48 @@ class TestReservationsView(TestCase):
 
         with self.assertLogs("mylib_dashboard.views", level="ERROR"):
             response = reservations(request)
+        self.assertEqual(response.status_code, 503)
+
+
+@override_settings(**VIEW_SETTINGS)
+class TestAppointmentsView(TestCase):
+    """Tests for the appointments view."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+
+    def setUp(self):
+        get_libcal_service.cache_clear()
+
+    @patch("mylib_dashboard.views.get_libcal_service")
+    def test_success(self, mock_get_svc):
+        mock_get_svc.return_value.get_appointments.return_value = {
+            "appointments": [{"id": "1", "group": "Research Help"}],
+            "totalAppointments": 1,
+        }
+        request = _make_request(self.factory, email="user@uchicago.edu")
+
+        response = appointments(request)
+
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data["totalAppointments"], 1)
+
+    def test_requires_email(self):
+        request = _make_request(self.factory)
+
+        with self.assertLogs("mylib_dashboard.views", level="WARNING"):
+            response = appointments(request)
+        self.assertEqual(response.status_code, 400)
+
+    @patch("mylib_dashboard.views.get_libcal_service")
+    def test_service_error(self, mock_get_svc):
+        mock_get_svc.return_value.get_appointments.side_effect = LibCalError("fail")
+        request = _make_request(self.factory, email="user@uchicago.edu")
+
+        with self.assertLogs("mylib_dashboard.views", level="ERROR"):
+            response = appointments(request)
         self.assertEqual(response.status_code, 503)
 
 

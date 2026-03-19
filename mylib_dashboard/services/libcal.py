@@ -1,7 +1,8 @@
 """
 LibCal API Service for MyLib Dashboard.
 
-Handles room reservations and Special Collections reading room seat data retrieval.
+Handles room reservations, Special Collections reading room seats,
+and appointment data retrieval.
 """
 
 import logging
@@ -37,6 +38,10 @@ class LibCalService:
     TOKEN_CACHE_KEY = "libcal_access_token"
     # Cache token for 55 minutes (token expires in 60 minutes)
     TOKEN_CACHE_TTL = 55 * 60
+
+    APPOINTMENT_USERS_CACHE_KEY = "libcal_appointment_users"
+    # Cache appointment users for 24 hours
+    APPOINTMENT_USERS_CACHE_TTL = 24 * 60 * 60
 
     def __init__(self):
         self.base_url = getattr(settings, "LIBCAL_API_BASE_URL", "").rstrip("/")
@@ -252,6 +257,114 @@ class LibCalService:
         return {
             "reservations": reservations,
             "totalReservations": len(reservations),
+        }
+
+    def get_appointment_users(self):
+        """
+        Fetch appointment users (librarians) from LibCal.
+
+        Results are cached for 24 hours since librarian info rarely changes.
+
+        Returns:
+            dict: Mapping of userId (int) → {firstName, lastName, email}
+        """
+        cached = cache.get(self.APPOINTMENT_USERS_CACHE_KEY)
+        if cached is not None:
+            return cached
+
+        data = self._request("/appointments/users")
+
+        # Build lookup dict from the list of user objects
+        # API returns snake_case fields: id, first_name, last_name, email
+        users = {}
+        if isinstance(data, list):
+            for user in data:
+                user_id = user.get("id")
+                if user_id is not None:
+                    users[user_id] = {
+                        "firstName": user.get("first_name", ""),
+                        "lastName": user.get("last_name", ""),
+                        "email": user.get("email", ""),
+                    }
+
+        cache.set(
+            self.APPOINTMENT_USERS_CACHE_KEY, users, self.APPOINTMENT_USERS_CACHE_TTL
+        )
+        return users
+
+    def _format_appointment(self, appointment, users=None):
+        """
+        Format an appointment booking for the frontend.
+
+        Args:
+            appointment: The appointment object from LibCal
+            users: Optional dict of userId → user info for librarian name lookup
+
+        Returns:
+            dict: Formatted appointment data
+        """
+        librarian_name = ""
+        user_id = appointment.get("userId")
+        if users and user_id in users:
+            user = users[user_id]
+            first = user.get("firstName", "")
+            last = user.get("lastName", "")
+            librarian_name = f"{first} {last}".strip()
+
+        return {
+            "id": str(appointment.get("id", "")),
+            "startTime": appointment.get("fromDate", ""),
+            "endTime": appointment.get("toDate", ""),
+            "location": appointment.get("location", ""),
+            "group": appointment.get("group", ""),
+            "directions": appointment.get("directions", ""),
+            "librarianName": librarian_name,
+        }
+
+    def get_appointments(self, email, days=90):
+        """
+        Get appointments for a user by email.
+
+        Args:
+            email: The user's email address
+            days: Number of days to look ahead (default 90)
+
+        Returns:
+            dict: {
+                "appointments": [...],
+                "totalAppointments": int,
+            }
+        """
+        endpoint = "/appointments/bookings"
+        params = {
+            "email": email,
+            "days": days,
+            "include_cancellations": 1,
+        }
+
+        data = self._request(endpoint, params)
+
+        # Ensure we have a list
+        if not isinstance(data, list):
+            logger.warning(
+                f"Unexpected LibCal appointments response type: {type(data)}"
+            )
+            data = []
+
+        # Fetch librarian user info for name enrichment
+        try:
+            users = self.get_appointment_users()
+        except LibCalError:
+            logger.warning("Could not fetch appointment users for name enrichment")
+            users = {}
+
+        # Format and sort by start time
+        appointments = [self._format_appointment(a, users) for a in data]
+        appointments.sort(key=lambda a: a.get("startTime") or "")
+
+        return {
+            "appointments": appointments,
+            "totalAppointments": len(appointments),
         }
 
 

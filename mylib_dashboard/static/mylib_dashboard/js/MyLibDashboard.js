@@ -18,6 +18,7 @@ import {
   ILLRequestItem,
   ScanDeliverItem,
   ReservationItem,
+  AppointmentItem,
   PagingRequestItem,
   ScMaterialItem,
 } from './components'
@@ -73,6 +74,7 @@ function Dashboard() {
 
   // Fetch all data - LibCal
   const reservationsQuery = useQuery({ queryKey: ['reservations'], queryFn: api.fetchReservations })
+  const appointmentsQuery = useQuery({ queryKey: ['appointments'], queryFn: api.fetchAppointments })
   const scSeatsQuery = useQuery({ queryKey: ['scSeats'], queryFn: api.fetchScSeats })
 
   // Fetch all data - FOLIO paging requests
@@ -90,6 +92,7 @@ function Dashboard() {
     illInProcessQuery.data,
     scanDeliverQuery.data,
     reservationsQuery.data,
+    appointmentsQuery.data,
     pagingRequestsQuery.data,
     scSeatsQuery.data,
     scMaterialsQuery.data
@@ -285,6 +288,20 @@ function Dashboard() {
                   >
                     {reservationsQuery.data?.reservations?.map(reservation => (
                       <ReservationItem key={reservation.id} reservation={reservation} />
+                    ))}
+                  </CategoryCard>
+                  <CategoryCard
+                    title="Appointments"
+                    count={appointmentsQuery.data?.appointments?.length || 0}
+                    manageUrl="/about/directory/?view=staff&subject=All+Subject+Specialists"
+                    manageLabel="Schedule appointment"
+                    isLoading={appointmentsQuery.isLoading}
+                    error={appointmentsQuery.error?.message}
+                    onRetry={() => appointmentsQuery.refetch()}
+                    emptyMessage="No upcoming appointments"
+                  >
+                    {appointmentsQuery.data?.appointments?.map(appointment => (
+                      <AppointmentItem key={appointment.id} appointment={appointment} />
                     ))}
                   </CategoryCard>
                 </div>

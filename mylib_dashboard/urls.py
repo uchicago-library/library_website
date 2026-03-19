@@ -25,6 +25,7 @@ urlpatterns = [
     ),
     # LibCal endpoints
     path("reservations/", views.reservations, name="reservations"),
+    path("appointments/", views.appointments, name="appointments"),
     path("special-collections/seats/", views.sc_seats, name="sc_seats"),
     # Paging requests (items being retrieved from stacks/storage)
     path("paging-requests/", views.paging_requests, name="paging_requests"),

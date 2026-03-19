@@ -252,6 +252,22 @@ def reservations(request):
 
 @require_http_methods(["GET"])
 @require_email
+def appointments(request):
+    """
+    Get user's upcoming appointments.
+    Returns: appointments array with librarian name, location, times, etc.
+    """
+    try:
+        libcal = get_libcal_service()
+        appointments_data = libcal.get_appointments(request.email)
+        return JsonResponse(appointments_data)
+    except LibCalError as e:
+        logger.error(f"LibCal error fetching appointments for {request.email}: {e}")
+        return JsonResponse({"error": "Unable to retrieve appointments"}, status=503)
+
+
+@require_http_methods(["GET"])
+@require_email
 def sc_seats(request):
     """
     Get user's Special Collections reading room seat reservations.

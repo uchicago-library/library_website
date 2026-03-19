@@ -34,6 +34,7 @@ export default function createApi(baseUrl) {
     fetchScanDeliverInProcess: () => fetchJson(`${baseUrl}/scan-deliver-in-process/`),
     // LibCal endpoints
     fetchReservations: () => fetchJson(`${baseUrl}/reservations/`),
+    fetchAppointments: () => fetchJson(`${baseUrl}/appointments/`),
     fetchScSeats: () => fetchJson(`${baseUrl}/special-collections/seats/`),
     // Aeon endpoints
     fetchScMaterials: () => fetchJson(`${baseUrl}/special-collections/materials/`),
