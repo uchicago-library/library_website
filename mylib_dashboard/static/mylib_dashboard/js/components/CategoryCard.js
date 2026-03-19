@@ -79,6 +79,9 @@ function CategoryCard({
     setVisibleCount(prev => Math.min(prev + 10, totalItems))
   }
 
+  // Check if manage link points to an external site
+  const isExternal = manageUrl && /^https?:\/\//.test(manageUrl)
+
   // Determine content to render
   let content
   if (isLoading) {
@@ -103,8 +106,16 @@ function CategoryCard({
         )}
       </div>
       {manageUrl && (
-        <a href={manageUrl} className="mylib-card__manage-link">
-          {manageLabel} <i className="fa fa-external-link" aria-hidden="true" />
+        <a
+          href={manageUrl}
+          className="mylib-card__manage-link"
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+        >
+          {manageLabel}{' '}
+          {isExternal && (
+            <i className="fa fa-external-link" aria-hidden="true" />
+          )}
         </a>
       )}
       <div className="mylib-card__content">{content}</div>
@@ -122,8 +133,13 @@ function CategoryCard({
         <a
           href={manageUrl}
           className="mylib-card__manage-link mylib-card__manage-link--bottom"
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
         >
-          {manageLabel} <i className="fa fa-external-link" aria-hidden="true" />
+          {manageLabel}{' '}
+          {isExternal && (
+            <i className="fa fa-external-link" aria-hidden="true" />
+          )}
         </a>
       )}
     </div>

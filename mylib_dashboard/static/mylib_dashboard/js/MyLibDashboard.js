@@ -33,7 +33,7 @@ const CONFIG = {
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
   // Max items to show per card (0 or empty = show all)
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
-  // LibCal web interface URL for "Manage reservations" links
+  // LibCal web interface base URL
   libcalWebUrl: DOM_ELEMENT.getAttribute('data-libcal-web-url') || '',
   // Whether the user has an active Shibboleth session
   isAuthenticated: DOM_ELEMENT.getAttribute('data-is-authenticated') === 'true',
@@ -279,7 +279,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Room Reservations"
                     count={reservationsQuery.data?.reservations?.length || 0}
-                    manageUrl={CONFIG.libcalWebUrl}
+                    manageUrl="/spaces/"
                     manageLabel="Make a new reservation"
                     isLoading={reservationsQuery.isLoading}
                     error={reservationsQuery.error?.message}
@@ -332,7 +332,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Reading Room Reservations"
                     count={scSeatsQuery.data?.reservations?.length || 0}
-                    manageUrl={CONFIG.libcalWebUrl}
+                    manageUrl={CONFIG.libcalWebUrl ? `${CONFIG.libcalWebUrl}/reserve/scrc` : ''}
                     manageLabel="Make a new reservation"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={scSeatsQuery.isLoading}
