@@ -105,43 +105,45 @@ function CategoryCard({
           <span className="mylib-card__count mylib-card__count--loading" />
         )}
       </div>
-      {manageUrl && (
-        <a
-          href={manageUrl}
-          className="mylib-card__manage-link"
-          target={isExternal ? '_blank' : undefined}
-          rel={isExternal ? 'noopener noreferrer' : undefined}
-        >
-          {manageLabel}{' '}
-          {isExternal && (
-            <i className="fa fa-external-link" aria-hidden="true" />
-          )}
-        </a>
-      )}
-      <div className="mylib-card__content">{content}</div>
-      {!isLoading && !error && !isEmpty && hasMore && (
-        <button
-          type="button"
-          className="mylib-card__show-more"
-          onClick={handleShowMore}
-        >
-          + Show {Math.min(remainingItems, 10)} more item
-          {Math.min(remainingItems, 10) !== 1 ? 's' : ''}
-        </button>
-      )}
-      {manageUrl && (
-        <a
-          href={manageUrl}
-          className="mylib-card__manage-link mylib-card__manage-link--bottom"
-          target={isExternal ? '_blank' : undefined}
-          rel={isExternal ? 'noopener noreferrer' : undefined}
-        >
-          {manageLabel}{' '}
-          {isExternal && (
-            <i className="fa fa-external-link" aria-hidden="true" />
-          )}
-        </a>
-      )}
+      <div className="mylib-card__body">
+        {manageUrl && (
+          <a
+            href={manageUrl}
+            className="mylib-card__manage-link"
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+          >
+            {manageLabel}{' '}
+            {isExternal && (
+              <i className="fa fa-external-link" aria-hidden="true" />
+            )}
+          </a>
+        )}
+        <div className="mylib-card__content">{content}</div>
+        {!isLoading && !error && !isEmpty && hasMore && (
+          <button
+            type="button"
+            className="mylib-card__show-more"
+            onClick={handleShowMore}
+          >
+            + Show {Math.min(remainingItems, 10)} more item
+            {Math.min(remainingItems, 10) !== 1 ? 's' : ''}
+          </button>
+        )}
+        {manageUrl && (
+          <a
+            href={manageUrl}
+            className="mylib-card__manage-link mylib-card__manage-link--bottom"
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+          >
+            {manageLabel}{' '}
+            {isExternal && (
+              <i className="fa fa-external-link" aria-hidden="true" />
+            )}
+          </a>
+        )}
+      </div>
     </div>
   )
 }
