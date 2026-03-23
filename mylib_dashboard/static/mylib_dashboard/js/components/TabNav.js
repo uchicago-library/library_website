@@ -1,18 +1,23 @@
 /**
  * TabNav - Tab navigation with count badges.
+ *
+ * Implements the WAI-ARIA Tabs pattern:
+ * https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/
  */
-import React from 'react'
+import React, { useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 export const TABS = {
   CHECKED_OUT: 'checked-out',
   AVAILABLE_PICKUP: 'available-pickup',
   IN_PROCESS: 'in-process',
-  ROOM_RESERVATIONS: 'room-reservations',
+  RESERVATIONS: 'reservations',
   SPECIAL_COLLECTIONS: 'special-collections',
 }
 
 function TabNav({ activeTab, onTabChange, counts }) {
+  const tabRefs = useRef([])
+
   const tabs = [
     {
       id: TABS.CHECKED_OUT,
@@ -35,21 +40,58 @@ function TabNav({ activeTab, onTabChange, counts }) {
       count: counts.specialCollections,
     },
     {
-      id: TABS.ROOM_RESERVATIONS,
-      label: 'Room Reservations',
-      count: counts.roomReservations,
+      id: TABS.RESERVATIONS,
+      label: 'Reservations',
+      count: counts.reservations,
     },
   ]
 
+  const handleKeyDown = useCallback(
+    e => {
+      const currentIndex = tabs.findIndex(t => t.id === activeTab)
+      let newIndex
+
+      switch (e.key) {
+        case 'ArrowRight':
+          newIndex = (currentIndex + 1) % tabs.length
+          break
+        case 'ArrowLeft':
+          newIndex = (currentIndex - 1 + tabs.length) % tabs.length
+          break
+        case 'Home':
+          newIndex = 0
+          break
+        case 'End':
+          newIndex = tabs.length - 1
+          break
+        default:
+          return
+      }
+
+      e.preventDefault()
+      onTabChange(tabs[newIndex].id)
+      tabRefs.current[newIndex]?.focus()
+    },
+    [activeTab, onTabChange],
+  )
+
   return (
-    <nav className="mylib-tabs">
-      {tabs.map(tab => (
+    <div role="tablist" aria-label="Dashboard sections" className="mylib-tabs">
+      {tabs.map((tab, index) => (
         <button
           type="button"
+          role="tab"
           key={tab.id}
-          aria-current={activeTab === tab.id ? 'page' : undefined}
+          id={`tab-${tab.id}`}
+          ref={el => {
+            tabRefs.current[index] = el
+          }}
+          aria-selected={activeTab === tab.id}
+          aria-controls={`panel-${tab.id}`}
+          tabIndex={activeTab === tab.id ? 0 : -1}
           className={`mylib-tabs__tab ${activeTab === tab.id ? 'mylib-tabs__tab--active' : ''}`}
           onClick={() => onTabChange(tab.id)}
+          onKeyDown={handleKeyDown}
         >
           {tab.label}
           {tab.count > 0 && (
@@ -57,7 +99,7 @@ function TabNav({ activeTab, onTabChange, counts }) {
           )}
         </button>
       ))}
-    </nav>
+    </div>
   )
 }
 
@@ -68,7 +110,7 @@ TabNav.propTypes = {
     checkedOut: PropTypes.number,
     availableForPickup: PropTypes.number,
     inProcess: PropTypes.number,
-    roomReservations: PropTypes.number,
+    reservations: PropTypes.number,
     specialCollections: PropTypes.number,
   }).isRequired,
 }

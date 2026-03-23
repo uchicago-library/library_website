@@ -131,7 +131,7 @@ function Dashboard() {
           />
 
           {/* Tab Panels */}
-          <div className="mylib-dashboard__panels">
+          <div className="mylib-dashboard__panels" aria-live="polite">
             {activeTab === TABS.CHECKED_OUT && (
               <div
                 id="panel-checked-out"
@@ -139,6 +139,7 @@ function Dashboard() {
                 aria-labelledby="tab-checked-out"
                 className="mylib-panel"
               >
+                <h2 className="sr-only">Checked Out</h2>
                 <div className="mylib-card-grid">
                   <CategoryCard
                     title="Non-Renewable Loans"
@@ -181,6 +182,7 @@ function Dashboard() {
                 aria-labelledby="tab-available-pickup"
                 className="mylib-panel"
               >
+                <h2 className="sr-only">Available for Pickup</h2>
                 <div className="mylib-card-grid">
                   <CategoryCard
                     title="Pickups"
@@ -221,6 +223,7 @@ function Dashboard() {
                 aria-labelledby="tab-in-process"
                 className="mylib-panel"
               >
+                <h2 className="sr-only">In Process</h2>
                 <div className="mylib-card-grid">
                   <CategoryCard
                     title="Interlibrary Loan (ILL)"
@@ -268,13 +271,14 @@ function Dashboard() {
               </div>
             )}
 
-            {activeTab === TABS.ROOM_RESERVATIONS && (
+            {activeTab === TABS.RESERVATIONS && (
               <div
-                id="panel-room-reservations"
+                id="panel-reservations"
                 role="tabpanel"
-                aria-labelledby="tab-room-reservations"
+                aria-labelledby="tab-reservations"
                 className="mylib-panel"
               >
+                <h2 className="sr-only">Reservations</h2>
                 <div className="mylib-card-grid">
                   <CategoryCard
                     title="Room Reservations"
@@ -315,6 +319,7 @@ function Dashboard() {
                 aria-labelledby="tab-special-collections"
                 className="mylib-panel"
               >
+                <h2 className="sr-only">Special Collections</h2>
                 <div className="mylib-card-grid">
                   <CategoryCard
                     title="Material Requests"

@@ -46,8 +46,8 @@ export function useTabCounts(
       (illInProcessData?.totalRequests || 0) +
       (scanDeliverData?.totalRequests || 0) +
       (pagingRequestsData?.totalRequests || 0)
-    // Room Reservations + Appointments from LibCal
-    const roomReservationsCount =
+    // Reservations + Appointments from LibCal
+    const reservationsCount =
       (reservationsData?.totalReservations || 0) +
       (appointmentsData?.totalAppointments || 0)
     // Special Collections: LibCal seats + Aeon material requests
@@ -58,7 +58,7 @@ export function useTabCounts(
       checkedOut: checkedOutCount,
       availableForPickup: availableForPickupCount,
       inProcess: inProcessCount,
-      roomReservations: roomReservationsCount,
+      reservations: reservationsCount,
       specialCollections: specialCollectionsCount,
     }
   }, [
