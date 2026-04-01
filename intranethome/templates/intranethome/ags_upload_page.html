@@ -17,7 +17,7 @@
     </form>
 </div>
 
-{% if table_rows %}
+{% if table_rows and table_rows.ok %}
 
 <h2>
     The current AGS spreadsheet looks like this:
@@ -38,7 +38,7 @@
 	    YearEnd
 	</th>
     </tr>
-    {% for row in table_rows %}
+    {% for row in table_rows.ok %}
     <tr>
 	{% for entry in row %}
 	<td>
@@ -48,6 +48,14 @@
     </tr>
     {% endfor %}
 </table>
+
+{% elif table_rows.error %}
+
+<h1>
+
+{{ table_rows.error }}
+
+</h1>
 
 {% else %}
 

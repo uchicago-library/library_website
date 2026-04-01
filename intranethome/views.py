@@ -308,9 +308,15 @@ def ags_upload_page(request):
     D = get_document_model()
     doc = document_model_to_doc(D, AGS_SPREADSHEET_NAME)
 
+    # desired error handling for the moment:
+    # { "ok" : rows } - good case
+    # { "error" : "dude" } - syntactic anomaly in the spreadsheet
+    # [] - no spreadsheet uploaded
+    # code is currently not distinguishing the two error cases
     if doc:
         with doc.file.open() as f:
-            table_rows = handle_to_list(f)
+            rows = handle_to_list(f)
+            table_rows = { "ok": rows } if rows else { "error" : "dude" }
     else:
         table_rows = []
 
