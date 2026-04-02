@@ -815,14 +815,10 @@ class DuoImage(StructBlock):
     by side. Used in web exhibits.
     """
 
-    image_one = SoloImage(
-        help_text="First of two images displayed \
-            side by side"
-    )
-    image_two = SoloImage(
-        help_text="Second of two images displayed \
-            side by side"
-    )
+    image_one = SoloImage(help_text="First of two images displayed \
+            side by side")
+    image_two = SoloImage(help_text="Second of two images displayed \
+            side by side")
 
     class Meta:
         icon = "image"

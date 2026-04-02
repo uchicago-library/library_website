@@ -59,14 +59,8 @@ def enforce_name_as_year(title):
     formatting policy.
     """
     if not re.match("^[0-9]{4}$", title):
-        raise ValidationError(
-            {
-                "title": (
-                    "Please enter the year as \
-            a four digit number, e.g. 2016"
-                )
-            }
-        )
+        raise ValidationError({"title": ("Please enter the year as \
+            a four digit number, e.g. 2016")})
 
 
 def get_page_objects_grouped_by_date(obj):

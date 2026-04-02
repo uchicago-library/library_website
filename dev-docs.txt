@@ -13,11 +13,8 @@ black path/to/source_file.py
 Linting HTML files and Wagtail / Django templates
 =================================================
 
-Template files should be linted with curlyling and djhtml. Curlylint catches
-syntax errors but does not automatically fix them. You will need to do that.
-Djhtml applies indentation.
+Template files should be linted with djhtml, which applies indentation.
 
-curlylint --parse-only path/to/template_file.html
 djhtml -i path/to/template_file.html
 
 Generating fixtures

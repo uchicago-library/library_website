@@ -27,7 +27,7 @@ html2text>=2025.4.15,<2026
 pandas>=2,<3
 pocli==0.1.10
 psycopg2
-Pygments==2.15.0
+Pygments==2.20.0
 python-dateutil
 simplejson==3.11.1
 sqlparse==0.5.4
