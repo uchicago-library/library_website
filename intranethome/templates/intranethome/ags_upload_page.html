@@ -17,6 +17,10 @@
     </form>
 </div>
 
+<h1>
+    {{ table_rows }}
+</h1>
+
 {% if table_rows and table_rows.ok %}
 
 <h2>
@@ -51,16 +55,14 @@
 
 {% elif table_rows.error %}
 
-<h1>
-
-{{ table_rows.error }}
-
-</h1>
+<h2>
+    {{ table_rows.error }}
+</h2>
 
 {% else %}
 
 <h2>
-    No AGS spreadsheet is currently uploaded.
+    Please contact us.
 </h2>
 
 {% endif %}

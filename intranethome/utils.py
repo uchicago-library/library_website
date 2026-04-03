@@ -36,14 +36,26 @@ def error(msg):
     return { "error": msg }
 
 
-def bind(mx, k):
-    match mx:
+def rmap(f, result):
+    match result:
+        case { "ok": x }:
+            return ok(f(x))
+        case { "error": msg }:
+            return { "error": msg }
+        case other:
+            msg = "invalid result value: %s" % str(other)
+            raise Exception(msg)
+
+
+def bind(result, k):
+    match result:
         case { "ok": x }:
             return k(x)
         case { "error": msg }:
             return { "error": msg }
         case other:
             msg = "invalid result value: %s" % str(other)
+            raise Exception(msg)
 
 
 required_columns = ["StandardNumber",
@@ -81,7 +93,9 @@ def df_to_list(dataframe):
 
 
 def handle_to_list(handle):
-    return df_to_list(handle_to_df(handle))
+    df = handle_to_df(handle)
+    validated = check_required(df)
+    return rmap(df_to_list, validated)
 
 
 def document_model_to_doc(mod, title):
@@ -94,4 +108,5 @@ def document_model_to_doc(mod, title):
     if sort_em:
         return ok(sort_em[0])
     else:
-        return ok([])
+        msg = "No AGS spreadsheet is currently uploaded."
+        return error(msg)
