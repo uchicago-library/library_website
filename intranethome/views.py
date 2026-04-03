@@ -7,7 +7,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from django.core.files.base import ContentFile
 from wagtail.models import Site
-from .utils import handle_to_list, handle_to_df, df_to_dict, document_model_to_doc
+from .utils import handle_to_list, handle_to_df, df_to_dict, document_model_to_doc, bind
 
 from base.wagtail_hooks import (
     get_required_groups,
@@ -306,25 +306,37 @@ def ags_upload_page(request):
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
     D = get_document_model()
-    doc = document_model_to_doc(D, AGS_SPREADSHEET_NAME)
 
-    # desired error handling for the moment:
-    # { "ok" : rows } - good case
-    # { "error" : "dude" } - syntactic anomaly in the spreadsheet
-    # [] - no spreadsheet uploaded
-    # code is currently not distinguishing the two error cases
-    if doc:
+    # TODO: document_model_to_doc should probably return a result,
+    # which means that the whole conditional block below should be
+    # changed to a pattern match on doc
+    doc_result = document_model_to_doc(D, AGS_SPREADSHEET_NAME)
+
+    def compute_rows(doc):
         with doc.file.open() as f:
-            rows = handle_to_list(f)
-            table_rows = { "ok": rows } if rows else { "error" : "dude" }
-    else:
-        table_rows = []
+            return handle_to_list(f)
+
+    table_rows = bind(doc_result, compute_rows)
+
+    # match doc_result:
+        # case { "ok": doc }:
+            # with doc.file.open() as f:
+                 # = handle_to_list(f)
+                # table_rows = 
+        # case
+
+    # if doc:
+        # with doc.file.open() as f:
+            # rows = handle_to_list(f)
+            # table_rows = { "ok": rows } if rows else { "error" : "dude" }
+    # else:
+        # table_rows = []
 
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
         template_path = "intranethome/ags_upload_page.html"
-        context = { "table_rows": table_rows }
+        context = { "table_rows": bind(doc_result, compute_rows) }
         return TemplateResponse(request, template_path, context)
 
 
