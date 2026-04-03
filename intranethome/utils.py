@@ -58,9 +58,12 @@ def bind(result, k):
             raise Exception(msg)
 
 
-required_columns = ["StandardNumber",
-                    "YearStart",
-                    "YearEnd", ]
+required_columns = [
+    "PublicationName",
+    "StandardNumber",
+    "YearStart",
+    "YearEnd",
+]
 
 
 def check_required(df):
@@ -81,10 +84,7 @@ def check_required(df):
 def df_to_list(dataframe):
     def project(dataframe):
         try:
-            cols = dataframe[['PublicationName',
-                              'StandardNumber',
-                              'YearStart',
-                              'YearEnd']]
+            cols = dataframe[required_columns]
             return cols
         except KeyError:
             return pd.DataFrame()
