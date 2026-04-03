@@ -286,10 +286,8 @@ class ObjectMetadata(models.Model):
     link_target = models.IntegerField(
         choices=MENU_OPTIONS,
         default=1,
-        help_text=(
-            "How do you want the link to behave? \
-            (Required for hotlinked)"
-        ),
+        help_text=("How do you want the link to behave? \
+            (Required for hotlinked)"),
     )
 
     panels = [
@@ -384,10 +382,8 @@ class CBrowse(models.Model):
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
-        help_text=(
-            "Include browse term in collection sidebar? \
-            (Featured browse)"
-        ),
+        help_text=("Include browse term in collection sidebar? \
+            (Featured browse)"),
     )
     iiif_location = models.URLField(max_length=255, blank=True)
     link_text_override = models.CharField(max_length=255, blank=True)
@@ -424,10 +420,8 @@ class LBrowse(models.Model):
     label = models.CharField(max_length=255, blank=True)
     include = models.BooleanField(
         default=False,
-        help_text=(
-            "Include browse term in collection sidebar? \
-            (Featured browse)"
-        ),
+        help_text=("Include browse term in collection sidebar? \
+            (Featured browse)"),
     )
     iiif_location = models.URLField(max_length=255, blank=True)
     link_text_override = models.CharField(max_length=255, blank=True)
@@ -465,10 +459,8 @@ class CSearch(models.Model):
     include = models.BooleanField(default=False, help_text="Include in sidebar?")
     default = models.BooleanField(
         default=False,
-        help_text=(
-            "Is this the default search? (If more than one are selected, the \
-            first one selected will be the default.)"
-        ),
+        help_text=("Is this the default search? (If more than one are selected, the \
+            first one selected will be the default.)"),
     )
     mark_logic_parameter = models.CharField(max_length=255, blank=True)
     search_handler_location = models.CharField(max_length=255, blank=True)
@@ -791,10 +783,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     )
     highlighted_records = models.URLField(
         blank=True,
-        help_text=(
-            "URL for the select objects you would \
-            like to show in the collection page"
-        ),
+        help_text=("URL for the select objects you would \
+            like to show in the collection page"),
     )
 
     # TODO: eventually this will contain instructions for generating a
@@ -803,10 +793,8 @@ class CollectionPage(RoutablePageMixin, PublicBasePage):
     object_identifier = models.URLField(
         max_length=255,
         blank=True,
-        help_text=(
-            "Use a Bib ID or a record PI to construct \
-            a link to the catalog"
-        ),
+        help_text=("Use a Bib ID or a record PI to construct \
+            a link to the catalog"),
     )
 
     @route(r"^object/(?P<manifid>\w+)/$")
@@ -1623,10 +1611,8 @@ class CollectingAreaPage(PublicBasePage, LibGuide):
             InlinePanel(
                 "regional_collections",
                 label="Other Local Collections",
-                help_text=(
-                    "Related collections that are held by other \
-                institutions, like BMRC, Newberry, etc."
-                ),
+                help_text=("Related collections that are held by other \
+                institutions, like BMRC, Newberry, etc."),
             ),
         ]
         + PublicBasePage.content_panels

@@ -81,9 +81,9 @@ class FindingAidsPage(PublicBasePage):
                     span = div.findall("span")
                     digitized.append(
                         [
-                            span[0].find("eadid").text,
+                            span[0].find("eadid").text.strip(),
                             span[1].text,
-                            span[2].find("abstract").text,
+                            span[2].find("abstract").text.strip(),
                         ]
                     )
             except ElementTree.ParseError:
@@ -125,7 +125,7 @@ class FindingAidsPage(PublicBasePage):
                 ):
                     searchresults.append(
                         {
-                            "eadid": div.find("div[@class='eadid']").text,
+                            "eadid": div.find("div[@class='eadid']").text.strip(),
                             "title": div.find("div[@class='project']").text,
                             "abstract": div.find("div[@class='abstract']").text,
                         }
@@ -156,7 +156,7 @@ class FindingAidsPage(PublicBasePage):
                     topic_data = {}
                     for f in ["eadid", "title"]:
                         try:
-                            topic_data[f] = div.find(f).text
+                            topic_data[f] = div.find(f).text.strip()
                         except AttributeError:
                             topic_data[f] = ""
 

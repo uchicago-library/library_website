@@ -18,13 +18,12 @@
   },
   "homepage": "https://github.com/uchicago-library/library_website#readme",
   "devDependencies": {
-    "ajv": "8.18.0",
-    "minimatch": "10.2.1",
     "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
+    "ajv": "8.18.0",
     "babel-loader": "^9.1.2",
     "eslint": "^8.31.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -34,6 +33,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-react": "^7.32.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "minimatch": "^10.2.5",
     "minimist": "^1.2.7",
     "postcss-scss": "^4.0.9",
     "prettier": "^3.1.1",
@@ -46,10 +46,14 @@
     "webpack-bundle-tracker": "^1.8.0",
     "webpack-cli": "^5.0.1"
   },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "$minimatch"
+    }
+  },
   "dependencies": {
     "@tanstack/react-query": "^5.90.18",
     "ajv": "8.18.0",
-    "minimatch": "10.2.1",
     "eslint-utils": "^3.0.0",
     "htmr": "^1.0.2",
     "ini": "^3.0.1",
