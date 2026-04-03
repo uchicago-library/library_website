@@ -2,6 +2,7 @@ import pandas as pd
 import json
 from io import BytesIO
 from wagtail.documents import get_document_model
+from functools import reduce
 
 DEFAULT_SHEET="data1"
 
@@ -27,6 +28,43 @@ def df_to_dict(dataframe):
              [ row["YearStart"], row["YearEnd"] ]
              for row in dataframe.to_dict('records') }
 
+def ok(x):
+    return { "ok": x }
+
+
+def error(msg):
+    return { "error": msg }
+
+
+def bind(mx, k):
+    match mx:
+        case { "ok": x }:
+            return k(x)
+        case { "error": msg }:
+            return { "error": msg }
+        case other:
+            msg = "invalid result value: %s" % str(other)
+
+
+required_columns = ["StandardNumber",
+                    "YearStart",
+                    "YearEnd", ]
+
+
+def check_required(df):
+    def contains_column(name):
+        def inner(df):
+            if name in df:
+                return ok(df)
+            else:
+                msg = ("Invalid spreadsheet: required column "
+                       "name '%s' is missing." % name)
+                return error(msg)
+        return inner
+    def reducer(validated, next_col):
+        return bind(validated, contains_column(next_col))
+    return reduce(reducer, required_columns, ok(df))
+        
 
 def df_to_list(dataframe):
     def project(dataframe):
@@ -54,6 +92,6 @@ def document_model_to_doc(mod, title):
         reverse=True
     )
     if sort_em:
-        return sort_em[0]
+        return ok(sort_em[0])
     else:
-        return None
+        return ok([])
