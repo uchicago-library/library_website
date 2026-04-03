@@ -9,9 +9,7 @@ from staff.utils import get_all_library_cnetids_from_directory
 
 class UniversityDirectoryTestCase(TestCase):
     def test_directory_xml_validates(self):
-        dtd = etree.DTD(
-            StringIO(
-                """
+        dtd = etree.DTD(StringIO("""
         <!ELEMENT responseData    (response, totalResults, organizations)>
         <!ELEMENT response        (#PCDATA)>
         <!ELEMENT totalResults    (#PCDATA)>
@@ -36,9 +34,7 @@ class UniversityDirectoryTestCase(TestCase):
         <!ELEMENT phone           (#PCDATA)>
         <!ELEMENT facultyExchange (#PCDATA)>
         <!--      resources (see above) -->
-        """
-            )
-        )
+        """))
 
         root = etree.XML(
             get_xml_from_directory_api(
@@ -48,9 +44,7 @@ class UniversityDirectoryTestCase(TestCase):
         self.assertEqual(dtd.validate(root), True)
 
     def test_individual_xml_validates(self):
-        dtd = etree.DTD(
-            StringIO(
-                """
+        dtd = etree.DTD(StringIO("""
         <!ELEMENT responseData    (response, totalResults, individuals)>
         <!ELEMENT response        (#PCDATA)>
         <!ELEMENT totalResults    (#PCDATA)>
@@ -72,9 +66,7 @@ class UniversityDirectoryTestCase(TestCase):
         <!ELEMENT email           (#PCDATA)>
         <!ELEMENT phone           (#PCDATA)>
         <!ELEMENT facultyExchange (#PCDATA)>
-        """
-            )
-        )
+        """))
 
         cnetids = get_all_library_cnetids_from_directory()
         root = etree.XML(
