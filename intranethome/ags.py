@@ -1,3 +1,4 @@
+from django.core.files.base import ContentFile
 import pandas as pd
 import json
 from io import BytesIO
@@ -108,5 +109,32 @@ def document_model_to_doc(mod, title):
     if sort_em:
         return ok(sort_em[0])
     else:
-        msg = "No AGS spreadsheet is currently uploaded."
+        msg = "No AGS spreadsheet currently uploaded."
         return error(msg)
+
+
+def document_model_to_rows(mod, title):
+    doc_result = document_model_to_doc(mod, title)
+    def compute_rows(doc):
+        with doc.file.open() as f:
+            return handle_to_list(f)
+    rows = bind(doc_result, compute_rows)
+    return rows
+
+
+def create_document(filename):
+    def inner(bytz):
+        Document = get_document_model()
+        doc = Document(title=filename)
+        doc.file.save(filename, ContentFile(bytz))
+    return inner
+
+
+def request_to_xlsx(request):
+    if request.method == 'POST' and 'uploadFile' in request.FILES:
+        upload_file = request.FILES['uploadFile']
+        with upload_file.open(mode="rw") as f:
+            xlsx_data = f.read()
+            return { "ok": xlsx_data }
+    else:
+        return { "error": "Missing POST parameter 'uploadFile'" }

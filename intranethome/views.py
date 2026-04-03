@@ -5,10 +5,19 @@ from string import ascii_lowercase, ascii_uppercase
 from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
-from django.core.files.base import ContentFile
-from wagtail.models import Site
-from .utils import handle_to_list, handle_to_df, df_to_dict, document_model_to_doc, bind
 
+from wagtail.models import Site
+from .ags import (
+    handle_to_list,
+    handle_to_df,
+    df_to_dict,
+    document_model_to_doc,
+    bind,
+    rmap,
+    create_document,
+    request_to_xlsx,
+    document_model_to_rows
+)
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
@@ -28,7 +37,6 @@ from wagtail.models import Site
 from wagtail.documents import get_document_model
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from openpyxl import load_workbook
 
 # todo: move this into the config base.py
 AGS_SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
@@ -282,61 +290,27 @@ def mail_aliases_view(request, *args, **kwargs):
 
 def ags_upload_page(request):
 
-    def create_document(bytz, filename):
-        Document = get_document_model()
-        doc = Document(title=filename)
-        doc.file.save(filename, ContentFile(bytz))
+    # get the XLSX data out of the POST request, if they exist
+    xlsx_result = request_to_xlsx(request)
 
-    if request.method == 'POST' and 'uploadFile' in request.FILES:
-        upload_file = request.FILES['uploadFile']
-        with upload_file.open(mode="rw") as f:
-            xlsx_data = f.read()
-            workbook = load_workbook(filename=f)
-            f.close()
-    else:
-        upload_file = None
-        xlsx_data = ''
-        workbook = ''
+    # create a Wagtail Document out of the XLSX data, if none exists
+    _ = rmap(create_document("ags_spreadsheet.xlsx"), xlsx_result)
 
-    if xlsx_data:
-        create_document(xlsx_data, "ags_spreadsheet.xlsx")
-    else:
-        pass
+    # load the spreadsheet out of Wagtail Document, if it exists
+    D = get_document_model()
+    table_rows = document_model_to_rows(D, "ags_spreadsheet.xlsx")
 
+    # get loop homepage
     loop_homepage = Site.objects.get(site_name="Loop").root_page
 
-    D = get_document_model()
-
-    # TODO: document_model_to_doc should probably return a result,
-    # which means that the whole conditional block below should be
-    # changed to a pattern match on doc
-    doc_result = document_model_to_doc(D, AGS_SPREADSHEET_NAME)
-
-    def compute_rows(doc):
-        with doc.file.open() as f:
-            return handle_to_list(f)
-
-    table_rows = bind(doc_result, compute_rows)
-
-    # match doc_result:
-        # case { "ok": doc }:
-            # with doc.file.open() as f:
-                 # = handle_to_list(f)
-                # table_rows = 
-        # case
-
-    # if doc:
-        # with doc.file.open() as f:
-            # rows = handle_to_list(f)
-            # table_rows = { "ok": rows } if rows else { "error" : "dude" }
-    # else:
-        # table_rows = []
-
     if not has_permission(request.user, get_required_groups(loop_homepage)):
+        # redirect user if they are not staff
         return redirect_users_without_permissions(loop_homepage, request, None, None)
+
     else:
+        # keep going if user is staff
         template_path = "intranethome/ags_upload_page.html"
-        context = { "table_rows": bind(doc_result, compute_rows) }
+        context = { "table_rows": table_rows }
         return TemplateResponse(request, template_path, context)
 
 
@@ -348,9 +322,14 @@ def display_js(request):
     except D.DoesNotExist:
         error_dict = { "error" : "no AGS spreadsheet" }
         error_json = json.dumps(error_dict)
-        return HttpResponse(error_json, status=400, content_type="application/json")
+        return HttpResponse(error_json, status=400,
+                            content_type="application/json")
 
+    # this code assumes the spreadsheet is well-formed, because
+    # ags_upload_page is supposed to block the user from uploading an
+    # ill-formed spreadsheet
     with ags_xlsx.file.open() as f:
+
         dataframe = handle_to_df(f)
         ags_dict = df_to_dict(dataframe)
         json_string = json.dumps(ags_dict)
