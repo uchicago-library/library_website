@@ -16,7 +16,8 @@ from .ags import (
     rmap,
     create_document,
     request_to_xlsx,
-    document_model_to_rows
+    document_model_to_rows,
+    validate_xlsx,
 )
 from base.wagtail_hooks import (
     get_required_groups,
@@ -293,8 +294,14 @@ def ags_upload_page(request):
     # get the XLSX data out of the POST request, if they exist
     xlsx_result = request_to_xlsx(request)
 
-    # create a Wagtail Document out of the XLSX data, if none exists
-    _ = rmap(create_document("ags_spreadsheet.xlsx"), xlsx_result)
+    # check that XLSX has required columns and worksheet name
+    validated = bind(xlsx_result, validate_xlsx)
+
+    # create or update a Wagtail Document based on the XLSX data
+    msg = rmap(create_document("ags_spreadsheet.xlsx"), validated)
+
+    # TODO: fix the fact that it's still uploading when there's a
+    # validation error on the spreadsheet
 
     # load the spreadsheet out of Wagtail Document, if it exists
     D = get_document_model()
@@ -306,11 +313,12 @@ def ags_upload_page(request):
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         # redirect user if they are not staff
         return redirect_users_without_permissions(loop_homepage, request, None, None)
-
+    
     else:
         # keep going if user is staff
         template_path = "intranethome/ags_upload_page.html"
-        context = { "table_rows": table_rows }
+        context = { "table_rows": table_rows,
+                    "msg": msg, }
         return TemplateResponse(request, template_path, context)
 
 

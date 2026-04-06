@@ -59,6 +59,7 @@ def bind(result, k):
             raise Exception(msg)
 
 
+
 required_columns = [
     "PublicationName",
     "StandardNumber",
@@ -67,7 +68,7 @@ required_columns = [
 ]
 
 
-def check_required(df):
+def validate_dataframe(df):
     def contains_column(name):
         def inner(df):
             if name in df:
@@ -95,7 +96,7 @@ def df_to_list(dataframe):
 
 def handle_to_list(handle):
     df = handle_to_df(handle)
-    validated = check_required(df)
+    validated = validate_dataframe(df)
     return rmap(df_to_list, validated)
 
 
@@ -124,9 +125,16 @@ def document_model_to_rows(mod, title):
 
 def create_document(filename):
     def inner(bytz):
-        Document = get_document_model()
-        doc = Document(title=filename)
+        D = get_document_model()
+        try:
+            ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+            ags_xlsx.delete()
+            msg = "Updating previous spreadsheet..."
+        except D.DoesNotExist:
+            msg = ""
+        doc = D(title=filename)
         doc.file.save(filename, ContentFile(bytz))
+        return msg
     return inner
 
 
@@ -137,4 +145,20 @@ def request_to_xlsx(request):
             xlsx_data = f.read()
             return { "ok": xlsx_data }
     else:
-        return { "error": "Missing POST parameter 'uploadFile'" }
+        return { "ok": "" }
+
+def validate_xlsx(xlsx):
+    try:
+        df = xlsx_to_df(xlsx)
+        match validate_dataframe(df):
+            case { "ok": _ }:
+                return ok(xlsx)
+            case { "error": msg }:
+                return error(msg)
+            case other:
+                msg = "invalid result value: %s" % str(other)
+                raise Exception(msg)
+    except ValueError:
+        msg = ("Invalid spreadsheet: the worksheet must "
+               "be named 'data1'")
+        return error(msg)
