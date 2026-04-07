@@ -5,29 +5,7 @@ from io import BytesIO
 from wagtail.documents import get_document_model
 from functools import reduce
 
-DEFAULT_SHEET="data1"
-
-def xlsx_to_df(data, sheet_name=DEFAULT_SHEET):
-    return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
-
-
-def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
-    return df_to_dict(xlsx_to_df(data, sheet_name))
-
-
-def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
-    return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
-
-
-def handle_to_df(handle):
-    output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
-    return output
-
-
-def df_to_dict(dataframe):
-    return { row["StandardNumber"]:
-             [ row["YearStart"], row["YearEnd"] ]
-             for row in dataframe.to_dict('records') }
+############ monadic error handling utility functions ################
 
 def ok(x):
     return { "ok": x }
@@ -58,7 +36,26 @@ def bind(result, k):
             msg = "invalid result value: %s" % str(other)
             raise Exception(msg)
 
+################## XLSX data transformation #########################
 
+DEFAULT_SHEET="data1"
+
+def xlsx_to_df_exn(data, sheet_name=DEFAULT_SHEET):
+    return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
+
+def xlsx_to_df(xlsx):
+    try:
+        df = xlsx_to_df_exn(xlsx)
+        return(ok(df))
+    except ValueError:
+        msg = ("Invalid spreadsheet: the worksheet must "
+               "be named 'data1'")
+        return error(msg)
+
+def df_to_dict_exn(df):
+    return { row["StandardNumber"]:
+             [ row["YearStart"], row["YearEnd"] ]
+             for row in df.to_dict('records') }
 
 required_columns = [
     "PublicationName",
@@ -66,7 +63,6 @@ required_columns = [
     "YearStart",
     "YearEnd",
 ]
-
 
 def validate_dataframe(df):
     def contains_column(name):
@@ -81,6 +77,24 @@ def validate_dataframe(df):
     def reducer(validated, next_col):
         return bind(validated, contains_column(next_col))
     return reduce(reducer, required_columns, ok(df))
+
+# def df_to_dict(df):
+
+def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
+    return df_to_dict(xlsx_to_df(data, sheet_name))
+
+
+def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
+    return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
+
+
+def handle_to_df(handle):
+    output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
+    return output
+
+
+
+
         
 
 def df_to_list(dataframe):
