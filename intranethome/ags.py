@@ -17,6 +17,12 @@ def error(msg):
     return { "error": msg }
 
 
+class InvalidResult(Exception):
+    def __init__(self, msg="invalid result value "):
+        self.msg = msg
+        super().__init__(self.msg)
+
+
 def rmap(f, result):
     match result:
         case { "ok": x }:
@@ -25,7 +31,21 @@ def rmap(f, result):
             return { "error": msg }
         case other:
             msg = "invalid result value: %s" % str(other)
-            raise Exception(msg)
+            raise InvalidResult(msg)
+
+
+def product(result1, result2):
+    match (result1, result2):
+        case ({ "ok": ok1 }, {"ok": ok2 }):
+            return { "ok": (ok1, ok2) }
+        case ({ "error": msg }, _):
+            return { "error": msg }
+        case (_, { "error": msg }):
+            return { "error": msg }
+        case (one, two):
+            msg = "invalid results: %s and %s" % (str(one),
+                                                   str(two))
+            raise InvalidResult(msg)
 
 
 def bind(result, k):
@@ -36,7 +56,7 @@ def bind(result, k):
             return { "error": msg }
         case other:
             msg = "invalid result value: %s" % str(other)
-            raise Exception(msg)
+            raise InvalidResult(msg)
 
 
 #################### XLSX data transformation ########################
@@ -124,9 +144,9 @@ def validate_xlsx(xlsx):
 #     return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
 
 
-# def handle_to_df(handle):
-#     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
-#     return output
+def handle_to_df_exn(handle):
+    output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
+    return output
         
 
 def df_to_list(dataframe):
@@ -141,12 +161,11 @@ def df_to_list(dataframe):
 
 
 def handle_to_list(handle):
-    df = handle_to_df(handle)
-    validated = validate_dataframe(df)
-    return rmap(df_to_list, validated)
+    df = handle_to_df_exn(handle)
+    return df_to_list(df)
 
 
-def document_model_to_doc(mod, title):
+def retrieve_document(mod, title):
     docs_by_name = mod.objects.filter(title=title)
     sort_em = sorted(
         docs_by_name,
@@ -156,18 +175,11 @@ def document_model_to_doc(mod, title):
     if sort_em:
         return ok(sort_em[0])
     else:
-        msg = "No AGS spreadsheet currently uploaded."
-        return error(msg)
+        return error("No AGS spreadsheet uploaded.")
 
-
-def document_model_to_rows(mod, title):
-    doc_result = document_model_to_doc(mod, title)
-    def compute_rows(doc):
-        with doc.file.open() as f:
-            return handle_to_list(f)
-    rows = bind(doc_result, compute_rows)
-    return rows
-
+def doc_to_rows(doc):
+    with doc.file.open() as f:
+        return handle_to_list(f)
 
 def create_document(filename):
     def inner(bytz):
@@ -183,9 +195,9 @@ def create_document(filename):
                               "to Wagtail Documents...")
             doc = D(title=filename)
             doc.file.save(filename, ContentFile(bytz))
-            return (bytz, update_msg)
+            return update_msg
         else:
-            return (bytz, "")
+            return ""
     return inner
 
 

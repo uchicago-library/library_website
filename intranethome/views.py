@@ -9,15 +9,15 @@ from django.shortcuts import render
 from wagtail.models import Site
 from .ags import (
     handle_to_list,
-    handle_to_df,
     df_to_dict,
-    document_model_to_doc,
     bind,
     rmap,
+    product,
     create_document,
     request_to_xlsx,
-    document_model_to_rows,
     validate_xlsx,
+    retrieve_document,
+    doc_to_rows,
 )
 from base.wagtail_hooks import (
     get_required_groups,
@@ -291,35 +291,36 @@ def mail_aliases_view(request, *args, **kwargs):
 
 def ags_upload_page(request):
 
+    SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
+
     # get the XLSX data out of the POST request, if they exist
     xlsx = request_to_xlsx(request)
 
-    # check that XLSX has required columns and worksheet name
+    # check that POST data are valid
     validated = validate_xlsx(xlsx)
 
-    # create or update a Wagtail Document based on the XLSX data
-    result = rmap(create_document("ags_spreadsheet.xlsx"), validated)
+    # update the Wagtail Document based on the POST data
+    update_msg_result = rmap(
+        create_document(SPREADSHEET_NAME), validated
+    )
 
-    # TODO: make this a function
-    match result:
-        case { "ok": (b"", update_msg) }:
-            pass
-        case { "ok": (bytz, update_msg) }:
-            pass
-        case { "error": error_msg }:
-            pass
-        case other:
-            msg = "invalid tuple result: %s" % str(other)
-            raise Exception(msg)
-
-        
-
-    # TODO: fix the fact that it's still uploading when there's a
-    # validation error on the spreadsheet
-
-    # load the spreadsheet out of Wagtail Document, if it exists
+    # retrieve the latest XLSX from Wagtail Documents
     D = get_document_model()
-    table_rows = document_model_to_rows(D, "ags_spreadsheet.xlsx")
+    doc_result = retrieve_document(D, SPREADSHEET_NAME)
+    rows_result = rmap(doc_to_rows, doc_result)
+
+    msg_and_rows = product(update_msg_result, rows_result)
+
+    match msg_and_rows:
+        case { "ok": (update_msg, rows) }:
+            context = { "table_rows": rows,
+                        "msg": update_msg, }
+        case { "error": error_msg }:
+            context = { "table_rows": [],
+                        "msg": error_msg, }
+        case other:
+            context = { "table_rows": [],
+                        "msg": "", }
 
     # get loop homepage
     loop_homepage = Site.objects.get(site_name="Loop").root_page
@@ -331,8 +332,6 @@ def ags_upload_page(request):
     else:
         # keep going if user is staff
         template_path = "intranethome/ags_upload_page.html"
-        context = { "table_rows": table_rows,
-                    "msg": msg, }
         return TemplateResponse(request, template_path, context)
 
 
