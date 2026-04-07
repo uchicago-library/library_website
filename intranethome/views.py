@@ -292,13 +292,13 @@ def mail_aliases_view(request, *args, **kwargs):
 def ags_upload_page(request):
 
     # get the XLSX data out of the POST request, if they exist
-    xlsx_result = request_to_xlsx(request)
+    xlsx = request_to_xlsx(request)
 
     # check that XLSX has required columns and worksheet name
-    validated = bind(xlsx_result, validate_xlsx)
+    validated = validate_xlsx(xlsx)
 
     # create or update a Wagtail Document based on the XLSX data
-    msg = rmap(create_document("ags_spreadsheet.xlsx"), validated)
+    _ = rmap(create_document("ags_spreadsheet.xlsx"), validated)
 
     # TODO: fix the fact that it's still uploading when there's a
     # validation error on the spreadsheet

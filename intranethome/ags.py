@@ -5,7 +5,9 @@ from io import BytesIO
 from wagtail.documents import get_document_model
 from functools import reduce
 
+
 ############ monadic error handling utility functions ################
+
 
 def ok(x):
     return { "ok": x }
@@ -36,7 +38,9 @@ def bind(result, k):
             msg = "invalid result value: %s" % str(other)
             raise Exception(msg)
 
-################## XLSX data transformation #########################
+
+#################### XLSX data transformation ########################
+
 
 DEFAULT_SHEET="data1"
 
@@ -68,7 +72,6 @@ required_columns = [
     "YearEnd",
 ]
 
-
 def validate_dataframe(df):
     def contains_column(name):
         def inner(df):
@@ -84,24 +87,46 @@ def validate_dataframe(df):
     return reduce(reducer, required_columns, ok(df))
 
 
-# def df_to_dict(df):
+def df_to_dict(df):
+    return rmap(df_to_dict_exn, validate_dataframe(df))
 
 
-def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
-    return df_to_dict(xlsx_to_df(data, sheet_name))
+def request_to_xlsx(request):
+    if request.method == 'POST' and 'uploadFile' in request.FILES:
+        upload_file = request.FILES['uploadFile']
+        with upload_file.open(mode="rw") as f:
+            xlsx_data = f.read()
+            return xlsx_data
+    else:
+        return b""
 
 
-def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
-    return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
+def validate_xlsx(xlsx):
+    if not(xlsx):
+        return ok(xlsx)
+    else:
+        df_result = xlsx_to_df(xlsx)
+        match bind(df_result, validate_dataframe):
+            case { "ok": _ }:
+                return ok(xlsx)
+            case { "error": msg }:
+                return error(msg)
+            case other:
+                msg = "invalid result value: %s" % str(other)
+                raise Exception(msg)
 
 
-def handle_to_df(handle):
-    output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
-    return output
+# def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
+#     return df_to_dict(xlsx_to_df(data, sheet_name))
 
 
+# def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
+#     return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
 
 
+# def handle_to_df(handle):
+#     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
+#     return output
         
 
 def df_to_list(dataframe):
@@ -146,40 +171,18 @@ def document_model_to_rows(mod, title):
 
 def create_document(filename):
     def inner(bytz):
-        D = get_document_model()
-        try:
-            ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
-            ags_xlsx.delete()
-            msg = "Updating previous spreadsheet..."
-        except D.DoesNotExist:
-            msg = ""
-        doc = D(title=filename)
-        doc.file.save(filename, ContentFile(bytz))
-        return msg
+        if bytz:
+            D = get_document_model()
+            try:
+                ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+                ags_xlsx.delete()
+            except D.DoesNotExist:
+                update_msg = ""
+            doc = D(title=filename)
+            doc.file.save(filename, ContentFile(bytz))
+        else:
+            pass
     return inner
 
 
-def request_to_xlsx(request):
-    if request.method == 'POST' and 'uploadFile' in request.FILES:
-        upload_file = request.FILES['uploadFile']
-        with upload_file.open(mode="rw") as f:
-            xlsx_data = f.read()
-            return { "ok": xlsx_data }
-    else:
-        return { "ok": "" }
 
-def validate_xlsx(xlsx):
-    try:
-        df = xlsx_to_df(xlsx)
-        match validate_dataframe(df):
-            case { "ok": _ }:
-                return ok(xlsx)
-            case { "error": msg }:
-                return error(msg)
-            case other:
-                msg = "invalid result value: %s" % str(other)
-                raise Exception(msg)
-    except ValueError:
-        msg = ("Invalid spreadsheet: the worksheet must "
-               "be named 'data1'")
-        return error(msg)
