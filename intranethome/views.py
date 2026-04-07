@@ -8,8 +8,6 @@ from django.shortcuts import render
 
 from wagtail.models import Site
 from .ags import (
-    handle_to_list,
-    df_to_dict,
     bind,
     rmap,
     product,

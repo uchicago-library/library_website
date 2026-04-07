@@ -136,14 +136,6 @@ def validate_xlsx(xlsx):
                 raise Exception(msg)
 
 
-# def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
-#     return df_to_dict(xlsx_to_df(data, sheet_name))
-
-
-# def xlsx_to_json(data, sheet_name=DEFAULT_SHEET):
-#     return json.dumps(xlsx_to_dict(data, sheet_name), indent=4)
-
-
 def handle_to_df_exn(handle):
     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
     return output
@@ -160,11 +152,6 @@ def df_to_list(dataframe):
     return cols.values.tolist()
 
 
-def handle_to_list(handle):
-    df = handle_to_df_exn(handle)
-    return df_to_list(df)
-
-
 def retrieve_document(mod, title):
     docs_by_name = mod.objects.filter(title=title)
     sort_em = sorted(
@@ -179,7 +166,8 @@ def retrieve_document(mod, title):
 
 def doc_to_rows(doc):
     with doc.file.open() as f:
-        return handle_to_list(f)
+        df = handle_to_df_exn(handle)
+        return df_to_list(df)
 
 def create_document(filename):
     def inner(bytz):
