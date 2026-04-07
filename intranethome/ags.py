@@ -174,14 +174,18 @@ def create_document(filename):
         if bytz:
             D = get_document_model()
             try:
-                ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
+                ags_xlsx = D.objects.get(title=filename)
                 ags_xlsx.delete()
+                update_msg = ("Updating AGS spreadsheet "
+                              "in Wagtail Documents...")
             except D.DoesNotExist:
-                update_msg = ""
+                update_msg = ("Adding new AGS spreadsheet "
+                              "to Wagtail Documents...")
             doc = D(title=filename)
             doc.file.save(filename, ContentFile(bytz))
+            return (bytz, update_msg)
         else:
-            pass
+            return (bytz, "")
     return inner
 
 

@@ -298,7 +298,21 @@ def ags_upload_page(request):
     validated = validate_xlsx(xlsx)
 
     # create or update a Wagtail Document based on the XLSX data
-    _ = rmap(create_document("ags_spreadsheet.xlsx"), validated)
+    result = rmap(create_document("ags_spreadsheet.xlsx"), validated)
+
+    # TODO: make this a function
+    match result:
+        case { "ok": (b"", update_msg) }:
+            pass
+        case { "ok": (bytz, update_msg) }:
+            pass
+        case { "error": error_msg }:
+            pass
+        case other:
+            msg = "invalid tuple result: %s" % str(other)
+            raise Exception(msg)
+
+        
 
     # TODO: fix the fact that it's still uploading when there's a
     # validation error on the spreadsheet
