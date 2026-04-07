@@ -40,8 +40,10 @@ def bind(result, k):
 
 DEFAULT_SHEET="data1"
 
+
 def xlsx_to_df_exn(data, sheet_name=DEFAULT_SHEET):
     return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
+
 
 def xlsx_to_df(xlsx):
     try:
@@ -52,10 +54,12 @@ def xlsx_to_df(xlsx):
                "be named 'data1'")
         return error(msg)
 
+
 def df_to_dict_exn(df):
     return { row["StandardNumber"]:
              [ row["YearStart"], row["YearEnd"] ]
              for row in df.to_dict('records') }
+
 
 required_columns = [
     "PublicationName",
@@ -63,6 +67,7 @@ required_columns = [
     "YearStart",
     "YearEnd",
 ]
+
 
 def validate_dataframe(df):
     def contains_column(name):
@@ -78,7 +83,9 @@ def validate_dataframe(df):
         return bind(validated, contains_column(next_col))
     return reduce(reducer, required_columns, ok(df))
 
+
 # def df_to_dict(df):
+
 
 def xlsx_to_dict(data, sheet_name=DEFAULT_SHEET):
     return df_to_dict(xlsx_to_df(data, sheet_name))
