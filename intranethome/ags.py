@@ -213,4 +213,4 @@ def retrieve_document(mod, title):
 
 def doc_to_dict_exn(doc):
     df = doc_to_dataframe_exn(doc)
-    return df_to_dict(df)
+    return df_to_dict_exn(df)
