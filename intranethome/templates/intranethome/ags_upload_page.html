@@ -17,12 +17,15 @@
     </form>
 </div>
 
-{{ msg }}
+{% if msg %}
+<h3>
+    {{ msg }}
+</h3>
+{% endif %}
 
-{% if table_rows and table_rows.ok %}
-
+{% if table_rows %}
 <h2>
-    The current AGS spreadsheet looks like this:
+    Preview of the current AGS spreadsheet:
 </h2>
 
 <table>
@@ -40,7 +43,7 @@
 	    YearEnd
 	</th>
     </tr>
-    {% for row in table_rows.ok %}
+    {% for row in table_rows %}
     <tr>
 	{% for entry in row %}
 	<td>
@@ -50,18 +53,6 @@
     </tr>
     {% endfor %}
 </table>
-
-{% elif table_rows.error %}
-
-<h2>
-    {{ table_rows.error }}
-</h2>
-
-{% else %}
-
-<h2>
-    Please contact us.
-</h2>
 
 {% endif %}
 

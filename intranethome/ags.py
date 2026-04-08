@@ -166,7 +166,7 @@ def retrieve_document(mod, title):
 
 def doc_to_rows(doc):
     with doc.file.open() as f:
-        df = handle_to_df_exn(handle)
+        df = handle_to_df_exn(f)
         return df_to_list(df)
 
 def create_document(filename):
