@@ -1,5 +1,7 @@
 {% extends "base/intranet_base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 <title> Article Galaxy Configuration Management </title>
@@ -55,5 +57,7 @@
 </table>
 
 {% endif %}
+
+<script src="{% static 'intranethome/js/ags.js' %}"></script>
 
 {% endblock %}
