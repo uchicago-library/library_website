@@ -8,7 +8,6 @@ from django.shortcuts import render
 
 from wagtail.models import Site
 from .ags import (
-    bind,
     rmap,
     product,
     create_document,
