@@ -301,10 +301,12 @@ def ags_upload_page(request):
     # retrieve the latest XLSX from Wagtail Documents
     D = get_document_model()
     doc_result = retrieve_document(D, SPREADSHEET_NAME)
-    rows_result = rmap(doc_to_rows_exn, doc_result)
 
+    # generate the XLSX preview, when XLSX is in Documents
+    rows_result = rmap(doc_to_rows_exn, doc_result)
     msg_and_rows = product(update_msg_result, rows_result)
 
+    # determine XLSX preview + update message
     match msg_and_rows:
         case { "ok": (update_msg, rows) }:
             context = { "table_rows": rows,
@@ -316,7 +318,7 @@ def ags_upload_page(request):
             context = { "table_rows": [],
                         "msg": "", }
 
-
+    # render template
     template_path = "intranethome/ags_upload_page.html"
     return check_loop_permissions(
         request,
@@ -326,9 +328,13 @@ def ags_upload_page(request):
 
 def display_js(request):
 
+    # read XLSX from Wagtail Documents
     D = get_document_model()
     doc = retrieve_document(D, SPREADSHEET_NAME)
+    
+    # convert XLSX to Javascript object for use in Find It
     ags_dict_result = rmap(doc_to_dict_exn, doc)
     json_string = json.dumps(ags_dict_result)
 
+    # render template
     return HttpResponse(json_string, content_type="application/json")
