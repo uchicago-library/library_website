@@ -5,8 +5,6 @@ from string import ascii_lowercase, ascii_uppercase
 from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
-
-from wagtail.models import Site
 from .ags import (
     rmap,
     product,
@@ -18,11 +16,7 @@ from .ags import (
     doc_to_dict_exn,
     SPREADSHEET_NAME,
 )
-from base.wagtail_hooks import (
-    get_required_groups,
-    has_permission,
-    redirect_users_without_permissions,
-)
+from base.utils import check_loop_permissions
 from django.core.files.base import File
 from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
@@ -265,11 +259,11 @@ def mail_aliases_view(request, *args, **kwargs):
 
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    # loop_homepage = Site.objects.get(site_name="Loop").root_page
 
     # check whether user has permission to be on Loop; redirect if not
-    if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
+    # if not has_permission(request.user, get_required_groups(loop_homepage)):
+        # return redirect_users_without_permissions(loop_homepage, request, None, None)
 
     try:
         alias_filter = kwargs["alias_filter"].lower()
@@ -285,7 +279,10 @@ def mail_aliases_view(request, *args, **kwargs):
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
         context = {"final_data": final_data, "alphas": alphas}
 
-    return render(request, "intranethome/mail_aliases.html", context)
+    return check_loop_permissions(
+        request,
+        render(request, "intranethome/mail_aliases.html", context)
+    )
 
 
 def ags_upload_page(request):
@@ -319,17 +316,12 @@ def ags_upload_page(request):
             context = { "table_rows": [],
                         "msg": "", }
 
-    # get loop homepage
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
 
-    if not has_permission(request.user, get_required_groups(loop_homepage)):
-        # redirect user if they are not staff
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
-    
-    else:
-        # keep going if user is staff
-        template_path = "intranethome/ags_upload_page.html"
-        return TemplateResponse(request, template_path, context)
+    template_path = "intranethome/ags_upload_page.html"
+    return check_loop_permissions(
+        request,
+        TemplateResponse(request, template_path, context)
+    )
 
 
 def display_js(request):

@@ -6,7 +6,13 @@ from tempfile import NamedTemporaryFile
 import requests
 from django.utils.text import slugify
 from wagtail.documents.models import Document
-from wagtail.models import Page
+from wagtail.models import Page, Site
+
+from base.wagtail_hooks import (
+    get_required_groups,
+    has_permission,
+    redirect_users_without_permissions,
+)
 
 from library_website.settings import (
     ADDRESS_TEMPLATE,
@@ -466,6 +472,20 @@ def unfold(step, initial):
                 yield tup[0]
 
     return [item for item in generator((None, initial))]
+
+
+def check_loop_permissions(request, response):
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    if not has_permission(request.user,
+                          get_required_groups(loop_homepage)):
+        return redirect_users_without_permissions(
+            loop_homepage,
+            request,
+            None,
+            None
+        )
+    else:
+        return response
 
 
 def save_virtual_workbook(workbook):
