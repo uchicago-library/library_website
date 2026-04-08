@@ -6,6 +6,13 @@ from wagtail.documents import get_document_model
 from functools import reduce
 
 
+############################ constants ###############################
+
+
+SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
+DEFAULT_SHEET="data1"
+
+
 ############ monadic error handling utility functions ################
 
 
@@ -59,10 +66,20 @@ def bind(result, k):
             raise InvalidResult(msg)
 
 
-#################### XLSX data transformation ########################
+############## Retriving XLSX from a POST parameter ##################
 
 
-DEFAULT_SHEET="data1"
+def request_to_xlsx(request):
+    if request.method == 'POST' and 'uploadFile' in request.FILES:
+        upload_file = request.FILES['uploadFile']
+        with upload_file.open(mode="rw") as f:
+            xlsx_data = f.read()
+            return xlsx_data
+    else:
+        return b""
+
+
+################# XLSX validation/transformation ####################
 
 
 def xlsx_to_df_exn(data, sheet_name=DEFAULT_SHEET):
@@ -111,16 +128,6 @@ def df_to_dict(df):
     return rmap(df_to_dict_exn, validate_dataframe(df))
 
 
-def request_to_xlsx(request):
-    if request.method == 'POST' and 'uploadFile' in request.FILES:
-        upload_file = request.FILES['uploadFile']
-        with upload_file.open(mode="rw") as f:
-            xlsx_data = f.read()
-            return xlsx_data
-    else:
-        return b""
-
-
 def validate_xlsx(xlsx):
     if not(xlsx):
         return ok(xlsx)
@@ -139,6 +146,14 @@ def validate_xlsx(xlsx):
 def handle_to_df_exn(handle):
     output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
     return output
+
+
+def doc_to_dataframe_exn(doc):
+    with doc.file.open() as f:
+        return handle_to_df_exn(f)
+
+
+################## Preview table generation ######################
         
 
 def df_to_list(dataframe):
@@ -152,22 +167,13 @@ def df_to_list(dataframe):
     return cols.values.tolist()
 
 
-def retrieve_document(mod, title):
-    docs_by_name = mod.objects.filter(title=title)
-    sort_em = sorted(
-        docs_by_name,
-        key=lambda doc: doc.created_at,
-        reverse=True
-    )
-    if sort_em:
-        return ok(sort_em[0])
-    else:
-        return error("No AGS spreadsheet uploaded.")
+def doc_to_rows_exn(doc):
+    df = doc_to_dataframe_exn(doc)
+    return df_to_list(df)
 
-def doc_to_rows(doc):
-    with doc.file.open() as f:
-        df = handle_to_df_exn(f)
-        return df_to_list(df)
+
+############# Reading/Writing Wagtail Documents ###############
+
 
 def create_document(filename):
     def inner(bytz):
@@ -188,5 +194,25 @@ def create_document(filename):
             return ""
     return inner
 
+
+def retrieve_document(mod, title):
+    docs_by_name = mod.objects.filter(title=title)
+    sort_em = sorted(
+        docs_by_name,
+        key=lambda doc: doc.created_at,
+        reverse=True
+    )
+    if sort_em:
+        return ok(sort_em[0])
+    else:
+        return error("No AGS spreadsheet uploaded.")
+
+
+############# Generating Javascript for /js view #################
+
+
+def doc_to_dict_exn(doc):
+    df = doc_to_dataframe_exn(doc)
+    return df_to_dict(df)
 
 

@@ -15,7 +15,9 @@ from .ags import (
     request_to_xlsx,
     validate_xlsx,
     retrieve_document,
-    doc_to_rows,
+    doc_to_rows_exn,
+    doc_to_dict_exn,
+    SPREADSHEET_NAME,
 )
 from base.wagtail_hooks import (
     get_required_groups,
@@ -289,8 +291,6 @@ def mail_aliases_view(request, *args, **kwargs):
 
 def ags_upload_page(request):
 
-    SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
-
     # get the XLSX data out of the POST request, if they exist
     xlsx = request_to_xlsx(request)
 
@@ -305,7 +305,7 @@ def ags_upload_page(request):
     # retrieve the latest XLSX from Wagtail Documents
     D = get_document_model()
     doc_result = retrieve_document(D, SPREADSHEET_NAME)
-    rows_result = rmap(doc_to_rows, doc_result)
+    rows_result = rmap(doc_to_rows_exn, doc_result)
 
     msg_and_rows = product(update_msg_result, rows_result)
 
@@ -335,22 +335,9 @@ def ags_upload_page(request):
 
 def display_js(request):
 
-    try:
-        D = get_document_model()
-        ags_xlsx = D.objects.get(title="ags_spreadsheet.xlsx")
-    except D.DoesNotExist:
-        error_dict = { "error" : "no AGS spreadsheet" }
-        error_json = json.dumps(error_dict)
-        return HttpResponse(error_json, status=400,
-                            content_type="application/json")
-
-    # this code assumes the spreadsheet is well-formed, because
-    # ags_upload_page is supposed to block the user from uploading an
-    # ill-formed spreadsheet
-    with ags_xlsx.file.open() as f:
-
-        dataframe = handle_to_df(f)
-        ags_dict = df_to_dict(dataframe)
-        json_string = json.dumps(ags_dict)
+    D = get_document_model()
+    doc = retrieve_document(D, SPREADSHEET_NAME)
+    ags_dict_result = rmap(doc_to_dict_exn, doc)
+    json_string = json.dumps(ags_dict_result)
 
     return HttpResponse(json_string, content_type="application/json")
