@@ -14,6 +14,7 @@ from .ags import (
     retrieve_document,
     doc_to_rows_exn,
     doc_to_dict_exn,
+    bool_to_msg,
     SPREADSHEET_NAME,
 )
 from base.utils import check_loop_permissions
@@ -294,7 +295,7 @@ def ags_upload_page(request):
     validated = validate_xlsx(xlsx)
 
     # update the Wagtail Document based on the POST data
-    update_msg_result = rmap(
+    confirm_result = rmap(
         create_document(SPREADSHEET_NAME), validated
     )
 
@@ -304,19 +305,22 @@ def ags_upload_page(request):
 
     # generate the XLSX preview, when XLSX is in Documents
     rows_result = rmap(doc_to_rows_exn, doc_result)
-    msg_and_rows = product(update_msg_result, rows_result)
+    confirm_and_rows = product(confirm_result, rows_result)
 
     # determine XLSX preview + update message
-    match msg_and_rows:
-        case { "ok": (update_msg, rows) }:
+    match confirm_and_rows:
+        case { "ok": (confirm, rows) }:
             context = { "table_rows": rows,
-                        "msg": update_msg, }
+                        "msg": bool_to_msg(confirm),
+                        "confirm": confirm, }
         case { "error": error_msg }:
             context = { "table_rows": [],
-                        "msg": error_msg, }
+                        "msg": error_msg,
+                        "confirm": False, }
         case other:
             context = { "table_rows": [],
-                        "msg": "", }
+                        "msg": "",
+                        "confirm": False, }
 
     # render template
     template_path = "intranethome/ags_upload_page.html"

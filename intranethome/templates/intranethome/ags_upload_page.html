@@ -11,7 +11,7 @@
 <h2> Article Galaxy Index </h2>
 
 <div>
-    <form action="/ags/" method="post" enctype="multipart/form-data">
+    <form action="/ags/" method="post" enctype="multipart/form-data" id="ags_form">
 	{% csrf_token %}
 	<label for="uploadFile">Select an .xlsx file to upload:</label>
 	<input type="file" name="uploadFile" required="true" id="uploadFile" accept=".xlsx" formenctype="multipart/form-data">
@@ -27,7 +27,7 @@
 
 {% if table_rows %}
 <h2>
-    Preview of the AGS spreadsheet:
+    AGS spreadsheet preview:
 </h2>
 
 <table>

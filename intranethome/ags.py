@@ -175,6 +175,13 @@ def doc_to_rows_exn(doc):
 ############# Reading/Writing Wagtail Documents ###############
 
 
+def bool_to_msg(confirm):
+    if confirm:
+        return "Updating AGS spreadsheet in Wagtail database..."
+    else:
+        return "Adding new AGS spreadsheet to Wagtail database..."
+
+
 def create_document(filename):
     def inner(bytz):
         if bytz:
@@ -182,14 +189,12 @@ def create_document(filename):
             try:
                 ags_xlsx = D.objects.get(title=filename)
                 ags_xlsx.delete()
-                update_msg = ("Updating AGS spreadsheet "
-                              "in Wagtail Documents...")
+                confirm = True
             except D.DoesNotExist:
-                update_msg = ("Adding new AGS spreadsheet "
-                              "to Wagtail Documents...")
+                confirm = False
             doc = D(title=filename)
             doc.file.save(filename, ContentFile(bytz))
-            return update_msg
+            return confirm
         else:
             return ""
     return inner
