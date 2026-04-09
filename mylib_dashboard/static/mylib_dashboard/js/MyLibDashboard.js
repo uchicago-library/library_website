@@ -324,6 +324,7 @@ function Dashboard() {
                   <CategoryCard
                     title="Material Requests"
                     count={scMaterialsQuery.data?.requests?.length || 0}
+                    manageUrl="https://scrcrequests.lib.uchicago.edu/"
                     maxItems={CONFIG.maxItemsPerCard}
                     isLoading={scMaterialsQuery.isLoading}
                     error={scMaterialsQuery.error?.message}
