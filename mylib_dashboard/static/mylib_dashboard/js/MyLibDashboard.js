@@ -329,7 +329,7 @@ function Dashboard() {
                     isLoading={scMaterialsQuery.isLoading}
                     error={scMaterialsQuery.error?.message}
                     onRetry={() => scMaterialsQuery.refetch()}
-                    emptyMessage="No material requests"
+                    emptyMessage={<>No material requests. <a href="https://www.lib.uchicago.edu/scrc/visiting/" target="_blank" rel="noopener noreferrer">Plan a visit</a></>}
                   >
                     {scMaterialsQuery.data?.requests?.map(request => (
                       <ScMaterialItem key={request.id} request={request} />

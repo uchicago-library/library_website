@@ -45,7 +45,7 @@ function CardEmptyState({ message = 'No items' }) {
 }
 
 CardEmptyState.propTypes = {
-  message: PropTypes.string,
+  message: PropTypes.node,
 }
 
 function CategoryCard({
@@ -157,7 +157,7 @@ CategoryCard.propTypes = {
   isLoading: PropTypes.bool,
   error: PropTypes.string,
   onRetry: PropTypes.func,
-  emptyMessage: PropTypes.string,
+  emptyMessage: PropTypes.node,
   children: PropTypes.node,
 }
 
