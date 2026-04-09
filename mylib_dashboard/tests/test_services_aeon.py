@@ -137,7 +137,7 @@ class TestGetUserRequests(TestCase):
     def test_sorts_by_scheduled_then_request_date(self, mock_request):
         mock_request.side_effect = lambda method, endpoint: {
             "/Queues": [
-                {"queue": {"id": 5, "queueName": "New Request"}, "requestCount": 0}
+                {"queue": {"id": 10, "queueName": "New Request"}, "requestCount": 0}
             ],
             "/Users/user@uchicago.edu/requests": [
                 {
@@ -145,14 +145,14 @@ class TestGetUserRequests(TestCase):
                     "itemTitle": "Later Scheduled",
                     "scheduledDate": "2026-04-01",
                     "creationDate": "2026-03-01",
-                    "transactionStatus": 5,
+                    "transactionStatus": 10,
                 },
                 {
                     "transactionNumber": 1,
                     "itemTitle": "Sooner Scheduled",
                     "scheduledDate": "2026-03-20",
                     "creationDate": "2026-03-05",
-                    "transactionStatus": 5,
+                    "transactionStatus": 10,
                 },
             ],
         }[endpoint]
@@ -161,6 +161,40 @@ class TestGetUserRequests(TestCase):
 
         self.assertEqual(result["requests"][0]["title"], "Sooner Scheduled")
         self.assertEqual(result["requests"][1]["title"], "Later Scheduled")
+
+    @patch.object(AeonService, "_request")
+    def test_filters_out_awaiting_user_review(self, mock_request):
+        mock_request.side_effect = lambda method, endpoint: {
+            "/Queues": [
+                {
+                    "queue": {"id": 5, "queueName": "Awaiting User Review"},
+                    "requestCount": 0,
+                },
+                {"queue": {"id": 10, "queueName": "In Retrieval"}, "requestCount": 0},
+            ],
+            "/Users/user@uchicago.edu/requests": [
+                {
+                    "transactionNumber": 1,
+                    "itemTitle": "Active Request",
+                    "scheduledDate": "2026-03-20",
+                    "creationDate": "2026-03-10",
+                    "transactionStatus": 10,
+                },
+                {
+                    "transactionNumber": 2,
+                    "itemTitle": "Saved For Later",
+                    "scheduledDate": "2026-04-01",
+                    "creationDate": "2026-03-15",
+                    "transactionStatus": 5,
+                },
+            ],
+        }[endpoint]
+
+        result = self.service.get_user_requests("user@uchicago.edu")
+
+        self.assertEqual(len(result["requests"]), 1)
+        self.assertEqual(result["totalRequests"], 1)
+        self.assertEqual(result["requests"][0]["title"], "Active Request")
 
     @patch.object(AeonService, "_request")
     def test_handles_non_list_response(self, mock_request):

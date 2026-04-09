@@ -87,6 +87,12 @@ class AeonService:
         # data is a list of requests
         requests_list = data if isinstance(data, list) else []
 
+        # Filter out "Awaiting User Review" (status 5) — these are items
+        # the user saved for later, not active requests.
+        requests_list = [
+            req for req in requests_list if req.get("transactionStatus") != 5
+        ]
+
         # Transform to our standard format
         material_requests = []
         for req in requests_list:
