@@ -36,6 +36,7 @@ class AeonService:
         )
         self.api_key = getattr(settings, "AEON_API_KEY", "")
         self.timeout = getattr(settings, "AEON_TIMEOUT", 30)
+        self._queue_map = None
 
         if not self.api_key:
             logger.warning("AEON_API_KEY not configured")
@@ -116,25 +117,37 @@ class AeonService:
 
         return {"requests": material_requests, "totalRequests": len(material_requests)}
 
+    def _get_queue_map(self):
+        """
+        Fetch and cache the queue ID to name mapping from /Queues.
+
+        Returns:
+            dict mapping queue ID (int) to queue name (str)
+        """
+        if self._queue_map is not None:
+            return self._queue_map
+
+        try:
+            data = self._request("GET", "/Queues")
+            self._queue_map = {
+                q["queue"]["id"]: q["queue"].get("displayName")
+                or q["queue"]["queueName"]
+                for q in data
+                if "queue" in q
+            }
+        except AeonError:
+            logger.warning("Failed to fetch Aeon queues, status names unavailable")
+            self._queue_map = {}
+
+        return self._queue_map
+
     def _map_status(self, status_code):
         """
-        Map Aeon transaction status codes to human-readable strings.
-
-        Common status codes (may need adjustment based on actual Aeon config):
-        - Awaiting Request Processing
-        - In Retrieval
-        - Paging
-        - On Hold
-        - Delivered to Reading Room
-        - etc.
+        Map Aeon transaction status code (integer) to human-readable
+        queue name by looking up the /Queues endpoint.
         """
-        # These are common Aeon statuses - may need to be adjusted
-        # based on UChicago's specific Aeon configuration
-        status_map = {
-            # Add specific mappings as we learn them
-            # For now, return a generic "Processing" for unknown codes
-        }
-        return status_map.get(status_code, "Pending")
+        queue_map = self._get_queue_map()
+        return queue_map.get(status_code, f"Status {status_code}")
 
     def _clean_author(self, author):
         """Clean up author string (remove trailing commas, etc.)."""

@@ -87,27 +87,31 @@ class TestAeonServiceRequest(TestCase):
 class TestGetUserRequests(TestCase):
     """Tests for AeonService.get_user_requests."""
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.service = AeonService()
+    def setUp(self):
+        self.service = AeonService()
 
     @patch.object(AeonService, "_request")
     def test_returns_formatted_requests(self, mock_request):
-        mock_request.return_value = [
-            {
-                "transactionNumber": 1001,
-                "itemTitle": "Archival Collection",
-                "itemAuthor": "Smith, John,",
-                "callNumber": "MS 123",
-                "location": "Regenstein",
-                "subLocation": "Floor 4",
-                "scheduledDate": "2026-03-20",
-                "creationDate": "2026-03-10",
-                "transactionStatus": "In Retrieval",
-                "specialRequest": "Pages 1-50",
-                "itemVolume": "Box 2",
-            },
-        ]
+        mock_request.side_effect = lambda method, endpoint: {
+            "/Queues": [
+                {"queue": {"id": 10, "queueName": "In Retrieval"}, "requestCount": 0}
+            ],
+            "/Users/user@uchicago.edu/requests": [
+                {
+                    "transactionNumber": 1001,
+                    "itemTitle": "Archival Collection",
+                    "itemAuthor": "Smith, John,",
+                    "callNumber": "MS 123",
+                    "location": "Regenstein",
+                    "subLocation": "Floor 4",
+                    "scheduledDate": "2026-03-20",
+                    "creationDate": "2026-03-10",
+                    "transactionStatus": 10,
+                    "specialRequest": "Pages 1-50",
+                    "itemVolume": "Box 2",
+                },
+            ],
+        }[endpoint]
 
         result = self.service.get_user_requests("user@uchicago.edu")
 
@@ -118,6 +122,7 @@ class TestGetUserRequests(TestCase):
         self.assertEqual(req["title"], "Archival Collection")
         self.assertEqual(req["author"], "Smith, John")  # Trailing comma stripped
         self.assertEqual(req["callNumber"], "MS 123")
+        self.assertEqual(req["status"], "In Retrieval")
 
     @patch.object(AeonService, "_request")
     def test_404_returns_empty_list(self, mock_request):
@@ -130,22 +135,27 @@ class TestGetUserRequests(TestCase):
 
     @patch.object(AeonService, "_request")
     def test_sorts_by_scheduled_then_request_date(self, mock_request):
-        mock_request.return_value = [
-            {
-                "transactionNumber": 2,
-                "itemTitle": "Later Scheduled",
-                "scheduledDate": "2026-04-01",
-                "creationDate": "2026-03-01",
-                "transactionStatus": "Pending",
-            },
-            {
-                "transactionNumber": 1,
-                "itemTitle": "Sooner Scheduled",
-                "scheduledDate": "2026-03-20",
-                "creationDate": "2026-03-05",
-                "transactionStatus": "Pending",
-            },
-        ]
+        mock_request.side_effect = lambda method, endpoint: {
+            "/Queues": [
+                {"queue": {"id": 5, "queueName": "New Request"}, "requestCount": 0}
+            ],
+            "/Users/user@uchicago.edu/requests": [
+                {
+                    "transactionNumber": 2,
+                    "itemTitle": "Later Scheduled",
+                    "scheduledDate": "2026-04-01",
+                    "creationDate": "2026-03-01",
+                    "transactionStatus": 5,
+                },
+                {
+                    "transactionNumber": 1,
+                    "itemTitle": "Sooner Scheduled",
+                    "scheduledDate": "2026-03-20",
+                    "creationDate": "2026-03-05",
+                    "transactionStatus": 5,
+                },
+            ],
+        }[endpoint]
 
         result = self.service.get_user_requests("user@uchicago.edu")
 
@@ -154,7 +164,9 @@ class TestGetUserRequests(TestCase):
 
     @patch.object(AeonService, "_request")
     def test_handles_non_list_response(self, mock_request):
-        mock_request.return_value = {"error": "something"}
+        mock_request.side_effect = lambda method, endpoint: (
+            [] if endpoint == "/Queues" else {"error": "something"}
+        )
 
         result = self.service.get_user_requests("user@uchicago.edu")
 
@@ -163,15 +175,71 @@ class TestGetUserRequests(TestCase):
 
 
 @override_settings(**AEON_SETTINGS)
-class TestMapStatus(TestCase):
-    """Tests for AeonService._map_status."""
+class TestGetQueueMap(TestCase):
+    """Tests for AeonService._get_queue_map and _map_status."""
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.service = AeonService()
+    def setUp(self):
+        self.service = AeonService()
 
-    def test_returns_pending_for_unknown(self):
-        self.assertEqual(self.service._map_status("SomeUnknownStatus"), "Pending")
+    @patch.object(AeonService, "_request")
+    def test_prefers_display_name_over_queue_name(self, mock_request):
+        mock_request.return_value = [
+            {
+                "queue": {
+                    "id": 57,
+                    "queueName": "New Request with Special Request Note",
+                    "displayName": "New Request",
+                },
+                "requestCount": 0,
+            },
+        ]
+
+        self.assertEqual(self.service._map_status(57), "New Request")
+
+    @patch.object(AeonService, "_request")
+    def test_falls_back_to_queue_name_when_no_display_name(self, mock_request):
+        mock_request.return_value = [
+            {
+                "queue": {
+                    "id": 38,
+                    "queueName": "Awaiting Future Request Processing",
+                    "displayName": None,
+                },
+                "requestCount": 0,
+            },
+        ]
+
+        self.assertEqual(
+            self.service._map_status(38), "Awaiting Future Request Processing"
+        )
+
+    @patch.object(AeonService, "_request")
+    def test_returns_fallback_for_unknown_code(self, mock_request):
+        mock_request.return_value = [
+            {"queue": {"id": 1, "queueName": "New Request"}, "requestCount": 0}
+        ]
+
+        self.assertEqual(self.service._map_status(999), "Status 999")
+
+    @patch.object(AeonService, "_request")
+    def test_caches_queue_map(self, mock_request):
+        mock_request.return_value = [
+            {"queue": {"id": 1, "queueName": "New Request"}, "requestCount": 0}
+        ]
+
+        self.service._map_status(1)
+        self.service._map_status(1)
+
+        mock_request.assert_called_once_with("GET", "/Queues")
+
+    @patch.object(AeonService, "_request")
+    def test_handles_queue_fetch_failure(self, mock_request):
+        mock_request.side_effect = AeonError("Aeon API error: 500")
+
+        with self.assertLogs("mylib_dashboard.services.aeon", level="WARNING"):
+            result = self.service._map_status(38)
+
+        self.assertEqual(result, "Status 38")
 
 
 @override_settings(**AEON_SETTINGS)
