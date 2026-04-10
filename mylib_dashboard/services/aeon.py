@@ -10,6 +10,7 @@ from functools import lru_cache
 
 import requests
 from django.conf import settings
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,9 @@ class AeonService:
     Handles authentication and requests to fetch Special Collections
     material requests.
     """
+
+    ACTIVITIES_CACHE_KEY = "aeon_activities"
+    ACTIVITIES_CACHE_TTL = 60 * 60  # 1 hour
 
     def __init__(self):
         self.base_url = getattr(
@@ -113,6 +117,7 @@ class AeonService:
                     "statusCode": req.get("transactionStatus"),
                     "specialRequest": req.get("specialRequest") or "",
                     "itemVolume": req.get("itemVolume") or "",
+                    "activityName": self._get_activity_name(req.get("requestFor")),
                 }
             )
 
@@ -154,6 +159,53 @@ class AeonService:
         """
         queue_map = self._get_queue_map()
         return queue_map.get(status_code, f"Status {status_code}")
+
+    def _get_activity_map(self):
+        """
+        Fetch and cache the activity ID to name mapping from /Activities.
+
+        The /Activities endpoint returns ALL activities with no filtering,
+        so we cache aggressively to avoid repeated large fetches.
+
+        Returns:
+            dict mapping activity ID (int) to activity name (str)
+        """
+        cached = cache.get(self.ACTIVITIES_CACHE_KEY)
+        if cached is not None:
+            return cached
+
+        try:
+            data = self._request("GET", "/Activities")
+            activity_map = {
+                a["id"]: a.get("name", "").strip() for a in data if "id" in a
+            }
+        except AeonError:
+            logger.warning("Failed to fetch Aeon activities")
+            return {}
+
+        cache.set(self.ACTIVITIES_CACHE_KEY, activity_map, self.ACTIVITIES_CACHE_TTL)
+        return activity_map
+
+    def _get_activity_name(self, request_for):
+        """
+        Look up the activity name for a request's requestFor field.
+
+        Args:
+            request_for: dict with 'type' and 'reference' keys from Aeon
+
+        Returns:
+            Activity name string or empty string if not an activity request
+        """
+        if not request_for or request_for.get("type") != "Activity":
+            return ""
+
+        try:
+            activity_id = int(request_for["reference"])
+        except (KeyError, ValueError, TypeError):
+            return ""
+
+        activity_map = self._get_activity_map()
+        return activity_map.get(activity_id, "")
 
     def _clean_author(self, author):
         """Clean up author string (remove trailing commas, etc.)."""

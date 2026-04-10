@@ -4,6 +4,7 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import requests as real_requests
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 
 from mylib_dashboard.services.aeon import AeonError, AeonService, get_aeon_service
@@ -96,6 +97,9 @@ class TestGetUserRequests(TestCase):
             "/Queues": [
                 {"queue": {"id": 10, "queueName": "In Retrieval"}, "requestCount": 0}
             ],
+            "/Activities": [
+                {"id": 2687, "name": "Test Activity "},
+            ],
             "/Users/user@uchicago.edu/requests": [
                 {
                     "transactionNumber": 1001,
@@ -109,6 +113,7 @@ class TestGetUserRequests(TestCase):
                     "transactionStatus": 10,
                     "specialRequest": "Pages 1-50",
                     "itemVolume": "Box 2",
+                    "requestFor": {"type": "Activity", "reference": "2687"},
                 },
             ],
         }[endpoint]
@@ -123,6 +128,7 @@ class TestGetUserRequests(TestCase):
         self.assertEqual(req["author"], "Smith, John")  # Trailing comma stripped
         self.assertEqual(req["callNumber"], "MS 123")
         self.assertEqual(req["status"], "In Retrieval")
+        self.assertEqual(req["activityName"], "Test Activity")
 
     @patch.object(AeonService, "_request")
     def test_404_returns_empty_list(self, mock_request):
@@ -274,6 +280,85 @@ class TestGetQueueMap(TestCase):
             result = self.service._map_status(38)
 
         self.assertEqual(result, "Status 38")
+
+
+@override_settings(**AEON_SETTINGS)
+class TestGetActivityMap(TestCase):
+    """Tests for AeonService._get_activity_map and _get_activity_name."""
+
+    def setUp(self):
+        self.service = AeonService()
+        cache.delete(AeonService.ACTIVITIES_CACHE_KEY)
+
+    def tearDown(self):
+        cache.delete(AeonService.ACTIVITIES_CACHE_KEY)
+
+    @patch.object(AeonService, "_request")
+    def test_builds_activity_map(self, mock_request):
+        mock_request.return_value = [
+            {"id": 100, "name": "Spring Reception "},
+            {"id": 200, "name": "Faculty Seminar"},
+        ]
+
+        result = self.service._get_activity_map()
+
+        self.assertEqual(result, {100: "Spring Reception", 200: "Faculty Seminar"})
+
+    @patch.object(AeonService, "_request")
+    def test_caches_activity_map(self, mock_request):
+        mock_request.return_value = [{"id": 100, "name": "Event"}]
+
+        self.service._get_activity_map()
+        self.service._get_activity_map()
+
+        mock_request.assert_called_once_with("GET", "/Activities")
+
+    @patch.object(AeonService, "_request")
+    def test_returns_empty_on_failure(self, mock_request):
+        mock_request.side_effect = AeonError("Aeon API error: 500")
+
+        with self.assertLogs("mylib_dashboard.services.aeon", level="WARNING"):
+            result = self.service._get_activity_map()
+
+        self.assertEqual(result, {})
+
+    @patch.object(AeonService, "_request")
+    def test_get_activity_name_returns_name(self, mock_request):
+        mock_request.return_value = [{"id": 2687, "name": "Test Activity"}]
+
+        name = self.service._get_activity_name(
+            {"type": "Activity", "reference": "2687"}
+        )
+
+        self.assertEqual(name, "Test Activity")
+
+    @patch.object(AeonService, "_request")
+    def test_get_activity_name_returns_empty_for_non_activity(self, mock_request):
+        name = self.service._get_activity_name({"type": "Other", "reference": "123"})
+
+        self.assertEqual(name, "")
+        mock_request.assert_not_called()
+
+    def test_get_activity_name_returns_empty_for_none(self):
+        self.assertEqual(self.service._get_activity_name(None), "")
+
+    @patch.object(AeonService, "_request")
+    def test_get_activity_name_returns_empty_for_unknown_id(self, mock_request):
+        mock_request.return_value = [{"id": 100, "name": "Known Event"}]
+
+        name = self.service._get_activity_name(
+            {"type": "Activity", "reference": "9999"}
+        )
+
+        self.assertEqual(name, "")
+
+    def test_get_activity_name_handles_invalid_reference(self):
+        self.assertEqual(
+            self.service._get_activity_name(
+                {"type": "Activity", "reference": "not-a-number"}
+            ),
+            "",
+        )
 
 
 @override_settings(**AEON_SETTINGS)

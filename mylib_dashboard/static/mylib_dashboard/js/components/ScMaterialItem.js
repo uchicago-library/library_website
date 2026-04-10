@@ -6,8 +6,15 @@ import PropTypes from 'prop-types'
 import { formatDate } from '../hooks'
 
 function ScMaterialItem({ request }) {
-  const { title, author, callNumber, itemVolume, scheduledDate, status } =
-    request
+  const {
+    title,
+    author,
+    callNumber,
+    itemVolume,
+    scheduledDate,
+    status,
+    activityName,
+  } = request
 
   return (
     <div className="mylib-item">
@@ -18,6 +25,9 @@ function ScMaterialItem({ request }) {
       )}
       {itemVolume && (
         <div className="mylib-item__volume">Volume/Box: {itemVolume}</div>
+      )}
+      {activityName && (
+        <div className="mylib-item__activity">Event: {activityName}</div>
       )}
       {scheduledDate && (
         <div className="mylib-item__scheduled-date">
@@ -36,6 +46,7 @@ ScMaterialItem.propTypes = {
     author: PropTypes.string,
     callNumber: PropTypes.string,
     itemVolume: PropTypes.string,
+    activityName: PropTypes.string,
     scheduledDate: PropTypes.string,
     status: PropTypes.string,
   }).isRequired,
