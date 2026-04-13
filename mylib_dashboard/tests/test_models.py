@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 
 from mylib_dashboard.models import MyLibDashboardPage
 
@@ -50,6 +50,25 @@ class TestMyLibDashboardPage(TestCase):
         self.assertEqual(MyLibDashboardPage._meta.verbose_name, "MyLib Dashboard Page")
         self.assertEqual(
             MyLibDashboardPage._meta.verbose_name_plural, "MyLib Dashboard Pages"
+        )
+
+    @override_settings(MYLIB_DEV_USERNAME=None)
+    def test_get_template_returns_dashboard_when_authenticated(self):
+        page = MyLibDashboardPage()
+        request = RequestFactory().get("/my-library/")
+        request.META["uid"] = "testuser"
+        self.assertEqual(
+            page.get_template(request),
+            "mylib_dashboard/my_lib_dashboard_page.html",
+        )
+
+    @override_settings(MYLIB_DEV_USERNAME=None)
+    def test_get_template_returns_login_when_unauthenticated(self):
+        page = MyLibDashboardPage()
+        request = RequestFactory().get("/my-library/")
+        self.assertEqual(
+            page.get_template(request),
+            "mylib_dashboard/my_lib_dashboard_login.html",
         )
 
 

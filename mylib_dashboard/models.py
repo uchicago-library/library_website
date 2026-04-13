@@ -1,19 +1,27 @@
+from urllib.parse import quote
+
 from django.conf import settings
 from django.db import models
 from wagtail.admin.panels import FieldPanel, HelpPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
+from wagtailcache.cache import WagtailCacheMixin
 
 from mylib_dashboard.utils import get_current_cnetid
 from public.models import PublicBasePage
 
 
-class MyLibDashboardPage(PublicBasePage):
+class MyLibDashboardPage(WagtailCacheMixin, PublicBasePage):
     """
     A patron dashboard page that displays account information from
     FOLIO, ILLiad, and LibCal. Content is rendered via React and
     populated from API endpoints.
     """
+
+    # Rendered state depends on the viewer's Shibboleth session. Force
+    # Cache-Control: private so wagtailcache won't serve one user's shell
+    # (login gate or dashboard) to another.
+    cache_control = "private"
 
     auto_renewal_notice = RichTextField(
         blank=True,
@@ -77,7 +85,16 @@ class MyLibDashboardPage(PublicBasePage):
         context["illiad_web_url"] = getattr(settings, "ILLIAD_WEB_BASE_URL", "")
         context["libcal_web_url"] = getattr(settings, "LIBCAL_WEB_URL", "")
         context["is_authenticated"] = bool(get_current_cnetid(request))
+        if not context["is_authenticated"]:
+            context["shibboleth_login_url"] = "/Shibboleth.sso/Login?target=" + quote(
+                request.build_absolute_uri(), safe=""
+            )
         return context
+
+    def get_template(self, request, *args, **kwargs):
+        if get_current_cnetid(request):
+            return "mylib_dashboard/my_lib_dashboard_page.html"
+        return "mylib_dashboard/my_lib_dashboard_login.html"
 
     class Meta:
         verbose_name = "MyLib Dashboard Page"

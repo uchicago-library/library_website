@@ -26,7 +26,6 @@ function MyAccountSidebar({
   finesLoading = false,
   recalledCount = 0,
   accountsFaqUrl = '',
-  isAuthenticated = false,
 }) {
   const [departmentExpanded, setDepartmentExpanded] = useState(false)
 
@@ -123,22 +122,6 @@ function MyAccountSidebar({
                 You have {recalledCount} item{recalledCount !== 1 ? 's' : ''}{' '}
                 recalled
               </span>
-            </li>
-          )}
-
-          {/* Log In */}
-          {!isAuthenticated && (
-            <li className="mylib-sidebar__item">
-              <i
-                className="fa fa-sign-in mylib-sidebar__icon"
-                aria-hidden="true"
-              />
-              <a
-                href={`/Shibboleth.sso/Login?target=${encodeURIComponent(window.location.href)}`}
-                className="mylib-sidebar__link"
-              >
-                Log In
-              </a>
             </li>
           )}
 
@@ -285,7 +268,6 @@ MyAccountSidebar.propTypes = {
   finesLoading: PropTypes.bool,
   recalledCount: PropTypes.number,
   accountsFaqUrl: PropTypes.string,
-  isAuthenticated: PropTypes.bool,
 }
 
 export default MyAccountSidebar

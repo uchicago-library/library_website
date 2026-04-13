@@ -1,0 +1,18 @@
+{% extends "base/public_base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-mylib-dashboard template-mylib-login{% endblock %}
+
+{% block content %}
+    <div class="mylib-login-gate">
+        <p>Sign in with your CNetID to view your checked out items,
+            holds, requests, room reservations, and account status.</p>
+        <p>
+            <a href="{{ shibboleth_login_url }}" class="btn btn-primary btn-lg">
+                Log in with CNetID
+            </a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block right_sidebar %}{% endblock %}
