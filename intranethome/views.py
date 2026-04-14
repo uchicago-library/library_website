@@ -298,7 +298,6 @@ def ags_upload_page(request):
 
     # generate the XLSX preview, when XLSX is in Documents
     rows_result = rmap(doc_to_rows_exn, doc_result)
-    confirm_and_rows = product(confirm_result, rows_result)
 
     # determine alert and message
     match confirm_result:
