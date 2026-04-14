@@ -474,7 +474,7 @@ def unfold(step, initial):
     return [item for item in generator((None, initial))]
 
 
-def check_loop_permissions(request, page):
+def has_page_permissions(request, page):
     groups = get_required_groups(page)
     user = request.user
     return has_permission(user, groups)
@@ -482,7 +482,7 @@ def check_loop_permissions(request, page):
 
 def permissions_redirect(request, response):
     loop_homepage = Site.objects.get(site_name="Loop").root_page
-    if not check_loop_permissions(request, loop_homepage):
+    if not has_page_permissions(request, loop_homepage):
         return redirect_users_without_permissions(
             loop_homepage,
             request,
