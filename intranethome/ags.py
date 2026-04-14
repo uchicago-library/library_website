@@ -208,11 +208,9 @@ def retrieve_document(mod, title):
         reverse=True
     )
     if sort_em:
-        return ok(sort_em[0])
+        return sort_em[0]
     else:
-        # this error message is for developers only; the user-facing
-        # error message is in the template, ags_upload_page.html.
-        return error("Can't find ags_spreadsheet.xlsx.")
+        return None
 
 
 ############# Generating Javascript for /js view #################

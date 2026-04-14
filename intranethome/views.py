@@ -293,14 +293,6 @@ def ags_upload_page(request):
         create_document(SPREADSHEET_NAME), validated
     )
 
-    # retrieve the latest XLSX from Wagtail Documents
-    D = get_document_model()
-    doc_result = retrieve_document(D, SPREADSHEET_NAME)
-
-    # generate the XLSX preview, when XLSX is in Documents
-    rows_result = rmap(doc_to_rows_exn, doc_result)
-    confirm_and_rows = product(confirm_result, rows_result)
-
     # determine alert and message
     match confirm_result:
         case { "ok": confirm }:
@@ -313,15 +305,15 @@ def ags_upload_page(request):
             msg_context = { "msg": "",
                             "confirm": False, }
 
+    # retrieve the latest XLSX from Wagtail Documents
+    D = get_document_model()
+    doc = retrieve_document(D, SPREADSHEET_NAME)
+
     # determine table preview
-    match rows_result:
-        case { "ok": rows }:
-            context = { "table_rows": rows } | msg_context
-        case { "error": _ }:
-            # suppress developer error message for users
-            context = { "table_rows": [] } | msg_context
-        case other:
-            context = { "table_rows": [] } | msg_context
+    rows = doc_to_rows_exn(doc) if doc else []
+
+    # put everything together into context
+    context = { "table_rows": rows } | msg_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
