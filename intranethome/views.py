@@ -260,12 +260,6 @@ def mail_aliases_view(request, *args, **kwargs):
 
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
-    # loop_homepage = Site.objects.get(site_name="Loop").root_page
-
-    # check whether user has permission to be on Loop; redirect if not
-    # if not has_permission(request.user, get_required_groups(loop_homepage)):
-        # return redirect_users_without_permissions(loop_homepage, request, None, None)
-
     try:
         alias_filter = kwargs["alias_filter"].lower()
     except KeyError:
@@ -307,20 +301,27 @@ def ags_upload_page(request):
     rows_result = rmap(doc_to_rows_exn, doc_result)
     confirm_and_rows = product(confirm_result, rows_result)
 
-    # determine XLSX preview + update message
-    match confirm_and_rows:
-        case { "ok": (confirm, rows) }:
-            context = { "table_rows": rows,
-                        "msg": bool_to_msg(confirm),
-                        "confirm": confirm, }
+    # determine alert and message
+    match confirm_result:
+        case { "ok": confirm }:
+            msg_context = { "msg": bool_to_msg(confirm),
+                            "confirm": confirm, }
         case { "error": error_msg }:
-            context = { "table_rows": [],
-                        "msg": error_msg,
-                        "confirm": False, }
+            msg_context = { "msg": error_msg,
+                            "confirm": False, }
         case other:
-            context = { "table_rows": [],
-                        "msg": "",
-                        "confirm": False, }
+            msg_context = { "msg": "",
+                            "confirm": False, }
+
+    # determine table preview
+    match rows_result:
+        case { "ok": rows }:
+            context = { "table_rows": rows } | msg_context
+        case { "error": _ }:
+            # suppress developer error message for users
+            context = { "table_rows": [] } | msg_context
+        case other:
+            context = { "table_rows": [] } | msg_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"

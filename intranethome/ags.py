@@ -179,7 +179,7 @@ def bool_to_msg(confirm):
     if confirm:
         return "Updating AGS spreadsheet in Wagtail database..."
     else:
-        return "Adding new AGS spreadsheet to Wagtail database..."
+        return ""
 
 
 def create_document(filename):
@@ -196,7 +196,7 @@ def create_document(filename):
             doc.file.save(filename, ContentFile(bytz))
             return confirm
         else:
-            return ""
+            return False
     return inner
 
 
@@ -210,7 +210,9 @@ def retrieve_document(mod, title):
     if sort_em:
         return ok(sort_em[0])
     else:
-        return error("No AGS spreadsheet uploaded.")
+        # this error message is for developers only; the user-facing
+        # error message is in the template, ags_upload_page.html.
+        return error("Can't find ags_spreadsheet.xlsx.")
 
 
 ############# Generating Javascript for /js view #################

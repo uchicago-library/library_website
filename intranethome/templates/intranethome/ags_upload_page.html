@@ -4,6 +4,16 @@
 
 {% block content %}
 
+{% if msg and not confirm %}
+<div class="alert alert-danger" role="alert">
+    {{ msg }}
+</div>
+{% elif confirm %}
+<div class="alert alert-success" role="alert">
+    {{ msg }}
+</div>
+{% endif %}
+
 <title> Article Galaxy Configuration Management </title>
 
 <h1> Article Galaxy Configuration Management </h1>
@@ -11,7 +21,7 @@
 <h2> Article Galaxy Index </h2>
 
 <div>
-    <form action="/ags/" method="post" enctype="multipart/form-data" id="ags_form">
+    <form action="/ags/" method="post" enctype="multipart/form-data" id="ags_form" onsubmit="return confirm('Are you sure?  This will overwrite any previous spreadsheets.')">
 	{% csrf_token %}
 	<label for="uploadFile">Select an .xlsx file to upload:</label>
 	<input type="file" name="uploadFile" required="true" id="uploadFile" accept=".xlsx" formenctype="multipart/form-data">
@@ -19,13 +29,9 @@
     </form>
 </div>
 
-{% if msg %}
-<h3>
-    {{ msg }}
-</h3>
-{% endif %}
-
 {% if table_rows %}
+
+
 <h2>
     AGS spreadsheet preview:
 </h2>
@@ -56,8 +62,10 @@
     {% endfor %}
 </table>
 
+{% else %}
+<h2>
+    No AGS spreadsheet uploaded.
+</h2>
 {% endif %}
-
-<script src="{% static 'intranethome/js/ags.js' %}"></script>
 
 {% endblock %}
