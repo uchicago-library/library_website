@@ -162,6 +162,11 @@ def retrieve_document(mod, title):
         return error("No AGS spreadsheet present in Wagtail database.")
 
 
+def delete_document_exn(mod, title):
+    docs_by_name = mod.objects.filter(title=title)
+    [ d.delete() for d in docs_by_name ]
+
+
 ############# Generating Javascript for /js view #################
 
 
