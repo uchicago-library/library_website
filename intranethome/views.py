@@ -6,6 +6,7 @@ from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from base.result import rmap
+from library_website.settings import AGS_SPREADSHEET_NAME
 from .ags import (
     create_document,
     request_to_xlsx,
@@ -14,7 +15,6 @@ from .ags import (
     doc_to_rows_exn,
     doc_to_dict_exn,
     bool_to_msg,
-    SPREADSHEET_NAME,
 )
 from base.utils import permissions_redirect
 from django.core.files.base import File
@@ -31,9 +31,6 @@ from wagtail.models import Site
 from wagtail.documents import get_document_model
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-
-# todo: move this into the config base.py
-AGS_SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -289,12 +286,12 @@ def ags_upload_page(request):
 
     # update the Wagtail Document based on the POST data
     confirm_result = rmap(
-        create_document(SPREADSHEET_NAME), validated
+        create_document(AGS_SPREADSHEET_NAME), validated
     )
 
     # retrieve the latest XLSX from Wagtail Documents
     D = get_document_model()
-    doc_result = retrieve_document(D, SPREADSHEET_NAME)
+    doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
 
     # generate the XLSX preview, when XLSX is in Documents
     rows_result = rmap(doc_to_rows_exn, doc_result)
@@ -341,3 +338,9 @@ def display_js(request):
 
     # render template
     return HttpResponse(json_string, content_type="application/json")
+
+
+def delete_spreadsheet(request):
+    # TODO: finish this
+    D = get_document_model()
+    pass

@@ -5,13 +5,7 @@ import json
 from io import BytesIO
 from wagtail.documents import get_document_model
 from functools import reduce
-
-
-############################ constants ###############################
-
-
-SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
-DEFAULT_SHEET="data1"
+from library_website.settings import AGS_DEFAULT_SHEET
 
 
 ############## Retriving XLSX from a POST parameter ##################
@@ -30,7 +24,7 @@ def request_to_xlsx(request):
 ################# XLSX validation/transformation ####################
 
 
-def xlsx_to_df_exn(data, sheet_name=DEFAULT_SHEET):
+def xlsx_to_df_exn(data, sheet_name=AGS_DEFAULT_SHEET):
     return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
 
 
@@ -92,7 +86,7 @@ def validate_xlsx(xlsx):
 
 
 def handle_to_df_exn(handle):
-    output = pd.read_excel(handle, sheet_name=DEFAULT_SHEET)
+    output = pd.read_excel(handle, sheet_name=AGS_DEFAULT_SHEET)
     return output
 
 
