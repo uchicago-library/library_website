@@ -16,7 +16,7 @@ from .ags import (
     bool_to_msg,
     SPREADSHEET_NAME,
 )
-from base.utils import check_loop_permissions
+from base.utils import permissions_redirect
 from django.core.files.base import File
 from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
@@ -273,7 +273,7 @@ def mail_aliases_view(request, *args, **kwargs):
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
         context = {"final_data": final_data, "alphas": alphas}
 
-    return check_loop_permissions(
+    return permissions_redirect(
         request,
         render(request, "intranethome/mail_aliases.html", context)
     )
@@ -323,7 +323,7 @@ def ags_upload_page(request):
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
-    return check_loop_permissions(
+    return permissions_redirect(
         request,
         TemplateResponse(request, template_path, context)
     )
