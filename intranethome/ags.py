@@ -156,9 +156,10 @@ def retrieve_document(mod, title):
         reverse=True
     )
     if sort_em:
-        return sort_em[0]
+        return ok(sort_em[0])
     else:
-        return None
+        # this error message is only used in the ags/js view
+        return error("No AGS spreadsheet present in Wagtail database.")
 
 
 ############# Generating Javascript for /js view #################
