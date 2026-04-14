@@ -5,9 +5,8 @@ from string import ascii_lowercase, ascii_uppercase
 from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
+from base.result import rmap
 from .ags import (
-    rmap,
-    product,
     create_document,
     request_to_xlsx,
     validate_xlsx,
