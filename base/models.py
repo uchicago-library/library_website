@@ -2423,13 +2423,6 @@ class IntranetIndexPage(BasePage):
                 )
             )
 
-        def alphabetize_pages(currentlevel):
-            for node in currentlevel:
-                node["children"] = alphabetize_pages(node["children"])
-            return sorted(currentlevel, key=lambda c: c["title"])
-
-        pages = alphabetize_pages(pages)
-
         def get_html(currentlevel):
             if not currentlevel:
                 return ""
