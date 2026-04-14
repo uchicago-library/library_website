@@ -1,10 +1,11 @@
 const agsForm = document.getElementById("ags_form");
 
-agsForm.addEventListener ('submit', function (event) {
+agsForm.addEventListener("submit", function(event) {
     event.preventDefault();
     const msg = "Are you sure you want overwrite the previous AGS spreadsheet?";
-    if (confirm(msg)) {
-	agsForm.submit();
+    const confirmed = confirm (msg);
+    if (confirmed) {
+	this.submit();
     } else {
 	() => {};
     }
