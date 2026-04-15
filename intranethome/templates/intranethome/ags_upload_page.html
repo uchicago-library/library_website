@@ -21,17 +21,22 @@
 <h2> Article Galaxy Index </h2>
 
 <div>
-    <form action="/ags/" method="post" enctype="multipart/form-data" id="ags_form" onsubmit="return confirm('Are you sure?  This will overwrite any previous spreadsheets.')">
+    <form action="/ags/" method="post" enctype="multipart/form-data" id="ags_form" onsubmit="return confirm('Are you sure you want to update the AGS spreadsheet?')">
 	{% csrf_token %}
+	<label for="uploadFile">The AGS spreadsheet .xlsx file is required to have a sheet called 'data1' and columns called 'PublicationName', 'StandardNumber', 'YearStart', and 'YearEnd'.</label>
 	<label for="uploadFile">Select an .xlsx file to upload:</label>
 	<input type="file" name="uploadFile" required="true" id="uploadFile" accept=".xlsx" formenctype="multipart/form-data">
-	<button id="ags_button">Upload Article Galaxy</button>
+	<button type="submit">Upload Article Galaxy</button>
     </form>
+    {% if table_rows %}
+    <form action="/ags/delete/" method="post" enctype="multipart/form-data" id="ags_form" onsubmit="return confirm('Are you sure you want to delete the AGS spreadsheet?')">
+	{% csrf_token %}
+	<button type="submit">Delete Article Galaxy</button>
+    </form>
+    {% endif %}
 </div>
 
 {% if table_rows %}
-
-
 <h2>
     AGS spreadsheet preview:
 </h2>
@@ -62,6 +67,10 @@
     {% endfor %}
 </table>
 
+{% elif delete %}
+<h2>
+    AGS spreadsheet deleted.
+</h2>
 {% else %}
 <h2>
     No AGS spreadsheet uploaded.

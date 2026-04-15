@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path("", views.ags_upload_page, name="ags_upload_page"),
     path("js/", views.display_js, name="display_js"),
+    path("delete/", views.delete_spreadsheet, name="delete_spreadsheet"),
 ]

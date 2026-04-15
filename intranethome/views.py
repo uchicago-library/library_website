@@ -15,12 +15,17 @@ from .ags import (
     doc_to_rows_exn,
     doc_to_dict_exn,
     bool_to_msg,
+    delete_document_exn,
 )
-from base.utils import permissions_redirect
+from base.utils import (
+    permissions_redirect,
+    get_loop_homepage,
+    has_page_permissions,
+)
 from django.core.files.base import File
 from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponse
 import json
@@ -29,6 +34,7 @@ from site_settings.models import ContactInfo
 from string import ascii_uppercase, ascii_lowercase
 from wagtail.models import Site
 from wagtail.documents import get_document_model
+from urllib.parse import urlencode
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -296,7 +302,7 @@ def ags_upload_page(request):
     # generate the XLSX preview, when XLSX is in Documents
     rows_result = rmap(doc_to_rows_exn, doc_result)
 
-    # determine alert and message
+    # determine alert and upload/error message
     match confirm_result:
         case { "ok": confirm }:
             msg_context = { "msg": bool_to_msg(confirm),
@@ -308,15 +314,21 @@ def ags_upload_page(request):
             msg_context = { "msg": "",
                             "confirm": False, }
 
+    # determine deletion message
+    if "delete" in request.GET:
+        delete_context = { "delete": True } | msg_context
+    else:
+        delete_context = { "delete": False } | msg_context
+
     # determine table preview
     match rows_result:
         case { "ok": rows }:
-            context = { "table_rows": rows } | msg_context
+            context = { "table_rows": rows } | delete_context
         case { "error": _ }:
             # suppress developer error message for users
-            context = { "table_rows": [] } | msg_context
+            context = { "table_rows": [] } | delete_context
         case other:
-            context = { "table_rows": [] } | msg_context
+            context = { "table_rows": [] } | delete_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
@@ -330,7 +342,7 @@ def display_js(request):
 
     # read XLSX from Wagtail Documents
     D = get_document_model()
-    doc = retrieve_document(D, SPREADSHEET_NAME)
+    doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
     
     # convert XLSX to Javascript object for use in Find It
     ags_dict_result = rmap(doc_to_dict_exn, doc)
@@ -341,6 +353,11 @@ def display_js(request):
 
 
 def delete_spreadsheet(request):
-    # TODO: finish this
     D = get_document_model()
-    pass
+    page = get_loop_homepage()
+    if has_page_permissions(request, page) and request.POST:
+        delete_document_exn(D, AGS_SPREADSHEET_NAME)
+    else:
+        pass
+    url = "/ags?delete"
+    return redirect(url)

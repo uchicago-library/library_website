@@ -8,7 +8,7 @@ from functools import reduce
 from library_website.settings import AGS_DEFAULT_SHEET
 
 
-############## Retriving XLSX from a POST parameter ##################
+############## Retrieving XLSX from a POST parameter #################
 
 
 def request_to_xlsx(request):
@@ -21,7 +21,7 @@ def request_to_xlsx(request):
         return b""
 
 
-################# XLSX validation/transformation ####################
+################## XLSX validation/transformation ###################
 
 
 def xlsx_to_df_exn(data, sheet_name=AGS_DEFAULT_SHEET):

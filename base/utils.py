@@ -480,8 +480,12 @@ def has_page_permissions(request, page):
     return has_permission(user, groups)
 
 
+def get_loop_homepage():
+    return Site.objects.get(site_name="Loop").root_page
+
+
 def permissions_redirect(request, response):
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
+    loop_homepage = get_loop_homepage()
     if not has_page_permissions(request, loop_homepage):
         return redirect_users_without_permissions(
             loop_homepage,
