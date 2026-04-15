@@ -95,7 +95,7 @@ function CategoryCard({
   }
 
   return (
-    <div className="mylib-card">
+    <div className="mylib-card" data-ga-subcategory={`${title} Card`}>
       <div className="mylib-card__header">
         <h3 className="mylib-card__title">{title}</h3>
         {!isLoading && !error && count !== undefined && (
@@ -112,6 +112,7 @@ function CategoryCard({
             className="mylib-card__manage-link"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
+            data-ga-label={manageLabel}
           >
             {manageLabel}{' '}
             {isExternal && (
@@ -125,6 +126,7 @@ function CategoryCard({
             type="button"
             className="mylib-card__show-more"
             onClick={handleShowMore}
+            data-ga-label="Show more items"
           >
             + Show {Math.min(remainingItems, 10)} more item
             {Math.min(remainingItems, 10) !== 1 ? 's' : ''}
@@ -136,6 +138,7 @@ function CategoryCard({
             className="mylib-card__manage-link mylib-card__manage-link--bottom"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
+            data-ga-label={manageLabel}
           >
             {manageLabel}{' '}
             {isExternal && (
