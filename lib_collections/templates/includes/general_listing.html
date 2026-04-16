@@ -19,22 +19,15 @@
 {% if objects %}
     {% for object in objects %}
         <figure class="figure">
-            {% if object.image_link %}
-                <a href="{{ object.wagtail_link }}">
-                    <img src="{{ object.image_link }}" alt="{{ object.title }}">
-                </a>
-            {% endif %}
-            <figcaption>
-                <a href="{{ object.wagtail_link }}">
-                    <h3>{{ object.title }}</h3>
-                </a>
-                <ul>
-                    <li>Creator: {{ object.creator }}</li>
-                    <li>Publisher: {{ object.publisher }}</li>
-                    <li>Date: {{ object.date }}</li>
-                    <li>Language: {{ object.language }}</li>
-                </ul>
-            </figcaption>
+            <a href="{{ object.wagtail_link }}">
+                <h3>{{ object.title }}</h3>
+            </a>
+            <ul>
+                <li>Creator: {{ object.creator }}</li>
+                <li>Publisher: {{ object.publisher }}</li>
+                <li>Date: {{ object.date }}</li>
+                <li>Language: {{ object.language }}</li>
+            </ul>
         </figure>
     {% endfor %}
 {% endif %}

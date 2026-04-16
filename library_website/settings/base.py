@@ -501,8 +501,8 @@ SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
 LANGUAGE_ABBREVS = {"en": "English"}
 
 # toggle this comment to go between dev and production
-IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
-# IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
+IIIF_COLLECTION_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+IIIF_MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
 
 # toggle this comment with the other to switch from dev to production
 # IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="

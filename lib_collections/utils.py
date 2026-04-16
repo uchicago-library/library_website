@@ -19,7 +19,8 @@ from django.utils.text import slugify
 
 from library_website.settings import (
     CITATION_ROOT,
-    IIIF_PREFIX,
+    IIIF_COLLECTION_PREFIX,
+    IIIF_MANIFEST_PREFIX,
     IIIF_VIEWER_PREFIX,
     LANGUAGE_ABBREVS,
     TURTLE_ROOT,
@@ -115,7 +116,7 @@ class CBrowseURL:
         mk_cbrowse_url, specialized to the IIIF host
         """
         return CBrowseURL.mk_cbrowse_url(
-            IIIF_PREFIX, slug, browse_type, browse_name, ".json"
+            IIIF_COLLECTION_PREFIX, slug, browse_type, browse_name, ".json"
         )
 
     def mk_cbrowse_url_wagtail(
@@ -179,7 +180,7 @@ class CBrowseURL:
         Returns:
             URL string
         """
-        return CBrowseURL.mk_cbrowse_type_url(IIIF_PREFIX, slug, browse_type, ".json")
+        return CBrowseURL.mk_cbrowse_type_url(IIIF_COLLECTION_PREFIX, slug, browse_type, ".json")
 
     def mk_cbrowse_type_url_wagtail(
         slug: str, browse_type: str, full: bool = False
@@ -237,7 +238,7 @@ class LBrowseURL:
         Returns:
             URL string
         """
-        return LBrowseURL.mk_lbrowse_url(IIIF_PREFIX, slug, browse_name, ".json")
+        return LBrowseURL.mk_lbrowse_url(IIIF_COLLECTION_PREFIX, slug, browse_name, ".json")
 
     def mk_lbrowse_url_wagtail(slug: str, browse_name: str) -> str:
         """
@@ -848,7 +849,7 @@ class IIIFDisplay:
         Returns:
             IIIF Manifest URL
         """
-        return "%s/object/ark:/61001/%s.json" % (IIIF_PREFIX, manifid)
+        return "%s/%s" % (IIIF_MANIFEST_PREFIX, manifid)
 
     def mk_viewer_url(manifid: str) -> str:
         """
