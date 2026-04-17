@@ -180,7 +180,9 @@ class CBrowseURL:
         Returns:
             URL string
         """
-        return CBrowseURL.mk_cbrowse_type_url(IIIF_COLLECTION_PREFIX, slug, browse_type, ".json")
+        return CBrowseURL.mk_cbrowse_type_url(
+            IIIF_COLLECTION_PREFIX, slug, browse_type, ".json"
+        )
 
     def mk_cbrowse_type_url_wagtail(
         slug: str, browse_type: str, full: bool = False
@@ -238,7 +240,9 @@ class LBrowseURL:
         Returns:
             URL string
         """
-        return LBrowseURL.mk_lbrowse_url(IIIF_COLLECTION_PREFIX, slug, browse_name, ".json")
+        return LBrowseURL.mk_lbrowse_url(
+            IIIF_COLLECTION_PREFIX, slug, browse_name, ".json"
+        )
 
     def mk_lbrowse_url_wagtail(slug: str, browse_name: str) -> str:
         """
