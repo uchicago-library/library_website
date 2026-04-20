@@ -9,8 +9,8 @@
  * The isLoading prop shows a loading state inside the card while preserving
  * the card structure (title, manage link).
  */
-import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 
 function CardLoadingState() {
   return (
@@ -112,7 +112,7 @@ function CategoryCard({
             className="mylib-card__manage-link"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={manageLabel}
+            data-ga-label={`${manageLabel} top`}
           >
             {manageLabel}{' '}
             {isExternal && (
@@ -138,7 +138,7 @@ function CategoryCard({
             className="mylib-card__manage-link mylib-card__manage-link--bottom"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={manageLabel}
+            data-ga-label={`${manageLabel} bottom`}
           >
             {manageLabel}{' '}
             {isExternal && (
