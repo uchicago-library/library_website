@@ -97,6 +97,16 @@ function Dashboard() {
     scSeatsQuery.data,
     scMaterialsQuery.data
   )
+  const tabLoading = {
+    checkedOut: loansQuery.isLoading,
+    availableForPickup: holdsQuery.isLoading || downloadsQuery.isLoading,
+    inProcess:
+      illInProcessQuery.isLoading ||
+      scanDeliverQuery.isLoading ||
+      pagingRequestsQuery.isLoading,
+    reservations: reservationsQuery.isLoading || appointmentsQuery.isLoading,
+    specialCollections: scSeatsQuery.isLoading || scMaterialsQuery.isLoading,
+  }
 
   // Note: We render the layout immediately - no blocking loading state.
   // Each section handles its own loading state for progressive rendering.
@@ -128,6 +138,7 @@ function Dashboard() {
             activeTab={activeTab}
             onTabChange={setActiveTab}
             counts={tabCounts}
+            loading={tabLoading}
           />
 
           {/* Tab Panels */}

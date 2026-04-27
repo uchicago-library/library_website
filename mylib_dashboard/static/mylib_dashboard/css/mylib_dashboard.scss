@@ -234,6 +234,22 @@ $background-light: #f5f5f5;
     background: $background-light;
     border-radius: 10px;
     text-align: center;
+
+    &--loading {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      padding: 0;
+      background: linear-gradient(
+        90deg,
+        $background-light 25%,
+        lighten($background-light, 7%) 50%,
+        $background-light 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      vertical-align: text-bottom;
+    }
   }
 }
 

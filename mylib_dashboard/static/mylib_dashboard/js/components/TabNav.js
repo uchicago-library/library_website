@@ -15,7 +15,7 @@ export const TABS = {
   SPECIAL_COLLECTIONS: 'special-collections',
 }
 
-function TabNav({ activeTab, onTabChange, counts }) {
+function TabNav({ activeTab, onTabChange, counts, loading }) {
   const tabRefs = useRef([])
 
   const tabs = [
@@ -23,26 +23,31 @@ function TabNav({ activeTab, onTabChange, counts }) {
       id: TABS.CHECKED_OUT,
       label: 'Checked Out',
       count: counts.checkedOut,
+      loading: loading.checkedOut,
     },
     {
       id: TABS.AVAILABLE_PICKUP,
       label: 'Available for Pickup',
       count: counts.availableForPickup,
+      loading: loading.availableForPickup,
     },
     {
       id: TABS.IN_PROCESS,
       label: 'In Process',
       count: counts.inProcess,
+      loading: loading.inProcess,
     },
     {
       id: TABS.SPECIAL_COLLECTIONS,
       label: 'Special Collections',
       count: counts.specialCollections,
+      loading: loading.specialCollections,
     },
     {
       id: TABS.RESERVATIONS,
       label: 'Reservations',
       count: counts.reservations,
+      loading: loading.reservations,
     },
   ]
 
@@ -96,7 +101,14 @@ function TabNav({ activeTab, onTabChange, counts }) {
           data-ga-label={tab.label}
         >
           {tab.label}
-          {tab.count > 0 && (
+          {tab.loading && (
+            <span
+              className="mylib-tabs__badge mylib-tabs__badge--loading"
+              aria-label="Loading count"
+              role="status"
+            />
+          )}
+          {!tab.loading && tab.count > 0 && (
             <span className="mylib-tabs__badge">{tab.count}</span>
           )}
         </button>
@@ -114,6 +126,13 @@ TabNav.propTypes = {
     inProcess: PropTypes.number,
     reservations: PropTypes.number,
     specialCollections: PropTypes.number,
+  }).isRequired,
+  loading: PropTypes.shape({
+    checkedOut: PropTypes.bool,
+    availableForPickup: PropTypes.bool,
+    inProcess: PropTypes.bool,
+    reservations: PropTypes.bool,
+    specialCollections: PropTypes.bool,
   }).isRequired,
 }
 
