@@ -23,6 +23,7 @@ function DownloadItem({ copy }) {
           className="mylib-item__download-link"
           target="_blank"
           rel="noopener noreferrer"
+          data-ga-label="Download PDF"
         >
           Download PDF <i className="fa fa-external-link" aria-hidden="true" />
         </a>

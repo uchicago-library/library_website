@@ -92,6 +92,8 @@ function TabNav({ activeTab, onTabChange, counts }) {
           className={`mylib-tabs__tab ${activeTab === tab.id ? 'mylib-tabs__tab--active' : ''}`}
           onClick={() => onTabChange(tab.id)}
           onKeyDown={handleKeyDown}
+          data-ga-subcategory={tab.label}
+          data-ga-label={tab.label}
         >
           {tab.label}
           {tab.count > 0 && (

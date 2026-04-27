@@ -33,7 +33,11 @@ function MyAccountSidebar({
   const extIcon = <i className="fa fa-external-link" aria-hidden="true" />
 
   return (
-    <aside className="mylib-sidebar">
+    <aside
+      className="mylib-sidebar"
+      data-ga-category="Sidebar"
+      data-ga-subcategory="My Account Sidebar"
+    >
       {/* My Account */}
       <div className="mylib-sidebar__section">
         <h3 className="mylib-sidebar__heading">My Account</h3>
@@ -47,6 +51,7 @@ function MyAccountSidebar({
               <a
                 href={`${catalogBase}/vufind/MyResearch/Profile`}
                 className="mylib-sidebar__link"
+                data-ga-label="Profile"
               >
                 {profile?.displayName || 'Profile'} {extIcon}
               </a>
@@ -59,6 +64,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/MyResearch/Favorites`}
               className="mylib-sidebar__link"
+              data-ga-label="Saved Items"
             >
               Saved Items {extIcon}
             </a>
@@ -70,6 +76,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/MyResearch/CheckedOut`}
               className="mylib-sidebar__link"
+              data-ga-label="Checked Out Items"
             >
               Checked Out Items {extIcon}
             </a>
@@ -84,6 +91,7 @@ function MyAccountSidebar({
               <a
                 href={`${catalogBase}/vufind/MyResearch/Fines`}
                 className="mylib-sidebar__link mylib-sidebar__warning"
+                data-ga-label="Fines"
               >
                 You have {formatCurrency(finesTotal)} in fines. {extIcon}
               </a>
@@ -91,6 +99,7 @@ function MyAccountSidebar({
               <a
                 href={`${catalogBase}/vufind/MyResearch/Fines`}
                 className="mylib-sidebar__link"
+                data-ga-label="Fines"
               >
                 Fines {extIcon}
               </a>
@@ -106,6 +115,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/Search/History`}
               className="mylib-sidebar__link"
+              data-ga-label="Search History"
             >
               Search History {extIcon}
             </a>
@@ -133,6 +143,7 @@ function MyAccountSidebar({
                 className="mylib-sidebar__expand-btn"
                 onClick={() => setDepartmentExpanded(!departmentExpanded)}
                 aria-expanded={departmentExpanded}
+                data-ga-label="My Lib department affiliation"
               >
                 <i
                   className="fa fa-university mylib-sidebar__icon"
@@ -159,7 +170,11 @@ function MyAccountSidebar({
                 className="fa fa-question-circle mylib-sidebar__icon"
                 aria-hidden="true"
               />
-              <a href={accountsFaqUrl} className="mylib-sidebar__link">
+              <a
+                href={accountsFaqUrl}
+                className="mylib-sidebar__link"
+                data-ga-label="Accounts FAQ"
+              >
                 Accounts FAQ {extIcon}
               </a>
             </li>
@@ -176,6 +191,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/Requests/List`}
               className="mylib-sidebar__link"
+              data-ga-label="Requested Items"
             >
               Requested Items {extIcon}
             </a>
@@ -188,6 +204,7 @@ function MyAccountSidebar({
             <a
               href="https://requests.lib.uchicago.edu/illiad/illiad.dll"
               className="mylib-sidebar__link"
+              data-ga-label="Interlibrary Loan"
             >
               Interlibrary Loan {extIcon}
             </a>
@@ -200,6 +217,7 @@ function MyAccountSidebar({
             <a
               href="https://forms2.lib.uchicago.edu/lib/aon/aeon.php"
               className="mylib-sidebar__link"
+              data-ga-label="Special Collections"
             >
               Special Collections {extIcon}
             </a>
@@ -219,6 +237,7 @@ function MyAccountSidebar({
             <a
               href="https://acadtech-res.uchicago.edu/canvas/whichlogin/"
               className="mylib-sidebar__link"
+              data-ga-label="Canvas"
             >
               Canvas {extIcon}
             </a>
@@ -235,6 +254,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/MyResearch/Favorites`}
               className="mylib-sidebar__link"
+              data-ga-label="Saved Items"
             >
               Saved Items {extIcon}
             </a>
@@ -247,6 +267,7 @@ function MyAccountSidebar({
             <a
               href={`${catalogBase}/vufind/MyResearch/EditList/NEW`}
               className="mylib-sidebar__link"
+              data-ga-label="Create a List"
             >
               Create a List {extIcon}
             </a>

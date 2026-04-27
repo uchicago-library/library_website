@@ -26,7 +26,12 @@ function AutoRenewalNotice({ content = '' }) {
   }
 
   return (
-    <div className="mylib-notice" role="note">
+    <div
+      className="mylib-notice"
+      role="note"
+      data-ga-category="Floating"
+      data-ga-subcategory="Dismissible Notice"
+    >
       <div
         className="mylib-notice__content"
         dangerouslySetInnerHTML={{ __html: content }} //eslint-disable-line react/no-danger
@@ -36,6 +41,7 @@ function AutoRenewalNotice({ content = '' }) {
         className="mylib-notice__dismiss"
         onClick={handleDismiss}
         aria-label="Dismiss notice"
+        data-ga-label="Dismiss notice"
       >
         <span aria-hidden="true">&times;</span>
       </button>

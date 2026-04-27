@@ -61,6 +61,7 @@ function ReservationItem({ reservation }) {
             href="https://rooms.lib.uchicago.edu/r/checkin"
             target="_blank"
             rel="noopener noreferrer"
+            data-ga-label="Check in"
           >
             Check in
           </a>{' '}
