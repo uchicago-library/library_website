@@ -2,7 +2,7 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.db import models
-from wagtail.admin.panels import FieldPanel, HelpPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel, MultiFieldPanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtailcache.cache import WagtailCacheMixin
@@ -50,6 +50,80 @@ class MyLibDashboardPage(WagtailCacheMixin, PublicBasePage):
         help_text="URL to the Accounts FAQ page.",
     )
 
+    # Per-card empty-state messages. Shown when the user has no items in the
+    # corresponding category. Rich text so editors can include links.
+    EMPTY_STATE_FEATURES = ["bold", "italic", "link"]
+    EMPTY_STATE_HELP = (
+        "Message shown in this card when the user has no items in this category."
+    )
+
+    empty_state_non_renewable_loans = RichTextField(
+        blank=True,
+        default="No non-renewable loans",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_standard_loans = RichTextField(
+        blank=True,
+        default="No standard loans",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_pickups = RichTextField(
+        blank=True,
+        default="No items available for pickup",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_downloads = RichTextField(
+        blank=True,
+        default="No downloads available",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_ill_in_process = RichTextField(
+        blank=True,
+        default="No ILL requests in process",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_scan_deliver = RichTextField(
+        blank=True,
+        default="No scan requests in process",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_paging_requests = RichTextField(
+        blank=True,
+        default="No paging requests in process",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_room_reservations = RichTextField(
+        blank=True,
+        default="No upcoming room reservations",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_appointments = RichTextField(
+        blank=True,
+        default="No upcoming appointments",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_material_requests = RichTextField(
+        blank=True,
+        default="No material requests",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+    empty_state_reading_room_reservations = RichTextField(
+        blank=True,
+        default="No upcoming reading room reservations",
+        help_text=EMPTY_STATE_HELP,
+        features=EMPTY_STATE_FEATURES,
+    )
+
     subpage_types = []
 
     content_panels = (
@@ -59,6 +133,23 @@ class MyLibDashboardPage(WagtailCacheMixin, PublicBasePage):
             FieldPanel("max_items_per_card"),
             FieldPanel("catalog_account_url"),
             FieldPanel("accounts_faq_url"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("empty_state_non_renewable_loans"),
+                    FieldPanel("empty_state_standard_loans"),
+                    FieldPanel("empty_state_pickups"),
+                    FieldPanel("empty_state_downloads"),
+                    FieldPanel("empty_state_ill_in_process"),
+                    FieldPanel("empty_state_scan_deliver"),
+                    FieldPanel("empty_state_paging_requests"),
+                    FieldPanel("empty_state_room_reservations"),
+                    FieldPanel("empty_state_appointments"),
+                    FieldPanel("empty_state_material_requests"),
+                    FieldPanel("empty_state_reading_room_reservations"),
+                ],
+                heading="Empty State Messages",
+                classname="collapsible collapsed",
+            ),
             HelpPanel(
                 heading="About the MyLib Dashboard",
                 content="""

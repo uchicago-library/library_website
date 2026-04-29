@@ -37,6 +37,20 @@ const CONFIG = {
   libcalWebUrl: DOM_ELEMENT.getAttribute('data-libcal-web-url') || '',
   // Whether the user has an active Shibboleth session
   isAuthenticated: DOM_ELEMENT.getAttribute('data-is-authenticated') === 'true',
+  // Per-card empty-state messages (rich-text HTML from Wagtail)
+  emptyState: {
+    nonRenewableLoans: DOM_ELEMENT.getAttribute('data-empty-state-non-renewable-loans') || '',
+    standardLoans: DOM_ELEMENT.getAttribute('data-empty-state-standard-loans') || '',
+    pickups: DOM_ELEMENT.getAttribute('data-empty-state-pickups') || '',
+    downloads: DOM_ELEMENT.getAttribute('data-empty-state-downloads') || '',
+    illInProcess: DOM_ELEMENT.getAttribute('data-empty-state-ill-in-process') || '',
+    scanDeliver: DOM_ELEMENT.getAttribute('data-empty-state-scan-deliver') || '',
+    pagingRequests: DOM_ELEMENT.getAttribute('data-empty-state-paging-requests') || '',
+    roomReservations: DOM_ELEMENT.getAttribute('data-empty-state-room-reservations') || '',
+    appointments: DOM_ELEMENT.getAttribute('data-empty-state-appointments') || '',
+    materialRequests: DOM_ELEMENT.getAttribute('data-empty-state-material-requests') || '',
+    readingRoomReservations: DOM_ELEMENT.getAttribute('data-empty-state-reading-room-reservations') || '',
+  },
 }
 
 // Create API instance
@@ -161,7 +175,7 @@ function Dashboard() {
                     isLoading={loansQuery.isLoading}
                     error={loansQuery.error?.message}
                     onRetry={() => loansQuery.refetch()}
-                    emptyMessage="No non-renewable loans"
+                    emptyMessage={CONFIG.emptyState.nonRenewableLoans}
                   >
                     {loansQuery.data?.nonRenewableLoans?.map(loan => (
                       <LoanItem key={loan.id} loan={loan} />
@@ -176,7 +190,7 @@ function Dashboard() {
                     isLoading={loansQuery.isLoading}
                     error={loansQuery.error?.message}
                     onRetry={() => loansQuery.refetch()}
-                    emptyMessage="No standard loans"
+                    emptyMessage={CONFIG.emptyState.standardLoans}
                   >
                     {loansQuery.data?.standardLoans?.map(loan => (
                       <LoanItem key={loan.id} loan={loan} />
@@ -203,7 +217,7 @@ function Dashboard() {
                     isLoading={holdsQuery.isLoading}
                     error={holdsQuery.error?.message}
                     onRetry={() => holdsQuery.refetch()}
-                    emptyMessage="No items available for pickup"
+                    emptyMessage={CONFIG.emptyState.pickups}
                   >
                     {holdsQuery.data?.holds?.map(hold => (
                       <PickupItem key={hold.id} hold={hold} />
@@ -217,7 +231,7 @@ function Dashboard() {
                     isLoading={downloadsQuery.isLoading}
                     error={downloadsQuery.error?.message}
                     onRetry={() => downloadsQuery.refetch()}
-                    emptyMessage="No downloads available"
+                    emptyMessage={CONFIG.emptyState.downloads}
                   >
                     {downloadsQuery.data?.copies?.map(copy => (
                       <DownloadItem key={copy.id} copy={copy} />
@@ -244,7 +258,7 @@ function Dashboard() {
                     isLoading={illInProcessQuery.isLoading}
                     error={illInProcessQuery.error?.message}
                     onRetry={() => illInProcessQuery.refetch()}
-                    emptyMessage="No ILL requests in process"
+                    emptyMessage={CONFIG.emptyState.illInProcess}
                   >
                     {illInProcessQuery.data?.requests?.map(request => (
                       <ILLRequestItem key={request.id} request={request} />
@@ -258,7 +272,7 @@ function Dashboard() {
                     isLoading={scanDeliverQuery.isLoading}
                     error={scanDeliverQuery.error?.message}
                     onRetry={() => scanDeliverQuery.refetch()}
-                    emptyMessage="No scan requests in process"
+                    emptyMessage={CONFIG.emptyState.scanDeliver}
                   >
                     {scanDeliverQuery.data?.requests?.map(request => (
                       <ScanDeliverItem key={request.id} request={request} />
@@ -272,7 +286,7 @@ function Dashboard() {
                     isLoading={pagingRequestsQuery.isLoading}
                     error={pagingRequestsQuery.error?.message}
                     onRetry={() => pagingRequestsQuery.refetch()}
-                    emptyMessage="No paging requests in process"
+                    emptyMessage={CONFIG.emptyState.pagingRequests}
                   >
                     {pagingRequestsQuery.data?.requests?.map(request => (
                       <PagingRequestItem key={request.id} request={request} />
@@ -299,7 +313,7 @@ function Dashboard() {
                     isLoading={reservationsQuery.isLoading}
                     error={reservationsQuery.error?.message}
                     onRetry={() => reservationsQuery.refetch()}
-                    emptyMessage="No upcoming room reservations"
+                    emptyMessage={CONFIG.emptyState.roomReservations}
                   >
                     {reservationsQuery.data?.reservations?.map(reservation => (
                       <ReservationItem key={reservation.id} reservation={reservation} />
@@ -313,7 +327,7 @@ function Dashboard() {
                     isLoading={appointmentsQuery.isLoading}
                     error={appointmentsQuery.error?.message}
                     onRetry={() => appointmentsQuery.refetch()}
-                    emptyMessage="No upcoming appointments"
+                    emptyMessage={CONFIG.emptyState.appointments}
                   >
                     {appointmentsQuery.data?.appointments?.map(appointment => (
                       <AppointmentItem key={appointment.id} appointment={appointment} />
@@ -340,7 +354,7 @@ function Dashboard() {
                     isLoading={scMaterialsQuery.isLoading}
                     error={scMaterialsQuery.error?.message}
                     onRetry={() => scMaterialsQuery.refetch()}
-                    emptyMessage={<>No material requests. <a href="https://www.lib.uchicago.edu/scrc/visiting/" target="_blank" rel="noopener noreferrer">Plan a visit</a></>}
+                    emptyMessage={CONFIG.emptyState.materialRequests}
                   >
                     {scMaterialsQuery.data?.requests?.map(request => (
                       <ScMaterialItem key={request.id} request={request} />
@@ -355,7 +369,7 @@ function Dashboard() {
                     isLoading={scSeatsQuery.isLoading}
                     error={scSeatsQuery.error?.message}
                     onRetry={() => scSeatsQuery.refetch()}
-                    emptyMessage="No upcoming reading room reservations"
+                    emptyMessage={CONFIG.emptyState.readingRoomReservations}
                   >
                     {scSeatsQuery.data?.reservations?.map(reservation => (
                       <ReservationItem key={reservation.id} reservation={reservation} />

@@ -41,7 +41,18 @@ CardErrorState.propTypes = {
 }
 
 function CardEmptyState({ message = 'No items' }) {
-  return <div className="mylib-card__empty">{message || 'No items'}</div>
+  const text = message || 'No items'
+  // Rich-text override fields are sanitized by Wagtail, so we render the
+  // editor's HTML (which may include <a>, <b>, <i>) directly.
+  if (typeof text === 'string') {
+    return (
+      <div
+        className="mylib-card__empty"
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
+    )
+  }
+  return <div className="mylib-card__empty">{text}</div>
 }
 
 CardEmptyState.propTypes = {

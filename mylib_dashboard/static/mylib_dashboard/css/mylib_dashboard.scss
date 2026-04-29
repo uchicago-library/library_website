@@ -490,6 +490,14 @@ $background-light: #f5f5f5;
     text-align: center;
     color: $text-muted;
     font-style: italic;
+
+    p {
+      margin: 0;
+    }
+
+    p + p {
+      margin-top: 0.5rem;
+    }
   }
 
   &__loading {
