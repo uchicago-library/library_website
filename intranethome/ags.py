@@ -131,12 +131,11 @@ def create_document(filename):
             try:
                 ags_xlsx = D.objects.get(title=filename)
                 ags_xlsx.delete()
-                confirm = True
             except D.DoesNotExist:
-                confirm = False
+                pass
             doc = D(title=filename)
             doc.file.save(filename, ContentFile(bytz))
-            return confirm
+            return True
         else:
             return False
     return inner
