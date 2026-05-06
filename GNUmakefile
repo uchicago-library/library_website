@@ -19,9 +19,16 @@ docker-cache: secrets
 docker-clean:
 	./docker-cleanup.sh
 
+REFRESH_COMMAND = docker compose $DOCKER_PROG up -d web
+
 .PHONY: docker-up
 docker-up:
-	docker compose $DOCKER_PROG up -d web
+	$(REFRESH_COMMAND)
+
+.PHONY: docker-refresh
+docker-refresh:
+	sudo systemctl restart docker
+	$(REFRESH_COMMAND)
 
 .PHONY: update-secrets
 update-secrets:
