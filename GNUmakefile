@@ -19,6 +19,10 @@ docker-cache: secrets
 docker-clean:
 	./docker-cleanup.sh
 
+.PHONY: docker-up
+docker-up:
+	docker compose $DOCKER_PROG up -d web
+
 .PHONY: update-secrets
 update-secrets:
 	git -C $(SECRETS_REPO_PATH) pull origin $(CURRENT_BRANCH)
