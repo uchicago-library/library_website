@@ -19,7 +19,7 @@ docker-cache: secrets
 docker-clean:
 	./docker-cleanup.sh
 
-REFRESH_COMMAND = docker compose $DOCKER_PROG up -d web
+REFRESH_COMMAND = docker compose --progress=plain up -d web
 
 .PHONY: docker-up
 docker-up:
