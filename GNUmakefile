@@ -9,7 +9,7 @@ CURRENT_BRANCH = $(shell git -C $(SECRETS_REPO_PATH) symbolic-ref --short HEAD)
 CLONE_PATH = wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/$(SECRETS_REPO_NAME)
 
 .PHONY: docker
-docker: secrets docker-clean docker-cache
+docker: docker-clean docker-cache
 
 .PHONY: docker-cache
 docker-cache: secrets

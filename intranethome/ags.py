@@ -109,6 +109,26 @@ def df_to_list(dataframe):
     return cols.values.tolist()
 
 
+def indicate_color(issn, issns1, issns2, all_rows):
+
+    def find_by_issn(issn, rows):
+        return next((row for row in rows if row[1] == issn), None)
+
+    if issn in issns1 and issn not in issns2:
+        return ("red", find_by_issn(issn, all_rows))
+    elif issn in issns2 and issn not in issns1:
+        return ("green", find_by_issn(issn, all_rows))
+    else:
+        return ("neutral", find_by_issn(issn, all_rows))
+
+def color_rows(old_rows, new_rows):
+    issns1 = [ row[1] for row in old_rows ]
+    issns2 = [ row[1] for row in new_rows ]
+    unioned_issns = list(dict.fromkeys(issns2 + issns1))
+    unioned_rows = old_rows + new_rows
+    return [ indicate_color(issn, issns1, issns2, unioned_rows)
+             for issn in unioned_issns ]
+
 def doc_to_rows_exn(doc):
     df = doc_to_dataframe_exn(doc)
     return df_to_list(df)
