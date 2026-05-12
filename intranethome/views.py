@@ -13,9 +13,13 @@ from .ags import (
     validate_xlsx,
     retrieve_document,
     doc_to_rows_exn,
+    doc_to_rows_exn_prime,
     doc_to_dict_exn,
     bool_to_msg,
     delete_document_exn,
+    df_to_list,
+    xlsx_to_df,
+    bind,
 )
 from base.utils import (
     permissions_redirect,
@@ -290,6 +294,13 @@ def ags_upload_page(request):
     # check that POST data are valid
     validated = validate_xlsx(xlsx)
 
+    # convert post data into table preview
+    # oops, this is wrong; I need to convert the Wagtail documents
+    # thing into a table preview
+    post_df = bind(validated, xlsx_to_df)
+    old_rows = rmap(df_to_list, post_df)
+    print(str(old_rows))
+
     # update the Wagtail Document based on the POST data
     confirm_result = rmap(
         create_document(AGS_SPREADSHEET_NAME), validated
@@ -304,6 +315,9 @@ def ags_upload_page(request):
 
     # determine alert and upload/error message
     match confirm_result:
+        case { "ok": "" }:
+            msg_context = { "msg": bool_to_msg(confirm),
+                            "confirm": "", }
         case { "ok": confirm }:
             msg_context = { "msg": bool_to_msg(confirm),
                             "confirm": confirm, }
