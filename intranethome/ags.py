@@ -51,6 +51,7 @@ required_columns = [
     "YearEnd",
 ]
 
+
 def validate_dataframe(df):
     def contains_column(name):
         def inner(df):
@@ -121,6 +122,7 @@ def indicate_color(issn, issns1, issns2, all_rows):
     else:
         return ("neutral", find_by_issn(issn, all_rows))
 
+
 def color_rows(old_rows, new_rows):
     issns1 = [ row[1] for row in old_rows ]
     issns2 = [ row[1] for row in new_rows ]
@@ -132,6 +134,12 @@ def color_rows(old_rows, new_rows):
 def doc_to_rows_exn(doc):
     df = doc_to_dataframe_exn(doc)
     return df_to_list(df)
+
+def doc_to_rows_exn_prime(new_rows):
+    def inner(doc_df):
+        old_rows = df_to_list(doc_df)
+        return color_rows(old_rows, new_rows)
+    return inner
 
 
 ############# Reading/Writing Wagtail Documents ###############
