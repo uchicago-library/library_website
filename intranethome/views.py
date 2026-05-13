@@ -342,16 +342,31 @@ def ags_upload_page(request):
     # determine table preview
     match (old_rows_result, rows_result):
         case ({ "ok": old_rows }, { "ok": new_rows }):
-            diffed = diff_rows(old_rows, new_rows)
-            context = { "table_rows": diffed } | delete_context
+            (reds, greens, diffed) = diff_rows(old_rows, new_rows)
+            if sorted(old_rows) != sorted(new_rows):
+                diff_column = True
+            else:
+                diff_column = False
+            new_context = { "table_rows": diffed,
+                            "diff_column": diff_column,
+                            "reds": reds,
+                            "greens": greens, }
+            context = new_context | delete_context
         case ({ "error": _ }, { "ok": new_rows }):
-            diffed = pad_with_empties(new_rows)
-            context = { "table_rows": diffed } | delete_context
+            (reds, greens, diffed) = (0, 0, pad_with_empties(new_rows))
+            diff_column = False
+            new_context = { "table_rows": diffed,
+                            "diff_column": diff_column,
+                            "reds": reds,
+                            "greens": greens, }
+            context = new_context | delete_context
         case (_, { "error": _ }):
             # suppress developer error message for users
-            context = { "table_rows": [] } | delete_context
+            diff_column = False
+            context = { "table_rows": [], "diff_column": diff_column } | delete_context
         case _:
-            context = { "table_rows": [] } | delete_context
+            diff_column = False
+            context = { "table_rows": [], "diff_column": diff_column } | delete_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"

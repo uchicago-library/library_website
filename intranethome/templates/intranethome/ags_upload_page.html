@@ -4,12 +4,6 @@
 
 {% block content %}
 
-<style>
- table>tbody>tr:nth-of-type(odd) {
-     background-color: transparent;
- }
-</style>
-
 {% if msg and not confirm %}
 <div class="alert alert-danger" role="alert">
     {{ msg }}
@@ -61,10 +55,29 @@
     AGS spreadsheet preview:
 </h2>
 
+{% if diff_column %}
+<div>
+    <p />
+    <span style="color: #499172;">
+	{{ greens }} subscriptions added
+    </span>
+    ;
+    <span style="color: #c73c4f;">
+	{{ reds }} subscriptions removed
+    </span>
+    <p />
+</div>
+
+
+
+{% endif %}
+
 <table class="table">
-    <tr class="table-active">
+    <tr>
+	{% if diff_column %}
 	<th>
 	</th>
+	{% endif %}
 	<th>
 	    PublicationName
 	</th>
@@ -79,10 +92,12 @@
 	</th>
     </tr>
     {% for row in table_rows %}
-    <tr class="{{ row.1 }}">
+    <tr style="{{ row.1 }}">
+	{% if diff_column %}
 	<td>
 	    {{ row.0 }}
 	</td>
+	{% endif %}
 	{% for entry in row.2 %}
 	<td>
 	    {{ entry }}

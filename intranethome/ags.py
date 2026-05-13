@@ -111,28 +111,42 @@ def df_to_list(dataframe):
 
 
 def indicate_diff(issn, issns1, issns2, all_rows):
+    minus_color = "#fce6e9"
+    plus_color = "#e4f7ea"
+    def styleify(hex_string):
+        return "background-color:  %s;" % hex_string
 
     def find_by_issn(issn, rows):
         return next((row for row in rows if row[1] == issn), None)
 
     if issn in issns1 and issn not in issns2:
-        return ("-", "table-danger", find_by_issn(issn, all_rows))
+        return ("-",
+                styleify(minus_color),
+                find_by_issn(issn, all_rows))
     elif issn in issns2 and issn not in issns1:
-        return ("+", "table-warning",find_by_issn(issn, all_rows))
+        return ("+",
+                styleify(plus_color),
+                find_by_issn(issn, all_rows))
     else:
-        return ("", "table-active", find_by_issn(issn, all_rows))
+        return ("", "", find_by_issn(issn, all_rows))
 
 
 def diff_rows(old_rows, new_rows):
     issns1 = [ row[1] for row in old_rows ]
     issns2 = [ row[1] for row in new_rows ]
-    enumerated = list(enumerate(issns1)) + list(enumerate(issns2))
-    interleaved = [ x for (_,x) in sorted(enumerated, key=lambda x: x[0]) ]
+    enumerated = list(enumerate(issns2)) + list(enumerate(issns1))
+    sorted_them = sorted(enumerated, key=lambda x: x[0])
+    interleaved = [ x for (_,x) in sorted_them ]
     unioned_issns = list(dict.fromkeys(interleaved))
     unioned_rows = old_rows + new_rows
-    return [ indicate_diff(issn, issns1, issns2, unioned_rows)
-             for issn in unioned_issns ]
-    
+    reds = len(set(issns1) - set(issns2))
+    greens = len(set(issns2) - set(issns1))
+    return (
+        reds,
+        greens,
+        [ indicate_diff(issn, issns1, issns2, unioned_rows)
+          for issn in unioned_issns ]
+    )
 
 def pad_with_empties(rows):
     return [ ("", "table-active", row) for row in rows ]
