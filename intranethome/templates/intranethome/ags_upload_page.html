@@ -4,6 +4,12 @@
 
 {% block content %}
 
+<style>
+ table>tbody>tr:nth-of-type(odd) {
+     background-color: transparent;
+ }
+</style>
+
 {% if msg and not confirm %}
 <div class="alert alert-danger" role="alert">
     {{ msg }}

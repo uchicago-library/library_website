@@ -21,7 +21,7 @@ from .ags import (
     xlsx_to_df,
     bind,
     pad_with_empties,
-    color_rows,
+    diff_rows,
 )
 from base.utils import (
     permissions_redirect,
@@ -342,11 +342,11 @@ def ags_upload_page(request):
     # determine table preview
     match (old_rows_result, rows_result):
         case ({ "ok": old_rows }, { "ok": new_rows }):
-            colored = color_rows(old_rows, new_rows)
-            context = { "table_rows": colored } | delete_context
+            diffed = diff_rows(old_rows, new_rows)
+            context = { "table_rows": diffed } | delete_context
         case ({ "error": _ }, { "ok": new_rows }):
-            colored = pad_with_empties(new_rows)
-            context = { "table_rows": colored } | delete_context
+            diffed = pad_with_empties(new_rows)
+            context = { "table_rows": diffed } | delete_context
         case (_, { "error": _ }):
             # suppress developer error message for users
             context = { "table_rows": [] } | delete_context
