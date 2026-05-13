@@ -116,24 +116,32 @@ def indicate_color(issn, issns1, issns2, all_rows):
         return next((row for row in rows if row[1] == issn), None)
 
     if issn in issns1 and issn not in issns2:
-        return ("red", find_by_issn(issn, all_rows))
+        return ("-", "bg-warning", find_by_issn(issn, all_rows))
     elif issn in issns2 and issn not in issns1:
-        return ("green", find_by_issn(issn, all_rows))
+        return ("+", "bg-info",find_by_issn(issn, all_rows))
     else:
-        return ("neutral", find_by_issn(issn, all_rows))
+        return ("", "table-active", find_by_issn(issn, all_rows))
 
 
 def color_rows(old_rows, new_rows):
     issns1 = [ row[1] for row in old_rows ]
     issns2 = [ row[1] for row in new_rows ]
-    unioned_issns = list(dict.fromkeys(issns2 + issns1))
+    enumerated = list(enumerate(issns1)) + list(enumerate(issns2))
+    interleaved = [ x for (_,x) in sorted(enumerated, key=lambda x: x[0]) ]
+    unioned_issns = list(dict.fromkeys(interleaved))
     unioned_rows = old_rows + new_rows
     return [ indicate_color(issn, issns1, issns2, unioned_rows)
              for issn in unioned_issns ]
+    
+
+def pad_with_empties(rows):
+    return [ ("", "table-active", row) for row in rows ]
+
 
 def doc_to_rows_exn(doc):
     df = doc_to_dataframe_exn(doc)
     return df_to_list(df)
+
 
 def doc_to_rows_exn_prime(new_rows):
     def inner(doc_df):
