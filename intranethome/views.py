@@ -20,6 +20,8 @@ from .ags import (
     df_to_list,
     xlsx_to_df,
     bind,
+    pad_with_empties,
+    color_rows,
 )
 from base.utils import (
     permissions_redirect,
@@ -288,6 +290,10 @@ def mail_aliases_view(request, *args, **kwargs):
 
 def ags_upload_page(request):
 
+    D = get_document_model()
+    old_doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
+    old_rows_result = rmap(doc_to_rows_exn, old_doc_result)
+
     # get the XLSX data out of the POST request, if they exist
     xlsx = request_to_xlsx(request)
 
@@ -297,9 +303,9 @@ def ags_upload_page(request):
     # convert post data into table preview
     # oops, this is wrong; I need to convert the Wagtail documents
     # thing into a table preview
-    post_df = bind(validated, xlsx_to_df)
-    old_rows = rmap(df_to_list, post_df)
-    print(str(old_rows))
+    # post_df = bind(validated, xlsx_to_df)
+    # old_rows = rmap(df_to_list, post_df)
+    # print(str(old_rows))
 
     # update the Wagtail Document based on the POST data
     confirm_result = rmap(
@@ -307,7 +313,6 @@ def ags_upload_page(request):
     )
 
     # retrieve the latest XLSX from Wagtail Documents
-    D = get_document_model()
     doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
 
     # generate the XLSX preview, when XLSX is in Documents
@@ -335,13 +340,17 @@ def ags_upload_page(request):
         delete_context = { "delete": False } | msg_context
 
     # determine table preview
-    match rows_result:
-        case { "ok": rows }:
-            context = { "table_rows": rows } | delete_context
-        case { "error": _ }:
+    match (old_rows_result, rows_result):
+        case ({ "ok": old_rows }, { "ok": new_rows }):
+            colored = color_rows(old_rows, new_rows)
+            context = { "table_rows": colored } | delete_context
+        case ({ "error": _ }, { "ok": new_rows }):
+            colored = pad_with_empties(new_rows)
+            context = { "table_rows": colored } | delete_context
+        case (_, { "error": _ }):
             # suppress developer error message for users
             context = { "table_rows": [] } | delete_context
-        case other:
+        case _:
             context = { "table_rows": [] } | delete_context
 
     # render template
