@@ -176,7 +176,9 @@ class Command(BaseCommand):
             bundles = {k: v for k, v in bundles.items() if k == target}
 
         if not bundles:
-            self.stdout.write("No diffs to apply.")
+            # Nothing to sync: stay silent so the daily cron run produces no
+            # output (and thus no email) on quiet days. Cron only mails us
+            # when this command actually changes records or hits an error.
             return
 
         self._unit_by_campus_name = {
