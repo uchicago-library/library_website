@@ -9,6 +9,22 @@ def error(msg):
     return { "error": msg }
 
 
+def is_ok(result):
+    match result:
+        case { "ok": _ }:
+            return True
+        case _:
+            return False
+
+
+def is_error(result):
+    match result:
+        case { "error": _ }:
+            return True
+        case _:
+            return False
+
+
 class InvalidResult(Exception):
     def __init__(self, msg="invalid result value "):
         self.msg = msg
