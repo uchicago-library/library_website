@@ -13,7 +13,6 @@ from .ags import (
     validate_xlsx,
     retrieve_document,
     doc_to_rows_exn,
-    doc_to_rows_exn_prime,
     doc_to_dict_exn,
     bool_to_msg,
     delete_document_exn,
