@@ -11,10 +11,11 @@ from library_website.settings import AGS_DEFAULT_SHEET
 
 
 def request_to_xlsx(request):
-    """Reads binary XLSX data out of the POST data.
+    """
+    Reads binary XLSX data out of the POST data.
 
     Args:
-        request: an HTTP request
+        request: An HTTP request.
 
     Returns:
         binary XLSX data
@@ -32,11 +33,12 @@ def request_to_xlsx(request):
 
 
 def xlsx_to_df_exn(xlsx, sheet_name=AGS_DEFAULT_SHEET):
-    """Converts binary XLSX to a pandas dataframe.  Not
+    """
+    Converts binary XLSX to a pandas dataframe.  Not
     exception-safe.
 
     Args:
-        xlsx: binary XLSX data
+        xlsx: Binary XLSX data.
         sheet_name: expected name of the XLSX spreadsheet
 
     Returns:
@@ -47,11 +49,12 @@ def xlsx_to_df_exn(xlsx, sheet_name=AGS_DEFAULT_SHEET):
 
 
 def xlsx_to_df(xlsx):
-    """Like xlsx_to_df_exn, but returns the output in monadic result
+    """
+    Like xlsx_to_df_exn, but returns the output in monadic result
     format.
 
     Args:
-        xlsx: binary XLSX data
+        xlsx: Binary XLSX data.
 
     Returns: 
         Success when the XLSX can be converted to a dataframe;
@@ -67,11 +70,12 @@ def xlsx_to_df(xlsx):
 
 
 def df_to_dict_exn(df):
-    """Converts pandas dataframe to a lookup table for determining
+    """
+    Converts pandas dataframe to a lookup table for determining
     journal coverage.  Not exception-safe.
 
     Args:
-        df: spreadsheet as a pandas dataframe.
+        df: Spreadsheet as a pandas dataframe.
 
     Returns: 
         A dictionary with ISSN strings as keys and string lists
@@ -91,11 +95,12 @@ required_columns = [
 
 
 def validate_dataframe(df):
-    """Performs all necessary validations on the input
+    """
+    Performs all necessary validations on the input
     spreadsheet-as-dataframe.
 
     Args:
-        df: spreadsheet as a pandas dataframe.
+        df: Spreadsheet as a pandas dataframe.
 
     Returns:
         The spreadsheet, in monadic result format.
@@ -115,13 +120,14 @@ def validate_dataframe(df):
 
 
 def df_to_dict(df):
-    """Like df_to_dict_exn, but returns the output in monadic result
+    """
+    Like df_to_dict_exn, but returns the output in monadic result
     format.
 
     Args:
-        df: spreadsheet as pandas dataframe
+         df: Spreadsheet as pandas dataframe
 
-    Returns: 
+    Returns:
         Lookup table for journal coverage, in monadic result
         format.
     """
@@ -129,11 +135,12 @@ def df_to_dict(df):
 
 
 def validate_xlsx(xlsx):
-    """Like validate_dataframe, except with an XLSX binary as an input
+    """
+    Like validate_dataframe, except with an XLSX binary as an input
     format.  Returns the output in monadic result format.
 
     Args:
-        XLSX binary data
+        xlsx: XLSX binary data.
 
     Returns: 
         Success on the empty string or fully valid XLSX data;
@@ -154,11 +161,30 @@ def validate_xlsx(xlsx):
 
 
 def handle_to_df_exn(handle):
+    """
+    Read binary XLSX data in from a file handle and output pandas
+    dataframe.  Not exception safe.
+
+    Args:
+        handle: File handle.
+
+    Returns:
+        Spreadsheet as a pandas dataframe.
+    """
     output = pd.read_excel(handle, sheet_name=AGS_DEFAULT_SHEET)
     return output
 
 
 def doc_to_dataframe_exn(doc):
+    """
+    Convert XLSX Wagtail Document into pandas dataframe.
+    
+    Args:
+        doc: Wagtail document object.
+
+    Returns:
+        Spreadsheet as a pandas dataframe.
+    """
     with doc.file.open() as f:
         return handle_to_df_exn(f)
 
@@ -166,18 +192,44 @@ def doc_to_dataframe_exn(doc):
 ################## Preview table generation ######################
         
 
-def df_to_list(dataframe):
-    def project(dataframe):
+def df_to_list(df):
+    """
+    Convert spreadsheet as pandas dataframe to list of rows to be
+    passed into template context.  
+
+    Args:
+        df: Spreadsheet as a pandas dataframe.
+
+    Returns:
+        List of lists, each row represents a column in the
+        spreadsheet preview.
+    """
+    def project(df):
         try:
-            cols = dataframe[required_columns]
+            cols = df[required_columns]
             return cols
         except KeyError:
             return pd.DataFrame()
-    cols = project(dataframe)
+    cols = project(df)
     return cols.values.tolist()
 
 
 def indicate_diff(issn, issns1, issns2, all_rows):
+    """
+    For a given issn, determine whether it has been deleted from
+    the first list, added to the second list, or is present in both
+    lists.
+
+    Args:
+        issn: An ISSN string.
+        issns1: A list of the old ISSN strings.
+        issns2: A list of the updated ISSN strings.
+
+    Returns:
+        A tuple containing a minus, plus, or empty string,
+        followed by the string for a red or green HTML style
+        attribute, followed by the row containing issn.
+    """
     minus_color = "#fce6e9"
     plus_color = "#e4f7ea"
     def styleify(hex_string):
@@ -199,6 +251,18 @@ def indicate_diff(issn, issns1, issns2, all_rows):
 
 
 def diff_rows(old_rows, new_rows):
+    """
+    Compute visual diff representation that displays +/- changes
+    between two spreadsheet previews.
+
+    Args:
+        old_rows: Old spreadsheet preview.
+        new_rows: New spreadsheet preview.
+
+    Returns: 
+        A tuple containing the spreadsheet preview augmented with
+        diffing information.
+    """
     issns1 = [ row[1] for row in old_rows ]
     issns2 = [ row[1] for row in new_rows ]
     enumerated = list(enumerate(issns2)) + list(enumerate(issns1))
@@ -217,25 +281,51 @@ def diff_rows(old_rows, new_rows):
 
 
 def pad_with_empties(rows):
+    """
+    Extend simple spreadsheet preview into vacuous diff format
+    spreadsheet preview, showing no diffs.
+
+    Args:
+        rows: Spreadsheet preview as list of string values
+        for each row.
+
+    Returns:
+        A vacuous/blank diff format spreadsheet preview.
+    """
     return [ ("", "table-active", row) for row in rows ]
 
 
 def doc_to_rows_exn(doc):
+    """
+    Load spreadsheet as pandas dataframe from a Wagtail Document.
+    Not exception-safe.
+
+    Args:
+        Spreadsheet as Wagtail Document.
+
+    Returns:
+        Spreadsheet as Pandas dataframe.
+    """
     df = doc_to_dataframe_exn(doc)
     return df_to_list(df)
-
-
-def doc_to_rows_exn_prime(new_rows):
-    def inner(doc_df):
-        old_rows = df_to_list(doc_df)
-        return diff_rows(old_rows, new_rows)
-    return inner
 
 
 ############# Reading/Writing Wagtail Documents ###############
 
 
 def bool_to_msg(confirm):
+    """
+    Helper function converting boolean to message that appears
+    after the confirmation window.
+
+    Args:
+        confirm: Boolean representing whether the user confirmed the
+        request.
+
+    Returns:
+        Message about the database being updated, or the empty
+        string if the input is False.
+    """
     if confirm:
         return "Updating AGS spreadsheet in Wagtail database..."
     else:
@@ -243,6 +333,16 @@ def bool_to_msg(confirm):
 
 
 def create_document(filename):
+    """
+    (Curried) helper function to create a new Wagtail Document.
+
+    Args:
+        filename: Title to be given to Wagtail Document.
+        bytz: XLSX binary data to be saved as a Wagtail Document.
+
+    Returns: True if there already was a file in Wagtail documents
+        with title filename; False otherwise.
+    """
     def inner(bytz):
         if bytz:
             D = get_document_model()
@@ -260,6 +360,17 @@ def create_document(filename):
 
 
 def retrieve_document(mod, title):
+    """
+    Look a Wagtail Document up by title; return it in monadic
+    result format.
+
+    Args:
+        mod: Wagtail Document Model.
+        title: String indicating title to be queried.
+
+    Returns: First document found, in the success case; error message,
+        in the failure case.
+    """
     docs_by_name = mod.objects.filter(title=title)
     sort_em = sorted(
         docs_by_name,
@@ -274,6 +385,14 @@ def retrieve_document(mod, title):
 
 
 def delete_document_exn(mod, title):
+    """
+    Delete all Wagtail Documents matching input title from the
+    database.
+
+    Args:
+        mod: Wagtail Document Model.
+        title: String indicating title of document to be deleted.
+    """
     docs_by_name = mod.objects.filter(title=title)
     [ d.delete() for d in docs_by_name ]
 
@@ -282,5 +401,18 @@ def delete_document_exn(mod, title):
 
 
 def doc_to_dict_exn(doc):
+    """
+    Convert Wagtail Document to dictionary representing a lookup
+    table for journal coverages.  
+
+    Not exception-safe; should only be used with input that has already
+    been validated by validate_xlsx or validate_dataframe.
+
+    Args:
+        doc: A Wagtail Document.
+
+    Returns:
+        Dictionary lookup table for journal coverages.
+    """
     df = doc_to_dataframe_exn(doc)
     return df_to_dict_exn(df)
