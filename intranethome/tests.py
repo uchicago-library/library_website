@@ -198,9 +198,8 @@ class test_ags_upload(SimpleTestCase):
     def test_diff_rows_one_diff(self):
         expected = (1,
                     1,
-                    [('',
-                      '',
-                      ['', 'def']), ('-', 'background-color:  #fce6e9;', ['', 'abc']),
+                    [('', '', ['', 'def']),
+                     ('-', 'background-color:  #fce6e9;', ['', 'abc']),
                      ('+', 'background-color:  #e4f7ea;', ['', 'ghi'])])
         self.assertEqual(diff_rows(rows1, rows2), expected)
 
