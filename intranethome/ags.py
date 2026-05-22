@@ -11,6 +11,14 @@ from library_website.settings import AGS_DEFAULT_SHEET
 
 
 def request_to_xlsx(request):
+    """Reads binary XLSX data out of the POST data.
+
+    Args:
+        request: an HTTP request
+
+    Returns:
+        binary XLSX data
+    """
     if request.method == 'POST' and 'uploadFile' in request.FILES:
         upload_file = request.FILES['uploadFile']
         with upload_file.open(mode="rw") as f:
@@ -24,6 +32,16 @@ def request_to_xlsx(request):
 
 
 def xlsx_to_df_exn(data, sheet_name=AGS_DEFAULT_SHEET):
+    """Converts binary XLSX to a pandas dataframe.
+
+    Args:
+        data: binary XLSX data
+        sheet_name: expected name of the XLSX spreadsheet
+
+    Returns:
+        A pandas dataframe containing the information in the sheet
+        named as specified in the input.
+    """
     return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
 
 
@@ -146,6 +164,7 @@ def diff_rows(old_rows, new_rows):
         [ indicate_diff(issn, issns1, issns2, unioned_rows)
           for issn in unioned_issns ]
     )
+
 
 def pad_with_empties(rows):
     return [ ("", "table-active", row) for row in rows ]
