@@ -31,21 +31,32 @@ def request_to_xlsx(request):
 ################## XLSX validation/transformation ###################
 
 
-def xlsx_to_df_exn(data, sheet_name=AGS_DEFAULT_SHEET):
-    """Converts binary XLSX to a pandas dataframe.
+def xlsx_to_df_exn(xlsx, sheet_name=AGS_DEFAULT_SHEET):
+    """Converts binary XLSX to a pandas dataframe.  Not
+    exception-safe.
 
     Args:
-        data: binary XLSX data
+        xlsx: binary XLSX data
         sheet_name: expected name of the XLSX spreadsheet
 
     Returns:
         A pandas dataframe containing the information in the sheet
         named as specified in the input.
     """
-    return pd.read_excel(BytesIO(data), sheet_name=sheet_name)
+    return pd.read_excel(BytesIO(xlsx), sheet_name=sheet_name)
 
 
 def xlsx_to_df(xlsx):
+    """Like xlsx_to_df_exn, but returns the output in monadic result
+    format.
+
+    Args:
+        xlsx: binary XLSX data
+
+    Returns: 
+        Ok and the dataframe in success case, Error and the error
+        message in failure case.
+    """
     try:
         df = xlsx_to_df_exn(xlsx)
         return(ok(df))
@@ -56,6 +67,16 @@ def xlsx_to_df(xlsx):
 
 
 def df_to_dict_exn(df):
+    """Converts pandas dataframe to a lookup table for determining
+    journal coverage.  Not exception-safe.
+
+    Args:
+        Spreadsheet as a pandas dataframe.
+
+    Returns: 
+        A dictionary with ISSN strings as keys and string lists
+        indicating journal coverage as values.
+    """
     return { row["StandardNumber"]:
              [ row["YearStart"], row["YearEnd"] ]
              for row in df.to_dict('records') }
@@ -70,6 +91,8 @@ required_columns = [
 
 
 def validate_dataframe(df):
+    """
+    """
     def contains_column(name):
         def inner(df):
             if name in df:
