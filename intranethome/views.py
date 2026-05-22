@@ -289,6 +289,7 @@ def mail_aliases_view(request, *args, **kwargs):
 
 def ags_upload_page(request):
 
+    # look up previous spreadsheet, if it exists
     D = get_document_model()
     old_doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
     old_rows_result = rmap(doc_to_rows_exn, old_doc_result)
@@ -298,13 +299,6 @@ def ags_upload_page(request):
 
     # check that POST data are valid
     validated = validate_xlsx(xlsx)
-
-    # convert post data into table preview
-    # oops, this is wrong; I need to convert the Wagtail documents
-    # thing into a table preview
-    # post_df = bind(validated, xlsx_to_df)
-    # old_rows = rmap(df_to_list, post_df)
-    # print(str(old_rows))
 
     # update the Wagtail Document based on the POST data
     confirm_result = rmap(
@@ -359,10 +353,12 @@ def ags_upload_page(request):
         case (_, { "error": _ }):
             # suppress developer error message for users
             diff_column = False
-            context = { "table_rows": [], "diff_column": diff_column } | delete_context
+            context = { "table_rows": [],
+                        "diff_column": diff_column } | delete_context
         case _:
             diff_column = False
-            context = { "table_rows": [], "diff_column": diff_column } | delete_context
+            context = { "table_rows": [],
+                        "diff_column": diff_column } | delete_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
@@ -373,7 +369,6 @@ def ags_upload_page(request):
 
 
 def display_js(request):
-
     # read XLSX from Wagtail Documents
     D = get_document_model()
     doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
@@ -387,6 +382,8 @@ def display_js(request):
 
 
 def delete_spreadsheet(request):
+
+    # delete spreadsheet only if user is authenticated to Loop
     D = get_document_model()
     page = get_loop_homepage()
     if has_page_permissions(request, page) and request.POST:
