@@ -54,8 +54,8 @@ def xlsx_to_df(xlsx):
         xlsx: binary XLSX data
 
     Returns: 
-        Ok and the dataframe in success case, Error and the error
-        message in failure case.
+        Success when the XLSX can be converted to a dataframe;
+        failure otherwise.
     """
     try:
         df = xlsx_to_df_exn(xlsx)
@@ -71,7 +71,7 @@ def df_to_dict_exn(df):
     journal coverage.  Not exception-safe.
 
     Args:
-        Spreadsheet as a pandas dataframe.
+        df: spreadsheet as a pandas dataframe.
 
     Returns: 
         A dictionary with ISSN strings as keys and string lists
@@ -91,7 +91,14 @@ required_columns = [
 
 
 def validate_dataframe(df):
-    """
+    """Performs all necessary validations on the input
+    spreadsheet-as-dataframe.
+
+    Args:
+        df: spreadsheet as a pandas dataframe.
+
+    Returns:
+        The spreadsheet, in monadic result format.
     """
     def contains_column(name):
         def inner(df):
@@ -108,10 +115,30 @@ def validate_dataframe(df):
 
 
 def df_to_dict(df):
+    """Like df_to_dict_exn, but returns the output in monadic result
+    format.
+
+    Args:
+        df: spreadsheet as pandas dataframe
+
+    Returns: 
+        Lookup table for journal coverage, in monadic result
+        format.
+    """
     return rmap(df_to_dict_exn, validate_dataframe(df))
 
 
 def validate_xlsx(xlsx):
+    """Like validate_dataframe, except with an XLSX binary as an input
+    format.  Returns the output in monadic result format.
+
+    Args:
+        XLSX binary data
+
+    Returns: 
+        Success on the empty string or fully valid XLSX data;
+        failure otherwise.
+    """
     if not(xlsx):
         return ok(xlsx)
     else:
