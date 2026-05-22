@@ -13,7 +13,6 @@ from base.wagtail_hooks import (
     has_permission,
     redirect_users_without_permissions,
 )
-
 from library_website.settings import (
     ADDRESS_TEMPLATE,
     CRERAR_HOMEPAGE,
@@ -487,12 +486,7 @@ def get_loop_homepage():
 def permissions_redirect(request, response):
     loop_homepage = get_loop_homepage()
     if not has_page_permissions(request, loop_homepage):
-        return redirect_users_without_permissions(
-            loop_homepage,
-            request,
-            None,
-            None
-        )
+        return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
         return response
 
