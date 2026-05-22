@@ -1,7 +1,6 @@
 from base.result import bind, ok, error, rmap
 from django.core.files.base import ContentFile
 import pandas as pd
-import json
 from io import BytesIO
 from wagtail.documents import get_document_model
 from functools import reduce

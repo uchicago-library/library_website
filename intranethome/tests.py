@@ -1,6 +1,7 @@
+from base.result import is_ok, is_error
 from django.test import SimpleTestCase
-
 from .views import comparison, convert_list_to_dict, parse_file, sort_aliases
+from .ags import xlsx_to_df
 
 
 class test_mail_aliases_view(SimpleTestCase):
@@ -143,3 +144,29 @@ class test_mail_aliases_view(SimpleTestCase):
                 return False
 
         self.assertTrue(is_error(bad_json))
+
+
+with open("intranethome/test_data/export.xlsx", "rb") as f:
+    good_xlsx = f.read()
+
+with open("intranethome/test_data/export_bad_sheet_name.xlsx", "rb") as f:
+    bad_sheet_name_xlsx = f.read()
+
+with open("intranethome/test_data/export_bad_yearend_field.xlsx", "rb") as f:
+    bad_column_name_xlsx = f.read()
+
+
+
+class test_ags_upload(SimpleTestCase):
+
+    def good_xlsx_reads(self):
+        df = xlsx_to_df(good_xlsx)
+        self.assertTrue(is_ok(df))
+
+    def bad_sheet_name_fails(self):
+        df = xlsx_to_df(bad_sheet_name_xlsx)
+        self.assertTrue(is_error(df))
+
+    def bad_column_name_reads(self):
+        df = xlsx_to_df(bad_column_name_xlsx)
+        self.assertTrue(is_ok(df))

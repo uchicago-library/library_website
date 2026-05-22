@@ -321,16 +321,13 @@ def ags_upload_page(request):
     # determine alert and upload/error message
     match confirm_result:
         case { "ok": "" }:
-            msg_context = { "msg": bool_to_msg(confirm),
+            msg_context = { "msg": "",
                             "confirm": "", }
         case { "ok": confirm }:
             msg_context = { "msg": bool_to_msg(confirm),
                             "confirm": confirm, }
         case { "error": error_msg }:
             msg_context = { "msg": error_msg,
-                            "confirm": False, }
-        case other:
-            msg_context = { "msg": "",
                             "confirm": False, }
 
     # determine deletion message
