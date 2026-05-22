@@ -1,7 +1,11 @@
 from base.result import is_ok, is_error
 from django.test import SimpleTestCase
 from .views import comparison, convert_list_to_dict, parse_file, sort_aliases
-from .ags import xlsx_to_df
+from .ags import (xlsx_to_df,
+                  validate_xlsx,
+                  validate_dataframe,
+                  diff_rows,
+                  pad_with_empties)
 
 
 class test_mail_aliases_view(SimpleTestCase):
@@ -149,24 +153,70 @@ class test_mail_aliases_view(SimpleTestCase):
 with open("intranethome/test_data/export.xlsx", "rb") as f:
     good_xlsx = f.read()
 
+
 with open("intranethome/test_data/export_bad_sheet_name.xlsx", "rb") as f:
     bad_sheet_name_xlsx = f.read()
 
-with open("intranethome/test_data/export_bad_yearend_field.xlsx", "rb") as f:
-    bad_column_name_xlsx = f.read()
 
+with open("intranethome/test_data/export_bad_yearend_field.xlsx", "rb") as f:
+    bad_column_field_xlsx = f.read()
+
+
+rows1 = [["", "abc"], ["", "def"]]
+rows2 = [["", "def"], ["", "ghi"]]
 
 
 class test_ags_upload(SimpleTestCase):
 
-    def good_xlsx_reads(self):
+
+    def test_good_xlsx_reads(self):
         df = xlsx_to_df(good_xlsx)
         self.assertTrue(is_ok(df))
 
-    def bad_sheet_name_fails(self):
+
+    def test_bad_sheet_name_fails(self):
         df = xlsx_to_df(bad_sheet_name_xlsx)
         self.assertTrue(is_error(df))
 
-    def bad_column_name_reads(self):
-        df = xlsx_to_df(bad_column_name_xlsx)
+
+    def test_bad_column_name_xlsx_reads(self):
+        df = xlsx_to_df(bad_column_field_xlsx)
         self.assertTrue(is_ok(df))
+
+
+    def test_bad_column_name_validate_df_fails(self):
+        df = xlsx_to_df(bad_column_field_xlsx)
+        validated = validate_dataframe(df)
+        self.assertTrue(is_error(validated))
+
+
+    def test_bad_column_validate_xlsx_fails(self):
+        xlsx_result = validate_xlsx(bad_column_field_xlsx)
+        self.assertTrue(is_error(xlsx_result))
+
+
+    def test_diff_rows_one_diff(self):
+        expected = (1,
+                    1,
+                    [('',
+                      '',
+                      ['', 'def']), ('-', 'background-color:  #fce6e9;', ['', 'abc']),
+                     ('+', 'background-color:  #e4f7ea;', ['', 'ghi'])])
+        self.assertEqual(diff_rows(rows1, rows2), expected)
+
+
+    def test_diff_rows_no_diffs(self):
+        expected = (0, 0, [('', '', ['', 'def']), ('', '', ['', 'ghi'])])
+        self.assertEqual(diff_rows(rows2, rows2), expected)
+
+
+    def test_diff_rows_empties(self):
+        self.assertEqual(diff_rows([],[]), (0,0,[]))
+
+    
+    def test_pad_with_empties(self):
+        lst = [1,2,3]
+        expected = [('', 'table-active', 1),
+                    ('', 'table-active', 2),
+                    ('', 'table-active', 3)]
+        self.assertEqual(pad_with_empties(lst), expected)
