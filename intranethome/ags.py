@@ -1,13 +1,14 @@
-from base.result import bind, ok, error, rmap
-from django.core.files.base import ContentFile
-import pandas as pd
-from io import BytesIO
-from wagtail.documents import get_document_model
 from functools import reduce
+from io import BytesIO
+
+import pandas as pd
+from django.core.files.base import ContentFile
+from wagtail.documents import get_document_model
+
+from base.result import bind, error, ok, rmap
 from library_website.settings import AGS_DEFAULT_SHEET
 
-
-############## Retrieving XLSX from a POST parameter #################
+# Retrieving XLSX from a POST parameter
 
 
 def request_to_xlsx(request):
@@ -20,8 +21,8 @@ def request_to_xlsx(request):
     Returns:
         binary XLSX data
     """
-    if request.method == 'POST' and 'uploadFile' in request.FILES:
-        upload_file = request.FILES['uploadFile']
+    if request.method == "POST" and "uploadFile" in request.FILES:
+        upload_file = request.FILES["uploadFile"]
         with upload_file.open(mode="rw") as f:
             xlsx_data = f.read()
             return xlsx_data
@@ -29,7 +30,7 @@ def request_to_xlsx(request):
         return b""
 
 
-################## XLSX validation/transformation ###################
+# XLSX validation/transformation
 
 
 def xlsx_to_df_exn(xlsx, sheet_name=AGS_DEFAULT_SHEET):
@@ -56,16 +57,15 @@ def xlsx_to_df(xlsx):
     Args:
         xlsx: Binary XLSX data.
 
-    Returns: 
+    Returns:
         Success when the XLSX can be converted to a dataframe;
         failure otherwise.
     """
     try:
         df = xlsx_to_df_exn(xlsx)
-        return(ok(df))
+        return ok(df)
     except ValueError:
-        msg = ("Invalid spreadsheet: the worksheet must "
-               "be named 'data1'")
+        msg = "Invalid spreadsheet: the worksheet must " "be named 'data1'"
         return error(msg)
 
 
@@ -77,13 +77,14 @@ def df_to_dict_exn(df):
     Args:
         df: Spreadsheet as a pandas dataframe.
 
-    Returns: 
+    Returns:
         A dictionary with ISSN strings as keys and string lists
         indicating journal coverage as values.
     """
-    return { row["StandardNumber"]:
-             [ row["YearStart"], row["YearEnd"] ]
-             for row in df.to_dict('records') }
+    return {
+        row["StandardNumber"]: [row["YearStart"], row["YearEnd"]]
+        for row in df.to_dict("records")
+    }
 
 
 required_columns = [
@@ -105,17 +106,23 @@ def validate_dataframe(df):
     Returns:
         The spreadsheet, in monadic result format.
     """
+
     def contains_column(name):
         def inner(df):
             if name in df:
                 return ok(df)
             else:
-                msg = ("Invalid spreadsheet: required column "
-                       "name '%s' is missing." % name)
+                msg = (
+                    "Invalid spreadsheet: required column "
+                    "name '%s' is missing." % name
+                )
                 return error(msg)
+
         return inner
+
     def reducer(validated, next_col):
         return bind(validated, contains_column(next_col))
+
     return reduce(reducer, required_columns, ok(df))
 
 
@@ -142,18 +149,18 @@ def validate_xlsx(xlsx):
     Args:
         xlsx: XLSX binary data.
 
-    Returns: 
+    Returns:
         Success on the empty string or fully valid XLSX data;
         failure otherwise.
     """
-    if not(xlsx):
+    if not (xlsx):
         return ok(xlsx)
     else:
         df_result = xlsx_to_df(xlsx)
         match bind(df_result, validate_dataframe):
-            case { "ok": _ }:
+            case {"ok": _}:
                 return ok(xlsx)
-            case { "error": msg }:
+            case {"error": msg}:
                 return error(msg)
             case other:
                 msg = "invalid result value: %s" % str(other)
@@ -178,7 +185,7 @@ def handle_to_df_exn(handle):
 def doc_to_dataframe_exn(doc):
     """
     Convert XLSX Wagtail Document into pandas dataframe.
-    
+
     Args:
         doc: Wagtail document object.
 
@@ -189,13 +196,13 @@ def doc_to_dataframe_exn(doc):
         return handle_to_df_exn(f)
 
 
-################## Preview table generation ######################
-        
+# Preview table generation
+
 
 def df_to_list(df):
     """
     Convert spreadsheet as pandas dataframe to list of rows to be
-    passed into template context.  
+    passed into template context.
 
     Args:
         df: Spreadsheet as a pandas dataframe.
@@ -204,12 +211,14 @@ def df_to_list(df):
         List of lists, each row represents a column in the
         spreadsheet preview.
     """
+
     def project(df):
         try:
             cols = df[required_columns]
             return cols
         except KeyError:
             return pd.DataFrame()
+
     cols = project(df)
     return cols.values.tolist()
 
@@ -232,6 +241,7 @@ def indicate_diff(issn, issns1, issns2, all_rows):
     """
     minus_color = "#fce6e9"
     plus_color = "#e4f7ea"
+
     def styleify(hex_string):
         return "background-color:  %s;" % hex_string
 
@@ -239,13 +249,9 @@ def indicate_diff(issn, issns1, issns2, all_rows):
         return next((row for row in rows if row[1] == issn), None)
 
     if issn in issns1 and issn not in issns2:
-        return ("-",
-                styleify(minus_color),
-                find_by_issn(issn, all_rows))
+        return ("-", styleify(minus_color), find_by_issn(issn, all_rows))
     elif issn in issns2 and issn not in issns1:
-        return ("+",
-                styleify(plus_color),
-                find_by_issn(issn, all_rows))
+        return ("+", styleify(plus_color), find_by_issn(issn, all_rows))
     else:
         return ("", "", find_by_issn(issn, all_rows))
 
@@ -259,15 +265,15 @@ def diff_rows(old_rows, new_rows):
         old_rows: Old spreadsheet preview.
         new_rows: New spreadsheet preview.
 
-    Returns: 
+    Returns:
         A tuple containing the spreadsheet preview augmented with
         diffing information.
     """
-    issns1 = [ row[1] for row in old_rows ]
-    issns2 = [ row[1] for row in new_rows ]
+    issns1 = [row[1] for row in old_rows]
+    issns2 = [row[1] for row in new_rows]
     enumerated = list(enumerate(issns2)) + list(enumerate(issns1))
     sorted_them = sorted(enumerated, key=lambda x: x[0])
-    interleaved = [ x for (_,x) in sorted_them ]
+    interleaved = [x for (_, x) in sorted_them]
     unioned_issns = list(dict.fromkeys(interleaved))
     unioned_rows = old_rows + new_rows
     reds = len(set(issns1) - set(issns2))
@@ -275,8 +281,7 @@ def diff_rows(old_rows, new_rows):
     return (
         reds,
         greens,
-        [ indicate_diff(issn, issns1, issns2, unioned_rows)
-          for issn in unioned_issns ]
+        [indicate_diff(issn, issns1, issns2, unioned_rows) for issn in unioned_issns],
     )
 
 
@@ -292,7 +297,7 @@ def pad_with_empties(rows):
     Returns:
         A vacuous/blank diff format spreadsheet preview.
     """
-    return [ ("", "table-active", row) for row in rows ]
+    return [("", "table-active", row) for row in rows]
 
 
 def doc_to_rows_exn(doc):
@@ -310,7 +315,7 @@ def doc_to_rows_exn(doc):
     return df_to_list(df)
 
 
-############# Reading/Writing Wagtail Documents ###############
+# Reading/Writing Wagtail Documents
 
 
 def bool_to_msg(confirm):
@@ -343,6 +348,7 @@ def create_document(filename):
     Returns: True if there already was a file in Wagtail documents
         with title filename; False otherwise.
     """
+
     def inner(bytz):
         if bytz:
             D = get_document_model()
@@ -356,6 +362,7 @@ def create_document(filename):
             return True
         else:
             return False
+
     return inner
 
 
@@ -372,11 +379,7 @@ def retrieve_document(mod, title):
         in the failure case.
     """
     docs_by_name = mod.objects.filter(title=title)
-    sort_em = sorted(
-        docs_by_name,
-        key=lambda doc: doc.created_at,
-        reverse=True
-    )
+    sort_em = sorted(docs_by_name, key=lambda doc: doc.created_at, reverse=True)
     if sort_em:
         return ok(sort_em[0])
     else:
@@ -394,16 +397,16 @@ def delete_document_exn(mod, title):
         title: String indicating title of document to be deleted.
     """
     docs_by_name = mod.objects.filter(title=title)
-    [ d.delete() for d in docs_by_name ]
+    [d.delete() for d in docs_by_name]
 
 
-############# Generating Javascript for /js view #################
+# Generating Javascript for /js view
 
 
 def doc_to_dict_exn(doc):
     """
     Convert Wagtail Document to dictionary representing a lookup
-    table for journal coverages.  
+    table for journal coverages.
 
     Not exception-safe; should only be used with input that has already
     been validated by validate_xlsx or validate_dataframe.
