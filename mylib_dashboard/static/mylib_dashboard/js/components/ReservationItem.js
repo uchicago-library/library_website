@@ -31,17 +31,13 @@ function formatTime(dateString) {
 }
 
 function ReservationItem({ reservation }) {
-  const { roomName, locationName, startTime, endTime, status, checkInCode } =
-    reservation
+  const { roomName, startTime, endTime, status, checkInCode } = reservation
 
   const isCancelled = status && status.toLowerCase().includes('cancelled')
 
   return (
     <div className={`mylib-item${isCancelled ? ' mylib-item--cancelled' : ''}`}>
       <div className="mylib-item__title">{roomName}</div>
-      {locationName && (
-        <div className="mylib-item__location">{locationName}</div>
-      )}
       <div className="mylib-item__request-date">
         Booked for {formatDateTime(startTime)} - {formatTime(endTime)}
       </div>
@@ -76,7 +72,6 @@ ReservationItem.propTypes = {
   reservation: PropTypes.shape({
     id: PropTypes.string,
     roomName: PropTypes.string.isRequired,
-    locationName: PropTypes.string,
     startTime: PropTypes.string.isRequired,
     endTime: PropTypes.string.isRequired,
     status: PropTypes.string,
