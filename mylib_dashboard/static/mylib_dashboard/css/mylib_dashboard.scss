@@ -199,15 +199,14 @@ $background-light: #f5f5f5;
 .mylib-tabs {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  border-bottom: 2px solid $border-color;
+  justify-content: flex-start;
 
   &__tab {
     padding: 0.75rem 1.5rem;
     background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
+    border: 1px solid #c9c9c9;
+      font-weight: 700;
+    border-radius: 8px;
     color: $text-muted;
     cursor: pointer;
     transition:
@@ -215,13 +214,13 @@ $background-light: #f5f5f5;
       border-color 0.2s;
 
     &:hover {
-      color: $primary-color;
+      border-bottom-width: 4px;
     }
 
     &--active {
       color: $primary-color;
-      border-bottom-color: $primary-color;
-      font-weight: 500;
+      border: 1px solid $primary-color;
+      border-bottom-width: 4px;
     }
   }
 
@@ -250,6 +249,10 @@ $background-light: #f5f5f5;
       animation: shimmer 1.5s infinite;
       vertical-align: text-bottom;
     }
+  }
+
+  @media (max-width: 560px) {
+    justify-content: center;
   }
 }
 
@@ -532,8 +535,7 @@ $background-light: #f5f5f5;
 
 // Loan Item (within a card)
 .mylib-item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid $border-color;
+  padding: .6em 0 1.4em;
 
   &:last-child {
     border-bottom: none;
@@ -548,11 +550,11 @@ $background-light: #f5f5f5;
   }
 
   &__badge {
-    display: inline-block;
-    padding: 0.125rem 0.5rem;
-    border-radius: 4px;
+    display: inline-block;    
+    padding: .1rem 1rem;
+    border-radius: 20px;
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: 0.85em;
 
     &--recalled {
       background: lighten($danger-color, 35%);
@@ -582,7 +584,8 @@ $background-light: #f5f5f5;
 
   &__title {
     font-weight: 600;
-    margin-bottom: 0.125rem;
+    margin-bottom: 0.1em;
+    font-size: 1.2em;
   }
 
   &__author {
@@ -614,6 +617,11 @@ $background-light: #f5f5f5;
   &__request-date {
     color: $text-muted;
     font-style: italic;
+
+    #panel-reservations & {
+      color: black;
+      font-style: normal;
+    }
   }
 
   &__available-until {
@@ -624,17 +632,21 @@ $background-light: #f5f5f5;
 
   &__scheduled-date {
     color: $text-muted;
+  }
+
+  &__directions {
+    color: $text-muted;
     font-style: italic;
   }
 
   &__download-link {
     display: inline-block;
-    padding: 0.375rem 0.75rem;
+    padding: 0.5rem 1.2rem;
     background: $primary-color;
     color: white;
     text-decoration: none;
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: 0.85em;
     margin-top: 0.25rem;
 
     &:hover {

@@ -39,11 +39,11 @@ function AppointmentItem({ appointment }) {
       <div className="mylib-item__title">
         {librarianName ? `Appointment with ${librarianName}` : 'Appointment'}
       </div>
+      <div className="mylib-item__scheduled-date">
+        <strong>{formatDateTime(startTime)}</strong> - {formatTime(endTime)}
+      </div>
       {location && <div className="mylib-item__location">{location}</div>}
       {directions && <div className="mylib-item__directions">{directions}</div>}
-      <div className="mylib-item__request-date">
-        {formatDateTime(startTime)} - {formatTime(endTime)}
-      </div>
     </div>
   )
 }
