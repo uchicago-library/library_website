@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 
@@ -71,8 +71,23 @@ const queryClient = new QueryClient({
  *
  * Displays patron account information from FOLIO, ILLiad, and LibCal.
  */
+const STORAGE_KEY_TAB = 'mylib-active-tab'
+const VALID_TABS = new Set(Object.values(TABS))
+
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState(TABS.CHECKED_OUT)
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_TAB)
+      return saved && VALID_TABS.has(saved) ? saved : TABS.CHECKED_OUT
+    } catch {
+      return TABS.CHECKED_OUT
+    }
+  })
+
+  const handleTabChange = useCallback(tabId => {
+    try { localStorage.setItem(STORAGE_KEY_TAB, tabId) } catch {}
+    setActiveTab(tabId)
+  }, [])
 
   // Fetch all data - FOLIO
   const profileQuery = useQuery({ queryKey: ['profile'], queryFn: api.fetchProfile })
@@ -150,7 +165,7 @@ function Dashboard() {
           {/* Tab Navigation */}
           <TabNav
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={handleTabChange}
             counts={tabCounts}
             loading={tabLoading}
           />
