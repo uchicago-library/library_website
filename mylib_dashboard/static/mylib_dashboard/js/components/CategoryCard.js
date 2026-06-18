@@ -63,7 +63,7 @@ function CategoryCard({
   title,
   count,
   manageUrl = '',
-  manageLabel = 'All',
+  manageLabel = 'View all',
   maxItems = 0,
   isLoading = false,
   error = null,
@@ -128,9 +128,8 @@ function CategoryCard({
             className="mylib-card__manage-link"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={`All top`}
+            data-ga-label={`View all top`}
           >
-            {'All '}
             {isExternal && (
               <i className="fa fa-external-link" aria-hidden="true" />
             )}
