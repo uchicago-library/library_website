@@ -1,27 +1,27 @@
-import React, { useState, useCallback } from 'react'
-import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import React, { useCallback, useState } from 'react'
+import ReactDOM from 'react-dom/client'
 
 import createApi from './api'
-import { useLoanAlerts, useTabCounts } from './hooks'
 import {
-  TabNav,
-  TABS,
-  AlertBanner,
-  AutoRenewalNotice,
   AccountBlockWarning,
-  MyAccountSidebar,
+  AlertBanner,
+  AppointmentItem,
+  AutoRenewalNotice,
   CategoryCard,
-  LoanItem,
-  PickupItem,
   DownloadItem,
   ILLRequestItem,
-  ScanDeliverItem,
-  ReservationItem,
-  AppointmentItem,
+  LoanItem,
+  MyAccountSidebar,
   PagingRequestItem,
+  PickupItem,
+  ReservationItem,
+  ScanDeliverItem,
   ScMaterialItem,
+  TabNav,
+  TABS,
 } from './components'
+import { useLoanAlerts, useTabCounts } from './hooks'
 
 // Get the mount element and extract configuration from data attributes
 const DOM_ELEMENT = document.getElementById('mylib-dashboard')
@@ -31,6 +31,7 @@ const CONFIG = {
   catalogAccountUrl: DOM_ELEMENT.getAttribute('data-catalog-account-url') || '',
   accountsFaqUrl: DOM_ELEMENT.getAttribute('data-accounts-faq-url') || '',
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
+  autoRenewalNoticeVersion: DOM_ELEMENT.getAttribute('data-auto-renewal-notice-version') || '',
   // Max items to show per card (0 or empty = show all)
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
   // LibCal web interface base URL
@@ -148,7 +149,10 @@ function Dashboard() {
       )}
 
       {/* Auto-renewal Notice */}
-      <AutoRenewalNotice content={CONFIG.autoRenewalNotice} />
+      <AutoRenewalNotice
+        content={CONFIG.autoRenewalNotice}
+        versionToken={CONFIG.autoRenewalNoticeVersion}
+      />
 
       {/* Alert Banner */}
       {alerts.hasAlerts && (

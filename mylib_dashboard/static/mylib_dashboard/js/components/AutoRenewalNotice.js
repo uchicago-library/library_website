@@ -2,21 +2,22 @@
  * AutoRenewalNotice - Dismissible notice with localStorage persistence.
  * Content is editable via Wagtail admin.
  */
-import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'mylib-auto-renewal-dismissed'
 
-function AutoRenewalNotice({ content = '' }) {
+function AutoRenewalNotice({ content = '', versionToken = '' }) {
   const [isDismissed, setIsDismissed] = useState(true) // Start hidden to avoid flash
+  const effectiveVersionToken = versionToken || 'default'
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(STORAGE_KEY)
-    setIsDismissed(dismissed === 'true')
-  }, [])
+    const dismissedToken = localStorage.getItem(STORAGE_KEY)
+    setIsDismissed(dismissedToken === effectiveVersionToken)
+  }, [effectiveVersionToken])
 
   const handleDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, 'true')
+    localStorage.setItem(STORAGE_KEY, effectiveVersionToken)
     setIsDismissed(true)
   }
 
@@ -51,6 +52,7 @@ function AutoRenewalNotice({ content = '' }) {
 
 AutoRenewalNotice.propTypes = {
   content: PropTypes.string,
+  versionToken: PropTypes.string,
 }
 
 export default AutoRenewalNotice
