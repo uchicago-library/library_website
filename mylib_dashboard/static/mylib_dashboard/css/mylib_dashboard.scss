@@ -502,7 +502,8 @@ $background-light: #f5f5f5;
 
   &__empty {
     padding: 1rem;
-    text-align: center;
+    text-align: left;
+    background: $background-light;
     color: $text-muted;
     font-style: italic;
 
