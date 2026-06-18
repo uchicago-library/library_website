@@ -399,21 +399,33 @@ $background-light: #f5f5f5;
 
   &__header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 6px;
     align-items: center;
     padding: 0.75rem 1rem;
-    background: $background-light;
-    border-bottom: 1px solid $border-color;
+    // background: $background-light;
+    // border-bottom: 1px solid $border-color;
   }
 
   &__title {
     margin: 0;
     font-weight: 600;
     color: #333;
+    font-size: 1.8rem;
+    flex-grow: 1;
   }
 
   &__count {
     background: $border-color;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  &__help-button {
+    background: none;
+    border: 1px solid $border-color;
+    color: #333;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-weight: 600;
@@ -535,7 +547,7 @@ $background-light: #f5f5f5;
 
 // Loan Item (within a card)
 .mylib-item {
-  padding: .6em 0 1.4em;
+  padding: 0 0 1.4em;
 
   &:last-child {
     border-bottom: none;

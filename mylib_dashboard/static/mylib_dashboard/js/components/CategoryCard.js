@@ -63,7 +63,7 @@ function CategoryCard({
   title,
   count,
   manageUrl = '',
-  manageLabel = 'View all',
+  manageLabel = 'All',
   maxItems = 0,
   isLoading = false,
   error = null,
@@ -108,29 +108,30 @@ function CategoryCard({
   return (
     <div className="mylib-card" data-ga-subcategory={`${title} Card`}>
       <div className="mylib-card__header">
-        <h3 className="mylib-card__title">{title}</h3>
         {!isLoading && !error && count !== undefined && (
           <span className="mylib-card__count">{count}</span>
         )}
         {isLoading && (
           <span className="mylib-card__count mylib-card__count--loading" />
         )}
-      </div>
-      <div className="mylib-card__body">
+        <h3 className="mylib-card__title">{title}</h3>
         {manageUrl && (
           <a
             href={manageUrl}
             className="mylib-card__manage-link"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={`${manageLabel} top`}
+            data-ga-label={`All top`}
           >
-            {manageLabel}{' '}
+            {'All '}
             {isExternal && (
               <i className="fa fa-external-link" aria-hidden="true" />
             )}
           </a>
         )}
+        <button className="mylib-card__help-button" title={emptyMessage}>?</button>
+      </div>
+      <div className="mylib-card__body">
         <div className="mylib-card__content">{content}</div>
         {!isLoading && !error && !isEmpty && hasMore && (
           <button
