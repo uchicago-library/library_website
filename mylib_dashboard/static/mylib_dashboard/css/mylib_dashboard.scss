@@ -459,10 +459,10 @@ $background-light: #f5f5f5;
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.5rem;
-    background: $background-light;
-    border: 1px dashed $border-color;
+    background: white;
+    border: 1px solid $border-color;
     border-radius: 4px;
-    color: $primary-color;
+    color: #333;
     cursor: pointer;
     font-size: inherit;
     text-align: center;
@@ -471,8 +471,8 @@ $background-light: #f5f5f5;
       border-color 0.2s;
 
     &:hover {
-      background: darken($background-light, 3%);
-      border-color: $primary-color;
+      background: darken(white, 1%);
+      // border-color: $primary-color;
     }
   }
 
@@ -503,9 +503,10 @@ $background-light: #f5f5f5;
   &__empty {
     padding: 1rem;
     text-align: left;
-    background: $background-light;
-    color: $text-muted;
-    font-style: italic;
+    background: lighten($background-light, 2%);
+    border : 1px solid darken($background-light, 3%);
+    border-radius: 4px;
+    // color: $text-muted;
 
     p {
       margin: 0;
