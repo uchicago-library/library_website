@@ -10,7 +10,7 @@
  * the card structure (title, manage link).
  */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function CardLoadingState() {
   return (
@@ -71,12 +71,13 @@ function CategoryCard({
   emptyMessage = 'No items',
   children = null,
 }) {
-  // Track how many items are currently visible (starts at maxItems or all)
-  const [visibleCount, setVisibleCount] = useState(maxItems || 0)
-
   // Convert children to array for slicing
   const childArray = React.Children.toArray(children)
   const totalItems = childArray.length
+
+  // Track how many items are currently visible (starts at maxItems or all)
+  const [visibleCount, setVisibleCount] = useState(maxItems || 0)
+  const [isHelpExpanded, setIsHelpExpanded] = useState(totalItems === 0)
 
   // Determine what to display
   const effectiveLimit = visibleCount > 0 ? visibleCount : totalItems
@@ -85,9 +86,17 @@ function CategoryCard({
   const hasMore = remainingItems > 0
   const isEmpty = !isLoading && !error && totalItems === 0
 
+  useEffect(() => {
+    setIsHelpExpanded(totalItems === 0)
+  }, [totalItems])
+
   // Show more handler - always reveal 10 additional items regardless of initial limit
   const handleShowMore = () => {
     setVisibleCount(prev => Math.min(prev + 10, totalItems))
+  }
+
+  const handleHelpToggle = () => {
+    setIsHelpExpanded(prev => !prev)
   }
 
   // Check if manage link points to an external site
@@ -99,8 +108,6 @@ function CategoryCard({
     content = <CardLoadingState />
   } else if (error) {
     content = <CardErrorState message={error} onRetry={onRetry} />
-  } else if (isEmpty) {
-    content = <CardEmptyState message={emptyMessage} />
   } else {
     content = displayedChildren
   }
@@ -129,10 +136,22 @@ function CategoryCard({
             )}
           </a>
         )}
-        <button className="mylib-card__help-button" title={emptyMessage}>?</button>
+        <button
+          type="button"
+          className="mylib-card__help-button"
+          aria-expanded={isHelpExpanded}
+          onClick={handleHelpToggle}
+        >
+          ?
+        </button>
       </div>
       <div className="mylib-card__body">
-        <div className="mylib-card__content">{content}</div>
+        <div className="mylib-card__content">
+          {!isLoading && !error && isHelpExpanded && (
+            <CardEmptyState message={emptyMessage} />
+          )}
+          {content}
+        </div>
         {!isLoading && !error && !isEmpty && hasMore && (
           <button
             type="button"
