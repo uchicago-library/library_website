@@ -1,4 +1,4 @@
-bleach==3.3.0
+bleach==6.4.0
 DateTime>=4,<5
 defusedxml
 git+https://github.com/bbusenius/Diablo-Python.git#egg=diablo_python
