@@ -31,7 +31,6 @@ const CONFIG = {
   catalogAccountUrl: DOM_ELEMENT.getAttribute('data-catalog-account-url') || '',
   accountsFaqUrl: DOM_ELEMENT.getAttribute('data-accounts-faq-url') || '',
   autoRenewalNotice: DOM_ELEMENT.getAttribute('data-auto-renewal-notice') || '',
-  autoRenewalNoticeVersion: DOM_ELEMENT.getAttribute('data-auto-renewal-notice-version') || '',
   // Max items to show per card (0 or empty = show all)
   maxItemsPerCard: parseInt(DOM_ELEMENT.getAttribute('data-max-items-per-card'), 10) || 0,
   // LibCal web interface base URL
@@ -86,7 +85,7 @@ function Dashboard() {
   })
 
   const handleTabChange = useCallback(tabId => {
-    try { localStorage.setItem(STORAGE_KEY_TAB, tabId) } catch {}
+    try { localStorage.setItem(STORAGE_KEY_TAB, tabId) } catch { /* storage may be unavailable */ }
     setActiveTab(tabId)
   }, [])
 
@@ -149,10 +148,7 @@ function Dashboard() {
       )}
 
       {/* Auto-renewal Notice */}
-      <AutoRenewalNotice
-        content={CONFIG.autoRenewalNotice}
-        versionToken={CONFIG.autoRenewalNoticeVersion}
-      />
+      <AutoRenewalNotice content={CONFIG.autoRenewalNotice} />
 
       {/* Alert Banner */}
       {alerts.hasAlerts && (

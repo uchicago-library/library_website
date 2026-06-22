@@ -10,7 +10,7 @@
  * the card structure (title, manage link).
  */
 import PropTypes from 'prop-types'
-import React, { useEffect, useState } from 'react'
+import React, { useId, useState } from 'react'
 
 function CardLoadingState() {
   return (
@@ -77,7 +77,9 @@ function CategoryCard({
 
   // Track how many items are currently visible (starts at maxItems or all)
   const [visibleCount, setVisibleCount] = useState(maxItems || 0)
-  const [isHelpExpanded, setIsHelpExpanded] = useState(totalItems === 0)
+  // Help-text toggle for populated cards; empty cards always show it as zero-state
+  const [isHelpExpanded, setIsHelpExpanded] = useState(false)
+  const helpId = useId()
 
   // Determine what to display
   const effectiveLimit = visibleCount > 0 ? visibleCount : totalItems
@@ -85,10 +87,7 @@ function CategoryCard({
   const remainingItems = totalItems - effectiveLimit
   const hasMore = remainingItems > 0
   const isEmpty = !isLoading && !error && totalItems === 0
-
-  useEffect(() => {
-    setIsHelpExpanded(totalItems === 0)
-  }, [totalItems])
+  const hasItems = !isLoading && !error && totalItems > 0
 
   // Show more handler - always reveal 10 additional items regardless of initial limit
   const handleShowMore = () => {
@@ -122,35 +121,27 @@ function CategoryCard({
           <span className="mylib-card__count mylib-card__count--loading" />
         )}
         <h3 className="mylib-card__title">{title}</h3>
-        {manageUrl && (
-          <a
-            href={manageUrl}
-            className="mylib-card__manage-link"
-            target={isExternal ? '_blank' : undefined}
-            rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={`View all top`}
+        {hasItems && (
+          <button
+            type="button"
+            className="mylib-card__help-button"
+            aria-expanded={isHelpExpanded}
+            aria-controls={helpId}
+            aria-label={`About ${title}`}
+            onClick={handleHelpToggle}
           >
-            {isExternal && (
-              <i className="fa fa-external-link" aria-hidden="true" />
-            )}
-          </a>
+            ?
+          </button>
         )}
-        <button
-          type="button"
-          className="mylib-card__help-button"
-          aria-expanded={isHelpExpanded}
-          onClick={handleHelpToggle}
-        >
-          ?
-        </button>
       </div>
       <div className="mylib-card__body">
-        {!isLoading && !error && isHelpExpanded && (
-          <CardEmptyState message={emptyMessage} />
+        {isEmpty && <CardEmptyState message={emptyMessage} />}
+        {hasItems && (
+          <div id={helpId} hidden={!isHelpExpanded}>
+            <CardEmptyState message={emptyMessage} />
+          </div>
         )}
-        <div className="mylib-card__content">
-          {content}
-        </div>
+        <div className="mylib-card__content">{content}</div>
         {!isLoading && !error && !isEmpty && hasMore && (
           <button
             type="button"
