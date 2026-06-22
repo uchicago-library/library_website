@@ -10,7 +10,7 @@
  * the card structure (title, manage link).
  */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 
 function CardLoadingState() {
   return (
@@ -71,12 +71,15 @@ function CategoryCard({
   emptyMessage = 'No items',
   children = null,
 }) {
-  // Track how many items are currently visible (starts at maxItems or all)
-  const [visibleCount, setVisibleCount] = useState(maxItems || 0)
-
   // Convert children to array for slicing
   const childArray = React.Children.toArray(children)
   const totalItems = childArray.length
+
+  // Track how many items are currently visible (starts at maxItems or all)
+  const [visibleCount, setVisibleCount] = useState(maxItems || 0)
+  // Help-text toggle for populated cards; empty cards always show it as zero-state
+  const [isHelpExpanded, setIsHelpExpanded] = useState(false)
+  const helpId = useId()
 
   // Determine what to display
   const effectiveLimit = visibleCount > 0 ? visibleCount : totalItems
@@ -84,10 +87,15 @@ function CategoryCard({
   const remainingItems = totalItems - effectiveLimit
   const hasMore = remainingItems > 0
   const isEmpty = !isLoading && !error && totalItems === 0
+  const hasItems = !isLoading && !error && totalItems > 0
 
   // Show more handler - always reveal 10 additional items regardless of initial limit
   const handleShowMore = () => {
     setVisibleCount(prev => Math.min(prev + 10, totalItems))
+  }
+
+  const handleHelpToggle = () => {
+    setIsHelpExpanded(prev => !prev)
   }
 
   // Check if manage link points to an external site
@@ -99,8 +107,6 @@ function CategoryCard({
     content = <CardLoadingState />
   } else if (error) {
     content = <CardErrorState message={error} onRetry={onRetry} />
-  } else if (isEmpty) {
-    content = <CardEmptyState message={emptyMessage} />
   } else {
     content = displayedChildren
   }
@@ -108,28 +114,32 @@ function CategoryCard({
   return (
     <div className="mylib-card" data-ga-subcategory={`${title} Card`}>
       <div className="mylib-card__header">
-        <h3 className="mylib-card__title">{title}</h3>
         {!isLoading && !error && count !== undefined && (
           <span className="mylib-card__count">{count}</span>
         )}
         {isLoading && (
           <span className="mylib-card__count mylib-card__count--loading" />
         )}
+        <h3 className="mylib-card__title">{title}</h3>
+        {hasItems && (
+          <button
+            type="button"
+            className="mylib-card__help-button"
+            aria-expanded={isHelpExpanded}
+            aria-controls={helpId}
+            aria-label={`About ${title}`}
+            onClick={handleHelpToggle}
+          >
+            ?
+          </button>
+        )}
       </div>
       <div className="mylib-card__body">
-        {manageUrl && (
-          <a
-            href={manageUrl}
-            className="mylib-card__manage-link"
-            target={isExternal ? '_blank' : undefined}
-            rel={isExternal ? 'noopener noreferrer' : undefined}
-            data-ga-label={`${manageLabel} top`}
-          >
-            {manageLabel}{' '}
-            {isExternal && (
-              <i className="fa fa-external-link" aria-hidden="true" />
-            )}
-          </a>
+        {isEmpty && <CardEmptyState message={emptyMessage} />}
+        {hasItems && (
+          <div id={helpId} hidden={!isHelpExpanded}>
+            <CardEmptyState message={emptyMessage} />
+          </div>
         )}
         <div className="mylib-card__content">{content}</div>
         {!isLoading && !error && !isEmpty && hasMore && (

@@ -38,8 +38,8 @@ function ReservationItem({ reservation }) {
   return (
     <div className={`mylib-item${isCancelled ? ' mylib-item--cancelled' : ''}`}>
       <div className="mylib-item__title">{roomName}</div>
-      <div className="mylib-item__request-date">
-        Booked for {formatDateTime(startTime)} - {formatTime(endTime)}
+      <div className="mylib-item__scheduled-date">
+        <strong>{formatDateTime(startTime)}</strong> - {formatTime(endTime)}
       </div>
       {status && status !== 'Confirmed' && (
         <div className="mylib-item__status">
@@ -61,7 +61,7 @@ function ReservationItem({ reservation }) {
           >
             Check in
           </a>{' '}
-          with code: <strong>{checkInCode}</strong>
+          with code: {checkInCode}
         </div>
       )}
     </div>

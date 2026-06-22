@@ -11,19 +11,19 @@ function AlertBanner({
 }) {
   const alerts = []
 
-  if (recalledCount > 0) {
-    alerts.push({
-      type: 'recalled',
-      className: 'mylib-alert--danger',
-      message: `${recalledCount} item${recalledCount !== 1 ? 's' : ''} recalled`,
-    })
-  }
-
   if (overdueCount > 0) {
     alerts.push({
       type: 'overdue',
-      className: 'mylib-alert--warning',
+      className: 'mylib-alert--danger',
       message: `${overdueCount} item${overdueCount !== 1 ? 's' : ''} overdue`,
+    })
+  }
+
+  if (recalledCount > 0) {
+    alerts.push({
+      type: 'recalled',
+      className: 'mylib-alert--warning',
+      message: `${recalledCount} item${recalledCount !== 1 ? 's' : ''} recalled`,
     })
   }
 
