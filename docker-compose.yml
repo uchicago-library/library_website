@@ -10,6 +10,8 @@ services:
       - static_files:/app/static
     ports:
       - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # For FOLIO proxy in dev
     environment:
       - ELASTICSEARCH=${ELASTICSEARCH:-true}
       - NODEJS=${NODEJS:-true}

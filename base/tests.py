@@ -378,6 +378,7 @@ class TestPageModels(TestCase):
                 "IntranetFormPage",
                 "IntranetHomePage",
                 "IntranetUnitsReportsIndexPage",
+                "MyLibDashboardPage",
                 "ProjectIndexPage",
                 "RedirectPage",
                 "LoopRedirectPage",

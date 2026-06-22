@@ -52,6 +52,7 @@
     }
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.18",
     "ajv": "8.18.0",
     "eslint-utils": "^3.0.0",
     "htmr": "^1.0.2",

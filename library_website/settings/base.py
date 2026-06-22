@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "lib_news",
     "library_website",
     "macros",
+    "mylib_dashboard",
     "news",
     "public",
     "projects",
@@ -529,6 +530,7 @@ CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
 COLLECTION_OBJECT_TRUNCATE = 25
 
 # Folio API
+FOLIO_BASE_URL = "https://uchicago-okapi.folio.indexdata.com"
 FOLIO_USERNAME = ""
 FOLIO_PASSWORD = ""
 FOLIO_TENANT = ""
@@ -538,6 +540,50 @@ FOLIO_BASE_URL = ""
 FOLIO_TYPE_ISBN_ID = "8261054f-be78-422d-bd51-4ed9f33c3422"
 FOLIO_TYPE_ISSN_ID = "913300b2-03ed-469a-8179-c1092c991227"
 FOLIO_TYPE_LINKING_ISSN_ID = "5860f255-a27f-4916-a830-262aa900a6b9"
+
+# Loan policy IDs that are considered "non-renewable" (e.g., TechBar, room keys)
+FOLIO_NON_RENEWABLE_LOAN_POLICY_IDS = [
+    "a1e26512-ba2e-4690-a0cf-12b6988e4ae7",  # 21daynorenew
+    "866c672e-1433-40da-9794-71d831ce7501",  # 7daynrdll
+    "4503ab2c-0b5b-46f9-8366-95fa4924af78",  # 7dayrenew
+    "5b256b8d-17d4-4487-88b3-ef2e2e8734bc",  # illbuo
+    "6d928e9f-9fe0-4d68-83e3-2c5d5c9a31c5",  # jrlbuo
+    "efd60273-31d5-4dcc-a9fc-3c6d75d55086",  # Loan-1-min
+    "54f4fcc3-ecdd-4826-bb58-707db797a884",  # noloan
+    "43198de5-f56a-4a53-a0bd-5a324418967a",  # One Hour
+    "ecb1dbbf-bc02-4866-8110-8c62b739e7d3",  # res24hr
+    "04ed7ac8-8db3-4538-b752-9745b8101be7",  # res2hr
+    "d9d18e4f-2044-4832-8d3a-03acdf3ce224",  # res48hr
+    "7f3812f8-613c-4b94-b575-bbb75ee30548",  # res4hr
+    "6ce53413-85ad-4ff3-958b-e513f30a040c",  # res72hr
+    "936cfff3-02a0-49a0-8df0-10722cf0905c",  # res7day
+    "3cb14017-6ac0-42e1-9270-e85f8ea5e047",  # res7dayDLL
+    "2a467d26-53a3-40ef-b8c4-c8a9456db158",  # stks14
+    "38e38981-e821-4d28-a557-cd9c3bcc85bd",  # tech2hr (TechBar)
+    "d010218d-b904-4ea3-b926-da7fd02524f0",  # tech8hr (TechBar)
+    "94b2a593-0c53-4fa8-93a9-f9a20d4300f6",  # techrfid (TechBar)
+]
+
+# ILLiad API
+ILLIAD_API_URL = "https://requests.lib.uchicago.edu/ILLiadWebPlatform"
+ILLIAD_WEB_BASE_URL = "https://requests.lib.uchicago.edu/illiad"
+ILLIAD_API_KEY = ""
+ILLIAD_TIMEOUT = 30
+
+# LibCal API (Springshare)
+LIBCAL_API_BASE_URL = "https://rooms.lib.uchicago.edu/api/1.1"
+LIBCAL_WEB_URL = "https://rooms.lib.uchicago.edu"
+LIBCAL_CLIENT_ID = ""
+LIBCAL_CLIENT_SECRET = ""
+LIBCAL_TIMEOUT = 30
+# Special Collections location IDs for filtering reading room seats
+# TODO: Confirm these location IDs are correct
+LIBCAL_SPECIAL_COLLECTIONS_LOCATION_IDS = [14995, 11873]
+
+# Aeon API (Special Collections material requests)
+AEON_API_BASE_URL = "https://scrcrequests.lib.uchicago.edu/aeonapi"
+AEON_API_KEY = ""
+AEON_TIMEOUT = 30
 
 MAIL_ALIASES_PATH = "/data/web/aliases/data.json"
 

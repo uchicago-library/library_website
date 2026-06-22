@@ -12,12 +12,28 @@ GENERIC_HEADERS = {
 }
 
 
-def get_auth():
+class FOLIOAuthError(Exception):
+    """Raised when FOLIO authentication fails."""
+
+    pass
+
+
+def get_auth(proxies=None, timeout=TIMEOUT, raise_on_error=False):
     """
     Authenticate and get auth token from Folio API.
 
+    Args:
+        proxies: dict, optional proxy configuration for requests
+            (e.g., {"http": "socks5h://localhost:1080", "https": "socks5h://localhost:1080"})
+        timeout: int, optional timeout in seconds (default: 5)
+        raise_on_error: bool, if True raises FOLIOAuthError on failure,
+            otherwise returns dict with empty token (default: False)
+
     Returns:
         dict, with auth token.
+
+    Raises:
+        FOLIOAuthError: If raise_on_error is True and authentication fails.
     """
     data = {"x-okapi-token": ""}
     try:
@@ -29,20 +45,29 @@ def get_auth():
             settings.FOLIO_BASE_URL + "/authn/login-with-expiry",
             headers=GENERIC_HEADERS,
             data=payload,
-            timeout=TIMEOUT,
+            proxies=proxies,
+            timeout=timeout,
         )
         if response.status_code != 201:
+            if raise_on_error:
+                raise FOLIOAuthError(
+                    f"FOLIO authentication failed: {response.status_code}"
+                )
             return data
+        token = response.cookies.get("folioAccessToken")
+        if not token and raise_on_error:
+            raise FOLIOAuthError("No access token in FOLIO response")
         return {
-            "x-okapi-token": response.cookies.get("folioAccessToken"),
+            "x-okapi-token": token or "",
         }
     except (
         requests.exceptions.Timeout,
         json.decoder.JSONDecodeError,
         requests.exceptions.ConnectionError,
         requests.exceptions.MissingSchema,
-    ):
-        pass
+    ) as e:
+        if raise_on_error:
+            raise FOLIOAuthError(f"FOLIO authentication failed: {e}")
     return data
 
 

@@ -46,3 +46,6 @@ CACHES = {
         },
     },
 }
+
+# FOLIO proxy override for Docker (reaches host's SSH tunnel from container)
+FOLIO_PROXY = "socks5h://host.docker.internal:1080"
