@@ -86,6 +86,15 @@ export function formatCurrency(amount) {
 }
 
 /**
+ * Format a FOLIO request status for display by stripping the internal
+ * "Open - "/"Closed - " prefix (e.g. "Open - In transit" -> "In transit").
+ */
+export function formatRequestStatus(status) {
+  if (!status) return ''
+  return status.replace(/^(Open|Closed)\s*-\s*/, '')
+}
+
+/**
  * Format date for display (e.g., "Jan 15, 2025").
  */
 export function formatDate(dateString) {
