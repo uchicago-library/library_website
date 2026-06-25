@@ -1066,6 +1066,78 @@ class TestGetPagingRequests(TestCase):
         self.assertEqual(result["requests"][0]["title"], "Held Book")
         self.assertEqual(result["requests"][1]["title"], "Paged Book")
 
+    @patch.object(FOLIOService, "get_locations")
+    @patch.object(FOLIOService, "get_service_points")
+    @patch.object(FOLIOService, "_request")
+    @patch.object(FOLIOService, "get_user_by_cnetid")
+    def test_includes_in_transit_and_awaiting_delivery(
+        self, mock_get_user, mock_request, mock_sp, mock_loc
+    ):
+        """Open statuses other than awaiting pickup are still in process."""
+        mock_get_user.return_value = {"id": "uuid-1"}
+        mock_sp.return_value = {}
+        mock_loc.return_value = {}
+        mock_request.return_value = {
+            "requests": [
+                {
+                    "id": "req-1",
+                    "instance": {"title": "Transit Book"},
+                    "item": {},
+                    "requestDate": "2026-03-10",
+                    "status": "Open - In transit",
+                },
+                {
+                    "id": "req-2",
+                    "instance": {"title": "Delivery Book"},
+                    "item": {},
+                    "requestDate": "2026-03-09",
+                    "status": "Open - Awaiting delivery",
+                },
+            ]
+        }
+
+        result = self.service.get_paging_requests("testuser")
+
+        titles = {r["title"] for r in result["requests"]}
+        self.assertEqual(titles, {"Transit Book", "Delivery Book"})
+        self.assertEqual(result["totalRequests"], 2)
+        self.assertEqual(result["requests"][0]["status"], "Open - In transit")
+
+    @patch.object(FOLIOService, "get_locations")
+    @patch.object(FOLIOService, "get_service_points")
+    @patch.object(FOLIOService, "_request")
+    @patch.object(FOLIOService, "get_user_by_cnetid")
+    def test_excludes_awaiting_pickup(
+        self, mock_get_user, mock_request, mock_sp, mock_loc
+    ):
+        """Awaiting pickup belongs to the Available for Pickup tab, not here."""
+        mock_get_user.return_value = {"id": "uuid-1"}
+        mock_sp.return_value = {}
+        mock_loc.return_value = {}
+        mock_request.return_value = {
+            "requests": [
+                {
+                    "id": "req-1",
+                    "instance": {"title": "On Hold Shelf"},
+                    "item": {},
+                    "requestDate": "2026-03-10",
+                    "status": "Open - Awaiting pickup",
+                },
+                {
+                    "id": "req-2",
+                    "instance": {"title": "Still In Transit"},
+                    "item": {},
+                    "requestDate": "2026-03-09",
+                    "status": "Open - In transit",
+                },
+            ]
+        }
+
+        result = self.service.get_paging_requests("testuser")
+
+        self.assertEqual(len(result["requests"]), 1)
+        self.assertEqual(result["requests"][0]["title"], "Still In Transit")
+
 
 class TestGetFolioServiceLruCache(TestCase):
     """Tests for get_folio_service LRU cache."""

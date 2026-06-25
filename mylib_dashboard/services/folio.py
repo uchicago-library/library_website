@@ -22,6 +22,11 @@ DEFAULT_TIMEOUT = 30
 # Hours threshold for "due soon" warning
 DUE_SOON_HOURS = 24
 
+# The one open request status that is NOT "in process": the item is on the
+# hold shelf, ready to collect. It is surfaced under the Available for Pickup
+# tab (get_user_holds). Every other open status is still being fulfilled.
+AWAITING_PICKUP_STATUS = "Open - Awaiting pickup"
+
 
 class FOLIOError(Exception):
     """Base exception for FOLIO API errors."""
@@ -639,10 +644,15 @@ class FOLIOService:
 
     def get_paging_requests(self, cnetid):
         """
-        Get all paging and hold requests for a user.
+        Get a user's Page/Hold requests that are still being fulfilled
+        ("In Process").
 
-        These are FOLIO Page requests for items being retrieved from
-        stacks or storage, and Hold requests for items not yet available.
+        Returns the user's open Page and Hold requests except those that have
+        reached the hold shelf ("Open - Awaiting pickup"), which belong to the
+        Available for Pickup tab (get_user_holds). Selecting every open status
+        except awaiting-pickup (rather than pinning a single status) means
+        items that have moved on to "Open - In transit" or
+        "Open - Awaiting delivery" still appear instead of falling into a gap.
 
         Args:
             cnetid: The user's CNetID
@@ -660,11 +670,13 @@ class FOLIOService:
         service_points = self.get_service_points()
         locations = self.get_locations()
 
-        # Query for open page and hold requests (not yet filled)
+        # Fetch all open page/hold requests; the specific open status is
+        # categorized below rather than pinned in the query, so items past
+        # "Not yet filled" (e.g. "In transit") still appear.
         endpoint = (
             f"/request-storage/requests?query="
             f"requesterId=={user_uuid}"
-            f"%20and%20status==%22Open%20-%20Not%20yet%20filled%22"
+            f"%20and%20status==Open*"
             f"%20and%20(requestType==Page%20or%20requestType==Hold)"
             f"&limit=1000"
         )
@@ -673,6 +685,10 @@ class FOLIOService:
 
         paging_requests = []
         for req in requests_list:
+            # Items awaiting pickup are shown on the Available for Pickup tab.
+            if req.get("status") == AWAITING_PICKUP_STATUS:
+                continue
+
             item = req.get("item", {})
             item_location_id = item.get("locationId")
 

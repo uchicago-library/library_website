@@ -3,14 +3,27 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { formatDate } from '../hooks'
+import { formatDate, formatRequestStatus } from '../hooks'
 
 function PagingRequestItem({ request }) {
-  const { title, callNumber, locationName, pickupLocation, requestDate } =
-    request
+  const {
+    title,
+    callNumber,
+    locationName,
+    pickupLocation,
+    requestDate,
+    status,
+  } = request
 
   return (
     <div className="mylib-item">
+      {status && (
+        <div className="mylib-item__status">
+          <span className="mylib-item__badge mylib-item__badge--info">
+            {formatRequestStatus(status)}
+          </span>
+        </div>
+      )}
       <div className="mylib-item__title">{title || 'Untitled'}</div>
       {callNumber && (
         <div className="mylib-item__call-number">{callNumber}</div>
@@ -38,6 +51,7 @@ PagingRequestItem.propTypes = {
     locationName: PropTypes.string,
     pickupLocation: PropTypes.string,
     requestDate: PropTypes.string,
+    status: PropTypes.string,
   }).isRequired,
 }
 
