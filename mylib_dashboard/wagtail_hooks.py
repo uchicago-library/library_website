@@ -4,7 +4,6 @@ Wagtail hooks for MyLib Dashboard.
 
 from wagtail import hooks
 
-
 MYLIB_API_PATH_PREFIX = "/api/mylib/"
 
 
