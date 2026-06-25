@@ -7,6 +7,7 @@ All views return JSON responses for consumption by the React frontend.
 import logging
 
 from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 
 from .services.aeon import AeonError, get_aeon_service
@@ -59,6 +60,7 @@ def require_email(view_func):
     return wrapper
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def profile(request):
@@ -80,6 +82,7 @@ def profile(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def loans(request):
@@ -101,6 +104,7 @@ def loans(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def holds(request):
@@ -122,6 +126,7 @@ def holds(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def fines(request):
@@ -143,6 +148,7 @@ def fines(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def account_blocks(request):
@@ -168,6 +174,7 @@ def account_blocks(request):
 # integration works independently of the ILS.
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 @require_email
@@ -187,6 +194,7 @@ def downloads(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 @require_email
@@ -206,6 +214,7 @@ def ill_in_process(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 @require_email
@@ -232,6 +241,7 @@ def scan_deliver_in_process(request):
 # authentication attributes (Shibboleth/Okta).
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_email
 def reservations(request):
@@ -250,6 +260,7 @@ def reservations(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_email
 def appointments(request):
@@ -266,6 +277,7 @@ def appointments(request):
         return JsonResponse({"error": "Unable to retrieve appointments"}, status=503)
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_email
 def sc_seats(request):
@@ -284,6 +296,7 @@ def sc_seats(request):
         )
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_cnetid
 def paging_requests(request):
@@ -308,6 +321,7 @@ def paging_requests(request):
 # authentication attributes (Shibboleth/Okta).
 
 
+@never_cache
 @require_http_methods(["GET"])
 @require_email
 def sc_materials(request):
