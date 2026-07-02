@@ -102,14 +102,12 @@ Key requirements:
 
     ai_model = models.CharField(
         max_length=50,
-        default="chatgpt-4o-latest",
+        default="gpt-5.5",
         choices=[
-            ("gpt-3.5-turbo", "GPT-3.5 Turbo"),
-            ("gpt-4o", "GPT-4o"),
-            ("gpt-4-turbo", "GPT-4 Turbo"),
-            ("gpt-5.1", "GPT-5.1"),
-            ("o3", "o3"),
-            ("chatgpt-4o-latest", "ChatGPT-4o Latest"),
+            ("gpt-5.5", "GPT-5.5"),
+            ("gpt-5.4", "GPT-5.4"),
+            ("gpt-5.4-mini", "GPT-5.4 Mini"),
+            ("gpt-5.3-chat-latest", "GPT-5.3 Chat Latest"),
         ],
         help_text="OpenAI model to use for generation",
     )
