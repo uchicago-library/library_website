@@ -227,28 +227,15 @@ def generate_form_json(request):
             "Content-Type": "application/json",
         }
 
-        # o1 and o3 models don't support system messages or custom temperature
-        is_reasoning_model = model.startswith("o1") or model.startswith("o3")
-
-        if is_reasoning_model:
-            # For o1/o3: combine system prompt into user message, use default temperature
-            combined_prompt = f"{system_prompt}\n\n---\n\n{prompt}"
-            payload = {
-                "model": model,
-                "messages": [
-                    {"role": "user", "content": combined_prompt},
-                ],
-            }
-        else:
-            # For GPT models: use system message and custom temperature
-            payload = {
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.2,
-            }
+        # Current OpenAI models all accept system messages, and GPT-5
+        # series models only allow the default temperature
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+        }
 
         api_endpoint = getattr(
             settings,
@@ -285,8 +272,17 @@ def generate_form_json(request):
             status=504,
         )
     except requests.exceptions.RequestException as e:
+        # Prefer the error message from the OpenAI response body, which
+        # explains the failure (e.g. model_not_found, insufficient_quota)
+        error = str(e)
+        resp = getattr(e, "response", None)
+        if resp is not None:
+            try:
+                error = resp.json()["error"]["message"]
+            except (ValueError, KeyError, TypeError):
+                pass
         return JsonResponse(
-            {"error": f"OpenAI API error: {str(e)}"},
+            {"error": f"OpenAI API error: {error}"},
             status=502,
         )
     except Exception as e:

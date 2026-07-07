@@ -1,6 +1,7 @@
 import json
 from unittest.mock import Mock, patch
 
+import requests
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import Client, TestCase, override_settings
@@ -171,7 +172,7 @@ class CGIMailFormEditorPageTests(WagtailPageTestCase):
         page = CGIMailFormEditorPage(
             title="Editor",
             slug="editor-2",
-            ai_model="gpt-4o",
+            ai_model="gpt-5.4-mini",
             system_prompt="Test prompt",
             template_description="Test template",
             page_maintainer=self.staff,
@@ -182,7 +183,7 @@ class CGIMailFormEditorPageTests(WagtailPageTestCase):
         request = Mock()
         context = page.get_context(request)
 
-        self.assertEqual(context["ai_model"], "gpt-4o")
+        self.assertEqual(context["ai_model"], "gpt-5.4-mini")
         self.assertEqual(context["system_prompt"], "Test prompt")
         self.assertEqual(context["template_description"], "Test template")
 
@@ -394,8 +395,8 @@ class GenerateFormJSONTests(TestCase):
     @override_settings(OPENAI_CGIMAIL_KEY="test-key")
     @patch("cgimail_editor.views.check_loop_permission")
     @patch("cgimail_editor.views.requests.post")
-    def test_calls_openai_api_for_gpt_models(self, mock_post, mock_permission):
-        """Should call OpenAI API with system message for GPT models."""
+    def test_calls_openai_api_with_system_message(self, mock_post, mock_permission):
+        """Should call OpenAI API with system message and default temperature."""
         mock_permission.return_value = None
         self.client.force_login(self.user)
 
@@ -416,33 +417,42 @@ class GenerateFormJSONTests(TestCase):
                     "description": "Test form",
                     "documentation": [],
                     "system_prompt": "Help",
-                    "model": "gpt-4o",
+                    "model": "gpt-5.5",
                 }
             ),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
-        # Verify API was called with system message and temperature
+        # Verify API was called with system message and no custom temperature
         call_args = mock_post.call_args
         payload = call_args[1]["json"]
+        self.assertEqual(payload["model"], "gpt-5.5")
         self.assertEqual(len(payload["messages"]), 2)
         self.assertEqual(payload["messages"][0]["role"], "system")
-        self.assertEqual(payload["temperature"], 0.2)
+        self.assertNotIn("temperature", payload)
 
     @override_settings(OPENAI_CGIMAIL_KEY="test-key")
     @patch("cgimail_editor.views.check_loop_permission")
     @patch("cgimail_editor.views.requests.post")
-    def test_calls_openai_api_for_reasoning_models(self, mock_post, mock_permission):
-        """Should call OpenAI API without system message for o1/o3 models."""
+    def test_surfaces_openai_error_message(self, mock_post, mock_permission):
+        """Should surface the error message from the OpenAI response body."""
         mock_permission.return_value = None
         self.client.force_login(self.user)
 
         mock_response = Mock()
         mock_response.json.return_value = {
-            "choices": [{"message": {"content": '{"form": {}}'}}]
+            "error": {
+                "message": "The model `bad-model` does not exist",
+                "type": "invalid_request_error",
+                "code": "model_not_found",
+            }
         }
-        mock_response.raise_for_status = Mock()
+        http_error = requests.exceptions.HTTPError(
+            "404 Client Error: Not Found for url: https://api.openai.com/..."
+        )
+        http_error.response = mock_response
+        mock_response.raise_for_status = Mock(side_effect=http_error)
         mock_post.return_value = mock_response
 
         response = self.client.post(
@@ -455,19 +465,13 @@ class GenerateFormJSONTests(TestCase):
                     "description": "Test form",
                     "documentation": [],
                     "system_prompt": "Help",
-                    "model": "o3",
                 }
             ),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
-
-        # Verify API was called with only user message, no temperature
-        call_args = mock_post.call_args
-        payload = call_args[1]["json"]
-        self.assertEqual(len(payload["messages"]), 1)
-        self.assertEqual(payload["messages"][0]["role"], "user")
-        self.assertNotIn("temperature", payload)
+        self.assertEqual(response.status_code, 502)
+        data = json.loads(response.content)
+        self.assertIn("The model `bad-model` does not exist", data["error"])
 
 
 class HelperFunctionTests(TestCase):
