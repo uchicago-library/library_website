@@ -620,3 +620,7 @@ TURNSTILE_EXCLUDED_PATHS = [
     r"^/api/.*$",
     r"^/rss/.*$",
 ]
+
+# article galaxy spreadsheet constants
+AGS_SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
+AGS_DEFAULT_SHEET = "data1"

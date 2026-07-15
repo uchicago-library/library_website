@@ -1,19 +1,47 @@
-import json
 import re
+import os
 from functools import cmp_to_key
 from string import ascii_lowercase, ascii_uppercase
-
+from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
-from wagtail.models import Site
-
-from base.wagtail_hooks import (
-    get_required_groups,
-    has_permission,
-    redirect_users_without_permissions,
+from base.result import rmap
+from library_website.settings import AGS_SPREADSHEET_NAME
+from .ags import (
+    create_document,
+    request_to_xlsx,
+    validate_xlsx,
+    retrieve_document,
+    doc_to_rows_exn,
+    doc_to_dict_exn,
+    bool_to_msg,
+    delete_document_exn,
+    df_to_list,
+    xlsx_to_df,
+    bind,
+    pad_with_empties,
+    diff_rows,
 )
+from base.utils import (
+    permissions_redirect,
+    get_loop_homepage,
+    has_page_permissions,
+)
+from django.core.files.base import File
+from django.template.response import TemplateResponse
+from django.db.utils import ProgrammingError, OperationalError
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponse
+import json
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
+from string import ascii_uppercase, ascii_lowercase
+from wagtail.models import Site
+from wagtail.documents import get_document_model
+from urllib.parse import urlencode
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -239,12 +267,6 @@ def mail_aliases_view(request, *args, **kwargs):
 
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
-    loop_homepage = Site.objects.get(site_name="Loop").root_page
-
-    # check whether user has permission to be on Loop; redirect if not
-    if not has_permission(request.user, get_required_groups(loop_homepage)):
-        return redirect_users_without_permissions(loop_homepage, request, None, None)
-
     try:
         alias_filter = kwargs["alias_filter"].lower()
     except KeyError:
@@ -259,4 +281,114 @@ def mail_aliases_view(request, *args, **kwargs):
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
         context = {"final_data": final_data, "alphas": alphas}
 
-    return render(request, "intranethome/mail_aliases.html", context)
+    return permissions_redirect(
+        request,
+        render(request, "intranethome/mail_aliases.html", context)
+    )
+
+
+def ags_upload_page(request):
+
+    # look up previous spreadsheet, if it exists
+    D = get_document_model()
+    old_doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
+    old_rows_result = rmap(doc_to_rows_exn, old_doc_result)
+
+    # get the XLSX data out of the POST request, if they exist
+    xlsx = request_to_xlsx(request)
+
+    # check that POST data are valid
+    validated = validate_xlsx(xlsx)
+
+    # update the Wagtail Document based on the POST data
+    confirm_result = rmap(
+        create_document(AGS_SPREADSHEET_NAME), validated
+    )
+
+    # retrieve the latest XLSX from Wagtail Documents
+    doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
+
+    # generate the XLSX preview, when XLSX is in Documents
+    rows_result = rmap(doc_to_rows_exn, doc_result)
+
+    # determine alert and upload/error message
+    match confirm_result:
+        case { "ok": "" }:
+            msg_context = { "msg": "",
+                            "confirm": "", }
+        case { "ok": confirm }:
+            msg_context = { "msg": bool_to_msg(confirm),
+                            "confirm": confirm, }
+        case { "error": error_msg }:
+            msg_context = { "msg": error_msg,
+                            "confirm": False, }
+
+    # determine deletion message
+    if "delete" in request.GET:
+        delete_context = { "delete": True } | msg_context
+    else:
+        delete_context = { "delete": False } | msg_context
+
+    # determine table preview
+    match (old_rows_result, rows_result):
+        case ({ "ok": old_rows }, { "ok": new_rows }):
+            (reds, greens, diffed) = diff_rows(old_rows, new_rows)
+            if sorted(old_rows) != sorted(new_rows):
+                diff_column = True
+            else:
+                diff_column = False
+            new_context = { "table_rows": diffed,
+                            "diff_column": diff_column,
+                            "reds": reds,
+                            "greens": greens, }
+            context = new_context | delete_context
+        case ({ "error": _ }, { "ok": new_rows }):
+            (reds, greens, diffed) = (0, 0, pad_with_empties(new_rows))
+            diff_column = False
+            new_context = { "table_rows": diffed,
+                            "diff_column": diff_column,
+                            "reds": reds,
+                            "greens": greens, }
+            context = new_context | delete_context
+        case (_, { "error": _ }):
+            # suppress developer error message for users
+            diff_column = False
+            context = { "table_rows": [],
+                        "diff_column": diff_column } | delete_context
+        case _:
+            diff_column = False
+            context = { "table_rows": [],
+                        "diff_column": diff_column } | delete_context
+
+    # render template
+    template_path = "intranethome/ags_upload_page.html"
+    return permissions_redirect(
+        request,
+        TemplateResponse(request, template_path, context)
+    )
+
+
+def display_js(request):
+    # read XLSX from Wagtail Documents
+    D = get_document_model()
+    doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
+    
+    # convert XLSX to Javascript object for use in Find It
+    ags_dict_result = rmap(doc_to_dict_exn, doc)
+    json_string = json.dumps(ags_dict_result)
+
+    # render template
+    return HttpResponse(json_string, content_type="application/json")
+
+
+def delete_spreadsheet(request):
+
+    # delete spreadsheet only if user is authenticated to Loop
+    D = get_document_model()
+    page = get_loop_homepage()
+    if has_page_permissions(request, page) and request.POST:
+        delete_document_exn(D, AGS_SPREADSHEET_NAME)
+    else:
+        pass
+    url = "/ags?delete"
+    return redirect(url)
