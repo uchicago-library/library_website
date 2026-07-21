@@ -37,6 +37,6 @@ urllib3==2.7.0
 wagtail==7.0.7
 wagtailmedia==0.15.2
 wagtail-cache==3.0.0
-wagtail-markdown==0.13.0
+wagtail-markdown==0.14.1
 wheel==0.46.2
 zope.interface==4.1.2
