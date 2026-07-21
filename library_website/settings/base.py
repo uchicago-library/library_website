@@ -479,7 +479,7 @@ if "test" in sys.argv:
 
 # DOI resolution service
 
-IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
+IDRESOLVE_URL = "https://restful.lib.uchicago.edu/cgi-bin/idresolve"
 
 MARKLOGIC_LDR_PORT = 8008
 MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
@@ -519,7 +519,7 @@ WAGTAIL_PREFIX = "/collex/collections"
 
 # toggle these root URLs for dev/production
 # CITATION_ROOT = "http://sequent.lib.uchicago.edu:9000"
-CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
+CITATION_ROOT = "http://restful.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
 
