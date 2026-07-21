@@ -54,7 +54,7 @@
                 <span class="hidden-xs">Get materials from other libraries:</span> &nbsp;
                 <!--<a href="http://www.lib.uchicago.edu/h/ub" data-ga-label="Catalogs &gt; UBorrow">UBorrow</a> &nbsp; | &nbsp;
         <a href="http://www.lib.uchicago.edu/h/borrowdirect" data-ga-label="Catalogs &gt; BorrowDirect">BorrowDirect</a> &nbsp; |  &nbsp; --> 
-                <a href="http://proxy.uchicago.edu/login?url=http://newfirstsearch.oclc.org/dbname=WorldCat;done=referer;FSIP" data-ga-label="WorldCat">WorldCat</a>
+                <a href="https://www.lib.uchicago.edu/h/worldcat" data-ga-label="WorldCat">WorldCat</a>
             </p>
         </div>
         <!-- // Filter Search -->
@@ -70,11 +70,6 @@
                     <input type="text" name="ebscohostsearchtext" placeholder="evolutionary biology" aria-label="Search articles" id="ebscohostsearchtext" class="form-control" onchange="propagate(this)">
                     <input type="hidden" name="which-form" value="articles">
                     {% csrf_token %}
-                    <input type="hidden" value="0" name="ebscohostwindow" id="ebscohostwindow">
-                    <input type="hidden" value="http://proxy.uchicago.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=0&amp;mode=and&amp;cli0=FT1&amp;clv0=Yxb" name="ebscohosturl" id="ebscohosturl">
-                    <input type="hidden" value="db" name="ebscohostsearchsrc" id="ebscohostsearchsrc">
-                    <input type="hidden" value="+AND+" name="ebscohostsearchmode" id="ebscohostsearchmode">
-                    <input type="hidden" value="" name="ebscohostkeywords" id="ebscohostkeywords">
                 </div>
 
                 <div class="col-xs-3 col-sm-2 search-btn-wrapper">

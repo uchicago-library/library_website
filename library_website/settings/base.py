@@ -479,7 +479,7 @@ if "test" in sys.argv:
 
 # DOI resolution service
 
-IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
+IDRESOLVE_URL = "https://restful.lib.uchicago.edu/cgi-bin/idresolve"
 
 MARKLOGIC_LDR_PORT = 8008
 MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
@@ -497,6 +497,12 @@ E_FINDING_AIDS = E_FINDING_AIDS_URL + E_FINDING_AIDS_QUERY_STRING
 
 EBOOKS_SEARCH = "https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor="
 
+# Articles search (EBSCO "ijaglh" UChicago profile), fronted by the proxy
+# redirector. The redirector expects the entire target URL, query string
+# included, percent-encoded into a single "url" parameter.
+PROXY_REDIRECTOR_URL = "https://proxy-redirector.lib.uchicago.edu/login"
+ARTICLES_SEARCH_URL = "https://research.ebsco.com/c/ijaglh/search/results"
+
 SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
 
 LANGUAGE_ABBREVS = {"en": "English"}
@@ -513,7 +519,7 @@ WAGTAIL_PREFIX = "/collex/collections"
 
 # toggle these root URLs for dev/production
 # CITATION_ROOT = "http://sequent.lib.uchicago.edu:9000"
-CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
+CITATION_ROOT = "http://restful.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
 

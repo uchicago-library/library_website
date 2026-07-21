@@ -1,7 +1,13 @@
+from urllib import parse
+
 import requests
 from wagtail.search import index
 
-from library_website.settings import IDRESOLVE_URL
+from library_website.settings import (
+    ARTICLES_SEARCH_URL,
+    IDRESOLVE_URL,
+    PROXY_REDIRECTOR_URL,
+)
 
 FEATURES_LIST = [
     (
@@ -265,17 +271,6 @@ def switchboard_url(form_name, form_option=""):
         return "https://catalog.lib.uchicago.edu/vufind/Alphabrowse/Home"
     elif form_name == "catalog":
         return "https://catalog.lib.uchicago.edu/vufind/Search/Results"
-    elif form_name == "articles":
-        url = (
-            "http://proxy.uchicago.edu/login"
-            "?url=http://search.ebscohost.com/login.aspx"
-            "?direct=true&site=eds-live"
-            "&scope=site"
-            "&type=0"
-            "&mode=and"
-            "&cli0=FT1&clv0=Y"
-        )
-        return url
     elif form_name == "journals":
         return "https://sfx.lib.uchicago.edu/sfx_local/journalsearch"
     elif form_name == "databases":
@@ -286,6 +281,25 @@ def switchboard_url(form_name, form_option=""):
         return "/about/news/search/"
     else:
         assert False
+
+
+def articles_search_url(search_term):
+    """
+    Build the proxied EBSCO articles search URL for a search term.
+
+    The proxy redirector needs the whole target URL (including its own query
+    string) percent-encoded into a single "url" parameter, so build it here
+    rather than appending the posted form fields to a base URL.
+
+    Args:
+        search_term: string, the user's query
+
+    Returns:
+        a redirect URL of the form
+        https://proxy-redirector.lib.uchicago.edu/login?url=<encoded target>
+    """
+    target = f"{ARTICLES_SEARCH_URL}?{parse.urlencode({'q': search_term})}"
+    return f"{PROXY_REDIRECTOR_URL}?{parse.urlencode({'url': target})}"
 
 
 def mk_search_field(string):
