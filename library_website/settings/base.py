@@ -497,6 +497,12 @@ E_FINDING_AIDS = E_FINDING_AIDS_URL + E_FINDING_AIDS_QUERY_STRING
 
 EBOOKS_SEARCH = "https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor="
 
+# Articles search (EBSCO "ijaglh" UChicago profile), fronted by the proxy
+# redirector. The redirector expects the entire target URL, query string
+# included, percent-encoded into a single "url" parameter.
+PROXY_REDIRECTOR_URL = "https://proxy-redirector.lib.uchicago.edu/login"
+ARTICLES_SEARCH_URL = "https://research.ebsco.com/c/ijaglh/search/results"
+
 SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
 
 LANGUAGE_ABBREVS = {"en": "English"}

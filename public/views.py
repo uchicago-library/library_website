@@ -27,6 +27,7 @@ from library_website.settings import (
 )
 from public.models import LocationPage, LocationPageFloorPlacement, StandardPage
 from public.utils import (
+    articles_search_url,
     doi_lookup,
     get_clean_params,
     get_features,
@@ -97,21 +98,22 @@ def switchboard(request):
         # otherwise: pass query string along to wherever it was going
         form = params["which-form"]
 
+        if form == "articles":
+            # the articles search posts to the EBSCO interface through the
+            # proxy redirector, which needs the whole target URL encoded into
+            # a single url= parameter; build it directly and redirect
+            return redirect(articles_search_url(search_term))
+
         try:
             formtype = params["type"]
         except KeyError:
             formtype = ""
 
-        if form == "articles":
-            # add a 'bquery' parameter to make the ebscohost API happy
-            params["bquery"] = search_term
-        elif form == "catalog" and formtype in browse_options:
+        if form == "catalog" and formtype in browse_options:
             params["from"] = params["lookfor"]
             del params["lookfor"]
             params["source"] = trim(formtype)
             del params["type"]
-        else:
-            pass
 
         url_prefix = switchboard_url(form, form_option=formtype)
         del params["which-form"]

@@ -1,4 +1,5 @@
 import warnings
+from urllib import parse
 
 import requests
 from django.core.cache import cache
@@ -13,7 +14,7 @@ from wagtailcache.cache import clear_cache
 
 from base.tests import add_generic_request_meta_fields, boiler_plate
 from library_website.settings import IDRESOLVE_URL
-from public.utils import doi_lookup, doi_lookup_base_url, mk_url
+from public.utils import articles_search_url, doi_lookup, doi_lookup_base_url, mk_url
 from results.views import main_search_query, pages_to_exclude
 
 example_doi1 = "10.1007/s11050-007-9022-y"
@@ -92,6 +93,32 @@ class IdresolveTest(SimpleTestCase):
             validate(result2[:-1])
         except ValidationError:
             self.fail("Idresolve not returning valid SFX url.")
+
+
+class ArticlesSearchUrlTest(SimpleTestCase):
+
+    def test_builds_expected_proxied_url(self):
+        """
+        a simple term yields the redirector URL wrapping the fully
+        percent-encoded EBSCO target
+        """
+        expected = (
+            "https://proxy-redirector.lib.uchicago.edu/login"
+            "?url=https%3A%2F%2Fresearch.ebsco.com%2Fc%2Fijaglh"
+            "%2Fsearch%2Fresults%3Fq%3Dscience"
+        )
+        self.assertEqual(articles_search_url("science"), expected)
+
+    def test_search_term_round_trips(self):
+        """
+        a multi-word term with special characters survives the nested
+        encoding, so the redirector hands EBSCO the exact query typed
+        """
+        term = "climate change & policy"
+        url = articles_search_url(term)
+        inner = parse.parse_qs(parse.urlparse(url).query)["url"][0]
+        recovered = parse.parse_qs(parse.urlparse(inner).query)["q"][0]
+        self.assertEqual(recovered, term)
 
 
 class TestStandardPageExcludeFields(TestCase):
