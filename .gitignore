@@ -25,6 +25,5 @@ src
 **/*~
 .vscode
 
-.claude/
+.claude/settings.local.json
 .gemini/
-CLAUDE.md
