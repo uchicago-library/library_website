@@ -13,7 +13,8 @@
                     <div class="media">
                         {% if sticky_page.thumbnail %}
                             <div class="media-left">
-                                {% image sticky_page.thumbnail fill-150x150 class="media-object" %}
+                                {% image sticky_page.thumbnail fill-150x150 as sticky_thumb %}
+                                <img src="{{ sticky_thumb.url }}" width="{{ sticky_thumb.width }}" height="{{ sticky_thumb.height }}" alt="{% firstof sticky_page.alt_text sticky_page.thumbnail.title %}" class="media-object" />
                             </div>
                         {% endif %}
                         <div class="media-body">
@@ -30,7 +31,8 @@
                 <div class="media">
                     {% if news_page.thumbnail %}
                         <div class="media-left">
-                            {% image news_page.thumbnail fill-150x150 class="media-object" %}
+                            {% image news_page.thumbnail fill-150x150 as news_thumb %}
+                            <img src="{{ news_thumb.url }}" width="{{ news_thumb.width }}" height="{{ news_thumb.height }}" alt="{% firstof news_page.alt_text news_page.thumbnail.title %}" class="media-object" />
                         </div>
                     {% endif %}
                     <div class="media-body">

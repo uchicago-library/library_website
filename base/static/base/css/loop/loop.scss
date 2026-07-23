@@ -423,6 +423,9 @@ figure {
     font-size: 1.2em;
     line-height: 1.7em;
     max-width: 46em;
+    p {
+      font-size: 1em;
+    }
   }
 
   @include respond-to(mobileonly) {

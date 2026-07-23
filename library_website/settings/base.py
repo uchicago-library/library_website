@@ -322,6 +322,12 @@ ADDRESS_TEMPLATE = "%s, %s, %s %s"
 # Location and hours page
 HOURS_PAGE = 4084
 
+# Loop News excerpt-writing guidance page. Set to a live page id to show a
+# link to examples/best practices in the News editor's excerpt HelpPanel.
+# Leave as None until that page is authored on Loop; the guidance still shows,
+# just without a link.
+NEWS_EXCERPT_GUIDE_PAGE = None
+
 # Library news categories
 NEWS_CATEGORIES = set(
     [
