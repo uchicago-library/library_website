@@ -1,10 +1,27 @@
 import re
 
 from django import template
+from django.conf import settings
+from wagtail.models import Page
 
 from staff.models import StaffPage
 
 register = template.Library()
+
+
+@register.simple_tag
+def news_excerpt_guide_url():
+    """
+    Resolve the configured News excerpt guidance page to its URL.
+
+    Returns the page's URL, or None if NEWS_EXCERPT_GUIDE_PAGE is unset or the
+    page is missing/unpublished. Used by the excerpt HelpPanel to render the
+    link only when a live page is configured.
+    """
+    try:
+        return Page.objects.live().get(id=settings.NEWS_EXCERPT_GUIDE_PAGE).url
+    except (Page.DoesNotExist, AttributeError):
+        return None
 
 
 @register.inclusion_tag("news/news_author.html")

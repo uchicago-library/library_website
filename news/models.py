@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import models
 from django.utils import timezone
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel, MultiFieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 from wagtail.search import index
@@ -18,9 +19,9 @@ class NewsPage(BasePage):
     """
 
     excerpt = RichTextField(
-        blank=True,
+        blank=False,
         null=True,
-        help_text="Shown on the News feed. Populated automatically from “Body” if left empty.",
+        help_text="Shown on the News feed.",
     )
     author = models.ForeignKey(
         "staff.StaffPage",
@@ -43,7 +44,14 @@ class NewsPage(BasePage):
         on_delete=models.SET_NULL,
         related_name="+",
     )
-    alt_text = models.CharField(max_length=100, blank=True)
+    alt_text = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text=(
+            "Describe the thumbnail's content and purpose for screen-reader "
+            "users. Keep it concise. Required when a thumbnail is set."
+        ),
+    )
     body = StreamField(
         DefaultBodyFields(),
         blank=False,
@@ -65,7 +73,13 @@ class NewsPage(BasePage):
                 ],
                 heading="Thumbnail",
             ),
-            FieldPanel("excerpt"),
+            MultiFieldPanel(
+                [
+                    HelpPanel(template="news/blocks/excerpt_helppanel.html"),
+                    FieldPanel("excerpt"),
+                ],
+                heading="Excerpt",
+            ),
         ]
         + BasePage.content_panels
     )
@@ -80,6 +94,13 @@ class NewsPage(BasePage):
         index.SearchField("thumbnail"),
         index.SearchField("body"),
     ]
+
+    def clean(self):
+        super().clean()
+        if self.thumbnail and not self.alt_text.strip():
+            raise ValidationError(
+                {"alt_text": "Alt text is required when a thumbnail is set."}
+            )
 
     @classmethod
     def get_stories(cls, sticky=False, now=None):
