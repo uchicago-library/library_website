@@ -18,7 +18,14 @@ from wagtail.models import Page, Site
 from wagtailcache.cache import clear_cache
 
 from ask_a_librarian.models import AskPage
-from base.models import BasePage, LinkQueueSpreadsheetBlock, get_available_path_under
+from base.models import (
+    PAGE_LISTING_MAX_DEPTH,
+    BasePage,
+    LinkQueueSpreadsheetBlock,
+    PageListingBlock,
+    build_page_listing,
+    get_available_path_under,
+)
 from base.utils import get_hours_by_id, get_json_for_library
 from news.models import NewsPage
 from public.models import LocationPage, StandardPage
@@ -901,3 +908,177 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         self.empty_document.delete()
         response = self.page.serve(request)
         self.assertEqual(response.status_code, 200)
+
+
+class PageListingBlockTestCase(TestCase):
+    """
+    Tests for the "Page Listing" streamfield block and the helper
+    that builds its nested data structure.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        boiler_plate(cls)
+
+        # A section four levels deep, with a page excluded from menus and an
+        # unpublished page, each with a child of their own:
+        #
+        # section
+        # |-- child (in menus)
+        # |   `-- grandchild (in menus)
+        # |       `-- great_grandchild (in menus)
+        # |-- hidden_child (not in menus)
+        # |   `-- hidden_grandchild (in menus)
+        # `-- draft_child (not live)
+        #     `-- draft_grandchild (in menus)
+        cls.section = cls.make_page(cls.homepage, "Bajor")
+        cls.child = cls.make_page(cls.section, "Bajoran Provisional Government")
+        cls.grandchild = cls.make_page(cls.child, "Chamber of Ministers")
+        cls.great_grandchild = cls.make_page(cls.grandchild, "First Minister")
+        cls.hidden_child = cls.make_page(cls.section, "Obsidian Order", in_menu=False)
+        cls.hidden_grandchild = cls.make_page(cls.hidden_child, "Enabran Tain")
+        cls.draft_child = cls.make_page(cls.section, "Circle Coup", live=False)
+        cls.draft_grandchild = cls.make_page(cls.draft_child, "Jaro Essa")
+
+    @classmethod
+    def make_page(cls, parent, title, in_menu=True, live=True):
+        page = StandardPage(
+            title=title,
+            content_specialist=cls.staff,
+            editor=cls.staff,
+            live=live,
+            page_maintainer=cls.staff,
+            show_in_menus=in_menu,
+            unit=cls.unit,
+        )
+        parent.add_child(instance=page)
+        return page
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
+
+    def titles(self, listing):
+        """
+        Flatten a listing into a list of titles for easy comparison.
+        """
+        titles = []
+        for node in listing:
+            titles.append(node["title"])
+            titles.extend(self.titles(node["children"]))
+        return titles
+
+    def render_block(self, page, root_page=None, depth="1", heading=""):
+        """
+        Serve a page with a single Page Listing block in the body and
+        return the response.
+        """
+        page.body = json.dumps(
+            [
+                {
+                    "type": "page_listing",
+                    "value": {
+                        "heading": heading,
+                        "root_page": root_page.id if root_page else None,
+                        "depth": depth,
+                    },
+                }
+            ]
+        )
+        page.save()
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        return page.serve(request)
+
+    def test_one_level_lists_immediate_children_only(self):
+        listing = build_page_listing(self.section, 1)
+        self.assertEqual(self.titles(listing), [self.child.title])
+
+    def test_depth_is_honored(self):
+        listing = build_page_listing(self.section, 2)
+        self.assertEqual(
+            self.titles(listing), [self.child.title, self.grandchild.title]
+        )
+
+    def test_depth_is_clamped_to_the_maximum(self):
+        expected = self.titles(build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH))
+        self.assertEqual(self.titles(build_page_listing(self.section, 99)), expected)
+
+        # The editor should never be offered a depth beyond the cap either
+        choices = dict(PageListingBlock().child_blocks["depth"].field.choices)
+        self.assertEqual(
+            sorted(choices), [str(n) for n in range(1, PAGE_LISTING_MAX_DEPTH + 1)]
+        )
+
+    def test_invalid_depth_falls_back_to_one_level(self):
+        expected = self.titles(build_page_listing(self.section, 1))
+        for depth in (None, "", "banana", 0, -3):
+            self.assertEqual(
+                self.titles(build_page_listing(self.section, depth)), expected
+            )
+
+    def test_descendants_are_fetched_in_a_single_query(self):
+        # Warm the site root paths cache, which page urls are built from
+        build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+
+        with self.assertNumQueries(1):
+            build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+
+    def test_pages_hidden_from_menus_and_drafts_are_excluded(self):
+        listing = build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+        titles = self.titles(listing)
+
+        self.assertNotIn(self.hidden_child.title, titles)
+        self.assertNotIn(self.draft_child.title, titles)
+
+        # An excluded page takes its own children with it
+        self.assertNotIn(self.hidden_grandchild.title, titles)
+        self.assertNotIn(self.draft_grandchild.title, titles)
+
+    def test_nesting_structure(self):
+        listing = build_page_listing(self.section, 3)
+
+        self.assertEqual(len(listing), 1)
+        self.assertEqual(listing[0]["title"], self.child.title)
+        self.assertEqual(listing[0]["url"], self.child.url)
+
+        children = listing[0]["children"]
+        self.assertEqual([node["title"] for node in children], [self.grandchild.title])
+        self.assertEqual(
+            [node["title"] for node in children[0]["children"]],
+            [self.great_grandchild.title],
+        )
+
+    def test_blank_root_page_lists_children_of_the_current_page(self):
+        response = self.render_block(self.section, depth="2")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="index-list"')
+        self.assertContains(response, self.child.title)
+        self.assertContains(response, self.grandchild.title)
+        self.assertNotContains(response, self.hidden_child.title)
+
+    def test_root_page_lists_the_chosen_section(self):
+        # The listing is rooted at another section, not at the page the
+        # block appears on.
+        response = self.render_block(self.page, root_page=self.child, depth="1")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.grandchild.title)
+        self.assertNotContains(response, self.child.title)
+
+    def test_heading_is_rendered_when_supplied(self):
+        heading = "Further Reading"
+        response = self.render_block(self.section, heading=heading)
+        self.assertContains(response, "<h2>%s</h2>" % heading, html=True)
+
+        response = self.render_block(self.section)
+        self.assertNotContains(response, heading)
+
+    def test_empty_section_renders_nothing(self):
+        response = self.render_block(self.great_grandchild, heading="Further Reading")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'class="index-list"')
+        self.assertNotContains(response, "Further Reading")

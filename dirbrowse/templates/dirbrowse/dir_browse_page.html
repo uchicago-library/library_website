@@ -5,7 +5,7 @@
 
 {% block content %}
   <article>
-    {{ self.body }}
+    {% include_block self.body %}
     <h2 id="dirbrowsetitle"></h2>
     <div id="dirbrowse"></div>
   </article>

@@ -231,6 +231,62 @@ def get_index_html(currentlevel):
         )
 
 
+# The deepest a Page Listing block is ever allowed to go. This keeps the
+# single descendant query bounded no matter how large the section is.
+PAGE_LISTING_MAX_DEPTH = 3
+
+
+def build_page_listing(root, levels, request=None):
+    """
+    Build a nested listing of the pages under a section.
+
+    Descendants are fetched with a single query and assembled into a tree
+    in Python. Pages that are left out of the listing take their own
+    descendants with them, so hiding a page hides the branch below it.
+
+    Args:
+        root: Page object, the section to list pages from.
+
+        levels: integer, how many levels of child pages to include.
+        Clamped to PAGE_LISTING_MAX_DEPTH.
+
+        request: HttpRequest object or None, used to build page urls.
+
+    Returns:
+        A list of dictionaries with title, url, and children keys,
+        in page explorer order.
+    """
+    try:
+        levels = int(levels)
+    except (TypeError, ValueError):
+        levels = 1
+    levels = max(1, min(levels, PAGE_LISTING_MAX_DEPTH))
+
+    descendants = (
+        root.get_descendants().live().in_menu().filter(depth__lte=root.depth + levels)
+    )
+
+    listing = []
+    nodes = {}
+    # Descendants come back in path order, so a page is always seen after
+    # its parent and can be attached to it as we go.
+    for page in descendants:
+        url = page.get_url(request=request)
+        if not url:
+            continue
+        node = {"title": page.title, "url": url, "children": []}
+        parent_path = page.path[: -Page.steplen]
+        if parent_path == root.path:
+            listing.append(node)
+        elif parent_path in nodes:
+            nodes[parent_path]["children"].append(node)
+        else:
+            continue
+        nodes[page.path] = node
+
+    return listing
+
+
 # Abstract classes
 class Address(models.Model):
     """
@@ -1057,6 +1113,46 @@ class StaffPageChooserBlock(ChooserBlock):
             return value
 
 
+class PageListingBlock(StructBlock):
+    """
+    Dynamic, nested index of the pages under a section. Lists the live,
+    in-menu descendants of the chosen page, or of the page the block
+    appears on when no page is chosen.
+    """
+
+    heading = CharBlock(
+        required=False,
+        help_text="Optional heading to display above the listing",
+    )
+    root_page = PageChooserBlock(
+        required=False,
+        help_text="Section to list pages from. Leave this blank to list the \
+pages underneath the current page.",
+    )
+    depth = ChoiceBlock(
+        choices=[(str(n), str(n)) for n in range(1, PAGE_LISTING_MAX_DEPTH + 1)],
+        default="1",
+        help_text="How many levels of child pages to display. Choose 1 for \
+immediate children only.",
+    )
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context=parent_context)
+        parent_context = parent_context or {}
+        root = value.get("root_page") or parent_context.get("page")
+        context["pages"] = (
+            build_page_listing(root, value.get("depth"), parent_context.get("request"))
+            if root
+            else []
+        )
+        return context
+
+    class Meta:
+        icon = "list-ul"
+        label = "Page Listing"
+        template = "base/blocks/page_listing.html"
+
+
 class StaffListingFields(StructBlock):
     staff_listing = ListBlock(
         PageChooserBlock(),
@@ -1381,6 +1477,10 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
         group="Layout and Data",
     )
     code = CodeBlock(group="Layout and Data")
+    page_listing = PageListingBlock(
+        help_text="A nested, automatically generated index of child pages",
+        group="Layout and Data",
+    )
     html = RawHTMLBlock(
         help_text="Display code as text for tutorial or documentation purposes",
         group="Layout and Data",
