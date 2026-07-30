@@ -27,11 +27,10 @@ docker volume rm $DOCKER_PROG -f library_website_postgres_data library_website_e
 echo "Removing project network..."
 docker network rm $DOCKER_PROG library_website_library_network 2>/dev/null || true
 
-# Only prune dangling/unused resources (safer than full system prune)
+# Prune stopped containers and unused networks scoped to this project
 echo "Cleaning up dangling resources..."
-docker container prune -f
-docker image prune -f
-docker network prune -f
+docker container prune -f --filter "label=com.docker.compose.project=library_website"
+docker network prune -f --filter "label=com.docker.compose.project=library_website"
 
 echo ""
 echo "✅ Docker cleanup complete!"
