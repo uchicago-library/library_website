@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
 
-from django.db import models
 from django.core.paginator import EmptyPage
 from wagtail.models import Page
-from wagtail.documents import get_document_model
 
 from base.models import BasePage
 from group.models import GroupIndexPage
