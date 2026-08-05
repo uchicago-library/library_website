@@ -1,8 +1,6 @@
 import re
-import os
 from functools import cmp_to_key
 from string import ascii_lowercase, ascii_uppercase
-from io import BytesIO
 from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render
 from base.result import rmap
@@ -16,9 +14,6 @@ from .ags import (
     doc_to_dict_exn,
     bool_to_msg,
     delete_document_exn,
-    df_to_list,
-    xlsx_to_df,
-    bind,
     pad_with_empties,
     diff_rows,
 )
@@ -27,21 +22,14 @@ from base.utils import (
     get_loop_homepage,
     has_page_permissions,
 )
-from django.core.files.base import File
 from django.template.response import TemplateResponse
 from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponse
 import json
 from library_website.settings import MAIL_ALIASES_PATH
 from site_settings.models import ContactInfo
-from string import ascii_uppercase, ascii_lowercase
-from wagtail.models import Site
 from wagtail.documents import get_document_model
-from urllib.parse import urlencode
-
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
