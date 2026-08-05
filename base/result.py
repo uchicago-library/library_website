@@ -72,7 +72,7 @@ class InvalidResult(Exception):
     { "ok": _ } or {"error": _ }.
     """
 
-    def __init__(self, msg="invalid result value "):
+    def __init__(self, msg="invalid result value"):
         self.msg = msg
         super().__init__(self.msg)
 
