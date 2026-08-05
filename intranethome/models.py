@@ -46,6 +46,7 @@ class IntranetHomePage(BasePage):
             sticky_stories = sticky_pages.page(page).object_list
         except EmptyPage:
             sticky_stories = NewsPage.objects.none()
+        news_pages = NewsPage.get_stories()
         try:
             news_stories = news_pages.page(page).object_list
         except EmptyPage:
@@ -54,6 +55,7 @@ class IntranetHomePage(BasePage):
         prev_link = None
         if page > 1:
             prev_link = "/?page=%s" % (str(page - 1))
+        next_link = None
         if page < max(news_pages.page_range):
             next_link = "/?page=%s" % (str(page + 1))
 
