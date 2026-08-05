@@ -10,7 +10,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from base.views import chat_status, external_include, json_events, json_hours
 from events.views import events as events_view
-from intranethome.views import mail_aliases_view
+from intranethome.views import mail_aliases_view, ags_upload_page, display_js
 from item_servlet.views import item_servlet
 from lib_collections.views import citation_display as citation_display
 from lib_collections.views import collections as collection_view
@@ -59,6 +59,7 @@ urlpatterns = [
         mail_aliases_view,
         name="mail_aliases",
     ),
+    re_path(r"^ags/", include("intranethome.urls")),
     re_path(r"^turnstile/", include("django_turnstile_site_protect.urls")),
     re_path(r"^cgimail-editor/", include("cgimail_editor.urls")),
     re_path(r"^api/mylib/", include("mylib_dashboard.urls")),
