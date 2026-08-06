@@ -287,6 +287,58 @@ def build_page_listing(root, levels, request=None):
     return listing
 
 
+def is_public_page(page):
+    """
+    Determine whether a page belongs to the public site.
+
+    Public content types extend PublicBasePage. Loop, our staff intranet,
+    extends BasePage directly.
+
+    Args:
+        page: Page object.
+
+    Returns:
+        boolean
+    """
+    specific_class = page.specific_class
+    return specific_class is not None and issubclass(specific_class, PublicBasePage)
+
+
+def get_loop_page_listing_roots(page):
+    """
+    Find the Loop sections that a page's Page Listing blocks point at.
+
+    Loop page titles shouldn't show up on the public site, so public
+    pages are not allowed to list a section of the intranet.
+
+    Args:
+        page: Page object.
+
+    Returns:
+        A dictionary keyed by streamfield name, where each value is a
+        list of the Loop pages chosen in that field. Empty when the page
+        has no Page Listing blocks rooted on Loop.
+    """
+    roots = {}
+    for field in page._meta.fields:
+        if not isinstance(field, StreamField):
+            continue
+        value = getattr(page, field.name, None)
+        if not value:
+            continue
+        loop_roots = [
+            block.value["root_page"]
+            for block in value
+            if block.block_type == "page_listing"
+            and block.value.get("root_page")
+            and not is_public_page(block.value["root_page"])
+        ]
+        if loop_roots:
+            roots[field.name] = loop_roots
+
+    return roots
+
+
 # Abstract classes
 class Address(models.Model):
     """
@@ -1139,7 +1191,17 @@ immediate children only.",
     def get_context(self, value, parent_context=None):
         context = super().get_context(value, parent_context=parent_context)
         parent_context = parent_context or {}
-        root = value.get("root_page") or parent_context.get("page")
+        page = parent_context.get("page")
+        root = value.get("root_page")
+        if root:
+            # Editors are stopped from choosing a Loop section on a public
+            # page when they save, but content saved before that check, or
+            # copied over from Loop, can still get this far. Render nothing
+            # rather than leak intranet page titles.
+            if not is_public_page(root) and (page is None or is_public_page(page)):
+                root = None
+        else:
+            root = page
         context["pages"] = (
             build_page_listing(root, value.get("depth"), parent_context.get("request"))
             if root
@@ -1769,6 +1831,19 @@ follow a strict schema. Contact DLDC for help with this",
 
     class Meta:
         abstract = True
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+        for field_name, roots in get_loop_page_listing_roots(self).items():
+            errors[field_name] = (
+                "A Page Listing on the public site can only list sections of \
+the public site. These sections are on Loop: %s."
+                % ", ".join(root.title for root in roots)
+            )
+        if errors:
+            raise ValidationError(errors)
 
     def get_hours_page(self, request):
         """

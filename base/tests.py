@@ -21,6 +21,7 @@ from ask_a_librarian.models import AskPage
 from base.models import (
     PAGE_LISTING_MAX_DEPTH,
     BasePage,
+    IntranetPlainPage,
     LinkQueueSpreadsheetBlock,
     PageListingBlock,
     build_page_listing,
@@ -940,6 +941,11 @@ class PageListingBlockTestCase(TestCase):
         cls.draft_child = cls.make_page(cls.section, "Circle Coup", live=False)
         cls.draft_grandchild = cls.make_page(cls.draft_child, "Jaro Essa")
 
+        # A section on Loop. Loop content types extend BasePage while
+        # public ones extend PublicBasePage.
+        cls.loop_section = cls.make_loop_page(cls.homepage, "Cardassian Union")
+        cls.loop_child = cls.make_loop_page(cls.loop_section, "Detapa Council")
+
     @classmethod
     def make_page(cls, parent, title, in_menu=True, live=True):
         page = StandardPage(
@@ -950,6 +956,17 @@ class PageListingBlockTestCase(TestCase):
             page_maintainer=cls.staff,
             show_in_menus=in_menu,
             unit=cls.unit,
+        )
+        parent.add_child(instance=page)
+        return page
+
+    @classmethod
+    def make_loop_page(cls, parent, title):
+        page = IntranetPlainPage(
+            title=title,
+            editor=cls.staff,
+            page_maintainer=cls.staff,
+            show_in_menus=True,
         )
         parent.add_child(instance=page)
         return page
@@ -969,27 +986,55 @@ class PageListingBlockTestCase(TestCase):
             titles.extend(self.titles(node["children"]))
         return titles
 
-    def render_block(self, page, root_page=None, depth="1", heading=""):
+    def block_value(self, root_page=None, depth="1", heading=""):
         """
-        Serve a page with a single Page Listing block in the body and
-        return the response.
+        The value of a single Page Listing block.
         """
-        page.body = json.dumps(
+        return {
+            "heading": heading,
+            "root_page": root_page.id if root_page else None,
+            "depth": depth,
+        }
+
+    def block_body(self, root_page=None, depth="1", heading=""):
+        """
+        A streamfield containing nothing but a Page Listing block.
+        """
+        return json.dumps(
             [
                 {
                     "type": "page_listing",
-                    "value": {
-                        "heading": heading,
-                        "root_page": root_page.id if root_page else None,
-                        "depth": depth,
-                    },
+                    "value": self.block_value(root_page, depth, heading),
                 }
             ]
         )
-        page.save()
+
+    def render_block(self, page, root_page=None, depth="1", heading=""):
+        """
+        Serve a page with a single Page Listing block in the body and
+        return the response. Saves the page without validating it, so
+        combinations an editor would be stopped from choosing can be
+        rendered too.
+        """
+        page.body = self.block_body(root_page, depth, heading)
+        page.save(clean=False)
         request = HttpRequest()
         add_generic_request_meta_fields(request)
         return page.serve(request)
+
+    def listing_for(self, page, root_page=None, depth="1"):
+        """
+        The listing a Page Listing block builds when it appears on a
+        given page.
+        """
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        block = PageListingBlock()
+        context = block.get_context(
+            block.to_python(self.block_value(root_page, depth)),
+            parent_context={"page": page, "request": request},
+        )
+        return context["pages"]
 
     def test_one_level_lists_immediate_children_only(self):
         listing = build_page_listing(self.section, 1)
@@ -1082,3 +1127,44 @@ class PageListingBlockTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'class="index-list"')
         self.assertNotContains(response, "Further Reading")
+
+    def test_a_loop_section_cannot_be_saved_on_a_public_page(self):
+        self.page.body = self.block_body(root_page=self.loop_section)
+
+        with self.assertRaises(ValidationError) as error:
+            self.page.clean()
+
+        self.assertIn("body", error.exception.message_dict)
+        self.assertIn(self.loop_section.title, str(error.exception))
+
+    def test_a_public_section_can_be_saved_on_a_public_page(self):
+        self.page.body = self.block_body(root_page=self.section)
+        self.page.clean()
+
+    def test_a_loop_section_can_be_saved_on_a_loop_page(self):
+        self.loop_section.body = self.block_body(root_page=self.loop_section)
+        self.loop_section.clean()
+
+    def test_a_loop_section_is_not_listed_on_a_public_page(self):
+        # Loop page titles are intranet content. Nothing renders, rather
+        # than falling back to the children of the public page.
+        response = self.render_block(
+            self.page, root_page=self.loop_section, heading="Further Reading"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'class="index-list"')
+        self.assertNotContains(response, self.loop_child.title)
+        self.assertNotContains(response, "Further Reading")
+
+    def test_a_loop_section_is_not_listed_without_a_page_to_check(self):
+        self.assertEqual(self.listing_for(None, root_page=self.loop_section), [])
+
+    def test_a_loop_section_is_listed_on_a_loop_page(self):
+        listing = self.listing_for(self.loop_section, root_page=self.loop_section)
+        self.assertEqual(self.titles(listing), [self.loop_child.title])
+
+    def test_a_public_section_is_listed_on_a_loop_page(self):
+        # Documenting part of the public site on Loop is fine.
+        listing = self.listing_for(self.loop_section, root_page=self.section)
+        self.assertEqual(self.titles(listing), [self.child.title])
