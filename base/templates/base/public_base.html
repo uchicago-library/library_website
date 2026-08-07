@@ -263,7 +263,7 @@
                         <div class="">
                             {% block content %}
                                 {% for block in self.body %}
-                                    {{ block }}
+                                    {% include_block block %}
                                 {% endfor %}
                             {% endblock %}
 

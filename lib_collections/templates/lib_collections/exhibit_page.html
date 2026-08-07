@@ -449,7 +449,7 @@
                 {% endif %}
 
                 {% for block in self.full_description %}
-                    {{ block }}
+                    {% include_block block %}
                 {% endfor %}
 
                 {% if self.web_exhibit_url %}

@@ -8,7 +8,7 @@
     <div class="col-xs-12 col-sm-12 col-md-12 swnews">
       <article>
         <h1>{{ self.title }}</h1>
-        {{ self.intro }}
+        {% include_block self.intro %}
 
         {% if location or phone or email %}
           <h2>Department Contact</h2>
@@ -91,7 +91,7 @@
           </ul>
         {% endif %}
 
-        {{ self.body }}
+        {% include_block self.body %}
       </article>
     </div>
   </div>

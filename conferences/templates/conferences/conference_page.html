@@ -173,7 +173,7 @@
 {% endblock %}
 
 {% block content %}
-  {{self.body}}
+  {% include_block self.body %}
 {% endblock %}
 
 {% block right_sidebar %}
