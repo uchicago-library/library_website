@@ -474,16 +474,39 @@ def unfold(step, initial):
 
 
 def has_page_permissions(request, page):
+    """
+    Helper function for determining whether the user is authorized
+    to view a page.
+
+    Args: http request, wagtail page
+
+    Returns: bool
+    """
     groups = get_required_groups(page)
     user = request.user
     return has_permission(user, groups)
 
 
 def get_loop_homepage():
+    """
+    Helper function for retrieving Loop page.
+
+    Args: none
+
+    Returns: wagtail page
+    """
     return Site.objects.get(site_name="Loop").root_page
 
 
 def permissions_redirect(request, response):
+    """
+    Helper function for redirecting users without permission to be
+    on Loop.
+
+    Args: http request
+
+    Returns: http response or none
+    """
     loop_homepage = get_loop_homepage()
     if not has_page_permissions(request, loop_homepage):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
