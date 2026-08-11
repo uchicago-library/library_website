@@ -23,7 +23,6 @@ from base.utils import (
     has_page_permissions,
 )
 from django.template.response import TemplateResponse
-from django.db.utils import ProgrammingError, OperationalError
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import json
