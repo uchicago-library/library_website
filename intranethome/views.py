@@ -240,7 +240,7 @@ def convert_list_to_dict(aliases_json, filt=""):
     return aliases
 
 
-def mail_aliases_view(request, *args, **kwargs):
+def mail_aliases_view(request, *_, **kwargs):
     """
     View for mail aliases page.
 
@@ -361,7 +361,7 @@ def ags_upload_page(request):
     )
 
 
-def display_js(request):
+def display_js(_):
     # read XLSX from Wagtail Documents
     D = get_document_model()
     doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
