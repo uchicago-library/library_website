@@ -309,6 +309,11 @@ def ags_upload_page(request):
                 "msg": error_msg,
                 "confirm": False,
             }
+        case _:
+            msg_context = {
+                "msg": "",
+                "confirm": False,
+            }
 
     # determine deletion message
     if "delete" in request.GET:
