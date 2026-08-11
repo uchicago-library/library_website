@@ -1,34 +1,31 @@
+import json
 import re
 from functools import cmp_to_key
 from string import ascii_lowercase, ascii_uppercase
+
 from django.db.utils import OperationalError, ProgrammingError
-from django.shortcuts import render
-from base.result import rmap
-from library_website.settings import AGS_SPREADSHEET_NAME
-from .ags import (
-    create_document,
-    request_to_xlsx,
-    validate_xlsx,
-    retrieve_document,
-    doc_to_rows_exn,
-    doc_to_dict_exn,
-    bool_to_msg,
-    delete_document_exn,
-    pad_with_empties,
-    diff_rows,
-)
-from base.utils import (
-    permissions_redirect,
-    get_loop_homepage,
-    has_page_permissions,
-)
-from django.template.response import TemplateResponse
-from django.shortcuts import render, redirect
 from django.http import HttpResponse
-import json
-from library_website.settings import MAIL_ALIASES_PATH
-from site_settings.models import ContactInfo
+from django.shortcuts import redirect, render
+from django.template.response import TemplateResponse
 from wagtail.documents import get_document_model
+
+from base.result import rmap
+from base.utils import get_loop_homepage, has_page_permissions, permissions_redirect
+from library_website.settings import AGS_SPREADSHEET_NAME, MAIL_ALIASES_PATH
+from site_settings.models import ContactInfo
+
+from .ags import (
+    bool_to_msg,
+    create_document,
+    delete_document_exn,
+    diff_rows,
+    doc_to_dict_exn,
+    doc_to_rows_exn,
+    pad_with_empties,
+    request_to_xlsx,
+    retrieve_document,
+    validate_xlsx,
+)
 
 try:
     message_text = ContactInfo.objects.first().report_a_problem
@@ -269,8 +266,7 @@ def mail_aliases_view(request, *args, **kwargs):
         context = {"final_data": final_data, "alphas": alphas}
 
     return permissions_redirect(
-        request,
-        render(request, "intranethome/mail_aliases.html", context)
+        request, render(request, "intranethome/mail_aliases.html", context)
     )
 
 
@@ -288,9 +284,7 @@ def ags_upload_page(request):
     validated = validate_xlsx(xlsx)
 
     # update the Wagtail Document based on the POST data
-    confirm_result = rmap(
-        create_document(AGS_SPREADSHEET_NAME), validated
-    )
+    confirm_result = rmap(create_document(AGS_SPREADSHEET_NAME), validated)
 
     # retrieve the latest XLSX from Wagtail Documents
     doc_result = retrieve_document(D, AGS_SPREADSHEET_NAME)
@@ -300,58 +294,65 @@ def ags_upload_page(request):
 
     # determine alert and upload/error message
     match confirm_result:
-        case { "ok": "" }:
-            msg_context = { "msg": "",
-                            "confirm": "", }
-        case { "ok": confirm }:
-            msg_context = { "msg": bool_to_msg(confirm),
-                            "confirm": confirm, }
-        case { "error": error_msg }:
-            msg_context = { "msg": error_msg,
-                            "confirm": False, }
+        case {"ok": ""}:
+            msg_context = {
+                "msg": "",
+                "confirm": "",
+            }
+        case {"ok": confirm}:
+            msg_context = {
+                "msg": bool_to_msg(confirm),
+                "confirm": confirm,
+            }
+        case {"error": error_msg}:
+            msg_context = {
+                "msg": error_msg,
+                "confirm": False,
+            }
 
     # determine deletion message
     if "delete" in request.GET:
-        delete_context = { "delete": True } | msg_context
+        delete_context = {"delete": True} | msg_context
     else:
-        delete_context = { "delete": False } | msg_context
+        delete_context = {"delete": False} | msg_context
 
     # determine table preview
     match (old_rows_result, rows_result):
-        case ({ "ok": old_rows }, { "ok": new_rows }):
+        case ({"ok": old_rows}, {"ok": new_rows}):
             (reds, greens, diffed) = diff_rows(old_rows, new_rows)
             if sorted(old_rows) != sorted(new_rows):
                 diff_column = True
             else:
                 diff_column = False
-            new_context = { "table_rows": diffed,
-                            "diff_column": diff_column,
-                            "reds": reds,
-                            "greens": greens, }
+            new_context = {
+                "table_rows": diffed,
+                "diff_column": diff_column,
+                "reds": reds,
+                "greens": greens,
+            }
             context = new_context | delete_context
-        case ({ "error": _ }, { "ok": new_rows }):
+        case ({"error": _}, {"ok": new_rows}):
             (reds, greens, diffed) = (0, 0, pad_with_empties(new_rows))
             diff_column = False
-            new_context = { "table_rows": diffed,
-                            "diff_column": diff_column,
-                            "reds": reds,
-                            "greens": greens, }
+            new_context = {
+                "table_rows": diffed,
+                "diff_column": diff_column,
+                "reds": reds,
+                "greens": greens,
+            }
             context = new_context | delete_context
-        case (_, { "error": _ }):
+        case (_, {"error": _}):
             # suppress developer error message for users
             diff_column = False
-            context = { "table_rows": [],
-                        "diff_column": diff_column } | delete_context
+            context = {"table_rows": [], "diff_column": diff_column} | delete_context
         case _:
             diff_column = False
-            context = { "table_rows": [],
-                        "diff_column": diff_column } | delete_context
+            context = {"table_rows": [], "diff_column": diff_column} | delete_context
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
     return permissions_redirect(
-        request,
-        TemplateResponse(request, template_path, context)
+        request, TemplateResponse(request, template_path, context)
     )
 
 
@@ -359,7 +360,7 @@ def display_js(request):
     # read XLSX from Wagtail Documents
     D = get_document_model()
     doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
-    
+
     # convert XLSX to Javascript object for use in Find It
     ags_dict_result = rmap(doc_to_dict_exn, doc)
     json_string = json.dumps(ags_dict_result)
