@@ -210,11 +210,11 @@ class test_ags_upload(SimpleTestCase):
 
 
     def test_diff_rows_empties(self):
-        self.assertEqual(diff_rows([],[]), (0,0,[]))
+        self.assertEqual(diff_rows([], []), (0, 0, []))
 
-    
+
     def test_pad_with_empties(self):
-        lst = [1,2,3]
+        lst = [1, 2, 3]
         expected = [('', 'table-active', 1),
                     ('', 'table-active', 2),
                     ('', 'table-active', 3)]
