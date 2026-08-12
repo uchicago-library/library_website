@@ -384,7 +384,7 @@ def display_js(_):
 
     # convert XLSX to Javascript object for use in Find It
     ags_dict_result = rmap(doc_to_dict_exn, doc)
-    json_string = json.dumps(ags_dict_result).encode('utf-8')
+    json_string = json.dumps(ags_dict_result).encode("utf-8")
 
     # render template
     return HttpResponse(json_string, content_type="application/json")
