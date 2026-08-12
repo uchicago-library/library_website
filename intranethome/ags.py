@@ -23,7 +23,7 @@ def request_to_xlsx(request):
     """
     if request.method == "POST" and "uploadFile" in request.FILES:
         upload_file = request.FILES["uploadFile"]
-        with upload_file.open(mode="rw") as f:
+        with upload_file.open(mode="rb") as f:
             xlsx_data = f.read()
             return xlsx_data
     else:
