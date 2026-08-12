@@ -341,7 +341,7 @@ def ags_upload_page(request):
     # determine table preview
     match (old_rows_result, rows_result):
         case ({"ok": old_rows}, {"ok": new_rows}):
-            (reds, greens, diffed) = diff_rows(old_rows, new_rows)
+            reds, greens, diffed = diff_rows(old_rows, new_rows)
             if sorted(old_rows) != sorted(new_rows):
                 diff_column = True
             else:
@@ -354,7 +354,7 @@ def ags_upload_page(request):
             }
             context = new_context | delete_context
         case ({"error": _}, {"ok": new_rows}):
-            (reds, greens, diffed) = (0, 0, pad_with_empties(new_rows))
+            reds, greens, diffed = (0, 0, pad_with_empties(new_rows))
             diff_column = False
             new_context = {
                 "table_rows": diffed,
