@@ -498,7 +498,7 @@ def get_loop_homepage():
     return Site.objects.get(site_name="Loop").root_page
 
 
-def permissions_redirect(request, response):
+def permissions_redirect(request):
     """
     Helper function for redirecting users without permission to be
     on Loop.
@@ -508,10 +508,12 @@ def permissions_redirect(request, response):
     Returns: http response or none
     """
     loop_homepage = get_loop_homepage()
+    print(loop_homepage)
+    print(has_page_permissions(request,loop_homepage))
     if not has_page_permissions(request, loop_homepage):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
-        return response
+        pass
 
 
 def save_virtual_workbook(workbook):
