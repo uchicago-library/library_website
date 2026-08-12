@@ -72,7 +72,7 @@ def get_first_key(dct):
         key: a dictionary key
     """
     key = ""
-    for k, v in dct.items():
+    for k, _ in dct.items():
         key = k
         break
     return key
@@ -249,6 +249,12 @@ def mail_aliases_view(request, *_, **kwargs):
     Returns: http response
     """
 
+    # make sure the user is authenticated to Loop
+    if permissions_redirect(request):
+        return permissions_redirect(request)
+    else:
+        pass
+
     parsed_file = parse_file(MAIL_ALIASES_PATH)
 
     try:
@@ -265,12 +271,23 @@ def mail_aliases_view(request, *_, **kwargs):
         final_data = convert_list_to_dict(parsed_file["ok"], alias_filter)
         context = {"final_data": final_data, "alphas": alphas}
 
-    return permissions_redirect(
-        request, render(request, "intranethome/mail_aliases.html", context)
-    )
+    return render(request, "intranethome/mail_aliases.html", context)
 
 
 def ags_upload_page(request):
+    """
+    View for Article Galaxy Spreadsheet Upload page.
+
+    Args: http request
+
+    Returns: http response
+    """
+
+    # make sure the user is authenticated to Loop
+    if permissions_redirect(request):
+        return permissions_redirect(request)
+    else:
+        pass
 
     # look up previous spreadsheet, if it exists
     D = get_document_model()
@@ -356,19 +373,18 @@ def ags_upload_page(request):
 
     # render template
     template_path = "intranethome/ags_upload_page.html"
-    return permissions_redirect(
-        request, TemplateResponse(request, template_path, context)
-    )
+    return TemplateResponse(request, template_path, context)
 
 
 def display_js(_):
+
     # read XLSX from Wagtail Documents
     D = get_document_model()
     doc = retrieve_document(D, AGS_SPREADSHEET_NAME)
 
     # convert XLSX to Javascript object for use in Find It
     ags_dict_result = rmap(doc_to_dict_exn, doc)
-    json_string = json.dumps(ags_dict_result)
+    json_string = json.dumps(ags_dict_result).encode('utf-8')
 
     # render template
     return HttpResponse(json_string, content_type="application/json")
