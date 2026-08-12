@@ -508,8 +508,6 @@ def permissions_redirect(request):
     Returns: http response or none
     """
     loop_homepage = get_loop_homepage()
-    print(loop_homepage)
-    print(has_page_permissions(request,loop_homepage))
     if not has_page_permissions(request, loop_homepage):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
     else:
