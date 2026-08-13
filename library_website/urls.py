@@ -59,6 +59,7 @@ urlpatterns = [
         mail_aliases_view,
         name="mail_aliases",
     ),
+    re_path(r"^ags/", include("intranethome.urls")),
     re_path(r"^turnstile/", include("django_turnstile_site_protect.urls")),
     re_path(r"^cgimail-editor/", include("cgimail_editor.urls")),
     re_path(r"^api/mylib/", include("mylib_dashboard.urls")),

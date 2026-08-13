@@ -9,7 +9,7 @@ CURRENT_BRANCH = $(shell git -C $(SECRETS_REPO_PATH) symbolic-ref --short HEAD)
 CLONE_PATH = wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/$(SECRETS_REPO_NAME)
 
 .PHONY: docker
-docker: secrets docker-clean docker-cache
+docker: docker-clean docker-cache
 
 .PHONY: docker-cache
 docker-cache: secrets
@@ -18,6 +18,17 @@ docker-cache: secrets
 .PHONY: docker-clean
 docker-clean:
 	./docker-cleanup.sh
+
+REFRESH_COMMAND = docker compose --progress=plain up -d web
+
+.PHONY: docker-up
+docker-up:
+	$(REFRESH_COMMAND)
+
+.PHONY: docker-refresh
+docker-refresh:
+	sudo systemctl restart docker
+	$(REFRESH_COMMAND)
 
 .PHONY: update-secrets
 update-secrets:
