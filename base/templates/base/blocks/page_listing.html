@@ -1,0 +1,6 @@
+{% if pages %}
+    {% if value.heading %}
+        <h2>{{ value.heading }}</h2>
+    {% endif %}
+    {% include "base/blocks/page_listing_nodes.html" with nodes=pages %}
+{% endif %}

@@ -22,7 +22,7 @@
                     {% endif %}
                 </figure>
 
-                {{self.collecting_statement }}
+                {% include_block self.collecting_statement %}
 
                 {% if self.policy_link_url and self.policy_link_text %}
                     <a class="btn btn-morecoll" href="{{ self.policy_link_url }}">{{ self.policy_link_text }}</a>

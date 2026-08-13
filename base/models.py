@@ -231,6 +231,114 @@ def get_index_html(currentlevel):
         )
 
 
+# The deepest a Page Listing block is ever allowed to go. This keeps the
+# single descendant query bounded no matter how large the section is.
+PAGE_LISTING_MAX_DEPTH = 3
+
+
+def build_page_listing(root, levels, request=None):
+    """
+    Build a nested listing of the pages under a section.
+
+    Descendants are fetched with a single query and assembled into a tree
+    in Python. Pages that are left out of the listing take their own
+    descendants with them, so hiding a page hides the branch below it.
+
+    Args:
+        root: Page object, the section to list pages from.
+
+        levels: integer, how many levels of child pages to include.
+        Clamped to PAGE_LISTING_MAX_DEPTH.
+
+        request: HttpRequest object or None, used to build page urls.
+
+    Returns:
+        A list of dictionaries with title, url, and children keys,
+        in page explorer order.
+    """
+    try:
+        levels = int(levels)
+    except (TypeError, ValueError):
+        levels = 1
+    levels = max(1, min(levels, PAGE_LISTING_MAX_DEPTH))
+
+    descendants = (
+        root.get_descendants().live().in_menu().filter(depth__lte=root.depth + levels)
+    )
+
+    listing = []
+    nodes = {}
+    # Descendants come back in path order, so a page is always seen after
+    # its parent and can be attached to it as we go.
+    for page in descendants:
+        url = page.get_url(request=request)
+        if not url:
+            continue
+        node = {"title": page.title, "url": url, "children": []}
+        parent_path = page.path[: -Page.steplen]
+        if parent_path == root.path:
+            listing.append(node)
+        elif parent_path in nodes:
+            nodes[parent_path]["children"].append(node)
+        else:
+            continue
+        nodes[page.path] = node
+
+    return listing
+
+
+def is_public_page(page):
+    """
+    Determine whether a page belongs to the public site.
+
+    Public content types extend PublicBasePage. Loop, our staff intranet,
+    extends BasePage directly.
+
+    Args:
+        page: Page object.
+
+    Returns:
+        boolean
+    """
+    specific_class = page.specific_class
+    return specific_class is not None and issubclass(specific_class, PublicBasePage)
+
+
+def get_loop_page_listing_roots(page):
+    """
+    Find the Loop sections that a page's Page Listing blocks point at.
+
+    Loop page titles shouldn't show up on the public site, so public
+    pages are not allowed to list a section of the intranet.
+
+    Args:
+        page: Page object.
+
+    Returns:
+        A dictionary keyed by streamfield name, where each value is a
+        list of the Loop pages chosen in that field. Empty when the page
+        has no Page Listing blocks rooted on Loop.
+    """
+    roots = {}
+    for field in page._meta.fields:
+        if not isinstance(field, StreamField):
+            continue
+        value = getattr(page, field.name, None)
+        if not value:
+            continue
+        loop_roots = [
+            block.value["root_page"]
+            for block in value
+            if block.block_type == "page_listing"
+            and block.value.get("root_page")
+            and not is_public_page(block.value["root_page"])
+        ]
+        if loop_roots:
+            roots[field.name] = loop_roots
+
+    return roots
+
+
 # Abstract classes
 class Address(models.Model):
     """
@@ -1057,6 +1165,56 @@ class StaffPageChooserBlock(ChooserBlock):
             return value
 
 
+class PageListingBlock(StructBlock):
+    """
+    Dynamic, nested index of the pages under a section. Lists the live,
+    in-menu descendants of the chosen page, or of the page the block
+    appears on when no page is chosen.
+    """
+
+    heading = CharBlock(
+        required=False,
+        help_text="Optional heading to display above the listing",
+    )
+    root_page = PageChooserBlock(
+        required=False,
+        help_text="Section to list pages from. Leave this blank to list the \
+pages underneath the current page.",
+    )
+    depth = ChoiceBlock(
+        choices=[(str(n), str(n)) for n in range(1, PAGE_LISTING_MAX_DEPTH + 1)],
+        default="1",
+        help_text="How many levels of child pages to display. Choose 1 for \
+immediate children only.",
+    )
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context=parent_context)
+        parent_context = parent_context or {}
+        page = parent_context.get("page")
+        root = value.get("root_page")
+        if root:
+            # Editors are stopped from choosing a Loop section on a public
+            # page when they save, but content saved before that check, or
+            # copied over from Loop, can still get this far. Render nothing
+            # rather than leak intranet page titles.
+            if not is_public_page(root) and (page is None or is_public_page(page)):
+                root = None
+        else:
+            root = page
+        context["pages"] = (
+            build_page_listing(root, value.get("depth"), parent_context.get("request"))
+            if root
+            else []
+        )
+        return context
+
+    class Meta:
+        icon = "list-ul"
+        label = "Page Listing"
+        template = "base/blocks/page_listing.html"
+
+
 class StaffListingFields(StructBlock):
     staff_listing = ListBlock(
         PageChooserBlock(),
@@ -1381,6 +1539,10 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
         group="Layout and Data",
     )
     code = CodeBlock(group="Layout and Data")
+    page_listing = PageListingBlock(
+        help_text="A nested, automatically generated index of child pages",
+        group="Layout and Data",
+    )
     html = RawHTMLBlock(
         help_text="Display code as text for tutorial or documentation purposes",
         group="Layout and Data",
@@ -1669,6 +1831,19 @@ follow a strict schema. Contact DLDC for help with this",
 
     class Meta:
         abstract = True
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+        for field_name, roots in get_loop_page_listing_roots(self).items():
+            errors[field_name] = (
+                "A Page Listing on the public site can only list sections of \
+the public site. These sections are on Loop: %s."
+                % ", ".join(root.title for root in roots)
+            )
+        if errors:
+            raise ValidationError(errors)
 
     def get_hours_page(self, request):
         """

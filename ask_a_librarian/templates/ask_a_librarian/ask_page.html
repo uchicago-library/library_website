@@ -15,7 +15,7 @@
     <script src="{{libchat_widget_url}}7d40a704e1d39b1c6a20f5c35faf1aaf"></script>
     <div id="libchat_7d40a704e1d39b1c6a20f5c35faf1aaf"></div>
   {% endif %}
-  {{ self.body }}
+  {% include_block self.body %}
 {% endblock %}
 
 {% block right_sidebar_classes %}ask-rightside{% endblock %}
