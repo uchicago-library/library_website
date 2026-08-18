@@ -25,6 +25,7 @@ git+https://github.com/bbusenius/django-turnstile-site-protect.git#egg=django_tu
 git+https://github.com/bbusenius/Good-Bots.git
 html2text>=2025.4.15,<2026
 pandas>=2,<3
+pillow-heif>=1.4.0,<1.5
 pocli==0.1.10
 psycopg2
 requests[socks]
