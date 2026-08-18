@@ -31,7 +31,7 @@ requests[socks]
 Pygments==2.20.0
 python-dateutil
 simplejson==3.11.1
-sqlparse==0.5.4
+sqlparse==0.6.0
 Unidecode==1.1.1
 urllib3==2.7.0
 wagtail==7.0.7
