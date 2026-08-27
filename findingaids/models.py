@@ -10,8 +10,8 @@ from wagtail.models import Page
 from base.models import PublicBasePage
 from library_website.settings import (
     E_FINDING_AIDS,
-    MARKLOGIC_FINDINGAIDS_PORT,
-    MARKLOGIC_LDR_BASE,
+    MARKLOGIC_HOST,
+    MARKLOGIC_FINDINGAIDS_DB,
 )
 
 
@@ -22,9 +22,9 @@ class FindingAidsPage(PublicBasePage):
 
     def get_context(self, request):
         def marklogic_url(route):
-            return "%s:%i%s" % (
-                MARKLOGIC_LDR_BASE,
-                MARKLOGIC_FINDINGAIDS_PORT,
+            return "https://%s.%s%s" % (
+                MARKLOGIC_HOST,
+                MARKLOGIC_FINDINGAIDS_DB,
                 route,
             )
 
