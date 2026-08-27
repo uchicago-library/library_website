@@ -23,8 +23,8 @@ class FindingAidsPage(PublicBasePage):
     def get_context(self, request):
         def marklogic_url(route):
             return "https://%s.%s%s" % (
-                MARKLOGIC_HOST,
                 MARKLOGIC_FINDINGAIDS_DB,
+                MARKLOGIC_HOST,
                 route,
             )
 
