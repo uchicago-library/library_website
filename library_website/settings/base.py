@@ -487,15 +487,6 @@ if "test" in sys.argv:
 
 IDRESOLVE_URL = "https://restful.lib.uchicago.edu/cgi-bin/idresolve"
 
-MARKLOGIC_LDR_PORT = 8008
-MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
-MARKLOGIC_LDR_ROUTE = "/v1/graphs"
-MARKLOGIC_LDR_URL = "%s:%i%s" % (
-    MARKLOGIC_LDR_BASE,
-    MARKLOGIC_LDR_PORT,
-    MARKLOGIC_LDR_ROUTE,
-)
-
 MARKLOGIC_HOST = "marklogic.lib.uchicago.edu"
 MARKLOGIC_LDR_DB = "ldr"
 MARKLOGIC_FINDINGAIDS_DB = "uncap"
