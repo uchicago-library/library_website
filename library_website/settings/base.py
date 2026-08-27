@@ -506,8 +506,6 @@ MARKLOGIC_LDR_URL = "https://%s.%s/%s" % (
     MARKLOGIC_LDR_ROUTE,
 )
 
-# MARKLOGIC_FINDINGAIDS_DB = “https://uncap.lib.uchicago.edu"
-
 MARKLOGIC_FINDINGAIDS_PORT = 8011
 
 E_FINDING_AIDS_URL = "http://www.lib.uchicago.edu/e/scrc/findingaids/view.php"
