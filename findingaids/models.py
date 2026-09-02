@@ -3,9 +3,9 @@ import re
 import urllib
 from xml.etree import ElementTree
 
-from django.core.cache import cache
 from django.core.paginator import Paginator
 from wagtail.models import Page
+from wagtailcache.cache import WagtailCacheMixin
 
 from base.models import PublicBasePage
 from library_website.settings import (
@@ -14,8 +14,11 @@ from library_website.settings import (
     MARKLOGIC_HOST,
 )
 
-
-class FindingAidsPage(PublicBasePage):
+class FindingAidsPage(WagtailCacheMixin, PublicBasePage):
+    
+    # turn off Wagtail caching on this page
+    cache_control = "no-cache"
+    
     content_panels = Page.content_panels + PublicBasePage.content_panels
 
     subpage_types = []
@@ -203,13 +206,7 @@ class FindingAidsPage(PublicBasePage):
             searchresults = get_search_results(searchq)
             searchresultcount = len(searchresults)
 
-        cached_browses = cache.get("finding_aids_all_browses")
-
-        if cached_browses:
-            all_browses = json.loads(cached_browses)
-        else:
-            all_browses = get_browses()
-            cache.set("finding_aids_all_browses", json.dumps(all_browses))
+        all_browses = get_browses()
 
         paginator = Paginator(all_browses, 100)
         page_number = request.GET.get("page")
