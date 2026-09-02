@@ -1,4 +1,3 @@
-import json
 import re
 import urllib
 from xml.etree import ElementTree
@@ -14,11 +13,12 @@ from library_website.settings import (
     MARKLOGIC_HOST,
 )
 
+
 class FindingAidsPage(WagtailCacheMixin, PublicBasePage):
-    
+
     # turn off Wagtail caching on this page
     cache_control = "no-cache"
-    
+
     content_panels = Page.content_panels + PublicBasePage.content_panels
 
     subpage_types = []
