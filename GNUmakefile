@@ -48,8 +48,8 @@ create-repo:
 
 .PHONY: update-npm
 update-npm:
-	npm update
-	npm run build
+	docker compose exec web npm update
+	docker compose exec web npm run build
 
 .PHONY: clean
 clean:
