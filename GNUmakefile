@@ -46,6 +46,11 @@ create-repo:
 	mkdir -p $(SECRETS_REPO_DIR)
 	git -C $(SECRETS_REPO_DIR) clone $(CLONE_PATH)
 
+.PHONY: update-npm
+update-npm:
+	docker compose exec web npm update
+	docker compose exec web npm run build
+
 .PHONY: clean
 clean:
 	$(RM) $(SETTINGS_PATH)/secrets.py || true
