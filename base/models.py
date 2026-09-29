@@ -1065,6 +1065,38 @@ class CodeBlock(StructBlock):
         return mark_safe(highlight(src, lexer, formatter))
 
 
+class MermaidBlock(StructBlock):
+    """
+    Mermaid diagram StreamField block. Source is rendered client-side
+    with a pinned Mermaid build (see base/static/base/js/Mermaid.js).
+    """
+
+    source = TextBlock(
+        label="Mermaid source",
+        help_text=(
+            "Diagram definition in Mermaid syntax (flowchart, sequence, "
+            "class, gantt, etc.). Validate at https://mermaid.live if needed."
+        ),
+    )
+    description = TextBlock(
+        required=True,
+        help_text=(
+            "Required text alternative describing the diagram for "
+            "accessibility (ADA)."
+        ),
+    )
+    title = CharBlock(
+        required=False,
+        max_length=255,
+        help_text="Optional visible title for the diagram",
+    )
+
+    class Meta:
+        icon = "code"
+        label = "Mermaid diagram"
+        template = "base/blocks/mermaid.html"
+
+
 class AgendaInnerBlock(StructBlock):
     """
     Block definition for the repeatable inner
@@ -1539,6 +1571,7 @@ Use <em>text</em> for italics, <strong>text</strong> for bold, and \
         group="Layout and Data",
     )
     code = CodeBlock(group="Layout and Data")
+    mermaid = MermaidBlock(group="Layout and Data")
     page_listing = PageListingBlock(
         help_text="A nested, automatically generated index of child pages",
         group="Layout and Data",

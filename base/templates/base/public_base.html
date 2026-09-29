@@ -602,6 +602,18 @@
         <script src="{% static "base/js/offcanvas.js" %}"></script>
         <script src="{% static "base/js/library_website.js" %}"></script>
         <script src="{% static "base/js/render_hours.js" %}"></script>
+        <script>
+            if (document.querySelector('pre.mermaid')) {
+                var mermaidLib = document.createElement('script');
+                mermaidLib.src = "{% static 'base/js/vendor/mermaid.min.js' %}";
+                mermaidLib.onload = function () {
+                    var mermaidInit = document.createElement('script');
+                    mermaidInit.src = "{% static 'base/js/Mermaid.js' %}";
+                    document.body.appendChild(mermaidInit);
+                };
+                document.body.appendChild(mermaidLib);
+            }
+        </script>
         <script src='/static/base/js/jquery.track-everything.js' defer></script>
 
         {% block extra_scripts %}
