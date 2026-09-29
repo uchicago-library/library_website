@@ -31,8 +31,23 @@
     }
   }
 
+  async function renderOne(mermaidApi, el) {
+    var source = (el.textContent || '').trim();
+    if (!source) {
+      return;
+    }
+
+    try {
+      await mermaidApi.parse(source);
+      await mermaidApi.run({ nodes: [el] });
+    } catch (err) {
+      showFriendlyError(el, source);
+    }
+  }
+
   async function renderDiagrams() {
-    if (typeof mermaid === 'undefined') {
+    var mermaidApi = window.mermaid;
+    if (typeof mermaidApi === 'undefined') {
       return;
     }
 
@@ -43,27 +58,16 @@
       return;
     }
 
-    mermaid.initialize({
+    mermaidApi.initialize({
       startOnLoad: false,
       securityLevel: 'strict',
       htmlLabels: false,
       theme: 'default',
     });
 
-    for (var i = 0; i < nodes.length; i += 1) {
-      var el = nodes[i];
-      var source = (el.textContent || '').trim();
-      if (!source) {
-        continue;
-      }
-
-      try {
-        await mermaid.parse(source);
-        await mermaid.run({ nodes: [el] });
-      } catch (err) {
-        showFriendlyError(el, source);
-      }
-    }
+    await Promise.all(nodes.map(function (el) {
+      return renderOne(mermaidApi, el);
+    }));
   }
 
   if (document.readyState === 'loading') {
