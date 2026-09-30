@@ -1,0 +1,11 @@
+<figure class="mermaid-diagram">
+  {% if value.title %}
+    <figcaption class="mermaid-title">{{ value.title }}</figcaption>
+  {% endif %}
+  <pre class="mermaid" role="img" aria-label="{{ value.description }}">{{ value.source }}</pre>
+  <p class="mermaid-description">{{ value.description }}</p>
+  <noscript>
+    <p class="mermaid-noscript">JavaScript is required to render this diagram. Source:</p>
+    <pre class="mermaid-source-fallback">{{ value.source }}</pre>
+  </noscript>
+</figure>

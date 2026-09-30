@@ -38,6 +38,7 @@
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
     <link href="{% static 'base/css/code-block-syntax-highlighting.css' %}" rel="stylesheet">
+    <link href="{% static 'base/css/mermaid.css' %}" rel="stylesheet">
     <link href="{% static 'base/css/uclib_print.css' %}" rel="stylesheet">
     {% compress css %}
     {# SCSS compilation relies on django compressor #}
@@ -175,6 +176,18 @@
   <script src="{% static 'base/js/ie10-viewport-bug-workaround.js' %}"></script>
   <script src="{% static 'base/js/offcanvas.js' %}"></script>
   <script src='/static/base/js/jquery.track-everything.js' defer></script>
+  <script>
+    if (document.querySelector('pre.mermaid')) {
+      var mermaidLib = document.createElement('script');
+      mermaidLib.src = "{% static 'base/js/vendor/mermaid.min.js' %}";
+      mermaidLib.onload = function () {
+        var mermaidInit = document.createElement('script');
+        mermaidInit.src = "{% static 'base/js/Mermaid.js' %}";
+        document.body.appendChild(mermaidInit);
+      };
+      document.body.appendChild(mermaidLib);
+    }
+  </script>
 
   {% block extra_js %}
     {# Override this in templates to add extra javascript #}
