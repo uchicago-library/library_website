@@ -34,7 +34,7 @@ python-dateutil
 simplejson==3.11.1
 sqlparse==0.6.0
 Unidecode==1.1.1
-urllib3==2.7.0
+urllib3==2.8.0
 wagtail==7.0.9
 wagtailmedia==0.15.2
 wagtail-cache==3.0.0
