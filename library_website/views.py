@@ -18,31 +18,26 @@ def library_404_view(request, exception=Http404):
 
         if is_default:
             return {
-                "404_page_template_switcher":
-                "base/public_base.html",
+                "404_page_template_switcher": "base/public_base.html",
                 "links": [
                     Link("Ask a Librarian", "/research/help/ask-librarian/"),
                     Link("Library Digital Collections", "/collex/"),
-                    Link("Library Homepage", "/")
+                    Link("Library Homepage", "/"),
                 ],
-                "helptext1":
-                "Let us know that we have a missing page.",
-                "helptext2":
-                " We will do our best to rectify the issue."
+                "helptext1": "Let us know that we have a missing page.",
+                "helptext2": " We will do our best to rectify the issue.",
             }
         else:
             return {
-                "404_page_template_switcher":
-                "intranethome/intranet_home_page.html",
+                "404_page_template_switcher": "intranethome/intranet_home_page.html",
                 "koala": Image.objects.get(title="Adventure Koala"),
                 "links": [Link("Return to Loop Homepage", "/")],
-                "helptext1":
-                "Let us know that we have a missing page. Contact ",
+                "helptext1": "Let us know that we have a missing page. Contact ",
                 "helptext_email": "intranet@lib.uchicago.edu",
                 "helptext2": " and we will do our best to rectify the issue.",
-                "tabs": True
+                "tabs": True,
             }
 
     context = context_404(is_default)
 
-    return render(request, '404.html', context, status=404)
+    return render(request, "404.html", context, status=404)

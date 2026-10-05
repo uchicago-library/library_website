@@ -6,5 +6,5 @@
   {% if has_search_widget %}
     {% include "public/blocks/search_widget.html" %}
   {% endif %}
-  {{ self.body }}
+  {% include_block self.body %}
 {% endblock %}

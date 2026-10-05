@@ -1,0 +1,35 @@
+{% extends "base/intranet_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load compress static %}
+{% load wagtailcore_tags %}
+
+{% block extra_css %}
+    {% compress css %}
+        <link href="{% static 'cgimail_editor/css/cgimail-editor.scss' %}" rel="stylesheet" type="text/x-scss"/>
+    {% endcompress %}
+{% endblock %}
+
+{% block content %}
+    <div class="cgimail-editor-page">
+        <h1>{{ self.title }}</h1>
+
+        {% if self.intro %}
+            <div class="intro">
+                {{ self.intro|richtext }}
+            </div>
+        {% endif %}
+
+        <div
+            id="cgimail-editor"
+            data-surrogate-api="{{ surrogate_api_url }}"
+            data-generate-api="{{ generate_api_url }}"
+            data-fetch-docs-api="{{ fetch_docs_api_url }}"
+            data-ai-model="{{ ai_model }}"
+            data-template="{{ template_description }}"
+            data-system-prompt="{{ system_prompt }}"
+            data-csrf-token="{{ csrf_token }}"
+        ></div>
+
+        {% render_bundle 'CGIMailEditor' %}
+    </div>
+{% endblock %}

@@ -11,13 +11,14 @@ class AlertPage(PublicBasePage):
     """
     Page for displaying alert messages.
     """
-    INFO = 'alert-info'
-    LOW = 'alert-low'
-    HIGH = 'alert-high'
+
+    INFO = "alert-info"
+    LOW = "alert-low"
+    HIGH = "alert-high"
     ALERT_TYPES = (
-        (INFO, 'Informational Alert'),
-        (LOW, 'General Alert'),
-        (HIGH, 'Critical Alert'),
+        (INFO, "Informational Alert"),
+        (LOW, "General Alert"),
+        (HIGH, "Critical Alert"),
     )
 
     banner_message = RichTextField(blank=False)
@@ -28,19 +29,23 @@ class AlertPage(PublicBasePage):
         default=INFO,
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('banner_message'),
-        FieldPanel('more_info'),
-        FieldPanel('alert_level'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("banner_message"),
+            FieldPanel("more_info"),
+            FieldPanel("alert_level"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
     subpage_types = []
 
     api_fields = [
-        APIField('banner_message'),
-        APIField('more_info'),
-        APIField('alert_level'),
-        APIField('url'),
+        APIField("banner_message"),
+        APIField("more_info"),
+        APIField("alert_level"),
+        APIField("url"),
     ]
 
     search_fields = PublicBasePage.search_fields
@@ -50,7 +55,8 @@ class AlertIndexPage(PublicBasePage):
     """
     Container page for holding alert pages.
     """
+
     max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
-    subpage_types = ['alerts.AlertPage']
+    subpage_types = ["alerts.AlertPage"]
     search_fields = PublicBasePage.search_fields

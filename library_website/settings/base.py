@@ -16,18 +16,18 @@ import sys
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
-WAGTAILADMIN_BASE_URL = 'https://www.lib.uchicago.edu'
+WAGTAILADMIN_BASE_URL = "https://www.lib.uchicago.edu"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-WAGTAIL_ENABLE_UPDATE_CHECK = 'lts'
+WAGTAIL_ENABLE_UPDATE_CHECK = "lts"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -124,32 +124,121 @@ MIDDLEWARE = [
     'django_htmx.middleware.HtmxMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'wagtailcache.cache.FetchFromCacheMiddleware',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sitemaps",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django_bleach",
+    "django_turnstile_site_protect",
+    "taggit",
+    "compressor",
+    "modelcluster",
+    "wagtailcache",
+    "wagtail",
+    "wagtail.admin",
+    "wagtail.search",
+    "wagtail.images",
+    "wagtail.documents",
+    "wagtailmedia",
+    "wagtailmarkdown",
+    "wagtail.snippets",
+    "wagtail.users",
+    "wagtail.sites",
+    "wagtail.embeds",
+    "wagtail.contrib.redirects",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.table_block",
+    "wagtail.contrib.routable_page",
+    "wagtail.contrib.search_promotions",
+    "wagtail.contrib.sitemaps",
+    "wagtail.contrib.settings",
+    "wagtail.contrib.styleguide",
+    "wagtail.api.v2",
+    "corsheaders",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "alerts",
+    "ask_a_librarian",
+    "base",
+    "cgimail_editor",
+    "conferences",
+    "dirbrowse",
+    "events",
+    "findingaids",
+    "group",
+    "home",
+    "icon_list_boxes",
+    "intranetforms",
+    "intranethome",
+    "intranettocs",
+    "intranetunits",
+    "item_servlet",
+    "lib_collections",
+    "lib_news",
+    "library_website",
+    "macros",
+    "mylib_dashboard",
+    "news",
+    "public",
+    "projects",
+    "redirects",
+    "results",
+    "reusable_content",
+    "search",
+    "searchable_content",
+    "shibboleth",
+    "site_settings",
+    "staff",
+    "subjects",
+    "units",
+    "static_precompiler",
+    "webpack_loader",
 ]
 
-ROOT_URLCONF = 'library_website.urls'
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django_turnstile_site_protect.middleware.TurnstileMiddleware",
+    "wagtailcache.cache.UpdateCacheMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    # Required for shibboleth
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "shibboleth.middleware.ShibbolethRemoteUserMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "wagtailcache.cache.FetchFromCacheMiddleware",
+]
+
+ROOT_URLCONF = "library_website.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(PROJECT_DIR, 'templates'),
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(PROJECT_DIR, "templates"),
         ],
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'shibboleth.context_processors.login_link',
-                'shibboleth.context_processors.logout_link',
-                'wagtail.contrib.settings.context_processors.settings',
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "shibboleth.context_processors.login_link",
+                "shibboleth.context_processors.logout_link",
+                "wagtail.contrib.settings.context_processors.settings",
             ],
-            'loaders': [
+            "loaders": [
                 (
-                    'django.template.loaders.cached.Loader',
+                    "django.template.loaders.cached.Loader",
                     [
-                        'django.template.loaders.filesystem.Loader',
-                        'django.template.loaders.app_directories.Loader',
+                        "django.template.loaders.filesystem.Loader",
+                        "django.template.loaders.app_directories.Loader",
                     ],
                 ),
             ],
@@ -161,7 +250,7 @@ WAGTAILMEDIA = {
     "MEDIA_MODEL": "base.LocalMedia",
 }
 
-WSGI_APPLICATION = 'library_website.wsgi.application'
+WSGI_APPLICATION = "library_website.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
@@ -170,9 +259,9 @@ WSGI_APPLICATION = 'library_website.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = "America/Chicago"
 
 USE_I18N = False
 
@@ -184,19 +273,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-    'static_precompiler.finders.StaticPrecompilerFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+    "static_precompiler.finders.StaticPrecompilerFinder",
 )
 
-STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
+STATICFILES_DIRS = (os.path.join(PROJECT_DIR, "static"),)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/static/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = False
@@ -206,31 +295,31 @@ COMPRESS_REBUILD_TIMEOUT = 3
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
 
 # Phone number format
-PHONE_FORMAT = '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'
-PHONE_ERROR_MSG = 'Please enter the phone number using the format 773-123-4567'
+PHONE_FORMAT = "^[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+PHONE_ERROR_MSG = "Please enter the phone number using the format 773-123-4567"
 
 # Postal code format
-POSTAL_CODE_FORMAT = '^[0-9]{5}$'
+POSTAL_CODE_FORMAT = "^[0-9]{5}$"
 POSTAL_CODE_ERROR_MSG = (
-    'Please enter the postal code as a five digit number, e.g. 60637'
+    "Please enter the postal code as a five digit number, e.g. 60637"
 )
 
 # ORCID
-ORCID_FORMAT = '^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$'
+ORCID_FORMAT = "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$"
 ORCID_ERROR_MSG = (
-    'Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444'
+    "Please enter ORCIDs as a 16 digit number with hyphens, e.g. 1111-2222-3333-4444"
 )
 
 # django-compressor settings
-COMPRESS_PRECOMPILERS = (('text/x-scss', 'django_libsass.SassCompiler'),)
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # django-static-precompilers
 STATIC_PRECOMPILER_COMPILERS = (
     (
-        'static_precompiler.compilers.libsass.SCSS',
+        "static_precompiler.compilers.libsass.SCSS",
         {
-            'load_paths': [os.path.join(BASE_DIR, 'base/static/base/css')],
-            'output_style': 'compressed',
+            "load_paths": [os.path.join(BASE_DIR, "base/static/base/css")],
+            "output_style": "compressed",
         },
     ),
 )
@@ -238,18 +327,24 @@ STATIC_PRECOMPILER_COMPILERS = (
 # Wagtail settings
 WAGTAIL_SITE_NAME = "library_website"
 
+# Wagtail Markdown settings
+WAGTAILMARKDOWN = {
+    "extensions": ["extra", "codehilite", "attr_list", "toc", "sane_lists"],
+    "extensions_settings_mode": "extend",
+}
+
 WAGTAILSEARCH_BACKENDS = {
-    'default': {
-        'BACKEND': 'wagtail.search.backends.elasticsearch7',
-        'URLS': ['http://localhost:9200'],
-        'INDEX': 'wagtail',
-        'TIMEOUT': 5,
-        'INDEX_SETTINGS': {
-            'settings': {
-                'index': {
-                    'analysis': {
-                        'analyzer': {
-                            'default': {'type': 'english'},
+    "default": {
+        "BACKEND": "wagtail.search.backends.elasticsearch8",
+        "URLS": ["http://localhost:9200"],
+        "INDEX": "wagtail",
+        "TIMEOUT": 5,
+        "INDEX_SETTINGS": {
+            "settings": {
+                "index": {
+                    "analysis": {
+                        "analyzer": {
+                            "default": {"type": "english"},
                         },
                     }
                 }
@@ -263,20 +358,21 @@ WAGTAILSEARCH_BACKENDS = {
 # https://github.com/OttoYiu/django-cors-headers
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = (
-    'https://catalog.lib.uchicago.edu',
-    'https://catalogtest.lib.uchicago.edu',
-    'https://dldc1.lib.uchicago.edu',
-    'https://dldc2.lib.uchicago.edu',
-    'https://dldc3.lib.uchicago.edu',
-    'https://forms2.lib.uchicago.edu',
-    'http://guides.lib.uchicago.edu',
-    'https://guides.lib.uchicago.edu',
-    'https://rooms.lib.uchicago.edu',
-    'https://sfx.lib.uchicago.edu',
-    'https://sfx.lib.uchicago.edu:3103',
+    "https://catalog.lib.uchicago.edu",
+    "https://catalogtest.lib.uchicago.edu",
+    "https://dldc1.lib.uchicago.edu",
+    "https://dldc2.lib.uchicago.edu",
+    "https://dldc3.lib.uchicago.edu",
+    "https://forms2.lib.uchicago.edu",
+    "http://guides.lib.uchicago.edu",
+    "https://guides.lib.uchicago.edu",
+    "https://rooms.lib.uchicago.edu",
+    "http://sfxdemo.lib.uchicago.edu",
+    "https://sfx.lib.uchicago.edu",
+    "https://sfx.lib.uchicago.edu:3103",
 )
 CORS_ALLOW_METHODS = (
-    'GET',
+    "GET",
     # 'POST',
     # 'PUT',
     # 'PATCH',
@@ -288,11 +384,11 @@ CORS_ALLOW_METHODS = (
 # by page ID. In order to see any page, a user must belong to all groups
 # set in all page ancestors. This works as a blacklist.
 # PERMISSIONS_MAPPING = {6: ['Library'], 319: ['Foo', 'Bar']}
-PERMISSIONS_MAPPING = {6: ['Library']}
+PERMISSIONS_MAPPING = {6: ["Library"]}
 
 # Where to send users that aren't members of the necessary groups to
 # view a page.
-NO_PERMISSIONS_REDIRECT_URL = 'https://www.lib.uchicago.edu/no-permission/'
+NO_PERMISSIONS_REDIRECT_URL = "https://www.lib.uchicago.edu/no-permission/"
 
 # Settings for RESTful API and frontend cache invalidation
 WAGTAILAPI_SEARCH_ENABLED = True
@@ -314,25 +410,31 @@ PUBLIC_HOMEPAGE = 3378
 RESTRICTED = 3831
 
 # String templates for hours and address display in the header and footer
-HOURS_TEMPLATE = '%s &nbsp; %s'
-ADDRESS_TEMPLATE = '%s, %s, %s %s'
+HOURS_TEMPLATE = "%s &nbsp; %s"
+ADDRESS_TEMPLATE = "%s, %s, %s %s"
 
 # Location and hours page
 HOURS_PAGE = 4084
 
+# Loop News excerpt-writing guidance page. Set to a live page id to show a
+# link to examples/best practices in the News editor's excerpt HelpPanel.
+# Leave as None until that page is authored on Loop; the guidance still shows,
+# just without a link.
+NEWS_EXCERPT_GUIDE_PAGE = None
+
 # Library news categories
 NEWS_CATEGORIES = set(
     [
-        'Resources',
-        'Research',
-        'Teaching',
-        'Events',
-        'Exhibits',
-        'People',
-        'Hours & Access',
-        'Spaces',
-        'Spotlight',
-        'From the Director',
+        "Resources",
+        "Research",
+        "Teaching",
+        "Events",
+        "Exhibits",
+        "People",
+        "Hours & Access",
+        "Spaces",
+        "Spotlight",
+        "From the Director",
     ]
 )
 
@@ -423,15 +525,25 @@ CRERAR_BUILDING_ID = 2713
 CRERAR_EXHIBIT_FOOTER_IMG = 1130
 SCRC_EXHIBIT_FOOTER_IMG = 1129
 
-WAGTAIL_CACHE_BACKEND = 'pagecache'
+WAGTAIL_CACHE_BACKEND = "pagecache"
 
 # Redis cache configuration
 CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://localhost:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+    "pagecache": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "cache"),
+        "KEY_PREFIX": "wagtailcache",
+        "TIMEOUT": 21600,
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+            "CULL_FREQUENCY": 5,
         },
     },
     'pagecache': {
@@ -443,115 +555,123 @@ CACHES = {
 }
 
 # Base URL for LibAnswers services
-LIBANSWERS_BASE = 'https://uchicago.libanswers.com'
+LIBANSWERS_BASE = "https://uchicago.libanswers.com"
 
 # LibChat JavaScript for widgets
-LIBCHAT_WIDGET_URL = LIBANSWERS_BASE + '/load_chat.php?hash='
+LIBCHAT_WIDGET_URL = LIBANSWERS_BASE + "/load_chat.php?hash="
 
 # Base url for the LibChat status API
-LIBCHAT_STATUS_URL = LIBANSWERS_BASE + '/1.0/chat/widgets/status/'
+LIBCHAT_STATUS_URL = LIBANSWERS_BASE + "/1.0/chat/widgets/status/"
 
 # Map LibraryH3lp chat widget names to LibChat widget IDs
 # Implemented to avoid changing function signatures and
 # page models when we migrated to LibChat. Preferable
 # since it documents this for us.
 LIBCHAT_IDS = {
-    'uofc-ask': '9650',
-    'dissertation-office': '11495',
-    'law': '11496',
-    'crerar': '9650',
-    'ssa': '9650',
+    "uofc-ask": "9650",
+    "dissertation-office": "11495",
+    "law": "11496",
+    "crerar": "9650",
+    "ssa": "9650",
 }
 
 # API configuration
 WAGTAILAPI_LIMIT_MAX = None
 
-# OwnCloud settings
-OWNCLOUD_USERNAME = 'ldr_oc_admin'
-OWNCLOUD_WEB_SERVICE = 'https://s3.lib.uchicago.edu/owncloud'
+# Directory service
+DIRECTORY_WEB_SERVICE = "directory.uchicago.edu"
 
 # Uploaded files and documents should have group read/write permissions
 # and world read permissions.
 FILE_UPLOAD_PERMISSIONS = 0o664
 
+# Email backend
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # Config for frontent dependencies
 WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "bundles/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
     }
 }
 
 # Public news site
-NEWS_FEED_DEFAULT_VISIBLE = 9
-NEWS_FEED_INCREMENT_BY = 18
 LIBRA_ID = 1664
-STATIC_NEWS_FEED = os.path.join(STATIC_ROOT, 'lib_news', 'files', 'lib-news.json')
-DRF_NEWS_FEED = '/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*&limit=1000'
+STATIC_NEWS_FEED = os.path.join(STATIC_ROOT, "lib_news", "files", "lib-news.json")
+DRF_NEWS_FEED = "/api/v2/pages/?format=json&treat_as_webpage=false&order=-published_at&type=lib_news.LibNewsPage&fields=*&limit=1000"
 
 # Cache time for news site categories is 3 hours
 NEWS_CACHE_TTL = 60 * 180
 
 # University Events Feed
-UC_EVENTS_BASE = ''
-UC_EVENTS_FEED = 'https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48'
+UC_EVENTS_BASE = ""
+UC_EVENTS_FEED = "https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48"
 
 # Tiny Tiny RSS Feed
-TTRSS_FEED = 'https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d'
+TTRSS_FEED = "https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d"
 
 # Authorization key for LibCal admin interface
-LIBCAL_TOKEN_ENDPOINT = ''
-LIBCAL_ENDPOINT = ''
+LIBCAL_TOKEN_ENDPOINT = ""
+LIBCAL_ENDPOINT = ""
 LIBCAL_CREDENTIALS = {
-    'grant_type': '',
-    'client_id': '',
-    'client_secret': '',
+    "grant_type": "",
+    "client_id": "",
+    "client_secret": "",
 }
 
 # CGIMail Forms
-CGI_MAIL_SERVICE = '/cgi-bin/cgimail/cgimail'
-ITEM_SERVLET = '/item-servlet/?p=true'
-SPRINGSHARE_PRIVACY_POLICY = 'https://springshare.com/privacy.html'
+CGI_MAIL_SERVICE = "/cgi-bin/cgimail/cgimail"
+ITEM_SERVLET = "/item-servlet/?p=true"
+SPRINGSHARE_PRIVACY_POLICY = "https://springshare.com/privacy.html"
+
+# CGIMail Editor (Rebecca) settings
+CGI_SURROGATES_API = ""  # Set in production settings
+CGI_SURROGATES_FALLBACK = []  # Set in dev.py for local development
+OPENAI_CGIMAIL_KEY = ""  # Set in local.py (secret)
+OPENAI_API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 # Override settings in test
 # -------------------------------
 # THESE ONLY APPLY TO UNIT TESTS!
 # -------------------------------
 
-if 'test' in sys.argv:
+if "test" in sys.argv:
     HOURS_PAGE = 1
 
 # DOI resolution service
 
-IDRESOLVE_URL = "https://www.lib.uchicago.edu/cgi-bin/idresolve"
+IDRESOLVE_URL = "https://restful.lib.uchicago.edu/cgi-bin/idresolve"
 
-MARKLOGIC_LDR_PORT = 8008
-
-MARKLOGIC_LDR_BASE = "http://marklogic.lib.uchicago.edu"
-
-MARKLOGIC_LDR_ROUTE = "/v1/graphs"
-
-MARKLOGIC_LDR_URL = "%s:%i%s" % (
-    MARKLOGIC_LDR_BASE,
-    MARKLOGIC_LDR_PORT,
+MARKLOGIC_HOST = "marklogic.lib.uchicago.edu"
+MARKLOGIC_LDR_DB = "ldr"
+MARKLOGIC_FINDINGAIDS_DB = "uncap"
+MARKLOGIC_LDR_ROUTE = "v1/graphs"
+MARKLOGIC_LDR_URL = "https://%s.%s/%s" % (
+    MARKLOGIC_LDR_DB,
+    MARKLOGIC_HOST,
     MARKLOGIC_LDR_ROUTE,
 )
-
-MARKLOGIC_FINDINGAIDS_PORT = 8011
 
 E_FINDING_AIDS_URL = "http://www.lib.uchicago.edu/e/scrc/findingaids/view.php"
 E_FINDING_AIDS_QUERY_STRING = "?eadid="
 E_FINDING_AIDS = E_FINDING_AIDS_URL + E_FINDING_AIDS_QUERY_STRING
 
-EBOOKS_SEARCH = 'https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor='
+EBOOKS_SEARCH = "https://catalog.lib.uchicago.edu/vufind/Search/Results?filter%5B%5D=format%3A%22Book%22&filter%5B%5D=format%3A%22E-Resource%22&type=AllFields&lookfor="
+
+# Articles search (EBSCO "ijaglh" UChicago profile), fronted by the proxy
+# redirector. The redirector expects the entire target URL, query string
+# included, percent-encoded into a single "url" parameter.
+PROXY_REDIRECTOR_URL = "https://proxy-redirector.lib.uchicago.edu/login"
+ARTICLES_SEARCH_URL = "https://research.ebsco.com/c/ijaglh/search/results"
 
 SPARQL_ROOT = "https://repository.lib.uchicago.edu/digital_collections"
 
-LANGUAGE_ABBREVS = {'en': 'English'}
+LANGUAGE_ABBREVS = {"en": "English"}
 
 # toggle this comment to go between dev and production
-IIIF_PREFIX = "https://iiif-collection.lib.uchicago.edu"
-# IIIF_PREFIX = "https://iiif-collection-dev.lib.uchicago.edu"
+IIIF_COLLECTION_PREFIX = "https://iiif-collection.lib.uchicago.edu"
+IIIF_MANIFEST_PREFIX = "https://iiif-manifest.lib.uchicago.edu"
 
 # toggle this comment with the other to switch from dev to production
 # IIIF_VIEWER_PREFIX = "https://liblet.lib.uchicago.edu/viewer?manifest="
@@ -561,7 +681,7 @@ WAGTAIL_PREFIX = "/collex/collections"
 
 # toggle these root URLs for dev/production
 # CITATION_ROOT = "http://sequent.lib.uchicago.edu:9000"
-CITATION_ROOT = "http://www.lib.uchicago.edu/cgi-bin/citation"
+CITATION_ROOT = "http://restful.lib.uchicago.edu/cgi-bin/citation"
 
 TURTLE_ROOT = "https://ark.lib.uchicago.edu/ark:61001/"
 
@@ -578,46 +698,95 @@ CHICAGO_PATH = BASE_DIR + "/lib_collections/csl/chicago-author-date.csl"
 COLLECTION_OBJECT_TRUNCATE = 25
 
 # Folio API
-FOLIO_USERNAME = ''
-FOLIO_PASSWORD = ''
-FOLIO_TENANT = ''
-FOLIO_BASE_URL = ''
+FOLIO_BASE_URL = "https://uchicago-okapi.folio.indexdata.com"
+FOLIO_USERNAME = ""
+FOLIO_PASSWORD = ""
+FOLIO_TENANT = ""
+FOLIO_BASE_URL = ""
 
 # Folio IDs
-FOLIO_TYPE_ISBN_ID = '8261054f-be78-422d-bd51-4ed9f33c3422'
-FOLIO_TYPE_ISSN_ID = '913300b2-03ed-469a-8179-c1092c991227'
-FOLIO_TYPE_LINKING_ISSN_ID = '5860f255-a27f-4916-a830-262aa900a6b9'
+FOLIO_TYPE_ISBN_ID = "8261054f-be78-422d-bd51-4ed9f33c3422"
+FOLIO_TYPE_ISSN_ID = "913300b2-03ed-469a-8179-c1092c991227"
+FOLIO_TYPE_LINKING_ISSN_ID = "5860f255-a27f-4916-a830-262aa900a6b9"
 
-# CNetIDs for people in the University or Library directory that
-# we wish to keep out of sync. People listed here will not show
-# up in the "out of sync staff members" email report.
-DO_NOT_SYNC = []
-MAIL_ALIASES_PATH = '/data/web/aliases/data.json'
+# Loan policy IDs that are considered "non-renewable" (e.g., TechBar, room keys)
+FOLIO_NON_RENEWABLE_LOAN_POLICY_IDS = [
+    "a1e26512-ba2e-4690-a0cf-12b6988e4ae7",  # 21daynorenew
+    "866c672e-1433-40da-9794-71d831ce7501",  # 7daynrdll
+    "4503ab2c-0b5b-46f9-8366-95fa4924af78",  # 7dayrenew
+    "5b256b8d-17d4-4487-88b3-ef2e2e8734bc",  # illbuo
+    "6d928e9f-9fe0-4d68-83e3-2c5d5c9a31c5",  # jrlbuo
+    "efd60273-31d5-4dcc-a9fc-3c6d75d55086",  # Loan-1-min
+    "54f4fcc3-ecdd-4826-bb58-707db797a884",  # noloan
+    "43198de5-f56a-4a53-a0bd-5a324418967a",  # One Hour
+    "ecb1dbbf-bc02-4866-8110-8c62b739e7d3",  # res24hr
+    "04ed7ac8-8db3-4538-b752-9745b8101be7",  # res2hr
+    "d9d18e4f-2044-4832-8d3a-03acdf3ce224",  # res48hr
+    "7f3812f8-613c-4b94-b575-bbb75ee30548",  # res4hr
+    "6ce53413-85ad-4ff3-958b-e513f30a040c",  # res72hr
+    "936cfff3-02a0-49a0-8df0-10722cf0905c",  # res7day
+    "3cb14017-6ac0-42e1-9270-e85f8ea5e047",  # res7dayDLL
+    "2a467d26-53a3-40ef-b8c4-c8a9456db158",  # stks14
+    "38e38981-e821-4d28-a557-cd9c3bcc85bd",  # tech2hr (TechBar)
+    "d010218d-b904-4ea3-b926-da7fd02524f0",  # tech8hr (TechBar)
+    "94b2a593-0c53-4fa8-93a9-f9a20d4300f6",  # techrfid (TechBar)
+]
+
+# ILLiad API
+ILLIAD_API_URL = "https://requests.lib.uchicago.edu/ILLiadWebPlatform"
+ILLIAD_WEB_BASE_URL = "https://requests.lib.uchicago.edu/illiad"
+ILLIAD_API_KEY = ""
+ILLIAD_TIMEOUT = 30
+
+# LibCal API (Springshare)
+LIBCAL_API_BASE_URL = "https://rooms.lib.uchicago.edu/api/1.1"
+LIBCAL_WEB_URL = "https://rooms.lib.uchicago.edu"
+LIBCAL_CLIENT_ID = ""
+LIBCAL_CLIENT_SECRET = ""
+LIBCAL_TIMEOUT = 30
+# Special Collections location IDs for filtering reading room seats
+# TODO: Confirm these location IDs are correct
+LIBCAL_SPECIAL_COLLECTIONS_LOCATION_IDS = [14995, 11873]
+
+# Aeon API (Special Collections material requests)
+AEON_API_BASE_URL = "https://scrcrequests.lib.uchicago.edu/aeonapi"
+AEON_API_KEY = ""
+AEON_TIMEOUT = 30
+
+MAIL_ALIASES_PATH = "/data/web/aliases/data.json"
+
+# LibGuides API endpoints
+LIBGUIDES_API_OAUTH_TOKEN_ENDPOINT = "https://lgapi-us.libapps.com/1.2/oauth/token"
+LIBGUIDES_API_ASSETS_AZ_ENDPOINT = "https://lgapi-us.libapps.com/1.2/az"
+LIBGUIDES_OAI_PMH_ENDPOINT = (
+    "http://guides.lib.uchicago.edu/oai.php?verb=ListRecords&metadataPrefix=oai_dc"
+)
 
 # Cloudflare Turnstile settings (using test keys that always pass)
-TURNSTILE_SITE_KEY = '3x00000000000000000000FF'
-TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'
+TURNSTILE_SITE_KEY = "3x00000000000000000000FF"
+TURNSTILE_SECRET_KEY = "1x0000000000000000000000000000000AA"
 # Options: 'managed', 'non-interactive', 'invisible'
-TURNSTILE_MODE = 'non-interactive'
-TURNSTILE_APPEARANCE = 'always'
+TURNSTILE_MODE = "non-interactive"
+TURNSTILE_APPEARANCE = "always"
 
 # 2 weeks (in seconds)
 SESSION_COOKIE_AGE = 1209600
 
 # Exclude admin, static files, etc. from Turnstile protection
 TURNSTILE_EXCLUDED_PATHS = [
-    r'^/json-events/.*$',
-    r'^/chat-status/.*$',
-    r'^/json-hours/.*$',
-    r'^/item-servlet/.*$',
-    r'^/cgi-bin/.*$',
-    r'^/admin/.*$',
-    r'^/django-admin/.*$',
-    r'^/static/.*$',
-    r'^/media/.*$',
-    r'^/shib/.*$',
-    r'^/_util/.*$',
-    r'^/api/.*$',
+    r"^/json-events/.*$",
+    r"^/chat-status/.*$",
+    r"^/json-hours/.*$",
+    r"^/item-servlet/.*$",
+    r"^/cgi-bin/.*$",
+    r"^/admin/.*$",
+    r"^/django-admin/.*$",
+    r"^/static/.*$",
+    r"^/media/.*$",
+    r"^/shib/.*$",
+    r"^/_util/.*$",
+    r"^/api/.*$",
+    r"^/rss/.*$",
 ]
 
 WAGTAIL_AI = {
@@ -668,3 +837,6 @@ WAGTAIL_VECTOR_INDEX_STORAGE_PROVIDERS = {
         "STORAGE_PROVIDER": "wagtail_vector_index.storage.pgvector.PgvectorStorageProvider",
     }
 }
+# article galaxy spreadsheet constants
+AGS_SPREADSHEET_NAME = "ags_spreadsheet.xlsx"
+AGS_DEFAULT_SHEET = "data1"

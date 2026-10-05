@@ -61,71 +61,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.memory = "10240"
     vb.cpus = 8
 
-    up_message = <<-MSG
-
-    Linting for Python and React
-    ============================
-
-    Lint Python files with isort, autopep8, and black. Lint React Javascript
-    using eslint. This can be done here using Vim or in your editor of choice.
-    Look at ~/.vimrc to see relevant settings (you will need to configure your
-    editor in a similar way). Linting can also be done on the command line:
-
-    isort path/to/source_file.py
-    autopep8 --in-place path/to/source_file.py
-    black path/to/source_file.py
-
-    Linting HTML files and Wagtail / Django templates
-    =================================================
-
-    Template files should be linted with curlyling and djhtml. Curlylint catches
-    syntax errors but does not automatically fix them. You will need to do that.
-    Djhtml applies indentation.
-
-    curlylint --parse-only path/to/template_file.html
-    djhtml -i path/to/template_file.html
-
-    Generating fixtures
-    ===================
-
-    If you make changes to the dev database that you'd like to preseve, this can
-    be done by generating fixtures:
-
-    ./manage.py dumpdata --natural-foreign --natural-primary --exclude wagtailcore.GroupCollectionPermission > base/fixtures/test.json
-
-    The file will need to be saved and checked into version control.
-
-    Indexing for wagtail-vector-index and other AI capabilities
-    ===========================================================
-    export OPENAI_API_KEY="--YOUR-OPENAI-KEY--"
-    ./manage.py update_vector_indexes
-
-    Run unit tests
-    ==============
-
-    ./manage.py test --parallel
-
-    Run the dev server
-    ==================
-
-    ./manage.py runserver 0.0.0.0:8000
-
-    If you add these lines to the /etc/hosts file on your host machine, you can
-    see the site at http://wwwdev:8000/ (and loopdev respectively). This is
-    useful for distinguising between loop and the public site in dev:
-
-    127.0.0.1 wwwdev
-    127.0.0.1 loopdev
-
-    WRITE SOME CODE!!!
-         ___________________________            ____
-    ...  \____DLDC_220_________|_// __=*=__.--"----"--._________
-                        \  |        /-------.__________.--------'
-                   /=====\ |======/      '     "----"
-                      \________          }]
-                               `--------'
-    MAKE IT SO!!!
-    MSG
+    # Read shared developer documentation
+    up_message = File.read('dev-docs.txt')
 
     config.vm.post_up_message = up_message
   end
@@ -171,7 +108,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if [ "$2" != "false" ]; then
         echo "============== Installing NVM and NodeJS =============="
         curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-        NODE_MAJOR=18
+        NODE_MAJOR=20
         echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
         apt-get update
         apt-get install nodejs -y
@@ -218,15 +155,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     touch $VAGRANT_HOME/.vimrc
     echo "let g:ale_linters_explicit = 1" >> $VAGRANT_HOME/.vimrc
     echo "let g:ale_linters = { 'python': ['flake8'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_flake8_options = '--ignore=D100,D101,D202,D204,D205,D400,D401,E303,E501,W503,N805,N806'" >> $VAGRANT_HOME/.vimrc
     echo "let g:ale_fixers = { 'python': ['isort', 'autopep8', 'black'], 'javascript': ['eslint'] }" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_black_options = '--skip-string-normalization'" >> $VAGRANT_HOME/.vimrc
-    echo "let g:ale_python_isort_options = '--profile black'" >> $VAGRANT_HOME/.vimrc
+    # Note: flake8 options are read from .flake8
+    # Note: black and isort options are read from pyproject.toml
 
     # Install UChicago dependencies
     echo ""
     echo "============== Installing UChicago dependencies =============="
-    sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
     apt-get update -y
     apt-get install -y libxml2-dev
     apt-get install -y libxslt-dev
@@ -255,12 +190,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if [ "$1" != "false" ]; then
         echo ""
         echo "============== Downloading Elasticsearch =============="
-        wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.13-amd64.deb
-        dpkg -i elasticsearch-7.17.13-amd64.deb
+        wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.19.0-amd64.deb
+        dpkg -i elasticsearch-8.19.0-amd64.deb
         # reduce JVM heap size from 2g to 512m
         sed -i 's/^\(-Xm[sx]\)2g$/\1512m/g' /etc/elasticsearch/jvm.options
-        rm elasticsearch-7.17.13-amd64.deb
-        echo "xpack.security.enabled: false" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+        rm elasticsearch-8.19.0-amd64.deb
+        # ES 8 includes xpack.security.enabled by default, modify it instead of appending
+        sed -i 's/^xpack.security.enabled:.*$/xpack.security.enabled: false/' /etc/elasticsearch/elasticsearch.yml
     fi
 
     # Create a Python virtualenv
@@ -300,17 +236,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     rm -rf /usr/local/lib/python3.7/test/__pycache__
     apt-get clean
 
-    # Install pgvector for wagtail-vector-index
-    echo ""
-    echo "============== Installing pgvector for wagtail-vector-index =============="
-    sudo apt-get install -y postgresql-14-pgvector
-
     # Run migrations, load the dev db and build a search index
     echo ""
     echo "============== Running django migrations and loading the dev database =============="
-    su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py migrate --noinput && \
-                     $PYTHON $PROJECT_DIR/manage.py loaddata /vagrant/base/fixtures/test.json && \
-                     $PYTHON $PROJECT_DIR/manage.py update_index"
+    su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py migrate --noinput"
+    su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py loaddata /vagrant/base/fixtures/test.json"
+    su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py shell" <<'PYTHON_EOF'
+from wagtail.models import Site
+Site.objects.filter(hostname='localhost').delete()
+PYTHON_EOF
+    su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py update_index"
 
     # Create the static news feed JSON file
     echo ""

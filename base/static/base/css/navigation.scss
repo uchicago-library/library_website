@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 
 > Styles can be used on public site and third party platforms <
 
@@ -8,13 +8,10 @@ Top Right Navbar (time/account/ask)
 Main Navbar
 Navigation Drop Downs
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-
-@import "variables.scss";
-@import "media.scss";
-
-
+@import 'variables.scss';
+@import 'media.scss';
 
 /*
  * Top Right Navbar (time/account/ask)
@@ -31,7 +28,7 @@ Navigation Drop Downs
   a {
     color: #fff;
     flex-grow: 1;
-    padding: .5em 0;
+    padding: 0.5em 0;
   }
 
   @include respond-to(small) {
@@ -47,7 +44,7 @@ Navigation Drop Downs
   font-size: 1em;
   padding-right: 30px;
 
-  &>li>a {
+  & > li > a {
     color: $ncs-maroon;
 
     &:hover,
@@ -61,13 +58,13 @@ Navigation Drop Downs
     }
   }
 
-  &>li>.dropdown-menu {
+  & > li > .dropdown-menu {
     color: inherit;
     text-align: right;
     background: $ncs-lighter-greystone;
 
-    li>a,
-    li>a:hover {
+    li > a,
+    li > a:hover {
       color: inherit !important;
     }
   }
@@ -78,7 +75,7 @@ Navigation Drop Downs
   }
 }
 
-ul#navbar-right li:hover>ul.dropdown-menu.menuhover {
+ul#navbar-right li:hover > ul.dropdown-menu.menuhover {
   display: block;
 }
 
@@ -99,7 +96,6 @@ i.ask-icon {
   }
 }
 
-
 /*
  * Main Navbar
  * --------------------------------------------------
@@ -109,7 +105,7 @@ i.ask-icon {
   box-shadow: $box-shadow-header;
 
   @include respond-to(small) {
-    padding: 0px;
+    padding: 0;
   }
 }
 
@@ -119,7 +115,7 @@ i.ask-icon {
   margin: 0;
   height: unset;
 
-  &>img {
+  & > img {
     max-width: 120px;
   }
 
@@ -136,14 +132,14 @@ i.ask-icon {
 }
 
 .navbar-default {
-  border: 0px;
-  margin-bottom: 0px;
+  border: 0;
+  margin-bottom: 0;
   background-color: white;
   z-index: 10;
   border-radius: 0;
 
   .navbar-nav {
-    &>li>a {
+    & > li > a {
       color: #eee;
       text-decoration: none;
 
@@ -165,14 +161,14 @@ i.ask-icon {
       background-color: $transparent;
     }
 
-    &>.open>a:focus {
+    & > .open > a:focus {
       background-color: $maroon;
       color: #fff;
     }
 
-    &>.open>a,
-    &>.open>a:hover {
-      color: #EDD4C1;
+    & > .open > a,
+    & > .open > a:hover {
+      color: #edd4c1;
       background-color: $transparent;
     }
   }
@@ -187,20 +183,20 @@ i.ask-icon {
   font-size: $font-small;
   padding-left: 15px;
 
-  & .navbar-nav>li>a:hover,
-  & .navbar-nav>li>a:focus {
+  & .navbar-nav > li > a:hover,
+  & .navbar-nav > li > a:focus {
     text-decoration: none;
   }
 
-  & .navbar-nav>li>a:hover,
-  & .navbar-nav>li>a:focus,
-  & .navbar-nav>.open>a,
-  & .navbar-nav>.open>a:hover,
-  & .navbar-nav>.open>a:focus,
-  & .navbar-nav>.open .dropdown-menu,
-  & .navbar-nav>.open .dropdown-menu a,
-  & .navbar-nav>.open .dropdown-menu a:hover,
-  & .navbar-nav>.open .dropdown-menu a:focus {
+  & .navbar-nav > li > a:hover,
+  & .navbar-nav > li > a:focus,
+  & .navbar-nav > .open > a,
+  & .navbar-nav > .open > a:hover,
+  & .navbar-nav > .open > a:focus,
+  & .navbar-nav > .open .dropdown-menu,
+  & .navbar-nav > .open .dropdown-menu a,
+  & .navbar-nav > .open .dropdown-menu a:hover,
+  & .navbar-nav > .open .dropdown-menu a:focus {
     background: $ncs-dark-maroon;
     color: white;
   }
@@ -209,7 +205,7 @@ i.ask-icon {
     margin-top: 60px;
     padding: 0 15px;
 
-    .navbar-nav>li>a {
+    .navbar-nav > li > a {
       padding-top: 7px;
       padding-bottom: 7px;
     }
@@ -220,7 +216,6 @@ i.ask-icon {
   }
 }
 
-
 /*
  * Navigation Drop Downs
  * --------------------------------------------------
@@ -229,21 +224,21 @@ i.ask-icon {
 #navbar-right .dropdown-menu {
   border: none;
 
-  &>li>a {
+  & > li > a {
     color: #fff;
     font-size: 1.05em;
     margin-bottom: 5px;
     text-decoration: none;
 
     &:hover {
-      //For top right nav
-      color: #EDD4C1;
+      // For top right nav
+      color: #edd4c1;
       text-decoration: underline;
       background-color: transparent;
     }
 
     &:focus {
-      //For top right nav
+      // For top right nav
       color: #fff;
       background-color: transparent;
       outline-offset: 1px;
@@ -252,7 +247,7 @@ i.ask-icon {
   }
 }
 
-.dropdown-menu>li>a {
+.dropdown-menu > li > a {
   // ADA
   text-decoration: none;
 
@@ -279,7 +274,7 @@ i.ask-icon {
 .twocol-head {
   // Headers for mega drop downs
   color: $ncs-greystone;
-  font-size: .8em;
+  font-size: 0.8em;
   line-height: 2.4em;
   text-transform: uppercase;
 }
@@ -289,7 +284,7 @@ i.ask-icon {
 
   @include respond-to(small) {
     min-width: 500px;
-    padding: 10px 0 10px 0;
+    padding: 10px 0;
   }
 
   a {
@@ -298,11 +293,11 @@ i.ask-icon {
     text-decoration: none;
     line-height: 1.5em;
     display: inline-block;
-    margin-bottom: .8em;
+    margin-bottom: 0.8em;
 
     &:hover,
     &:focus {
-      color: #EDD4C1;
+      color: #edd4c1;
       text-decoration: underline;
     }
   }
@@ -316,14 +311,14 @@ i.ask-icon {
 
 .onecol-drop {
   background-color: $transparent;
-  padding: 0 15px 10px 15px;
+  padding: 0 15px 10px;
 
   @include respond-to(small) {
     min-width: 15em;
-    padding: 10px 15px 10px 15px;
+    padding: 10px 15px;
   }
 
-  >li {
+  > li {
     margin-bottom: 5px;
 
     a {
@@ -335,14 +330,14 @@ i.ask-icon {
 
       &:hover,
       &:focus {
-        color: #EDD4C1;
+        color: #edd4c1;
         background-color: transparent;
       }
     }
   }
 
   .twocol-head {
-    padding-left: 0px;
+    padding-left: 0;
   }
 }
 
@@ -350,7 +345,7 @@ i.ask-icon {
   padding-bottom: 1.5em;
 
   @include respond-to(small) {
-    padding-bottom: 0px;
+    padding-bottom: 0;
     border-right: 1.2px solid $darkgray;
   }
 }

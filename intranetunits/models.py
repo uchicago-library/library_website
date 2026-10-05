@@ -1,22 +1,18 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from base.models import BasePage, DefaultBodyFields, Email, PhoneNumber, Report
 from base.utils import get_doc_titles_for_indexing, get_field_for_indexing
-from group.models import (
-    get_page_objects_as_list, get_page_objects_grouped_by_date
-)
+from group.models import get_page_objects_as_list, get_page_objects_grouped_by_date
 from staff.models import StaffPage
 
 INTRANET_UNIT_PAGE_CONTENT_TYPES = [
-    'Intranetunits | intranet units page',
-    'Intranetunits | intranet units index page'
+    "Intranetunits | intranet units page",
+    "Intranetunits | intranet units index page",
 ]
 
 
@@ -24,9 +20,9 @@ class IntranetUnitsReportsPageTable(Orderable, Report):
     """
     Reports for intranet unit pages.
     """
+
     page = ParentalKey(
-        'intranetunits.IntranetUnitsReportsPage',
-        related_name='intranet_units_reports'
+        "intranetunits.IntranetUnitsReportsPage", related_name="intranet_units_reports"
     )
 
 
@@ -34,41 +30,42 @@ class IntranetUnitsReportsIndexPage(BasePage):
     """
     Index page for holding reports.
     """
+
     content_panels = Page.content_panels + BasePage.content_panels
-    subpage_types = ['intranetunits.IntranetUnitsReportsPage']
+    subpage_types = ["intranetunits.IntranetUnitsReportsPage"]
 
     def get_context(self, request):
         """
         Get reports from children.
         """
-        context = super(IntranetUnitsReportsIndexPage,
-                        self).get_context(request)
-        year_pages = self.get_children().order_by('-title')
+        context = super(IntranetUnitsReportsIndexPage, self).get_context(request)
+        year_pages = self.get_children().order_by("-title")
 
         data = []
         for page in year_pages:
             year_title = page.title
-            year_reports = page.intranetunitsreportspage.get_reports_grouped_by_date(
-            )
+            year_reports = page.intranetunitsreportspage.get_reports_grouped_by_date()
             data.append((year_title, year_reports))
 
-        context['data'] = data
+        context["data"] = data
         return context
 
 
 class IntranetUnitsReportsPage(BasePage):
-    content_panels = Page.content_panels + [
-        InlinePanel('intranet_units_reports', label='Reports'),
-    ] + BasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            InlinePanel("intranet_units_reports", label="Reports"),
+        ]
+        + BasePage.content_panels
+    )
 
     search_fields = BasePage.search_fields + [
-        index.
-        AutocompleteField('get_report_summaries_for_indexing'),
-        index.
-        AutocompleteField('get_report_doc_links_for_indexing'),
+        index.AutocompleteField("get_report_summaries_for_indexing"),
+        index.AutocompleteField("get_report_doc_links_for_indexing"),
     ]
 
-    subpage_types = ['base.IntranetPlainPage']
+    subpage_types = ["base.IntranetPlainPage"]
 
     def get_context(self, request):
         """
@@ -76,7 +73,7 @@ class IntranetUnitsReportsPage(BasePage):
         """
         context = super(IntranetUnitsReportsPage, self).get_context(request)
         reports = self.get_reports_grouped_by_date()
-        context['reports'] = reports
+        context["reports"] = reports
         return context
 
     def get_reports(self):
@@ -105,9 +102,7 @@ class IntranetUnitsReportsPage(BasePage):
             Concatonated string of all meeting minute sumaries for
             indexing purposes.
         """
-        return get_field_for_indexing(
-            'summary', self.intranet_units_reports.values()
-        )
+        return get_field_for_indexing("summary", self.intranet_units_reports.values())
 
     def get_report_doc_links_for_indexing(self):
         """
@@ -118,7 +113,7 @@ class IntranetUnitsReportsPage(BasePage):
             document links. Used for indexing purposes.
         """
         return get_doc_titles_for_indexing(
-            'link_document_id', self.intranet_units_reports.values()
+            "link_document_id", self.intranet_units_reports.values()
         )
 
 
@@ -128,11 +123,11 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     """
 
     unit_page = models.ForeignKey(
-        'units.UnitPage',
-        related_name='loop_page',
+        "units.UnitPage",
+        related_name="loop_page",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
     )
 
     intro = StreamField(
@@ -152,19 +147,21 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
     show_departments = models.BooleanField(default=False)
 
     subpage_types = [
-        'base.IntranetIndexPage', 'base.IntranetPlainPage',
-        'intranetforms.IntranetFormPage', 'intranettocs.TOCPage',
-        'intranetunits.IntranetUnitsPage',
-        'intranetunits.IntranetUnitsReportsIndexPage'
+        "base.IntranetIndexPage",
+        "base.IntranetPlainPage",
+        "intranetforms.IntranetFormPage",
+        "intranettocs.TOCPage",
+        "intranetunits.IntranetUnitsPage",
+        "intranetunits.IntranetUnitsReportsIndexPage",
     ]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
-        index.SearchField('internal_location'),
-        index.SearchField('internal_phone_number'),
-        index.SearchField('internal_email'),
-        index.SearchField('staff_only_email'),
-        index.SearchField('body'),
+        index.SearchField("intro"),
+        index.SearchField("internal_location"),
+        index.SearchField("internal_phone_number"),
+        index.SearchField("internal_email"),
+        index.SearchField("staff_only_email"),
+        index.SearchField("body"),
     ]
 
     def _get_full_name_list(self):
@@ -174,9 +171,10 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         that can be processed by those two functions.
         """
         return list(
-            self.get_ancestors(True).live().type(IntranetUnitsPage).values_list(
-                'title', flat=True
-            )
+            self.get_ancestors(True)
+            .live()
+            .type(IntranetUnitsPage)
+            .values_list("title", flat=True)
         )
 
     def get_full_name(self):
@@ -193,7 +191,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
         Compare this method's output with get_campus_directory_full_name().
         """
-        return ' - '.join(self._get_full_name_list())
+        return " - ".join(self._get_full_name_list())
 
     def get_campus_directory_full_name(self):
         """
@@ -216,7 +214,7 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
 
         # Remove "container units". These are top-level units in the library's
         # system that aren't present in the campus directory.
-        skip_containing_units = ['Collections & Access', 'Research & Learning']
+        skip_containing_units = ["Collections & Access", "Research & Learning"]
         for v in skip_containing_units:
             try:
                 titles.remove(v)
@@ -227,120 +225,124 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
         # directory only includes two.
         titles = titles[:2]
 
-        return ' - '.join(titles)
+        return " - ".join(titles)
 
     def get_context(self, request):
         context = super(IntranetUnitsPage, self).get_context(request)
 
-        context['phone'] = ''
+        context["phone"] = ""
         if self.specific.internal_phone_number:
-            context['phone'] = self.specific.internal_phone_number
+            context["phone"] = self.specific.internal_phone_number
 
-        context['location'] = ''
+        context["location"] = ""
         if self.specific.internal_location:
-            context['location'] = self.specific.internal_location
+            context["location"] = self.specific.internal_location
 
-        context['email'] = ''
+        context["email"] = ""
         if self.specific.internal_email:
-            context['email'] = self.specific.internal_email
+            context["email"] = self.specific.internal_email
 
-        context['show_staff'] = self.show_staff
+        context["show_staff"] = self.show_staff
 
-        context['show_departments'] = self.show_departments
+        context["show_departments"] = self.show_departments
 
         department_members = []
         if self.specific.unit_page:
             unit_pages = self.specific.unit_page.get_descendants(True)
-            staff_pages = StaffPage.objects.live().filter(
-                staff_page_units__library_unit__in=unit_pages
-            ).distinct()
+            staff_pages = (
+                StaffPage.objects.live()
+                .filter(staff_page_units__library_unit__in=unit_pages)
+                .distinct()
+            )
 
             # sorting: supervisors first, alphabetically; then non-supervisors, alphabetically.
             supervisor = self.specific.unit_page.department_head
             if supervisor:
                 staff_pages = [supervisor] + list(
-                    staff_pages.exclude(pk=supervisor.pk).order_by('last_name')
+                    staff_pages.exclude(pk=supervisor.pk).order_by("last_name")
                 )
             else:
-                staff_pages = list(staff_pages.order_by('last_name'))
+                staff_pages = list(staff_pages.order_by("last_name"))
 
             for staff_page in staff_pages:
                 try:
                     email = staff_page.staff_page_email.first().email
                 except AttributeError:
                     email = None
-                phone_numbers = staff_page.staff_page_phone_faculty_exchange.all(
-                ).values_list('phone_number', flat=True)
+                phone_numbers = (
+                    staff_page.staff_page_phone_faculty_exchange.all().values_list(
+                        "phone_number", flat=True
+                    )
+                )
                 titles = []
                 if staff_page.position_title:
                     titles = [staff_page.position_title]
 
                 department_members.append(
                     {
-                        'title': staff_page.title,
-                        'url': staff_page.url,
-                        'jobtitle': "<br/>".join(titles),
-                        'email': email,
-                        'phone': "<br/>".join(phone_numbers),
+                        "title": staff_page.title,
+                        "url": staff_page.url,
+                        "jobtitle": "<br/>".join(titles),
+                        "email": email,
+                        "phone": "<br/>".join(phone_numbers),
                     }
                 )
 
-        context['department_members'] = department_members
+        context["department_members"] = department_members
 
         department_units = []
         try:
             for unit_page in self.unit_page.get_descendants():
-                intranet_unit_page = unit_page.specific.loop_page.live().filter(
-                    show_in_menus=True
-                ).first()
+                intranet_unit_page = (
+                    unit_page.specific.loop_page.live()
+                    .filter(show_in_menus=True)
+                    .first()
+                )
                 if intranet_unit_page:
                     unit = {
-                        'title': intranet_unit_page.title,
-                        'url': intranet_unit_page.url,
-                        'location': intranet_unit_page.internal_location,
-                        'phone_number':
-                        intranet_unit_page.internal_phone_number,
-                        'email': intranet_unit_page.internal_email
+                        "title": intranet_unit_page.title,
+                        "url": intranet_unit_page.url,
+                        "location": intranet_unit_page.internal_location,
+                        "phone_number": intranet_unit_page.internal_phone_number,
+                        "email": intranet_unit_page.internal_email,
                     }
 
                     supervisors = []
                     if unit_page.specific.department_head:
                         try:
-                            email = unit_page.specific.department_head.staff_page_email.first(
-                            ).email
+                            email = (
+                                unit_page.specific.department_head.staff_page_email.first().email
+                            )
                         except AttributeError:
-                            email = ''
+                            email = ""
                         try:
-                            phone_number = unit_page.specific.department_head.staff_page_phone_faculty_exchange.first(
-                            ).phone_number
+                            phone_number = (
+                                unit_page.specific.department_head.staff_page_phone_faculty_exchange.first().phone_number
+                            )
                         except AttributeError:
-                            phone_number = ''
+                            phone_number = ""
 
                         supervisors.append(
                             {
-                                'title':
-                                unit_page.specific.department_head.title,
-                                'url': unit_page.specific.department_head.url,
-                                'phone_number': phone_number,
-                                'email': email
+                                "title": unit_page.specific.department_head.title,
+                                "url": unit_page.specific.department_head.url,
+                                "phone_number": phone_number,
+                                "email": email,
                             }
                         )
-                    unit['supervisors'] = supervisors
+                    unit["supervisors"] = supervisors
                     department_units.append(unit)
-        except (AttributeError):
+        except AttributeError:
             pass
 
         # split the department units into lists of lists, each inner list containing 4 or less items.
-        context['department_unit_rows'] = [
-            department_units[i:i + 4]
-            for i in range(0, len(department_units), 4)
+        context["department_unit_rows"] = [
+            department_units[i : i + 4] for i in range(0, len(department_units), 4)
         ]
 
         # reports
         tmp = []
-        unit_reports_pages = IntranetUnitsReportsPage.objects.descendant_of(
-            self
-        )
+        unit_reports_pages = IntranetUnitsReportsPage.objects.descendant_of(self)
         for unit_reports_page in unit_reports_pages:
             for r in unit_reports_page.intranet_units_reports.all():
                 try:
@@ -349,57 +351,62 @@ class IntranetUnitsPage(BasePage, Email, PhoneNumber):
                 except AttributeError:
                     continue
                 report = {
-                    'summary': r.summary,
-                    'date': r.date.strftime("%b. %-d, %Y"),
-                    'sortdate': r.date.strftime("%Y%m%d")
+                    "summary": r.summary,
+                    "date": r.date.strftime("%b. %-d, %Y"),
+                    "sortdate": r.date.strftime("%Y%m%d"),
                 }
                 if r.link:
-                    report['url'] = r.link
+                    report["url"] = r.link
                 elif r.document.url:
-                    report['url'] = r.document.url
+                    report["url"] = r.document.url
                 tmp.append(report)
-        reports = sorted(tmp, key=lambda r: r['sortdate'], reverse=True)[:3]
+        reports = sorted(tmp, key=lambda r: r["sortdate"], reverse=True)[:3]
 
-        context['reports'] = reports
+        context["reports"] = reports
 
         return context
 
 
-IntranetUnitsPage.content_panels = Page.content_panels + [
-    FieldPanel('intro'),
-    FieldPanel('unit_page'),
-    MultiFieldPanel(
-        [
-            FieldPanel('internal_location'),
-            FieldPanel('internal_phone_number'),
-            FieldPanel('internal_email'),
-        ],
-        heading="Staff-only Contact Information",
-    ),
-    FieldPanel('body')
-] + BasePage.content_panels + [
-    MultiFieldPanel(
-        [
-            FieldPanel('show_staff'),
-            FieldPanel('show_departments'),
-        ],
-        heading="Show staff or subdepartments on this page"
-    )
-]
+IntranetUnitsPage.content_panels = (
+    Page.content_panels
+    + [
+        FieldPanel("intro"),
+        FieldPanel("unit_page"),
+        MultiFieldPanel(
+            [
+                FieldPanel("internal_location"),
+                FieldPanel("internal_phone_number"),
+                FieldPanel("internal_email"),
+            ],
+            heading="Staff-only Contact Information",
+        ),
+        FieldPanel("body"),
+    ]
+    + BasePage.content_panels
+    + [
+        MultiFieldPanel(
+            [
+                FieldPanel("show_staff"),
+                FieldPanel("show_departments"),
+            ],
+            heading="Show staff or subdepartments on this page",
+        )
+    ]
+)
 
 
 class IntranetUnitsIndexPage(BasePage):
     max_count = 1
     intro = RichTextField()
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro')
-    ] + BasePage.content_panels
+    content_panels = (
+        Page.content_panels + [FieldPanel("intro")] + BasePage.content_panels
+    )
 
-    subpage_types = ['intranetunits.IntranetUnitsPage']
+    subpage_types = ["intranetunits.IntranetUnitsPage"]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
+        index.SearchField("intro"),
     ]
 
     def get_context(self, request):
@@ -407,9 +414,9 @@ class IntranetUnitsIndexPage(BasePage):
 
         units = [
             {
-                'title': IntranetUnitsIndexPage.objects.first().title,
-                'url': IntranetUnitsIndexPage.objects.first().url,
-                'children': [],
+                "title": IntranetUnitsIndexPage.objects.first().title,
+                "url": IntranetUnitsIndexPage.objects.first().url,
+                "children": [],
             }
         ]
 
@@ -420,52 +427,59 @@ class IntranetUnitsIndexPage(BasePage):
         # adding new levels or using the existing ones if they're already there
         # from previous unit pages.
         for intranetunitspage in IntranetUnitsPage.objects.live():
-            ancestors = [IntranetUnitsIndexPage.objects.first()] + list(
-                IntranetUnitsPage.objects.ancestor_of(intranetunitspage)
-            ) + [intranetunitspage]
+            ancestors = (
+                [IntranetUnitsIndexPage.objects.first()]
+                + list(IntranetUnitsPage.objects.ancestor_of(intranetunitspage))
+                + [intranetunitspage]
+            )
             currentlevel = units
             while ancestors:
                 ancestor = ancestors.pop(0)
-                if str(
-                    ancestor.content_type
-                ) in INTRANET_UNIT_PAGE_CONTENT_TYPES:
+                if str(ancestor.content_type) in INTRANET_UNIT_PAGE_CONTENT_TYPES:
                     nextlevels = list(
-                        filter(
-                            lambda g: g['url'] == ancestor.url, currentlevel
-                        )
+                        filter(lambda g: g["url"] == ancestor.url, currentlevel)
                     )
                     if nextlevels:
-                        currentlevel = nextlevels[0]['children']
+                        currentlevel = nextlevels[0]["children"]
                     else:
                         newnode = {
-                            'title': ancestor.title,
-                            'url': ancestor.url,
-                            'children': [],
+                            "title": ancestor.title,
+                            "url": ancestor.url,
+                            "children": [],
                         }
                         currentlevel.append(newnode)
-                        currentlevel = newnode['children']
+                        currentlevel = newnode["children"]
 
         def alphabetize_units(currentlevel):
             for node in currentlevel:
-                node['children'] = alphabetize_units(node['children'])
-            return sorted(currentlevel, key=lambda c: c['title'])
+                node["children"] = alphabetize_units(node["children"])
+            return sorted(currentlevel, key=lambda c: c["title"])
 
         units = alphabetize_units(units)
 
         def get_html(currentlevel):
             if not currentlevel:
-                return ''
+                return ""
             else:
-                return "<ul>" + "".join(
-                    list(
-                        map(
-                            lambda n: "<li><a href='" + n['url'] + "'>" + n[
-                                'title'] + "</a>" + get_html(n['children']) +
-                            "</li>", currentlevel
+                return (
+                    "<ul>"
+                    + "".join(
+                        list(
+                            map(
+                                lambda n: "<li><a href='"
+                                + n["url"]
+                                + "'>"
+                                + n["title"]
+                                + "</a>"
+                                + get_html(n["children"])
+                                + "</li>",
+                                currentlevel,
+                            )
                         )
                     )
-                ) + "</ul>"
+                    + "</ul>"
+                )
 
-        units_html = get_html(units[0]['children'])
-        context['units_html'] = units_html
+        units_html = get_html(units[0]["children"])
+        context["units_html"] = units_html
         return context

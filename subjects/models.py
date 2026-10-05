@@ -13,23 +13,22 @@ class SubjectParentRelations(Orderable, models.Model):
     Through table for capturing subjects with multiple
     parent subjects.
     """
+
     child = ParentalKey(
-        'subjects.Subject',
-        on_delete=models.CASCADE,
-        related_name='parent_subject'
+        "subjects.Subject", on_delete=models.CASCADE, related_name="parent_subject"
     )  # Yeah, this is weird but it works
     parent = models.ForeignKey(
-        'subjects.Subject', on_delete=models.CASCADE, related_name='+'
+        "subjects.Subject", on_delete=models.CASCADE, related_name="+"
     )
 
     panels = [
-        FieldPanel('parent'),
+        FieldPanel("parent"),
     ]
 
 
 class SubjectSeeAlsoTable(Orderable, models.Model):
     alias = models.CharField(max_length=255)
-    snippet = ParentalKey('subjects.Subject', related_name='see_also')
+    snippet = ParentalKey("subjects.Subject", related_name="see_also")
 
 
 @register_snippet
@@ -37,6 +36,7 @@ class Subject(ClusterableModel, index.Indexed):
     """
     Snippet for subjects.
     """
+
     name = models.CharField(max_length=255, blank=False)
 
     libguide_url = models.URLField(max_length=255, null=True, blank=True)
@@ -44,32 +44,32 @@ class Subject(ClusterableModel, index.Indexed):
     display_in_dropdown = models.BooleanField(default=False)
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('libguide_url'),
-        InlinePanel('parent_subject', label="Parent"),
-        InlinePanel('see_also', label="Aliases"),
-        FieldPanel('display_in_dropdown')
+        FieldPanel("name"),
+        FieldPanel("libguide_url"),
+        InlinePanel("parent_subject", label="Parent"),
+        InlinePanel("see_also", label="Aliases"),
+        FieldPanel("display_in_dropdown"),
     ]
 
     def get_descendants(self, include_self=True):
         subject_ids_to_check = [self.id]
         checked_subjects = []
 
-        relations_cache = caches['default']
+        relations_cache = caches["default"]
 
         while subject_ids_to_check:
             s = subject_ids_to_check.pop()
             checked_subjects.append(s)
 
-            key = 'parent_' + str(s)
+            key = "parent_" + str(s)
 
             ids_to_add = relations_cache.get(key)
 
             if not ids_to_add:
                 ids_to_add = list(
-                    SubjectParentRelations.objects.filter(
-                        parent__id=s
-                    ).values_list("child", flat=True)
+                    SubjectParentRelations.objects.filter(parent__id=s).values_list(
+                        "child", flat=True
+                    )
                 )
                 relations_cache.set(key, ids_to_add, 60 * 5)
 
@@ -91,9 +91,8 @@ class Subject(ClusterableModel, index.Indexed):
             string, relative url
         """
         current_site = Site.find_for_request(request)
-        collecting_area_page = self.lib_collections_collectingareapage_related.first(
-        )
-        url = ''
+        collecting_area_page = self.lib_collections_collectingareapage_related.first()
+        url = ""
         if collecting_area_page and collecting_area_page.live:
             url = collecting_area_page.relative_url(current_site)
         return url
@@ -109,8 +108,8 @@ class Subject(ClusterableModel, index.Indexed):
         return self.name
 
     search_fields = [
-        index.AutocompleteField('name'),
+        index.AutocompleteField("name"),
     ]
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]

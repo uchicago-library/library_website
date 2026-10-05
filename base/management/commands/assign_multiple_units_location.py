@@ -1,16 +1,19 @@
 import sys
-from django.core.management.base import BaseCommand, CommandError
+
 from django.core import management
+from django.core.management.base import BaseCommand
 from django.db.models.base import ObjectDoesNotExist
-from units.models import UnitPage
+
 from public.models import LocationPage
+from units.models import UnitPage
+
 
 class Command(BaseCommand):
     """
-    Assigns a LocationPage to multiple UnitPages by matching 
-    against a title string. Only a partial string match is 
+    Assigns a LocationPage to multiple UnitPages by matching
+    against a title string. Only a partial string match is
     required. If a UnitPage title contains part of the string
-    a locaation is assigned. Only applies to UnitPages that 
+    a locaation is assigned. Only applies to UnitPages that
     don't have a location set.
 
     Args:
@@ -22,7 +25,8 @@ class Command(BaseCommand):
     Returns:
         None but updates multiple UnitPages.
     """
-    help = 'Assigns a LocationPage to multiple UnitPages by matching against part of a title.'
+
+    help = "Assigns a LocationPage to multiple UnitPages by matching against part of a title."
 
     def add_arguments(self, parser):
         """
@@ -30,8 +34,8 @@ class Command(BaseCommand):
         named arguments.
         """
         # Required positional options
-        parser.add_argument('title_fragment', nargs='+', type=str)
-        parser.add_argument('location', nargs='+', type=int)
+        parser.add_argument("title_fragment", nargs="+", type=str)
+        parser.add_argument("location", nargs="+", type=int)
 
     def handle(self, *args, **options):
         """
@@ -40,20 +44,25 @@ class Command(BaseCommand):
         stdout. More: https://docs.djangoproject.com/en/1.8/howto/custom
         -management-commands/#django.core.management.BaseCommand.handle
         """
-        kwargs = { 'title_fragment': options['title_fragment'][0],
-                   'location': options['location'][0] }
+        kwargs = {
+            "title_fragment": options["title_fragment"][0],
+            "location": options["location"][0],
+        }
 
         try:
             units = UnitPage.objects.all().filter(location=None)
-            matched_units = units.filter(title__contains=kwargs['title_fragment'])
+            matched_units = units.filter(title__contains=kwargs["title_fragment"])
             count = str(matched_units.count())
 
-            location_name = LocationPage.objects.get(id=kwargs['location']).title
+            location_name = LocationPage.objects.get(id=kwargs["location"]).title
 
             for unit in matched_units:
-                management.call_command('assign_unit_location', str(unit.id), str(kwargs['location']))
-            self.stdout.write(count + ' UnitPages were assigned a location of ' + location_name)
+                management.call_command(
+                    "assign_unit_location", str(unit.id), str(kwargs["location"])
+                )
+            self.stdout.write(
+                count + " UnitPages were assigned a location of " + location_name
+            )
         except ObjectDoesNotExist:
-            self.stdout.write('Something went wrong')
+            self.stdout.write("Something went wrong")
             sys.exit(1)
-

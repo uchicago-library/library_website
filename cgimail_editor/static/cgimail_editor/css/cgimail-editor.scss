@@ -1,0 +1,508 @@
+// CGIMail Editor (Rebecca) Styles
+
+.cgimail-editor-page {
+  padding: 20px 0;
+
+  .intro {
+    margin-bottom: 30px;
+  }
+}
+
+.cgimail-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 20px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor-main {
+  @media (min-width: 993px) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .mode-toggle {
+    margin-bottom: 20px;
+
+    .btn-group {
+      display: flex;
+
+      .btn {
+        flex: 1;
+
+        &.btn-primary {
+          background-color: #800000;
+          border-color: #800000;
+          color: #fff;
+
+          &:hover {
+            background-color: #600000;
+          }
+        }
+
+        &.btn-default {
+          background-color: #fff;
+          border-color: #ccc;
+          color: #333;
+
+          &:hover {
+            background-color: #f5f5f5;
+          }
+        }
+      }
+    }
+  }
+
+  .editor-form {
+    .form-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+
+        abbr {
+          color: #800000;
+          text-decoration: none;
+        }
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+
+        &:focus {
+          border-color: #800000;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.1);
+        }
+      }
+
+      textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      textarea.code-textarea {
+        font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+        font-size: 13px;
+      }
+
+      .form-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #666;
+      }
+    }
+
+    .editor-actions {
+      margin: 25px 0;
+      display: flex;
+      gap: 10px;
+
+      .btn {
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.btn-primary {
+          background-color: #800000;
+          border: 1px solid #800000;
+          color: #fff;
+
+          &:hover:not(:disabled) {
+            background-color: #600000;
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        &.btn-default {
+          background-color: #fff;
+          border: 1px solid #ccc;
+          color: #333;
+
+          &:hover {
+            background-color: #f5f5f5;
+          }
+        }
+      }
+    }
+  }
+
+  .alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+
+    &.alert-danger {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    &.alert-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+    }
+
+    .validation-errors {
+      margin-top: 10px;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 5px;
+      }
+    }
+  }
+}
+
+// Surrogate Select (react-select)
+.surrogate-select {
+  .react-select__control {
+    border-color: #ccc;
+    min-height: 38px;
+
+    &:hover {
+      border-color: #999;
+    }
+
+    &--is-focused {
+      border-color: #800000;
+      box-shadow: 0 0 0 1px #800000;
+    }
+  }
+
+  .react-select__menu {
+    z-index: 1000;
+  }
+
+  .react-select__option {
+    &--is-focused {
+      background-color: rgba(128, 0, 0, 0.1);
+    }
+
+    &--is-selected {
+      background-color: #800000;
+    }
+  }
+}
+
+// Output and preview columns
+.output-column {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 400px;
+
+  @media (min-width: 993px) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+.preview-column {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 400px;
+
+  @media (min-width: 993px) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+// Loading placeholders
+.loading-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  .preload {
+    text-align: center;
+    padding: 60px 20px;
+    width: 100%;
+
+    i {
+      color: #999;
+      margin: 0 auto;
+      display: block;
+    }
+
+    span {
+      color: #666;
+      margin: 15px auto 0;
+      padding: 0;
+      display: block;
+      font-size: 14px;
+    }
+  }
+}
+
+// Output Display (Row 1, Column 2)
+.output-display {
+  padding: 20px;
+  background: #fff;
+  height: 100%;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .output-actions {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+
+    .btn {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-sm {
+      &.btn-primary {
+        background-color: #800000;
+        border-color: #800000;
+        color: #fff;
+
+        &:hover {
+          background-color: #600000;
+        }
+      }
+
+      &.btn-default {
+        background-color: #fff;
+        border-color: #ccc;
+        color: #333;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+      }
+    }
+  }
+
+  pre {
+    max-height: 400px;
+    overflow: auto;
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+
+    code {
+      font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+    }
+  }
+}
+
+// Preview Panel (Row 2, Column 1)
+.preview-panel {
+  padding: 20px;
+  background: #fff;
+  height: 100%;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .preview-container {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+
+  .preview-form {
+    .preview-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+
+      legend {
+        font-weight: 600;
+        font-size: 16px;
+        padding: 0 10px;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+
+      .col {
+        flex: 1;
+      }
+    }
+
+    button[type='submit'] {
+      padding: 10px 20px;
+      background-color: #e0e0e0;
+      border: 1px solid #bbb;
+      color: #666;
+      cursor: not-allowed;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .required-intro {
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #666;
+
+      abbr {
+        color: #800000;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .text-muted {
+    color: #666;
+    font-size: 13px;
+    margin-top: 15px;
+  }
+}
+
+// Sidebar (Row 2, Column 2)
+.editor-sidebar {
+  @media (min-width: 993px) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .field-reference {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+
+    h2 {
+      margin-top: 0;
+    }
+
+    h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #333;
+      border-bottom: 2px solid #800000;
+      padding-bottom: 10px;
+    }
+
+    h5 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 8px;
+        padding: 8px 10px;
+        background: #f8f8f8;
+        border-radius: 3px;
+        font-size: 13px;
+
+        strong {
+          color: #800000;
+          font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+        }
+
+        code {
+          background: #e8e8e8;
+          padding: 2px 5px;
+          border-radius: 3px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+// Prism.js JSON syntax highlighting
+.language-json {
+  .token {
+    &.property {
+      color: #905;
+    }
+
+    &.string {
+      color: #690;
+    }
+
+    &.number {
+      color: #905;
+    }
+
+    &.boolean {
+      color: #07a;
+    }
+
+    &.null {
+      color: #07a;
+    }
+
+    &.punctuation {
+      color: #999;
+    }
+  }
+}
+
+// Text utilities
+.text-warning {
+  color: #856404;
+}
+
+.text-muted {
+  color: #666;
+}

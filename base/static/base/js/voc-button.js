@@ -10,32 +10,34 @@
  * - The feedback button will be appended to the body if it exists
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-    const currentPageUrl = encodeURIComponent(window.location.href);
-    let feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl;
+document.addEventListener('DOMContentLoaded', function () {
+  const currentPageUrl = encodeURIComponent(window.location.href);
+  const feedbackLinkUrl = 'https://chicagobooth.az1.qualtrics.com/jfe/form/SV_0Ul7ULLhiDnN90W?context_url=' + currentPageUrl;
 
-    // Check if the "Don't show this" button has been clicked before
-    const dontShowClicked = localStorage.getItem('dontShowFeedbackFlag') !== null;
+  // Check if the "Don't show this" button has been clicked before
+  const dontShowClicked = localStorage.getItem('dontShowFeedbackFlag') !== null;
 
-    if (!dontShowClicked) {
-        // Create the feedback flag element
-        const feedbackFlagWrapper = document.createElement('div');
-        feedbackFlagWrapper.className = 'feedback-flag-wrapper';
-        feedbackFlagWrapper.innerHTML = `
+  if (!dontShowClicked) {
+    // Create the feedback flag element
+    const feedbackFlagWrapper = document.createElement('div');
+    feedbackFlagWrapper.className = 'feedback-flag-wrapper';
+    feedbackFlagWrapper.setAttribute('data-ga-category', 'Floating');
+    feedbackFlagWrapper.setAttribute('data-ga-subcategory', 'Feedback Button');
+    feedbackFlagWrapper.innerHTML = `
             <div class="feedback-flag">
                 <i class="fa fa-comment" aria-hidden="true"></i> feedback
             </div>
             <div class="feedback-flag-content"> <!-- Renamed here -->
                 <p>Take a 3 minute survey to help us improve our website!</p>
                 <div class="button-row">
-                    <button class="btn dont-show">Don't show this</button>
-                    <a id="take-survey-button" href="`+feedbackLinkUrl + `&button=flag" target="_blank" class="tbn take-survey">Take Survey</a>
+                    <button class="btn dont-show" data-ga-label="Don't show this">Don't show this</button>
+                    <a id="take-survey-button" href="`+ feedbackLinkUrl + `&button=flag" target="_blank" class="tbn take-survey" data-ga-label="Give feedback">Give feedback</a>
                 </div>
             </div>
         `;
 
-        // Define the CSS styles for the feedback flag
-        const css = `
+    // Define the CSS styles for the feedback flag
+    const css = `
             .feedback-flag-wrapper {
                 position: fixed;
                 z-index: 9999999999999;
@@ -138,38 +140,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         `;
 
-        const styleElement = document.createElement('style');
-        styleElement.textContent = css;
-        document.head.appendChild(styleElement);
+    const styleElement = document.createElement('style');
+    styleElement.textContent = css;
+    document.head.appendChild(styleElement);
 
-        // Append the feedback flag to the body of the document
-        document.body.appendChild(feedbackFlagWrapper);
+    // Append the feedback flag to the body of the document
+    document.body.appendChild(feedbackFlagWrapper);
 
-        // Add event listener for the click toggle
-        feedbackFlagWrapper.addEventListener('click', function() {
-            feedbackFlagWrapper.classList.toggle('expanded');
-        });
+    // Add event listener for the click toggle
+    feedbackFlagWrapper.addEventListener('click', function () {
+      feedbackFlagWrapper.classList.toggle('expanded');
+    });
 
-        // Add event listener for the "Don't show this" button
-        feedbackFlagWrapper.querySelector('.dont-show').addEventListener('click', function() {
-            localStorage.setItem('dontShowFeedbackFlag', Date.now()); // Store current timestamp
-            feedbackFlagWrapper.style.display = 'none';
-        });
-    }
+    // Add event listener for the "Don't show this" button
+    feedbackFlagWrapper.querySelector('.dont-show').addEventListener('click', function () {
+      localStorage.setItem('dontShowFeedbackFlag', Date.now()); // Store current timestamp
+      feedbackFlagWrapper.style.display = 'none';
+    });
+  }
 
-    // Add feedback link to the footer
-    const footerList = document.querySelector('ul[aria-labelledby="contact_label"]');
-    if (footerList) {
-        // Create a list item and link for the feedback
-        const feedbackListItem = document.createElement('li');
-        const feedbackLink = document.createElement('a');
-        feedbackLink.href = feedbackLinkUrl + '&button=footer';
-        feedbackLink.textContent = 'Feedback';
-        feedbackLink.setAttribute('data-ga-category', 'footer-links');
-        feedbackLink.setAttribute('data-ga-action', 'click');
-        feedbackLink.setAttribute('data-ga-label', 'Contact > Feedback');
-        feedbackListItem.appendChild(feedbackLink);
-        // Append the feedback link to the footer list
-        footerList.appendChild(feedbackListItem);
-    }
+  // Add feedback link to the footer
+  const footerList = document.querySelector('ul[aria-labelledby="contact_label"]');
+  if (footerList) {
+    // Create a list item and link for the feedback
+    const feedbackListItem = document.createElement('li');
+    const feedbackLink = document.createElement('a');
+    feedbackLink.href = feedbackLinkUrl + '&button=footer';
+    feedbackLink.textContent = 'Feedback';
+    feedbackLink.setAttribute('data-ga-category', 'footer-links');
+    feedbackLink.setAttribute('data-ga-action', 'click');
+    feedbackLink.setAttribute('data-ga-label', 'Contact > Feedback');
+    feedbackListItem.appendChild(feedbackLink);
+    // Append the feedback link to the footer list
+    footerList.appendChild(feedbackListItem);
+  }
 });

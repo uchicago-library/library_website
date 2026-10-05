@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build outputs / collected static files (root directory only)
+/static/
+
+# Minified/vendor CSS
+**/*.min.css
+**/vendor/**/*.css
+**/vendor/**/*.scss
+
+# Bootstrap vendor files
+base/static/base/css/bootstrap.css
+base/static/base/css/bootstrap.min.css
+
+# Font Awesome vendor files
+base/static/base/css/font-awesome-4.6.3/
+
+# Third-party CSS files
+base/static/base/css/normalize.css
+base/static/base/css/calendar/
+base/static/base/css/iconfont/
+base/static/base/css/third-party/
+
+# Git
+.git/

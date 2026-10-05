@@ -1,11 +1,11 @@
 <div class="row-fluid "> <!-- Main Row -->
-  <div class="col-xs-12 col-sm-12 col-md-8">
-    <h1>{{self.title}}</h1>
-      {% for year, table in data %}
-          {% if table %}
-              <h2>{{year}}</h2>
-              {% include "base/minutes_and_reports_outer_table.html" %}
-          {% endif %}
-      {% endfor %}
-  </div>
+    <div class="col-xs-12 col-sm-12 col-md-8">
+        <h1>{{self.title}}</h1>
+        {% for year, table in data %}
+            {% if table %}
+                <h2>{{year}}</h2>
+                {% include "base/minutes_and_reports_outer_table.html" %}
+            {% endif %}
+        {% endfor %}
+    </div>
 </div> <!-- // Main row -->

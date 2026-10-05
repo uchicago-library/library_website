@@ -2,7 +2,7 @@
 {% image value.image width-400 as thumbnail %}
 <div class="thumbnail-mod col-xs-12 col-sm-4">
     <a href="{% firstof value.link_page.url value.link_external value.link_document.url %}">
-        {% if value.image %} 
+        {% if value.image %}
             <img alt="{{value.alt_text}}" src="{{thumbnail.url}}" class="img-responsive"/>
         {% elif value.icon %}
             <i class="fa {{value.icon}} fa-5x" aria-hidden="true"></i>

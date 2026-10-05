@@ -11,7 +11,7 @@ def ltdrfr(request):
     """
     Let the Django Rest Framework Rest.
     """
-    response = StreamingHttpResponse(content=open(STATIC_NEWS_FEED, 'rb'))
+    response = StreamingHttpResponse(content=open(STATIC_NEWS_FEED, "rb"))
     return response
 
 
@@ -76,7 +76,7 @@ class RSSFeeds(Feed):
 
             return partial_application
 
-        stories = LibNewsPage.objects.live().order_by('-published_at')
+        stories = LibNewsPage.objects.live().order_by("-published_at")
 
         if obj:
             c = obj.text

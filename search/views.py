@@ -1,14 +1,15 @@
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.shortcuts import redirect, render
+from wagtail.contrib.search_promotions.models import Query, SearchPromotion
+from wagtail.models import Page, Site
+
 from base.wagtail_hooks import (
     get_required_groups,
     has_permission,
     redirect_users_without_permissions,
 )
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import redirect, render
 from library_website.settings import EBOOKS_SEARCH
 from units.models import UnitIndexPage
-from wagtail.contrib.search_promotions.models import Query, SearchPromotion
-from wagtail.models import Page, Site
 
 
 def ebooks_search(request):
@@ -16,10 +17,10 @@ def ebooks_search(request):
     View for processing a form submission and forwarding
     a request to an ebooks search in the catalog.
     """
-    if request.method == 'GET':
-        query = request.GET.get('q')
+    if request.method == "GET":
+        query = request.GET.get("q")
         if not query:
-            query = '*'
+            query = "*"
         return redirect(EBOOKS_SEARCH + query)
 
 
@@ -27,12 +28,12 @@ def loop_search(request):
     """
     Loop search results.
     """
-    loop_homepage = Site.objects.get(site_name='Loop').root_page
+    loop_homepage = Site.objects.get(site_name="Loop").root_page
     if not has_permission(request.user, get_required_groups(loop_homepage)):
         return redirect_users_without_permissions(loop_homepage, request, None, None)
 
-    search_query = request.GET.get('query', None)
-    page = request.GET.get('page', 1)
+    search_query = request.GET.get("query", None)
+    page = request.GET.get("page", 1)
 
     # Search
     search_results_count = 0
@@ -68,11 +69,11 @@ def loop_search(request):
 
     return render(
         request,
-        'search/loop_search.html',
+        "search/loop_search.html",
         {
-            'search_query': search_query,
-            'search_results': search_results,
-            'search_results_count': search_results_count,
-            'search_picks': search_picks,
+            "search_query": search_query,
+            "search_results": search_results,
+            "search_results_count": search_results_count,
+            "search_picks": search_picks,
         },
     )

@@ -7,13 +7,13 @@
 {% block content %}
   <div class="row-fluid">
     <div class="col-xs-12">
-		<h1>{{ self.title }}</h1>
+      <h1>{{ self.title }}</h1>
 
-		{{ self.intro|richtext }}
+      {{ self.intro|richtext }}
 
-        <div class="col-xs-12 deptlist"> 
+      <div class="col-xs-12 deptlist">
         {{ units_html|richtext }}
-        </div>
+      </div>
     </div>
   </div>
 {% endblock %}

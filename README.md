@@ -4,19 +4,62 @@
 - [Developer workflows](https://github.com/uchicago-library/uchicago-library.github.io/blob/master/docs/README.md#developer) (for pull requests and creating branches)
 - [ADA Documentation and code](https://github.com/uchicago-library/uchicago-library.github.io/blob/master/docs/code-resources.md#documentation)
 
-## Running an Instance of the Site
-*If you haven't run Vagrant yet, see the 'Setting up for Development' section below.*
-1. Start the dev environment from the root of the project directory: `vagrant up`
-2. ssh to the guest machine: `vagrant ssh`
-3. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
-4. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+## Development Setup
 
-### Build the site withouth Elasticsearch or NodeJS
-Since the majority of development tasks don't require Elasticsearch or NodeJS it is often faster and more desireable to build the site without these things. This can be accomplished by running `vagrant up` with the `ELASTICSEARCH` or `NODEJS` environment variables set to `false`:
+### Docker (Recommended)
+*Docker is the preferred development environment - it's faster to set up and more consistent across different systems.*
+
+#### Initial Setup:
+1. **Install Docker**: [Get Docker](https://docs.docker.com/get-docker/) for your platform
+2. **Clone the repo**: `git clone <repo-url>` or fetch the newest code
+3. **Set Up Secrets**: `cd /path/to/library_website && make create-repo install` (see [Setting Up Secrets Repo](#setting-up-secrets-repository) section below)
+4. **Run setup**: `./docker-setup.sh` (this will take a while on first run)
+
+#### Daily Development:
+- **Install Secrets**: `make secrets`
+- **Start development server**: `docker compose exec web ./manage.py runserver 0.0.0.0:8000`
+- **Access shell**: `docker compose exec web bash`
+- **View help**: `./docker-setup.sh --help`
+
+#### Docker Commands:
+- **Start services**: `docker compose up -d`
+- **Stop services**: `docker compose down`
+- **Complete cleanup**: `./docker-cleanup.sh`
+- **View logs**: `docker compose logs -f web`
+
+#### Build without Elasticsearch or NodeJS:
+Since most development tasks don't require Elasticsearch or NodeJS, you can build faster by skipping them:
+```bash
+ELASTICSEARCH=false NODEJS=false ./docker-setup.sh
+```
+
+The Docker setup automatically:
+- Creates and loads the development database
+- Sets up all dependencies
+- Configures services (PostgreSQL, Redis, optional Elasticsearch)
+- Shows development documentation
+
+### Vagrant (Alternative)
+*If you prefer Vagrant or need it for specific development tasks.*
+
+#### Initial Setup:
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
+2. Clone this repo or fetch the newest code
+3. Create a local config file: `library_website/settings/local.py` (see Local Configuration File section below)
+4. Create the dev environment from the root of the project directory: `vagrant up` (this will take awhile)
+
+#### Daily Development:
+1. ssh to the guest machine: `vagrant ssh`
+2. The following commands run automatically after `vagrant ssh` to activate the virtualenv and move to the working directory: `source lw/bin/activate && cd /vagrant/`
+3. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
+4. In the Wagtail admin go to: `Settings > Sites` and delete the site called `localhost`.
+5. If you're not a regular contributor to the Library website, you will need to create a superuser by running `./manage.py createsuperuser`. This will allow you access to the admin. If you're a Library developer, however, this was already done for you.
+
+#### Build without Elasticsearch or NodeJS:
 ```
 ELASTICSEARCH=false NODEJS=false vagrant up
 ```
-Note: If you build the site withouth Elasticsearch, you will need the following in your `local.py`:
+Note: If you build without Elasticsearch, you will need the following in your `local.py`:
 ```
 WAGTAILSEARCH_BACKENDS = {
     'default': {
@@ -25,20 +68,7 @@ WAGTAILSEARCH_BACKENDS = {
 }
 ```
 
-### Turnstile Configuration
-By default, Turnstile (Cloudflare's CAPTCHA service) is disabled in the Vagrant dev environment and CI. 
-
-If you need to test or develop with Turnstile enabled in the Vagrant environment, the recommended approach is:
-
-1. SSH into the Vagrant machine: `vagrant ssh`
-2. Set the environment variable for your current session:
-```
-export TURNSTILE_ENABLED=True
-```
-
-Note that this will only affect the current session. When you log out and log back in, `TURNSTILE_ENABLED` will be set back to "False".
-
-### Vagrant Troubleshooting
+#### Vagrant Troubleshooting:
 If you have issues loading your local instance, try:
 ```
 vagrant halt
@@ -47,83 +77,87 @@ vagrant up
 pip install -r requirements.txt
 ```
 
-## Loop style changes
-Loop Sass file compression is separate from the public site compression. If you want to compress new Sass code into an updated CSS file, in a terminal that is not running Vagrant, run 'gulp' in the root directory. This command should start a watch on all Loop Sass files and compress anytime a Sass file is saved.
+### Turnstile Configuration
+By default, Turnstile (Cloudflare's CAPTCHA service) is disabled in both Docker and Vagrant dev environments, and CI.
 
-## Setting up for Development
+If you need to test or develop with Turnstile enabled in the Vagrant environment, the recommended approach is:
 
-1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html)
-2. Clone this repo or fetch the newest code
-3. Create a local config file (see example below)
-4. Create the dev environment from the root of the project directory: `vagrant up` (this will take awhile)
-5. ssh to the guest machine: `vagrant ssh`
-6. Activate the virualenv and navigate to the root directory: `source lw/bin/activate && cd /vagrant/`
-7. Start the Django dev server: `./manage.py runserver 0.0.0.0:8000`
-8. In the Wagtail admin go to: `Settings > Sites` and delete ths site called `localhost`.
-9. If you're not a regular contributor to the Library website, you will need to create a superuser by running `./manage.py createsuperuser`. This will allow you access to the admin. If you're a Library developer, however, this was already done for you.
-
-### Local config file example
-
-Create the file `library_website/settings/local.py`. It should look something like this:
-
-```python
-import sys
-
-if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-            'TEST': {
-                'NAME': ':memory:',
-            },
-        },
-    }
-else:
-     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'lib_www_dev',
-        }
-    }
-
-LOGGING = {
-     'version': 1,
-     'disable_existing_loggers': False,
-     'handlers': {
-         'file': {
-             'level': 'DEBUG',
-             'class': 'logging.FileHandler',
-             'formatter': 'default',
-             'filename': '/var/log/django-errors.log',
-         },
-     },
-     'loggers': {
-         'django.request': {
-             'handlers': ['file'],
-             'level': 'DEBUG',
-             'propagate': True,
-         },
-     },
-
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
-        }
-    }
-}
-
-# ** You will also need to add settings for the following. Get these from another developer. ** 
-
-DIRECTORY_USERNAME = #Get from another developer
-DIRECTORY_WEB_SERVICE = #Get from another developer
-DIRECTORY_PASSWORD = #Get from another developer
-OWNCLOUD_PASSWORD = #Get from another developer
+1. SSH into the Vagrant machine: `vagrant ssh`
+2. Set the environment variable for your current session:
 
 ```
+export TURNSTILE_ENABLED=True
+```
 
-### Optional (but recommended)
-#### Configure etc/hosts
+Note that this will only affect the current session. When you log out and log back in, `TURNSTILE_ENABLED` will be set back to "False".
+
+### Setting Up Secrets Repository
+
+The library website obtains secrets from a file called `./library_website/settings/secrets.py`.  This Python module contains login credentials for several websites and web applications, and therefore is excluded from this public repository by our `.gitignore` file.  `secrets.py` is part of a separate private `git` repository called `lw-config`, which is hosted on `vault.lib.uchicago.edu`.  In this project, we provide a makefile which will clone that repository down, then install `secrets.py` from the secrets repository into this `library_website` repository, so that the Wagtail site can make use of it.
+
+To clone the secrets repository to your machine:
+
+```
+$ cd /path/to/library_website && make create-repo
+```
+
+Or, if you'd prefer to run the clone command yourself:
+
+```
+$ cd ~
+$ git clone wagtail@vault.lib.uchicago.edu:/data/vault/wagtail/lw-config
+```
+
+Some observations:
+
+- you will need to obtain permission from our sysadmins to clone repositories owned by the `wagtail` user on `vault`
+- by default, our makefile will assume that `~/lw-config` is the path to the secrets repository both for cloning and for installing the secrets
+- it is possible to override this path when running `make` ([see below](#overriding-the-path) for more info)
+
+Once the repository has been cloned down, run one of the following Make rules from the root of the `library_website` project:
+
+```
+$ make install
+$ make secrets
+```
+
+`make install` copies the `secrets.py` file from the secrets repository over into this repository, setting the permissions on the file to 444 to remind any developer doing Wagtail development to edit the original in the secrets repository rather than this copy.  `make secrets` does the same thing, but before installing `secrets.py` it pulls down the latest changes from the branch that is checked out in the secrets repository on the user's machine.
+
+#### Overriding The Path
+
+If you are running our makefile as part of a script, especially while provisioning a production environment for the Wagtail site, you will likely want the secrets repository to live somewhere other than `~/lw-config`.
+
+Our makefile provides two ways to override the path to the secrets repository.  So if you want to override the path to be `/data/local/secret-repos`, you can pass a Make variable called `SECRETS_REPO_DIR` in when running every Make rule:
+
+```
+$ make create-repo SECRETS_REPO_DIR=/data/local/secret-repos
+$ make secrets SECRETS_REPO_DIR=/data/local/secret-repos
+```
+
+Alternatively, you can customize the `SECRETS_REPO_DIR` environment variable, which only requires exporting it once before running our Make rules:
+
+```
+$ export SECRETS_REPO_DIR=/data/local/secret-repos
+$ make create-repo
+$ make secrets
+```
+
+In both of the above two examples, the makefile will operate under the assumption that the secrets repository is located at `/data/local/secret-repos/lw-config`.
+
+## Bot IP Management
+The site uses the [Good-Bots
+package](https://github.com/bbusenius/Good-Bots) to automatically
+manage IP exclusions for legitimate search engine bots and
+crawlers. This ensures they aren't blocked by Turnstile protection.
+
+The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that gets updated daily via cron. This file is automatically imported in Django settings and excluded from version control.
+
+## SCSS/CSS Compilation
+Both the public site and Loop (intranet) use Django Compressor with django-libsass for SCSS compilation. SCSS files are automatically compiled when templates are rendered. Edit the `.scss` source files in `base/static/base/css/` and `base/static/base/css/loop/` - do not edit the compiled `.css` files directly.
+
+## Optional Configuration
+
+### Configure /etc/hosts
 Add the following lines to your `/etc/hosts` file
 
 ```bash
@@ -131,9 +165,9 @@ Add the following lines to your `/etc/hosts` file
 127.0.0.1 loopdev
 ```
 
-This will allow you to access the public site at `http://wwwdev:8000` and the intranet at `http://loopdev:8000`.
+This will allow you to access the public site at `http://wwwdev:8000` and the intranet at `http://loopdev:8000`. Alternatively, you can access the site at `http://localhost:8000`.
 
-#### Get development images
+### Get Development Images
 These are the images used on pages in the test database on the dev version of the site. Not having these
 is fine, however, you will have broken image links if you don't get them.
 
@@ -176,3 +210,14 @@ For testing purposes, you may want to push a branch that is not master to Nest.
 - `./manage.py migrate` _only needed if made migrations_
 - `./manage.py collectstatic`
 - `sudo service apache24 restart`
+
+### Caching Issues
+If your changes aren't loading into production, try:
+- Collectstatic, and restart apache again
+- Clear the Wagtail cache in Wagtail settings or run `./manage.py clear_wagtail_cache`
+- Clear the Django cache manually
+```
+./manage.py shell
+from django.core.cache import cache
+cache.clear()
+```

@@ -19,12 +19,12 @@
     <div class="nice-padding">
         <h2>Unit Reporting</h2>
         <p>Download a unit report in Microsoft Excel format. The spreadsheet
-will contain a worksheet for this report and a worksheet listing the units that
-are present in the Library directory but not in the campus directory, and vice
-versa.</p>
+            will contain a worksheet for this report and a worksheet listing the units that
+            are present in the Library directory but not in the campus directory, and vice
+            versa.</p>
         <form action="{% url 'list_units_wagtail' %}" method="POST">
             {% csrf_token %}
-    
+
             <section id="account" class="active nice-padding">
                 <ul class="fields">
                     {% block fields %}

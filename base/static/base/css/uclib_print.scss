@@ -5,44 +5,58 @@
  *
  */
 
-
 @media print {
   @page {
-      size: 330mm 427mm;
-      margin: 2cm;
+    size: 330mm 427mm;
+    margin: 2cm;
   }
-  a[href]:after {
-      content: none !important;
+  a[href]::after {
+    content: none !important;
   }
   .container {
-      width: 1170px;
+    width: 1170px;
   }
-  .navbar, #footer {
-      display: none;
+  .navbar,
+  #footer {
+    display: none;
   }
-  nav:after {
+  nav::after {
     display: block;
-    content: "The University of Chicago Library ( lib.uchicago.edu )";
+    content: 'The University of Chicago Library ( lib.uchicago.edu )';
     font-size: 1.5em;
     font-style: italic;
     margin-bottom: 10px;
   }
-  .navbar, .footer, .breadcrumbs, div.breadcrumbs, div#sidebar, div.jumbotron, .btn.btn-sidebar {
-      display: none;
+  .navbar,
+  .footer,
+  .breadcrumbs,
+  div.breadcrumbs,
+  div#sidebar,
+  div.jumbotron,
+  .btn.btn-sidebar {
+    display: none;
   }
   body {
-      overflow: visible !important; 
+    overflow: visible !important;
   }
-  div.container, div.container-fluid {
-      margin: none;
-      padding: none;
+  div.container,
+  div.container-fluid {
+    margin: none;
+    padding: none;
   }
-  div.row, div.row-fluid {
-      margin: none;
-      padding: none;
+  div.row,
+  div.row-fluid {
+    margin: none;
+    padding: none;
   }
-  h2, h3, h4, h5, h6, ul, img {
-     page-break-after: avoid;
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  img {
+    page-break-after: avoid;
   }
   .rightside {
     border-top: 1px solid #bbb;
@@ -53,14 +67,16 @@
     color: #000;
     word-wrap: break-word;
   }
-  p, ul, ol {
+  p,
+  ul,
+  ol {
     font-size: 14px;
     line-height: 22px;
     max-width: unset;
     margin-bottom: 0;
   }
-  .rich-text ul li, .rich-text ol li {
+  .rich-text ul li,
+  .rich-text ol li {
     margin-bottom: 0;
   }
 }
-

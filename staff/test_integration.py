@@ -1,32 +1,13 @@
-import time
+from io import StringIO
+
+from django.test import TestCase
+from lxml import etree
 
 from base.utils import get_xml_from_directory_api
-from django.core import management
-from django.test import TestCase
-from io import StringIO
-from lxml import etree
-from public.models import StandardPage
-from .models import StaffPage, StaffPageEmailAddresses, StaffPageLibraryUnits, StaffPagePhoneFacultyExchange
-from staff.utils import get_all_library_cnetids_from_directory, get_individual_info_from_directory
-from units.models import UnitPage
-from wagtail.models import Page
+from staff.utils import get_all_library_cnetids_from_directory
 
-def print_test_time_elapsed(method):
-    """
-    Utility method for print verbalizing test suite, prints out
-    time taken for test and functions name, and status
-    """
-    def run(*args, **kw):
-        ts = time.time()
-        print('\n\ttesting function %r' % method.__name__)
-        method(*args, **kw)
-        te = time.time()
-        print('\t[OK] in %r %2.2f sec' % (method.__name__, te - ts))
-
-    return run
 
 class UniversityDirectoryTestCase(TestCase):
-    @print_test_time_elapsed
     def test_directory_xml_validates(self):
         dtd = etree.DTD(StringIO("""
         <!ELEMENT responseData    (response, totalResults, organizations)>
@@ -55,10 +36,13 @@ class UniversityDirectoryTestCase(TestCase):
         <!--      resources (see above) -->
         """))
 
-        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/divisions/16.xml'))
+        root = etree.XML(
+            get_xml_from_directory_api(
+                "https://directory.uchicago.edu/api/v2/divisions/16.xml"
+            )
+        )
         self.assertEqual(dtd.validate(root), True)
 
-    @print_test_time_elapsed
     def test_individual_xml_validates(self):
         dtd = etree.DTD(StringIO("""
         <!ELEMENT responseData    (response, totalResults, individuals)>
@@ -85,10 +69,15 @@ class UniversityDirectoryTestCase(TestCase):
         """))
 
         cnetids = get_all_library_cnetids_from_directory()
-        root = etree.XML(get_xml_from_directory_api('https://directory.uchicago.edu/api/v2/individuals/' + cnetids[0] + '.xml'))
+        root = etree.XML(
+            get_xml_from_directory_api(
+                "https://directory.uchicago.edu/api/v2/individuals/"
+                + cnetids[0]
+                + ".xml"
+            )
+        )
         self.assertEqual(dtd.validate(root), True)
 
-    @print_test_time_elapsed
     def test_get_all_library_cnet_ids_from_directory_two_staff(self):
         xml_string = """<?xml version="1.0" encoding="UTF-8"?>
         <responseData>
@@ -148,15 +137,15 @@ class UniversityDirectoryTestCase(TestCase):
 
         cnetids = get_all_library_cnetids_from_directory(xml_string)
 
-        self.assertEqual(set(cnetids), set(('lovelee', 'danger')))
+        self.assertEqual(set(cnetids), set(("lovelee", "danger")))
 
     def assertInfoEqual(self, a, b):
-        for field in ['cnetid', 'officialName', 'displayName']:
+        for field in ["cnetid", "officialName", "displayName"]:
             if not a[field] == b[field]:
                 return False
 
-        tds_a = sorted([a['title_department_subdepartments']])
-        tds_b = sorted([b['title_department_subdepartments']])
+        tds_a = sorted([a["title_department_subdepartments"]])
+        tds_b = sorted([b["title_department_subdepartments"]])
 
         if not len(tds_a) == len(tds_b):
             return False
@@ -167,18 +156,23 @@ class UniversityDirectoryTestCase(TestCase):
                 return False
             t = t + 1
 
-        tds_a = sorted(a['title_department_subdepartments_dicts'], key = lambda t: t['title'] + t['department'])
-        tds_b = sorted(b['title_department_subdepartments_dicts'], key = lambda t: t['title'] + t['department'])
+        tds_a = sorted(
+            a["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
+        )
+        tds_b = sorted(
+            b["title_department_subdepartments_dicts"],
+            key=lambda t: t["title"] + t["department"],
+        )
 
         if not len(tds_a) == len(tds_b):
             return False
 
         t = 0
         while t < len(tds_a):
-            for field in ['department', 'title', 'email', 'facultyexchange', 'phone']:
+            for field in ["department", "title", "email", "facultyexchange", "phone"]:
                 if not tds_a[t][field] == tds_b[t][field]:
                     return False
             t = t + 1
 
         return True
-

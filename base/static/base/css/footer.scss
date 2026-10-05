@@ -1,24 +1,26 @@
-/*------------------------------------------------------------------
+/* ------------------------------------------------------------------
 [Table of contents]
 
 Sticky Footer Magic
 Pleeb Footer Code
 
--------------------------------------------------------------------*/
+------------------------------------------------------------------- */
 
-@import "variables.scss";
-@import "media.scss";
+@import 'variables.scss';
+@import 'media.scss';
 
 /*
  * Sticky Footer Magic
  * --------------------------------------------------
  */
 
-#body-wrap { // Wrapper for page content to push down footer
+#body-wrap {
+  // Wrapper for page content to push down footer
   min-height: 100%;
   height: auto !important;
   height: 100%;
   margin: 0 auto -10px;
+
   @include respond-to(medium) {
     margin: 0 auto -200px;
   }
@@ -30,14 +32,12 @@ Pleeb Footer Code
   }
 }
 
-
 #footer {
   @include respond-to(small-only) {
     padding-left: 20px;
     padding-right: 20px;
   }
 }
-
 
 /*
  * Pleeb Footer Code
@@ -51,51 +51,58 @@ Pleeb Footer Code
   padding-top: 20px;
   padding-bottom: 20px;
   ul {
-    list-style:none;
+    list-style: none;
     padding-left: 0;
     margin-bottom: 12px;
   }
-  &>hr {
+  & > hr {
     border-top: 1px solid $mid-dark;
   }
-  p, li, small {
+  p,
+  li,
+  small {
     color: $neutral;
   }
   & a {
-  color: #fff;
-  line-height: 1.7em;
-  text-decoration: none;
-    &:hover, &:focus {
+    color: #fff;
+    line-height: 1.7em;
+    text-decoration: none;
+    &:hover,
+    &:focus {
       color: #fff;
       text-decoration: underline;
     }
   }
   h5 {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
   h2.footer-heading {
     color: #fff;
-    color: rgba(255, 255, 255, .75);
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
     font-size: 16px;
     margin: 0 0 6px;
   }
   .col-footer {
-      border-top: 1px solid #5e5e5e;
-      padding-top: 15px;
-      &:first-child {
-        border-top: none;
-      }
+    border-top: 1px solid #5e5e5e;
+    padding-top: 15px;
+    &:first-child {
+      border-top: none;
+    }
+
     @include respond-to(small) {
       border-top: none;
       padding-top: 0;
     }
   }
-  @include respond-to(small) { // Full width footer div
+
+  @include respond-to(small) {
+    // Full width footer div
     margin: 0;
     display: table;
     width: 100%;
-    .divider-vertical { // Lines between link blocks
+    .divider-vertical {
+      // Lines between link blocks
       height: 100%;
       border-right: 1px solid #5e5e5e;
       border-left: 1px solid #5e5e5e;
@@ -105,15 +112,14 @@ Pleeb Footer Code
 
 .centerdiv {
   img {
-    padding-bottom:20px;
+    padding-bottom: 20px;
     width: 150px;
     height: auto;
   }
+
   @include respond-to(small) {
     @include center;
+
     text-align: center;
   }
 }
-
-
-      

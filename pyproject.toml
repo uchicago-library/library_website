@@ -1,0 +1,18 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']
+extend-exclude = '''
+/(
+    migrations
+  | node_modules
+  | static/CACHE
+  | static/wagtailadmin
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip_glob = ["*/migrations/*", "node_modules/*", "static/CACHE/*", "static/wagtailadmin/*"]
+
+[tool.djhtml]
+tabwidth = 2

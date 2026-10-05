@@ -2,12 +2,12 @@
     <i class="fa {{value.icon}} fa-5x"></i>
     <h2><a href="{{value.starting_page.url}}">{{value.starting_page.title}}</a></h2>
     <ul style="text-align: left;">
-    {% for child in descendants %}
-       <li><a href="{{ child.url }}">{{ child.title }}</a><ul style="padding-left: 1em;">
-        {% for grandchild in child.children %}
-            <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+        {% for child in descendants %}
+            <li><a href="{{ child.url }}">{{ child.title }}</a><ul style="padding-left: 1em;">
+                {% for grandchild in child.children %}
+                    <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                {% endfor %}
+            </ul></li>
         {% endfor %}
-       </ul></li>
-    {% endfor %}
     </ul>
 </div>

@@ -72,7 +72,7 @@
                     Posted on {{self.published_at|date:"M d, Y,"}} by {% get_author self.by_staff_or_unit self.custom_author_byline self.page_maintainer %}
                 </span>
             {% endif %}
-            {{ self.body }}
+            {% include_block self.body %}
             <div style="clear:both;"></div>
             {% if self.related_exhibits %}
                 <div class="media-use">

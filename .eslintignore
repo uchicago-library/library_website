@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build outputs - these are generated bundles, not source
+**/bundles/**
+**/CACHE/**
+
+# Django collected static files (root static/ directory)
+# We only want to lint source files in app/static/ directories
+static/**
+
+# Minified/vendor files
+**/*.min.js
+**/vendor/**
+
+# Specific vendor files that might not match *.min.js
+base/static/base/js/bootstrap.js
+base/static/base/js/typeahead.js
+base/static/base/css/calendar/res-timeline.js
+public/static/public/js/bootstrap-select.js
+
+# Django migrations
+**/migrations/**
+
+# Git
+.git/

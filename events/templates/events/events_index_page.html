@@ -7,57 +7,37 @@
   <article>
 
      <!--EVENTLIST-->
-      <table class="table table-striped etable">
-        <thead>
-          <tr>
-            <th>
-              {{ start_label }} to {{ stop_label }}
-            </th>
-            <th>
-              {% if previous_link %}
-              <a href=".?start={{ previous_link|urlencode }}"><span style="font-size:0.7em;" class="glyphicon glyphicon-chevron-left"></span><span class="th-link visually-hidden">Go back to </span> Previous four weeks</a>&nbsp; &nbsp; &nbsp; &nbsp; 
-              {% endif %}
-              <a href=".?start={{ next_link|urlencode }}"><span class="th-link visually-hidden">Advance to </span>Next four weeks <span style="font-size:0.7em;" class="glyphicon glyphicon-chevron-right"></span></a>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
+    <table class="table table-striped etable">
+      <thead>
+        <tr>
+          <th>
+            {{ start_label }} to {{ stop_label }}
+          </th>
+          <th>
+            {% if previous_link %}
+              <a href=".?start={{ previous_link|urlencode }}"><span style="font-size:0.7em;" class="glyphicon glyphicon-chevron-left"></span><span class="th-link visually-hidden">Go back to </span> Previous four weeks</a>&nbsp; &nbsp; &nbsp; &nbsp;
+            {% endif %}
+            <a href=".?start={{ next_link|urlencode }}"><span class="th-link visually-hidden">Advance to </span>Next four weeks <span style="font-size:0.7em;" class="glyphicon glyphicon-chevron-right"></span></a>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
 
-        <tbody>
-          <tr class="visually-hidden">
-            <th scope="col">Date and Time</th>
-            <th scope="col">Event</th>
-            <th scope="col">Registration Link</th>
-          </tr>
+      <tbody>
+        <tr class="visually-hidden">
+          <th scope="col">Date and Time</th>
+          <th scope="col">Event</th>
+          <th scope="col">Registration Link</th>
+        </tr>
         <!-- Ongoing Events -->
-          {% if multiday_entries %}
-            {% for e in multiday_entries %}
+        {% if multiday_entries %}
+          {% for e in multiday_entries %}
             <tr>
               <th scope="row" class="time">
                 {{ e.start_date_short_form }}
                 {% if e.start_date_short_form or e.end_date_short_form %} - {% endif %}
                 {{ e.end_date_short_form }}<br/>
-              <span class="event-time">Ongoing Event</span>
-              </th>
-              <td>
-                <a href="{{ e.link }}">{{ e.title|safe }}</a><br>
-                {{ e.content|safe }}
-              </td>
-              <td></td>
-            </tr>
-            {% endfor %}
-          {% endif %}
-
-        <!-- Daily Events -->
-        {% if entries %}
-          {% for d, list in entries %}
-            {% for e in list %}
-            <tr>
-              <th scope="row" class="time">
-                {{ list.0.sortable_date_label }}<br/>
-                <span class="event-time">{{ e.start_time }}
-                {% if e.start_time or e.end_time %} - {% endif %}
-                {{ e.end_time }}</span>
+                <span class="event-time">Ongoing Event</span>
               </th>
               <td>
                 <a href="{{ e.link }}">{{ e.title|safe }}</a><br>
@@ -66,15 +46,35 @@
               <td></td>
             </tr>
           {% endfor %}
-        {% endfor %}
-      {% endif %}                
-        </tbody>
-      </table>
+        {% endif %}
+
+        <!-- Daily Events -->
+        {% if entries %}
+          {% for d, list in entries %}
+            {% for e in list %}
+              <tr>
+                <th scope="row" class="time">
+                  {{ list.0.sortable_date_label }}<br/>
+                  <span class="event-time">{{ e.start_time }}
+                    {% if e.start_time or e.end_time %} - {% endif %}
+                    {{ e.end_time }}</span>
+                </th>
+                <td>
+                  <a href="{{ e.link }}">{{ e.title|safe }}</a><br>
+                  {{ e.content|safe }}
+                </td>
+                <td></td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
 
 
-      {% if not entries and not multiday_entries %}
-        <p>There are no events scheduled for this month.</p>
-      {% endif %}
+    {% if not entries and not multiday_entries %}
+      <p>There are no events scheduled for this month.</p>
+    {% endif %}
 
   </article>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% load news_tags %}
+<fieldset>
+    {% if self.heading %}
+        <legend>{{ self.heading }}</legend>
+    {% endif %}
+    <div class="{{ self.classname }}">
+        <p>Write a short, hand-crafted excerpt (about one or two sentences) that summarizes the story for the News feed and search results. Don't just repeat the headline or paste in the first line of the body.</p>
+        {% news_excerpt_guide_url as guide_url %}
+        {% if guide_url %}
+            <p>Need help? See <a href="{{ guide_url }}">excerpt examples and best practices</a>.</p>
+        {% endif %}
+    </div>
+</fieldset>

@@ -1,0 +1,11 @@
+{# Renders one level of a Page Listing block and includes itself for the next. #}
+<ul class="index-list">
+    {% for node in nodes %}
+        <li>
+            <a href="{{ node.url }}">{{ node.title }}</a>
+            {% if node.children %}
+                {% include "base/blocks/page_listing_nodes.html" with nodes=node.children %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

@@ -1,49 +1,57 @@
 from datetime import datetime
 
-from base.models import BasePage, DefaultBodyFields, PublicBasePage
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import models
 from django.utils import timezone
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel, MultiFieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+
+from base.models import BasePage, DefaultBodyFields, PublicBasePage
 
 
 class NewsPage(BasePage):
     """
     News story content type used on intranet pages.
     """
+
     excerpt = RichTextField(
-        blank=True,
+        blank=False,
         null=True,
-        help_text=
-        'Shown on the News feed. Populated automatically from “Body” if left empty.'
+        help_text="Shown on the News feed.",
     )
     author = models.ForeignKey(
-        'staff.StaffPage',
+        "staff.StaffPage",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='news_stories'
+        related_name="news_stories",
     )
     story_date = models.DateField(
         default=timezone.now,
-        help_text=
-        'If you use Settings to publish a future post, put the publish date here. Otherwise, leave today as the story date.'
+        help_text="If you use Settings to publish a future post, put the publish date here. Otherwise, leave today as the story date.",
     )
     sticky_until = models.DateField(
-        blank=True, null=True, help_text='To be used by Admin and HR only.'
+        blank=True, null=True, help_text="To be used by Admin and HR only."
     )
     thumbnail = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name="+",
     )
-    alt_text = models.CharField(max_length=100, blank=True)
+    alt_text = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text=(
+            "Describe the thumbnail's content and purpose for screen-reader "
+            "users. Keep it concise. Required when a thumbnail is set."
+        ),
+    )
     body = StreamField(
         DefaultBodyFields(),
         blank=False,
@@ -52,30 +60,47 @@ class NewsPage(BasePage):
 
     subpage_types = []
 
-    content_panels = Page.content_panels + [
-        FieldPanel('body'),
-        FieldPanel('author'),
-        FieldPanel('story_date'),
-        MultiFieldPanel(
-            [
-                FieldPanel('thumbnail'),
-                FieldPanel('alt_text'),
-            ],
-            heading='Thumbnail',
-        ),
-        FieldPanel('excerpt'),
-    ] + BasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("body"),
+            FieldPanel("author"),
+            FieldPanel("story_date"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("thumbnail"),
+                    FieldPanel("alt_text"),
+                ],
+                heading="Thumbnail",
+            ),
+            MultiFieldPanel(
+                [
+                    HelpPanel(template="news/blocks/excerpt_helppanel.html"),
+                    FieldPanel("excerpt"),
+                ],
+                heading="Excerpt",
+            ),
+        ]
+        + BasePage.content_panels
+    )
 
     promote_panels = BasePage.promote_panels + [
-        FieldPanel('sticky_until'),
+        FieldPanel("sticky_until"),
     ]
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('excerpt'),
-        index.SearchField('author'),
-        index.SearchField('thumbnail'),
-        index.SearchField('body'),
+        index.SearchField("excerpt"),
+        index.SearchField("author"),
+        index.SearchField("thumbnail"),
+        index.SearchField("body"),
     ]
+
+    def clean(self):
+        super().clean()
+        if self.thumbnail and not self.alt_text.strip():
+            raise ValidationError(
+                {"alt_text": "Alt text is required when a thumbnail is set."}
+            )
 
     @classmethod
     def get_stories(cls, sticky=False, now=None):
@@ -92,16 +117,16 @@ class NewsPage(BasePage):
                   function easier to test.
 
         Returns:
-        A django.core.paginator.Paginator object for Loop news stories. 
+        A django.core.paginator.Paginator object for Loop news stories.
         """
 
-        if now == None:
+        if now is None:
             now = datetime.date(datetime.now())
 
         stories = cls.objects.filter(
             live=True,
             story_date__lte=now,
-        ).order_by('-story_date', '-latest_revision_created_at')
+        ).order_by("-story_date", "-latest_revision_created_at")
         if sticky:
             stories = stories.filter(sticky_until__gte=now)
         else:
@@ -114,18 +139,19 @@ class NewsIndexPage(BasePage):
     """
     Index page for intranet news stories.
     """
+
     max_count = 1
-    subpage_types = ['news.NewsPage']
+    subpage_types = ["news.NewsPage"]
     intro = RichTextField()
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro')
-    ] + BasePage.content_panels
+    content_panels = (
+        Page.content_panels + [FieldPanel("intro")] + BasePage.content_panels
+    )
 
-    subpage_types = ['news.NewsPage']
+    subpage_types = ["news.NewsPage"]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
+        index.SearchField("intro"),
     ]
 
 
@@ -135,15 +161,13 @@ class NewsEmailAddition(models.Model, index.Indexed):
         null=False,
         blank=False,
         default=datetime.now,
-        help_text=
-        'Emails are send automatically via cron. Only email additions with the appropriate date will be attached to messages.'
+        help_text="Emails are send automatically via cron. Only email additions with the appropriate date will be attached to messages.",
     )
     text = RichTextField(
-        help_text=
-        'Text to include in emails. This can include internal or external links.'
+        help_text="Text to include in emails. This can include internal or external links."
     )
 
-    panels = [FieldPanel('include_in_email_dated'), FieldPanel('text')]
+    panels = [FieldPanel("include_in_email_dated"), FieldPanel("text")]
 
     def __str__(self):
         return self.include_in_email_dated.strftime("%B %-d, %Y")

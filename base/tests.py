@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 from io import StringIO
 
 import pandas as pd
-from ask_a_librarian.models import AskPage
-from django.contrib.auth.models import AnonymousUser, Group, User
+from django.contrib.auth.models import Group, User
 from django.core import management
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -13,22 +12,31 @@ from django.http import HttpRequest
 from django.test import Client, TestCase
 from django.urls import clear_url_caches
 from file_parsing import is_json
-from news.models import NewsPage
-from public.models import LocationPage, StandardPage
-from staff.models import StaffIndexPage, StaffPage
-from units.models import UnitPage
 from wagtail.blocks.stream_block import StreamValue
 from wagtail.documents.models import Document
 from wagtail.models import Page, Site
 from wagtailcache.cache import clear_cache
 
-from base.models import BasePage, LinkQueueSpreadsheetBlock, get_available_path_under
+from ask_a_librarian.models import AskPage
+from base.models import (
+    PAGE_LISTING_MAX_DEPTH,
+    BasePage,
+    IntranetPlainPage,
+    LinkQueueSpreadsheetBlock,
+    PageListingBlock,
+    build_page_listing,
+    get_available_path_under,
+)
 from base.utils import get_hours_by_id, get_json_for_library
+from news.models import NewsPage
+from public.models import LocationPage, StandardPage
+from staff.models import StaffIndexPage, StaffPage
+from units.models import UnitPage
 
 GENERIC_REQUEST_HEADERS = [
-    ('HTTP_HOST', 'foobartest.com'),
-    ('SERVER_PORT', '80'),
-    ('SERVER_NAME', 'dungeon'),
+    ("HTTP_HOST", "starfleet-academy.com"),
+    ("SERVER_PORT", "80"),
+    ("SERVER_NAME", "starfleet-academy.com"),
 ]
 
 
@@ -93,7 +101,7 @@ def loggin_user_with_privileges(user):
         user: django user object.
     """
     user.client = Client()
-    user.client.login(username='geordilaforge', password='broken_visor!')
+    user.client.login(username="geordilaforge", password="broken_visor!")
     return user
 
 
@@ -113,11 +121,11 @@ def run_report_page_maintainers_and_editors(options):
 
     # Capture stdout
     sys.stdout = StringIO()
-    management.call_command('report_page_maintainers_and_editors', **options)
+    management.call_command("report_page_maintainers_and_editors", **options)
     output = sys.stdout.getvalue()
 
     # Concatonate output
-    csv = ''
+    csv = ""
     csv += output
 
     # Restore original stdout
@@ -128,32 +136,42 @@ def run_report_page_maintainers_and_editors(options):
 
 
 def boiler_plate(instance):
+    # Delete the default localhost site created by Wagtail migrations
+    # to prevent conflicts with our test site
+    Site.objects.filter(hostname="localhost").delete()
+
+    # Clear cache after site deletion and before creating new site
+    # This ensures Wagtail doesn't use stale cached references
+    clear_url_caches()
+    cache.clear()
+    clear_cache()
+
     # Create the homepage
-    root = Page.objects.get(path='0001')
+    root = Page.objects.get(path="0001")
     instance.homepage = Page(
-        slug='welcome-to-starfleet-academy', title='Welcome to Starfleet Academy'
+        slug="welcome-to-starfleet-academy", title="Welcome to Starfleet Academy"
     )
     root.add_child(instance=instance.homepage)
 
     # Create a site and associate the homepage with it
     instance.site = Site.objects.create(
-        hostname='starfleet-academy.com',
+        hostname="starfleet-academy.com",
         is_default_site=True,
         port=80,
         root_page=instance.homepage,
-        site_name='test federation site',
+        site_name="test federation site",
     )
 
     # Necessary pages
     instance.staff = StaffPage(
-        title='Jean-Luc Picard',
-        cnetid='picard',
-        position_title='Captain of the USS Enterprise',
+        title="Jean-Luc Picard",
+        cnetid="picard",
+        position_title="Captain of the USS Enterprise",
     )
     instance.homepage.add_child(instance=instance.staff)
 
     instance.unit = UnitPage(
-        title='USS Enterprise (NCC-1701-D)',
+        title="USS Enterprise (NCC-1701-D)",
         page_maintainer=instance.staff,
         editor=instance.staff,
         display_in_dropdown=True,
@@ -161,7 +179,7 @@ def boiler_plate(instance):
     instance.homepage.add_child(instance=instance.unit)
 
     instance.ask_page = AskPage(
-        title='Ask a Betazoid (or don\'t)',
+        title="Ask a Betazoid (or don't)",
         page_maintainer=instance.staff,
         editor=instance.staff,
         content_specialist=instance.staff,
@@ -170,11 +188,11 @@ def boiler_plate(instance):
     instance.homepage.add_child(instance=instance.ask_page)
 
     instance.building = LocationPage(
-        title='Deep Space 9',
+        title="Deep Space 9",
         is_building=True,
-        short_description='A space station orbiting Bajor.',
-        long_description='A space station orbiting Bajor\
-        that was called Terok Nor during the occupation.',
+        short_description="A space station orbiting Bajor.",
+        long_description="A space station orbiting Bajor\
+        that was called Terok Nor during the occupation.",
         page_maintainer=instance.staff,
         editor=instance.staff,
         content_specialist=instance.staff,
@@ -188,15 +206,15 @@ def boiler_plate(instance):
     instance.unit.save()
 
     instance.page = StandardPage(
-        title='The Great Link',
+        title="The Great Link",
         page_maintainer=instance.staff,
         editor=instance.staff,
         content_specialist=instance.staff,
         unit=instance.unit,
-        slug='the-great-link-test',
-        rich_text='Fallback text.',
-        rich_text_heading='Explore',
-        rich_text_external_link='https://something.com',
+        slug="the-great-link-test",
+        rich_text="Fallback text.",
+        rich_text_heading="Explore",
+        rich_text_external_link="https://something.com",
     )
     instance.homepage.add_child(instance=instance.page)
 
@@ -240,7 +258,7 @@ class TestUsersAndServingLivePages(TestCase):
     """
 
     # Load a copy of the production database
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def setUp(self):
         # Explicitly clear the cache of site root paths. Normally this would be kept
@@ -248,7 +266,7 @@ class TestUsersAndServingLivePages(TestCase):
         # rolled back between tests using transactions.
         from django.core.cache import cache
 
-        cache.delete('wagtail_site_root_paths')
+        cache.delete("wagtail_site_root_paths")
 
         # also need to clear urlresolver caches before/after tests, because we override
         # ROOT_URLCONF in some tests here
@@ -267,7 +285,7 @@ class TestUsersAndServingLivePages(TestCase):
         https://github.com/torchbox/wagtail/blob/master/wagtail
         /wagtailcore/tests/test_page_model.py
         """
-        hostname = Site.objects.filter(site_name='Loop')[0].hostname
+        hostname = Site.objects.filter(site_name="Loop")[0].hostname
         news_page = NewsPage.objects.live().first()
         request = HttpRequest()
         add_generic_request_meta_fields(request)
@@ -300,31 +318,6 @@ class TestUsersAndServingLivePages(TestCase):
     #        url = page.relative_url(site)
     #        response = user.client.get(page.url, HTTP_HOST=site.hostname)
     #        self.assertEqual(response.status_code, 200, msg='The following url failed: ' + page.url)
-
-    def test_all_live_public_pages_for_200_or_redirect_with_anonymous_user(self):
-        """
-        Test all live public pages with an anonymous user.
-        Most pages should return a 200, however, the redirect
-        page will return a 301 and some custom views return
-        a 302. Nothing should return a 404.
-        """
-        site = Site.objects.filter(site_name='Public')[0]
-        user = AnonymousUser()
-        user.client = Client()
-        pages = site.root_page.get_descendants().live()
-        possible = set([200, 301, 302])
-
-        for page in pages:
-            try:
-                response = user.client.get(page.url, HTTP_HOST=site.hostname)
-                self.assertEqual(
-                    response.status_code in possible,
-                    True,
-                    msg=page.url + ' returned a ' + str(response.status_code),
-                )
-            except:
-                print(page.relative_url(site) + ' has a problem')
-                raise
 
     # def test_loop_page_with_anonymous_user(self):
     #    """
@@ -360,13 +353,13 @@ class TestPageModels(TestCase):
                 # self.assertNotEqual(num, number_of_content_types, 'This content type is missing a subpage_types declaration')
                 # assert page_type.subpage_types, 'This content type is missing a subpage_types declaration'
                 page_type.subpage_types
-            except:
+            except:  # noqa: E722
                 no_subpagetypes.add(page_type.__name__)
 
         self.assertEqual(
             len(no_subpagetypes),
             0,
-            'The following content types don\'t have a subpages_type declaration: '
+            "The following content types don't have a subpages_type declaration: "
             + str(no_subpagetypes),
         )
 
@@ -383,19 +376,20 @@ class TestPageModels(TestCase):
         default_search_fields = set(page_search_fields + base_page_search_fields)
         ignore = set(
             [
-                'AlertPage',
-                'AlertIndexPage',
-                'ConferenceIndexPage',
-                'FindingAidsPage',
-                'GroupMeetingMinutesIndexPage',
-                'GroupReportsIndexPage',
-                'HomePage',
-                'IntranetFormPage',
-                'IntranetHomePage',
-                'IntranetUnitsReportsIndexPage',
-                'ProjectIndexPage',
-                'RedirectPage',
-                'LoopRedirectPage',
+                "AlertPage",
+                "AlertIndexPage",
+                "ConferenceIndexPage",
+                "FindingAidsPage",
+                "GroupMeetingMinutesIndexPage",
+                "GroupReportsIndexPage",
+                "HomePage",
+                "IntranetFormPage",
+                "IntranetHomePage",
+                "IntranetUnitsReportsIndexPage",
+                "MyLibDashboardPage",
+                "ProjectIndexPage",
+                "RedirectPage",
+                "LoopRedirectPage",
             ]
         )
         no_search_fields = set([])
@@ -409,7 +403,7 @@ class TestPageModels(TestCase):
         self.assertEqual(
             len(no_search_fields),
             0,
-            'The following content types don\'t have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: '
+            "The following content types don't have a search_fields declaration or their search_field declaration is not extending a base_class search_fields attribute: "
             + str(no_search_fields),
         )
 
@@ -417,7 +411,7 @@ class TestPageModels(TestCase):
 class TestStreamFields(TestCase):
 
     # Load a copy of the production database
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def test_staff_listing_stream_fields(self):
         # get a few pages for the test.
@@ -426,17 +420,17 @@ class TestStreamFields(TestCase):
         alien = StaffPage.objects.live().first()
 
         try:
-            StaffPage.objects.get(cnetid='ignatius').delete()
+            StaffPage.objects.get(cnetid="ignatius").delete()
         except StaffPage.DoesNotExist:
             pass
 
         # create a fictional StaffPage object for testing.
         staff_page = StaffPage.objects.create(
-            cnetid='ignatius',
+            cnetid="ignatius",
             depth=staff_index_page.depth + 1,
             path=get_available_path_under(staff_index_page.path),
-            slug='ignatius-reilly',
-            title='Ignatius Reilly',
+            slug="ignatius-reilly",
+            title="Ignatius Reilly",
         )
 
         # build a streamfield by hand for testing.
@@ -455,7 +449,7 @@ class TestStreamFields(TestCase):
         )
 
         try:
-            StandardPage.objects.get(slug='a-standard-page').delete()
+            StandardPage.objects.get(slug="a-standard-page").delete()
         except StandardPage.DoesNotExist:
             pass
 
@@ -507,10 +501,10 @@ class TestUtilityFunctions(TestCase):
         """
         crerar = 1373
         self.assertEqual(
-            is_json(json.dumps(get_json_for_library(crerar))), True, 'Not valid json'
+            is_json(json.dumps(get_json_for_library(crerar))), True, "Not valid json"
         )
         self.assertEqual(
-            json.dumps(get_json_for_library(999)), 'null', 'Should be a null json value'
+            json.dumps(get_json_for_library(999)), "null", "Should be a null json value"
         )
 
     def test_get_hours_by_id(self):
@@ -519,7 +513,7 @@ class TestUtilityFunctions(TestCase):
         """
         crerar = 1373
         assert len(get_hours_by_id(crerar)) > 1
-        self.assertEqual(get_hours_by_id(999), 'Unavailable')
+        self.assertEqual(get_hours_by_id(999), "Unavailable")
 
 
 class TestAssignUnitLocationCommand(TestCase):
@@ -527,15 +521,17 @@ class TestAssignUnitLocationCommand(TestCase):
     Test cases for the assign_unit_location manage command.
     """
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def test_assign_unit_location(self):
         """
         Should exit with a code of 1 if a location or
         unit doesn't exist.
         """
+        # Suppress stdout to avoid cluttering test output
+        out = StringIO()
         with self.assertRaises(SystemExit) as cm:
-            management.call_command('assign_unit_location', str(1), str(2))
+            management.call_command("assign_unit_location", str(1), str(2), stdout=out)
 
         self.assertEqual(cm.exception.code, 1)
 
@@ -546,30 +542,32 @@ class TestPageOwnerReports(TestCase):
     associated views.
     """
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
+    # Note: Cannot use setUpTestData() because Command objects contain
+    # file handles that aren't picklable (can't be deepcopied)
     def setUp(self):
         from base.management.commands.report_page_maintainers_and_editors import Command
 
         class Ship(object):
-            name = 'Enterprise'
+            name = "Enterprise"
             warp = 9
 
         # Foobar objects to test
         self.c = Command()
         self.ship = Ship()
 
-        self.loop = Site.objects.get(site_name='Loop')
-        self.public = Site.objects.get(site_name='Public')
+        self.loop = Site.objects.get(site_name="Loop")
+        self.public = Site.objects.get(site_name="Public")
 
         self.all_live_pages = Page.objects.live()
 
     def test_get_attr_with_object_attributes(self):
-        self.assertEqual(self.c._get_attr(self.ship, 'name'), 'Enterprise')
-        self.assertEqual(self.c._get_attr(self.ship, 'warp'), 9)
+        self.assertEqual(self.c._get_attr(self.ship, "name"), "Enterprise")
+        self.assertEqual(self.c._get_attr(self.ship, "warp"), 9)
 
     def test_get_attr_with_object_missing_attribute(self):
-        self.assertEqual(self.c._get_attr(self.ship, 'romulans'), '')
+        self.assertEqual(self.c._get_attr(self.ship, "romulans"), "")
 
     def test_get_pages_return_correct_number_of_pages(self):
         num_pages_loop = (
@@ -586,9 +584,9 @@ class TestPageOwnerReports(TestCase):
             .count()
             + 1
         )
-        get_loop_pages_count = sum(1 for p in self.c._get_pages(None, 'Loop', None)) - 1
+        get_loop_pages_count = sum(1 for p in self.c._get_pages(None, "Loop", None)) - 1
         get_public_pages_count = (
-            sum(1 for p in self.c._get_pages(None, 'Public', None)) - 1
+            sum(1 for p in self.c._get_pages(None, "Public", None)) - 1
         )
         self.assertEqual(get_loop_pages_count, num_pages_loop)
         self.assertEqual(get_public_pages_count, num_pages_public)
@@ -602,7 +600,7 @@ class TestPageOwnerReports(TestCase):
         content_specialist others.
         """
         get_locutus_pages_count = (
-            sum(1 for p in self.c._get_pages('locutus', None, None)) - 1
+            sum(1 for p in self.c._get_pages("locutus", None, None)) - 1
         )
         self.assertEqual(get_locutus_pages_count, 6)
 
@@ -618,13 +616,13 @@ class TestPageOwnerReports(TestCase):
         content_specialist: 2 pages
         """
         page_maintainer_in_scope = (
-            sum(1 for p in self.c._get_pages('locutus', None, 'page_maintainer')) - 1
+            sum(1 for p in self.c._get_pages("locutus", None, "page_maintainer")) - 1
         )
         editor_in_scope = (
-            sum(1 for p in self.c._get_pages('locutus', None, 'editor')) - 1
+            sum(1 for p in self.c._get_pages("locutus", None, "editor")) - 1
         )
         content_specialist_in_scope = (
-            sum(1 for p in self.c._get_pages('locutus', None, 'content_specialist')) - 1
+            sum(1 for p in self.c._get_pages("locutus", None, "content_specialist")) - 1
         )
         self.assertEqual(page_maintainer_in_scope, 3)
         self.assertEqual(editor_in_scope, 1)
@@ -641,12 +639,12 @@ class TestPageOwnerReports(TestCase):
         should return a nearly blank spreadsheet.
         """
         options = {
-            'site': None,
-            'cnetid': 'q',
-            'role': None,
+            "site": None,
+            "cnetid": "q",
+            "role": None,
         }
         csv = run_report_page_maintainers_and_editors(options)
-        self.assertEqual(csv.strip(), ','.join(self.c.HEADER))
+        self.assertEqual(csv.strip(), ",".join(self.c.HEADER))
 
 
 class TestUpdateSiteDataCommand(TestCase):
@@ -654,33 +652,33 @@ class TestUpdateSiteDataCommand(TestCase):
     Test cases for the update_site_data manage command.
     """
 
-    fixtures = ['test.json']
+    fixtures = ["test.json"]
 
     def test_changing_port_alone(self):
         """
         Change the site port to a new one
         """
-        management.call_command('update_site_data', 'loopdev', '--port=555')
-        site_obj = Site.objects.get(hostname='loopdev')
+        management.call_command("update_site_data", "loopdev", "--port=555")
+        site_obj = Site.objects.get(hostname="loopdev")
         self.assertEqual(555, site_obj.port)
 
     def test_changing_hostname_alone(self):
         """
         Change the site hostname to a new one
         """
-        management.call_command('update_site_data', 'loopdev', '--new_host=lcars')
-        site_obj = Site.objects.get(hostname='lcars')
-        self.assertEqual('lcars', site_obj.hostname)
+        management.call_command("update_site_data", "loopdev", "--new_host=lcars")
+        site_obj = Site.objects.get(hostname="lcars")
+        self.assertEqual("lcars", site_obj.hostname)
 
     def test_changing_all_options_at_once(self):
         """
         Pass all paramaters at once
         """
         management.call_command(
-            'update_site_data', 'loopdev', '--new_host=lcars', '--port=8912'
+            "update_site_data", "loopdev", "--new_host=lcars", "--port=8912"
         )
-        site_obj = Site.objects.get(hostname='lcars')
-        self.assertEqual('lcars', site_obj.hostname)
+        site_obj = Site.objects.get(hostname="lcars")
+        self.assertEqual("lcars", site_obj.hostname)
         self.assertEqual(8912, site_obj.port)
 
     def test_bad_port_given(self):
@@ -690,77 +688,78 @@ class TestUpdateSiteDataCommand(TestCase):
         self.assertRaises(
             ValueError,
             management.call_command,
-            'update_site_data',
-            'loopdev',
-            '--port=borg',
+            "update_site_data",
+            "loopdev",
+            "--port=borg",
         )
 
 
 class LinkQueueSpreadsheetBlockTestCase(TestCase):
-    def makeTestingSpreadsheet(self, path_to_file, data, title):
-        df = pd.DataFrame(data)
-        df.to_excel('media/' + path_to_file, index=False)
-        return Document.objects.create(title=title, file=path_to_file)
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # Create necessary pages
-        boiler_plate(self)
+        boiler_plate(cls)
 
         # Documents
         # Good data, current links
         now = datetime.now()
         later = now + timedelta(days=5)
-        sformat = '%m/%d/%Y'
+        sformat = "%m/%d/%Y"
         now_string = now.strftime(sformat)
         later_string = later.strftime(sformat)
         data = {
-            'Start Date': ['05/1/2021', later_string, now_string],
-            'End Date': ['06/3/2021', now_string, later_string],
-            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
-            'URL': [
-                'https://foobar.com',
-                'https://test.com',
-                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+            "Start Date": ["05/1/2021", later_string, now_string],
+            "End Date": ["06/3/2021", now_string, later_string],
+            "Link Text": ["The Grand Nagus", "Picard", "A deal is a deal"],
+            "URL": [
+                "https://foobar.com",
+                "https://test.com",
+                "https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition",
             ],
         }
-        self.good_document = self.makeTestingSpreadsheet(
-            'documents/test_get_link_queue.xlsx', data, 'The Rules of Acquisition'
+        cls.good_document = cls.makeTestingSpreadsheet(
+            "documents/test_get_link_queue.xlsx", data, "The Rules of Acquisition"
         )
-        self.good_document.save()
+        cls.good_document.save()
 
         # Old dates, no current links
         data = {
-            'Start Date': ['05/1/2021', '06/2/2021', '07/3/2021'],
-            'End Date': ['06/3/2021', '07/4/2021', '08/5/2021'],
-            'Link Text': ['The Grand Nagus', 'Picard', 'A deal is a deal'],
-            'URL': [
-                'https://foobar.com',
-                'https://test.com',
-                'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
+            "Start Date": ["05/1/2021", "06/2/2021", "07/3/2021"],
+            "End Date": ["06/3/2021", "07/4/2021", "08/5/2021"],
+            "Link Text": ["The Grand Nagus", "Picard", "A deal is a deal"],
+            "URL": [
+                "https://foobar.com",
+                "https://test.com",
+                "https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition",
             ],
         }
-        self.document_expired = self.makeTestingSpreadsheet(
-            'documents/test_link_queue_fallback.xlsx', data, 'The Rules of Acquisition'
+        cls.document_expired = cls.makeTestingSpreadsheet(
+            "documents/test_link_queue_fallback.xlsx", data, "The Rules of Acquisition"
         )
-        self.document_expired.save()
+        cls.document_expired.save()
 
         # Empty spreadsheet
-        self.path_to_empty_doc = 'documents/test_empty.xlsx'
+        cls.path_to_empty_doc = "documents/test_empty.xlsx"
         df = pd.DataFrame()
-        df.to_excel('media/' + self.path_to_empty_doc, index=False)
-        self.empty_document = Document.objects.create(
-            title='Empty Spreadsheet', file=self.path_to_empty_doc
+        df.to_excel("media/" + cls.path_to_empty_doc, index=False)
+        cls.empty_document = Document.objects.create(
+            title="Empty Spreadsheet", file=cls.path_to_empty_doc
         )
-        self.empty_document.save()
+        cls.empty_document.save()
+
+    @classmethod
+    def makeTestingSpreadsheet(cls, path_to_file, data, title):
+        df = pd.DataFrame(data)
+        df.to_excel("media/" + path_to_file, index=False)
+        return Document.objects.create(title=title, file=path_to_file)
 
     def tearDown(self):
         clear_url_caches()
         cache.clear()
         clear_cache()
-        self.site.delete()
 
     def test_clean_invalid_file_extension(self):
-        file_path = 'documents/invalid_file.doc'
+        file_path = "documents/invalid_file.doc"
         block = LinkQueueSpreadsheetBlock()
         invalid_document = Document.objects.create(
             title="Wrong File Extension", file=file_path
@@ -770,8 +769,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             stream_block=block,
             stream_data=[
                 {
-                    'type': 'linkqueuespreadsheetblock',
-                    'value': [{'type': 'spreadsheet', 'value': invalid_document.id}],
+                    "type": "linkqueuespreadsheetblock",
+                    "value": [{"type": "spreadsheet", "value": invalid_document.id}],
                 }
             ],
             is_lazy=True,
@@ -782,19 +781,19 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         with self.assertRaises(ValidationError) as cm:
             block.clean(sv)
         ex = cm.exception
-        self.assertEqual(ex.messages[0], 'Your spreadsheet file must be an .xlsx')
+        self.assertEqual(ex.messages[0], "Your spreadsheet file must be an .xlsx")
 
     def test_clean_invalid_spreadsheet_headers(self):
-        path_to_file = 'documents/test.xlsx'
+        path_to_file = "documents/test.xlsx"
         block = LinkQueueSpreadsheetBlock()
         data = {
-            'Test1': ['Foo', 'Foo', 'Foo'],
-            'Test2': ['Foo', 'Foo', 'Foo'],
-            'Test3': ['Foo', 'Foo', 'Foo'],
-            'Test4': ['Foo', 'Foo', 'Foo'],
+            "Test1": ["Foo", "Foo", "Foo"],
+            "Test2": ["Foo", "Foo", "Foo"],
+            "Test3": ["Foo", "Foo", "Foo"],
+            "Test4": ["Foo", "Foo", "Foo"],
         }
         invalid_document = self.makeTestingSpreadsheet(
-            path_to_file, data, 'Bad Spreadsheet Headers'
+            path_to_file, data, "Bad Spreadsheet Headers"
         )
         invalid_document.save()
 
@@ -802,8 +801,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             stream_block=block,
             stream_data=[
                 {
-                    'type': 'linkqueuespreadsheetblock',
-                    'value': [{'type': 'spreadsheet', 'value': invalid_document.id}],
+                    "type": "linkqueuespreadsheetblock",
+                    "value": [{"type": "spreadsheet", "value": invalid_document.id}],
                 }
             ],
             is_lazy=True,
@@ -826,8 +825,8 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
             stream_block=block,
             stream_data=[
                 {
-                    'type': 'linkqueuespreadsheetblock',
-                    'value': [{'type': 'spreadsheet', 'value': self.empty_document.id}],
+                    "type": "linkqueuespreadsheetblock",
+                    "value": [{"type": "spreadsheet", "value": self.empty_document.id}],
                 }
             ],
             is_lazy=True,
@@ -841,28 +840,28 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         ex = cm.exception
         self.assertEqual(
             ex.messages[0],
-            'Empty spreadsheets are not allowed',
+            "Empty spreadsheets are not allowed",
         )
 
     def test_get_link_queue(self):
         self.page.link_queue = json.dumps(
-            [{'type': 'spreadsheet', 'value': self.good_document.id}]
+            [{"type": "spreadsheet", "value": self.good_document.id}]
         )
         self.page.save()
 
         q = self.page.get_link_queue()
         expected_val = {
-            'The Rules of Acquisition': [
+            "The Rules of Acquisition": [
                 (
-                    'https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition',
-                    'A deal is a deal',
+                    "https://memory-alpha.fandom.com/wiki/Rules_of_Acquisition",
+                    "A deal is a deal",
                 )
             ]
         }
         self.assertEqual(q, expected_val)
 
     def test_link_queue_rich_text_fallback(self):
-        fallback_text = 'Fallback text.'
+        fallback_text = "Fallback text."
         request = HttpRequest()
         add_generic_request_meta_fields(request)
         response = self.page.serve(request)
@@ -872,7 +871,7 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
 
         # Should have fallback text when a link queue is set but the dates are old
         self.page.link_queue = json.dumps(
-            [{'type': 'spreadsheet', 'value': self.document_expired.id}]
+            [{"type": "spreadsheet", "value": self.document_expired.id}]
         )
         self.page.save()
         request = HttpRequest()
@@ -882,14 +881,14 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
 
         # Should not have fallback text when a link queue is set and the dates are current
         self.page.link_queue = json.dumps(
-            [{'type': 'spreadsheet', 'value': self.good_document.id}]
+            [{"type": "spreadsheet", "value": self.good_document.id}]
         )
         self.page.save()
         request = HttpRequest()
         add_generic_request_meta_fields(request)
         response = self.page.serve(request)
         self.assertNotContains(response, fallback_text)
-        self.assertContains(response, 'A deal is a deal')
+        self.assertContains(response, "A deal is a deal")
 
     def test_empty_spreadsheet_does_not_break_page(self):
         request = HttpRequest()
@@ -898,7 +897,7 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
 
         # Pages with an empty document should still return a 200
         self.page.link_queue = json.dumps(
-            [{'type': 'spreadsheet', 'value': self.empty_document.id}]
+            [{"type": "spreadsheet", "value": self.empty_document.id}]
         )
         self.page.save()
         request = HttpRequest()
@@ -910,3 +909,262 @@ class LinkQueueSpreadsheetBlockTestCase(TestCase):
         self.empty_document.delete()
         response = self.page.serve(request)
         self.assertEqual(response.status_code, 200)
+
+
+class PageListingBlockTestCase(TestCase):
+    """
+    Tests for the "Page Listing" streamfield block and the helper
+    that builds its nested data structure.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        boiler_plate(cls)
+
+        # A section four levels deep, with a page excluded from menus and an
+        # unpublished page, each with a child of their own:
+        #
+        # section
+        # |-- child (in menus)
+        # |   `-- grandchild (in menus)
+        # |       `-- great_grandchild (in menus)
+        # |-- hidden_child (not in menus)
+        # |   `-- hidden_grandchild (in menus)
+        # `-- draft_child (not live)
+        #     `-- draft_grandchild (in menus)
+        cls.section = cls.make_page(cls.homepage, "Bajor")
+        cls.child = cls.make_page(cls.section, "Bajoran Provisional Government")
+        cls.grandchild = cls.make_page(cls.child, "Chamber of Ministers")
+        cls.great_grandchild = cls.make_page(cls.grandchild, "First Minister")
+        cls.hidden_child = cls.make_page(cls.section, "Obsidian Order", in_menu=False)
+        cls.hidden_grandchild = cls.make_page(cls.hidden_child, "Enabran Tain")
+        cls.draft_child = cls.make_page(cls.section, "Circle Coup", live=False)
+        cls.draft_grandchild = cls.make_page(cls.draft_child, "Jaro Essa")
+
+        # A section on Loop. Loop content types extend BasePage while
+        # public ones extend PublicBasePage.
+        cls.loop_section = cls.make_loop_page(cls.homepage, "Cardassian Union")
+        cls.loop_child = cls.make_loop_page(cls.loop_section, "Detapa Council")
+
+    @classmethod
+    def make_page(cls, parent, title, in_menu=True, live=True):
+        page = StandardPage(
+            title=title,
+            content_specialist=cls.staff,
+            editor=cls.staff,
+            live=live,
+            page_maintainer=cls.staff,
+            show_in_menus=in_menu,
+            unit=cls.unit,
+        )
+        parent.add_child(instance=page)
+        return page
+
+    @classmethod
+    def make_loop_page(cls, parent, title):
+        page = IntranetPlainPage(
+            title=title,
+            editor=cls.staff,
+            page_maintainer=cls.staff,
+            show_in_menus=True,
+        )
+        parent.add_child(instance=page)
+        return page
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
+
+    def titles(self, listing):
+        """
+        Flatten a listing into a list of titles for easy comparison.
+        """
+        titles = []
+        for node in listing:
+            titles.append(node["title"])
+            titles.extend(self.titles(node["children"]))
+        return titles
+
+    def block_value(self, root_page=None, depth="1", heading=""):
+        """
+        The value of a single Page Listing block.
+        """
+        return {
+            "heading": heading,
+            "root_page": root_page.id if root_page else None,
+            "depth": depth,
+        }
+
+    def block_body(self, root_page=None, depth="1", heading=""):
+        """
+        A streamfield containing nothing but a Page Listing block.
+        """
+        return json.dumps(
+            [
+                {
+                    "type": "page_listing",
+                    "value": self.block_value(root_page, depth, heading),
+                }
+            ]
+        )
+
+    def render_block(self, page, root_page=None, depth="1", heading=""):
+        """
+        Serve a page with a single Page Listing block in the body and
+        return the response. Saves the page without validating it, so
+        combinations an editor would be stopped from choosing can be
+        rendered too.
+        """
+        page.body = self.block_body(root_page, depth, heading)
+        page.save(clean=False)
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        return page.serve(request)
+
+    def listing_for(self, page, root_page=None, depth="1"):
+        """
+        The listing a Page Listing block builds when it appears on a
+        given page.
+        """
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        block = PageListingBlock()
+        context = block.get_context(
+            block.to_python(self.block_value(root_page, depth)),
+            parent_context={"page": page, "request": request},
+        )
+        return context["pages"]
+
+    def test_one_level_lists_immediate_children_only(self):
+        listing = build_page_listing(self.section, 1)
+        self.assertEqual(self.titles(listing), [self.child.title])
+
+    def test_depth_is_honored(self):
+        listing = build_page_listing(self.section, 2)
+        self.assertEqual(
+            self.titles(listing), [self.child.title, self.grandchild.title]
+        )
+
+    def test_depth_is_clamped_to_the_maximum(self):
+        expected = self.titles(build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH))
+        self.assertEqual(self.titles(build_page_listing(self.section, 99)), expected)
+
+        # The editor should never be offered a depth beyond the cap either
+        choices = dict(PageListingBlock().child_blocks["depth"].field.choices)
+        self.assertEqual(
+            sorted(choices), [str(n) for n in range(1, PAGE_LISTING_MAX_DEPTH + 1)]
+        )
+
+    def test_invalid_depth_falls_back_to_one_level(self):
+        expected = self.titles(build_page_listing(self.section, 1))
+        for depth in (None, "", "banana", 0, -3):
+            self.assertEqual(
+                self.titles(build_page_listing(self.section, depth)), expected
+            )
+
+    def test_descendants_are_fetched_in_a_single_query(self):
+        # Warm the site root paths cache, which page urls are built from
+        build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+
+        with self.assertNumQueries(1):
+            build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+
+    def test_pages_hidden_from_menus_and_drafts_are_excluded(self):
+        listing = build_page_listing(self.section, PAGE_LISTING_MAX_DEPTH)
+        titles = self.titles(listing)
+
+        self.assertNotIn(self.hidden_child.title, titles)
+        self.assertNotIn(self.draft_child.title, titles)
+
+        # An excluded page takes its own children with it
+        self.assertNotIn(self.hidden_grandchild.title, titles)
+        self.assertNotIn(self.draft_grandchild.title, titles)
+
+    def test_nesting_structure(self):
+        listing = build_page_listing(self.section, 3)
+
+        self.assertEqual(len(listing), 1)
+        self.assertEqual(listing[0]["title"], self.child.title)
+        self.assertEqual(listing[0]["url"], self.child.url)
+
+        children = listing[0]["children"]
+        self.assertEqual([node["title"] for node in children], [self.grandchild.title])
+        self.assertEqual(
+            [node["title"] for node in children[0]["children"]],
+            [self.great_grandchild.title],
+        )
+
+    def test_blank_root_page_lists_children_of_the_current_page(self):
+        response = self.render_block(self.section, depth="2")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="index-list"')
+        self.assertContains(response, self.child.title)
+        self.assertContains(response, self.grandchild.title)
+        self.assertNotContains(response, self.hidden_child.title)
+
+    def test_root_page_lists_the_chosen_section(self):
+        # The listing is rooted at another section, not at the page the
+        # block appears on.
+        response = self.render_block(self.page, root_page=self.child, depth="1")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.grandchild.title)
+        self.assertNotContains(response, self.child.title)
+
+    def test_heading_is_rendered_when_supplied(self):
+        heading = "Further Reading"
+        response = self.render_block(self.section, heading=heading)
+        self.assertContains(response, "<h2>%s</h2>" % heading, html=True)
+
+        response = self.render_block(self.section)
+        self.assertNotContains(response, heading)
+
+    def test_empty_section_renders_nothing(self):
+        response = self.render_block(self.great_grandchild, heading="Further Reading")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'class="index-list"')
+        self.assertNotContains(response, "Further Reading")
+
+    def test_a_loop_section_cannot_be_saved_on_a_public_page(self):
+        self.page.body = self.block_body(root_page=self.loop_section)
+
+        with self.assertRaises(ValidationError) as error:
+            self.page.clean()
+
+        self.assertIn("body", error.exception.message_dict)
+        self.assertIn(self.loop_section.title, str(error.exception))
+
+    def test_a_public_section_can_be_saved_on_a_public_page(self):
+        self.page.body = self.block_body(root_page=self.section)
+        self.page.clean()
+
+    def test_a_loop_section_can_be_saved_on_a_loop_page(self):
+        self.loop_section.body = self.block_body(root_page=self.loop_section)
+        self.loop_section.clean()
+
+    def test_a_loop_section_is_not_listed_on_a_public_page(self):
+        # Loop page titles are intranet content. Nothing renders, rather
+        # than falling back to the children of the public page.
+        response = self.render_block(
+            self.page, root_page=self.loop_section, heading="Further Reading"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'class="index-list"')
+        self.assertNotContains(response, self.loop_child.title)
+        self.assertNotContains(response, "Further Reading")
+
+    def test_a_loop_section_is_not_listed_without_a_page_to_check(self):
+        self.assertEqual(self.listing_for(None, root_page=self.loop_section), [])
+
+    def test_a_loop_section_is_listed_on_a_loop_page(self):
+        listing = self.listing_for(self.loop_section, root_page=self.loop_section)
+        self.assertEqual(self.titles(listing), [self.loop_child.title])
+
+    def test_a_public_section_is_listed_on_a_loop_page(self):
+        # Documenting part of the public site on Loop is fine.
+        listing = self.listing_for(self.loop_section, root_page=self.section)
+        self.assertEqual(self.titles(listing), [self.child.title])

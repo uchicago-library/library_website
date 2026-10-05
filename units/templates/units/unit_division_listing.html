@@ -6,7 +6,7 @@
     <span>
       {% autoescape off %}
         {% division_building_room_phone division.unit %}
-      {% endautoescape %} &nbsp; | &nbsp; 
+      {% endautoescape %} &nbsp; | &nbsp;
       <a href=".?view=staff&amp;department={{ division.unit.title|urlencode }}" class="viewall">View all {{ division.unit.title }} staff</a>
     </span>
     <div class="col-xs-12 sdir-wrap">

@@ -1,7 +1,5 @@
-@import "base/css/variables.scss";
-@import "base/css/base.scss";
-
-
+@import 'base/css/variables.scss';
+@import 'base/css/base.scss';
 
 /*
  * User Defined Variables
@@ -9,49 +7,53 @@
  *
  */
 
-$display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$display-font: 'Helvetica Neue', helvetica, arial, sans-serif;
 
-
-
-.conferencepage, .conferencesubpage {
+.conferencepage,
+.conferencesubpage {
   .jumbotron {
     min-height: 250px;
     overflow: hidden;
-    padding-top: 0px;
+    padding-top: 0;
     margin-bottom: 0;
-    //background-color: $accent-color;  // needs to remain in head
+
+    // background-color: $accent-color;  // needs to remain in head
     background-size: cover;
     h2 {
       color: #fff;
     }
     .container {
-      padding: 0px;
-      margin: 0px;
+      padding: 0;
+      margin: 0;
       position: relative;
       width: 100%;
     }
     .img-wrapper {
       display: none;
+
       @include respond-to(small) {
-          display: block;
-          width: 250px;
-          overflow: hidden;
+        display: block;
+        width: 250px;
+        overflow: hidden;
       }
+
       @include respond-to(medium) {
-          width: 250px;
-          overflow: hidden;
+        width: 250px;
+        overflow: hidden;
       }
       img {
-          width: 200px;
-          height: auto;
-          @include respond-to(medium) {
-              width: 250px;
-          }
+        width: 200px;
+        height: auto;
+
+        @include respond-to(medium) {
+          width: 250px;
+        }
       }
-      &+.overlaywrap {
+      & + .overlaywrap {
         @include respond-to(small) {
           left: 200px;
         }
+
         @include respond-to(medium) {
           left: 250px;
         }
@@ -60,11 +62,12 @@ $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
   }
 
   .jumbotron .overlaywrap {
-    //background-color: rgba( $base-color, .9 );  // needs to remain in head
+    // background-color: rgba( $base-color, .9 );  // needs to remain in head
     left: 0;
     top: 0;
     font-family: $display-font;
     padding: 0.5em 2em;
+
     @include respond-to(small) {
       padding-right: 6em;
     }
@@ -72,43 +75,38 @@ $display-font: "Helvetica Neue",Helvetica,Arial,sans-serif;
       padding: 0;
       margin: 0;
       &:last-child {
-          padding-bottom: 15px;
+        padding-bottom: 15px;
       }
     }
     h2 {
       font-weight: 100;
-      font-size: $font-large*0.7;
+      font-size: $font-large * 0.7;
       margin: 0;
-      padding: 0px;
+      padding: 0;
       letter-spacing: 0.03em;
       color: #fff;
+
       @include respond-to(small) {
-          font-size: $font-large;
+        font-size: $font-large;
       }
     }
     .banner-subtitle {
       font-family: $display-font;
       color: #eee;
-      font-size: $font-medium*0.8;
-      padding-bottom:5px;
+      font-size: $font-medium * 0.8;
+      padding-bottom: 5px;
+
       @include respond-to(small) {
-          font-size: $font-medium;
+        font-size: $font-medium;
       }
     }
-    .banner-loc, .banner-loc a, .banner-date {
+    .banner-loc,
+    .banner-loc a,
+    .banner-date {
       font-family: $display-font;
       color: #e0dddb;
       font-style: italic;
-      font-size: $font-small*0.8;
+      font-size: $font-small * 0.8;
     }
   }
 }
-
-
-
-
-
-
-
-
-

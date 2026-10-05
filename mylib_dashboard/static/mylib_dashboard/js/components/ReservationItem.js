@@ -1,0 +1,82 @@
+/**
+ * ReservationItem - A single room reservation.
+ */
+import React from 'react'
+import PropTypes from 'prop-types'
+
+/**
+ * Format a date/time string for display (e.g., "Feb 6, 1:00 PM").
+ */
+function formatDateTime(dateString) {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
+/**
+ * Format time only (e.g., "4:00 PM").
+ */
+function formatTime(dateString) {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
+function ReservationItem({ reservation }) {
+  const { roomName, startTime, endTime, status, checkInCode } = reservation
+
+  const isCancelled = status && status.toLowerCase().includes('cancelled')
+
+  return (
+    <div className={`mylib-item${isCancelled ? ' mylib-item--cancelled' : ''}`}>
+      <div className="mylib-item__title">{roomName}</div>
+      <div className="mylib-item__scheduled-date">
+        <strong>{formatDateTime(startTime)}</strong> - {formatTime(endTime)}
+      </div>
+      {status && status !== 'Confirmed' && (
+        <div className="mylib-item__status">
+          {isCancelled && (
+            <span className="mylib-item__badge mylib-item__badge--cancelled">
+              Cancelled
+            </span>
+          )}
+          {!isCancelled && status}
+        </div>
+      )}
+      {checkInCode && !isCancelled && (
+        <div className="mylib-item__check-in">
+          <a
+            href="https://rooms.lib.uchicago.edu/r/checkin"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-ga-label="Check in"
+          >
+            Check in
+          </a>{' '}
+          with code: {checkInCode}
+        </div>
+      )}
+    </div>
+  )
+}
+
+ReservationItem.propTypes = {
+  reservation: PropTypes.shape({
+    id: PropTypes.string,
+    roomName: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    endTime: PropTypes.string.isRequired,
+    status: PropTypes.string,
+    checkInCode: PropTypes.string,
+  }).isRequired,
+}
+
+export default ReservationItem

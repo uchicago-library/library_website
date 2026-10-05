@@ -1,24 +1,25 @@
-import os
 import json
-import simplejson
+import os
 import re
 
 import requests
+import simplejson
 
 try:
     from library_website.settings import (
         MARKLOGIC_LDR_PASSWORD,
-        MARKLOGIC_LDR_USER,
         MARKLOGIC_LDR_URL,
-        SPARQL_ROOT
+        MARKLOGIC_LDR_USER,
+        SPARQL_ROOT,
     )
-except (ImportError):
-    MARKLOGIC_LDR_PASSWORD = os.environ['MARKLOGIC_LDR_PASSWORD']
-    MARKLOGIC_LDR_USER = os.environ['MARKLOGIC_LDR_USER']
-    MARKLOGIC_LDR_URL = os.environ['MARKLOGIC_LDR_URL']
-    SPARQL_ROOT = os.environ['SPARQL_ROOT']
+except ImportError:
+    MARKLOGIC_LDR_PASSWORD = os.environ["MARKLOGIC_LDR_PASSWORD"]
+    MARKLOGIC_LDR_USER = os.environ["MARKLOGIC_LDR_USER"]
+    MARKLOGIC_LDR_URL = os.environ["MARKLOGIC_LDR_URL"]
+    SPARQL_ROOT = os.environ["SPARQL_ROOT"]
 
 from requests.auth import HTTPBasicAuth
+
 from lib_collections.utils import GeneralPurpose
 
 
@@ -32,7 +33,7 @@ def sp_query(manifid: str) -> str:
     Returns:
         SparQL query in the form of a string
     """
-    return '''SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?spatial ?ClassificationLcc ?Local
+    return """SELECT ?coverage ?creator ?date ?description ?format ?identifier ?publisher ?rights ?subject ?title ?type ?spatial ?ClassificationLcc ?Local
               FROM <{1}>
               WHERE {{
                   <ark:61001/{0}> <http://purl.org/dc/elements/1.1/identifier> ?identifier .
@@ -48,12 +49,14 @@ def sp_query(manifid: str) -> str:
                   OPTIONAL {{ <ark:61001/{0}> <http://purl.org/dc/terms/spatial> ?spatial . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/ClassificationLcc> ?ClassificationLcc . }}
                   OPTIONAL {{ <ark:61001/{0}> <http://id.loc.gov/ontologies/bibframe/Local> ?Local . }}
-              }}'''.format(manifid, SPARQL_ROOT)
+              }}""".format(
+        manifid, SPARQL_ROOT
+    )
 
 
-def get_raw_record(manifid: str,
-                   modify=GeneralPurpose.noop,
-                   func=GeneralPurpose.identity) -> dict:
+def get_raw_record(
+    manifid: str, modify=GeneralPurpose.noop, func=GeneralPurpose.identity
+) -> dict:
     """
     Query Mark Logic for metadata fields to be displayed in collection object
     page.  Dictionary comes back in not-particularly-usable form that's similar
@@ -73,15 +76,15 @@ def get_raw_record(manifid: str,
                 MARKLOGIC_LDR_USER,
                 MARKLOGIC_LDR_PASSWORD,
             ),
-            headers={'Content-type': 'text/turtle'},
-            params={'query': sp_query(manifid)},
-            url=MARKLOGIC_LDR_URL + '/sparql',
+            headers={"Content-type": "text/turtle"},
+            params={"query": sp_query(manifid)},
+            url=MARKLOGIC_LDR_URL + "/sparql",
         )
         modify(r)
-        j = json.loads(r.content.decode('utf-8'))
+        j = json.loads(r.content.decode("utf-8"))
         return func(j)
     except requests.exceptions.RequestException:
-        return ''
+        return ""
 
 
 def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
@@ -99,9 +102,7 @@ def align_field_names(dct: dict, wagtail_field_names: list) -> dict:
         Dictionary representing metadata for display in object page
 
     """
-    filtered_names = [
-        item for item in wagtail_field_names if item in dct.keys()
-    ]
+    filtered_names = [item for item in wagtail_field_names if item in dct.keys()]
     updated_dict = {key: dct[key] for key in filtered_names}
     return updated_dict
 
@@ -122,22 +123,22 @@ def triples_to_dict(dct: dict, wagtail_field_names: list):
         Reformatted dictionary representing metadata
     """
     try:
-        results = dct['results']['bindings'][0]
-        field_dict = {
-            key.capitalize(): results[key]['value'] for key in results.keys()
-        }
+        results = dct["results"]["bindings"][0]
+        field_dict = {key.capitalize(): results[key]["value"] for key in results.keys()}
         if wagtail_field_names:
             return align_field_names(field_dict, wagtail_field_names)
         else:
             return field_dict
     except (KeyError, IndexError):
-        return ''
+        return ""
 
 
-def get_record_no_parsing(manifid: str,
-                          wagtail_field_names: list,
-                          modify=GeneralPurpose.noop,
-                          func=GeneralPurpose.identity) -> dict:
+def get_record_no_parsing(
+    manifid: str,
+    wagtail_field_names: list,
+    modify=GeneralPurpose.noop,
+    func=GeneralPurpose.identity,
+) -> dict:
     """
     Queries Mark Logic for collection object metadata fields, leaves the values
     of those metadata fields alone, in their raw form.
@@ -155,7 +156,7 @@ def get_record_no_parsing(manifid: str,
     if raw_record:
         return triples_to_dict(raw_record, wagtail_field_names)
     else:
-        return ''
+        return ""
 
 
 def remove_trailing_comma(string: str) -> str:
@@ -170,7 +171,7 @@ def remove_trailing_comma(string: str) -> str:
     """
     stripped = string.strip()
     rev = stripped[::-1]
-    if len(rev) > 0 and rev[0] == ',':
+    if len(rev) > 0 and rev[0] == ",":
         return rev[1:][::-1]
     else:
         return rev[::-1]
@@ -194,30 +195,28 @@ def brackets_parse(value: str) -> dict:
         if qm is None:
             return False
         else:
-            return qm == '?'
+            return qm == "?"
 
     prepped = remove_trailing_comma(value)
-    extract_from_brackets = re.compile(r'^\[([\w\s\d,.]*)(\\?)?\]')
+    extract_from_brackets = re.compile(r"^\[([\w\s\d,.]*)(\\?)?\]")
     contents = re.match(extract_from_brackets, prepped)
 
     if contents is not None:
         return {
-            'contents': contents[1],
-            'externally_derived': True,
-            'uncertain': question_mark(contents[2])
+            "contents": contents[1],
+            "externally_derived": True,
+            "uncertain": question_mark(contents[2]),
         }
     else:
-        return {
-            'contents': prepped,
-            'externally_derived': False,
-            'uncertain': False
-        }
+        return {"contents": prepped, "externally_derived": False, "uncertain": False}
 
 
-def get_record_parsed(manifid: str,
-                      wagtail_field_names: list,
-                      modify=GeneralPurpose.noop,
-                      func=GeneralPurpose.identity) -> dict:
+def get_record_parsed(
+    manifid: str,
+    wagtail_field_names: list,
+    modify=GeneralPurpose.noop,
+    func=GeneralPurpose.identity,
+) -> dict:
     """
     Performs SparQL query, arranges result to mirror metadata fields from
     Wagtail database, and parses all of the metadata fields.
@@ -232,12 +231,11 @@ def get_record_parsed(manifid: str,
         Dictionary of metadata fields, with parse results in values
 
     """
-    dct = get_record_no_parsing(
-        manifid, wagtail_field_names, modify=modify, func=func)
+    dct = get_record_no_parsing(manifid, wagtail_field_names, modify=modify, func=func)
     if dct:
         return {k: brackets_parse(v) for k, v in dct.items()}
     else:
-        return ''
+        return ""
 
 
 def render_field(parsed_field: dict) -> str:
@@ -254,24 +252,23 @@ def render_field(parsed_field: dict) -> str:
 
     def question_mark(yes_qm):
         if yes_qm:
-            return '?'
+            return "?"
         else:
-            return ''
+            return ""
 
     try:
-        if parsed_field['externally_derived']:
+        if parsed_field["externally_derived"]:
             return "[%s%s]" % (
-                parsed_field['contents'],
-                question_mark(parsed_field['uncertain']),
+                parsed_field["contents"],
+                question_mark(parsed_field["uncertain"]),
             )
         else:
-            return parsed_field['contents']
+            return parsed_field["contents"]
     except KeyError:
         return parsed_field
 
 
-def add_extra_fields(manifid: str,
-                     dct: dict) -> dict:
+def add_extra_fields(manifid: str, dct: dict) -> dict:
     """
     Add 'parent collection' and 'permanent url' to the end of a list
     of metadata fields.  (We do this on every object page.)
@@ -282,15 +279,17 @@ def add_extra_fields(manifid: str,
     Returns:
         Nothing; mutates the input dictionary
     """
-    ark_base = 'https://www.lib.uchicago.edu/ark:/61001/'
-    dct['Collection'] = 'Social Scientists Map Chicago'
-    dct['Permanent URL'] = ark_base + manifid
+    ark_base = "https://www.lib.uchicago.edu/ark:/61001/"
+    dct["Collection"] = "Social Scientists Map Chicago"
+    dct["Permanent URL"] = ark_base + manifid
 
 
-def get_record_for_display(manifid: str,
-                           wagtail_field_names: list,
-                           modify=GeneralPurpose.noop,
-                           func=GeneralPurpose.identity) -> dict:
+def get_record_for_display(
+    manifid: str,
+    wagtail_field_names: list,
+    modify=GeneralPurpose.noop,
+    func=GeneralPurpose.identity,
+) -> dict:
     """
     Main function for getting metadata fields back from Mark Logic, based on a
     collection object's NOID.
@@ -305,14 +304,13 @@ def get_record_for_display(manifid: str,
         Dictionary representing metadata to be displayed on collection
         object page.
     """
-    dct = get_record_parsed(manifid, wagtail_field_names,
-                            modify=modify, func=func)
+    dct = get_record_parsed(manifid, wagtail_field_names, modify=modify, func=func)
     try:
         if dct:
             main_output = {k: render_field(v) for k, v in dct.items()}
             add_extra_fields(manifid, main_output)
             return main_output
         else:
-            return ''
+            return ""
     except (json.JSONDecodeError, simplejson.JSONDecodeError):
-        return ''
+        return ""

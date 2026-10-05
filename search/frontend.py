@@ -12,7 +12,7 @@ def search(
     template_ajax=None,
     results_per_page=10,
     use_json=False,
-    json_attrs=['title', 'url'],
+    json_attrs=["title", "url"],
     show_unpublished=False,
     search_title_only=False,
     extra_filters={},
@@ -21,23 +21,23 @@ def search(
 
     # Get default templates
     if template is None:
-        if hasattr(settings, 'WAGTAILSEARCH_RESULTS_TEMPLATE'):
+        if hasattr(settings, "WAGTAILSEARCH_RESULTS_TEMPLATE"):
             template = settings.WAGTAILSEARCH_RESULTS_TEMPLATE
         else:
-            template = 'wagtailsearch/search_results.html'
+            template = "wagtailsearch/search_results.html"
 
     if template_ajax is None:
-        if hasattr(settings, 'WAGTAILSEARCH_RESULTS_TEMPLATE_AJAX'):
+        if hasattr(settings, "WAGTAILSEARCH_RESULTS_TEMPLATE_AJAX"):
             template_ajax = settings.WAGTAILSEARCH_RESULTS_TEMPLATE_AJAX
         else:
             template_ajax = template
 
     # Get query string and page from GET paramters
-    query_string = request.GET.get('q', '')
-    page = request.GET.get('page', request.GET.get('p', 1))
+    query_string = request.GET.get("q", "")
+    page = request.GET.get("page", request.GET.get("p", 1))
 
     # Search
-    if query_string != '':
+    if query_string != "":
         site = Site.find_for_request(request)
         pages = models.Page.objects.filter(
             path__startswith=(path or site.root_page.path)
@@ -50,7 +50,7 @@ def search(
             pages = pages.filter(**extra_filters)
 
         if search_title_only:
-            search_results = pages.search(query_string, fields=['title'])
+            search_results = pages.search(query_string, fields=["title"])
         else:
             search_results = pages.search(query_string)
 

@@ -18,23 +18,23 @@ class Command(BaseCommand):
     """
 
     HEADER = (
-        'URL',
-        'Page Title',
-        'Last Modified',
-        'Last Reviewed',
-        'Page Maintainer CNetID',
-        'Page Maintainer',
-        'Editor CNetID',
-        'Editor',
-        'Content Specialist CNetID',
-        'Content Specialist',
-        'Unit',
-        'Page Type',
-        'Section Start',
-        'Total Number of Edits',
-        'Creation Date',
-        'Title Tag',
-        'Meta Description',
+        "URL",
+        "Page Title",
+        "Last Modified",
+        "Last Reviewed",
+        "Page Maintainer CNetID",
+        "Page Maintainer",
+        "Editor CNetID",
+        "Editor",
+        "Content Specialist CNetID",
+        "Content Specialist",
+        "Unit",
+        "Page Type",
+        "Section Start",
+        "Total Number of Edits",
+        "Creation Date",
+        "Title Tag",
+        "Meta Description",
     )
 
     def add_arguments(self, parser):
@@ -43,21 +43,21 @@ class Command(BaseCommand):
         named arguments.
         """
         # Optional Argument.
-        parser.add_argument('cnetid', nargs='?', type=str)
+        parser.add_argument("cnetid", nargs="?", type=str)
 
         # Optional named arguments
         parser.add_argument(
-            '-s',
-            '--site',
+            "-s",
+            "--site",
             type=str,
-            help='Restrict results to a specific site (Loop or Public).',
+            help="Restrict results to a specific site (Loop or Public).",
         )
         parser.add_argument(
-            '-r',
-            '--role',
+            "-r",
+            "--role",
             type=str,
-            help='Role of the person for whom pages are being looked \
-            up (page_maintainer, editor, content_specialist)',
+            help="Role of the person for whom pages are being looked \
+            up (page_maintainer, editor, content_specialist)",
         )
 
     def _get_pages(self, cnetid, site_name, role):
@@ -138,7 +138,7 @@ class Command(BaseCommand):
         yield self.HEADER
         for page in pages:
             user = self._get_attr(page, role)
-            user_cnetid = self._get_attr(user, 'cnetid')
+            user_cnetid = self._get_attr(user, "cnetid")
             if user_cnetid == cnetid:
                 yield self.get_row(page, cnetid, site_name, role)
 
@@ -161,12 +161,12 @@ class Command(BaseCommand):
         """
         yield self.HEADER
         for page in pages:
-            page_maintainer = self._get_attr(page, 'page_maintainer')
-            editor = self._get_attr(page, 'editor')
-            content_specialist = self._get_attr(page, 'content_specialist')
-            page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
-            editor_cnetid = self._get_attr(editor, 'cnetid')
-            content_specialist_cnetid = self._get_attr(content_specialist, 'cnetid')
+            page_maintainer = self._get_attr(page, "page_maintainer")
+            editor = self._get_attr(page, "editor")
+            content_specialist = self._get_attr(page, "content_specialist")
+            page_maintainer_cnetid = self._get_attr(page_maintainer, "cnetid")
+            editor_cnetid = self._get_attr(editor, "cnetid")
+            content_specialist_cnetid = self._get_attr(content_specialist, "cnetid")
             if (
                 page_maintainer_cnetid == cnetid
                 or editor_cnetid == cnetid
@@ -191,27 +191,27 @@ class Command(BaseCommand):
             names (header) that will be used on the spreadsheet.
         """
         row = []
-        page_maintainer = self._get_attr(p, 'page_maintainer')
-        page_maintainer_cnetid = self._get_attr(page_maintainer, 'cnetid')
-        page_maintainer_title = self._get_attr(page_maintainer, 'title')
-        editor = self._get_attr(p, 'editor')
-        editor_cnetid = self._get_attr(editor, 'cnetid')
-        editor_title = self._get_attr(editor, 'title')
-        content_specialist = self._get_attr(p, 'content_specialist')
-        content_specialist_cnetid = self._get_attr(content_specialist, 'cnetid')
-        content_specialist_title = self._get_attr(content_specialist, 'title')
-        full_url = self._get_attr(p, 'full_url')
+        page_maintainer = self._get_attr(p, "page_maintainer")
+        page_maintainer_cnetid = self._get_attr(page_maintainer, "cnetid")
+        page_maintainer_title = self._get_attr(page_maintainer, "title")
+        editor = self._get_attr(p, "editor")
+        editor_cnetid = self._get_attr(editor, "cnetid")
+        editor_title = self._get_attr(editor, "title")
+        content_specialist = self._get_attr(p, "content_specialist")
+        content_specialist_cnetid = self._get_attr(content_specialist, "cnetid")
+        content_specialist_title = self._get_attr(content_specialist, "title")
+        full_url = self._get_attr(p, "full_url")
         latest_revision_created_at = self._get_date_string(
-            self._get_attr(p, 'latest_revision_created_at')
+            self._get_attr(p, "latest_revision_created_at")
         )
-        last_reviewed = self._get_date_string(self._get_attr(p, 'last_reviewed'))
-        unit = self._get_attr(p, 'unit')
+        last_reviewed = self._get_date_string(self._get_attr(p, "last_reviewed"))
+        unit = self._get_attr(p, "unit")
         page_type = p.cached_content_type.name
-        section_start = self._get_attr(p, 'start_sidebar_from_here')
-        title_tag = self._get_attr(p, 'seo_title')
-        meta_desc = self._get_attr(p, 'search_description')
-        total_edits = self._get_attr(p, 'revisions').count()
-        created_date = self._get_date_string(self._get_attr(p, 'first_published_at'))
+        section_start = self._get_attr(p, "start_sidebar_from_here")
+        title_tag = self._get_attr(p, "seo_title")
+        meta_desc = self._get_attr(p, "search_description")
+        total_edits = self._get_attr(p, "revisions").count()
+        created_date = self._get_date_string(self._get_attr(p, "first_published_at"))
 
         # Append to output.
         row.append(
@@ -253,10 +253,10 @@ class Command(BaseCommand):
         """
         if hasattr(obj, attr):
             # Since string attributes have a method called title
-            if obj == '' and attr == 'title':
-                return ''
+            if obj == "" and attr == "title":
+                return ""
             return getattr(obj, attr)
-        return ''
+        return ""
 
     def _get_date_string(self, date):
         """
@@ -271,8 +271,8 @@ class Command(BaseCommand):
             string
         """
         if date:
-            return date.strftime('%Y-%m-%d %H:%M:%S')
-        return ''
+            return date.strftime("%Y-%m-%d %H:%M:%S")
+        return ""
 
     def handle(self, *args, **options):
         """
@@ -282,9 +282,9 @@ class Command(BaseCommand):
         -management-commands/#django.core.management.BaseCommand.handle
         """
 
-        cnetid = options['cnetid']
-        site_name = options['site']
-        role = options['role']
+        cnetid = options["cnetid"]
+        site_name = options["site"]
+        role = options["role"]
 
         writer = csv.writer(sys.stdout)
         for record in self._get_pages(cnetid, site_name, role):
@@ -293,4 +293,4 @@ class Command(BaseCommand):
             except UnicodeEncodeError:
                 pass
 
-        return ''
+        return ""

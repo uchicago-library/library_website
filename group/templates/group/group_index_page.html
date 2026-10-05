@@ -14,17 +14,6 @@
                 <div class="grouplist">
                     {{ groups_active_html|richtext }}
                 </div>
-
-                {% if groups_inactive %}
-                    <h2>Inactive Groups</h2>
-                    <div class="inactive-groups">
-                        <ul>
-                            {% for group in groups_inactive %}
-                                <li><a href="{{ group.url }}">{{ group.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
             </article>
         </div>
     </div>

@@ -1,10 +1,10 @@
 <ul class="nav navbar-nav navbar-right">
     <li>
         <form class="searchbox news" action="/switchboard/" method="post">
-          <input id="search-news" type="search" required="" class="searchbox-input" name="query" aira-label="search news" title="search news" placeholder="Search News Stories" value="{{ search_query }}"/>
-	  <input name="news-search" value="true" type="hidden">
-	  <input type="hidden" name="which-form" value="news">
-	  {% csrf_token %}
+            <input id="search-news" type="search" required="" class="searchbox-input" name="query" aira-label="search news" title="search news" placeholder="Search News Stories" value="{{ search_query }}"/>
+            <input name="news-search" value="true" type="hidden">
+            <input type="hidden" name="which-form" value="news">
+            {% csrf_token %}
             <span class="searchbox-icon">
                 <i title="search" class="fa fa-search"></i>
                 <input type="submit" value="Search" class="searchbox-submit" style="background-color: transparent; color: transparent;">

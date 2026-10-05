@@ -1,17 +1,18 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import (
-    FieldPanel, InlinePanel, MultiFieldPanel
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.fields import StreamField
 from wagtail.models import Orderable, Page, Site
 from wagtail.search import index
 
 from base.models import (
-    AbstractButton, DefaultBodyFields, LinkedTextOrLogo, PublicBasePage,
-    SocialMediaFields
+    AbstractButton,
+    DefaultBodyFields,
+    LinkedTextOrLogo,
+    PublicBasePage,
+    SocialMediaFields,
 )
 
 
@@ -21,14 +22,13 @@ class ConferencePageMainRegistrationLinks(Orderable, AbstractButton):
     Creates a through table for the main
     registration buttons on conference pages.
     """
-    page = ParentalKey(
-        'conferences.ConferencePage', related_name='main_registration'
-    )
+
+    page = ParentalKey("conferences.ConferencePage", related_name="main_registration")
 
     class Meta:
-        verbose_name = 'Main Registration Link'
-        verbose_name_plural = 'Main Registration Links'
-        ordering = ['sort_order']
+        verbose_name = "Main Registration Link"
+        verbose_name_plural = "Main Registration Links"
+        ordering = ["sort_order"]
 
 
 class ConferencePageSecondaryRegistrationLinks(Orderable, AbstractButton):
@@ -36,38 +36,39 @@ class ConferencePageSecondaryRegistrationLinks(Orderable, AbstractButton):
     Creates a through table for the lesser
     registration buttons on conference pages.
     """
-    page = ParentalKey(
-        'conferences.ConferencePage', related_name='sub_registration'
-    )
+
+    page = ParentalKey("conferences.ConferencePage", related_name="sub_registration")
 
     class Meta:
-        verbose_name = 'Additional Registration Link'
-        verbose_name_plural = 'Additional Registration Links'
-        ordering = ['sort_order']
+        verbose_name = "Additional Registration Link"
+        verbose_name_plural = "Additional Registration Links"
+        ordering = ["sort_order"]
 
 
 class ConferencePageSponsors(Orderable, LinkedTextOrLogo):
     """
     Through table for sponsors.
     """
-    page = ParentalKey('conferences.ConferencePage', related_name='sponsors')
+
+    page = ParentalKey("conferences.ConferencePage", related_name="sponsors")
 
     class Meta:
-        verbose_name = 'Sponsor'
-        verbose_name_plural = 'Sponsors'
-        ordering = ['sort_order']
+        verbose_name = "Sponsor"
+        verbose_name_plural = "Sponsors"
+        ordering = ["sort_order"]
 
 
 class ConferencePageOrganizers(Orderable, LinkedTextOrLogo):
     """
     Through table for organizers.
     """
-    page = ParentalKey('conferences.ConferencePage', related_name='organizers')
+
+    page = ParentalKey("conferences.ConferencePage", related_name="organizers")
 
     class Meta:
-        verbose_name = 'Organizer'
-        verbose_name_plural = 'Organizers'
-        ordering = ['sort_order']
+        verbose_name = "Organizer"
+        verbose_name_plural = "Organizers"
+        ordering = ["sort_order"]
 
 
 # Page definitions
@@ -75,19 +76,20 @@ class ConferenceIndexPage(PublicBasePage):
     """
     Receptacle for all conference pages.
     """
+
     max_count = 1
     content_panels = Page.content_panels + PublicBasePage.content_panels
-    subpage_types = ['conferences.ConferencePage']
+    subpage_types = ["conferences.ConferencePage"]
 
 
 class ConferencePage(PublicBasePage, SocialMediaFields):
     """
     Main page for creating conferences.
     """
+
     # Generic variables
     hex_regex = RegexValidator(
-        regex='^#[a-zA-Z0-9]{6}$',
-        message='Please enter a hex color, e.g. #012043'
+        regex="^#[a-zA-Z0-9]{6}$", message="Please enter a hex color, e.g. #012043"
     )
 
     # Field definitions
@@ -98,24 +100,23 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         validators=[hex_regex], max_length=7, blank=True
     )
     location = models.ForeignKey(
-        'public.LocationPage',
+        "public.LocationPage",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='%(app_label)s_%(class)s_related'
+        related_name="%(app_label)s_%(class)s_related",
     )
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     current = models.BooleanField(
-        default=True,
-        help_text="Uncheck this when the conference has transpired"
+        default=True, help_text="Uncheck this when the conference has transpired"
     )
     conference_logo = models.ForeignKey(
-        'wagtailimages.Image',
+        "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
     )
     secondary_registration_heading = models.CharField(max_length=40, blank=True)
     secondary_registration_description = models.TextField(blank=True)
@@ -124,64 +125,70 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
     )
 
     # Panels and subpage types
-    content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [
-                FieldPanel('banner_image'),
-                FieldPanel('banner_title'),
-                FieldPanel('banner_subtitle'),
-            ],
-            heading='Banner'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('primary_branding_color'),
-                FieldPanel('secondary_branding_color'),
-                FieldPanel('conference_logo'),
-            ],
-            heading='Branding',
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('start_date'),
-                FieldPanel('end_date'),
-            ],
-            heading='Dates and Times',
-        ),
-        FieldPanel('location'),
-        FieldPanel('current'),
-        InlinePanel('main_registration', label='Main Registration Link'),
-        MultiFieldPanel(
-            [
-                FieldPanel('secondary_registration_heading'),
-                FieldPanel('secondary_registration_description'),
-                InlinePanel(
-                    'sub_registration', label='Secondary Registration Link'
-                ),
-            ],
-            heading='Secondary Registration Links',
-        ),
-        InlinePanel('sponsors', label='Sponsors'),
-        InlinePanel('organizers', label='Organizers'),
-        FieldPanel('body'),
-    ] + SocialMediaFields.panels + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            MultiFieldPanel(
+                [
+                    FieldPanel("banner_image"),
+                    FieldPanel("banner_title"),
+                    FieldPanel("banner_subtitle"),
+                ],
+                heading="Banner",
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel("primary_branding_color"),
+                    FieldPanel("secondary_branding_color"),
+                    FieldPanel("conference_logo"),
+                ],
+                heading="Branding",
+            ),
+            MultiFieldPanel(
+                [
+                    FieldPanel("start_date"),
+                    FieldPanel("end_date"),
+                ],
+                heading="Dates and Times",
+            ),
+            FieldPanel("location"),
+            FieldPanel("current"),
+            InlinePanel("main_registration", label="Main Registration Link"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("secondary_registration_heading"),
+                    FieldPanel("secondary_registration_description"),
+                    InlinePanel(
+                        "sub_registration", label="Secondary Registration Link"
+                    ),
+                ],
+                heading="Secondary Registration Links",
+            ),
+            InlinePanel("sponsors", label="Sponsors"),
+            InlinePanel("organizers", label="Organizers"),
+            FieldPanel("body"),
+        ]
+        + SocialMediaFields.panels
+        + PublicBasePage.content_panels
+    )
 
     subpage_types = [
-        'conferences.ConferencePage', 'conferences.ConferenceSubPage',
-        'redirects.RedirectPage'
+        "conferences.ConferencePage",
+        "conferences.ConferenceSubPage",
+        "redirects.RedirectPage",
     ]
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('banner_image'),
-        index.SearchField('primary_branding_color'),
-        index.SearchField('secondary_branding_color'),
-        index.SearchField('location'),
-        index.SearchField('current'),
-        index.SearchField('conference_logo'),
-        index.SearchField('body'),
+        index.SearchField("banner_image"),
+        index.SearchField("primary_branding_color"),
+        index.SearchField("secondary_branding_color"),
+        index.SearchField("location"),
+        index.SearchField("current"),
+        index.SearchField("conference_logo"),
+        index.SearchField("body"),
     ]
     api_fields = [
-        APIField('body'),
+        APIField("body"),
     ]
 
     @property
@@ -194,9 +201,11 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
             Boolean
         """
         fields = [
-            self.sponsors, self.organizers, self.sub_registration,
+            self.sponsors,
+            self.organizers,
+            self.sub_registration,
             self.secondary_registration_heading,
-            self.secondary_registration_description
+            self.secondary_registration_description,
         ]
         return self.base_has_right_sidebar() or self.has_field(fields)
 
@@ -228,16 +237,20 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
             # Base case
             if self.banner_title:
                 return (
-                    True, self.banner_image, self.banner_feature,
-                    self.banner_title, self.banner_subtitle,
-                    self.relative_url(current_site), self.title
+                    True,
+                    self.banner_image,
+                    self.banner_feature,
+                    self.banner_title,
+                    self.banner_subtitle,
+                    self.relative_url(current_site),
+                    self.title,
                 )
             # Recursive case
             else:
                 return self.get_parent().specific.get_banner(current_site)
         # Reached the top of the tree (could factor this into an if)
-        except (AttributeError):
-            return (False, None, None, '', '', '', '')
+        except AttributeError:
+            return (False, None, None, "", "", "", "")
 
     # Context
 
@@ -246,28 +259,28 @@ class ConferencePage(PublicBasePage, SocialMediaFields):
         current_site = Site.find_for_request(request)
         main_reg = self.main_registration.all()
         has_sidebar = self.has_left_sidebar(context) or bool(main_reg)
-        context['has_left_sidebar'] = has_sidebar
-        context['content_div_css'] = self.get_conditional_css_classes(
-            'content', has_sidebar
+        context["has_left_sidebar"] = has_sidebar
+        context["content_div_css"] = self.get_conditional_css_classes(
+            "content", has_sidebar
         )
-        context['breadcrumb_div_css'] = self.get_conditional_css_classes(
-            'breadcrumbs', has_sidebar
+        context["breadcrumb_div_css"] = self.get_conditional_css_classes(
+            "breadcrumbs", has_sidebar
         )
-        context['has_banner'] = self.has_conf_banner(current_site)
-        context['primary_branding_color'] = self.primary_branding_color
-        context['secondary_branding_color'] = self.secondary_branding_color
-        context['conference_logo'] = self.conference_logo
-        context['conference_title'] = self.title
-        context['has_social_media'] = self.has_social_media
-        context['main_registration'] = main_reg
-        context['sponsors'] = self.sponsors.all()
-        context['organizers'] = self.organizers.all()
-        context['secondary_registration'] = self.sub_registration.all()
-        context['secondary_registration_heading'
-                ] = self.secondary_registration_heading
-        context['secondary_registration_description'
-                ] = self.secondary_registration_description
-        context['home'] = self.relative_url(current_site)
+        context["has_banner"] = self.has_conf_banner(current_site)
+        context["primary_branding_color"] = self.primary_branding_color
+        context["secondary_branding_color"] = self.secondary_branding_color
+        context["conference_logo"] = self.conference_logo
+        context["conference_title"] = self.title
+        context["has_social_media"] = self.has_social_media
+        context["main_registration"] = main_reg
+        context["sponsors"] = self.sponsors.all()
+        context["organizers"] = self.organizers.all()
+        context["secondary_registration"] = self.sub_registration.all()
+        context["secondary_registration_heading"] = self.secondary_registration_heading
+        context["secondary_registration_description"] = (
+            self.secondary_registration_description
+        )
+        context["home"] = self.relative_url(current_site)
         return context
 
 
@@ -277,22 +290,27 @@ class ConferenceSubPage(PublicBasePage):
     most of their template "goodness" from
     parent ConferencePage.
     """
+
     body = StreamField(
         DefaultBodyFields(),
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('body'),
-    ] + PublicBasePage.content_panels
+    content_panels = (
+        Page.content_panels
+        + [
+            FieldPanel("body"),
+        ]
+        + PublicBasePage.content_panels
+    )
 
-    subpage_types = ['conferences.ConferenceSubPage']
+    subpage_types = ["conferences.ConferenceSubPage"]
 
     search_fields = PublicBasePage.search_fields + [
-        index.SearchField('body'),
+        index.SearchField("body"),
     ]
 
     api_fields = [
-        APIField('body'),
+        APIField("body"),
     ]
 
     @property
@@ -304,7 +322,7 @@ class ConferenceSubPage(PublicBasePage):
         Returns:
             Boolean
         """
-        parent = self.get_parent_of_type('conference page')
+        parent = self.get_parent_of_type("conference page")
         return parent.has_right_sidebar
 
     @property
@@ -315,37 +333,37 @@ class ConferenceSubPage(PublicBasePage):
         Returns:
             Boolean
         """
-        parent = self.get_parent_of_type('conference page')
+        parent = self.get_parent_of_type("conference page")
         return parent.has_social_media
 
     # Context
     def get_context(self, request):
         context = super(ConferenceSubPage, self).get_context(request)
         current_site = Site.find_for_request(request)
-        parent = self.get_parent_of_type('conference page')
+        parent = self.get_parent_of_type("conference page")
 
         # Set social media fields dynamically and
         # get all the values from the parent page.
         # This doesn't seem like a good practice
         # How else can this be done?
-        social_media_fields = [
-            f.name for f in SocialMediaFields._meta.get_fields()
-        ]
+        social_media_fields = [f.name for f in SocialMediaFields._meta.get_fields()]
         for field in social_media_fields:
-            exec('self.' + field + ' = ' + 'parent.' + field)
+            exec("self." + field + " = " + "parent." + field)
 
-        context['primary_branding_color'] = parent.primary_branding_color
-        context['secondary_branding_color'] = parent.secondary_branding_color
-        context['conference_logo'] = parent.conference_logo
-        context['conference_title'] = parent.title
-        context['has_social_media'] = parent.has_social_media
-        context['main_registration'] = parent.main_registration.all()
-        context['sponsors'] = parent.sponsors.all()
-        context['organizers'] = parent.organizers.all()
-        context['secondary_registration'] = parent.sub_registration.all()
-        context['secondary_registration_heading'
-                ] = parent.secondary_registration_heading
-        context['secondary_registration_description'
-                ] = parent.secondary_registration_description
-        context['home'] = parent.relative_url(current_site)
+        context["primary_branding_color"] = parent.primary_branding_color
+        context["secondary_branding_color"] = parent.secondary_branding_color
+        context["conference_logo"] = parent.conference_logo
+        context["conference_title"] = parent.title
+        context["has_social_media"] = parent.has_social_media
+        context["main_registration"] = parent.main_registration.all()
+        context["sponsors"] = parent.sponsors.all()
+        context["organizers"] = parent.organizers.all()
+        context["secondary_registration"] = parent.sub_registration.all()
+        context["secondary_registration_heading"] = (
+            parent.secondary_registration_heading
+        )
+        context["secondary_registration_description"] = (
+            parent.secondary_registration_description
+        )
+        context["home"] = parent.relative_url(current_site)
         return context
