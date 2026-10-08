@@ -12,7 +12,7 @@ $accent-font: 'Cormorant Garamond', 'Times New Roman', serif;
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
 }
 
 .visually-hidden {
@@ -21,7 +21,7 @@ $accent-font: 'Cormorant Garamond', 'Times New Roman', serif;
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
 }
 
 /*

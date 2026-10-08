@@ -10,8 +10,8 @@ Alerts
 
 ------------------------------------------------------------------- */
 
-@import 'variables.scss';
-@import 'media.scss';
+@import 'variables';
+@import 'media';
 
 /*
  * Accessibility
@@ -64,7 +64,7 @@ Alerts
   display: inline-block;
   text-transform: none;
   letter-spacing: normal;
-  word-wrap: normal;
+  overflow-wrap: normal;
   white-space: nowrap;
   direction: ltr;
   -webkit-font-smoothing: antialiased; // Support for all WebKit browsers.

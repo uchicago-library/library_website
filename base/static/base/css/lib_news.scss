@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import 'variables';
 
 body.libnewspage,
 body.libnewsindexpage {
@@ -107,7 +107,7 @@ body.libnewsindexpage {
 
       @include respond-to(small) {
         grid-template-columns: 1fr 2fr;
-        grid-gap: 30px;
+        gap: 30px;
         grid-template-rows: auto;
         grid-template-areas: 'title image';
         padding-left: 1.5em;
@@ -166,7 +166,7 @@ body.libnewsindexpage {
 
   section.news-stories {
     display: grid;
-    grid-gap: 30px;
+    gap: 30px;
     margin: 0 auto 30px;
 
     @include respond-to(small) {
@@ -463,7 +463,7 @@ body.libnewsindexpage {
  */
 
   section.related-stories {
-    grid-gap: 30px;
+    gap: 30px;
     margin: 0 auto 30px;
 
     @include respond-to(small) {

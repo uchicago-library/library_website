@@ -3,14 +3,11 @@ module.exports = {
   plugins: ['stylelint-prettier'],
   rules: {
     'prettier/prettier': true,
-    indentation: null,
-    'string-quotes': null,
     'no-duplicate-selectors': true,
     'color-hex-length': 'short',
     'selector-no-qualifying-type': null,
     'selector-class-pattern': null,
     'selector-id-pattern': null,
-    'scss/at-import-partial-extension': null,
     'scss/dollar-variable-pattern': null,
     'scss/no-global-function-names': null,
     'scss/percent-placeholder-pattern': null,
@@ -25,5 +22,6 @@ module.exports = {
     'color-function-notation': null,
     'alpha-value-notation': null,
     'media-feature-range-notation': null,
+    'color-function-alias-notation': null,
   },
 }

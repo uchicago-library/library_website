@@ -7,8 +7,8 @@ Digital Collection Object Page
 
 ------------------------------------------------------------------- */
 
-@import 'variables.scss';
-@import 'media.scss';
+@import 'variables';
+@import 'media';
 
 /*
  * Digital Collection Parent Page
@@ -95,7 +95,7 @@ body.collectionpage {
       @include respond-to(medium) {
         display: grid;
         grid-template-columns: 25% 75%;
-        grid-gap: 1.5em;
+        gap: 1.5em;
       }
       & + figure {
         margin-top: 1em;

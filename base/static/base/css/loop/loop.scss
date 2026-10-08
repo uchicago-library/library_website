@@ -13,8 +13,8 @@ Group Home Page
 
 ------------------------------------------------------------------- */
 
-@import 'loop-variables.scss';
-@import '../media.scss';
+@import 'loop-variables';
+@import '../media';
 
 /*
  * Typefaces & Links
@@ -620,13 +620,13 @@ select {
   article {
     padding: 1em;
     display: grid;
-    grid-gap: 1vw; // width of screen unit
+    gap: 1vw; // width of screen unit
     margin-right: -15px;
     margin-left: -15px;
 
     @include respond-to(small) {
       grid-template-columns: 1fr 1fr;
-      grid-row-gap: 1em;
+      row-gap: 1em;
     }
 
     @include respond-to(medium) {
