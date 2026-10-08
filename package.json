@@ -6,8 +6,9 @@
   "description": "Library website javascript dependencies.",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js --progress --mode production",
-    "watch": "webpack --config webpack.config.js --watch --mode production"
+    "build": "npm run vendor-mermaid && webpack --config webpack.config.js --progress --mode production",
+    "watch": "webpack --config webpack.config.js --watch --mode production",
+    "vendor-mermaid": "mkdir -p base/static/base/js/vendor && cp node_modules/mermaid/dist/mermaid.min.js base/static/base/js/vendor/mermaid.min.js"
   },
   "repository": {
     "type": "git",
@@ -63,6 +64,7 @@
     "ini": "^3.0.1",
     "is-my-json-valid": "^2.20.6",
     "lodash": "^4.17.23",
+    "mermaid": "11.6.0",
     "mixin-deep": "^2.0.1",
     "oboe": "^2.1.5",
     "prismjs": "^1.30.0",

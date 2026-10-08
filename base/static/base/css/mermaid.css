@@ -1,0 +1,16 @@
+/* Mermaid diagram StreamField block — error / fallback styling */
+
+.mermaid-error {
+  color: #800000;
+  background-color: #f7ebeb;
+  padding: 1em;
+  margin: 0.5em 0;
+}
+
+.mermaid-source-fallback {
+  margin: 0.5em 0 1em;
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+}
