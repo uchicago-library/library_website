@@ -10,7 +10,7 @@ Mixins
 ------------------------------------------------------------------- */
 
 @import 'https://fonts.googleapis.com/css?family=Cormorant+Garamond';
-@import 'media.scss';
+@import 'media';
 
 /*
  * Accessibility {Global Classes}
@@ -24,7 +24,7 @@ Mixins
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
 }
 
 /*
@@ -333,7 +333,7 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  word-wrap: normal;
+  overflow-wrap: normal;
 }
 
 @mixin borders {
@@ -346,5 +346,5 @@ $box-shadow-focus: 0 4px 5px rgba(0, 0, 0, 0.2);
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
 }

@@ -28,8 +28,8 @@ Forms (CGI)
 
 ------------------------------------------------------------------- */
 
-@import 'variables.scss';
-@import 'media.scss';
+@import 'variables';
+@import 'media';
 
 /*
  * Page Specific Alterations
@@ -1469,7 +1469,6 @@ a.btn-ask {
     border-radius: 3px;
     color: #333;
     background-color: #fff;
-    border-color: #ccc;
     display: inline-block;
     margin-bottom: 0;
     font-weight: 400;
@@ -1580,7 +1579,7 @@ a.btn-ask {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   border: 0;
 }
 
@@ -1961,13 +1960,13 @@ a.coll-access {
 
     padding: 1em;
     display: grid;
-    grid-gap: 1vw; // width of screen unit
+    gap: 1vw; // width of screen unit
     margin-right: -15px;
     margin-left: -15px;
 
     @include respond-to(small) {
       grid-template-columns: 1fr 1fr;
-      grid-row-gap: 1em;
+      row-gap: 1em;
     }
 
     @include respond-to(medium) {
