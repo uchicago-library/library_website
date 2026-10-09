@@ -1,0 +1,80 @@
+# Throwaway stack for verification runs. Start it only through
+# scripts/verify-site.sh, which passes its own Compose project name.
+# Postgres and Redis publish no host ports; only the web server listens on
+# 127.0.0.1:${VERIFY_HTTP_PORT}. Every container and volume carries the
+# verify-library-website label; the script refuses to remove a project
+# that has unlabeled resources.
+#
+# The services join Docker's default bridge network and reach each other
+# through links, so the stack creates no network of its own. Some hosts drop
+# forwarded traffic on user-defined bridges, and the default bridge avoids
+# that.
+x-label: &label
+  verify-library-website: "true"
+
+services:
+  web:
+    build:
+      context: ../../..
+      args:
+        - ELASTICSEARCH=false
+        - NODEJS=false
+    labels: *label
+    command: ["/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8000"]
+    working_dir: /app
+    volumes:
+      - ../../..:/app
+      - static_files:/app/static
+    tmpfs:
+      # Keep the wagtail-cache page cache out of the checkout's cache/ dir.
+      - /app/cache
+    ports:
+      - "127.0.0.1:${VERIFY_HTTP_PORT:-18000}:8000"
+    environment:
+      - ELASTICSEARCH=false
+      - POSTGRES_DB=lib_www_dev
+      - POSTGRES_USER=vagrant
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=library_website.settings.docker
+      - TURNSTILE_ENABLED=False
+      # base/utils.py and lib_collections/marklogic.py read these from the
+      # environment when settings/secrets.py is absent, and fail to import if
+      # they are unset. Empty credentials let the site start; staff directory
+      # and MarkLogic lookups then fail.
+      - DIRECTORY_USERNAME=${DIRECTORY_USERNAME:-}
+      - DIRECTORY_PASSWORD=${DIRECTORY_PASSWORD:-}
+      - DIRECTORY_WEB_SERVICE=directory.uchicago.edu
+      - MARKLOGIC_LDR_USER=${MARKLOGIC_LDR_USER:-}
+      - MARKLOGIC_LDR_PASSWORD=${MARKLOGIC_LDR_PASSWORD:-}
+      - MARKLOGIC_LDR_URL=http://marklogic.lib.uchicago.edu:8008/v1/graphs
+      - SPARQL_ROOT=https://repository.lib.uchicago.edu/digital_collections
+    network_mode: bridge
+    links:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    labels: *label
+    network_mode: bridge
+    environment:
+      - POSTGRES_DB=lib_www_dev
+      - POSTGRES_USER=vagrant
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    labels: *label
+    network_mode: bridge
+
+volumes:
+  pgdata:
+    labels: *label
+  static_files:
+    labels: *label
