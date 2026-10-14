@@ -5,6 +5,11 @@ set -euo pipefail
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO="$(git -C "$SKILL_DIR" rev-parse --show-toplevel)"
+
+# Optional, gitignored service credentials (see SKILL.md).
+if [[ -f "$SKILL_DIR/.env" ]]; then
+  set -a; source "$SKILL_DIR/.env"; set +a
+fi
 STATE_ROOT="${LWV_STATE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/lw-verify}"
 NODE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/lw-verify/node"
 PLAYWRIGHT_VERSION="1.63.0"
@@ -74,6 +79,8 @@ run_oneoff() {
   docker compose run --rm --no-deps -T \
     -v "$SKILL_DIR/lib:/verify:ro" \
     -e PYTHONPATH=/verify -e DJANGO_SETTINGS_MODULE=verify_settings \
+    -e DIRECTORY_USERNAME -e DIRECTORY_PASSWORD -e DIRECTORY_WEB_SERVICE \
+    -e MARKLOGIC_LDR_USER -e MARKLOGIC_LDR_PASSWORD -e MARKLOGIC_LDR_URL -e SPARQL_ROOT \
     -e LWV_RUN=template -e LWV_DB="$1" -e LWV_PORT=8000 \
     web bash -c "source /venv/bin/activate && cd /app && $2"
 }
@@ -164,6 +171,8 @@ EOF
     -p "127.0.0.1:$port:$port" \
     -v "$SKILL_DIR/lib:/verify:ro" \
     -e PYTHONPATH=/verify -e DJANGO_SETTINGS_MODULE=verify_settings \
+    -e DIRECTORY_USERNAME -e DIRECTORY_PASSWORD -e DIRECTORY_WEB_SERVICE \
+    -e MARKLOGIC_LDR_USER -e MARKLOGIC_LDR_PASSWORD -e MARKLOGIC_LDR_URL -e SPARQL_ROOT \
     -e LWV_RUN="$run" -e LWV_DB="$db" -e LWV_PORT="$port" \
     -e LWV_ADMIN_PASS="$pass" \
     web bash -c "source /venv/bin/activate && cd /app && \

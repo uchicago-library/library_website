@@ -35,6 +35,15 @@ Prerequisites: Docker with the compose image built (`./docker-setup.sh` once), `
 to 127.0.0.1 in `/etc/hosts`, and Node.js on the host. The first `lwv browse`/`lwv node` installs
 Playwright 1.63.0 into `~/.cache/lw-verify/node`, which needs network access.
 
+Service credentials are environment variables, the same names CI and Cursor Cloud Agent secrets use:
+`DIRECTORY_USERNAME`, `DIRECTORY_PASSWORD`, `MARKLOGIC_LDR_USER` and `MARKLOGIC_LDR_PASSWORD`.
+`lwv` passes them into the container, and also reads an optional gitignored
+`.claude/skills/verify-library-website/.env` (`KEY=value` lines). Missing variables fall back to
+`library_website/settings/local.py`, then to blank. With blank values the site still runs, but the
+directory and MarkLogic features cannot reach their services; report those as unverified.
+`DIRECTORY_WEB_SERVICE`, `MARKLOGIC_LDR_URL` and `SPARQL_ROOT` default to `base.py` and can be
+overridden the same way.
+
 ## Launch
 
 ```bash
@@ -56,7 +65,7 @@ This check is read-only. It confirms the container is running and belongs to the
 port, and reports the run's database. It also checks that the public homepage and `/admin/login/`
 return 200, that the anonymous Loop root returns 302 to `https://www.lib.uchicago.edu/no-permission/`
 (the expected gate), and that the checkout's git revision matches the one at launch. It exits
-non-zero on any `FAIL`. Run it first whenever something looks off. A `WARN` about the revision means
+non-zero on any `FAIL`. Run it after `lwv up`, and again whenever something looks off; it needs a running instance. A `WARN` about the revision means
 the checkout changed since launch. Edits are live, but label your evidence with the current revision.
 
 ## Drive
