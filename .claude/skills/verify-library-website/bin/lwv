@@ -1,0 +1,329 @@
+#!/usr/bin/env bash
+# lwv: launch, inspect, drive and tear down isolated verification instances
+# of the library website. Run `lwv help` for usage.
+set -euo pipefail
+
+SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO="$(git -C "$SKILL_DIR" rev-parse --show-toplevel)"
+STATE_ROOT="${LWV_STATE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/lw-verify}"
+NODE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/lw-verify/node"
+PLAYWRIGHT_VERSION="1.63.0"
+TEMPLATE_DB="lib_www_verify_tpl"
+FIXTURE="base/fixtures/test.json"
+PG=(docker compose exec -T db psql -U vagrant -d postgres -qAt -v ON_ERROR_STOP=1)
+
+cd "$REPO"
+
+die() { echo "lwv: $*" >&2; exit 1; }
+log() { echo "lwv: $*" >&2; }
+
+usage() {
+  cat <<'EOF'
+Usage: lwv <command> [args]
+
+  up                      Start a new isolated instance (prints run id, URLs, artifacts dir)
+  doctor                  Read-only health check of the selected run
+  env                     Print the selected run's state (URLs, admin login, paths)
+  manage <args...>        Run manage.py inside the run's container
+  sql "<query>"           Run SQL against the run's database
+  browse <url> [opts]     Load a page in headless Chromium and capture evidence
+                            --shot FILE   full-page PNG
+                            --aria FILE   ARIA snapshot of <body>
+                            --html FILE   rendered DOM
+                            --login       sign in to Wagtail admin first
+                            --wait SEL    wait for a CSS selector before capture
+  node <script.mjs>       Run a custom Playwright script (import from $LWV_LIB/lwv.mjs)
+  down                    Tear down the selected run (artifacts are kept)
+  list                    List runs and whether they are up
+  rebuild-template        Drop and rebuild the fixture-loaded template database
+
+Paths are relative to the repo root. URLs may be absolute or paths on the
+public site; prefix a path with "loop:" for the intranet (e.g. loop:/).
+Select a run with LWV_RUN=<id>; default is the most recent `lwv up`.
+EOF
+}
+
+# ---------------------------------------------------------------- run state
+
+select_run() {
+  local run="${LWV_RUN:-}"
+  if [[ -z "$run" ]]; then
+    [[ -L "$STATE_ROOT/current" ]] || die "no runs yet; use 'lwv up'"
+    run="$(basename "$(readlink "$STATE_ROOT/current")")"
+  fi
+  RUN_DIR="$STATE_ROOT/runs/$run"
+  [[ -f "$RUN_DIR/state.env" ]] || die "unknown run '$run'"
+  # shellcheck disable=SC1091
+  source "$RUN_DIR/state.env"
+}
+
+container_running() {
+  [[ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null)" == "true" ]]
+}
+
+# ---------------------------------------------------------------- template
+
+fixture_sum() { sha256sum "$FIXTURE" | cut -c1-16; }
+
+template_sum() {
+  "${PG[@]}" -c "SELECT shobj_description(oid, 'pg_database') FROM pg_database WHERE datname='$TEMPLATE_DB'"
+}
+
+run_oneoff() {
+  # run_oneoff <db> <bash command>; a throwaway container using verify settings
+  docker compose run --rm --no-deps -T \
+    -v "$SKILL_DIR/lib:/verify:ro" \
+    -e PYTHONPATH=/verify -e DJANGO_SETTINGS_MODULE=verify_settings \
+    -e LWV_RUN=template -e LWV_DB="$1" -e LWV_PORT=8000 \
+    web bash -c "source /venv/bin/activate && cd /app && $2"
+}
+
+build_template() {
+  log "building template database $TEMPLATE_DB from $FIXTURE (one-time, several minutes)"
+  "${PG[@]}" -c "DROP DATABASE IF EXISTS $TEMPLATE_DB"
+  "${PG[@]}" -c "CREATE DATABASE $TEMPLATE_DB"
+  run_oneoff "$TEMPLATE_DB" "python manage.py migrate --noinput && \
+    python manage.py loaddata $FIXTURE && \
+    python manage.py shell -c \"from wagtail.models import Site; Site.objects.filter(hostname='localhost').delete()\" && \
+    python manage.py update_index"
+  "${PG[@]}" -c "COMMENT ON DATABASE $TEMPLATE_DB IS '$(fixture_sum)'"
+}
+
+ensure_template() {
+  local have
+  have="$(template_sum)"
+  if [[ -z "$have" ]]; then
+    build_template
+  elif [[ "$have" != "$(fixture_sum)" ]]; then
+    log "fixture changed since template was built; rebuilding"
+    build_template
+  fi
+}
+
+# ---------------------------------------------------------------- deps
+
+ensure_deps() {
+  STARTED_DEPS=0
+  local running
+  running="$(docker compose ps --status running --services 2>/dev/null || true)"
+  if ! grep -qx db <<<"$running" || ! grep -qx redis <<<"$running"; then
+    log "starting db and redis"
+    docker compose up -d db redis >&2
+    STARTED_DEPS=1
+  fi
+  until docker compose exec -T db pg_isready -U vagrant -q; do sleep 2; done
+}
+
+free_port() {
+  local p
+  for p in $(seq 8010 8029); do
+    if ! ss -ltnH "sport = :$p" | grep -q .; then echo "$p"; return; fi
+  done
+  die "no free port in 8010-8029"
+}
+
+# ---------------------------------------------------------------- commands
+
+cmd_up() {
+  getent hosts wwwdev >/dev/null && getent hosts loopdev >/dev/null \
+    || die "wwwdev and loopdev must resolve to 127.0.0.1 (see /etc/hosts)"
+  ensure_deps
+  ensure_template
+
+  local run port db container pass
+  run="$(date +%Y%m%d-%H%M%S)"
+  port="$(free_port)"
+  db="lwv_${run//-/_}"
+  container="lwv-$run"
+  pass="$(head -c 18 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
+  RUN_DIR="$STATE_ROOT/runs/$run"
+  mkdir -p "$RUN_DIR/artifacts"
+  chmod 700 "$RUN_DIR"
+
+  cat >"$RUN_DIR/state.env" <<EOF
+RUN=$run
+PORT=$port
+DB=$db
+CONTAINER=$container
+PUBLIC_URL=http://wwwdev:$port
+LOOP_URL=http://loopdev:$port
+ADMIN_USER=lwv_admin
+ADMIN_PASS=$pass
+ARTIFACTS=$RUN_DIR/artifacts
+GIT_REV=$(git rev-parse --short HEAD)$(git diff --quiet HEAD || echo -dirty)
+STARTED_DEPS=$STARTED_DEPS
+EOF
+  chmod 600 "$RUN_DIR/state.env"
+  ln -sfn "$RUN_DIR" "$STATE_ROOT/current"
+
+  log "cloning $TEMPLATE_DB -> $db"
+  "${PG[@]}" -c "CREATE DATABASE $db TEMPLATE $TEMPLATE_DB"
+
+  log "starting container $container on port $port"
+  docker compose run -d --rm --no-deps --name "$container" \
+    -p "127.0.0.1:$port:$port" \
+    -v "$SKILL_DIR/lib:/verify:ro" \
+    -e PYTHONPATH=/verify -e DJANGO_SETTINGS_MODULE=verify_settings \
+    -e LWV_RUN="$run" -e LWV_DB="$db" -e LWV_PORT="$port" \
+    -e LWV_ADMIN_PASS="$pass" \
+    web bash -c "source /venv/bin/activate && cd /app && \
+      python manage.py migrate --noinput && \
+      python manage.py shell -c \"
+import os
+from django.contrib.auth.models import Group, User
+from wagtail.models import Site
+Site.objects.update(port=$port)
+User.objects.filter(username='lwv_admin').delete()
+u = User.objects.create_superuser('lwv_admin', '', os.environ['LWV_ADMIN_PASS'])
+u.groups.add(*Group.objects.filter(name='Library'))
+\" && echo LWV_READY_TO_SERVE && \
+      exec python manage.py runserver 0.0.0.0:$port" >/dev/null
+
+  log "waiting for http://wwwdev:$port/"
+  local i code
+  for i in $(seq 1 120); do
+    container_running_name "$container" || {
+      docker logs "$container" >"$RUN_DIR/artifacts/server.log" 2>&1 || true
+      die "container exited during startup; see $RUN_DIR/artifacts/server.log"
+    }
+    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "http://wwwdev:$port/" || true)"
+    [[ "$code" == "200" ]] && break
+    sleep 3
+  done
+  [[ "$code" == "200" ]] || die "instance did not answer 200 (last: $code); 'lwv down' to clean up"
+
+  echo "RUN=$run"
+  echo "PUBLIC_URL=http://wwwdev:$port"
+  echo "LOOP_URL=http://loopdev:$port"
+  echo "ADMIN_URL=http://wwwdev:$port/admin/"
+  echo "ARTIFACTS=$RUN_DIR/artifacts"
+}
+
+container_running_name() {
+  [[ "$(docker inspect -f '{{.State.Running}}' "$1" 2>/dev/null)" == "true" ]]
+}
+
+cmd_doctor() {
+  select_run
+  local ok=1 code rev
+  check() { if eval "$2"; then echo "ok    $1"; else echo "FAIL  $1"; ok=0; fi; }
+  echo "run $RUN  port $PORT  db $DB  container $CONTAINER"
+  check "container $CONTAINER is running" container_running
+  check "container belongs to run $RUN" \
+    "[[ \"\$(docker exec $CONTAINER printenv LWV_RUN 2>/dev/null)\" == '$RUN' ]]"
+  check "port $PORT is published by $CONTAINER" \
+    "docker port $CONTAINER $PORT/tcp 2>/dev/null | grep -q ':$PORT'"
+  check "app reports database $DB" \
+    "docker exec $CONTAINER /venv/bin/python -c \"import os; os.environ['DJANGO_SETTINGS_MODULE']='verify_settings'; import django; django.setup(); from django.conf import settings; assert settings.DATABASES['default']['NAME']=='$DB'\" 2>/dev/null"
+  code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$PUBLIC_URL/" || true)"
+  check "public site $PUBLIC_URL/ answers 200 (got $code)" "[[ $code == 200 ]]"
+  code="$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 "$LOOP_URL/" || true)"
+  check "intranet $LOOP_URL/ gates anonymous users (got $code)" \
+    "[[ '$code' == '302 https://www.lib.uchicago.edu/no-permission/' ]]"
+  code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$PUBLIC_URL/admin/login/" || true)"
+  check "admin login page answers 200 (got $code)" "[[ $code == 200 ]]"
+  rev="$(git rev-parse --short HEAD)$(git diff --quiet HEAD || echo -dirty)"
+  if [[ "$rev" == "$GIT_REV" ]]; then
+    echo "ok    checkout $rev matches launch"
+  else
+    echo "WARN  checkout is $rev, launched at $GIT_REV (runserver reloads edits; label evidence with $rev)"
+  fi
+  [[ $ok == 1 ]] || exit 1
+}
+
+cmd_env() { select_run; cat "$RUN_DIR/state.env"; }
+
+cmd_manage() {
+  select_run
+  container_running || die "container $CONTAINER is not running"
+  docker exec -i "$CONTAINER" bash -c 'source /venv/bin/activate && cd /app && python manage.py "$@"' _ "$@"
+}
+
+cmd_sql() {
+  select_run
+  docker compose exec -T db psql -U vagrant -d "$DB" -P pager=off -c "$1"
+}
+
+ensure_playwright() {
+  if [[ ! -d "$NODE_DIR/node_modules/playwright" ]]; then
+    log "installing playwright@$PLAYWRIGHT_VERSION into $NODE_DIR"
+    mkdir -p "$NODE_DIR"
+    npm install --silent --prefix "$NODE_DIR" "playwright@$PLAYWRIGHT_VERSION" >&2
+  fi
+  "$NODE_DIR/node_modules/.bin/playwright" install chromium >&2
+}
+
+node_env() {
+  export LWV_RUN="$RUN" LWV_PORT="$PORT" LWV_PUBLIC_URL="$PUBLIC_URL" \
+    LWV_LOOP_URL="$LOOP_URL" LWV_ADMIN_USER="$ADMIN_USER" \
+    LWV_ADMIN_PASS="$ADMIN_PASS" LWV_ARTIFACTS="$ARTIFACTS" \
+    LWV_LIB="$SKILL_DIR/lib" LWV_BIN="$SKILL_DIR/bin/lwv" \
+    NODE_PATH="$NODE_DIR/node_modules"
+}
+
+cmd_browse() {
+  select_run
+  ensure_playwright
+  node_env
+  node "$SKILL_DIR/lib/browse.mjs" "$@"
+}
+
+cmd_node() {
+  select_run
+  ensure_playwright
+  node_env
+  [[ $# -ge 1 ]] || die "usage: lwv node <script.mjs> [args]"
+  node "$@"
+}
+
+cmd_down() {
+  select_run
+  if container_running; then
+    docker logs "$CONTAINER" >"$ARTIFACTS/server.log" 2>&1 || true
+    docker stop "$CONTAINER" >/dev/null
+    log "stopped $CONTAINER (server log saved to $ARTIFACTS/server.log)"
+  fi
+  docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+  "${PG[@]}" -c "DROP DATABASE IF EXISTS $DB WITH (FORCE)"
+  docker compose exec -T redis sh -c \
+    "redis-cli -n 7 --scan --pattern 'lwv-$RUN:*' | xargs -r redis-cli -n 7 del >/dev/null"
+  if [[ "$STARTED_DEPS" == "1" ]]; then
+    local others
+    others="$(docker ps --filter name=lwv- -q | wc -l)"
+    if [[ "$others" == "0" ]] && ! docker compose ps --status running --services | grep -qx web; then
+      docker compose stop db redis >&2
+      log "stopped db and redis (started by this run)"
+    else
+      log "leaving db and redis up (in use by other containers)"
+    fi
+  fi
+  sed -i 's/^STATE=.*//' "$RUN_DIR/state.env"
+  echo "STATE=down" >>"$RUN_DIR/state.env"
+  echo "ARTIFACTS=$ARTIFACTS"
+}
+
+cmd_list() {
+  local d run name
+  [[ -d "$STATE_ROOT/runs" ]] || { echo "no runs"; return; }
+  for d in "$STATE_ROOT"/runs/*; do
+    run="$(basename "$d")"
+    name="lwv-$run"
+    if container_running_name "$name"; then echo "$run  up    $(grep ^PUBLIC_URL= "$d/state.env" | cut -d= -f2)"
+    else echo "$run  down  $d/artifacts"; fi
+  done
+}
+
+case "${1:-help}" in
+  up) shift; cmd_up "$@" ;;
+  doctor) shift; cmd_doctor "$@" ;;
+  env) shift; cmd_env "$@" ;;
+  manage) shift; cmd_manage "$@" ;;
+  sql) shift; cmd_sql "$@" ;;
+  browse) shift; cmd_browse "$@" ;;
+  node) shift; cmd_node "$@" ;;
+  down) shift; cmd_down "$@" ;;
+  list) shift; cmd_list "$@" ;;
+  rebuild-template) shift; ensure_deps; build_template ;;
+  help|-h|--help) usage ;;
+  *) usage; exit 2 ;;
+esac
