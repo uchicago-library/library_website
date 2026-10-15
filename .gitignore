@@ -27,3 +27,4 @@ src
 
 .claude/settings.local.json
 .gemini/
+.claude/skills/verify-library-website/.env
