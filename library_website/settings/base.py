@@ -632,6 +632,10 @@ TURNSTILE_EXCLUDED_PATHS = [
     r"^/_util/.*$",
     r"^/api/.*$",
     r"^/rss/.*$",
+    # Design system files read by agents; the HTML pages stay protected
+    r"^/design/llms\.txt$",
+    r"^/design/tokens\.json$",
+    r"^/design/.+\.md$",
 ]
 
 # article galaxy spreadsheet constants

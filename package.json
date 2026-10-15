@@ -11,9 +11,9 @@
     "vendor-mermaid": "mkdir -p base/static/base/js/vendor && cp node_modules/mermaid/dist/mermaid.min.js base/static/base/js/vendor/mermaid.min.js",
     "build:design-system": "npm run build:design-system:css && npm run build:design-system:js && npm run build:design-system:tokens",
     "build:design-system:css": "sass --pkg-importer=node --no-source-map --style=compressed --quiet-deps --silence-deprecation=import,global-builtin,color-functions,if-function design_system/scss:design_system/static/design_system/css",
-    "build:design-system:js": "node -e \"require('fs').copyFileSync('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'design_system/static/design_system/js/bootstrap.bundle.min.js')\"",
+    "build:design-system:js": "mkdir -p design_system/static/design_system/js && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js design_system/static/design_system/js/",
     "build:design-system:tokens": "node design_system/scripts/tokens.js",
-    "watch:design-system": "sass --pkg-importer=node --no-source-map --style=compressed --quiet-deps --silence-deprecation=import,global-builtin,color-functions,if-function design_system/scss:design_system/static/design_system/css --watch"
+    "watch:design-system": "npm run build:design-system:css -- --watch"
   },
   "repository": {
     "type": "git",

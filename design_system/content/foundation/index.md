@@ -1,5 +1,6 @@
 ---
 title: "Foundation"
+group: "Design System"
 order: 1
 description: "What guides our design decisions: the standards every component is held to, and the research and values behind them."
 ---

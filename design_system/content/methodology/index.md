@@ -12,6 +12,20 @@ description: "How this project is built and documented: the goals behind the des
 - Built on the latest Bootstrap and Font Awesome, customised through SCSS variables.
 - Atomic and cumulative, so the system keeps growing rather than being redesigned from scratch every decade.
 
+## Where Each Reader Starts
+
+Every reader has one entry point, and it must surface what that reader cannot afford to miss — stated there, or linked from it prominently, never left for them to find. When something critical changes for a reader, check that their entry point still surfaces it.
+
+| Reader | Entry point | It must cover |
+| --- | --- | --- |
+| **Developer building with the system** — a new project, or a library website template | [Getting Started](/design/implementation/using-ucld/), from "Build with It" on the home page | The one stylesheet to load and its URL; that it replaces Bootstrap's own CSS; Bootstrap's JavaScript and the icon set; taking values from the [Token Tables](/design/implementation/token-tables/) rather than writing them out; the checklist before shipping |
+| **Designer or project owner** reviewing decisions | [Foundation](/design/foundation/), from "Review Its Decisions" | The priorities; the palette and how much of each colour to use; the accessibility standard; where the system currently leans between competing values |
+| **Contributor** changing the system | This page, from "Contribute to It" | How to build and check a change ([Setup](/design/methodology/setup/)); where every file lives ([Architecture](/design/methodology/architecture/)); the conventions and the definition of done ([Conventions](/design/methodology/conventions/)); that consumers load the stylesheet unversioned, so nothing public is renamed or removed |
+| **Developer reading the code** — a reviewer or maintainer on GitHub | `design_system/README.md`, which GitHub shows when the folder is opened | The build command and committing its output; the public URLs; what the token documentation depends on; the traps that fail silently; a pointer to this section |
+| **Agent building with the system** — the playground, or another project | [/design/llms.txt](/design/llms.txt) | Every page with its description, linked as Markdown; the token JSON; where to start loading the system |
+| **Agent working on the library website** | `CLAUDE.md` in the repository root, which points to `design_system/README.md` | The build commands and that CI checks their output |
+| **Mockup author** | The [playground](https://github.com/uchicago-library/ucld) repository and its `new-mockup` skill | Outside this site. It loads the published stylesheets and reads `llms.txt` for the rules |
+
 ## How This Project Is Documented
 
 Documentation drifts when two places can hold the same fact. The rule here is that **a fact lives at the lowest layer that can hold it, and the build distributes it upward.**
@@ -22,7 +36,7 @@ Documentation drifts when two places can hold the same fact. The rule here is th
 | **Generated output** | Token Tables, `tokens.json`, `/design/llms.txt`, the Markdown source of each page | Anyone consuming the system, including agents |
 | **Design system pages** | `design_system/content/foundation/`, `guidelines/`, `implementation/` | Designers and developers using the system |
 | **Methodology** | `design_system/content/methodology/` (this section) | People working *on* this project |
-| **Contributor checklist** | `design_system/README.md` in the library website repository | People opening a pull request. Links here, states nothing of its own |
+| **Code entry point** | `design_system/README.md` in the library website repository | Developers reading the code. Holds the build, the public URLs and the traps; links here for everything else |
 | **Agent instructions** | `CLAUDE.md` in the library website repository root | AI agents working on this project |
 
 Three rules follow from it:

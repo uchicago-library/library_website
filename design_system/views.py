@@ -12,7 +12,7 @@ in {% verbatim %}.
 import json
 import math
 import xml.etree.ElementTree as etree
-from functools import lru_cache
+from functools import lru_cache, wraps
 from pathlib import Path
 
 import markdown
@@ -109,6 +109,7 @@ def entry(slug):
         "description": meta.get("description", ""),
         "order": meta.get("order", math.inf),
         "template": meta.get("template"),
+        "group": meta.get("group"),
         "is_folder": is_folder,
     }
 
@@ -127,6 +128,28 @@ def children(slug):
             continue
         items.append(item)
     return sorted(items, key=lambda item: (item["order"], item["title"]))
+
+
+def header_menu(sections, current_url):
+    """The header's links: one per section, except that sections sharing a
+    `group` in their front matter collapse into one dropdown, placed where the
+    first of them would be. An entry is active when the page is inside it."""
+    menu = []
+    for section in sections:
+        section = {**section, "active": current_url.startswith(section["url"])}
+        if not section["group"]:
+            menu.append(section)
+            continue
+        dropdown = next(
+            (m for m in menu if "links" in m and m["title"] == section["group"]),
+            None,
+        )
+        if dropdown is None:
+            dropdown = {"title": section["group"], "links": [], "active": False}
+            menu.append(dropdown)
+        dropdown["links"].append(section)
+        dropdown["active"] = dropdown["active"] or section["active"]
+    return menu
 
 
 def breadcrumbs(slug):
@@ -191,15 +214,43 @@ def render_body(body, context, request):
     return mark_safe(html)
 
 
+def noindex(view):
+    """Keeps a response out of search engines, whatever its content type.
+
+    Meta tags only reach HTML, so llms.txt, tokens.json and the Markdown
+    sources carry the header instead. robots.txt is deliberately not used:
+    agents fetching on someone's behalf honour it too, and would be locked out.
+    """
+
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        response = view(*args, **kwargs)
+        response["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+        return response
+
+    return wrapper
+
+
+def markdown_url(item):
+    """The .md URL of a page's source, following the llms.txt convention."""
+    parts = [item["slug"], "index" if item["is_folder"] else ""]
+    slug = "/".join(part for part in parts if part)
+    return reverse("design_system:markdown", kwargs={"slug": slug})
+
+
+@noindex
+def markdown_source(request, slug):
+    path = CONTENT_DIR / f"{slug}.md"
+    if not path.is_file():
+        raise Http404
+    return HttpResponse(parse(path)[2], content_type="text/markdown; charset=utf-8")
+
+
+@noindex
 def page(request, slug=""):
     slug = slug or ""
     path, is_folder = locate(slug)
     meta, body, source = parse(path) if path else ({}, "", "")
-
-    if request.GET.get("format") == "md":
-        if not path:
-            raise Http404
-        return HttpResponse(source, content_type="text/markdown; charset=utf-8")
 
     sections = [item for item in children("") if item["is_folder"]]
     context = {
@@ -209,6 +260,7 @@ def page(request, slug=""):
         "children": children(slug) if is_folder else [],
         "breadcrumbs": breadcrumbs(slug),
         "sections": sections,
+        "header_menu": header_menu(sections, page_url(slug)),
         "token_tables_url": page_url(TOKEN_TABLES_SLUG),
         "is_token_tables": slug == TOKEN_TABLES_SLUG,
     }
@@ -219,6 +271,7 @@ def page(request, slug=""):
     return render(request, template, context)
 
 
+@noindex
 def tokens_json(request):
     tokens = json.loads(TOKENS_FILE.read_text(encoding="utf-8"))
     return JsonResponse({"tokens": tokens["all"], "classes": tokens["classes"]})
@@ -230,6 +283,7 @@ def _walk(items):
         yield from _walk(item.get("children", []))
 
 
+@noindex
 def llms_txt(request):
     """Discovery index for agents (https://llmstxt.org), built from content/."""
     absolute = request.build_absolute_uri
@@ -239,7 +293,7 @@ def llms_txt(request):
         # live demos only exist rendered.
         if item["template"] or item["is_folder"]:
             return absolute(item["url"])
-        return absolute(f"{item['url']}?format=md")
+        return absolute(markdown_url(item))
 
     home = parse(CONTENT_DIR / "index.md")[0]
     lines = [
@@ -248,7 +302,7 @@ def llms_txt(request):
         f"> {home['description']}",
         "",
         "Built with Bootstrap 5 and Font Awesome 6. Prose pages are linked as",
-        "Markdown (?format=md), which is cheaper to read than the rendered HTML.",
+        "Markdown (.md), which is cheaper to read than the rendered HTML.",
         "Prefer Bootstrap's own classes and the documented component classes",
         "over bespoke CSS. To load the design system in a project, start with",
         link(entry("implementation/using-ucld")),

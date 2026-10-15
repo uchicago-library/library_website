@@ -1,5 +1,5 @@
 ---
-title: "Demonstrations"
+title: "Demos"
 order: 4
 description: "Complete pages rendered with the design system, for demonstration and visual validation."
 ---
