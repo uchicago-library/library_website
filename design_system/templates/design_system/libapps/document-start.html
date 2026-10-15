@@ -1,0 +1,270 @@
+{% load static %}{# Best effort to replicate the LibApps document start for all their apps. #}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex,nofollow,noarchive">
+        <link rel="icon" type="image/x-icon" href="https://www.lib.uchicago.edu/web-resources/img/favicon-black.ico">
+        <title>{{ page.title }} | UChicago Library Design System</title>
+
+    <!--  %%% LIBAPPS STUFF  -->
+        <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/jquery/css/jquery-ui.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/css3.27.3/lg-public-bs5.min.css" />
+
+    <!-- %%%% Guide specific -->
+        <link rel="stylesheet" type="text/css" href="https://static-assets-us.libguides.com/web/slick-1.8.1/slick/slick.css">
+        <link rel="stylesheet" type="text/css" href="https://static-assets-us.libguides.com/web/slick-1.8.1/slick/slick-theme.css">
+
+        {% if meta.is_dbfinder %}
+            <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/css3.28.0/lg-public-bs5.min.css"> {# db finder version #}
+        {% else %}
+            <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/css3.28.0/lg-public-bs535.min.css"> {# guides pages version #}
+        {% endif %}
+
+        <script type="text/javascript" src="https://static-assets-us.libguides.com/web/jquery/js/jquery-3.7.1.min.js"></script>
+        <script>
+            jQuery(document).ready(function () {
+                var s_lg_guide_name = jQuery('#s-lg-guide-name');
+                if (s_lg_guide_name.length) {
+                    if (jQuery.trim(s_lg_guide_name.text()) === '') {
+                        s_lg_guide_name.remove();
+                    }
+                }
+            });
+        </script>
+
+        {% if meta.is_dbfinder %}
+            <script type="text/javascript" src="https://static-assets-us.libguides.com/web/js3.27.3/lg-public-bs5.min.js"></script> {# db finder version #}
+        {% else %}
+            <script type="text/javascript" src="https://static-assets-us.libguides.com/web/js3.27.3/lg-public-bs35.min.js"></script> {# guides pages version #}
+        {% endif %}
+
+    <!-- %%% Database Finder Specific -->
+    <!-- <script src="https://static-assets-us.libguides.com/web/select2/current/js/select2.min.js"></script> -->
+    <!-- <script src="https://static-assets-us.libguides.com/web/js3.27.3/springshare.select2.min.js"></script> -->
+        <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/select2/current/css/select2.min.css" />
+
+    <!-- %%%% Guide Specific -->
+        {% if meta.is_guide %}
+            <style>
+        /** bs5/bootstrap_tab_box_css.twig **/
+
+
+                #s-lg-tabs-container .nav-tabs>li>a,
+                #s-lg-tabs-container .nav-tabs>li>button,
+                #s-lg-tabs-container .nav-pills>li>a,
+                #s-lg-tabs-container .nav-pills>li>button {
+                    border: 1px solid transparent;
+                    -webkit-border-radius: 0;
+                    -moz-border-radius: 0;
+                    border-radius: 0;
+                    background-color: #f2f2f2;
+                    color: #737373;
+                    font-weight: bold;
+                    padding: 4px 15px;
+                }
+
+                #s-lg-tabs-container .nav-tabs {
+                    border-bottom: 0;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li#s-lg-admin-tab-add>a {
+                    -webkit-border-radius: 4px 4px 0 0;
+                    -moz-border-radius: 4px 4px 0 0;
+                    border-radius: 4px 4px 0 0;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>a:hover,
+                #s-lg-tabs-container .nav-tabs>li>button:hover,
+                #s-lg-tabs-container .nav-pills>li>a:hover,
+                #s-lg-tabs-container .nav-pills>li>button:hover {
+                    border: 1px solid transparent;
+                    -webkit-border-radius: 0;
+                    -moz-border-radius: 0;
+                    border-radius: 0;
+                    background-color: #ffffff;
+                    color: #800000;
+                }
+
+                #s-lg-tabs-container .nav-tabs>.active>a,
+                #s-lg-tabs-container .nav-tabs>.active>button,
+                #s-lg-tabs-container .nav-pills>.active>a,
+                #s-lg-tabs-container .nav-pills>.active>button {
+                    color: #800000;
+                    cursor: default;
+                    background-color: #ffffff;
+                    border: 1px solid transparent;
+                    -webkit-border-radius: 0;
+                    -moz-border-radius: 0;
+                    border-radius: 0;
+                    border-bottom-color: transparent;
+                    font-weight: bold;
+                }
+
+                #s-lg-tabs-container .nav-tabs>.active>.s-lg-subtab-ul>.active>a,
+                #s-lg-tabs-container .nav-tabs>.active>.s-lg-subtab-ul>.active>button {
+                    color: #800000;
+                    cursor: default;
+                    background-color: #ffffff;
+                    border-bottom-color: transparent;
+                }
+
+                #s-lg-tabs-container .dropdown-item.active {
+                    background-color: #ffffff;
+                }
+
+                #s-lg-tabs-container .nav-tabs>.active>a:hover,
+                #s-lg-tabs-container .nav-pills>.active>a:hover,
+                #s-lg-tabs-container .nav-tabs>.active>button:hover,
+                #s-lg-tabs-container .nav-pills>.active>button:hover {
+                    color: #800000;
+                    cursor: pointer;
+                    background-color: #ffffff;
+                    border: 1px solid transparent;
+                    -webkit-border-radius: 0;
+                    -moz-border-radius: 0;
+                    border-radius: 0;
+                    border-bottom-color: transparent;
+                    font-weight: bold;
+                }
+
+                #s-lg-tabs-container .nav .dropdown-toggle .caret {
+                    border-top-color: #e1e1e1;
+                }
+
+                #s-lg-tabs-container .nav-tabs button.dropdown-toggle .caret {
+                    margin-left: 2px;
+                    margin-top: -3px;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>a.s-lg-tab-drop {
+                    border-radius: 0;
+                    padding: 4px 6px 4px 3px;
+                    border-left: 1px solid transparent;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>button.s-lg-tab-drop {
+                    border-radius: 0;
+                    padding: 4px 6px 0px 3px;
+                    border-left: 1px solid transparent;
+                    margin-right: 2px;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>a.s-lg-tab-drop:hover {
+                    border-radius: 0;
+                    border-left: 1px solid #bbb;
+                    padding: 4px 6px 4px 3px;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>button.s-lg-tab-drop:hover {
+                    border-radius: 0;
+                    border-left: 1px solid #bbb;
+                    padding: 4px 6px 0px 3px;
+                }
+
+                #s-lg-tabs-container .nav-tabs>li>a.s-lg-tab-top-link,
+                #s-lg-tabs-container .nav-tabs>li>a.s-lg-tab-top-link:hover,
+                #s-lg-tabs-container .nav-tabs>li>button.s-lg-tab-top-link,
+                #s-lg-tabs-container .nav-tabs>li>button.s-lg-tab-top-link:hover {
+                    border-radius: 0;
+                    font-weight: bold;
+                    padding: 4px 5px 4px 10px;
+                }
+
+                .nav-tabs>li>a.s-lg-tab-top-link,
+                .nav-tabs>li>button.s-lg-tab-top-link {
+                    margin-right: 0px;
+                    margin-bottom: 0px;
+                }
+
+                #s-lg-tabs-container .nav-pills>li>a.s-lg-tab-drop,
+                #s-lg-tabs-container .nav-pills>li>button.s-lg-tab-drop {
+                    border-radius: 0;
+                    padding: 4px 8px 4px 8px;
+                    border-left: 1px solid transparent;
+                    right: 0;
+                }
+
+                #s-lg-tabs-container .nav-pills>li>a.s-lg-tab-drop:hover,
+                #s-lg-tabs-container .nav-pills>li>button.s-lg-tab-drop:hover {
+                    border-radius: 0;
+                    border-left: 1px solid #bbb;
+                    padding: 4px 8px 4px 8px;
+                }
+
+                #s-lg-tabs-container .nav-pills>li>a.s-lg-tab-top-link,
+                #s-lg-tabs-container .nav-pills>li>a.s-lg-tab-top-link:hover,
+                #s-lg-tabs-container .nav-pills>li>button.s-lg-tab-top-link,
+                #s-lg-tabs-container .nav-pills>li>button.s-lg-tab-top-link:hover {
+                    width: 100%;
+                    float: left;
+                    border-radius: 0;
+                    font-weight: bold;
+                    padding: 4px 15px 4px 15px;
+                }
+
+                .s-lib-box {
+                    border-color: #cccccc;
+                    border-width: 1px;
+                    box-shadow: 0 8px 6px -6px #AAAAAA;
+                    border-radius: 0;
+                    background-color: #ffffff;
+                }
+
+                .s-lib-box-std .s-lib-box-title {
+                    background-color: #f2f2f2;
+                    background-image: none;
+                    color: #800000;
+                    border-bottom: 1px solid #cccccc;
+                }
+
+                .s-lib-box .s-lib-box-title {
+                    background-color: #f2f2f2;
+                    background-image: none;
+                    color: #800000;
+                    border-bottom: 1px solid #cccccc;
+                    border-radius: 0;
+                }
+
+                .s-lib-box .s-lib-box-title button {
+                    background-color: #f2f2f2;
+                    color: #800000;
+                }
+
+                .s-lib-box .s-lg-box-footer {
+                    border-radius: 0;
+                }
+
+        /** !bs5/bootstrap_tab_box_css.twig **/
+            </style>
+        {% endif %}
+
+    <!-- %%% Custom stuff -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> {# We need this version even though Libapps also loads font awesome from a previous version #}
+        <link href="{% static 'design_system/css/main-libapps.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://guides.lib.uchicago.edu/lookfeel.css">
+
+    {# Sprinshare analytics. Not needed. #}
+    <!-- <script src="https://static-assets-us.libguides.com/web/js/sa.min.js?3116"></script> --> 
+
+        <script>
+        // Enable tooltips.
+            jQuery(function () {
+                try {
+                    springSpace.UI.initPopOvers(true);
+                    jQuery(".az-bs-tooltip").tooltip();
+                } catch (e) { }
+            });
+            jQuery(document).ready(function () {
+                springSpace.springTrack.trackPage({ _st_type_id: '1', _st_guide_id: '1241077', _st_page_id: '9082320' });
+            });
+            jQuery(document).ready(function () {
+                handleScroll();
+            });
+        </script>
+
+
+    </head>

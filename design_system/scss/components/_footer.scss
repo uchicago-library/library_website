@@ -1,0 +1,50 @@
+// Footer Styles
+
+/// Site footer. Bootstrap has no footer component, so this is ours: a dark
+/// surface with white links and unstyled lists.
+.footer {
+  background-color: $dark;
+  color: #fff;
+  padding: 3rem 0 2rem;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+
+    &:hover {
+      color: $light;
+      text-decoration: underline;
+    }
+  }
+
+  /// Column heading inside `.footer`. Only meaningful within `.footer`.
+  .footer-heading {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    margin-top: 0;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /// Centred block inside `.footer`, used for the logo and closing text.
+  /// Legacy name kept for compatibility with existing footer markup.
+  .centerdiv {
+    text-align: center;
+
+    img {
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+  }
+}

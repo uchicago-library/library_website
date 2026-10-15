@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "base",
     "cgimail_editor",
     "conferences",
+    "design_system",
     "dirbrowse",
     "events",
     "findingaids",

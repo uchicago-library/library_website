@@ -1,0 +1,64 @@
+// Breadcrumb Navigation
+// Bootstrap variables are customized in _variables.scss
+// This file only adds styling not covered by Bootstrap defaults
+
+// Bootstrap's breadcrumb entry, restyled so links use the muted divider
+// colour and only underline on hover.
+.breadcrumb-item {
+  a,
+  button {
+    color: var(--bs-breadcrumb-divider-color) !important;
+    text-decoration: none !important;
+
+    &:hover {
+      color: darken($info, 15%);
+      text-decoration: underline !important;
+    }
+  }
+}
+
+/// Disclosure control inside a breadcrumb, for a trail segment that expands
+/// into sibling pages. Inherits the trail's size and weight so it does not
+/// read as a button.
+.breadcrumb-section-toggle {
+  line-height: 1;
+  color: var(--bs-breadcrumb-divider-color);
+  font-size: inherit;
+  font-weight: inherit;
+
+  &:hover,
+  &:focus {
+    color: darken($info, 15%);
+  }
+
+  &::after {
+    margin-left: 0.25rem;
+  }
+}
+
+/// Wrapper for the menu opened by `.breadcrumb-section-toggle`. Tightens
+/// Bootstrap's dropdown so it reads as part of the trail rather than a menu.
+.breadcrumb-section-dropdown {
+  .dropdown-menu {
+    min-width: auto;
+    font-size: inherit;
+    border-color: var(--bs-border-color);
+
+    &.show {
+      inset: 20px auto auto -10px !important;
+      transform: none !important;
+    }
+  }
+
+  .dropdown-item {
+    color: var(--bs-breadcrumb-divider-color);
+    padding: 0.1rem 0.5rem;
+
+    &:hover,
+    &:focus {
+      color: darken($info, 15%);
+      background-color: transparent;
+      text-decoration: underline;
+    }
+  }
+}

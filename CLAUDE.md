@@ -36,6 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Frontend Build Tools
 - **JavaScript bundling**: `npm run build` (webpack production build)
 - **JavaScript watch mode**: `npm run watch` (webpack with file watching)
+- **Design system**: `npm run build:design-system` compiles `design_system/scss/` with Dart Sass and regenerates `design_system/data/tokens.json`; commit the output (CI checks it). Docs at `/design/` are Markdown in `design_system/content/`. See `design_system/README.md`
 
 ### Testing
 - **Run all tests**: `./manage.py test --parallel` (this is what CI runs; under Docker, prefix with `docker compose exec web`)

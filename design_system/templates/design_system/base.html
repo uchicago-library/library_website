@@ -1,0 +1,37 @@
+{% load static %}<!DOCTYPE html>
+{% comment %}
+  Layout for every /design/ documentation page. Bootstrap 5 throughout: it loads
+  the design system's own main.css, never LW's Bootstrap 3 public_base.html.
+{% endcomment %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>{% block title %}{% if page.slug %}{{ page.title }} | {% endif %}UChicago Library Design System{% endblock %}</title>
+    {% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
+    <link rel="icon" type="image/x-icon" href="https://www.lib.uchicago.edu/web-resources/img/favicon-black.ico">
+    <link rel="stylesheet" href="{% static 'design_system/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'design_system/css/meta.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  </head>
+  <body>
+    <a class="visually-hidden-focusable" href="#main-content">Skip to main content</a>
+
+    {% block header %}{% include "design_system/includes/docs-header.html" %}{% endblock %}
+
+    {% block breadcrumb %}{% include "design_system/includes/breadcrumb.html" %}{% endblock %}
+
+    {% block content %}
+      <main id="main-content" tabindex="-1" class="container-md py-5 mb-5">
+        {% block main %}{% endblock %}
+      </main>
+    {% endblock %}
+
+    {% include "design_system/includes/footer.html" %}
+
+    <script src="{% static 'design_system/js/bootstrap.bundle.min.js' %}"></script>
+    {% block scripts %}{% endblock %}
+    {% include "design_system/includes/annotations.html" %}
+  </body>
+</html>

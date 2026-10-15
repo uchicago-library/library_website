@@ -1,0 +1,557 @@
+{% extends "design_system/page.html" %}
+{% comment %} Listed and routed through its stub, design_system/content/implementation/components.md. {% endcomment %}
+
+{% block body %}
+
+<!-- Buttons Section -->
+  <section id="section-buttons">
+    <h2>Buttons</h2>
+
+    <p>Bootstrap's button classes cover variant, hierarchy, and size. Each choice should be deliberate — buttons communicate affordance and priority at a glance.</p>
+
+    <h3>Hierarchy</h3>
+
+    <p>There is exactly one <code>.btn-primary</code> per view. Standard actions use <code>.btn-default</code>.</p>
+
+    <ul class="list-unstyled">
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-default">.btn-default</button>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Default action</strong>
+            <p>Use for all standard actions. <code>.btn-default</code> is complete on its own — do not add <code>.btn-outline-secondary</code> alongside it.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-primary">.btn-primary</button>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Primary CTA</strong>
+            <p>Reserved for the single primary call to action per view.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row bg-dark rounded text-white g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <div class="p-2">
+              <button class="btn btn-outline-white">.btn-outline-white</button>
+            </div>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Image-overlay CTA</strong>
+            <p>Reserved for specially created CTA components where the background is a darkened image.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-danger-x"><i class="fa-solid fa-exclamation me-2" aria-hidden="true"></i>btn-danger-x</button>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Destructive action</strong>
+            <p>Use <code>.btn-danger-x</code>, which carries its own 2px border, and pair it with <code>.fa-solid.fa-exclamation.me-2</code>. Do not use filled <code>.btn-danger</code>.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <p>The <code>.btn</code> classes are designed for <code>&lt;button&gt;</code> elements, but they can also be used on <code>&lt;a&gt;</code> or <code>&lt;input&gt;</code> elements when needed.</p>
+      </li>
+      <li class="py-3">
+        <p>When an <code>&lt;a&gt;</code> element with button styling triggers in-page functionality rather than navigation, add <code>role="button"</code> so assistive technologies announce the correct purpose.</p>
+      </li>
+    </ul>
+
+    <h3>Size</h3>
+
+    <ul class="list-unstyled">
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-default">.btn-default</button>
+          </div>
+          <div class="col-12 col-sm">
+            <p>All standard UI contexts — forms, modals, cards, toolbars.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-default btn-sm">.btn-default.btn-sm</button>
+          </div>
+          <div class="col-12 col-sm">
+            <p>Dense UI where space is constrained — tables, inline actions, tight toolbars. Not for emphasis.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-default btn-lg">.btn-default.btn-lg</button>
+          </div>
+          <div class="col-12 col-sm">
+            <p>Primary CTA in a hero or empty state only — where the button is the focal point of the layout.</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <h3>Unused</h3>
+
+    <ul class="list-unstyled">
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-secondary" disabled>.btn-secondary</button>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Not used in this system</strong>
+            <p><code>.btn-secondary</code> ships with Bootstrap but is not used in this design system.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-info" disabled>.btn-info</button>
+          </div>
+          <div class="col-12 col-sm">
+            <strong>Active state in some elements</strong>
+            <p><code>.btn-info</code> active styling is baked into tab and navigation components. Do not apply it directly to standalone buttons.</p>
+          </div>
+        </div>
+      </li>
+      <li class="py-3">
+        <div class="row g-3 align-items-center">
+          <div class="col-12 col-sm-auto">
+            <button class="btn btn-link" disabled>.btn-link</button>
+          </div>
+          <div class="col-12 col-sm">
+            <p>Avoid <code>.btn-link</code>. If the action navigates, use an <code>&lt;a&gt;</code> element.</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+  </section>
+
+<!-- Forms Section -->
+  <section id="section-forms">
+    <h2>Forms</h2>
+    <h3>Text Input</h3>
+    <div class="mb-3">
+      <label for="textInput" class="form-label">Text Input</label>
+      <input type="text" class="form-control" id="textInput" placeholder="Enter text">
+    </div>
+
+    <h3>Checkboxes</h3>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="check1" checked>
+      <label class="form-check-label" for="check1">Option 1</label>
+    </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="check2">
+      <label class="form-check-label" for="check2">Option 2</label>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <h3>Select</h3>
+    <select class="form-select mb-3" aria-label="Choose an option">
+      <option selected>Choose an option</option>
+      <option>Option 1</option>
+      <option>Option 2</option>
+    </select>
+
+    <h3>Radio Buttons</h3>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="radio" name="radio" id="radio1" checked>
+      <label class="form-check-label" for="radio1">Option A</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="radio" id="radio2">
+      <label class="form-check-label" for="radio2">Option B</label>
+    </div>
+  </div>
+  </div>
+
+  <hr class="my-5 border-0">
+  </section>
+
+<!-- Cards Section -->
+  <section id="section-cards">
+    <h2>Cards</h2>
+
+    <div class="row g-3 mb-4" data-ga-category="Main" data-ga-subcategory="Card">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card Title</h5>
+            <p class="card-text">This is a basic card with a title, text, and footer.</p>
+            <a href="#" class="btn btn-primary btn-sm" data-ga-label="Learn More">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h5 class="card-title">Info Card</h5>
+            <p class="card-text">Card with an info border for active or interactive emphasis.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Header</div>
+          <div class="card-body">
+            <h5 class="card-title">With Header</h5>
+            <p class="card-text">Card with a separate header section.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Accordions Section -->
+  <section id="section-accordions">
+    <h2>Accordions</h2>
+    <p><strong>Note:</strong> When accordion labels act as section titles, use an appropriate heading level for each <code>.accordion-header</code> to preserve document structure.</p>
+
+    <div class="accordion mb-4" id="accordionDemo" data-ga-category="Main">
+      <div class="accordion-item mb-0">
+        <h3 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+            Accordion Item 1
+          </button>
+        </h3>
+        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#accordionDemo">
+          <div class="accordion-body">
+            This is the body content for the first accordion item.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item mb-0">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+            Accordion Item 2
+          </button>
+        </h3>
+        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#accordionDemo">
+          <div class="accordion-body">
+            This is the body content for the second accordion item.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item mb-0">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+            Accordion Item 3
+          </button>
+        </h3>
+        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#accordionDemo">
+          <div class="accordion-body">
+            This is the body content for the third accordion item.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Two-Column Accordion Layout</h3>
+    <p>For larger collections of accordion items, use <code>.accordion-two-column</code> to create a responsive two-column layout at the <code>md</code> breakpoint. Wrap items in a <code>.row</code>, then wrap each <code>.accordion-item</code> inside a <code>.col-md-6</code> div. Bootstrap's gutter provides horizontal gap (default 1.5rem), and custom <code>row-gap: 0.5rem</code> provides vertical gap.</p>
+
+    <div class="accordion accordion-two-column" id="accordionTwoColDemo" data-ga-category="Main">
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-item1" aria-expanded="false" aria-controls="demo-item1">
+                Item 1
+              </button>
+            </h3>
+            <div id="demo-item1" class="accordion-collapse collapse" data-bs-parent="#accordionTwoColDemo">
+              <div class="accordion-body">
+                Content for item 1.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-item2" aria-expanded="false" aria-controls="demo-item2">
+                Item 2
+              </button>
+            </h3>
+            <div id="demo-item2" class="accordion-collapse collapse" data-bs-parent="#accordionTwoColDemo">
+              <div class="accordion-body">
+                Content for item 2.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-item3" aria-expanded="false" aria-controls="demo-item3">
+                Item 3
+              </button>
+            </h3>
+            <div id="demo-item3" class="accordion-collapse collapse" data-bs-parent="#accordionTwoColDemo">
+              <div class="accordion-body">
+                Content for item 3.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-item4" aria-expanded="false" aria-controls="demo-item4">
+                Item 4
+              </button>
+            </h3>
+            <div id="demo-item4" class="accordion-collapse collapse" data-bs-parent="#accordionTwoColDemo">
+              <div class="accordion-body">
+                Content for item 4.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Lists Section -->
+  <section id="section-lists">
+    <h2>Lists</h2>
+
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <h3>List Group</h3>
+        <ul class="list-group">
+          <li class="list-group-item">Item 1</li>
+          <li class="list-group-item">Item 2</li>
+          <li class="list-group-item">Item 3</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6 mb-4" data-ga-category="Main" data-ga-subcategory="List">
+        <h3>List Group with Links</h3>
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action" data-ga-position="1">Link Item 1</a>
+          <a href="#" class="list-group-item list-group-item-action active" data-ga-position="2">Link Item 2 (Active)</a>
+          <a href="#" class="list-group-item list-group-item-action" data-ga-position="3">Link Item 3</a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Tables Section -->
+  <section id="section-tables">
+    <h2>Tables</h2>
+
+    <div class="table-responsive mb-4" data-ga-category="Main" data-ga-subcategory="Table">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+            <th>Column 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data 1</td>
+            <td>Data 2</td>
+            <td>Data 3</td>
+          </tr>
+          <tr>
+            <td>Data 4</td>
+            <td>Data 5</td>
+            <td>Data 6</td>
+          </tr>
+          <tr>
+            <td>Data 7</td>
+            <td>Data 8</td>
+            <td>Data 9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Icons Section -->
+  <section id="section-icons">
+    <h2>Icons (FontAwesome)</h2>
+
+    <div class="mb-4">
+      <p>FontAwesome icons can be used in various sizes and styles:</p>
+      <i class="fa-solid fa-heart me-3"></i>
+      <i class="fa-solid fa-star me-3"></i>
+      <i class="fa-solid fa-user me-3"></i>
+      <i class="fa-solid fa-search me-3"></i>
+      <i class="fa-solid fa-book me-3"></i>
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <div class="mb-4">
+      <h3>Larger Icons</h3>
+      <i class="fa-solid fa-heart fa-2x me-3 text-info"></i>
+      <i class="fa-solid fa-star fa-2x me-3 text-info"></i>
+      <i class="fa-solid fa-book fa-2x text-info"></i>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Alerts Section -->
+  <section id="section-alerts">
+    <h2>Alerts</h2>
+
+    <p>Bootstrap's alerts, with each variant keeping its Bootstrap meaning. A link inside an alert takes the alert's own colour automatically, so it stays legible on every variant; add <code>.alert-link</code> only if you also want it bold.</p>
+
+    <div class="alert alert-info">
+      The reading room closes early on Friday. <a href="#section-alerts">See the full schedule</a>.
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Badges & Pills Section -->
+  <section id="section-badges">
+    <h2>Badges & Pills</h2>
+
+    <div class="mb-4">
+      <h3>Badges</h3>
+      <span class="badge bg-primary me-2">Primary (CTA)</span>
+      <span class="badge bg-info me-2">Info</span>
+      <span class="badge bg-secondary me-2">Secondary</span>
+      <span class="badge bg-success me-2">Success</span>
+      <span class="badge bg-danger me-2">Danger</span>
+    </div>
+
+    <div class="mb-4">
+      <h3>Pills</h3>
+      <span class="badge rounded-pill bg-primary me-2">Primary CTA Pill</span>
+      <span class="badge rounded-pill bg-info me-2">Info Pill</span>
+      <span class="badge rounded-pill bg-secondary me-2">Secondary Pill</span>
+      <span class="badge rounded-pill bg-success">Success Pill</span>
+    </div>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Navigation Section -->
+  <section id="section-navigation">
+    <h2>Navigation</h2>
+
+    <p>Navs, tabs, pills and breadcrumbs are Bootstrap's, used unmodified — follow <a href="https://getbootstrap.com/docs/5.3/components/navs-tabs/" target="_blank" rel="noopener">Bootstrap's documentation</a> and keep the ARIA attributes its examples carry. Two house rules: give every <code>&lt;nav&gt;</code> its own <code>aria-label</code>, since a page usually has several; and end a breadcrumb on the current page, unlinked. The site's own header and footer are covered in <a href="/design/implementation/site-chrome/">Site Chrome</a>.</p>
+
+    <hr class="my-5 border-0">
+  </section>
+
+<!-- Pagination Section -->
+  <section id="section-pagination">
+    <h2>Pagination</h2>
+
+    <nav aria-label="Pagination" data-ga-category="Main" data-ga-subcategory="Pagination">
+      <ul class="pagination">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" data-ga-label="Previous">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#" data-ga-position="1">1</a></li>
+        <li class="page-item active"><a class="page-link" href="#" data-ga-position="2">2</a></li>
+        <li class="page-item"><a class="page-link" href="#" data-ga-position="3">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#" data-ga-label="Next">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+  <template class="ds-annotations-template">
+  <!-- Buttons -->
+    <div data-target="#section-buttons" data-category="a11y" data-title="Button semantics">
+      When an <code>&lt;a&gt;</code> element is styled as a button but triggers in-page behavior rather than navigation, add <code>role="button"</code> so assistive technologies announce the correct purpose.
+    </div>
+    <div data-target="#section-buttons" data-category="behavior" data-title="One primary per view">
+      Only one <code>.btn-primary</code> should appear per view. Additional actions use <code>.btn-default</code> to maintain clear visual hierarchy.
+    </div>
+
+  <!-- Forms -->
+    <div data-target="#section-forms" data-category="a11y" data-title="Label association">
+      Every form control requires an associated <code>&lt;label&gt;</code> via matching <code>for</code>/<code>id</code> attributes. Placeholder text is not a substitute for a label.
+    </div>
+
+  <!-- Cards -->
+    <div data-target="#section-cards" data-category="tracking" data-title="Card event tracking">
+      The wrapping container sets <code>data-ga-category</code> and <code>data-ga-subcategory</code>. The CTA link adds <code>data-ga-label</code> to identify the action. The event name (<em>click</em>) is determined automatically by the tracking script.
+    </div>
+
+  <!-- Accordions -->
+    <div data-target="#section-accordions" data-category="a11y" data-title="Heading hierarchy">
+      When accordion labels act as section titles, wrap them in an appropriate heading level (e.g. <code>&lt;h3&gt;</code>) inside <code>.accordion-header</code> to preserve document structure.
+    </div>
+    <div data-target="#section-accordions" data-category="tracking" data-title="Accordion event tracking">
+      The tracking script detects accordion buttons automatically via selector matching and fires a <em>tab</em> event. No <code>data-ga-action</code> attribute is needed — event type is inferred from the element's role.
+    </div>
+    <div data-target="#section-accordions" data-category="responsive" data-title="Two-column breakpoint">
+      <code>.accordion-two-column</code> uses <code>.col-md-6</code> to arrange items in two columns at the <code>md</code> breakpoint. Below that, items stack into a single column.
+    </div>
+
+  <!-- Lists -->
+    <div data-target="#section-lists" data-category="tracking" data-title="List position tracking">
+      <code>data-ga-position</code> records each item's numeric index. This reveals whether users click top results or scroll further down. The label is derived automatically from the link text.
+    </div>
+    <div data-target="#section-lists" data-category="a11y" data-title="Active state semantics">
+      The <code>.active</code> class is visual only. Add <code>aria-current="true"</code> to the active item so assistive technologies convey its state.
+    </div>
+
+  <!-- Tables -->
+    <div data-target="#section-tables" data-category="responsive" data-title="Responsive table wrapper">
+      <code>.table-responsive</code> adds horizontal scrolling on narrow viewports, preventing the table from overflowing the layout.
+    </div>
+
+  <!-- Icons -->
+    <div data-target="#section-icons" data-category="a11y" data-title="Decorative icons">
+      Decorative icons must include <code>aria-hidden="true"</code> so screen readers skip them. Icons that convey meaning need an accessible text alternative (e.g. <code>&lt;span class="visually-hidden"&gt;</code>).
+    </div>
+
+  <!-- Badges -->
+    <div data-target="#section-badges" data-category="a11y" data-title="Color is not sufficient">
+      Badge colors convey meaning visually but are not accessible alone. Ensure surrounding context or text provides the same information for users who cannot perceive color.
+    </div>
+
+  <!-- Pagination -->
+    <div data-target="#section-pagination" data-category="tracking" data-title="Pagination tracking">
+      Navigation links use <code>data-ga-label</code> for Previous/Next and <code>data-ga-position</code> for numbered pages. The tracking script fires a <em>click</em> event automatically.
+    </div>
+    <div data-target="#section-pagination" data-category="a11y" data-title="Pagination landmark">
+      The <code>&lt;nav&gt;</code> element with <code>aria-label="Pagination"</code> creates a navigational landmark, helping screen-reader users locate and identify the pagination controls.
+    </div>
+  </template>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "design_system/base.html" %}
+
+{% block header %}{% include "design_system/includes/header.html" %}{% endblock %}
+
+{% block content %}
+  <main id="main-content" tabindex="-1" class="container-md py-4 mb-5">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+
+        <h1>{{ page.title }}</h1>
+        <p class="lead">{{ page.description }}</p>
+        <p>For the markup to copy, see <a href="/design/implementation/site-chrome/">Site Chrome</a> in the design system.</p>
+
+        <section class="mb-5">
+          <h2>Header</h2>
+          <h3>Full</h3>
+          <p>Rendered at the top of this page.</p>
+
+          <h3>Minimal Header</h3>
+
+          <div class="border rounded overflow-hidden mb-3">
+            <div class="global-navbar py-2">
+              <div class="container-md">
+                <img src="https://www.lib.uchicago.edu/web-resources/img/white-logo.png" alt="University of Chicago Library" height="35">
+              </div>
+            </div>
+          </div>
+
+          <p class="text-muted">Shown here inside a demo frame. In real use it is a <code>&lt;header role="banner"&gt;</code> at the top of the document — a page has only one banner landmark, which is why this example is not one.</p>
+        </section>
+
+        <section class="mb-5">
+          <h2>Footer</h2>
+          <p>Rendered at the bottom of this page. <code>.footer</code> supplies the dark surface, white links and unstyled lists; <code>.footer-heading</code> styles a column heading; <code>.centerdiv</code> is the centred block holding the logo and closing text.</p>
+        </section>
+
+        <section class="mb-5">
+          <h2>Favicon</h2>
+          <p>
+            <img src="https://www.lib.uchicago.edu/web-resources/img/favicon.ico" alt="University of Chicago Library favicon" width="16" height="16">
+            <code>https://www.lib.uchicago.edu/web-resources/img/favicon.ico</code>
+          </p>
+          <p>
+            <img src="https://www.lib.uchicago.edu/web-resources/img/favicon-black.ico" alt="University of Chicago Library favicon" width="16" height="16">
+            <code>https://www.lib.uchicago.edu/web-resources/img/favicon-black.ico</code>
+          </p>
+        </section>
+
+      </div>
+    </div>
+  </main>
+{% endblock %}

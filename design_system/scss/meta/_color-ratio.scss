@@ -1,0 +1,27 @@
+// ============================================================================
+// 60-30-10 color ratio visual — meta component
+//
+// Documentation-only illustration used on the Color Usage Guidelines page to
+// show the recommended proportions. Not a Design System component.
+// Markup lives in design_system/templates/design_system/includes/color-ratio.html.
+// ============================================================================
+
+// ── Level 3 tokens ──
+$color-ratio-segment-min-height: $spacer * 3;
+$color-ratio-proportions: (60, 30, 10);
+
+.color-ratio {
+  border: $border-width solid var(--bs-border-color);
+  overflow: hidden;
+
+  &__segment {
+    min-height: $color-ratio-segment-min-height;
+
+    // The proportions are the subject matter, so they drive the widths.
+    @each $proportion in $color-ratio-proportions {
+      &--#{$proportion} {
+        flex: 0 0 percentage($proportion * 0.01);
+      }
+    }
+  }
+}

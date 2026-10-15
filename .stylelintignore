@@ -24,3 +24,6 @@ base/static/base/css/third-party/
 
 # Git
 .git/
+
+# Design system build outputs (npm run build:design-system)
+design_system/static/design_system/css/

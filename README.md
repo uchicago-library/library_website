@@ -155,6 +155,9 @@ The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that 
 ## SCSS/CSS Compilation
 Both the public site and Loop (intranet) use Django Compressor with django-libsass for SCSS compilation. SCSS files are automatically compiled when templates are rendered. Edit the `.scss` source files in `base/static/base/css/` and `base/static/base/css/loop/` - do not edit the compiled `.css` files directly.
 
+### Design system (Bootstrap 5)
+The UChicago Library Design System lives in `design_system/`: its SCSS, the stylesheets compiled from it, and its documentation, served at `/design/`. It is compiled with Dart Sass from npm, not by Django Compressor, so after editing `design_system/scss/` run `npm run build:design-system` (or `npm run build`, which runs it after webpack) and commit the output. Production deploys run no Node, so the compiled CSS, `bootstrap.bundle.min.js` and `design_system/data/tokens.json` are committed, like the webpack bundles; CI fails if they are stale. The legacy Bootstrap 3 SCSS above stays on Django Compressor until its templates are migrated. See `design_system/README.md`.
+
 ## Optional Configuration
 
 ### Configure /etc/hosts

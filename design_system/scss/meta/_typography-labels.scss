@@ -1,0 +1,31 @@
+// Typography Labels for tagged elements
+// Used on typography-history.html to show CSS selectors with positioned badges
+
+// Wrapper that makes elements position: relative to anchor positioned labels
+.element-with-label {
+  position: relative;
+}
+
+// Badge label showing the CSS selector
+.element-label {
+  position: absolute;
+  top: -1.75rem;
+  left: 0;
+
+  // Use Bootstrap badge styling
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: monospace;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+
+  // Color scheme: light background with dark text
+  background-color: $body-secondary-bg;
+  color: $body-secondary-color;
+  border: $border-width solid $border-color;
+}

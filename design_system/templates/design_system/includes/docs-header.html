@@ -1,0 +1,65 @@
+{% comment %}
+  Header for the /design/ documentation pages.
+
+  Structure and styling mirror the production Library header so the two read as
+  one site: a white logo bar above a maroon navigation bar. Styles live in
+  design_system/scss/meta/_docs-header.scss.
+
+  The section links are the top-level folders of design_system/content/, in
+  their front-matter order. Ids are prefixed docs- so they cannot collide with
+  the production header, which claims #global-navbar and #navbar-shortcuts.
+{% endcomment %}
+<header id="docs-header" role="banner">
+  <div class="logo-bar bg-white">
+    <div class="container-md">
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'design_system:page' %}">
+          <img src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
+          <span class="docs-header-wordmark">Design System</span>
+        </a>
+
+        <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#docs-header-nav" aria-controls="docs-header-nav"
+                aria-expanded="false" aria-label="Toggle documentation navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-md navbar-dark global-navbar p-0" aria-label="Documentation">
+    <div class="container-md">
+      <div class="collapse navbar-collapse" id="docs-header-nav">
+        <ul class="navbar-nav" role="list">
+          {% for section in sections %}
+            <li class="nav-item">
+              <a class="nav-link{% if section.url in page.url %} active{% endif %}" href="{{ section.url }}"{% if page.url == section.url %} aria-current="page"{% endif %}>{{ section.title }}</a>
+            </li>
+          {% endfor %}
+          <li class="nav-item">
+            <a class="nav-link{% if is_token_tables %} active{% endif %}" href="{{ token_tables_url }}"{% if is_token_tables %} aria-current="page"{% endif %}>Token Tables</a>
+          </li>
+        </ul>
+
+        {% comment %}
+          Developers return to the tokens far more than to any other page, so
+          every page can search them. It is a plain GET to Token Tables, which
+          reads ?q= and opens filtered. Left off that page, whose own search
+          box does the same job. Uses the production header's
+          .global-navbar-search, so restyling that component restyles this one.
+        {% endcomment %}
+        {% if not is_token_tables %}
+          <form class="global-navbar-search ms-md-auto mt-3 mt-md-0" role="search" action="{{ token_tables_url }}" method="get">
+            <label class="visually-hidden" for="docs-header-search">Search tokens and classes</label>
+            <div class="global-navbar-search-field">
+              <input class="form-control form-control-sm" type="search" id="docs-header-search" name="q" placeholder="Tokens">
+              <button class="global-navbar-search-button" type="submit" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>

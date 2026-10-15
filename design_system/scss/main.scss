@@ -1,0 +1,81 @@
+// This is the main entry point to compile a CSS file for the main Library website.
+//
+// Bootstrap is imported in parts rather than as a single bundle so that
+// bootstrap/scss/functions loads BEFORE our variable overrides. Bootstrap's
+// color helpers (tint-color, shade-color, color-contrast, ...) are therefore
+// available inside _variables.scss. Note that an unresolved function does not
+// raise an error in Sass, it degrades to a literal CSS function call, so the
+// ordering below is load-bearing rather than cosmetic.
+//
+// See the Annotation Reference in _variables.scss for the comment conventions
+// that drive the generated Token Tables documentation page.
+
+@import 'pkg:bootstrap/scss/mixins/banner';
+@include bsBanner('');
+
+// 1. Bootstrap functions, before anything that might use them.
+@import 'pkg:bootstrap/scss/functions';
+
+// 2. Our variable overrides and design tokens.
+@import 'variables';
+
+// 3. The remainder of Bootstrap's configuration layer.
+@import 'pkg:bootstrap/scss/variables';
+@import 'pkg:bootstrap/scss/variables-dark';
+@import 'pkg:bootstrap/scss/maps';
+@import 'pkg:bootstrap/scss/mixins';
+@import 'pkg:bootstrap/scss/utilities';
+
+// 4. Bootstrap layout and components.
+@import 'pkg:bootstrap/scss/root';
+@import 'pkg:bootstrap/scss/reboot';
+@import 'pkg:bootstrap/scss/type';
+@import 'pkg:bootstrap/scss/images';
+@import 'pkg:bootstrap/scss/containers';
+@import 'pkg:bootstrap/scss/grid';
+@import 'pkg:bootstrap/scss/tables';
+@import 'pkg:bootstrap/scss/forms';
+@import 'pkg:bootstrap/scss/buttons';
+@import 'pkg:bootstrap/scss/transitions';
+@import 'pkg:bootstrap/scss/dropdown';
+@import 'pkg:bootstrap/scss/button-group';
+@import 'pkg:bootstrap/scss/nav';
+@import 'pkg:bootstrap/scss/navbar';
+@import 'pkg:bootstrap/scss/card';
+@import 'pkg:bootstrap/scss/accordion';
+@import 'pkg:bootstrap/scss/breadcrumb';
+@import 'pkg:bootstrap/scss/pagination';
+@import 'pkg:bootstrap/scss/badge';
+@import 'pkg:bootstrap/scss/alert';
+@import 'pkg:bootstrap/scss/progress';
+@import 'pkg:bootstrap/scss/list-group';
+@import 'pkg:bootstrap/scss/close';
+@import 'pkg:bootstrap/scss/toasts';
+@import 'pkg:bootstrap/scss/modal';
+@import 'pkg:bootstrap/scss/tooltip';
+@import 'pkg:bootstrap/scss/popover';
+@import 'pkg:bootstrap/scss/carousel';
+@import 'pkg:bootstrap/scss/spinners';
+@import 'pkg:bootstrap/scss/offcanvas';
+@import 'pkg:bootstrap/scss/placeholders';
+
+// 5. Bootstrap helpers and the utilities API.
+@import 'pkg:bootstrap/scss/helpers';
+@import 'pkg:bootstrap/scss/utilities/api';
+
+// 6. Base styles (after Bootstrap)
+@import 'base/fonts';
+@import 'base/global';
+@import 'base/typography';
+@import 'base/layout';
+
+// 7. Component styles
+// Documentation-only components are not imported here. They belong to
+// meta.scss so that they are not shipped to the product.
+@import 'components/breadcrumb';
+@import 'components/buttons';
+@import 'components/alert';
+@import 'components/header';
+@import 'components/footer';
+@import 'components/accordion';
+@import 'components/panel';

@@ -1,0 +1,24 @@
+// Design Intent scale — documentation-only component.
+// Lives in scss/meta/ and is imported by meta.scss, never by main.scss.
+// Markup lives in design_system/templates/design_system/includes/design-intent-scale.html.
+
+.intent-scale {
+  // Bootstrap's .form-range sets appearance: none, which also hides the tick
+  // marks the scale's <datalist> draws. Restoring the native control brings
+  // them back.
+  .form-range {
+    appearance: auto;
+  }
+
+  // Labels a fixed width either side of the scale, so the three axes on the
+  // page line up. Below sm the labels sit on one line above the scale.
+  @include media-breakpoint-up(sm) {
+    .intent-scale__label {
+      min-width: 8rem;
+
+      &:first-child {
+        text-align: end;
+      }
+    }
+  }
+}

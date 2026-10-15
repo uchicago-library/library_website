@@ -1,0 +1,19 @@
+// Documentation site header — documentation-only component.
+// Lives in scss/meta/ and is imported by meta.scss, never by main.scss.
+// Markup lives in design_system/templates/design_system/includes/docs-header.html.
+//
+// The header itself is not styled here. It reuses .logo-bar and
+// .global-navbar from components/_header.scss, so the documentation site
+// looks like the site it documents and there is one place to change that.
+// Only the wordmark below is specific to this project.
+
+// Wordmark distinguishing this documentation site from the production site it
+// documents. Sits beside the logo, which keeps its production sizing.
+.docs-header-wordmark {
+  color: $primary;
+  font-weight: 600;
+  line-height: 1.1;
+  border-left: 1px solid $light;
+  padding-left: 0.75rem;
+  margin-left: 0.75rem;
+}

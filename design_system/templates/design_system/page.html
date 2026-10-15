@@ -1,0 +1,22 @@
+{% extends "design_system/base.html" %}
+{% comment %}
+  A Markdown page from design_system/content/. A folder page also lists its
+  pages after its own content. A page whose markup is too rich for Markdown
+  names a template that extends this one and overrides `body`.
+{% endcomment %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-lg-10 mx-auto documentation">
+      <h1>{{ page.title }}</h1>
+      {% if page.description %}<p class="lead">{{ page.description }}</p>{% endif %}
+
+      {% block body %}{{ content }}{% endblock %}
+
+      {% if children %}
+        <h2>Pages in This Section</h2>
+        {% include "design_system/includes/page-list.html" with pages=children %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

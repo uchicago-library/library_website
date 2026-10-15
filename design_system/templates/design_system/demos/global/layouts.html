@@ -1,0 +1,90 @@
+{% extends "design_system/base.html" %}
+
+{% block header %}{% include "design_system/includes/header.html" %}{% endblock %}
+
+{% block content %}
+  <main id="main-content" tabindex="-1">
+
+    <div class="container-md py-4">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <h1>{{ page.title }}</h1>
+          <p class="lead">{{ page.description }}</p>
+          <p>For the markup to copy, see <a href="/design/implementation/layouts/">Page Layouts</a> in the design system.</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="py-5">
+      <div class="container-lg">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <h2>Main column with right sidebar</h2>
+            <p>The main content area uses <code>col-lg-8</code> for the information users came for. On narrow viewports this column takes the full width and appears first.</p>
+          </div>
+          <div class="col-lg-4">
+            <div class="sidebar p-4 rounded">
+              <h3>Sidebar</h3>
+              <p class="small">The sidebar uses <code>col-lg-4</code>.</p>
+              <ul class="small mb-0">
+                <li>Quick links</li>
+                <li>Related content</li>
+                <li>Additional info</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="py-5">
+      <div class="container-md">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h2>Single column</h2>
+            <p>A centred column using <code>container-md</code> with <code>col-lg-10 mx-auto</code>. This holds the line length near a comfortable reading measure, which is why every documentation page on this site uses it.</p>
+            <p>Best for articles, documentation and forms — anywhere focus and readability matter more than density.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="py-5">
+      <div class="container-md">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h2>Full-width sections with centred content</h2>
+            <p>Each band spans the viewport while its content stays within the standard container, so backgrounds can change without the text moving. Useful on landing pages that need visual rhythm.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 bg-body-secondary">
+      <div class="container-md">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h3>Band with a secondary surface</h3>
+            <p>Different bands can carry different backgrounds while content width and alignment stay constant.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 bg-primary text-white">
+      <div class="container-md">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h3>Band with the brand surface</h3>
+            <p>Full-width coloured bands keep content readable and aligned.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+{% endblock %}

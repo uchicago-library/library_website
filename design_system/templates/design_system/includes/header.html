@@ -1,0 +1,82 @@
+<!-- Header mockup: shortcuts + new navigation layout. -->
+<header role="banner">
+  <!-- Libguides injects the header inside a `<header>` -->
+  <div class="logo-bar bg-white">
+    <div class="container-md">
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <a class="navbar-brand m-0" href="/" itemscope itemtype="http://schema.org/Organization">
+          <span class="visually-hidden" itemprop="name">The University of Chicago Library</span>
+          <img itemprop="logo" src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
+        </a>
+
+        <ul class="nav d-none d-md-flex justify-content-end" id="navbar-shortcuts" role="list">
+          {% for link in navigation.globalNav.shortcutLinks %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ link.href }}">
+                <i class="{{ link.icon }}" aria-hidden="true"></i>
+                <span>{{ link.text }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#global-navbar-shortcuts-newnav-collapse" aria-controls="global-navbar-shortcuts-newnav-collapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav id="global-navbar" class="navbar navbar-expand-md navbar-dark global-navbar p-0" aria-label="Main navigation">
+    <div class="container-md">
+      <div class="collapse navbar-collapse" id="global-navbar-shortcuts-newnav-collapse">
+        <ul class="navbar-nav flex-grow-1" role="list">
+          {% for dropdown in navigation.globalNav.dropdowns %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="#" id="shortcuts-newnav-{{ dropdown.id }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ dropdown.label }}
+              </a>
+              <ul class="dropdown-menu px-md-3 py-md-2" aria-labelledby="shortcuts-newnav-{{ dropdown.id }}">
+                {% with group_count=dropdown.groups|length %}
+                  <li class="dropdown-layout row row-cols-1 row-cols-md-2 row-cols-lg-{% if group_count > 6 %}6{% elif group_count < 1 %}1{% else %}{{ group_count }}{% endif %} gx-3 gy-0">
+                    {% for group in dropdown.groups %}
+                      <div class="dropdown-group pb-2 col">
+                        <p class="dropdown-group-title">{{ group.title }}</p>
+                        {% for link in group.links %}
+                          <a class="dropdown-item text-wrap text-white" href="{{ link.href }}">{{ link.text }}</a>
+                        {% endfor %}
+                      </div>
+                    {% endfor %}
+                  </li>
+                {% endwith %}
+              </ul>
+            </li>
+          {% endfor %}
+
+          <li class="d-md-none mt-2">
+            <ul class="navbar-nav flex-column mobile-shortcuts-list" role="list">
+              {% for link in navigation.globalNav.shortcutLinks %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ link.href }}">
+                    <i class="{{ link.icon }} me-2" aria-hidden="true"></i>
+                    {{ link.text }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        </ul>
+
+        <form class="global-navbar-search ms-lg-auto mt-3 mt-md-0" role="search">
+          <label class="visually-hidden" for="shortcuts-newnav-search-input">Search the site</label>
+          <div class="global-navbar-search-field">
+            <input class="form-control form-control-sm" id="shortcuts-newnav-search-input" type="search" placeholder="Search" aria-label="Search the site">
+            <button class="global-navbar-search-button" type="submit" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>

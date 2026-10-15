@@ -1,0 +1,13 @@
+{% load static %}
+{% comment %} Annotation overlay. The button stays hidden unless the page has annotations. {% endcomment %}
+<button class="ds-notes-toggle"
+        type="button"
+        aria-pressed="true"
+        aria-label="Toggle annotations"
+        id="dsNotesToggle"
+        hidden>
+  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+  <span>Annotations</span>
+</button>
+
+<script src="{% static 'design_system/js/annotations.js' %}"></script>
