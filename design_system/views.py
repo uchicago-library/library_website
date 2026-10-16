@@ -88,7 +88,8 @@ def locate(slug):
     """The content file for a slug, and whether the slug is a folder.
 
     A folder without an index.md is still a page: its listing. An index.md is
-    its folder's page, so it has no URL of its own.
+    its folder's page, so it has no URL of its own; page() redirects to the
+    folder's.
     """
     if slug.rsplit("/", 1)[-1] == "index":
         raise Http404
@@ -222,16 +223,18 @@ def design_view(view):
 
 
 def markdown_url(item):
-    """The .md URL of a page's source, following the llms.txt convention."""
-    parts = [item["slug"], "index" if item["is_folder"] else ""]
-    slug = "/".join(part for part in parts if part)
+    """The .md URL of a page's source: its URL with the slash swapped for .md.
+
+    The home page's would fall outside /design/, so it is /design/index.md.
+    """
+    slug = item["slug"] or "index"
     return reverse("design_system:markdown", kwargs={"slug": slug})
 
 
 @design_view
 def markdown_source(request, slug):
-    path = CONTENT_DIR / f"{slug}.md"
-    if not path.is_file():
+    path, _ = locate("" if slug == "index" else slug)
+    if not path:
         raise Http404
     # Includes are run, so a reader gets the table or demo they bring in rather
     # than the tag. The Markdown itself is left as written.
@@ -244,6 +247,9 @@ def markdown_source(request, slug):
 @design_view
 def page(request, slug=""):
     slug = slug or ""
+    parent, _, name = slug.rpartition("/")
+    if name == "index":
+        return redirect(page_url(parent), permanent=True)
     path, is_folder = locate(slug)
     meta, body, source = parse(path) if path else ({}, "", "")
 

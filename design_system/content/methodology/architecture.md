@@ -113,7 +113,7 @@ None of this needs a manual step. Adding a file is enough.
 - **Token Tables** and `/design/tokens.json`, from `data/tokens.json`.
 - **Bootstrap's JavaScript** at `/static/design_system/js/bootstrap.bundle.min.js`, copied from the same installed package the CSS is compiled from, so the two cannot drift to different Bootstrap versions.
 - **`/design/llms.txt`**, a discovery index for agents building against this design system, listing every section and page.
-- **The Markdown source of every page**, at its path with `.md` appended: `/design/guidelines/copywriting.md`, or `/design/foundation/index.md` for a folder. Its includes are run, so a reader gets the table or demo they bring in rather than the tag.
+- **The Markdown source of every page**, at its path with `.md` appended: `/design/guidelines/copywriting.md`, and `/design/foundation.md` for a folder. The home page's is `/design/index.md`. Its includes are run, so a reader gets the table or demo they bring in rather than the tag.
 
 None of the documentation is meant for search engines. Every page and file is served with `noindex`, as a meta tag on HTML and an `X-Robots-Tag` header on everything else. `llms.txt`, `tokens.json` and the `.md` files are exempt from the site's Turnstile bot check so agents can read them; the HTML pages are not.
 

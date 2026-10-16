@@ -49,10 +49,18 @@ class DesignSystemTest(TestCase):
                 self.get(url)
 
     def test_missing_page(self):
-        for url in ["/design/no-such-page/", "/design/foundation/index/"]:
+        for url in ["/design/no-such-page/", "/design/foundation/index.md"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertContains(response, "Page Not Found", status_code=404)
+
+    def test_index_redirects_to_its_folder(self):
+        for url, target in [
+            ("/design/index/", "/design/"),
+            ("/design/foundation/index/", "/design/foundation/"),
+        ]:
+            with self.subTest(url=url):
+                self.assertRedirects(self.client.get(url), target, status_code=301)
 
     def test_tokens_json(self):
         data = json.loads(self.get("/design/tokens.json"))
