@@ -1,0 +1,16 @@
+{% extends "design_system/page.html" %}
+{% comment %}
+  The demos index. The demos are listed in views.DEMOS, each a template beside
+  this one. The rules they show are written in the Markdown pages, so no
+  reader, person or agent, needs a demo to learn one.
+{% endcomment %}
+
+{% block body %}
+  <ul>
+    {% for demo in demos %}
+      <li><a href="{{ demo.url }}">{{ demo.title }}</a> — {{ demo.description }}</li>
+    {% endfor %}
+  </ul>
+
+  <p>These show the system as it is. Exploratory work that has not been adopted lives in the <a href="https://github.com/uchicago-library/ucld">playground</a>.</p>
+{% endblock %}

@@ -53,4 +53,21 @@ $documentation-rule-margin: $spacer * 3;
     margin-top: $documentation-rule-margin;
     margin-bottom: $documentation-rule-margin;
   }
+
+  // Markdown tables carry no class, so they take the look of Bootstrap's
+  // .table.table-sm here: rules between rows, none between columns. Long
+  // values wrap instead of scrolling the table, which would need a wrapper
+  // element Markdown cannot emit.
+  > table {
+    width: 100%;
+    margin-bottom: $spacer;
+
+    th,
+    td {
+      padding: $table-cell-padding-y-sm $table-cell-padding-x-sm;
+      border-bottom: $table-border-width solid $table-border-color;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+  }
 }

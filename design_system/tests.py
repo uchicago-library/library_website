@@ -2,6 +2,7 @@ import json
 import re
 
 from django.test import TestCase
+from django.urls import reverse
 
 from . import views
 
@@ -9,7 +10,7 @@ INTERNAL_LINK = re.compile(r'href="(/design/[^"#?]*)')
 
 
 class DesignSystemTest(TestCase):
-    """Checks every page found in design_system/content/, so none is named here."""
+    """Checks every page in content/ and in views.DEMOS, so none is named here."""
 
     def setUp(self):
         # Pass the site's Turnstile check whether or not it is enabled.
@@ -17,6 +18,10 @@ class DesignSystemTest(TestCase):
         session["turnstile_passed"] = True
         session.save()
         self.pages = [views.entry("")] + list(views._walk(views.children("")))
+        self.html_pages = [
+            reverse("design_system:tokens"),
+            reverse("design_system:demos"),
+        ] + [views.demo_page(slug)["url"] for slug in views.DEMOS]
 
     def get(self, url):
         response = self.client.get(url)
@@ -28,15 +33,18 @@ class DesignSystemTest(TestCase):
         for page in self.pages:
             with self.subTest(url=page["url"]):
                 self.get(page["url"])
-                if views.locate(page["slug"])[0]:
+                if page["has_source"]:
                     self.get(views.markdown_url(page))
+        for url in self.html_pages:
+            with self.subTest(url=url):
+                self.get(url)
 
     def test_internal_links_resolve(self):
         checked = set()
-        for page in self.pages:
-            for href in set(INTERNAL_LINK.findall(self.get(page["url"]))) - checked:
+        for url in [page["url"] for page in self.pages] + self.html_pages:
+            for href in set(INTERNAL_LINK.findall(self.get(url))) - checked:
                 checked.add(href)
-                with self.subTest(page=page["url"], href=href):
+                with self.subTest(page=url, href=href):
                     self.get(href)
 
     def test_llms_txt_lists_every_page(self):
@@ -48,8 +56,19 @@ class DesignSystemTest(TestCase):
             with self.subTest(link=url):
                 self.get(url)
 
+    def test_markdown_is_served_as_written(self):
+        # Template syntax in a page body would reach readers unrun.
+        for page in self.pages:
+            if page["has_source"]:
+                with self.subTest(url=page["url"]):
+                    self.assertNotRegex(self.get(views.markdown_url(page)), r"{%|{{")
+
     def test_missing_page(self):
-        for url in ["/design/no-such-page/", "/design/foundation/index.md"]:
+        for url in [
+            "/design/no-such-page/",
+            "/design/foundations/index.md",
+            "/design/demos/no-such-demo/",
+        ]:
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertContains(response, "Page Not Found", status_code=404)
@@ -57,7 +76,7 @@ class DesignSystemTest(TestCase):
     def test_index_redirects_to_its_folder(self):
         for url, target in [
             ("/design/index/", "/design/"),
-            ("/design/foundation/index/", "/design/foundation/"),
+            ("/design/foundations/index/", "/design/foundations/"),
         ]:
             with self.subTest(url=url):
                 self.assertRedirects(self.client.get(url), target, status_code=301)
@@ -66,3 +85,4 @@ class DesignSystemTest(TestCase):
         data = json.loads(self.get("/design/tokens.json"))
         self.assertTrue(data["tokens"])
         self.assertTrue(data["classes"])
+        self.assertTrue(all(item["text"] for item in data["guidance"]))

@@ -3,7 +3,7 @@ title: "Page Layouts"
 description: "The three standard page layouts, when each applies, and the markup for them."
 ---
 
-Three layouts cover nearly every page. See them rendered at full width in the [layouts demo](/design/demos/global/layouts/).
+Three layouts cover nearly every page. See them rendered at full width in the [layouts demo](/design/demos/layouts/).
 
 ## Main column with right sidebar
 

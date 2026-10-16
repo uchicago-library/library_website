@@ -1,9 +1,11 @@
 {% extends "design_system/base.html" %}
 {% comment %}
-  A Markdown page from design_system/content/. A folder page also lists its
-  pages after its own content. A page whose markup is too rich for Markdown
-  names a template that extends this one and overrides `body`.
+  A Markdown page from design_system/content/, the home page included. A
+  folder page also lists its pages after its own content. HTML pages in
+  pages/ extend this too when they keep to the prose column, overriding `body`.
 {% endcomment %}
+
+{% block breadcrumb %}{% if page.slug %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block main %}
   <div class="row">
@@ -14,7 +16,7 @@
       {% block body %}{{ content }}{% endblock %}
 
       {% if children %}
-        <h2>Pages in This Section</h2>
+        <h2>{% if page.slug %}Pages in This Section{% else %}All Pages{% endif %}</h2>
         {% include "design_system/includes/page-list.html" with pages=children %}
       {% endif %}
     </div>

@@ -30,7 +30,7 @@ module.exports = {
       files: ['design_system/scss/**/*.scss'],
       rules: {
         // The /design/ token docs parse these comment markers (//!, /// and
-        // bare // paragraph breaks). See design_system/README.md.
+        // bare // paragraph breaks). See design_system/content/contributing/architecture.md.
         'scss/double-slash-comment-whitespace-inside': null,
         'scss/comment-no-empty': null,
         'scss/double-slash-comment-empty-line-before': null,

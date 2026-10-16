@@ -7,7 +7,7 @@ description: "How to apply the design system to LibGuides and other Springshare 
 
 Springshare's LibApps products serve their own copy of Bootstrap 5 and their own base styles, and neither can be removed. `main-libapps.css` is therefore an override sheet rather than a full build: it assumes Bootstrap is already present and corrects styles to the UChicago branding, instead of shipping the framework a second time.
 
-The main Library site uses `main.css`. The two compile from the same tokens but are not interchangeable. See [System Architecture](/design/methodology/architecture/) for all three stylesheet entry points.
+The main Library site uses `main.css`. The two compile from the same tokens but are not interchangeable. See [System Architecture](/design/contributing/architecture/) for all three stylesheet entry points.
 
 ## Loading it
 
@@ -17,7 +17,7 @@ In LibGuides it goes in the **Look & Feel → Custom JS/CSS** panel, which alrea
 
 ## What you can rely on
 
-**Every design token.** Both stylesheets compile from the same `_variables.scss` and publish the same 29 `--ucl-*` custom properties. Anything on the [Token Tables](/design/implementation/token-tables/) page is available on a Springshare page unchanged.
+**Every design token.** Both stylesheets compile from the same `_variables.scss` and publish the same 29 `--ucl-*` custom properties. Anything on the [tokens page](/design/tokens/) is available on a Springshare page unchanged.
 
 **The Bootstrap theme colours.** This sheet rewrites `--bs-primary`, `--bs-secondary` and the other theme slots to the brand palette, so the classes LibApps' own Bootstrap provides — `.text-primary`, `.bg-primary`, `.btn-primary` — pick up UChicago colours with no further work.
 
@@ -35,7 +35,7 @@ In LibGuides it goes in the **Look & Feel → Custom JS/CSS** panel, which alrea
 | `base/layout` | `.sidebar` does nothing. |
 | Bootstrap's utilities API | Utility classes come from LibApps' runtime Bootstrap, not from this sheet. Colour utilities still resolve to brand values because the theme slots are overridden. |
 
-If you need one of these, uncomment its import in `design_system/scss/main-libapps.scss` and check the result against the fixtures below. Do not redefine the class locally.
+If you need one of these, uncomment its import in `design_system/scss/main-libapps.scss` and check the result against the demo below. Do not redefine the class locally.
 
 ## What is covered
 
@@ -43,9 +43,9 @@ The overrides target LibGuides specifically: guide pages, the A–Z database fin
 
 ## Validating a change
 
-Reproductions of Springshare's own output are the [LibApps demos](/design/demos/libapps/), in `design_system/templates/design_system/demos/libapps/`, built from the partials in `includes/libapps/`. They exist so this stylesheet can be tested against the markup it actually has to style, and they load `main-libapps.css` rather than `main.css`.
+The reproduction of Springshare's own output is the [Database Finder demo](/design/demos/database-finder/), one self-contained file at `design_system/templates/design_system/pages/demos/database-finder.html`. It exists so this stylesheet can be tested against the markup it actually has to style, and it loads `main-libapps.css` rather than `main.css`. A guide page, or the LibGuides home page, would cover more of the stylesheet, and could replace it.
 
 Two rules apply:
 
-- The markup in those reproductions is Springshare's. Accessibility findings there are reported as warnings and must not be resolved by editing the reproduction — see [Conventions](/design/methodology/conventions/).
+- The markup in that reproduction is Springshare's. Accessibility findings there are reported as warnings and must not be resolved by editing the reproduction — see [Conventions](/design/contributing/conventions/).
 - Layouts we propose ourselves are mockups, not reproductions. They live in the [playground](https://github.com/uchicago-library/ucld) and are held to the full accessibility standard.

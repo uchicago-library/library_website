@@ -1,0 +1,321 @@
+{% extends "design_system/base.html" %}
+{% comment %}
+  A plausible Library page that uses as many components as it naturally can,
+  each labelled with the class that makes it, as the typography demo labels
+  its elements. The rules are written in content/implementation/components.md
+  and in the class notes on the tokens page; this page only shows them in
+  place, and its annotations point at the ones that are easy to miss.
+
+  The visit, the hours and the exhibitions are invented, to give the
+  components a real shape. It is not a mockup.
+{% endcomment %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <h1>{{ page.title }}</h1>
+      <p class="lead">{{ page.description }}</p>
+      <p>The rules for each component are in <a href="/design/implementation/components/">Components</a>, and the classes are on the <a href="/design/tokens/">tokens page</a>.</p>
+    </div>
+  </div>
+
+  <hr class="my-5">
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+
+      <h2>Visit the Special Collections Research Center</h2>
+
+      <div class="element-with-label mt-5" id="demo-alert">
+        <div class="alert alert-info">
+          <i class="fa-solid fa-circle-info me-2" aria-hidden="true"></i>The reading room closes at 1 p.m. on Friday, November 27. <a href="#demo-hours">See this week's hours</a>.
+        </div>
+        <span class="element-label badge">.alert.alert-info</span>
+      </div>
+
+      <p>Anyone can use the collections: you do not need to be a member of the University. Request what you would like to see before you come, and it will be waiting for you in the reading room.</p>
+
+      <div class="element-with-label mt-5" id="demo-panel">
+        <section class="panel panel-primary" aria-labelledby="demo-request-heading">
+          <h3 id="demo-request-heading">Request Materials</h3>
+          <form action="#" data-ga-category="Main" data-ga-subcategory="Form">
+            <div class="mb-3">
+              <label for="demo-call-number" class="form-label">Call number or collection name</label>
+              <input type="text" class="form-control" id="demo-call-number" aria-describedby="demo-call-number-help">
+              <div id="demo-call-number-help" class="form-text">You will find it in the catalogue record or the finding aid.</div>
+            </div>
+            <div class="mb-3">
+              <label for="demo-visit-day" class="form-label">Day of your visit</label>
+              <select class="form-select" id="demo-visit-day">
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+              </select>
+            </div>
+            <fieldset class="mb-3">
+              <legend class="form-label fs-6">How will you use the materials?</legend>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="demo-use" id="demo-use-research" checked>
+                <label class="form-check-label" for="demo-use-research">Research</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="demo-use" id="demo-use-class">
+                <label class="form-check-label" for="demo-use-class">A class visit</label>
+              </div>
+            </fieldset>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="demo-scans">
+              <label class="form-check-label" for="demo-scans">I would also like scans sent to me</label>
+            </div>
+            <button type="submit" class="btn btn-primary" data-ga-label="Request materials">Request materials</button>
+            <button type="button" class="btn btn-default ms-2">Save for later</button>
+          </form>
+        </section>
+        <span class="element-label badge">.panel.panel-primary</span>
+      </div>
+
+      <h3 class="mt-5" id="demo-hours">Reading Room Hours</h3>
+
+      <div class="element-with-label mt-5">
+        <div class="table-responsive" data-ga-category="Main" data-ga-subcategory="Table">
+          <table class="table">
+            <caption>Hours for the week of November 23</caption>
+            <thead>
+              <tr>
+                <th scope="col">Day</th>
+                <th scope="col">Hours</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monday to Thursday</td>
+                <td>9 a.m. to 5 p.m.</td>
+                <td><span class="badge text-bg-success">Open</span></td>
+              </tr>
+              <tr>
+                <td>Friday</td>
+                <td>9 a.m. to 1 p.m.</td>
+                <td><span class="badge text-bg-warning">Closes early</span></td>
+              </tr>
+              <tr>
+                <td>Saturday and Sunday</td>
+                <td>—</td>
+                <td><span class="badge text-bg-secondary">Closed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <span class="element-label badge">.table-responsive &gt; .table, .badge</span>
+      </div>
+
+      <h3 class="mt-5" id="demo-current-requests">Your Requests</h3>
+
+      <div class="element-with-label mt-5">
+        <ul class="list-group">
+          <li class="list-group-item d-flex flex-wrap align-items-center gap-2">
+            <span class="me-auto">Papers of Ida B. Wells, Box 4</span>
+            <button type="button" class="btn btn-default btn-sm">Change the day</button>
+            <button type="button" class="btn btn-danger-x btn-sm"><i class="fa-solid fa-exclamation me-2" aria-hidden="true"></i>Cancel request</button>
+          </li>
+          <li class="list-group-item d-flex flex-wrap align-items-center gap-2">
+            <span class="me-auto">Goodspeed Manuscript Collection, MS 965</span>
+            <button type="button" class="btn btn-default btn-sm">Change the day</button>
+            <button type="button" class="btn btn-danger-x btn-sm"><i class="fa-solid fa-exclamation me-2" aria-hidden="true"></i>Cancel request</button>
+          </li>
+        </ul>
+        <span class="element-label badge">.list-group, .btn-default.btn-sm, .btn-danger-x</span>
+      </div>
+
+      <h3 class="mt-5" id="demo-questions-heading">Before You Come</h3>
+
+      <div class="element-with-label mt-5" id="demo-accordion">
+        <div class="accordion" id="demo-questions" data-ga-category="Main">
+          <div class="accordion-item">
+            <h4 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#demo-q1" aria-expanded="true" aria-controls="demo-q1">What should I bring?</button>
+            </h4>
+            <div id="demo-q1" class="accordion-collapse collapse show" data-bs-parent="#demo-questions">
+              <div class="accordion-body">A photo ID. Pencils and a laptop are welcome; pens and bags stay in the lockers by the entrance.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-q2" aria-expanded="false" aria-controls="demo-q2">Can I take photographs?</button>
+            </h4>
+            <div id="demo-q2" class="accordion-collapse collapse" data-bs-parent="#demo-questions">
+              <div class="accordion-body">Yes, without flash, for your own research. Ask at the desk before photographing anything marked as restricted.</div>
+            </div>
+          </div>
+        </div>
+        <span class="element-label badge">.accordion</span>
+      </div>
+
+      <h3 class="mt-5">Policies</h3>
+
+      <div class="element-with-label mt-5" id="demo-accordion-two-column">
+        <div class="accordion accordion-two-column" id="demo-policies" data-ga-category="Main">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="accordion-item">
+                <h4 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-p1" aria-expanded="false" aria-controls="demo-p1">Handling materials</button>
+                </h4>
+                <div id="demo-p1" class="accordion-collapse collapse" data-bs-parent="#demo-policies">
+                  <div class="accordion-body">Keep items flat on the table, and turn pages from the upper corner.</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="accordion-item">
+                <h4 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-p2" aria-expanded="false" aria-controls="demo-p2">Citing the collections</button>
+                </h4>
+                <div id="demo-p2" class="accordion-collapse collapse" data-bs-parent="#demo-policies">
+                  <div class="accordion-body">Cite the collection, the box and the folder, and credit the University of Chicago Library.</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="accordion-item">
+                <h4 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-p3" aria-expanded="false" aria-controls="demo-p3">Publishing images</button>
+                </h4>
+                <div id="demo-p3" class="accordion-collapse collapse" data-bs-parent="#demo-policies">
+                  <div class="accordion-body">Ask for permission before you publish an image of an item.</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="accordion-item">
+                <h4 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demo-p4" aria-expanded="false" aria-controls="demo-p4">Restricted collections</button>
+                </h4>
+                <div id="demo-p4" class="accordion-collapse collapse" data-bs-parent="#demo-policies">
+                  <div class="accordion-body">Some collections can only be seen with the donor's permission. The finding aid says which.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="element-label badge">.accordion.accordion-two-column</span>
+      </div>
+
+      <h3 class="mt-5">Current Exhibitions</h3>
+
+      <div class="element-with-label mt-5" id="demo-cards">
+        <div class="row g-4" data-ga-category="Main" data-ga-subcategory="Card">
+          <div class="col-md-6">
+            <article class="card h-100">
+              <div class="card-body">
+                <h4 class="card-title">Printing the City</h4>
+                <p class="card-text">Chicago's printers and publishers, from the Great Fire to the World's Fair.</p>
+                <a href="#demo-cards" class="stretched-link" data-ga-label="Exhibition">About Printing the City</a>
+              </div>
+            </article>
+          </div>
+          <div class="col-md-6">
+            <article class="card h-100">
+              <div class="card-body">
+                <h4 class="card-title">Letters Home</h4>
+                <p class="card-text">Correspondence from students abroad, 1890 to 1960.</p>
+                <a href="#demo-cards" class="stretched-link" data-ga-label="Exhibition">About Letters Home</a>
+              </div>
+            </article>
+          </div>
+        </div>
+        <span class="element-label badge">.card</span>
+      </div>
+
+      <div class="element-with-label mt-5" id="demo-pagination">
+        <nav aria-label="Exhibitions pages" data-ga-category="Main" data-ga-subcategory="Pagination">
+          <ul class="pagination">
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            <li class="page-item active"><a class="page-link" href="#demo-cards" aria-current="page" data-ga-position="1">1</a></li>
+            <li class="page-item"><a class="page-link" href="#demo-cards" data-ga-position="2">2</a></li>
+            <li class="page-item"><a class="page-link" href="#demo-cards" data-ga-label="Next">Next</a></li>
+          </ul>
+        </nav>
+        <span class="element-label badge">.pagination</span>
+      </div>
+
+      <div class="element-with-label mt-5">
+        <section class="bg-dark text-white rounded-3 p-4" aria-labelledby="demo-cta-heading">
+          <h3 id="demo-cta-heading">Bring a Class</h3>
+          <p>Curators teach with the collections every quarter, in any subject.</p>
+          <a href="#demo-cards" class="btn btn-outline-white">Plan a class visit</a>
+        </section>
+        <span class="element-label badge">.btn-outline-white</span>
+      </div>
+
+    </div>
+
+    <div class="col-lg-4">
+      <div class="element-with-label mt-5 mt-lg-0">
+        <aside class="sidebar p-4 rounded" aria-labelledby="demo-sidebar-heading">
+          <h2 class="h5" id="demo-sidebar-heading">Special Collections</h2>
+          <p class="small"><i class="fa-solid fa-location-dot me-2" aria-hidden="true"></i>Regenstein Library, first floor</p>
+          <p class="small"><i class="fa-solid fa-phone me-2" aria-hidden="true"></i>773-702-8705</p>
+
+          <nav aria-label="Special Collections" id="demo-list-group" data-ga-category="Sidebar" data-ga-subcategory="List">
+            <div class="list-group">
+              <a href="#demo-cards" class="list-group-item list-group-item-action active" aria-current="page" data-ga-position="1">Visit</a>
+              <a href="#demo-cards" class="list-group-item list-group-item-action" data-ga-position="2">Collections</a>
+              <a href="#demo-cards" class="list-group-item list-group-item-action" data-ga-position="3">Exhibitions</a>
+            </div>
+          </nav>
+
+          <div class="dropdown mt-4">
+            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Share this page</button>
+            <ul class="dropdown-menu shadow">
+              <li><a class="dropdown-item" href="#demo-cards">Copy the link</a></li>
+              <li><a class="dropdown-item" href="#demo-cards">Email it</a></li>
+            </ul>
+          </div>
+        </aside>
+        <span class="element-label badge">.sidebar, .list-group, .dropdown-menu.shadow</span>
+      </div>
+    </div>
+  </div>
+
+  <template class="ds-annotations-template">
+    <div data-target="#demo-panel" data-category="behavior" data-title="One primary per view">
+      Only one <code>.btn-primary</code> appears in a view, and one <code>.panel-primary</code>. Every other action is <code>.btn-default</code>.
+    </div>
+    <div data-target="#demo-panel" data-category="a11y" data-title="Label association">
+      Every control has a <code>&lt;label&gt;</code> tied to it by <code>for</code> and <code>id</code>, and a group of radios has a <code>&lt;legend&gt;</code>. A placeholder is not a label.
+    </div>
+    <div data-target="#demo-alert" data-category="a11y" data-title="Alert links">
+      A link inside an alert takes the alert's own colour, so it stays legible on every variant. The icon is decorative, so it carries <code>aria-hidden="true"</code>.
+    </div>
+    <div data-target="#demo-hours" data-category="responsive" data-title="Responsive table">
+      <code>.table-responsive</code> scrolls the table sideways on a narrow screen instead of letting it overflow the layout.
+    </div>
+    <div data-target="#demo-hours" data-category="a11y" data-title="Colour is not enough">
+      Each badge says its status in words, so the colour only repeats it.
+    </div>
+    <div data-target="#demo-current-requests" data-category="behavior" data-title="Destructive actions">
+      An action that loses data is <code>.btn-danger-x</code> with the exclamation icon, never a filled <code>.btn-danger</code>.
+    </div>
+    <div data-target="#demo-accordion" data-category="a11y" data-title="Heading hierarchy">
+      Each <code>.accordion-header</code> is a heading one level below the section it sits in, so the outline of the page stays intact.
+    </div>
+    <div data-target="#demo-accordion" data-category="tracking" data-title="Accordion event tracking">
+      The tracking script recognises accordion buttons by their selector and sends a <em>tab</em> event. No attribute is needed.
+    </div>
+    <div data-target="#demo-accordion-two-column" data-category="responsive" data-title="Two-column breakpoint">
+      The items sit in two columns from the <code>md</code> breakpoint and stack below it.
+    </div>
+    <div data-target="#demo-cards" data-category="tracking" data-title="Card event tracking">
+      The row sets <code>data-ga-category</code> and <code>data-ga-subcategory</code> once, and each link adds its own <code>data-ga-label</code>.
+    </div>
+    <div data-target="#demo-pagination" data-category="a11y" data-title="Pagination landmark">
+      The <code>&lt;nav&gt;</code> has its own <code>aria-label</code>, and the current page carries <code>aria-current="page"</code>.
+    </div>
+    <div data-target="#demo-list-group" data-category="a11y" data-title="Active state">
+      <code>.active</code> is visual only. <code>aria-current</code> tells assistive technology which item is current.
+    </div>
+  </template>
+{% endblock %}

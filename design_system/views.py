@@ -1,18 +1,18 @@
 """Design system documentation, served at /design/.
 
-Every page is a Markdown file under content/. Its front matter gives the
-title, description and, optionally, an order and a template. A folder lists
-its own pages, so adding a page means adding a file and nothing else.
+Two kinds of page:
 
-A page body is rendered as a Django template first and as Markdown second, so
-it can {% include %} a live demo. Wrap template syntax meant to be displayed
-in {% verbatim %}.
+- Markdown pages, one file each under content/. The front matter gives the
+  title, the description and, optionally, an order. A folder lists its own
+  pages, so adding a page means adding a file and nothing else. The body is
+  plain Markdown: no template syntax runs in it.
+- HTML pages, in templates/design_system/pages/: the tokens page and the
+  demos. Each has its own route, and DEMOS below lists the demos.
 """
 
 import json
 import math
 import re
-import xml.etree.ElementTree as etree
 from functools import lru_cache, wraps
 from pathlib import Path
 
@@ -21,42 +21,40 @@ import yaml
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.template import engines
 from django.urls import resolve, reverse
 from django.utils.safestring import mark_safe
-from markdown.extensions import Extension
-from markdown.treeprocessors import Treeprocessor
 from wagtailcache.cache import nocache_page
 
 APP_DIR = Path(__file__).resolve().parent
 CONTENT_DIR = APP_DIR / "content"
 DATA_DIR = APP_DIR / "data"
 TOKENS_FILE = DATA_DIR / "tokens.json"
-TOKEN_TABLES_SLUG = "implementation/token-tables"
+PAGES = "design_system/pages"
 MARKDOWN_EXTENSIONS = ["attr_list", "fenced_code", "tables", "toc"]
 
-
-class _BootstrapTableProcessor(Treeprocessor):
-    """Styles Markdown tables as Bootstrap tables, in a scrolling wrapper.
-
-    Raw HTML tables never reach the tree, so they are left as written.
-    """
-
-    def run(self, root):
-        for parent in list(root.iter()):
-            for index, child in enumerate(list(parent)):
-                if child.tag != "table":
-                    continue
-                child.set("class", "table table-bordered table-sm")
-                wrapper = etree.Element("div", {"class": "table-responsive"})
-                parent.remove(child)
-                wrapper.append(child)
-                parent.insert(index, wrapper)
-
-
-class BootstrapTables(Extension):
-    def extendMarkdown(self, md):
-        md.treeprocessors.register(_BootstrapTableProcessor(md), "bootstrap_tables", 0)
+# Every demo, in the order the demos index lists them. Each is a template,
+# templates/design_system/pages/demos/<slug>.html.
+DEMOS = {
+    "components": (
+        "Components",
+        "A Library page built from as many of the system's components as it "
+        "can use naturally, each labelled with its class.",
+    ),
+    "typography": (
+        "A History of the Book",
+        "Every typography element in continuous prose, each labelled with "
+        "the element it shows.",
+    ),
+    "layouts": (
+        "Page Layouts",
+        "The three standard page layouts, rendered at full page width.",
+    ),
+    "database-finder": (
+        "Database Finder",
+        "A copy of the LibGuides A–Z database list, styled by the LibApps "
+        "stylesheet, for checking that stylesheet against Springshare's markup.",
+    ),
+}
 
 
 def _parse(path):
@@ -114,8 +112,8 @@ def entry(slug):
         "title": meta.get("title") or name.replace("-", " ").capitalize(),
         "description": meta.get("description", ""),
         "order": meta.get("order", math.inf),
-        "template": meta.get("template"),
         "is_folder": is_folder,
+        "has_source": path is not None,
     }
 
 
@@ -165,20 +163,20 @@ def load_tokens():
     return _load_tokens() if settings.DEBUG else _load_tokens_cached()
 
 
-def render_template(body, context, request):
-    """A page body with its template syntax run, still in Markdown."""
-    template = engines["django"].from_string("{% load static %}" + body)
-    return template.render(context, request)
-
-
-def render_body(body, context, request):
+def render_body(body):
     if not body.strip():
         return ""
-    html = markdown.markdown(
-        render_template(body, context, request),
-        extensions=MARKDOWN_EXTENSIONS + [BootstrapTables()],
-    )
-    return mark_safe(html)
+    return mark_safe(markdown.markdown(body, extensions=MARKDOWN_EXTENSIONS))
+
+
+def render_page(request, template, section, context):
+    """Renders a page with what the layout needs for its header and breadcrumbs.
+
+    `section` is the first part of the page's path, which the header marks.
+    """
+    context["section"] = section
+    context["sections"] = [item for item in children("") if item["is_folder"]]
+    return render(request, template, context)
 
 
 @nocache_page
@@ -236,12 +234,8 @@ def markdown_source(request, slug):
     path, _ = locate("" if slug == "index" else slug)
     if not path:
         raise Http404
-    # Includes are run, so a reader gets the table or demo they bring in rather
-    # than the tag. The Markdown itself is left as written.
-    meta, body, source = parse(path)
-    front_matter = source[: len(source) - len(body)]
-    text = front_matter + render_template(body, {"meta": meta}, request)
-    return HttpResponse(text, content_type="text/markdown; charset=utf-8")
+    source = parse(path)[2]
+    return HttpResponse(source, content_type="text/markdown; charset=utf-8")
 
 
 @design_view
@@ -251,30 +245,84 @@ def page(request, slug=""):
     if name == "index":
         return redirect(page_url(parent), permanent=True)
     path, is_folder = locate(slug)
-    meta, body, source = parse(path) if path else ({}, "", "")
-
-    sections = [item for item in children("") if item["is_folder"]]
+    body = parse(path)[1] if path else ""
     context = {
         "page": entry(slug),
-        "meta": meta,
+        "content": render_body(body),
         "children": children(slug) if is_folder else [],
         "breadcrumbs": breadcrumbs(slug),
-        "sections": sections,
-        "section": slug.split("/")[0],
-        "token_tables_url": page_url(TOKEN_TABLES_SLUG),
-        "is_token_tables": slug == TOKEN_TABLES_SLUG,
     }
-    if context["is_token_tables"]:
-        context["tokens"] = load_tokens()
-    context["content"] = render_body(body, context, request)
-    template = meta.get("template", "design_system/page.html")
-    return render(request, template, context)
+    section = slug.split("/")[0]
+    return render_page(request, "design_system/page.html", section, context)
+
+
+def html_page(slug, url, title, description):
+    """The `page` of an HTML page, as entry() gives a Markdown page's."""
+    return {"slug": slug, "url": url, "title": title, "description": description}
+
+
+@design_view
+def tokens(request):
+    page = html_page(
+        "tokens",
+        reverse("design_system:tokens"),
+        "Tokens and Classes",
+        "Every design token and documented class, with its CSS variable, SCSS "
+        "variable and value. Generated from the stylesheets.",
+    )
+    context = {"page": page, "breadcrumbs": [page], "tokens": load_tokens()}
+    return render_page(request, f"{PAGES}/tokens.html", "tokens", context)
+
+
+def demos_page():
+    return html_page(
+        "demos",
+        reverse("design_system:demos"),
+        "Demos",
+        "Complete pages rendered with the design system, to show it in place "
+        "and to check it visually.",
+    )
+
+
+def demo_page(slug):
+    title, description = DEMOS[slug]
+    url = reverse("design_system:demo", kwargs={"slug": slug})
+    return html_page(f"demos/{slug}", url, title, description)
+
+
+@design_view
+def demos(request):
+    page = demos_page()
+    context = {
+        "page": page,
+        "breadcrumbs": [page],
+        "demos": [demo_page(slug) for slug in DEMOS],
+    }
+    return render_page(request, f"{PAGES}/demos/index.html", "demos", context)
+
+
+@design_view
+def demo(request, slug):
+    if slug not in DEMOS:
+        raise Http404
+    page = demo_page(slug)
+    context = {"page": page, "breadcrumbs": [demos_page(), page]}
+    return render_page(request, f"{PAGES}/demos/{slug}.html", "demos", context)
 
 
 @design_view
 def tokens_json(request):
     tokens = json.loads(TOKENS_FILE.read_text(encoding="utf-8"))
-    return JsonResponse({"tokens": tokens["all"], "classes": tokens["classes"]})
+    # When to use each section's tokens, which the token rows do not repeat.
+    guidance = [
+        {"tab": table["label"], "section": section["label"], "text": text}
+        for table in tokens["tables"]
+        for section in table["sections"]
+        if (text := section.get("guidance"))
+    ]
+    return JsonResponse(
+        {"tokens": tokens["all"], "classes": tokens["classes"], "guidance": guidance}
+    )
 
 
 def _walk(items):
@@ -285,26 +333,28 @@ def _walk(items):
 
 @design_view
 def llms_txt(request):
-    """Discovery index for agents (https://llmstxt.org), built from content/."""
+    """Discovery index for agents (https://llmstxt.org), built from content/.
+
+    It links each page's Markdown source. The HTML pages, the tokens page and
+    the demos, are left out: what they show is in tokens.json and the prose.
+    """
     absolute = request.build_absolute_uri
 
     def link(item):
-        # Prose pages point at their Markdown source; generated pages and
-        # live demos only exist rendered.
-        if item["template"] or item["is_folder"]:
-            return absolute(item["url"])
-        return absolute(markdown_url(item))
+        return absolute(markdown_url(item) if item["has_source"] else item["url"])
 
     home = parse(CONTENT_DIR / "index.md")[0]
-    # The introduction is written in content/index.md, with site-relative links.
+    # The introduction is written in content/implementation/index.md, the
+    # entry point for people building with the system, with site-relative links.
+    builders = parse(CONTENT_DIR / "implementation" / "index.md")[0]
     intro = re.sub(
-        r"\]\((/[^)]*)\)", lambda m: f"]({absolute(m[1])})", home["llms"].strip()
+        r"\]\((/[^)]*)\)", lambda m: f"]({absolute(m[1])})", builders["llms"].strip()
     )
     lines = [f"# {home['title']}", "", f"> {home['description']}", "", intro]
     for section in children(""):
         if not section["is_folder"]:
             continue
-        lines += ["", f"## [{section['title']}]({absolute(section['url'])})", ""]
+        lines += ["", f"## [{section['title']}]({link(section)})", ""]
         for item in _walk(section["children"]):
             description = f": {item['description']}" if item["description"] else ""
             lines.append(f"- [{item['title']}]({link(item)}){description}")

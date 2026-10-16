@@ -1,4 +1,4 @@
-// Design token data for the Token Tables documentation page.
+// Design token data for the tokens documentation page, /design/tokens/.
 //
 // Run by `npm run build:design-system:tokens`. Writes
 // design_system/data/tokens.json, which is committed and read by the
@@ -407,7 +407,7 @@ function localImportsOfMain() {
   }
   const found = files.filter(file => fs.existsSync(file))
   // Without this, a change to how main.scss loads its partials would publish
-  // Token Tables with no component classes, and nothing would fail.
+  // a tokens page with no component classes, and nothing would fail.
   if (!found.length) {
     throw new Error(
       `No component partials found in main.scss. The token build reads them ` +

@@ -5,7 +5,7 @@ description: "The header and footer that frame every Library page, and the marku
 
 ## Header
 
-Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. The header at the top of these pages is an instance of it, carrying the documentation's links in place of the Library's; the [LibApps demos](/design/demos/libapps/) show it with the Library's.
+Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. The header at the top of these pages is an instance of it, carrying the documentation's links in place of the Library's; the [Database Finder demo](/design/demos/database-finder/) shows it with the Library's.
 
 ```html
 <header role="banner">
@@ -20,7 +20,7 @@ Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggl
 
 `role="banner"` is required rather than decorative: LibGuides injects this header inside a `<header>` of its own, and a nested `<header>` loses the implicit banner role. The stylesheet also hangs a rule on it.
 
-The `id` is the analytics hook only — `custom-event-tracking.js` uses it to attribute navigation events. All styling is on the `.global-navbar` class, so a second navigation bar can reuse the appearance without claiming the id.
+The `id` is the analytics hook only — `jquery.track-everything.js` uses it to attribute navigation events. All styling is on the `.global-navbar` class, so a second navigation bar can reuse the appearance without claiming the id.
 
 ## Simple header
 

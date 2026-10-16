@@ -42,10 +42,6 @@ Horizontal padding and gap is typically one step larger than vertical to improve
 
 Button padding is baked in by Bootstrap (`.btn` sits between levels 1 and 2 on the scale). Do not override it with spacing utilities — use `.btn-sm` or `.btn-lg` if a size variant is needed.
 
----
+## In Place
 
-## Visual Examples
-
-These examples show typical grouping decisions in context.
-
-{% include "design_system/includes/grouping-content.html" %}
+The [Components demo](/design/demos/components/) shows these choices on a full page: the sidebar surface, the primary panel, cards, and the shadow on a dropdown.
