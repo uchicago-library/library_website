@@ -1,0 +1,73 @@
+// ============================================================================
+// Documentation prose container — meta component
+//
+// Documentation-only styling, not part of the Design System delivered to
+// production. Applied by design_system/page.html to the prose column.
+//
+// Markdown-generated elements carry no classes, so this file restores the
+// rhythm the utility classes used to provide on hand-written pages:
+//   .display-4 on <h1>, .mb-5 on <section> wrappers, .my-5 on <hr>.
+//
+// Every selector is a DIRECT CHILD selector on purpose. Markdown output is
+// flat, so `>` reaches everything Markdown generates while leaving nested
+// markup alone — the live demos in includes/ keep their own spacing,
+// and the type specimens on the Typography page keep their .display-* sizes.
+// Spacing Bootstrap already provides (paragraphs, lists, tables) is inherited
+// rather than restated.
+// ============================================================================
+
+// ── Level 3 tokens ──
+$documentation-heading-margin-top: $spacer * 3;
+$documentation-title-margin-bottom: $spacer * 1.5;
+$documentation-rule-margin: $spacer * 3;
+
+.documentation {
+  // Stands in for the former .display-4 on the page title.
+  > h1:first-child {
+    @include font-size(map-get($display-font-sizes, 4));
+
+    font-weight: $display-font-weight;
+    line-height: $display-line-height;
+    margin-bottom: $documentation-title-margin-bottom;
+  }
+
+  // Stands in for the .mb-5 on the <section> wrappers Markdown cannot emit.
+  > h2,
+  > h3,
+  > h4 {
+    margin-top: $documentation-heading-margin-top;
+    margin-bottom: $spacer;
+  }
+
+  // The title and lead already provide separation above the first heading,
+  // and a horizontal rule provides its own.
+  > h1 + h2,
+  > .lead + h2,
+  > hr + h2,
+  > :first-child {
+    margin-top: 0;
+  }
+
+  // Stands in for the former .my-5 on section dividers.
+  > hr {
+    margin-top: $documentation-rule-margin;
+    margin-bottom: $documentation-rule-margin;
+  }
+
+  // Markdown tables carry no class, so they take the look of Bootstrap's
+  // .table.table-sm here: rules between rows, none between columns. Long
+  // values wrap instead of scrolling the table, which would need a wrapper
+  // element Markdown cannot emit.
+  > table {
+    width: 100%;
+    margin-bottom: $spacer;
+
+    th,
+    td {
+      padding: $table-cell-padding-y-sm $table-cell-padding-x-sm;
+      border-bottom: $table-border-width solid $table-border-color;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+  }
+}

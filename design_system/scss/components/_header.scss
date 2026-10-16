@@ -1,0 +1,274 @@
+$global-navbar-bg: $primary;
+$global-navbar-bg-open: darken($primary, 10%);
+$global-navbar-bg-mobile: darken($primary, 5%);
+$global-navbar-item-hover: darken($primary, 15%);
+
+header[role='banner'] {
+  position: relative;
+}
+
+/// Top bar holding the site logo, shortcut links and the mobile nav toggle.
+/// Sits above the global navbar and is separated from it by a bottom border.
+.logo-bar {
+  border-bottom: 1px solid $light;
+
+  .navbar-brand {
+    img {
+      max-height: 35px;
+      width: auto;
+    }
+  }
+
+  #navbar-shortcuts {
+    margin: 0;
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $primary;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+
+      &:hover {
+        color: darken($primary, 10%);
+        text-decoration: none;
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .navbar-toggler {
+    padding: 0.25rem 0.5rem;
+
+    .navbar-toggler-icon {
+      width: 1.5em;
+      height: 1.5em;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(128, 0, 0, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+  }
+}
+
+// Styled through the class, not the id. The id remains on the markup as the
+// analytics selector (see assets/js/custom-event-tracking.js), which is the
+// only thing that still needs it to be unique.
+.global-navbar {
+  background-color: $global-navbar-bg;
+  position: relative;
+
+  --bs-navbar-color: #fff;
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-nav-link-padding-x: 0.8rem !important;
+  --bs-nav-link-font-size: 0.9rem;
+  --bs-nav-link-font-weight: 400;
+
+  a:visited {
+    color: var(--bs-navbar-color);
+  }
+
+  @media (max-width: 767.98px) {
+    .navbar-collapse {
+      margin-left: calc(var(--bs-gutter-x) * 0.5 * -1);
+      margin-right: calc(var(--bs-gutter-x) * 0.5 * -1);
+    }
+  }
+
+  .nav-item {
+    @media (min-width: 768px) {
+      position: static;
+    }
+
+    .nav-link {
+      @include transition(background-color 0.2s ease);
+
+      white-space: nowrap;
+
+      &:hover,
+      &:focus,
+      &.active,
+      &[aria-expanded='true'] {
+        background-color: $global-navbar-bg-open;
+      }
+
+      @media (max-width: 767.98px) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-left: $spacer;
+        padding-right: $spacer;
+      }
+    }
+
+    &.show > .nav-link {
+      background-color: $global-navbar-bg-open;
+    }
+  }
+
+  .dropdown-toggle::after {
+    margin-left: 0.5rem;
+  }
+
+  .dropdown-menu {
+    --bs-dropdown-border-width: 0;
+    --bs-dropdown-border-radius: 0;
+    --bs-dropdown-spacer: 0;
+    --bs-dropdown-item-padding-y: 0.5rem;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    @media (min-width: 768px) {
+      position: absolute;
+      left: 0;
+      right: 0;
+      width: auto;
+      background-color: $global-navbar-bg-open;
+    }
+
+    @media (max-width: 767.98px) {
+      background-color: $global-navbar-bg-mobile;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    /// Multi-column layout for a global-navbar dropdown, grouping links
+    /// under headings. Only valid inside `.global-navbar`. Named in
+    /// Bootstrap's `.dropdown-*` namespace but defined here, not by
+    /// Bootstrap.
+    .dropdown-layout {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      /// Heading for one group of links inside `.dropdown-layout`.
+      /// Only valid inside `.global-navbar`. Named in Bootstrap's
+      /// `.dropdown-*` namespace but defined here, not by Bootstrap.
+      .dropdown-group-title {
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.6875rem;
+        text-transform: uppercase;
+        margin: 0;
+        padding: var(--bs-dropdown-item-padding-y)
+          var(--bs-dropdown-item-padding-x) 0.625rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        line-height: 1.2;
+
+        @media (max-width: 767.98px) {
+          color: rgba(255, 255, 255, 0.85);
+          border-bottom-color: rgba(255, 255, 255, 0.25);
+          padding-left: $spacer * 0.5;
+          padding-right: $spacer * 0.5;
+        }
+      }
+
+      .dropdown-item {
+        --bs-dropdown-link-color: #fff;
+        --bs-dropdown-link-hover-color: #fff;
+        --bs-dropdown-link-hover-bg: #{$global-navbar-item-hover};
+
+        @include transition(background-color 0.2s ease);
+
+        @media (max-width: 767.98px) {
+          padding-left: $spacer * 0.5;
+          padding-right: $spacer * 0.5;
+        }
+      }
+    }
+  }
+
+  /// Shortcut links shown inside the collapsed mobile menu, where the
+  /// logo-bar shortcuts are hidden. Only valid inside `.global-navbar`.
+  .mobile-shortcuts-list {
+    .nav-link {
+      color: #fff;
+      border-bottom: 0;
+      padding-left: $spacer * 0.5;
+      padding-right: $spacer * 0.5;
+
+      &:hover,
+      &:focus {
+        color: #fff;
+      }
+    }
+  }
+
+  /// Search region of the global navbar. Only valid inside
+  /// `.global-navbar`.
+  .global-navbar-search {
+    /// Input wrapper inside `.global-navbar-search`, positioned so the
+    /// submit button can overlay the field. Only valid inside
+    /// `.global-navbar`.
+    .global-navbar-search-field {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+
+      .form-control {
+        width: 8rem;
+        border-radius: 999px;
+        padding-right: 2.5rem;
+        background-color: transparent;
+        border-color: #fff;
+        color: #fff;
+
+        &::placeholder {
+          color: rgba(#fff, 0.75);
+        }
+
+        // White clear button for search inputs
+        &::-webkit-search-cancel-button {
+          filter: invert(1);
+        }
+
+        &:hover {
+          background-color: rgba(#fff, 0.1);
+        }
+
+        &:focus {
+          background-color: rgba(#fff, 0.1);
+          border-color: #fff;
+          color: #fff;
+          box-shadow: 0 0 0 0.2rem rgba($info, 0.25);
+        }
+      }
+
+      /// Submit control overlaid on the right of
+      /// `.global-navbar-search-field`. Only valid inside
+      /// `.global-navbar`.
+      .global-navbar-search-button {
+        position: absolute;
+        right: 0.375rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background: transparent;
+        color: #fff;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 999px;
+
+        &:hover,
+        &:focus {
+          color: #fff;
+        }
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      width: 100%;
+      padding: $spacer * 0.5 $spacer;
+
+      .global-navbar-search-field {
+        display: flex;
+
+        .form-control {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

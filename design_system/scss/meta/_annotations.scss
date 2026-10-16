@@ -1,0 +1,116 @@
+// Annotation system — DS documentation only, not for production use.
+// JS-driven: annotations are defined in a <template> block on each page,
+// then dynamically created and positioned by annotations-init.html.
+
+// ── Level 3 tokens — category colors ──
+// Brand tokens, chosen to stay distinguishable against each other. Consumed
+// by the marker badges and by the swatches on the annotations documentation
+// page. "info" is deliberately neutral rather than vivid: general info is
+// the catch-all, not a specialised concern competing for attention with the
+// other four.
+$ds-annotation-colors: (
+  'a11y': var(--ucl-violet),
+  'behavior': var(--ucl-lake),
+  'tracking': var(--ucl-terracotta),
+  'responsive': var(--ucl-ivy),
+  'info': var(--ucl-greystone),
+);
+
+// ── Marker group — positioned at top-right of annotated element ──
+.ds-note-group {
+  position: absolute;
+  top: -0.75rem;
+  right: -0.25rem;
+  display: flex;
+  gap: 0.25rem;
+  z-index: 10;
+}
+
+// ── Individual marker badge ──
+.ds-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.65rem;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--bs-body-bg);
+
+  @include transition(transform 0.1s ease-in-out);
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  @each $category, $color in $ds-annotation-colors {
+    &--#{$category} {
+      background-color: $color;
+      color: #fff;
+    }
+  }
+}
+
+// ── Dashed outline on annotated elements ──
+.ds-annotated {
+  position: relative;
+  outline: 2px dashed var(--ds-annotation-color, --ucl-greystone, #868e96);
+  outline-offset: 4px;
+}
+
+// ── Popover header fix ──
+.popover .popover-header {
+  margin-top: 0;
+}
+
+// ── Hide everything when toggled off ──
+.ds-notes-hidden {
+  .ds-note-group {
+    display: none !important;
+  }
+
+  .ds-annotated {
+    outline-color: transparent !important;
+  }
+}
+
+// ── Floating toggle button — fixed bottom-right ──
+.ds-notes-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 2rem;
+  border: 2px dashed var(--bs-border-color);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+
+  @include transition(box-shadow 0.15s ease-in-out);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &[aria-pressed='false'] {
+    opacity: 0.6;
+  }
+}
+// ── Category swatch — inline hex sample on the annotations doc page ──
+.annotation-swatch {
+  font-weight: 600;
+
+  @each $category, $color in $ds-annotation-colors {
+    &--#{$category} {
+      color: $color;
+    }
+  }
+}

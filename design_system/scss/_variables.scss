@@ -1,0 +1,301 @@
+// ============================================================================
+// Variables Reference
+// This file defines design-token values and Bootstrap variable overrides that
+// are consumed before Bootstrap is imported in design_system/scss/main.scss.
+//
+// Table of Contents
+// Sections are grouped into the tabs shown on the tokens page.
+//
+//   Configuration                             (not documented)
+//
+//   Brand Colors
+//     Primary Brand Colors
+//     Secondary Brand Colors - Goldenrod Family
+//     Secondary Brand Colors - Terracotta Family
+//     Secondary Brand Colors - Ivy Family
+//     Secondary Brand Colors - Forest Family
+//     Secondary Brand Colors - Lake Family
+//     Secondary Brand Colors - Violet Family
+//     Secondary Brand Colors - Brick Family
+//
+//   Semantic Colors
+//     Bootstrap Theme Colors
+//     Semantic Surfaces and Text
+//     Interactive and Inline Text Colors
+//     Active State Colors
+//     Body
+//     Focus Ring
+//
+//   Other Tokens
+//     Typography
+//     Breadcrumb Overrides
+//     Accordion Overrides
+//
+// ----------------------------------------------------------------------------
+// Annotation Reference
+// The tokens documentation page is generated from this file at build time
+// by design_system/scripts/tokens.js. Five comment forms are meaningful to that generator:
+//
+//   // === Tab Name ===       Opens a tab. Sections below it belong to it.
+//   // == Section Name ==     Section heading. Groups the rows that follow.
+//   //! prose                 Guidance block, rendered above the section table.
+//   /// prose                 Note for the single token declared below it.
+//   $token: value; // prose   Note for that token (same as ///, inline form).
+//
+// Annotation prose is rendered as inline Markdown, so `backticks` become code,
+// **bold** and [links](url) work, and raw HTML is escaped. Wrap any class name
+// containing an asterisk in backticks — a bare `.btn-*` would otherwise pair
+// its asterisks into emphasis. Block-level Markdown (lists, headings) is not
+// supported, since the prose sits inside a table cell or a paragraph.
+//
+// Any other // comment is ignored by the generator and is a plain code comment.
+// A token with no annotation still appears in the table, with empty cells, but
+// a token declared before the first === Tab === marker is not documented at
+// all — the build reports any that are not deliberately excluded.
+//
+// The same /// form documents a class in the component and base stylesheets.
+// There it is opt-in rather than exhaustive: a class appears on the page only
+// if it carries a /// note, because a stylesheet is mostly internal whereas
+// this file is entirely public API.
+//
+// The same data is published at /design/tokens.json, holding a `tokens`
+// array and a `classes` array, for tooling that needs the set directly.
+//
+// ----------------------------------------------------------------------------
+// Naming Rule
+// - $ucl-* is ours. A token this design system defines, which would not exist
+//   without this file.
+// - Everything else is Bootstrap's. An unprefixed name here is always an
+//   existing Bootstrap variable that we are overriding, set before Bootstrap's
+//   own !default declaration so ours wins. Every unprefixed declaration below
+//   follows this rule, so a name with no prefix can be looked up in
+//   node_modules/bootstrap/scss/_variables.scss.
+//
+// ----------------------------------------------------------------------------
+// SCSS Variable or CSS Variable?
+// Short version: SCSS to configure, CSS to apply.
+//
+// Use the SCSS variable only where the compiler has to see the value:
+// - as an argument to a Sass function or mixin
+// - inside maps, @if / @each, or any Sass logic
+// - in a media query condition
+// - when configuring Bootstrap, which reads $primary and friends before it
+//   emits anything
+// These are cases var() cannot do at all. rgba($ucl-lake-light, 0.8) computes
+// a color; rgba(var(--ucl-lake-light), 0.8) does not.
+//
+// Use the CSS variable everywhere else, meaning whenever you are simply
+// applying a value to a property. It survives into the compiled stylesheet, so
+// anyone inspecting the page can trace a value back to the token that produced
+// it — an SCSS variable is gone before the browser sees the CSS. It can also be
+// overridden per scope or per component instance, it responds to
+// [data-bs-theme], and it is the only form available to anyone consuming the
+// compiled CSS from outside this repository.
+//
+// The trade-off: var() has no compile-time safety, so a misspelled custom
+// property produces no error, just no style. Where a missing value would break
+// layout rather than merely look wrong, give it a fallback:
+// var(--ucl-maroon, #800000).
+//
+// ----------------------------------------------------------------------------
+// Availability Rule
+// - Bootstrap's functions are available here, but its variables are not: this
+//   file is imported before bootstrap/scss/variables, so names like
+//   $info-bg-subtle do not yet exist in this scope.
+// - If a Sass variable is not declared in this file, it is unavailable.
+// - Use the Bootstrap CSS custom property form instead when needed, such as
+//   var(--bs-info-bg-subtle).
+//
+// ----------------------------------------------------------------------------
+// Auto-Exposure Constraint
+// Every $ucl-* color below is automatically published as a --ucl-<name> custom
+// property by design_system/scss/base/_global.scss, which loads this file as a Sass
+// module (@use) rather than through the @import cascade. Consequently:
+// - Do NOT add !default to a $ucl-* token.
+// - Do NOT reassign a $ucl-* token anywhere downstream.
+// Either would leave the module copy holding the literal below while the
+// @import cascade holds the new value, and the published --ucl-* would
+// silently disagree with the compiled Sass. The token generator asserts that
+// the two agree and fails the build if they diverge.
+// ============================================================================
+
+// == Configuration ==
+//! Build flags, not design tokens. These are excluded from the token tables.
+
+$enable-dark-mode: false;
+
+// === Brand Colors ===
+
+// == Primary Brand Colors ==
+//! The core UChicago palette. Brand tokens are the raw material of the system:
+//! prefer the semantic tokens further down when styling components, and reach
+//! for these only when defining a new semantic role.
+//!
+//! Values follow the [UChicago Brand Guidelines](https://creative.uchicago.edu/brand-resources/),
+//! except Greystone: tinted to cooler greys for colour balance, with shades
+//! added to give a full neutral range for text, backgrounds and borders.
+
+$ucl-maroon: #800000;
+$ucl-greystone-lighter: #f9fafc;
+$ucl-greystone-light: #e8ebef;
+$ucl-greystone: #a2a9b4;
+$ucl-greystone-dark: #585f6b;
+$ucl-greystone-darker: #474f5b;
+$ucl-greystone-darkest: #2f3640;
+
+// == Secondary Brand Colors - Goldenrod Family ==
+//! Warnings, highlights and attention-grabbing elements.
+
+$ucl-goldenrod-light: #f3d03e;
+$ucl-goldenrod: #eaaa00;
+$ucl-goldenrod-dark: #cc8a00;
+
+// == Secondary Brand Colors - Terracotta Family ==
+
+$ucl-terracotta-light: #eca154;
+$ucl-terracotta: #de7c00;
+$ucl-terracotta-dark: #a9431e;
+
+// == Secondary Brand Colors - Ivy Family ==
+//! Success states and nature-inspired accents.
+
+$ucl-ivy-light: #a9c47f;
+$ucl-ivy: #789d4a;
+$ucl-ivy-dark: #13301c;
+
+// == Secondary Brand Colors - Forest Family ==
+
+$ucl-forest-light: #9caf88;
+$ucl-forest: #275d38;
+$ucl-forest-dark: #284734;
+
+// == Secondary Brand Colors - Lake Family ==
+//! The default family for active states, links and informational UI.
+
+$ucl-lake-light: #3eb1c8;
+$ucl-lake: #007396;
+$ucl-lake-dark: #002a3a;
+
+// == Secondary Brand Colors - Violet Family ==
+
+$ucl-violet-light: #86647a;
+$ucl-violet: #59315f;
+$ucl-violet-dark: #41273b;
+
+// == Secondary Brand Colors - Brick Family ==
+
+$ucl-brick-light: #b46a55;
+$ucl-brick: #a4343a;
+$ucl-brick-dark: #643335;
+
+// === Semantic Colors ===
+
+// == Bootstrap Theme Colors ==
+//! Bootstrap's theme slots, remapped onto the brand palette. Setting these
+//! drives every `.text-*`, `.bg-*`, `.border-*`, `.btn-*` and `.alert-*`, so
+//! component styles should consume these rather than the brand tokens above.
+//!
+//! These are only partly semantic. Primary, success, info and warning describe
+//! a role. Secondary, light and dark describe an appearance, so they say
+//! nothing about when to use them — a genuinely semantic name would read like
+//! "subtle text on a dark surface". Treat the appearance-named slots as
+//! Bootstrap's vocabulary rather than as this system's roles, and prefer a
+//! purpose-named token where one exists.
+
+$primary: $ucl-maroon; // Maroon. Reserved for calls to action.
+$secondary: $ucl-greystone-dark; // Dark Greystone
+$success: $ucl-ivy; // Ivy
+$info: $ucl-lake; // Lake
+$warning: $ucl-goldenrod; // Goldenrod
+// $danger: #dc3545; // Bootstrap default
+$light: $ucl-greystone-light; // Light Greystone
+$dark: $ucl-greystone-darkest; // Black
+
+// == Semantic Surfaces and Text ==
+//! Low-contrast surfaces and de-emphasised text. These override Bootstrap's
+//! own roles, so the matching utilities work unchanged: `.bg-body-tertiary`,
+//! `.bg-body-secondary` and `.text-body-secondary`.
+
+/// Subtlest page surface. Use for inset panels and code blocks.
+$body-tertiary-bg: $ucl-greystone-lighter;
+
+/// Slightly recessed surface, one step stronger than tertiary.
+$body-secondary-bg: $ucl-greystone-light;
+
+/// De-emphasised body text. Opaque, unlike Bootstrap's translucent default.
+$body-secondary-color: $ucl-greystone-dark;
+
+/// Active accordion surface.
+$ucl-info-bg-extra-subtle: $ucl-greystone-lighter;
+
+// == Interactive and Inline Text Colors ==
+//! Links use the Lake family, not Primary. Maroon is reserved for calls to
+//! action so that a page's primary action stays visually unique.
+
+$link-color: $ucl-lake;
+$link-hover-color: $ucl-lake-dark;
+$code-color: $link-color;
+
+// == Active State Colors ==
+//! Active states use the Lake family for consistent interaction feedback.
+
+$component-active-bg: $ucl-lake;
+$component-active-border-color: $ucl-lake;
+$component-active-color: #fff;
+
+// == Body ==
+
+$body-bg: #fff;
+$body-color: $dark;
+
+// == Focus Ring ==
+//! Keyboard focus is a solid outline drawn by `base/_global.scss`, not
+//! Bootstrap's translucent glow: the glow measured about 2:1 on white, below
+//! the 3:1 a focus indicator needs, and forced-colors mode removes box-shadows
+//! outright. Setting `$focus-ring-color` also feeds every Bootstrap component
+//! focus token, so this section is the single place focus colour is decided.
+
+/// Focus outline on light surfaces. The link colour, so focus and links read
+/// as one family. At least 4.5:1 on white and on both body surfaces.
+$focus-ring-color: $link-color;
+
+/// Focus outline on dark surfaces — `.global-navbar`, `.navbar-dark` and
+/// `.footer` — where the link colour falls to about 2:1. The lighter shade of
+/// the same family, at least 4.3:1 on each.
+$ucl-focus-ring-color-on-dark: $ucl-lake-light;
+
+// === Other Tokens ===
+
+// == Typography ==
+
+/// The brand typeface, declared with its real weights in `base/_fonts.scss`
+/// and compiled into `main.css`, so no font stylesheet needs loading.
+$font-family-sans-serif:
+  'UChicago Sans Serif',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  sans-serif;
+
+// == Breadcrumb Overrides ==
+//! Level 3 component tokens. They live here because Bootstrap reads them while
+//! building its component styles, which happens after this file is imported.
+
+$breadcrumb-font-size: 0.75rem;
+$breadcrumb-padding-y: 0.5rem;
+$breadcrumb-padding-x: 0;
+$breadcrumb-margin-bottom: 0;
+$breadcrumb-divider-color: $secondary;
+$breadcrumb-active-color: $secondary;
+
+// == Accordion Overrides ==
+//! Level 3 component tokens. See the note on Breadcrumb Overrides above.
+
+$accordion-button-bg: $body-bg;
+$accordion-button-active-bg: var(--ucl-info-bg-extra-subtle);
+$accordion-button-color: $body-color;
+$accordion-button-active-color: $body-color;
+$accordion-button-focus-box-shadow: 0 0 0 0.25rem rgba($info, 0.25);

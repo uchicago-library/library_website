@@ -17,6 +17,7 @@ django-webpack-loader==1.8.0
 elasticsearch>=8.0.0,<9.0.0
 libsass
 lxml
+Markdown>=3.4,<4
 networkx
 openpyxl>=3.1.0,<3.2.0
 git+https://github.com/owncloud/pyocclient.git@aa6b4374a779bf0f9e060117b2e8d1e810342bc8#egg=pyocclient
@@ -31,6 +32,7 @@ psycopg2
 requests[socks]
 Pygments==2.20.0
 python-dateutil
+PyYAML>=6,<7
 simplejson==3.11.1
 sqlparse==0.6.0
 Unidecode==1.1.1
