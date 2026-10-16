@@ -395,16 +395,28 @@ function readAnnotations() {
 function localImportsOfMain() {
   const source = fs.readFileSync(path.join(STYLES_DIR, 'main.scss'), 'utf8')
   const files = []
-  const pattern = /@import\s+["']([^"']+)["']/g
+  // @use and @forward too, so a move to Sass modules keeps finding them.
+  const pattern = /@(?:import|use|forward)\s+["']([^"']+)["']/g
   let match
   while ((match = pattern.exec(source)) !== null) {
     const target = match[1]
-    if (target.startsWith('pkg:') || target === 'variables') continue
+    if (/^(pkg|sass):/.test(target) || target === 'variables') continue
     const dir = path.dirname(target)
     const name = path.basename(target)
     files.push(path.join(STYLES_DIR, dir, `_${name}.scss`))
   }
-  return files.filter(file => fs.existsSync(file))
+  const found = files.filter(file => fs.existsSync(file))
+  // Without this, a change to how main.scss loads its partials would publish
+  // Token Tables with no component classes, and nothing would fail.
+  if (!found.length) {
+    throw new Error(
+      `No component partials found in main.scss. The token build reads them ` +
+        `from its @import, @use and @forward lines; update ` +
+        `localImportsOfMain() in scripts/tokens.js to match how main.scss ` +
+        `loads them now.`,
+    )
+  }
+  return found
 }
 
 function readComponentClasses() {

@@ -26,6 +26,7 @@ from django.urls import resolve, reverse
 from django.utils.safestring import mark_safe
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from wagtailcache.cache import nocache_page
 
 APP_DIR = Path(__file__).resolve().parent
 CONTENT_DIR = APP_DIR / "content"
@@ -179,6 +180,7 @@ def render_body(body, context, request):
     return mark_safe(html)
 
 
+@nocache_page
 def not_found(request, *args, **kwargs):
     """The design system's own 404, for any missing page under /design/.
 
@@ -200,9 +202,14 @@ def design_view(view):
     fetching on someone's behalf honour it too, and would be locked out.
 
     Answers a missing page with the design system's 404, not the site's.
+
+    Skips wagtail-cache, which would otherwise hold a page for six hours after
+    a deploy changed it. Rendering is cheap: content files are parsed once per
+    process.
     """
 
     @wraps(view)
+    @nocache_page
     def wrapper(request, *args, **kwargs):
         try:
             response = view(request, *args, **kwargs)

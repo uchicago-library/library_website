@@ -132,7 +132,7 @@ These checks fail rather than publish something wrong:
 
 ## Deployment
 
-The pages and stylesheets deploy with the library website. Production servers run no Node, so the compiled stylesheets, the Bootstrap bundle and `tokens.json` are committed alongside the SCSS, as the webpack bundles are. Changes reach `/design/` and every stylesheet consumer when the website is next deployed.
+The pages and stylesheets deploy with the library website. Production servers run no Node, so the compiled stylesheets, the Bootstrap bundle and `tokens.json` are committed alongside the SCSS, as the webpack bundles are. Changes reach `/design/` and every stylesheet consumer when the website is next deployed. The pages skip the site's page cache (wagtail-cache), so a deploy shows at once, and an edit shows on reload in development.
 
 ## Next Steps
 
