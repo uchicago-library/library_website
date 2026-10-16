@@ -39,6 +39,7 @@ Use IDs for things that are unique on the page; use classes for anything that re
 
 ## Writing Pages
 
+- **Review a page as code.** Its body runs as a Django template and can hold raw HTML, so a change to a `.md` file needs the same review as a change to a template.
 - **Choose the format deliberately.** Markdown for prose; a `template` when the rendered markup is itself the documentation.
 - **Do not restate the title or lead** in the body — `page.html` renders them from the `title` and `description` front matter.
 - **Do not put heading display classes on headings** (`<h2 class="h4">`) in documentation pages.
@@ -84,6 +85,7 @@ Keep it minimal. JavaScript is justified for initialising Bootstrap behaviour th
 | Global element styles | `design_system/scss/base/_global.scss` |
 | Layout styles | `design_system/scss/base/_layout.scss` |
 | Shared partials | `design_system/templates/design_system/includes/` |
+| Springshare markup for the LibApps demos | `design_system/templates/design_system/includes/libapps/` |
 
 ## Definition of Done
 

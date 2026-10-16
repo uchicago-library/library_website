@@ -11,6 +11,7 @@ in {% verbatim %}.
 
 import json
 import math
+import re
 import xml.etree.ElementTree as etree
 from functools import lru_cache, wraps
 from pathlib import Path
@@ -19,9 +20,9 @@ import markdown
 import yaml
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template import engines
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.utils.safestring import mark_safe
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
@@ -85,8 +86,11 @@ def page_url(slug=""):
 def locate(slug):
     """The content file for a slug, and whether the slug is a folder.
 
-    A folder without an index.md is still a page: its listing.
+    A folder without an index.md is still a page: its listing. An index.md is
+    its folder's page, so it has no URL of its own.
     """
+    if slug.rsplit("/", 1)[-1] == "index":
+        raise Http404
     folder = CONTENT_DIR / slug
     if folder.is_dir():
         index = folder / "index.md"
@@ -109,7 +113,6 @@ def entry(slug):
         "description": meta.get("description", ""),
         "order": meta.get("order", math.inf),
         "template": meta.get("template"),
-        "group": meta.get("group"),
         "is_folder": is_folder,
     }
 
@@ -128,28 +131,6 @@ def children(slug):
             continue
         items.append(item)
     return sorted(items, key=lambda item: (item["order"], item["title"]))
-
-
-def header_menu(sections, current_url):
-    """The header's links: one per section, except that sections sharing a
-    `group` in their front matter collapse into one dropdown, placed where the
-    first of them would be. An entry is active when the page is inside it."""
-    menu = []
-    for section in sections:
-        section = {**section, "active": current_url.startswith(section["url"])}
-        if not section["group"]:
-            menu.append(section)
-            continue
-        dropdown = next(
-            (m for m in menu if "links" in m and m["title"] == section["group"]),
-            None,
-        )
-        if dropdown is None:
-            dropdown = {"title": section["group"], "links": [], "active": False}
-            menu.append(dropdown)
-        dropdown["links"].append(section)
-        dropdown["active"] = dropdown["active"] or section["active"]
-    return menu
 
 
 def breadcrumbs(slug):
@@ -182,49 +163,51 @@ def load_tokens():
     return _load_tokens() if settings.DEBUG else _load_tokens_cached()
 
 
-def _load_navigation():
-    """Link data for the production header the demos show."""
-    navigation = {
-        name: json.loads((DATA_DIR / f"{name}.json").read_text(encoding="utf-8"))
-        for name in ("globalNav", "headerCurrentNav")
-    }
-    # The current header shortens "A & B" to "A" at the md breakpoint, so the
-    # template needs the two halves.
-    for dropdown in navigation["headerCurrentNav"]["dropdowns"]:
-        start, _, end = dropdown["label"].partition("&")
-        dropdown["label_start"], dropdown["label_end"] = start.strip(), end.strip()
-    return navigation
-
-
-_load_navigation_cached = lru_cache(maxsize=1)(_load_navigation)
-
-
-def load_navigation():
-    return _load_navigation() if settings.DEBUG else _load_navigation_cached()
+def render_template(body, context, request):
+    """A page body with its template syntax run, still in Markdown."""
+    template = engines["django"].from_string("{% load static %}" + body)
+    return template.render(context, request)
 
 
 def render_body(body, context, request):
     if not body.strip():
         return ""
-    template = engines["django"].from_string("{% load static %}" + body)
     html = markdown.markdown(
-        template.render(context, request),
+        render_template(body, context, request),
         extensions=MARKDOWN_EXTENSIONS + [BootstrapTables()],
     )
     return mark_safe(html)
 
 
-def noindex(view):
-    """Keeps a response out of search engines, whatever its content type.
+def not_found(request, *args, **kwargs):
+    """The design system's own 404, for any missing page under /design/.
 
-    Meta tags only reach HTML, so llms.txt, tokens.json and the Markdown
-    sources carry the header instead. robots.txt is deliberately not used:
-    agents fetching on someone's behalf honour it too, and would be locked out.
+    The last URL pattern sends every unmatched path here, which would stop
+    Django adding a missing trailing slash, so that is done here instead.
+    """
+    if not request.path_info.endswith("/"):
+        if resolve(f"{request.path_info}/").func is not not_found:
+            return redirect(request.get_full_path(force_append_slash=True))
+    return render(request, "design_system/404.html", status=404)
+
+
+def design_view(view):
+    """Wraps every /design/ view.
+
+    Keeps the response out of search engines, whatever its content type. Meta
+    tags only reach HTML, so llms.txt, tokens.json and the Markdown sources
+    carry the header instead. robots.txt is deliberately not used: agents
+    fetching on someone's behalf honour it too, and would be locked out.
+
+    Answers a missing page with the design system's 404, not the site's.
     """
 
     @wraps(view)
-    def wrapper(*args, **kwargs):
-        response = view(*args, **kwargs)
+    def wrapper(request, *args, **kwargs):
+        try:
+            response = view(request, *args, **kwargs)
+        except Http404:
+            return not_found(request)
         response["X-Robots-Tag"] = "noindex, nofollow, noarchive"
         return response
 
@@ -238,15 +221,20 @@ def markdown_url(item):
     return reverse("design_system:markdown", kwargs={"slug": slug})
 
 
-@noindex
+@design_view
 def markdown_source(request, slug):
     path = CONTENT_DIR / f"{slug}.md"
     if not path.is_file():
         raise Http404
-    return HttpResponse(parse(path)[2], content_type="text/markdown; charset=utf-8")
+    # Includes are run, so a reader gets the table or demo they bring in rather
+    # than the tag. The Markdown itself is left as written.
+    meta, body, source = parse(path)
+    front_matter = source[: len(source) - len(body)]
+    text = front_matter + render_template(body, {"meta": meta}, request)
+    return HttpResponse(text, content_type="text/markdown; charset=utf-8")
 
 
-@noindex
+@design_view
 def page(request, slug=""):
     slug = slug or ""
     path, is_folder = locate(slug)
@@ -256,11 +244,10 @@ def page(request, slug=""):
     context = {
         "page": entry(slug),
         "meta": meta,
-        "navigation": load_navigation(),
         "children": children(slug) if is_folder else [],
         "breadcrumbs": breadcrumbs(slug),
         "sections": sections,
-        "header_menu": header_menu(sections, page_url(slug)),
+        "section": slug.split("/")[0],
         "token_tables_url": page_url(TOKEN_TABLES_SLUG),
         "is_token_tables": slug == TOKEN_TABLES_SLUG,
     }
@@ -271,7 +258,7 @@ def page(request, slug=""):
     return render(request, template, context)
 
 
-@noindex
+@design_view
 def tokens_json(request):
     tokens = json.loads(TOKENS_FILE.read_text(encoding="utf-8"))
     return JsonResponse({"tokens": tokens["all"], "classes": tokens["classes"]})
@@ -283,7 +270,7 @@ def _walk(items):
         yield from _walk(item.get("children", []))
 
 
-@noindex
+@design_view
 def llms_txt(request):
     """Discovery index for agents (https://llmstxt.org), built from content/."""
     absolute = request.build_absolute_uri
@@ -296,20 +283,11 @@ def llms_txt(request):
         return absolute(markdown_url(item))
 
     home = parse(CONTENT_DIR / "index.md")[0]
-    lines = [
-        f"# {home['title']}",
-        "",
-        f"> {home['description']}",
-        "",
-        "Built with Bootstrap 5 and Font Awesome 6. Prose pages are linked as",
-        "Markdown (.md), which is cheaper to read than the rendered HTML.",
-        "Prefer Bootstrap's own classes and the documented component classes",
-        "over bespoke CSS. To load the design system in a project, start with",
-        link(entry("implementation/using-ucld")),
-        "",
-        f"Every token and documented class is also published as JSON at "
-        f"{absolute(reverse('design_system:tokens'))}",
-    ]
+    # The introduction is written in content/index.md, with site-relative links.
+    intro = re.sub(
+        r"\]\((/[^)]*)\)", lambda m: f"]({absolute(m[1])})", home["llms"].strip()
+    )
+    lines = [f"# {home['title']}", "", f"> {home['description']}", "", intro]
     for section in children(""):
         if not section["is_folder"]:
             continue

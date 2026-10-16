@@ -74,7 +74,9 @@ design_system/                 # A Django app in the library website
 ├── templates/design_system/
 │   ├── base.html              # Layout for documentation pages
 │   ├── page.html              # A Markdown page, and a folder's listing
+│   ├── 404.html               # Any missing page under /design/
 │   ├── includes/              # Header, footer, breadcrumb, live demos
+│   │   └── libapps/           # Springshare's markup, for the LibApps demos
 │   ├── pages/                 # Pages whose markup is too rich for Markdown
 │   └── demos/                 # The demonstration pages
 ├── views.py                   # Renders content/, llms.txt and tokens.json
@@ -94,29 +96,28 @@ description: "Renders as the lead paragraph and the meta description."
 
 Two optional keys:
 
-- `order` sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set the order of the header navigation.
+- `order` sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set their order in listings and in the breadcrumb menu.
 - `template` hands the page to a Django template instead of rendering its body as Markdown. Use it when the rendered markup *is* the documentation — live demos, type specimens, generated tables. The template extends `design_system/page.html` and overrides its `body` block, or extends `design_system/base.html` when it needs to escape the prose column. The `.md` file remains, so the page is still listed.
 
-### Two headers
+### The header
 
-There are two headers, and which one a page gets is a deliberate choice rather than a default.
+`includes/docs-header.html` is the header of every page, the global demos included: it is built from the production header's classes, so it shows that component in place. Its links are written out rather than generated, since they change about once a year. Its own styling comes from `scss/meta/_docs-header.scss`, following the rule that anything existing only to document the system stays out of the product.
 
-- `includes/docs-header.html` is the header for these documentation pages. `base.html` supplies it, so every page using the layout is already correct.
-- The production Library website header, which demonstration pages use because they show a real Library interface and need its real chrome to be worth looking at.
-
-`docs-header.html` is styled from `scss/meta/_docs-header.scss`, following the rule that anything existing only to document the system stays out of the product. It mirrors the production header visually so the two read as one site.
+The LibApps demos are the exception. They reproduce a LibGuides page whole, so they carry the header LibGuides shows, a static copy in `includes/libapps/header.html`.
 
 ## What Is Generated
 
 None of this needs a manual step. Adding a file is enough.
 
-- **Navigation.** Every folder lists its pages, nesting each subfolder under its landing page, and the header lists the top-level folders. The short "most used" lists on the home page and section indexes are the only hand-picked links.
+- **Listings and breadcrumbs.** Every folder lists its pages, nesting each subfolder under its landing page, and breadcrumbs follow the URL. The header's links and the short "most used" lists on the home page and section indexes are the only hand-picked links.
 - **Token Tables** and `/design/tokens.json`, from `data/tokens.json`.
 - **Bootstrap's JavaScript** at `/static/design_system/js/bootstrap.bundle.min.js`, copied from the same installed package the CSS is compiled from, so the two cannot drift to different Bootstrap versions.
 - **`/design/llms.txt`**, a discovery index for agents building against this design system, listing every section and page.
-- **The Markdown source of every page**, at its path with `.md` appended: `/design/guidelines/copywriting.md`, or `/design/foundation/index.md` for a folder.
+- **The Markdown source of every page**, at its path with `.md` appended: `/design/guidelines/copywriting.md`, or `/design/foundation/index.md` for a folder. Its includes are run, so a reader gets the table or demo they bring in rather than the tag.
 
 None of the documentation is meant for search engines. Every page and file is served with `noindex`, as a meta tag on HTML and an `X-Robots-Tag` header on everything else. `llms.txt`, `tokens.json` and the `.md` files are exempt from the site's Turnstile bot check so agents can read them; the HTML pages are not.
+
+A missing page gets the design system's own 404, with no navigation, rather than the library website's.
 
 Because `/design/llms.txt` publishes the `description` front matter, every page needs a real one-line summary rather than a placeholder.
 

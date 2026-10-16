@@ -1,0 +1,276 @@
+{% comment %}
+  The Library header as the LibGuides demos show it: the current information
+  architecture, rebuilt in Bootstrap 5. Static markup, as in LibGuides' Look &
+  Feel header, so replace it with a fresh copy from there when that changes.
+  Carried over from UCLD's header-current-new mockup, whose shortcut links had
+  no addresses yet.
+{% endcomment %}
+<header role="banner">
+	<!-- Libguides injects the header inside a `<header>` -->
+    <div class="logo-bar bg-white">
+        <div class="container-lg">
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <a class="navbar-brand m-0" href="/" itemscope itemtype="http://schema.org/Organization">
+                    <span class="visually-hidden" itemprop="name">The University of Chicago Library</span>
+                    <img itemprop="logo" src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
+                </a>
+
+                <ul class="nav d-none d-md-flex justify-content-end" id="navbar-shortcuts" role="list">
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <i class="fa-solid fa-comment" aria-hidden="true"></i>
+                            <span>Ask Us Anything</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                            <span>Hours</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <i class="fa-solid fa-gift" aria-hidden="true"></i>
+                            <span>Support the Library</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">
+                            <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#global-navbar-current-new-collapse" aria-controls="global-navbar-current-new-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav id="global-navbar" class="navbar navbar-expand-md navbar-dark global-navbar p-0" aria-label="Main navigation">
+        <div class="container-lg">
+            <div class="collapse navbar-collapse" id="global-navbar-current-new-collapse">
+                <ul class="navbar-nav flex-grow-1" role="list">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-searchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Search
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-searchDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Catalogs</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/3">Library Catalog</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/borrowdirect">BorrowDirect</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/worldcat">WorldCat</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/search/catalogs/other">Other Catalogs</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Other Search Tools</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/articlesplus">Articles Plus</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/atoz">Database Finder</a>
+                                    <a class="dropdown-item text-wrap" href="https://guides.lib.uchicago.edu/az.php?t=41934">Database Trials</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/ejournals">Ejournals</a>
+                                    <a class="dropdown-item text-wrap" href="https://knowledge.uchicago.edu/">Knowledge@UChicago</a>
+                                    <a class="dropdown-item text-wrap" href="https://guides.lib.uchicago.edu/off-campus">Proxy &amp; Off-Campus Access</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/#tab-3">Website Search</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-borrowDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Borrow<span class="d-md-none d-lg-inline"> &amp; Request</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-borrowDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Borrow</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/due-dates-and-loan-periods/">Due Dates &amp; Loan Periods</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/renewing-and-returning-items/">Renewing &amp; Returning Items</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/fines-and-lost-items/">Fines &amp; Lost Items</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/course-reserves">Course Reserves</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/checkout">Checkout UChicago</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/myaccount">My Library Account</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/mylib-dashboard/">MyLib Dashboard</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/who-can-borrow/">Who Can Borrow</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Request</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/requesting/interlibrary-loan/">Interlibrary Loan</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/paging/">Paging &amp; Pickup</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/requesting/scan-deliver/">Scan &amp; Deliver</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/requesting/suggest-purchase/">Suggest a Purchase</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/departments/pres/digitization-services-for-general-collections/">Digitization Services</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-researchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Research<span class="d-md-none d-lg-inline"> &amp; Teaching</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-researchDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-4 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Research Help &amp; Tools</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/help/ask-librarian/">Ask a Librarian</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/?view=staff&amp;subject=All+Subject+Specialists">Subject Specialists</a>
+                                    <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/citation_management">Citation Management</a>
+                                    <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/subjectguides/helpguides">Help Guides</a>
+                                    <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/subjectguides">Subject Guides</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Programs</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/kim-park-program-for-the-study-of-the-book/">Kim-Park Program for the Study of the Book</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Teaching Support</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/teaching/course-reserves-setup/">Course Reserves Setup</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/teaching/research-instruction-courses/">Instruction for Courses</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/teaching/">Teaching &amp; Learning Services</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Digital Scholarship</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/scholar/">Center for Digital Scholarship</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/research/scholar/phd">Dissertation Office</a>
+                                    <a class="dropdown-item text-wrap" href="https://knowledge.uchicago.edu/">Knowledge@UChicago</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/copyrightinfo/">Copyright Info</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-collectionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Collections<span class="d-md-none d-lg-inline"> &amp; Exhibits</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-collectionsDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-3 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Collections</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/">Notable Collections</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/?digital=on&amp;view=collections">Digital Collections</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/?view=subjects">Collecting Areas by Subject</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/collections/other-local-collections/">Other Local Collections</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Exhibits</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/?view=exhibits">All Exhibits</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/collex/?digital=on&amp;view=exhibits">Web Exhibits</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Research Centers</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/departments/eastasia/">East Asian Collection</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/departments/map-collection/">Map Collection</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/departments/southasia/">Southern Asia Collection</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/scrc/">Special Collections</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-visitDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Visit<span class="d-md-none d-lg-inline"> &amp; Study</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-visitDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Visiting the Library</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/access-privileges/visitors/">Visitor Information</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/scrc/visiting/reading-room-access/">Visiting Special Collections</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Using Our Spaces</p>
+                                    <a class="dropdown-item text-wrap" href="https://rooms.lib.uchicago.edu/r/search/seats#s-lc-public-pt">Book a Room</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/spaces/">Places to Study</a>
+                                    <a class="dropdown-item text-wrap" href="https://printing.uchicago.edu/">Copy, Print &amp; Scan</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/thelibrary/computers-and-wireless/">Computers &amp; Wireless</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/spaces/joseph-regenstein-library/regenstein-lockers/">Lockers</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/thelibrary/techbar/">TechBar</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-librariesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Libraries
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-librariesDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-1 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">Our Locations</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/crerar/">Crerar</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/law/">D&#x27;Angelo Law</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/eck/">Eckhart</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/mansueto/">Mansueto</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/spaces/joseph-regenstein-library/">Regenstein</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/swl/">Social Work</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/scrc/">Special Collections</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/libraries/libraries-hours/">Hours</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="current-new-aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            About
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="current-new-aboutDropdown">
+                            <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">The Library</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/">About the Library</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/mission/">Mission &amp; Strategic Plan</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/library-diversity-equity-and-inclusion-vision-statement/">DEI Vision Statement</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/">Departments &amp; Staff</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/employment/">Employment</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/policies/">Library Policies</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/committees/">Library Boards &amp; Committees</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/supportus/">Support the Library</a>
+                                </div>
+                                <div class="dropdown-group col">
+                                    <p class="dropdown-group-title">News &amp; Events</p>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/news/">News</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/news-events/events/">Workshops &amp; Events</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/thelibrary/conferences/">Conferences</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/news-events/libra">Libra Newsletter</a>
+                                    <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/news-events/social-media/">Social Media Directory</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="d-md-none mt-2">
+                        <ul class="navbar-nav flex-column mobile-shortcuts-list" role="list">
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    <i class="fa-solid fa-comment me-2" aria-hidden="true"></i>
+                                    Ask Us Anything
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    <i class="fa-solid fa-clock me-2" aria-hidden="true"></i>
+                                    Hours
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    <i class="fa-solid fa-gift me-2" aria-hidden="true"></i>
+                                    Support the Library
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    <i class="fa-solid fa-circle-user me-2" aria-hidden="true"></i>
+                                    Dashboard
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>

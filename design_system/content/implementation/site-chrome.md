@@ -5,7 +5,7 @@ description: "The header and footer that frame every Library page, and the marku
 
 ## Header
 
-Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. Link content comes from `design_system/data/globalNav.json`, not from the markup, so the same partial renders whatever that file defines. See it rendered in the [site chrome demo](/design/demos/global/site-chrome/).
+Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. The header at the top of these pages is an instance of it, carrying the documentation's links in place of the Library's; the [LibApps demos](/design/demos/libapps/) show it with the Library's.
 
 ```html
 <header role="banner">

@@ -44,6 +44,15 @@ class DesignSystemTest(TestCase):
         for page in self.pages[1:]:
             with self.subTest(url=page["url"]):
                 self.assertIn(page["url"].rstrip("/"), text)
+        for url in re.findall(r"\]\(http://testserver(/[^)]*)\)", text):
+            with self.subTest(link=url):
+                self.get(url)
+
+    def test_missing_page(self):
+        for url in ["/design/no-such-page/", "/design/foundation/index/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, "Page Not Found", status_code=404)
 
     def test_tokens_json(self):
         data = json.loads(self.get("/design/tokens.json"))

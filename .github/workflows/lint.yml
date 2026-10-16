@@ -107,7 +107,14 @@ jobs:
       run: |
         # Fails when SCSS changed but the compiled CSS or tokens.json
         # wasn't rebuilt and committed (npm run build:design-system).
-        git diff --exit-code design_system/static/ design_system/data/tokens.json
+        # git status, unlike git diff, also reports new files the build
+        # wrote but nobody committed.
+        changes="$(git status --porcelain design_system/static/ design_system/data/)"
+        if [ -n "$changes" ]; then
+          echo "$changes"
+          echo "Run npm run build:design-system and commit the result."
+          exit 1
+        fi
 
   template-lint:
     runs-on: ubuntu-latest

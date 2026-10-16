@@ -5,9 +5,11 @@
   one site: a white logo bar above a maroon navigation bar. Styles live in
   design_system/scss/meta/_docs-header.scss.
 
-  The section links are the top-level folders of design_system/content/, in
-  their front-matter order; folders sharing a `group` share a dropdown. Ids are prefixed docs- so they cannot collide with
-  the production header, which claims #global-navbar and #navbar-shortcuts.
+  The links are written out rather than generated: they change about once a
+  year, and a section added to design_system/content/ should be added here by
+  choice. `section` is the first segment of the page's path. Ids are prefixed
+  docs- so they cannot collide with the production header, which claims
+  #global-navbar and #navbar-shortcuts.
 {% endcomment %}
 <header id="docs-header" role="banner">
   <div class="logo-bar bg-white">
@@ -31,25 +33,28 @@
     <div class="container-md">
       <div class="collapse navbar-collapse" id="docs-header-nav">
         <ul class="navbar-nav" role="list">
-          {% for item in header_menu %}
-            {% if item.links %}
-              <li class="nav-item dropdown">
-                <button class="nav-link dropdown-toggle text-white{% if item.active %} active{% endif %}" type="button" id="docs-header-{{ item.title|slugify }}" data-bs-toggle="dropdown" aria-expanded="false">{{ item.title }}</button>
-                {% comment %} Same structure as the production header's dropdowns, so the links line up with the navigation bar. {% endcomment %}
-                <ul class="dropdown-menu" aria-labelledby="docs-header-{{ item.title|slugify }}">
-                  <li class="dropdown-layout container-md mx-auto">
-                    {% for section in item.links %}
-                      <a class="dropdown-item text-white" href="{{ section.url }}"{% if page.url == section.url %} aria-current="page"{% endif %}>{{ section.title }}</a>
-                    {% endfor %}
-                  </li>
-                </ul>
+          {% url 'design_system:page' slug='foundation' as foundation_url %}
+          {% url 'design_system:page' slug='guidelines' as guidelines_url %}
+          {% url 'design_system:page' slug='implementation' as implementation_url %}
+          {% url 'design_system:page' slug='demos' as demos_url %}
+          {% url 'design_system:page' slug='methodology' as methodology_url %}
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle text-white{% if section == 'foundation' or section == 'guidelines' or section == 'implementation' %} active{% endif %}" type="button" id="docs-header-design-system" data-bs-toggle="dropdown" aria-expanded="false">Design System</button>
+            {% comment %} Same structure as the production header's dropdowns, so the links line up with the navigation bar. {% endcomment %}
+            <ul class="dropdown-menu" aria-labelledby="docs-header-design-system">
+              <li class="dropdown-layout container-md mx-auto">
+                <a class="dropdown-item text-white" href="{{ foundation_url }}"{% if page.url == foundation_url %} aria-current="page"{% endif %}>Foundation</a>
+                <a class="dropdown-item text-white" href="{{ guidelines_url }}"{% if page.url == guidelines_url %} aria-current="page"{% endif %}>Guidelines</a>
+                <a class="dropdown-item text-white" href="{{ implementation_url }}"{% if page.url == implementation_url %} aria-current="page"{% endif %}>Implementation</a>
               </li>
-            {% else %}
-              <li class="nav-item">
-                <a class="nav-link{% if item.active %} active{% endif %}" href="{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>
-              </li>
-            {% endif %}
-          {% endfor %}
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if section == 'demos' %} active{% endif %}" href="{{ demos_url }}"{% if page.url == demos_url %} aria-current="page"{% endif %}>Demos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if section == 'methodology' %} active{% endif %}" href="{{ methodology_url }}"{% if page.url == methodology_url %} aria-current="page"{% endif %}>Project Methodology</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link{% if is_token_tables %} active{% endif %}" href="{{ token_tables_url }}"{% if is_token_tables %} aria-current="page"{% endif %}>Token Tables</a>
           </li>

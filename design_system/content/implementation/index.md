@@ -1,6 +1,5 @@
 ---
 title: "Implementation"
-group: "Design System"
 order: 3
 description: "Everything needed to build with the design system: the tokens and classes it defines, its components, and how to load it in a project."
 ---

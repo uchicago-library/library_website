@@ -14,4 +14,6 @@ urlpatterns = [
         name="markdown",
     ),
     re_path(r"^(?:(?P<slug>[\w-]+(?:/[\w-]+)*)/)?$", views.page, name="page"),
+    # Anything else under /design/ gets the design system's 404, not the site's.
+    re_path(r"", views.not_found),
 ]

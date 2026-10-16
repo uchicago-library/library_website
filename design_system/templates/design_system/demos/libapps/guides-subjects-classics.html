@@ -1,4 +1,4 @@
-{% include "design_system/libapps/document-start.html" %}
+{% include "design_system/includes/libapps/document-start.html" %}
 {% comment %} dump of HTML extracted from the browser 
     - mind the document-start, the header, the breadcrumbs, and the footer. {% endcomment %}
 
@@ -9,10 +9,10 @@
     }
 </style>
 <body class="s-lib-public-body"> <a id="s-lg-public-skiplink" class="alert-info" href="#s-lib-public-main">Skip to Main Content</a> <!-- BEGIN: Page Header -->
-    {% include "design_system/includes/header-current.html" %}
+    {% include "design_system/includes/libapps/header.html" %}
     <div id="s-lib-public-header" class="s-lib-header container s-lib-side-borders">
         <nav id="s-lib-bc" aria-label="breadcrumb">
-            {% include "design_system/libapps/breadcrumbs.html" %}
+            {% include "design_system/includes/libapps/breadcrumbs.html" %}
         </nav>
         <h1 id="s-lib-public-header-title">Classics</h1>
         <div id="s-lib-public-header-desc">Browse our best resources, organized by subject</div>
@@ -1340,5 +1340,5 @@
     <div id="s-lib-popover-title" class="hide"> <span class="text-info"> <strong>title</strong> </span> <button type="button" id="popclose" class="close" onclick="jQuery('.s-lib-popover').popover('hide')"> × </button> </div>
     <div id="s-lib-popover-content" class="hide"> <i class="fa fa-refresh fa-spin"></i> Loading... <button class="btn btn-default btn-sm popclose" type="button">Close</button> </div> <!-- !popover.twig --> <!-- scroll_top.twig -->
     <div id="s-lib-scroll-top" style="display: none;"> <a href="javascript:void(0);" onclick="jQuery('body').focus();" title="Back to Top" aria-label="Back to Top"> <span class="fa-stack fa-lg" aria-hidden="true"> <i class="fa fa-square-o fa-stack-2x"></i> <i class="fa fa-angle-double-up fa-stack-1x" style="position:relative; bottom:2px;"></i> </span> </a> </div> <!-- !scroll_top.twig -->
-    {% include "design_system/libapps/footer.html" %}{{public_footer}}
+    {% include "design_system/includes/libapps/footer.html" %}{{public_footer}}
 </body>

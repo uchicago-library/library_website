@@ -43,7 +43,7 @@ The overrides target LibGuides specifically: guide pages, the A–Z database fin
 
 ## Validating a change
 
-Reproductions of Springshare's own output are the [LibApps demos](/design/demos/libapps/), in `design_system/templates/design_system/demos/libapps/`. They exist so this stylesheet can be tested against the markup it actually has to style, and they load `main-libapps.css` rather than `main.css`.
+Reproductions of Springshare's own output are the [LibApps demos](/design/demos/libapps/), in `design_system/templates/design_system/demos/libapps/`, built from the partials in `includes/libapps/`. They exist so this stylesheet can be tested against the markup it actually has to style, and they load `main-libapps.css` rather than `main.css`.
 
 Two rules apply:
 

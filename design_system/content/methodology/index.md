@@ -21,7 +21,7 @@ Every reader has one entry point, and it must surface what that reader cannot af
 | **Developer building with the system** — a new project, or a library website template | [Getting Started](/design/implementation/using-ucld/), from "Build with It" on the home page | The one stylesheet to load and its URL; that it replaces Bootstrap's own CSS; Bootstrap's JavaScript and the icon set; taking values from the [Token Tables](/design/implementation/token-tables/) rather than writing them out; the checklist before shipping |
 | **Designer or project owner** reviewing decisions | [Foundation](/design/foundation/), from "Review Its Decisions" | The priorities; the palette and how much of each colour to use; the accessibility standard; where the system currently leans between competing values |
 | **Contributor** changing the system | This page, from "Contribute to It" | How to build and check a change ([Setup](/design/methodology/setup/)); where every file lives ([Architecture](/design/methodology/architecture/)); the conventions and the definition of done ([Conventions](/design/methodology/conventions/)); that consumers load the stylesheet unversioned, so nothing public is renamed or removed |
-| **Developer reading the code** — a reviewer or maintainer on GitHub | `design_system/README.md`, which GitHub shows when the folder is opened | The build command and committing its output; the public URLs; what the token documentation depends on; the traps that fail silently; a pointer to this section |
+| **Developer reading the code** — a reviewer or maintainer on GitHub | `design_system/README.md`, which GitHub shows when the folder is opened | The build command and committing its output; the traps that fail silently, including what the token documentation depends on; the public URLs; a pointer to this section |
 | **Agent building with the system** — the playground, or another project | [/design/llms.txt](/design/llms.txt) | Every page with its description, linked as Markdown; the token JSON; where to start loading the system |
 | **Agent working on the library website** | `CLAUDE.md` in the repository root, which points to `design_system/README.md` | The build commands and that CI checks their output |
 | **Mockup author** | The [playground](https://github.com/uchicago-library/ucld) repository and its `new-mockup` skill | Outside this site. It loads the published stylesheets and reads `llms.txt` for the rules |
@@ -41,7 +41,7 @@ Documentation drifts when two places can hold the same fact. The rule here is th
 
 Three rules follow from it:
 
-1. **If it can be generated, it must be.** Token values, class lists, page indexes and navigation are all derived from the source. None of them is maintained by hand.
+1. **If it can be generated, it must be.** Token values, class lists, page indexes and breadcrumbs are all derived from the source. None of them is maintained by hand.
 2. **If it is in the code, annotate the code.** A note beside a token or a class cannot be separated from the thing it describes. A paragraph on another page can.
 3. **These pages hold only what cannot be derived** — the reasoning, the conventions, and the process. Where an agent and a person need the same fact, it is written here once and `CLAUDE.md` points at it.
 
