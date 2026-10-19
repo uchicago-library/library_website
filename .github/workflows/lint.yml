@@ -2,9 +2,9 @@ name: Linting
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, '*-website-redesign' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, '*-website-redesign' ]
 
 jobs:
   python-lint:
