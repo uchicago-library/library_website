@@ -2,9 +2,10 @@
 // Usage: lwv node "$LWV_LIB/flows/admin-edit-publish.mjs" <page-id> <public-path> <new-title>
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 const { adminLogin, artifact, capture, env, launch, url } = await import(
-  process.env.LWV_LIB + "/lwv.mjs"
+  pathToFileURL(process.env.LWV_LIB + "/lwv.mjs")
 );
 
 const [pageId, publicPath, newTitle] = process.argv.slice(2);
@@ -46,7 +47,7 @@ try {
 // Anonymous responses come from wagtail-cache; publishing does not purge it.
 await anonymousView("public-after");
 report.staleAfterPublish = report["public-after"].h1 !== newTitle;
-execFileSync(process.env.LWV_BIN, ["manage", "clear_wagtail_cache"], { stdio: "inherit" });
+execFileSync("bash", [process.env.LWV_BIN, "manage", "clear_wagtail_cache"], { stdio: "inherit" });
 await anonymousView("public-after-clear");
 
 report.pass = report["public-after-clear"].h1 === newTitle;

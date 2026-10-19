@@ -32,7 +32,8 @@ the `lib_www_dev` database, or Elasticsearch. Several runs can be up at once; ea
 most recent run unless you set `LWV_RUN=<id>` (see `lwv list`).
 
 Prerequisites: Docker with the compose image built (`./docker-setup.sh` once), `wwwdev` and `loopdev` resolving
-to 127.0.0.1 in `/etc/hosts`, and Node.js on the host. The first `lwv browse`/`lwv node` installs
+to 127.0.0.1 in the hosts file (`/etc/hosts`, or `C:\Windows\System32\drivers\etc\hosts` on Windows), and
+Node.js on the host. On Windows, run `lwv` from Git Bash. The first `lwv browse`/`lwv node` installs
 Playwright 1.63.0 into `~/.cache/lw-verify/node`, which needs network access.
 
 Service credentials are environment variables, the same names CI and Cursor Cloud Agent secrets use:
@@ -83,7 +84,13 @@ Three levels, from cheapest to richest:
    It prints JSON with the final URL, HTTP status, title and artifact paths. Relative artifact paths
    go under `$ARTIFACTS`.
 3. **Multi-step flows**: write a script in your scratch dir and run it with `lwv node script.mjs`. Import the
-   helpers with `const { launch, url, adminLogin, capture, fullShot, artifact, env } = await import(process.env.LWV_LIB + "/lwv.mjs");`
+   helpers as below. `pathToFileURL` is needed because `import()` rejects Windows paths.
+   ```js
+   import { pathToFileURL } from "node:url";
+   const { launch, url, adminLogin, capture, fullShot, artifact, env } = await import(
+     pathToFileURL(process.env.LWV_LIB + "/lwv.mjs")
+   );
+   ```
    - `url("/x")` gives the public URL and `url("loop:/x")` the intranet URL.
    - `adminLogin(page, { loop })` signs in through the real `/admin/login/` form. Sessions are per host,
      so pass `{ loop: true }` before visiting Loop pages.

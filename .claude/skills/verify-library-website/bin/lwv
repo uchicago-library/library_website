@@ -3,15 +3,23 @@
 # of the library website. Run `lwv help` for usage.
 set -euo pipefail
 
-SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Git Bash rewrites arguments that look like POSIX paths (/venv/bin/python,
+# /borrow/) when it starts Windows programs. Turn that off and hand those
+# programs Windows-form host paths (C:/...) instead.
+export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*"
+native_path() {
+  if command -v cygpath >/dev/null; then cygpath -m "$1"; else echo "$1"; fi
+}
+
+SKILL_DIR="$(native_path "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)")"
 REPO="$(git -C "$SKILL_DIR" rev-parse --show-toplevel)"
 
 # Optional, gitignored service credentials (see SKILL.md).
 if [[ -f "$SKILL_DIR/.env" ]]; then
   set -a; source "$SKILL_DIR/.env"; set +a
 fi
-STATE_ROOT="${LWV_STATE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/lw-verify}"
-NODE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/lw-verify/node"
+STATE_ROOT="$(native_path "${LWV_STATE_ROOT:-${XDG_STATE_HOME:-$HOME/.local/state}/lw-verify}")"
+NODE_DIR="$(native_path "${XDG_CACHE_HOME:-$HOME/.cache}/lw-verify/node")"
 PLAYWRIGHT_VERSION="1.63.0"
 TEMPLATE_DB="lib_www_verify_tpl"
 FIXTURE="base/fixtures/test.json"
@@ -53,8 +61,8 @@ EOF
 select_run() {
   local run="${LWV_RUN:-}"
   if [[ -z "$run" ]]; then
-    [[ -L "$STATE_ROOT/current" ]] || die "no runs yet; use 'lwv up'"
-    run="$(basename "$(readlink "$STATE_ROOT/current")")"
+    [[ -f "$STATE_ROOT/current-run" ]] || die "no runs yet; use 'lwv up'"
+    run="$(<"$STATE_ROOT/current-run")"
   fi
   RUN_DIR="$STATE_ROOT/runs/$run"
   [[ -f "$RUN_DIR/state.env" ]] || die "unknown run '$run'"
@@ -68,7 +76,9 @@ container_running() {
 
 # ---------------------------------------------------------------- template
 
-fixture_sum() { sha256sum "$FIXTURE" | cut -c1-16; }
+fixture_sum() {
+  if command -v sha256sum >/dev/null; then sha256sum "$FIXTURE"; else shasum -a 256 "$FIXTURE"; fi | cut -c1-16
+}
 
 template_sum() {
   "${PG[@]}" -c "SELECT shobj_description(oid, 'pg_database') FROM pg_database WHERE datname='$TEMPLATE_DB'"
@@ -122,18 +132,23 @@ ensure_deps() {
 }
 
 free_port() {
+  # A port is taken if something accepts a connection on it.
   local p
   for p in $(seq 8010 8029); do
-    if ! ss -ltnH "sport = :$p" | grep -q .; then echo "$p"; return; fi
+    if ! (exec 3<>"/dev/tcp/127.0.0.1/$p") 2>/dev/null; then echo "$p"; return; fi
   done
   die "no free port in 8010-8029"
+}
+
+resolves() {
+  node -e 'require("dns").lookup(process.argv[1], (err) => process.exit(err ? 1 : 0))' "$1"
 }
 
 # ---------------------------------------------------------------- commands
 
 cmd_up() {
-  getent hosts wwwdev >/dev/null && getent hosts loopdev >/dev/null \
-    || die "wwwdev and loopdev must resolve to 127.0.0.1 (see /etc/hosts)"
+  resolves wwwdev && resolves loopdev \
+    || die "wwwdev and loopdev must resolve to 127.0.0.1 (see the hosts file in SKILL.md)"
   ensure_deps
   ensure_template
 
@@ -161,7 +176,7 @@ GIT_REV=$(git rev-parse --short HEAD)$(git diff --quiet HEAD || echo -dirty)
 STARTED_DEPS=$STARTED_DEPS
 EOF
   chmod 600 "$RUN_DIR/state.env"
-  ln -sfn "$RUN_DIR" "$STATE_ROOT/current"
+  echo "$run" >"$STATE_ROOT/current-run"
 
   log "cloning $TEMPLATE_DB -> $db"
   "${PG[@]}" -c "CREATE DATABASE $db TEMPLATE $TEMPLATE_DB"
@@ -306,8 +321,7 @@ cmd_down() {
       log "leaving db and redis up (in use by other containers)"
     fi
   fi
-  sed -i 's/^STATE=.*//' "$RUN_DIR/state.env"
-  echo "STATE=down" >>"$RUN_DIR/state.env"
+  grep -qx STATE=down "$RUN_DIR/state.env" || echo "STATE=down" >>"$RUN_DIR/state.env"
   echo "ARTIFACTS=$ARTIFACTS"
 }
 
