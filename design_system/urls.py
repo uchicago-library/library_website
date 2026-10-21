@@ -4,6 +4,10 @@ from . import views
 
 app_name = "design_system"
 
+# One segment of a page's path: a folder or file name in content/, without .md.
+SEGMENT = r"[\w-]+"
+SLUG = rf"(?P<slug>{SEGMENT}(?:/{SEGMENT})*)"
+
 urlpatterns = [
     path("llms.txt", views.llms_txt, name="llms"),
     path("tokens.json", views.tokens_json, name="tokens_json"),
@@ -13,11 +17,11 @@ urlpatterns = [
     path("demos/<slug:slug>/", views.demo, name="demo"),
     # A page's Markdown source: /design/<page>.md, or /design/index.md for home.
     re_path(
-        r"^(?P<slug>[\w-]+(?:/[\w-]+)*)\.md$",
+        rf"^{SLUG}\.md$",
         views.markdown_source,
         name="markdown",
     ),
-    re_path(r"^(?:(?P<slug>[\w-]+(?:/[\w-]+)*)/)?$", views.page, name="page"),
+    re_path(rf"^(?:{SLUG}/)?$", views.page, name="page"),
     # Anything else under /design/ gets the design system's 404, not the site's.
     re_path(r"", views.not_found),
 ]

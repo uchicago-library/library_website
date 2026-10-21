@@ -130,7 +130,17 @@ def children(slug):
         else:
             continue
         items.append(item)
-    return sorted(items, key=lambda item: (item["order"], item["title"]))
+    return sorted(items, key=listing_order)
+
+
+def listing_order(item):
+    return (item["order"], item["title"])
+
+
+def sections():
+    """The top-level folders, without walking the pages inside them."""
+    folders = [entry(child.name) for child in CONTENT_DIR.iterdir() if child.is_dir()]
+    return sorted(folders, key=listing_order)
 
 
 def breadcrumbs(slug):
@@ -175,7 +185,7 @@ def render_page(request, template, section, context):
     `section` is the first part of the page's path, which the header marks.
     """
     context["section"] = section
-    context["sections"] = [item for item in children("") if item["is_folder"]]
+    context["sections"] = sections()
     return render(request, template, context)
 
 
@@ -312,7 +322,7 @@ def demo(request, slug):
 
 @design_view
 def tokens_json(request):
-    tokens = json.loads(TOKENS_FILE.read_text(encoding="utf-8"))
+    tokens = load_tokens()
     # When to use each section's tokens, which the token rows do not repeat.
     guidance = [
         {"tab": table["label"], "section": section["label"], "text": text}

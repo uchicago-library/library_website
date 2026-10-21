@@ -93,7 +93,7 @@ design_system/                 # A Django app in the library website
 
 ## Page Structure
 
-A documentation page is a Markdown file in `content/`. Its URL follows its path: `content/guidelines/color.md` is `/design/guidelines/color/`, and a folder's `index.md` is the folder's own page, so `content/guidelines/index.md` is `/design/guidelines/`. The front matter supplies the title and the lead paragraph, and the layout supplies the document head, header, breadcrumb, prose column and footer.
+A documentation page is a Markdown file in `content/`. Its URL follows its path: `content/guidelines/color.md` is `/design/guidelines/color/`, and a folder's `index.md` is the folder's own page, so `content/guidelines/index.md` is `/design/guidelines/`. File and folder names are letters, digits, hyphens and underscores only, since they become the URL. The front matter supplies the title and the lead paragraph, and the layout supplies the document head, header, breadcrumb, prose column and footer.
 
 ```text
 ---
@@ -102,7 +102,7 @@ description: "Renders as the lead paragraph and the meta description."
 ---
 ```
 
-One optional key, `order`, sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set their order in listings and in the breadcrumb menu.
+One optional key, `order`, a number, sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set their order in listings and in the breadcrumb menu.
 
 The body is plain Markdown, with no template syntax run in it, so the Markdown an agent reads is exactly the file.
 
@@ -140,6 +140,7 @@ These checks fail rather than publish something wrong:
 2. **Token exposure disagreement.** Every `$ucl-*` colour is published as a `--ucl-*` custom property. If the published variable and the compiled Sass value disagree, the token generator stops. See the Auto-Exposure Constraint note in `_variables.scss`.
 3. **Stale build output.** CI rebuilds the stylesheets and `tokens.json` and fails if the committed copies differ.
 4. **Broken pages.** The test suite renders every page, Markdown and HTML, and fails on an error or a broken `/design/` link.
+5. **Unreadable content files.** One bad file can break pages other than its own, so the test suite checks each file in `content/` and names the problem: a name the URLs cannot hold, front matter never closed, an `order` that is not a number, or a missing `llms` introduction.
 
 ## Deployment
 

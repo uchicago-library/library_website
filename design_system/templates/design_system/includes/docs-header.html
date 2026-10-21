@@ -57,7 +57,7 @@
             <a class="nav-link{% if section == 'contributing' %} active{% endif %}" href="{{ contributing_url }}"{% if page.url == contributing_url %} aria-current="page"{% endif %}>Contributing</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link{% if section == 'tokens' %} active{% endif %}" href="{{ tokens_url }}"{% if section == 'tokens' %} aria-current="page"{% endif %}>Tokens</a>
+            <a class="nav-link{% if section == 'tokens' %} active{% endif %}" href="{{ tokens_url }}"{% if page.url == tokens_url %} aria-current="page"{% endif %}>Tokens</a>
           </li>
         </ul>
 

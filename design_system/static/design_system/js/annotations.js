@@ -27,8 +27,10 @@
     return;
   }
 
-  // Restore saved preference (default: visible)
-  var saved = localStorage.getItem(STORAGE_KEY);
+  // Restore saved preference (default: visible). localStorage throws when
+  // storage is blocked, so fall back to the default.
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) { /* storage unavailable */ }
   var visible = saved !== 'false';
 
   var targetMap = {};

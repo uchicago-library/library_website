@@ -1,12 +1,53 @@
 import json
 import re
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from . import views
+from .urls import SEGMENT
 
 INTERNAL_LINK = re.compile(r'href="(/design/[^"#?]*)')
+
+
+class ContentFilesTest(SimpleTestCase):
+    """Every file in content/ is one the views can read.
+
+    A bad file breaks more than its own page: its folder's listing, llms.txt
+    and the walk in DesignSystemTest.setUp. These checks name the file and the
+    problem instead.
+    """
+
+    def test_every_content_file_is_valid(self):
+        for path in views.CONTENT_DIR.rglob("*"):
+            if not (path.is_dir() or path.suffix == ".md"):
+                continue
+            name = path.relative_to(views.CONTENT_DIR).as_posix()
+            with self.subTest(file=name):
+                stem = path.name if path.is_dir() else path.stem
+                self.assertRegex(
+                    stem,
+                    rf"^{SEGMENT}$",
+                    "names are letters, digits, hyphens and underscores only",
+                )
+                if path.is_dir():
+                    continue
+                source = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+                if source.startswith("---\n"):
+                    self.assertGreaterEqual(
+                        source.count("---\n"), 2, "front matter is never closed"
+                    )
+                meta = views.parse(path)[0]
+                self.assertIsInstance(meta, dict, "front matter is not a mapping")
+                order = meta.get("order", 0)
+                self.assertIsInstance(order, (int, float), "order is not a number")
+
+    def test_llms_txt_front_matter(self):
+        home = views.parse(views.CONTENT_DIR / "index.md")[0]
+        builders = views.parse(views.CONTENT_DIR / "implementation" / "index.md")[0]
+        for meta, key in [(home, "title"), (home, "description"), (builders, "llms")]:
+            with self.subTest(key=key):
+                self.assertTrue(meta.get(key), f"{key} is missing")
 
 
 class DesignSystemTest(TestCase):

@@ -2,7 +2,6 @@
 design_system/static/design_system/css/** linguist-generated=true
 design_system/static/design_system/js/bootstrap.bundle.min.js linguist-generated=true
 design_system/data/tokens.json linguist-generated=true
-# Reproductions of Springshare markup, copied verbatim; marked generated so
-# GitHub collapses them in diffs too (linguist-vendored would not)
-design_system/templates/design_system/demos/libapps/** linguist-generated=true
-design_system/templates/design_system/libapps/** linguist-generated=true
+# A reproduction of Springshare markup, copied verbatim; marked generated so
+# GitHub collapses it in diffs too (linguist-vendored would not)
+design_system/templates/design_system/pages/demos/database-finder.html linguist-generated=true
