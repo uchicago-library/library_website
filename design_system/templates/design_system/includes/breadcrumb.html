@@ -1,0 +1,38 @@
+{% comment %}
+  Breadcrumbs, derived from the URL. The first crumb is a section, and can
+  switch to any other section.
+{% endcomment %}
+<nav aria-label="breadcrumb" class="container-md">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'design_system:page' %}">Home</a></li>
+    {% for crumb in breadcrumbs %}
+      {% if forloop.first %}
+        <li class="breadcrumb-item{% if forloop.last %} active{% endif %}"{% if forloop.last %} aria-current="page"{% endif %}>
+          <span class="breadcrumb-section-dropdown dropdown">
+            {% if forloop.last %}
+              <button class="btn btn-link breadcrumb-section-toggle dropdown-toggle dropdown-toggle-split p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch section">
+                <span>{{ crumb.title }}</span>
+              </button>
+            {% else %}
+              <a href="{{ crumb.url }}">{{ crumb.title }}</a>
+              <button class="btn btn-link breadcrumb-section-toggle dropdown-toggle dropdown-toggle-split p-0 border-0" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch section">
+                <span class="visually-hidden">Switch section</span>
+              </button>
+            {% endif %}
+            <ul class="dropdown-menu">
+              {% for section in sections %}
+                {% if section.url != crumb.url %}
+                  <li><a class="dropdown-item" href="{{ section.url }}">{{ section.title }}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </span>
+        </li>
+      {% elif forloop.last %}
+        <li class="breadcrumb-item active" aria-current="page">{{ crumb.title }}</li>
+      {% else %}
+        <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.title }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</nav>

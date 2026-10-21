@@ -1,0 +1,24 @@
+{% extends "design_system/base.html" %}
+{% comment %}
+  A Markdown page from design_system/content/, the home page included. A
+  folder page also lists its pages after its own content. HTML pages in
+  pages/ extend this too when they keep to the prose column, overriding `body`.
+{% endcomment %}
+
+{% block breadcrumb %}{% if page.slug %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-lg-10 mx-auto documentation">
+      <h1>{{ page.title }}</h1>
+      {% if page.description %}<p class="lead">{{ page.description }}</p>{% endif %}
+
+      {% block body %}{{ content }}{% endblock %}
+
+      {% if children %}
+        <h2>{% if page.slug %}Pages in This Section{% else %}All Pages{% endif %}</h2>
+        {% include "design_system/includes/page-list.html" with pages=children %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
