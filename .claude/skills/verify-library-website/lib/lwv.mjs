@@ -30,6 +30,7 @@ export function artifact(path) {
   return full;
 }
 
+// Headless Chromium at 1366x900. Page errors are printed and do not fail the script.
 export async function launch({ width = 1366, height = 900 } = {}) {
   const browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width, height } });
@@ -61,6 +62,8 @@ export async function fullShot(page, path) {
   await page.setViewportSize(vp);
 }
 
+// Full-page PNG and an ARIA snapshot of <body>, under the artifacts directory.
+// Pass { aria: false } or { shot: false } to skip one of them.
 export async function capture(page, name, { aria = true, shot = true } = {}) {
   const out = {};
   if (shot) {

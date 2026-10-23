@@ -1,5 +1,9 @@
 // Edit a page title in the Wagtail admin, publish it, and check the public page.
 // Usage: lwv node "$LWV_LIB/flows/admin-edit-publish.mjs" <page-id> <public-path> <new-title>
+//
+// Three anonymous loads of the public page bracket the edit: before, after
+// publish (wagtail-cache may still be stale), and after clear_wagtail_cache.
+// The process exits 0 only when the third load shows the new title.
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -16,6 +20,7 @@ if (!pageId || !publicPath || !newTitle) {
 const dir = `admin-edit-publish/${pageId}`;
 const report = { run: env.run, pageId, publicPath, newTitle };
 
+// Open the public page with no session. Record status, h1, and the cache header.
 async function anonymousView(label) {
   const { browser, page } = await launch();
   const resp = await page.goto(url(publicPath), { waitUntil: "networkidle" });
@@ -25,8 +30,10 @@ async function anonymousView(label) {
   await browser.close();
 }
 
+// Public page before the edit.
 await anonymousView("public-before");
 
+// Sign in, replace the title, publish, and record the admin success message.
 const { browser, page } = await launch();
 try {
   await adminLogin(page);
@@ -48,6 +55,7 @@ try {
 await anonymousView("public-after");
 report.staleAfterPublish = report["public-after"].h1 !== newTitle;
 execFileSync("bash", [process.env.LWV_BIN, "manage", "clear_wagtail_cache"], { stdio: "inherit" });
+// Same page after the cache clear. This load decides pass or fail.
 await anonymousView("public-after-clear");
 
 report.pass = report["public-after-clear"].h1 === newTitle;
