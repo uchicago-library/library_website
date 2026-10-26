@@ -53,7 +53,7 @@ Usage: lwv <command> [args]
   env                     Print the selected run's state (URLs, admin login, paths)
   manage <args...>        Run manage.py inside the run's container
   sql "<query>"           Run SQL against the run's database
-  browse <url> [opts]     Load a page in headless Chromium and capture evidence
+  browse <url> [opts]     Load a page in Chromium and capture evidence
                             --shot FILE   full-page PNG
                             --aria FILE   ARIA snapshot of <body>
                             --html FILE   rendered DOM
@@ -66,6 +66,8 @@ Usage: lwv <command> [args]
 
 Paths are relative to the repo root. URLs may be absolute or paths on the
 public site; prefix a path with "loop:" for the intranet (e.g. loop:/).
+For browse and node, LWV_WALKTHROUGH=1 shows the browser and pauses at each
+step() until Next is clicked; LWV_HEADED=1 only shows the browser.
 Select a run with LWV_RUN=<id>; default is the most recent `lwv up`.
 EOF
 }
@@ -332,7 +334,7 @@ node_env() {
     NODE_PATH="$NODE_DIR/node_modules"
 }
 
-# Open one page in headless Chromium. Implementation: lib/browse.mjs.
+# Open one page in Chromium. Implementation: lib/browse.mjs.
 cmd_browse() {
   select_run
   ensure_playwright

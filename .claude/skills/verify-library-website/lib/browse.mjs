@@ -1,10 +1,10 @@
 // lwv browse <url> [--shot FILE] [--aria FILE] [--html FILE] [--login] [--wait SEL]
 //
-// Load one page in headless Chromium and print JSON: final URL, status, title,
+// Load one page in Chromium (headless by default) and print JSON: final URL, status, title,
 // and artifact paths. Relative paths land in the run's artifacts directory.
 // A "loop:" URL is the intranet. --login signs in on that host first.
 import { writeFileSync } from "node:fs";
-import { adminLogin, artifact, fullShot, launch, url } from "./lwv.mjs";
+import { adminLogin, artifact, fullShot, launch, step, url } from "./lwv.mjs";
 
 const args = process.argv.slice(2);
 const target = args.shift();
@@ -40,6 +40,8 @@ try {
     writeFileSync(result.html, await page.content());
   }
   console.log(JSON.stringify(result, null, 2));
+  // Keep a walkthrough window open until the viewer is done with the page.
+  if (process.env.LWV_WALKTHROUGH) await step(page, `Loaded ${result.url}. Next: close the browser.`);
 } finally {
   await browser.close();
 }

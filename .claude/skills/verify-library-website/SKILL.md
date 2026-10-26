@@ -1,6 +1,6 @@
 ---
 name: verify-library-website
-description: Launch and drive an isolated instance of the UChicago Library Wagtail site (public site on wwwdev, Loop intranet on loopdev, Wagtail admin) in headless Chromium to prove a change works in the real app, with screenshots, ARIA snapshots and DB checks as evidence. Use when asked to verify, demo, screenshot or smoke-test a page, view, template, StreamField block or admin flow in library_website, beyond what unit tests show.
+description: Launch and drive an isolated instance of the UChicago Library Wagtail site (public site on wwwdev, Loop intranet on loopdev, Wagtail admin) in headless Chromium to prove a change works in the real app, with screenshots, ARIA snapshots and DB checks as evidence. Use when asked to verify, demo, screenshot or smoke-test a page, view, template, StreamField block or admin flow in library_website, beyond what unit tests show. Also use when the user wants to watch a verification or be walked through it step by step in a visible browser.
 ---
 
 # Verify library_website
@@ -87,7 +87,7 @@ Three levels, from cheapest to richest:
    helpers as below. `pathToFileURL` is needed because `import()` rejects Windows paths.
    ```js
    import { pathToFileURL } from "node:url";
-   const { launch, url, adminLogin, capture, fullShot, artifact, env } = await import(
+   const { launch, url, adminLogin, capture, fullShot, artifact, env, step } = await import(
      pathToFileURL(process.env.LWV_LIB + "/lwv.mjs")
    );
    ```
@@ -95,6 +95,8 @@ Three levels, from cheapest to richest:
    - `adminLogin(page, { loop })` signs in through the real `/admin/login/` form. Sessions are per host,
      so pass `{ loop: true }` before visiting Loop pages.
    - `capture(page, "name")` writes `name.png` and `name.aria.txt` into `$ARTIFACTS`.
+   - `step(page, "text")` marks a point where a walkthrough viewer stops (see Walkthrough mode).
+     Outside walkthrough mode it only prints the step, so add steps to every flow.
    - A shipped flow, `lib/flows/admin-edit-publish.mjs`, is the model for mutation proofs (see
      `features/admin-edit-publish.md`).
 
@@ -106,6 +108,34 @@ Some features call external services that are unreachable here: LibCal hours (`/
 events (`/about/news-events/events/` hangs past 60 s), `/switchboard/` (500), FOLIO/MyLib (needs the SOCKS
 tunnel), and LibGuides. Treat those as environment limits and report them as unverified. They are not
 regressions unless your change touched them.
+
+## Walkthrough mode
+
+Use this only when the user asks to watch the run, step through it, or be walked through it.
+By default, run headless with no pauses.
+
+```bash
+LWV_WALKTHROUGH=1 lwv node script.mjs
+LWV_WALKTHROUGH=1 lwv browse /borrow/
+```
+
+- Chromium opens a visible window and slows its actions slightly. A separate small `lwv walkthrough`
+  window shows each `step()` text with a Next button. The page under test is not modified, so captures
+  match a headless run.
+  The control window tries to open in the top-right corner. Some window managers (GNOME on Wayland)
+  place it themselves, so tell the user they can drag it aside.
+- Write each step text as what is on screen now and what Next will do:
+  `step(page, "Upload form is empty. Next: upload export_bad_sheet_name.xlsx, expect a red alert.")`.
+  Add a final step before `browser.close()`, or the window closes before the viewer sees the result.
+  `lib/flows/admin-edit-publish.mjs` already has its steps.
+- `step()` waits for Next with no timeout, so start the command in the background. Relay each
+  `{"step": n, "text": ...}` line to the user as it prints, and tell them to click Next in the
+  walkthrough window. They can click around the page while it is paused, but tell them that this
+  changes where the next action starts.
+- `LWV_HEADED=1` shows the browser without pausing.
+- A visible browser needs a display. On Linux with neither `DISPLAY` nor `WAYLAND_DISPLAY` set
+  (SSH, containers), `launch()` throws an error. Tell the user and run headless instead.
+- The evidence rules below apply unchanged.
 
 ## Evidence
 
