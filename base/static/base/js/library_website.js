@@ -1,3 +1,5 @@
+/* global EventsFeed */
+
 /*
  * Decode url parameters.
  */
@@ -6,26 +8,69 @@ function urldecode(str) {
 }
 
 /*
- * Ajax call to workshops and events feed.
+ * Workshops and events widget. Fetches the page's LiveWhale JSON feed
+ * and lists its events, parsed by EventsFeed (events_feed.js).
  */
-function renderEvents() {
-  var feed = $('#events').data('events'); // Already encoded
-  var eventsHtml = '';
-  if (feed) {
-    $.getJSON('/json-events/?feed='.concat(feed), function (data) {
-      var innerJson = data['events'];
-      $.each(innerJson, function (i, v) {
-        if (v['start_date'] == v['end_date'] || v['end_date'] == '') {
-          // single-day events.
-          eventsHtml += '<p><a class="event-header" href="' + v['link'] + '">' + v['title'] + '</a><br/><span class="event-date">' + v['start_date'] + '</span> | ' + v['start_time'] + ' - ' + v['end_time'] + '</p>'
-        } else {
-          // multi-day events. 
-          eventsHtml += '<p><a class="event-header" href="' + v['link'] + '">' + v['title'] + '</a><br/><span class="event-date">' + v['start_date'] + '</span> | ' + v['start_time'] + ' -<br/>' + '<span class="event-date">' + v['end_date'] + '</span> | ' + v['end_time'] + '</p>'
-        }
-      });
-      $('#events-target').replaceWith(eventsHtml);
-    });
+var EVENTS_FEED_TIMEOUT_MS = 5000;
+
+function eventDateLine(parent, date, time, suffix) {
+  var dateSpan = document.createElement('span');
+  dateSpan.className = 'event-date';
+  dateSpan.textContent = date;
+  parent.appendChild(dateSpan);
+  if (time) {
+    parent.appendChild(document.createTextNode(' | ' + time + suffix));
   }
+}
+
+function eventParagraph(event) {
+  var p = document.createElement('p');
+  var a = document.createElement('a');
+  a.className = 'event-header';
+  if (EventsFeed.isSafeLink(event.link)) {
+    a.setAttribute('href', event.link);
+  }
+  a.textContent = event.title;
+  p.appendChild(a);
+  p.appendChild(document.createElement('br'));
+
+  if (event.multiDay) {
+    eventDateLine(p, event.startDate, event.startTime, ' -');
+    p.appendChild(document.createElement('br'));
+    eventDateLine(p, event.endDate, event.endTime, '');
+  } else {
+    eventDateLine(
+      p,
+      event.startDate,
+      event.startTime,
+      event.endTime ? ' - ' + event.endTime : ''
+    );
+  }
+  return p;
+}
+
+function renderEvents() {
+  var container = document.getElementById('events');
+  var target = document.getElementById('events-target');
+  var feed = container ? container.getAttribute('data-events-feed') : '';
+  if (!feed || !target) {
+    return;
+  }
+
+  EventsFeed.loadEvents(fetch, feed, new Date(), EVENTS_FEED_TIMEOUT_MS)
+    .then(function (events) {
+      var fragment = document.createDocumentFragment();
+      if (events.length) {
+        events.forEach(function (event) {
+          fragment.appendChild(eventParagraph(event));
+        });
+      } else {
+        var empty = document.createElement('p');
+        empty.textContent = 'There are no upcoming events.';
+        fragment.appendChild(empty);
+      }
+      target.replaceWith(fragment);
+    });
 }
 
 /*
