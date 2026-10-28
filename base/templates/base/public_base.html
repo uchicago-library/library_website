@@ -461,7 +461,7 @@
                                         <h2>Workshops &amp; Events</h2>
                                         <div class="calledOnce">
                                             <!--<div class="jflatTimeline calledOnce">-->
-                                            <div id="events" class="event-wrap" data-events="{{events_feed|urlencode}}">
+                                            <div id="events" class="event-wrap" data-events-feed="{{ events_feed }}">
                                                 <span id="events-target">
                                                     <i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>
                                                     <span>Loading...</span>
@@ -601,6 +601,9 @@
         <script src="{% static "base/js/ie10-viewport-bug-workaround.js" %}"></script>
 
         <script src="{% static "base/js/offcanvas.js" %}"></script>
+        {% if self.events_feed_url %}
+            <script src="{% static "base/js/events_feed.js" %}"></script>
+        {% endif %}
         <script src="{% static "base/js/library_website.js" %}"></script>
         <script src="{% static "base/js/render_hours.js" %}"></script>
         <script>
