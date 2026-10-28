@@ -1,9 +1,6 @@
-import datetime
 import json
-import urllib.parse
 
 from bs4 import BeautifulSoup
-from dateutil.relativedelta import relativedelta
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from wagtail.models import Site
@@ -19,8 +16,7 @@ from base.utils import (
     get_hours_and_location,
     get_json_hours_by_id,
 )
-from events.utils import flatten_events, get_events
-from library_website.settings import PUBLIC_HOMEPAGE, UC_EVENTS_FEED
+from library_website.settings import PUBLIC_HOMEPAGE
 from public.models import StandardPage
 from units.utils import get_default_unit
 
@@ -68,29 +64,6 @@ def json_hours(request):
                 }
             )
         return JsonResponse({})
-
-
-def json_events(request):
-    """
-    View for rendering events feed data as json.
-
-    Parameters:
-        request: e.g., request.GET['feed'] = 'http://www3.lib.uchicago.edu/tt-rss/public.php?op=rss&id=library&key=oxj4em577573f09bc56'
-    """
-    if request.method == "GET":
-        encoded_url = request.GET.get("feed", "")
-        ttrss_url = urllib.parse.unquote(encoded_url)
-
-        n = datetime.datetime.now()
-        return JsonResponse(
-            {
-                "events": flatten_events(
-                    get_events(
-                        UC_EVENTS_FEED, ttrss_url, n, n + relativedelta(years=1), False
-                    )
-                )
-            }
-        )
 
 
 def chat_status(request):

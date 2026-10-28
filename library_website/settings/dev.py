@@ -95,9 +95,6 @@ FOLIO_BASE_URL = "https://uchicago-test-okapi.folio.indexdata.com"
 # Docker overrides this in docker.py to use host.docker.internal
 FOLIO_PROXY = "socks5h://localhost:1080"
 
-# Tiny Tiny RSS Feed for development
-TTRSS_FEED = "http://10.0.2.2/get_feed_atom"
-
 # Import secrets
 try:
     from .secrets import *  # noqa: F401,F403

@@ -105,7 +105,7 @@ or by Wagtail's form ids (`#id_title`). Avoid CSS layout classes. `lwv manage <c
 inside the run's container. `lwv sql "<query>"` queries the run's database.
 
 Some features call external services that are unreachable here: LibCal hours (`/json-hours/` returns 500),
-events (`/about/news-events/events/` hangs past 60 s), `/switchboard/` (500), FOLIO/MyLib (needs the SOCKS
+`/switchboard/` (500), FOLIO/MyLib (needs the SOCKS
 tunnel), and LibGuides. Treat those as environment limits and report them as unverified. They are not
 regressions unless your change touched them.
 
