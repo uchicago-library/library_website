@@ -155,6 +155,39 @@ The package generates a `bot_ips_config.py` file with ~1,700 bot IP ranges that 
 ## SCSS/CSS Compilation
 Both the public site and Loop (intranet) use Django Compressor with django-libsass for SCSS compilation. SCSS files are automatically compiled when templates are rendered. Edit the `.scss` source files in `base/static/base/css/` and `base/static/base/css/loop/` - do not edit the compiled `.css` files directly.
 
+## Verifying Changes in a Browser
+The repo includes an agent skill, `verify-library-website`, that starts an isolated copy of the site (its own container and database, separate from your dev stack on port 8000) and drives it in Chromium. It saves screenshots, ARIA snapshots and database checks as evidence. It needs the Docker image built (`./docker-setup.sh`), the `/etc/hosts` entries [below](#configure-etchosts) and Node.js. The first run takes about 4 minutes to build a template database; later runs start in about 10 seconds.
+
+There are two modes.
+
+### Default: runs on its own
+The browser is headless (you don't see it). The agent runs every step without stopping and reports the results and artifact paths at the end. Ask in plain language:
+
+- "Verify the new block renders on the borrowing page."
+- "Smoke-test the Loop homepage."
+
+Or run the helper directly from the repo root:
+
+```bash
+.claude/skills/verify-library-website/bin/lwv up
+.claude/skills/verify-library-website/bin/lwv node .claude/skills/verify-library-website/lib/flows/admin-edit-publish.mjs 3007 /borrow/borrowing/ "New title"
+.claude/skills/verify-library-website/bin/lwv down
+```
+
+### Walkthrough mode: steps you through it
+A visible browser opens, plus a small control window that describes each step. Nothing happens until you click **Next**, so you can watch each action and look around the page between steps. Ask for it explicitly:
+
+- "Walk me through verifying the admin edit and publish flow."
+- `/verify-library-website walkthrough mode: the AGS upload page` (the most reliable form)
+
+Or set `LWV_WALKTHROUGH=1` on the same command:
+
+```bash
+LWV_WALKTHROUGH=1 .claude/skills/verify-library-website/bin/lwv node .claude/skills/verify-library-website/lib/flows/admin-edit-publish.mjs 3007 /borrow/borrowing/ "New title"
+```
+
+Walkthrough mode needs a display, and it only pauses in scripts that call `step()`. See [`SKILL.md`](.claude/skills/verify-library-website/SKILL.md) for the details and `lwv help` for every command.
+
 ## Optional Configuration
 
 ### Configure /etc/hosts
