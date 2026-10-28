@@ -200,6 +200,68 @@ test('each CR and LF in a title becomes a space', () => {
   )
 })
 
+test('canceled events are kept and marked once', () => {
+  const rows = fixture('canceled.json').data
+  assert.equal(rows[0].title, 'CANCELED: Autumn Carillon Tower Tours')
+  assert.equal(rows[2].title, 'Autumn Carillon Tower Tours')
+
+  const titles = eventsAt(OCT_28_MORNING, 'canceled.json').map(
+    event => event.title,
+  )
+  assert.deepEqual(titles, [
+    'Oct 28, 2026: Canceled: Autumn Carillon Tower Tours',
+    'Oct 29, 2026: Autumn Carillon Tower Tours',
+    'Nov 5, 2026: Canceled: Autumn Carillon Tower Tours',
+  ])
+})
+
+test('is_canceled marks an event when it is 1, true, or "1"', () => {
+  const row = fixture('canceled.json').data[1]
+  const titleWith = isCanceled => {
+    const feed = { data: [{ ...row, is_canceled: isCanceled }] }
+    return EventsFeed.parseEvents(feed, OCT_28_MORNING)[0].title
+  }
+  ;[1, true, '1'].forEach(value => {
+    assert.equal(
+      titleWith(value),
+      'Oct 29, 2026: Canceled: Autumn Carillon Tower Tours',
+      String(value),
+    )
+  })
+  ;[null, 0, false, undefined].forEach(value => {
+    assert.equal(
+      titleWith(value),
+      'Oct 29, 2026: Autumn Carillon Tower Tours',
+      String(value),
+    )
+  })
+})
+
+test('a leading "Canceled:" or "Cancelled:" in any case is replaced', () => {
+  const row = fixture('canceled.json').data[0]
+  ;[
+    'Cancelled: Autumn Carillon Tower Tours',
+    'canceled:Autumn Carillon Tower Tours',
+  ].forEach(title => {
+    const feed = { data: [{ ...row, title }] }
+    assert.equal(
+      EventsFeed.parseEvents(feed, OCT_28_MORNING)[0].title,
+      'Oct 28, 2026: Canceled: Autumn Carillon Tower Tours',
+    )
+  })
+})
+
+test('the title of an event that is not canceled is unchanged', () => {
+  const row = fixture('canceled.json').data[1]
+  const feed = {
+    data: [{ ...row, title: 'CANCELED: Autumn Carillon Tower Tours' }],
+  }
+  assert.equal(
+    EventsFeed.parseEvents(feed, OCT_28_MORNING)[0].title,
+    'Oct 29, 2026: CANCELED: Autumn Carillon Tower Tours',
+  )
+})
+
 test('max counts events, not rows', () => {
   const rows = fixture('library_group.json').data
   assert.equal(new Set(rows.slice(0, 3).map(row => row.id)).size, 2)

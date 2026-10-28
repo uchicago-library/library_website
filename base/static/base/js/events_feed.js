@@ -101,6 +101,21 @@ var EventsFeed = (function () {
       .trim();
   }
 
+  // LiveWhale sets is_canceled to 1 on a canceled event and may start
+  // its title with "CANCELED: ". Strip that prefix and add one
+  // "Canceled: ", so the word appears once either way.
+  function eventTitle(row) {
+    var title = cleanTitle(row.title);
+    var canceled =
+      row.is_canceled === 1 ||
+      row.is_canceled === true ||
+      row.is_canceled === '1';
+    if (!canceled) {
+      return title;
+    }
+    return 'Canceled: ' + title.replace(/^cancell?ed:\s*/i, '');
+  }
+
   /*
    * Start and end of the event a row belongs to. A multi-day event
    * comes as one row per day, and each row carries the span of the
@@ -146,9 +161,10 @@ var EventsFeed = (function () {
    * Turn LiveWhale JSON into a sorted list of events to display.
    *
    * Each event has title, link, startDate, startTime, endDate, endTime
-   * and multiDay. Missing values are empty strings. Events that have
-   * ended before today, or that start more than a year from now, are
-   * left out. options.max limits the number of events.
+   * and multiDay. Missing values are empty strings. The title of a
+   * canceled event starts with "Canceled: " after the date. Events that
+   * have ended before today, or that start more than a year from now,
+   * are left out. options.max limits the number of events.
    */
   function parseEvents(feed, now, options) {
     var rows = feed && Array.isArray(feed.data) ? feed.data : [];
@@ -178,7 +194,7 @@ var EventsFeed = (function () {
       var endDate = span.end ? formatDate(span.end) : '';
       events.push({
         sortKey: span.start.getTime(),
-        title: startDate + ': ' + cleanTitle(row.title),
+        title: startDate + ': ' + eventTitle(row),
         link: typeof row.url === 'string' ? row.url : '',
         startDate: startDate,
         startTime: span.timed ? formatTime(span.start) : '',
