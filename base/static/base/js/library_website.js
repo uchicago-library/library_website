@@ -57,28 +57,8 @@ function renderEvents() {
     return;
   }
 
-  var request = EventsFeed.parseFeedUrl(feed);
-  var controller = new AbortController();
-  var timeout = setTimeout(function () {
-    controller.abort();
-  }, EVENTS_FEED_TIMEOUT_MS);
-
-  fetch(request.requestUrl, { signal: controller.signal })
-    .then(function (response) {
-      if (!response.ok) {
-        throw new Error('Events feed returned ' + response.status);
-      }
-      return response.json();
-    })
-    .then(function (data) {
-      return EventsFeed.parseEvents(data, new Date(), { max: request.max });
-    })
-    .catch(function (error) {
-      console.error('Could not load events:', error);
-      return [];
-    })
+  EventsFeed.loadEvents(fetch, feed, new Date(), EVENTS_FEED_TIMEOUT_MS)
     .then(function (events) {
-      clearTimeout(timeout);
       var fragment = document.createDocumentFragment();
       if (events.length) {
         events.forEach(function (event) {

@@ -307,3 +307,78 @@ test('only http and https links are safe', () => {
   assert.ok(!EventsFeed.isSafeLink(''))
   assert.ok(!EventsFeed.isSafeLink(null))
 })
+
+// loadEvents gets one of these in place of fetch. Response is the same
+// class that fetch resolves to.
+const FEED_URL = 'https://events.uchicago.edu/live/json/events/group/Library'
+
+function respondWith(status, body) {
+  return () => Promise.resolve(new Response(body, { status }))
+}
+
+function failWith(error) {
+  return () => Promise.reject(error)
+}
+
+// Like fetch with no answer from the server: it rejects only on abort.
+function neverAnswer(url, { signal }) {
+  return new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(signal.reason))
+  })
+}
+
+async function load(t, fetchFn, timeoutMs = 1000) {
+  const consoleError = t.mock.method(console, 'error', () => {})
+  const events = await EventsFeed.loadEvents(
+    fetchFn,
+    FEED_URL + '/max/5',
+    OCT_28_MORNING,
+    timeoutMs,
+  )
+  return { events, logged: consoleError.mock.calls.map(c => c.arguments) }
+}
+
+test('a failed request logs the request URL and the error', async t => {
+  const { events, logged } = await load(
+    t,
+    failWith(new TypeError('Failed to fetch')),
+  )
+  assert.deepEqual(events, [])
+  assert.deepEqual(logged, [
+    [`Could not load events from ${FEED_URL}: TypeError: Failed to fetch`],
+  ])
+})
+
+test('a non-2xx response logs the HTTP status', async t => {
+  const { events, logged } = await load(t, respondWith(404, 'Not Found'))
+  assert.deepEqual(events, [])
+  assert.deepEqual(logged, [
+    [`Could not load events from ${FEED_URL}: Error: HTTP 404`],
+  ])
+})
+
+test('invalid JSON logs the parse error', async t => {
+  const { events, logged } = await load(t, respondWith(200, '{"data": ['))
+  assert.deepEqual(events, [])
+  assert.equal(logged.length, 1)
+  assert.ok(
+    logged[0][0].startsWith(
+      `Could not load events from ${FEED_URL}: SyntaxError: `,
+    ),
+  )
+})
+
+test('a request with no answer logs a timeout', async t => {
+  const { events, logged } = await load(t, neverAnswer, 20)
+  assert.deepEqual(events, [])
+  assert.deepEqual(logged, [
+    [`Could not load events from ${FEED_URL}: timed out after 20 ms`],
+  ])
+})
+
+test('an empty feed logs nothing', async t => {
+  const empty = JSON.stringify(fixture('empty.json'))
+  const { events, logged } = await load(t, respondWith(200, empty))
+  assert.deepEqual(events, [])
+  assert.deepEqual(logged, [])
+})

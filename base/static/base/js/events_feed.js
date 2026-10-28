@@ -1,7 +1,8 @@
 /*
- * Parse a LiveWhale JSON events feed into display-ready events for the
- * Workshops & Events widget. Pure functions with no DOM access, so the
- * same code runs in the browser and in Node tests.
+ * Load a LiveWhale JSON events feed and parse it into display-ready
+ * events for the Workshops & Events widget. There is no DOM access, and
+ * loadEvents takes fetch as a parameter, so the same code runs in the
+ * browser and in Node tests.
  */
 var EventsFeed = (function () {
   var TIME_ZONE = 'America/Chicago';
@@ -221,9 +222,48 @@ var EventsFeed = (function () {
     return /^https?:\/\//i.test(url || '');
   }
 
+  /*
+   * Fetch a feed with fetchFn and parse it with parseEvents. If the
+   * request fails, gets a non-2xx response or invalid JSON, or takes
+   * longer than timeoutMs, log the request URL and the reason with
+   * console.error and resolve to an empty list.
+   */
+  function loadEvents(fetchFn, feedUrl, now, timeoutMs) {
+    var request = parseFeedUrl(feedUrl);
+    var controller = new AbortController();
+    var timeout = setTimeout(function () {
+      controller.abort();
+    }, timeoutMs);
+
+    return fetchFn(request.requestUrl, { signal: controller.signal })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status);
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        return parseEvents(data, now, { max: request.max });
+      })
+      .catch(function (error) {
+        var reason = controller.signal.aborted
+          ? 'timed out after ' + timeoutMs + ' ms'
+          : String(error);
+        console.error(
+          'Could not load events from ' + request.requestUrl + ': ' + reason
+        );
+        return [];
+      })
+      .then(function (events) {
+        clearTimeout(timeout);
+        return events;
+      });
+  }
+
   return {
     parseFeedUrl: parseFeedUrl,
     parseEvents: parseEvents,
+    loadEvents: loadEvents,
     isSafeLink: isSafeLink,
     decodeEntities: decodeEntities,
   };
