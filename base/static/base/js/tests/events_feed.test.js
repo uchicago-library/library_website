@@ -101,7 +101,7 @@ test('events are sorted by start', () => {
     'Sep 8, 2026: Created Equal: The Premises and Promises of the Declaration of Independence',
     'Oct 28, 2026: Snack-Sized AI: Four Ds of AI Fluency',
     'Oct 29, 2026: Latex with Overleaf Pro: the Basics',
-    'Oct 30, 2026: Halloween Costume Contest at the Maroon Oasis',
+    'Oct 30, 2026: Halloween Costume Contest  at the Maroon Oasis',
     'Nov 4, 2026: Snack-Sized AI: UChicago AI Q & A',
     'Nov 6, 2026: Dictaminal Attitudes: Transcribing and Compiling Peter of Blois',
     'Jan 13, 2027: Snack-Sized AI: Fellowship Applications and Appropriate AI Use',
@@ -189,13 +189,13 @@ test('HTML entities in titles are decoded', () => {
   )
 })
 
-test('line breaks in titles become spaces', () => {
+test('each CR and LF in a title becomes a space', () => {
   const rows = fixture('library_group.json').data
   assert.ok(rows.some(row => row.title.includes('\r\n')))
   assert.ok(
     findEvent(
       eventsAt(OCT_28_MORNING),
-      'Halloween Costume Contest at the Maroon Oasis',
+      'Halloween Costume Contest  at the Maroon Oasis',
     ),
   )
 })

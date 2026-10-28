@@ -97,7 +97,7 @@ var EventsFeed = (function () {
 
   function cleanTitle(title) {
     return decodeEntities(String(title || ''))
-      .replace(/\r\n|\r|\n/g, ' ')
+      .replace(/[\r\n]/g, ' ')
       .trim();
   }
 
