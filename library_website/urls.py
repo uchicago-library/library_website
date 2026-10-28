@@ -8,7 +8,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 
-from base.views import chat_status, external_include, json_events, json_hours
+from base.views import chat_status, external_include, json_hours
 from intranethome.views import mail_aliases_view
 from item_servlet.views import item_servlet
 from lib_collections.views import citation_display as citation_display
@@ -32,7 +32,6 @@ urlpatterns = [
     re_path(r"^documents/", include(wagtaildocs_urls)),
     re_path(r"^navigation-elements/", navigation_view, name="navigation-view"),
     re_path(r"^json-hours/", json_hours, name="json-hours"),
-    re_path(r"^json-events/", json_events, name="json-events"),
     re_path(r"^external-include/", external_include, name="external-include"),
     re_path(r"^chat-status/", chat_status, name="chat-status"),
     re_path(r"^item-servlet/", item_servlet, name="item-servlet"),

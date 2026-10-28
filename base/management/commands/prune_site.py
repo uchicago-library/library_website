@@ -28,7 +28,6 @@ class Command(BaseCommand):
         "base.models",
         "conferences.models",
         "dirbrowse.models",
-        "events.models",
         "findingaids.models",
         "group.models",
         "home.models",
