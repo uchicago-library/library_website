@@ -294,6 +294,19 @@ class TestUsersAndServingLivePages(TestCase):
         response = news_page.serve(request)
         self.assertEqual(response.status_code, 200)
 
+    def test_events_calendar_is_a_wagtail_page(self):
+        """
+        The events calendar URL is served by Wagtail and embeds the
+        LiveWhale calendar widget.
+        """
+        hostname = Site.objects.get(site_name="Public").hostname
+        response = self.client.get("/about/news-events/events/", HTTP_HOST=hostname)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "public/standard_page.html")
+        self.assertContains(
+            response, 'src="https://events.uchicago.edu/cal_widget.php?group=Library"'
+        )
+
     # def test_group_page(self):
     #    """
     #    Test a generic page on the intranet with a logged in
