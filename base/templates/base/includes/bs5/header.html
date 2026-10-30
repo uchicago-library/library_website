@@ -1,0 +1,280 @@
+{% load static %}
+{% comment %}
+  The public site's header on the design system (Bootstrap 5): the markup in
+  /design/implementation/site-chrome/, with the links of the current header.
+  base/includes/header.html stays as it is: /external-include/ serves it to
+  other sites.
+{% endcomment %}
+<header role="banner" data-ga-category="Global Navbar">
+  <div class="logo-bar bg-white">
+    <div class="container-lg">
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <a class="navbar-brand m-0" href="/" itemscope itemtype="http://schema.org/Organization" data-ga-subcategory="Logo and Menu Toggle" data-ga-label="Logo">
+          <span class="visually-hidden" itemprop="name">The University of Chicago Library</span>
+          <img itemprop="logo" src="{% static "base/images/color-logo.png" %}" alt="University of Chicago Library">
+        </a>
+
+        <ul class="nav d-none d-md-flex justify-content-end" id="navbar-shortcuts" role="list" data-ga-subcategory="Navbar Shortcuts">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ chat_url }}" data-ga-label="Ask a Librarian">
+              <i class="fa-solid fa-comment" aria-hidden="true"></i>
+              <span>Ask a{% if unfriendly_a %}n{% endif %} {{ self.friendly_name }} Librarian</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ hours_page_url }}" data-ga-label="Library Hours">
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
+              {% if settings.site_settings.EmergencyHours.enable %}
+                <span>{{ settings.site_settings.EmergencyHours.link_text|default:"View Hours" }}</span>
+              {% else %}
+                {# render_hours.js replaces the target with today's hours for this building #}
+                <span id="current-hours" data-libcalid="{{ libcalid }}"><span id="current-hours-target">Hours</span></span>
+              {% endif %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about/thelibrary/supportus/" data-ga-label="Support the Library">
+              <i class="fa-solid fa-gift" aria-hidden="true"></i>
+              <span>Support the Library</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.lib.uchicago.edu/mylib-dashboard/" data-ga-label="MyLib Dashboard">
+              <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+              <span>MyLib Dashboard</span>
+            </a>
+          </li>
+        </ul>
+
+        <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#global-navbar-collapse" aria-controls="global-navbar-collapse" aria-expanded="false" aria-label="Toggle navigation" data-ga-subcategory="Logo and Menu Toggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# The id is the analytics hook: jquery.track-everything.js attributes navigation events by it. #}
+  <nav id="global-navbar" class="navbar navbar-expand-md navbar-dark global-navbar p-0" aria-label="Main navigation">
+    <div class="container-lg">
+      <div class="collapse navbar-collapse" id="global-navbar-collapse">
+        <ul class="navbar-nav flex-grow-1" role="list">
+          <li class="nav-item dropdown" data-ga-subcategory="Search">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-search" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Search">
+              Search
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-search">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Catalogs</p>
+                  <a class="dropdown-item text-wrap" href="/h/3" data-ga-label="Library Catalog">Library Catalog</a>
+                  <a class="dropdown-item text-wrap" href="/h/borrowdirect" data-ga-label="BorrowDirect">BorrowDirect</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/worldcat" data-ga-label="WorldCat">WorldCat</a>
+                  <a class="dropdown-item text-wrap" href="/search/catalogs/other" data-ga-label="Other Catalogs">Other Catalogs</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Other Search Tools</p>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/h/articlesplus" data-ga-label="Articles Plus">Articles Plus</a>
+                  <a class="dropdown-item text-wrap" href="/h/atoz" data-ga-label="Database Finder">Database Finder</a>
+                  <a class="dropdown-item text-wrap" href="https://guides.lib.uchicago.edu/az.php?t=41934" data-ga-label="Database Trials">Database Trials</a>
+                  <a class="dropdown-item text-wrap" href="/ejournals" data-ga-label="Ejournals">Ejournals</a>
+                  <a class="dropdown-item text-wrap" href="https://knowledge.uchicago.edu/" data-ga-label="KnowledgeUChicago">Knowledge&#64;UChicago</a>
+                  <a class="dropdown-item text-wrap" href="https://guides.lib.uchicago.edu/off-campus" data-ga-label="Proxy & Off-Campus Access">Proxy &amp; Off-Campus Access</a>
+                  <a class="dropdown-item text-wrap" href="/#tab-3" data-ga-label="Website Search">Website Search</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="Borrow & Request">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-borrow" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Borrow &amp; Request">
+              Borrow<span class="d-md-none d-lg-inline"> &amp; Request</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-borrow">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Borrow</p>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/due-dates-and-loan-periods/" data-ga-label="Due Dates &amp; Loan Periods">Due Dates &amp; Loan Periods</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/renewing-and-returning-items/" data-ga-label="Renewing &amp; Returning Items">Renewing &amp; Returning Items</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/fines-and-lost-items/" data-ga-label="Fines &amp; Lost Items">Fines &amp; Lost Items</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/course-reserves" data-ga-label="Course Reserves">Course Reserves</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/checkout" data-ga-label="Checkout UChicago">Checkout UChicago</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/myaccount" data-ga-label="My Library Account">My Library Account</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/mylib-dashboard/" data-ga-label="MyLib Dashboard">MyLib Dashboard</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/borrow/borrowing/who-can-borrow/" data-ga-label="Who Can Borrow">Who Can Borrow</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Request</p>
+                  <a class="dropdown-item text-wrap" href="/borrow/requesting/interlibrary-loan/" data-ga-label="Interlibrary Loan">Interlibrary Loan</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/borrowing/paging/" data-ga-label="Paging &amp; Pickup">Paging &amp; Pickup</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/requesting/scan-deliver/" data-ga-label="Scan &amp; Deliver">Scan &amp; Deliver</a>
+                  <a class="dropdown-item text-wrap" href="/borrow/requesting/suggest-purchase/" data-ga-label="Suggest a Purchase">Suggest a Purchase</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/about/directory/departments/pres/digitization-services-for-general-collections/" data-ga-label="Digitization Services">Digitization Services</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="Research & Teaching">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-research" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Research &amp; Teaching">
+              Research<span class="d-md-none d-lg-inline"> &amp; Teaching</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-research">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-4 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Research Help &amp; Tools</p>
+                  <a class="dropdown-item text-wrap" href="/research/help/ask-librarian/" data-ga-label="Ask a Librarian">Ask a Librarian</a>
+                  <a class="dropdown-item text-wrap" href="/about/directory/?view=staff&amp;subject=All+Subject+Specialists" data-ga-label="Subject Specialists">Subject Specialists</a>
+                  <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/citation_management" data-ga-label="Citation Management">Citation Management</a>
+                  <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/subjectguides/helpguides" data-ga-label="Help Guides">Help Guides</a>
+                  <a class="dropdown-item text-wrap" href="http://guides.lib.uchicago.edu/subjectguides" data-ga-label="Subject Guides">Subject Guides</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Programs</p>
+                  <a class="dropdown-item text-wrap" href="/research/kim-park-program-for-the-study-of-the-book/" data-ga-label="Programs">Kim-Park Program for the Study of the Book</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Teaching Support</p>
+                  <a class="dropdown-item text-wrap" href="/research/teaching/course-reserves-setup/" data-ga-label="Course Reserves Setup">Course Reserves Setup</a>
+                  <a class="dropdown-item text-wrap" href="/research/teaching/research-instruction-courses/" data-ga-label="Instruction for Courses">Instruction for Courses</a>
+                  <a class="dropdown-item text-wrap" href="/research/teaching/" data-ga-label="Teaching &amp; Learning Services">Teaching &amp; Learning Services</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Digital Scholarship</p>
+                  <a class="dropdown-item text-wrap" href="/research/scholar/" data-ga-label="Digital Scholarship">Center for Digital Scholarship</a>
+                  <a class="dropdown-item text-wrap" href="/research/scholar/phd" data-ga-label="Dissertation Office">Dissertation Office</a>
+                  <a class="dropdown-item text-wrap" href="https://knowledge.uchicago.edu/" data-ga-label="KnowledgeUChicago">Knowledge&#64;UChicago</a>
+                  <a class="dropdown-item text-wrap" href="https://www.lib.uchicago.edu/copyrightinfo/" data-ga-label="Copyright Info">Copyright Info</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="Collections & Exhibits">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-collections" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Collections &amp; Exhibits">
+              Collections<span class="d-md-none d-lg-inline"> &amp; Exhibits</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-collections">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-3 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Collections</p>
+                  <a class="dropdown-item text-wrap" href="/collex/" data-ga-label="Notable Collections">Notable Collections</a>
+                  <a class="dropdown-item text-wrap" href="/collex/?digital=on&amp;view=collections" data-ga-label="Digital Collections">Digital Collections</a>
+                  <a class="dropdown-item text-wrap" href="/collex/?view=subjects" data-ga-label="Collecting Areas by Subject">Collecting Areas by Subject</a>
+                  <a class="dropdown-item text-wrap" href="/collex/collections/other-local-collections/" data-ga-label="Other Local Collections">Other Local Collections</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Exhibits</p>
+                  <a class="dropdown-item text-wrap" href="/collex/?view=exhibits" data-ga-label="All Exhibits">All Exhibits</a>
+                  <a class="dropdown-item text-wrap" href="/collex/?digital=on&amp;view=exhibits" data-ga-label="Web Exhibits">Web Exhibits</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Research Centers</p>
+                  <a class="dropdown-item text-wrap" href="/about/directory/departments/eastasia/" data-ga-label="East Asian Collections">East Asian Collection</a>
+                  <a class="dropdown-item text-wrap" href="/about/directory/departments/map-collection/" data-ga-label="Map Collection">Map Collection</a>
+                  <a class="dropdown-item text-wrap" href="/about/directory/departments/southasia/" data-ga-label="Southern Asia Collection">Southern Asia Collection</a>
+                  <a class="dropdown-item text-wrap" href="/scrc/" data-ga-label="Special Collections">Special Collections</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="Visit & Study">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-visit" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Visit &amp; Study">
+              Visit<span class="d-md-none d-lg-inline"> &amp; Study</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-visit">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Visiting the Library</p>
+                  <a class="dropdown-item text-wrap" href="/borrow/access-privileges/visitors/" data-ga-label="Visitor Information">Visitor Information</a>
+                  <a class="dropdown-item text-wrap" href="/scrc/visiting/reading-room-access/" data-ga-label="Visiting Special Collections">Visiting Special Collections</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Using Our Spaces</p>
+                  <a class="dropdown-item text-wrap" href="https://rooms.lib.uchicago.edu/r/search/seats#s-lc-public-pt" data-ga-label="Book a Room">Book a Room</a>
+                  <a class="dropdown-item text-wrap" href="/spaces/" data-ga-label="Places to Study">Places to Study</a>
+                  <a class="dropdown-item text-wrap" href="https://printing.uchicago.edu/" data-ga-label="Copy, Print &amp; Scan">Copy, Print &amp; Scan</a>
+                  <a class="dropdown-item text-wrap" href="/thelibrary/computers-and-wireless/" data-ga-label="Computers &amp; Wireless">Computers &amp; Wireless</a>
+                  <a class="dropdown-item text-wrap" href="/spaces/joseph-regenstein-library/regenstein-lockers/" data-ga-label="Lockers">Lockers</a>
+                  <a class="dropdown-item text-wrap" href="/thelibrary/techbar/" data-ga-label="TechBar">TechBar</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="Libraries">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-libraries" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="Libraries">
+              Libraries
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-libraries">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-1 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">Our Locations</p>
+                  <a class="dropdown-item text-wrap" href="/crerar/" data-ga-label="Crerar">Crerar</a>
+                  <a class="dropdown-item text-wrap" href="/law/" data-ga-label="D'Angelo Law">D'Angelo Law</a>
+                  <a class="dropdown-item text-wrap" href="/eck/" data-ga-label="Eckhart">Eckhart</a>
+                  <a class="dropdown-item text-wrap" href="/mansueto/" data-ga-label="Mansueto">Mansueto</a>
+                  <a class="dropdown-item text-wrap" href="/spaces/joseph-regenstein-library/" data-ga-label="Regenstein">Regenstein</a>
+                  <a class="dropdown-item text-wrap" href="/swl/" data-ga-label="Social Work">Social Work</a>
+                  <a class="dropdown-item text-wrap" href="/scrc/" data-ga-label="Special Collections">Special Collections</a>
+                  <a class="dropdown-item text-wrap" href="/libraries/libraries-hours/" data-ga-label="Hours">Hours</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown" data-ga-subcategory="About">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="nav-about" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-ga-label="About">
+              About
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="nav-about">
+              <li class="dropdown-layout container-lg mx-auto row row-cols-1 row-cols-lg-2 g-0">
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">The Library</p>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/" data-ga-label="Facts">About the Library</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/mission/" data-ga-label="Mission &amp; Strategic Plan">Mission &amp; Strategic Plan</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/library-diversity-equity-and-inclusion-vision-statement/" data-ga-label="DEI">DEI Vision Statement</a>
+                  <a class="dropdown-item text-wrap" href="/about/directory/" data-ga-label="Departments &amp; Staff">Departments &amp; Staff</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/employment/" data-ga-label="Employment">Employment</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/policies/" data-ga-label="Library Policies">Library Policies</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/committees/" data-ga-label="Library Boards &amp; Committees">Library Boards &amp; Committees</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/supportus/" data-ga-label="Support the Library">Support the Library</a>
+                </div>
+                <div class="dropdown-group col">
+                  <p class="dropdown-group-title">News &amp; Events</p>
+                  <a class="dropdown-item text-wrap" href="/about/news/" data-ga-label="News">News</a>
+                  <a class="dropdown-item text-wrap" href="/about/news-events/events/" data-ga-label="Workshops &amp; Events">Workshops &amp; Events</a>
+                  <a class="dropdown-item text-wrap" href="/about/thelibrary/conferences/" data-ga-label="Conferences">Conferences</a>
+                  <a class="dropdown-item text-wrap" href="/about/news-events/libra" data-ga-label="Libra (newsletter)">Libra Newsletter</a>
+                  <a class="dropdown-item text-wrap" href="/about/news-events/social-media/" data-ga-label="Social Media Directory">Social Media Directory</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="d-md-none mt-2" data-ga-subcategory="Navbar Shortcuts">
+            <ul class="navbar-nav flex-column mobile-shortcuts-list" role="list">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ chat_url }}" data-ga-label="Ask a Librarian">
+                  <i class="fa-solid fa-comment me-2" aria-hidden="true"></i>
+                  Ask a{% if unfriendly_a %}n{% endif %} {{ self.friendly_name }} Librarian
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ hours_page_url }}" data-ga-label="Library Hours">
+                  <i class="fa-solid fa-clock me-2" aria-hidden="true"></i>
+                  Hours
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about/thelibrary/supportus/" data-ga-label="Support the Library">
+                  <i class="fa-solid fa-gift me-2" aria-hidden="true"></i>
+                  Support the Library
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://www.lib.uchicago.edu/mylib-dashboard/" data-ga-label="MyLib Dashboard">
+                  <i class="fa-solid fa-circle-user me-2" aria-hidden="true"></i>
+                  MyLib Dashboard
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

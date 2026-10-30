@@ -3,6 +3,8 @@ title: "Site Chrome"
 description: "The header and footer that frame every Library page, and the markup to reuse them."
 ---
 
+On the Library website itself, the header and footer are `base/templates/base/includes/bs5/header.html` and `footer.html`, included by the public base template `base/templates/base/public_base_bs5.html`.
+
 ## Header
 
 Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. The header at the top of these pages is an instance of it, carrying the documentation's links in place of the Library's; the [Database Finder demo](/design/demos/database-finder/) shows it with the Library's.

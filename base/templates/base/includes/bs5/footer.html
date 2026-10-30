@@ -1,0 +1,91 @@
+{% load static %}
+{% comment %}
+  The public site's footer on the design system (Bootstrap 5): the markup in
+  /design/implementation/site-chrome/, with the links of the current footer.
+  base/includes/footer.html stays as it is: /external-include/ serves it to
+  other sites. voc-button.js adds its feedback link to the list labelled by
+  contact_label, so keep that id.
+{% endcomment %}
+<footer id="footer" role="contentinfo" class="footer" data-ga-category="Footer">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-2 col-footer mb-4" data-ga-subcategory="Contact">
+        <h2 class="footer-heading" id="contact_label">Contact</h2>
+        <ul aria-labelledby="contact_label">
+          <li><a href="/research/help/ask-librarian/ask-contact/" data-ga-label="Contact Us">Contact Us</a></li>
+          <li><a href="/about/directory/?view=department" data-ga-label="Library Departments">Library Departments</a></li>
+          <li><a href="/about/directory/?view=staff" data-ga-label="Staff Directory">Staff Directory</a></li>
+        </ul>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-2 col-footer mb-4" data-ga-subcategory="Information">
+        <h2 class="footer-heading" id="information_for_label">Information for</h2>
+        <ul aria-labelledby="information_for_label">
+          {% if is_law %}
+            <li><a href="http://guides.lib.uchicago.edu/lawfacultyservices" data-ga-label="Faculty">Law Faculty</a></li>
+            <li><a href="http://guides.lib.uchicago.edu/lawstudents" data-ga-label="Students">Law Students</a></li>
+            <li><a href="/law/about/access/" data-ga-label="Visitors">Visiting the Law Library</a></li>
+          {% endif %}
+          <li><a href="/research/help/infofor/accessibility/" data-ga-label="Patrons with Disabilities">Patrons with Disabilities</a></li>
+        </ul>
+
+        <h2 class="footer-heading" id="policies_label">Policies</h2>
+        <ul aria-labelledby="policies_label">
+          <li><a href="/about/thelibrary/policies/" data-ga-label="Library Policies">Library Policies</a></li>
+          <li><a href="/about/thelibrary/policies/privacy/" data-ga-label="Privacy Statement">Privacy Statement</a></li>
+          <li><a href="https://accessibility.uchicago.edu/" data-ga-label="University Accessibility">University Accessibility</a></li>
+        </ul>
+      </div>
+
+      <div class="col-12 col-md-12 col-lg-4 col-footer order-lg-3 order-2 mb-4" data-ga-subcategory="Address">
+        <div class="centerdiv">
+          <a href="https://www.uchicago.edu/" data-ga-label="The University of Chicago">
+            <img alt="The University of Chicago" src="{% static "base/images/unvlogo-white.png" %}" width="150">
+          </a>
+          <p>
+            <span>{{ page_location }}</span>
+            <br>
+            <span>{{ address }}</span>
+          </p>
+          <small>
+            &copy; <span>The University of Chicago</span>
+            <br>
+            <span class="staff-login"><a href="/admin" data-ga-label="Staff Login">Staff Login</a></span>
+          </small>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-2 col-footer order-lg-4 order-1 mb-4" data-ga-subcategory="Libraries">
+        <h2 class="footer-heading" id="library_list_label">Libraries</h2>
+        <ul aria-labelledby="library_list_label">
+          <li><a href="/crerar/" data-ga-label="Crerar">Crerar</a></li>
+          <li><a href="/law/" data-ga-label="D'Angelo Law">D’Angelo Law</a></li>
+          <li><a href="/eck/" data-ga-label="Eckhart">Eckhart</a></li>
+          <li><a href="/mansueto/" data-ga-label="Mansueto">Mansueto</a></li>
+          <li><a href="/spaces/joseph-regenstein-library/" data-ga-label="Regenstein">Regenstein</a></li>
+          <li><a href="/scrc/" data-ga-label="Special Collections">Special Collections</a></li>
+          <li><a href="/swl/" data-ga-label="Social Work">Social Work</a></li>
+        </ul>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-2 col-footer order-lg-5 order-1 mb-4" data-ga-subcategory="Social Media">
+        <h2 class="footer-heading" id="social_media_label">Library Social Media</h2>
+        <ul aria-labelledby="social_media_label">
+          {% if is_law %}
+            <li><a href="https://www.facebook.com/dangelolawlib" data-ga-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Law Library Facebook</a></li>
+            <li><a href="https://twitter.com/dangelolawlib" data-ga-label="Twitter"><i class="fa-brands fa-twitter" aria-hidden="true"></i> Law Twitter</a></li>
+            <li><a href="https://www.instagram.com/dangelolawlib/" data-ga-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Law Instagram</a></li>
+            <li><a href="http://news.lib.uchicago.edu/law/" data-ga-label="Library News"><i class="fa-solid fa-rss" aria-hidden="true"></i> Law Library News</a></li>
+          {% else %}
+            <li><a href="http://www.facebook.com/uchicagolibrary" data-ga-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i> Facebook</a></li>
+            <li><a href="https://twitter.com/UChicagoLibrary" data-ga-label="Twitter"><i class="fa-brands fa-twitter" aria-hidden="true"></i> Twitter</a></li>
+            <li><a href="https://www.instagram.com/uchicagolibrary/" data-ga-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+            <li><a href="http://news.lib.uchicago.edu/" data-ga-label="Library News"><i class="fa-solid fa-rss" aria-hidden="true"></i> Library News</a></li>
+          {% endif %}
+          <li><a href="https://www.youtube.com/user/uchicagolibrary" data-ga-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i> YouTube</a></li>
+          <li><a href="/about/news-events/social-media/" data-ga-label="More Library Accounts"><i class="fa-solid fa-clone" aria-hidden="true"></i> More Library Accounts...</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,150 @@
+{% load render_bundle from webpack_loader %}
+{% load static wagtailuserbar %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% comment %}
+  Base template for public pages on the design system (Bootstrap 5). Page
+  templates move here from base/public_base.html one page type at a time
+  (#1109); the two can't share a page, so this loads no Bootstrap 3 CSS or JS.
+  Breadcrumbs, sidebars and banners arrive with the shared partials (#1113).
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% if self.exclude_from_search_engines %}
+      <meta name="robots" content="noindex" />
+    {% endif %}
+    <title>
+      {% block title %}
+        {% if self.seo_title %}
+          {{ self.seo_title }}
+        {% else %}
+          {{ self.title }}
+        {% endif %}
+      {% endblock %}
+      {% block title_suffix %}
+        {% if has_banner %}
+          {% if branch_title %}
+            - {{ branch_title }}
+          {% endif %}
+        {% endif %}
+      {% endblock %}
+      - The University of Chicago Library
+    </title>
+
+    {% if request.in_preview_panel %}
+      <base target="_blank">
+    {% endif %}
+
+    <meta name="google-site-verification" content="MVKdj1ykLrwrN01_2Y85qg78KiUxrdRYTSFc6TyBkNY" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Library",
+        "url": "{{request.scheme}}://{{request.get_host}}",
+        "logo": "https://www.lib.uchicago.edu/static/base/images/color-logo.png",
+        "name": "{{page_location|escapejs}}",
+        "address": "{{address}}",
+        {% if self.unit.location.location_photo %}
+          {% image self.unit.location.location_photo fill-1000x750-c75 as loc_pic %}
+          "image": "{{self.get_site.root_url}}{{loc_pic.url}}",
+        {% endif %}
+        {% if self.unit.location.phone_number %}
+          "telephone": "{{self.unit.location.phone_number}}",
+        {% endif %}
+        "parentOrganization": "The University of Chicago"
+      }
+    </script>
+    {% block meta %}{% endblock %}
+
+    <link rel="icon" type="image/x-icon" href="https://www.lib.uchicago.edu/web-resources/img/favicon-black.ico">
+    <link rel="stylesheet" href="{% static "design_system/css/main.css" %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="{% static "base/css/mermaid.css" %}">
+    {% block styles %}{% endblock %}
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EWT5B3NZ15"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-EWT5B3NZ15');
+      gtag('set', 'content_group', 'public site');
+    </script>
+  </head>
+
+  <body id="p-{{ self.id }}" class="{{ page_type|slugify }}">
+    <a class="visually-hidden-focusable" href="#content">Skip to main content</a>
+    {% wagtailuserbar %}
+
+    {% if has_alert %}
+      <div class="alert {% if alert_level == "alert-high" %}alert-danger{% elif alert_level == "alert-low" %}alert-warning{% else %}alert-info{% endif %} rounded-0 mb-0" role="alert" data-ga-category="Floating" data-ga-subcategory="Alert Banner">
+        <div class="container-lg">
+          {{ alert_message|richtext }}
+          {% if alert_more_info|striptags %}
+            <a class="alert-link" href="{{ alert_link }}" data-ga-label="More Info...">More info...</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% include "base/includes/bs5/header.html" %}
+
+    <main id="content" tabindex="-1" class="container-md py-5" data-ga-category="Main">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          {% block page_heading %}
+            <h1>{% if object_title %}{{ object_title }}{% else %}{{ self.title }}{% endif %}</h1>
+          {% endblock %}
+          {% block under_h1 %}{% endblock %}
+
+          {% block content %}
+            {% for block in self.body %}
+              {% include_block block %}
+            {% endfor %}
+          {% endblock %}
+
+          {% autoescape off %}
+            {{ index_pages_html }}
+          {% endautoescape %}
+
+          {% if self.cgi_mail_form %}
+            <div id="cgi-mail-form" data-json="{{ self.cgi_mail_form }}" data-thank-you="{{ self.cgi_mail_form_thank_you_text }}" data-cgi-mail="{{ cgi_mail }}" data-item-servlet="{{ item_servlet }}" data-springshare-pp="{{ springshare_pp }}"></div>
+            {% render_bundle 'CGIMailForm' %}
+          {% endif %}
+        </div>
+      </div>
+    </main>
+
+    {% include "base/includes/bs5/footer.html" %}
+
+    <script src="{% static "design_system/js/bootstrap.bundle.min.js" %}"></script>
+    {# jQuery stays until #1118: the scripts below still use it. #}
+    <script src="{% static "base/js/jquery.min.js" %}"></script>
+    <script src="{% static "base/js/voc-button.js" %}"></script>
+    <script src="{% static "base/js/library_website.js" %}"></script>
+    <script src="{% static "base/js/render_hours.js" %}"></script>
+    <script>
+      if (document.querySelector('pre.mermaid')) {
+        var mermaidLib = document.createElement('script');
+        mermaidLib.src = "{% static 'base/js/vendor/mermaid.min.js' %}";
+        mermaidLib.onload = function () {
+          var mermaidInit = document.createElement('script');
+          mermaidInit.src = "{% static 'base/js/Mermaid.js' %}";
+          document.body.appendChild(mermaidInit);
+        };
+        document.body.appendChild(mermaidLib);
+      }
+    </script>
+    <script src="{% static "base/js/jquery.track-everything.js" %}" defer></script>
+
+    {% block extra_scripts %}
+      {# for the libcal "schedule an appointment" button #}
+      <script src="{% static "base/js/libcal_buttons_init.js" %}"></script>
+    {% endblock %}
+    {% block js %}{% endblock %}
+  </body>
+</html>
