@@ -2,9 +2,9 @@ name: Linting
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, '*-website-redesign' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, '*-website-redesign' ]
 
 jobs:
   python-lint:
@@ -44,7 +44,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         cache: 'npm'
 
     - name: Install Node dependencies
@@ -68,7 +68,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         cache: 'npm'
 
     - name: Install Node dependencies
@@ -82,6 +82,39 @@ jobs:
     - name: Check Prettier formatting for SCSS
       run: |
         npx prettier --check "**/*.{css,scss}"
+
+  design-system:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        cache: 'npm'
+
+    - name: Install Node dependencies
+      run: |
+        npm ci
+
+    - name: Build design system
+      run: |
+        npm run build:design-system
+
+    - name: Check committed build outputs are current
+      run: |
+        # Fails when SCSS changed but the compiled CSS or tokens.json
+        # wasn't rebuilt and committed (npm run build:design-system).
+        # git status, unlike git diff, also reports new files the build
+        # wrote but nobody committed.
+        changes="$(git status --porcelain design_system/static/ design_system/data/)"
+        if [ -n "$changes" ]; then
+          echo "$changes"
+          echo "Run npm run build:design-system and commit the result."
+          exit 1
+        fi
 
   template-lint:
     runs-on: ubuntu-latest

@@ -24,4 +24,26 @@ module.exports = {
     'media-feature-range-notation': null,
     'color-function-alias-notation': null,
   },
+  overrides: [
+    {
+      // Design system sources, compiled with Dart Sass rather than libsass.
+      files: ['design_system/scss/**/*.scss'],
+      rules: {
+        // The /design/ token docs parse these comment markers (//!, /// and
+        // bare // paragraph breaks). See design_system/content/contributing/architecture.md.
+        'scss/double-slash-comment-whitespace-inside': null,
+        'scss/comment-no-empty': null,
+        'scss/double-slash-comment-empty-line-before': null,
+        'comment-empty-line-before': null,
+        // Plain-CSS rule. SCSS allows @include before @import, which
+        // main.scss relies on for Bootstrap's banner.
+        'no-invalid-position-at-import-rule': null,
+        // Font names keep their real casing; the token docs display them.
+        'value-keyword-case': [
+          'lower',
+          { ignoreProperties: ['/font-family/'] },
+        ],
+      },
+    },
+  ],
 }

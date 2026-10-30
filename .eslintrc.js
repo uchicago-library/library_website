@@ -38,6 +38,28 @@ module.exports = {
   },
   overrides: [
     {
+      // Node build scripts (npm run build:design-system), never bundled for
+      // the browser, so the browser-oriented syntax restrictions don't apply.
+      files: ['design_system/scripts/**/*.js'],
+      env: {
+        browser: false,
+        node: true,
+      },
+      parserOptions: {
+        sourceType: 'script',
+      },
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          { devDependencies: true },
+        ],
+        'no-restricted-syntax': 'off',
+        'no-continue': 'off',
+        'no-cond-assign': ['error', 'except-parens'],
+        'no-use-before-define': ['error', { functions: false }],
+      },
+    },
+    {
       // Legacy jQuery files - relax modern JS requirements
       files: ['**/static/**/js/**/*.js'],
       excludedFiles: [

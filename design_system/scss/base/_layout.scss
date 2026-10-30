@@ -1,0 +1,8 @@
+// Layout utility classes
+
+/// Secondary column surface, marked by a maroon left edge. Use for supporting
+/// content beside the main column, not for content the page depends on. Typically used inside `.col-lg-4`.
+.sidebar {
+  background-color: $body-tertiary-bg;
+  border-left: 4px solid $primary;
+}

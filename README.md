@@ -188,6 +188,9 @@ LWV_WALKTHROUGH=1 .claude/skills/verify-library-website/bin/lwv node .claude/ski
 
 Walkthrough mode needs a display, and it only pauses in scripts that call `step()`. See [`SKILL.md`](.claude/skills/verify-library-website/SKILL.md) for the details and `lwv help` for every command.
 
+### Design system (Bootstrap 5)
+The UChicago Library Design System lives in `design_system/`: its SCSS, the stylesheets compiled from it, and its documentation, served at `/design/`. It is compiled with Dart Sass from npm, not by Django Compressor, so after editing `design_system/scss/` run `npm run build:design-system` (or `npm run build`, which runs it after webpack) and commit the output. Production deploys run no Node, so the compiled CSS, `bootstrap.bundle.min.js` and `design_system/data/tokens.json` are committed, like the webpack bundles; CI fails if they are stale. The legacy Bootstrap 3 SCSS above stays on Django Compressor until its templates are migrated. See `design_system/README.md`.
+
 ## Optional Configuration
 
 ### Configure /etc/hosts
