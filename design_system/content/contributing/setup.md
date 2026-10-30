@@ -15,7 +15,7 @@ After any change under `design_system/scss/`, rebuild and commit the output:
 npm run build:design-system
 ```
 
-This compiles `main.css`, `main-libapps.css` and `meta.css` into `design_system/static/design_system/css/`, copies Bootstrap's JavaScript beside them, and regenerates `design_system/data/tokens.json` for the tokens page. `npm run build` runs it too, after the webpack build.
+This compiles `main.css`, `main-libapps.css` and `meta.css` into `design_system/static/design_system/css/`, copies Bootstrap's JavaScript beside them, and regenerates `design_system/data/tokens.json` for the tokens page. The site's `npm run build` does not run it, so a mistake here cannot fail the site's build. If you forget, CI's `design-system` check fails the pull request until the output is rebuilt and committed.
 
 While editing SCSS, recompile on every save instead:
 
@@ -33,7 +33,6 @@ Start the library website's development server and open `http://localhost:8000/d
 
 | Command | Description |
 | --- | --- |
-| `npm run build` | The webpack build, then `build:design-system` |
 | `npm run build:design-system` | Compile the stylesheets, copy Bootstrap's JavaScript, regenerate `tokens.json` |
 | `npm run build:design-system:css` | Compile the stylesheets only |
 | `npm run build:design-system:tokens` | Regenerate `tokens.json` only |

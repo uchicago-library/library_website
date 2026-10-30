@@ -1,6 +1,7 @@
 import json
 import re
 
+from django.conf import settings
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
@@ -8,6 +9,9 @@ from . import views
 from .urls import SEGMENT
 
 INTERNAL_LINK = re.compile(r'href="(/design/[^"#?]*)')
+SCRIPT = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.S | re.I)
+INLINE_HANDLER = re.compile(r"<[^>]*\son[a-z]+\s*=", re.I)
+JAVASCRIPT_URL = re.compile(r"""<[^>]*=\s*["']?\s*javascript:""", re.I)
 
 
 class ContentFilesTest(SimpleTestCase):
@@ -87,6 +91,22 @@ class DesignSystemTest(TestCase):
                 checked.add(href)
                 with self.subTest(page=url, href=href):
                     self.get(href)
+
+    def test_no_page_runs_inline_or_off_site_script(self):
+        # Pages are served from the site's own origin, so script on them runs
+        # with a signed-in staff member's session. See Styling Springshare
+        # Pages for why the database finder's copy of Springshare's is removed.
+        for url in [page["url"] for page in self.pages] + self.html_pages:
+            html = self.get(url)
+            with self.subTest(url=url):
+                for attrs, body in SCRIPT.findall(html):
+                    src = re.search(r'\bsrc="([^"]*)"', attrs)
+                    self.assertTrue(src, f"inline <script>: {body.strip()[:60]}")
+                    self.assertTrue(
+                        src[1].startswith(settings.STATIC_URL), f"off-site {src[1]}"
+                    )
+                self.assertNotRegex(html, INLINE_HANDLER)
+                self.assertNotRegex(html, JAVASCRIPT_URL)
 
     def test_llms_txt_lists_every_page(self):
         text = self.get("/design/llms.txt")

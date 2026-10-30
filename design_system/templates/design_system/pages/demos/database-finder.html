@@ -20,23 +20,10 @@
 
     <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/css3.28.0/lg-public-bs5.min.css"> {# db finder version #}
 
-    <script type="text/javascript" src="https://static-assets-us.libguides.com/web/jquery/js/jquery-3.7.1.min.js"></script>
-    <script>
-      jQuery(document).ready(function () {
-        var s_lg_guide_name = jQuery('#s-lg-guide-name');
-        if (s_lg_guide_name.length) {
-          if (jQuery.trim(s_lg_guide_name.text()) === '') {
-            s_lg_guide_name.remove();
-          }
-        }
-      });
-    </script>
-
-    <script type="text/javascript" src="https://static-assets-us.libguides.com/web/js3.27.3/lg-public-bs5.min.js"></script> {# db finder version #}
+    {# Springshare's scripts are left out: see Styling Springshare Pages. The design system's Bootstrap stands in for collapse and dropdowns. #}
+    <script src="{% static 'design_system/js/bootstrap.bundle.min.js' %}" defer></script>
 
     <!-- %%% Database Finder Specific -->
-    <!-- <script src="https://static-assets-us.libguides.com/web/select2/current/js/select2.min.js"></script> -->
-    <!-- <script src="https://static-assets-us.libguides.com/web/js3.27.3/springshare.select2.min.js"></script> -->
     <link rel="stylesheet" href="https://static-assets-us.libguides.com/web/select2/current/css/select2.min.css" />
 
     <!-- %%%% Guide Specific -->
@@ -45,24 +32,6 @@
     <link href="{% static 'design_system/css/main-libapps.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://guides.lib.uchicago.edu/lookfeel.css">
 
-    {# Sprinshare analytics. Not needed. #}
-    <!-- <script src="https://static-assets-us.libguides.com/web/js/sa.min.js?3116"></script> --> 
-
-    <script>
-        // Enable tooltips.
-      jQuery(function () {
-        try {
-          springSpace.UI.initPopOvers(true);
-          jQuery(".az-bs-tooltip").tooltip();
-        } catch (e) { }
-      });
-      jQuery(document).ready(function () {
-        springSpace.springTrack.trackPage({ _st_type_id: '1', _st_guide_id: '1241077', _st_page_id: '9082320' });
-      });
-      jQuery(document).ready(function () {
-        handleScroll();
-      });
-    </script>
 
 
   </head>
@@ -566,7 +535,7 @@
 
 
 
-            <form role="search" onsubmit="springSpace.azPublicObj.filterAzBySearch(1951); return false;">
+            <form role="search">
               <div class="form-group">
                 <input type="text" class="s-lg-az-search form-control" maxlength="260" placeholder="Database Title / Keyword" aria-label="Search database by title or keyword">
               </div>
@@ -1259,21 +1228,11 @@
               <a class="collapsible collapsed az-toggle me-auto" data-bs-toggle="collapse" href="#az-public-mobile-filters-collapse-default" aria-expanded="false" aria-controls="az-public-mobile-filters-collapse-default">Show More Filters</a>
 
 
-              <button class="btn btn-primary ms-auto" type="submit" onclick="springSpace.azPublicObj.filterAzBySearch(1951); return false;">
+              <button class="btn btn-primary ms-auto" type="submit">
                 <i class="fa fa-fw fa-magnifying-glass"></i> Search
               </button>
             </div>
           </div>
-          <script>
-            jQuery('#az-public-mobile-filters-default .az-toggle.me-auto').on('click', function () {
-              var item = jQuery(this);
-              if (item.hasClass('collapsed')) {
-                item.text('Show More Filters');
-              } else {
-                item.text('Show Fewer Filters');
-              }
-            });
-          </script>
           <div class="row">
             <div class="col mb-4 mx-4 mt-2">
 
@@ -1463,7 +1422,7 @@
                             </div>
                             <div class="col-md-2 d-flex flex-grow-1 justify-content-around align-items-center form-group">
                               <div class="d-flex flex-row justify-content-around flex-grow-1">
-                                <button class="btn btn-default s-lg-az-reset" type="button" onclick="springSpace.azList.reset();" style="">
+                                <button class="btn btn-default s-lg-az-reset" type="button" style="">
                                   Clear Filters
                                 </button>
                                 <button class="btn btn-primary flex-grow-1" style="max-width:75%" type="submit" aria-label="Submit for Search Results">
@@ -1498,7 +1457,7 @@
 
 
 
-            <form role="search" onsubmit="springSpace.azPublicObj.filterAzBySearch(1951); return false;" data-gtm-form-interact-id="0">
+            <form role="search" data-gtm-form-interact-id="0">
               <div class="form-group">
                 <input type="text" class="s-lg-az-search form-control" maxlength="260" placeholder="Database Title / Keyword" aria-label="Search database by title or keyword" data-gtm-form-interact-field-id="0">
               </div>
@@ -1645,21 +1604,11 @@
               <a class="collapsible az-toggle me-auto" data-bs-toggle="collapse" href="#az-public-mobile-filters-collapse-default" aria-expanded="true" aria-controls="az-public-mobile-filters-collapse-default">Show Fewer Filters</a>
 
 
-              <button class="btn btn-primary ms-auto" type="submit" onclick="springSpace.azPublicObj.filterAzBySearch(1951); return false;">
+              <button class="btn btn-primary ms-auto" type="submit">
                 <img src="/web/assets/media/icons/duotune/general/gen021.svg" role="presentation" alt=""> Search
               </button>
             </div>
           </div>
-          <script>
-            jQuery('.az-toggle').click(function () {
-              var item = jQuery(this);
-              if (item.hasClass('collapsed')) {
-                item.text('Show More Filters');
-              } else {
-                item.text('Show Fewer Filters');
-              }
-            });
-          </script>
           <div class="row">
             <div class="col mb-4 mx-4 mt-2">
 
@@ -1683,7 +1632,7 @@
 
 
 
-                  <form role="search" onsubmit="springSpace.azPublicObj.filterAzBySearch(1951); return false;">
+                  <form role="search">
                     <div class="form-group">
                       <input type="text" class="s-lg-az-search form-control" maxlength="260" placeholder="Database Title / Keyword" aria-label="Search database by title or keyword">
                     </div>
@@ -1828,21 +1777,11 @@
 
                     <button class="btn btn-light me-auto" data-bs-dismiss="modal" type="button"> Cancel </button>
 
-                    <button class="btn btn-primary ms-auto" type="submit" onclick="springSpace.azPublicObj.filterAzBySearch(1951); return false;">
+                    <button class="btn btn-primary ms-auto" type="submit">
                       <img src="/web/assets/media/icons/duotune/general/gen021.svg" role="presentation" alt=""> Search
                     </button>
                   </div>
                 </div>
-                <script>
-                  jQuery('.az-toggle').click(function () {
-                    var item = jQuery(this);
-                    if (item.hasClass('collapsed')) {
-                      item.text('Show More Filters');
-                    } else {
-                      item.text('Show Fewer Filters');
-                    }
-                  });
-                </script>
               </div>
             </div>
           </div>
@@ -2141,7 +2080,7 @@
                 </div>
               </div>
               <div class="lazy-load-link text-center">
-                <a class="btn btn-primary" href="javascript:void(0)">Load More Databases</a>
+                <a class="btn btn-primary" href="#">Load More Databases</a>
               </div>
             </div>
             <div id="s-lg-az-pager" class="pad-right-sm pad-top-med"></div>
@@ -2160,14 +2099,14 @@
                     <div class="accordion-body">
                       <div class="d-flex justify-content-start az-helpful-links-row">
                         <div class="flex-fill">
-                          <a href="https://answers.lib.uchicago.edu/form?queue_id=3123" target="_blank" onclick="return springSpace.springTrack.trackLink({_st_inc_return: this,link: this,_st_type_id: '46',_st_setting_id: '20279'});">
+                          <a href="https://answers.lib.uchicago.edu/form?queue_id=3123" target="_blank">
                             Report a Problem
                             <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span>                </a>
                         </div>
                       </div>
                       <div class="d-flex justify-content-start az-helpful-links-row">
                         <div class="flex-fill">
-                          <a href="https://www.lib.uchicago.edu/ask" target="_blank" onclick="return springSpace.springTrack.trackLink({_st_inc_return: this,link: this,_st_type_id: '46',_st_setting_id: '84384'});">
+                          <a href="https://www.lib.uchicago.edu/ask" target="_blank">
                             Ask a Librarian
                             <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span>                </a>
                         </div>
@@ -2195,7 +2134,7 @@
                       <div class="mb-4">
                         <div class="d-flex justify-content-start">
                           <div class="flex-fill">
-                            <a href="https://www.lib.uchicago.edu/h/heinamnom" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84982578',_st_inc_return: this});" data-landing-page="">American Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                            <a href="https://www.lib.uchicago.edu/h/heinamnom" target="_blank" data-landing-page="">American Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                             <div class="az-flags ms-0 me-2">
                               <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2212,7 +2151,7 @@
                       <div class="mb-4">
                         <div class="d-flex justify-content-start">
                           <div class="flex-fill">
-                            <a href="https://www.lib.uchicago.edu/h/but" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85324282',_st_inc_return: this});" data-landing-page="">Britain Under Threat: Civil Defence in the Era of Total War, 1914-1989<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                            <a href="https://www.lib.uchicago.edu/h/but" target="_blank" data-landing-page="">Britain Under Threat: Civil Defence in the Era of Total War, 1914-1989<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                             <div class="az-flags ms-0 me-2">
                               <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2229,7 +2168,7 @@
                       <div class="mb-4">
                         <div class="d-flex justify-content-start">
                           <div class="flex-fill">
-                            <a href="https://www.lib.uchicago.edu/h/heinclp" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84982496',_st_inc_return: this});" data-landing-page="">Case Law Premium (powered by CourtListener)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                            <a href="https://www.lib.uchicago.edu/h/heinclp" target="_blank" data-landing-page="">Case Law Premium (powered by CourtListener)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                             <div class="az-flags ms-0 me-2">
                               <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2246,7 +2185,7 @@
                       <div class="mb-4">
                         <div class="d-flex justify-content-start">
                           <div class="flex-fill">
-                            <a href="https://www.lib.uchicago.edu/h/cppdww2" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '76672365',_st_inc_return: this});" data-landing-page="">Censorship: Policy and Practice During the Second World War<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                            <a href="https://www.lib.uchicago.edu/h/cppdww2" target="_blank" data-landing-page="">Censorship: Policy and Practice During the Second World War<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                             <div class="az-flags ms-0 me-2">
                               <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2263,7 +2202,7 @@
                       <div class="mb-4">
                         <div class="d-flex justify-content-start">
                           <div class="flex-fill">
-                            <a href="http://www.lib.uchicago.edu/h/capa" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '67170673',_st_inc_return: this});" data-landing-page="">Central Asia, Persia and Afghanistan, 1834‐1949 <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                            <a href="http://www.lib.uchicago.edu/h/capa" target="_blank" data-landing-page="">Central Asia, Persia and Afghanistan, 1834‐1949 <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                             <div class="az-flags ms-0 me-2">
                               <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2282,7 +2221,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/brillcclc" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85125622',_st_inc_return: this});" data-landing-page="">Climate Change and Law Collection<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/brillcclc" target="_blank" data-landing-page="">Climate Change and Law Collection<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2299,7 +2238,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/dnda" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85399177',_st_inc_return: this});" data-landing-page="">Daily News (Tanzania) Digital Archive, 1945-1975<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/dnda" target="_blank" data-landing-page="">Daily News (Tanzania) Digital Archive, 1945-1975<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2316,7 +2255,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/brillhrei" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85125528',_st_inc_return: this});" data-landing-page="">Economy and Inequality (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/brillhrei" target="_blank" data-landing-page="">Economy and Inequality (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2333,7 +2272,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/heinengnom" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84982592',_st_inc_return: this});" data-landing-page="">English Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/heinengnom" target="_blank" data-landing-page="">English Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2350,7 +2289,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/gbfocp" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85554920',_st_inc_return: this});" data-landing-page="">Germany, 1920-1969: British Foreign Office Confidential Print<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/gbfocp" target="_blank" data-landing-page="">Germany, 1920-1969: British Foreign Office Confidential Print<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2367,7 +2306,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/girlhood" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85276357',_st_inc_return: this});" data-landing-page="">Girlhood: Magazines and Print Culture. Module I &amp; II<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/girlhood" target="_blank" data-landing-page="">Girlhood: Magazines and Print Culture. Module I &amp; II<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2384,7 +2323,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/guangming" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85312142',_st_inc_return: this});" data-landing-page="">Guangming ribao, 1949-2018 光明日报<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/guangming" target="_blank" data-landing-page="">Guangming ribao, 1949-2018 光明日报<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2401,7 +2340,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/hein_amworker" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '81211548',_st_inc_return: this});" data-landing-page="">HeinOnline: Labor and Employment: The American Worker<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/hein_amworker" target="_blank" data-landing-page="">HeinOnline: Labor and Employment: The American Worker<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2418,7 +2357,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/hindi-cinema" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '76450445',_st_inc_return: this});" data-landing-page="">Hindi Cinema<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/hindi-cinema" target="_blank" data-landing-page="">Hindi Cinema<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2435,7 +2374,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/galehodi" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84640906',_st_inc_return: this});" data-landing-page="">History of Disabilities: Disabilities in Society, Seventeenth to Twentieth Century<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/galehodi" target="_blank" data-landing-page="">History of Disabilities: Disabilities in Society, Seventeenth to Twentieth Century<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2452,7 +2391,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/iepda" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85420410',_st_inc_return: this});" data-landing-page="">Independence Evening Post (Zi Li Wan Bao, 自立晚報), 1947-1995<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/iepda" target="_blank" data-landing-page="">Independence Evening Post (Zi Li Wan Bao, 自立晚報), 1947-1995<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2469,7 +2408,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/heinirnom" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84982610',_st_inc_return: this});" data-landing-page="">Irish Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/heinirnom" target="_blank" data-landing-page="">Irish Nominative Reports<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2486,7 +2425,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/ktda" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85399319',_st_inc_return: this});" data-landing-page="">Korea Times Digital Archive, 1992-2024<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/ktda" target="_blank" data-landing-page="">Korea Times Digital Archive, 1992-2024<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2503,7 +2442,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/lhda" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85554127',_st_inc_return: this});" data-landing-page="">La Hora Digital Archive, 1984–1987<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/lhda" target="_blank" data-landing-page="">La Hora Digital Archive, 1984–1987<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2520,7 +2459,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/lahus" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85281173',_st_inc_return: this});" data-landing-page="">Latin American Histories in the United States<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/lahus" target="_blank" data-landing-page="">Latin American Histories in the United States<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2537,7 +2476,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/wnalatam2" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84923862',_st_inc_return: this});" data-landing-page="">Latin American Newspapers, Series 2<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/wnalatam2" target="_blank" data-landing-page="">Latin American Newspapers, Series 2<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2554,7 +2493,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/medlitaloud" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85427190',_st_inc_return: this});" data-landing-page="">Medieval Literature Aloud<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/medlitaloud" target="_blank" data-landing-page="">Medieval Literature Aloud<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2571,7 +2510,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/musicid" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85281915',_st_inc_return: this});" data-landing-page="">Music ID<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/musicid" target="_blank" data-landing-page="">Music ID<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2588,7 +2527,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/heinnmc" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84982528',_st_inc_return: this});" data-landing-page="">National Moot Court Competition<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/heinnmc" target="_blank" data-landing-page="">National Moot Court Competition<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2605,7 +2544,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/heinoas" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85743796',_st_inc_return: this});" data-landing-page="">Organization of American States (OAS)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/heinoas" target="_blank" data-landing-page="">Organization of American States (OAS)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2622,7 +2561,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/ore_scitechsoc" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85535550',_st_inc_return: this});" data-landing-page="">Oxford Research Encyclopedia of Science, Technology, and Society <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/ore_scitechsoc" target="_blank" data-landing-page="">Oxford Research Encyclopedia of Science, Technology, and Society <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2639,7 +2578,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/ore_sociology" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85535671',_st_inc_return: this});" data-landing-page="">Oxford Research Encyclopedia of Sociology<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/ore_sociology" target="_blank" data-landing-page="">Oxford Research Encyclopedia of Sociology<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2656,7 +2595,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/pam" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85552880',_st_inc_return: this});" data-landing-page="">Pan-African Magazines<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/pam" target="_blank" data-landing-page="">Pan-African Magazines<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2673,7 +2612,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://proxy-redirector.lib.uchicago.edu/login?url=https%3A%2F%2Ftrials.proquest.com%2Faccess%3Ftoken%3DdTSnuCxeaMAVThvWrbtGVjfFV" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84593009',_st_inc_return: this});" data-landing-page="">ProQuest One Visual Art and Design<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://proxy-redirector.lib.uchicago.edu/login?url=https%3A%2F%2Ftrials.proquest.com%2Faccess%3Ftoken%3DdTSnuCxeaMAVThvWrbtGVjfFV" target="_blank" data-landing-page="">ProQuest One Visual Art and Design<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-trial badge rounded-pill">
@@ -2692,7 +2631,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/rppgb" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85324150',_st_inc_return: this});" data-landing-page="">Radicalism and Popular Protest in Georgian Britain, c. 1714-1837<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/rppgb" target="_blank" data-landing-page="">Radicalism and Popular Protest in Georgian Britain, c. 1714-1837<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2709,7 +2648,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/groam" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '84425260',_st_inc_return: this});" data-landing-page="">Religions of America<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/groam" target="_blank" data-landing-page="">Religions of America<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2726,7 +2665,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/brillhrcr" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85125481',_st_inc_return: this});" data-landing-page="">Rights of the Child, Women’s Rights, Reproductive Rights, LGBTQ+ and Gender (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/brillhrcr" target="_blank" data-landing-page="">Rights of the Child, Women’s Rights, Reproductive Rights, LGBTQ+ and Gender (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2743,7 +2682,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/brillrose" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85125426',_st_inc_return: this});" data-landing-page="">Rosenne's Law and Practice of the International Court: 1920-2015, Fifth Edition<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/brillrose" target="_blank" data-landing-page="">Rosenne's Law and Practice of the International Court: 1920-2015, Fifth Edition<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2760,7 +2699,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/snl" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '76653402',_st_inc_return: this});" data-landing-page="">Scottish nationalist leaflets, 1844-1973<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/snl" target="_blank" data-landing-page="">Scottish nationalist leaflets, 1844-1973<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2777,7 +2716,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/stt" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '76672114',_st_inc_return: this});" data-landing-page="">Slavery Through Time: from Enslavers to Abolitionists, 1675-1865<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/stt" target="_blank" data-landing-page="">Slavery Through Time: from Enslavers to Abolitionists, 1675-1865<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2794,7 +2733,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="http://www.lib.uchicago.edu/h/spocasia1" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '72094949',_st_inc_return: this});" data-landing-page="">State Papers Online Colonial: Asia<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="http://www.lib.uchicago.edu/h/spocasia1" target="_blank" data-landing-page="">State Papers Online Colonial: Asia<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2811,7 +2750,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/brillhrtd" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85125571',_st_inc_return: this});" data-landing-page="">Technology, Democracy and Society (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/brillhrtd" target="_blank" data-landing-page="">Technology, Democracy and Society (Human Rights Documents)<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2828,7 +2767,7 @@
                         <div class="mb-4">
                           <div class="d-flex justify-content-start">
                             <div class="flex-fill">
-                              <a href="https://www.lib.uchicago.edu/h/wam" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '16',_st_content_id: '85326978',_st_inc_return: this});" data-landing-page="">West Africa Magazine, 1917-2003<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
+                              <a href="https://www.lib.uchicago.edu/h/wam" target="_blank" data-landing-page="">West Africa Magazine, 1917-2003<i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span></a>
 
                               <div class="az-flags ms-0 me-2">
                                 <span class="margin-left-sm s-lg-az-result-badge-new badge rounded-pill">
@@ -2924,7 +2863,7 @@
 
                                     <div id="s-lg-content-69257841" class="">
                                       <span>
-                                        <a href="https://www.lib.uchicago.edu/about/thelibrary/policies/eresources/" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '2',_st_content_id: '69257841',_st_inc_return: this});">
+                                        <a href="https://www.lib.uchicago.edu/about/thelibrary/policies/eresources/" target="_blank">
                                           Library Policy on Acceptable Use of Electronic Resources <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span>             </a>
 
                                       </span>
@@ -2945,7 +2884,7 @@
 
                                     <div id="s-lg-content-69257874" class="">
                                       <span>
-                                        <a href="https://its.uchicago.edu/acceptable-use-policy/" target="_blank" onclick="return springSpace.springTrack.trackLink({link: this,_st_type_id: '2',_st_content_id: '69257874',_st_inc_return: this});">
+                                        <a href="https://its.uchicago.edu/acceptable-use-policy/" target="_blank">
                                           University Policy on Information Technology Use and Access <i class="fa fa-fw fa-external-link " aria-hidden="true" title="This link opens in a new window"></i><span class="sr-only">This link opens in a new window</span>             </a>
 
                                       </span>

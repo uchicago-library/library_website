@@ -45,7 +45,8 @@ The overrides target LibGuides specifically: guide pages, the A–Z database fin
 
 The reproduction of Springshare's own output is the [Database Finder demo](/design/demos/database-finder/), one self-contained file at `design_system/templates/design_system/pages/demos/database-finder.html`. It exists so this stylesheet can be tested against the markup it actually has to style, and it loads `main-libapps.css` rather than `main.css`. A guide page, or the LibGuides home page, would cover more of the stylesheet, and could replace it.
 
-Two rules apply:
+Three rules apply:
 
 - The markup in that reproduction is Springshare's. Accessibility findings there are reported as warnings and must not be resolved by editing the reproduction — see [Conventions](/design/contributing/conventions/).
+- Its scripts are not kept. Springshare's JavaScript, inline `<script>` blocks, `on…` attributes and `javascript:` links are removed whenever the markup is copied in. The page is served from `www.lib.uchicago.edu`, where their code would run with the session of any signed-in staff member, and it would count visits in the real guide's statistics. The design system's `bootstrap.bundle.min.js` stands in for collapse and dropdowns. The tests fail if any page under `/design/` loads a script from another site, or runs one inline.
 - Layouts we propose ourselves are mockups, not reproductions. They live in the [playground](https://github.com/uchicago-library/ucld) and are held to the full accessibility standard.
