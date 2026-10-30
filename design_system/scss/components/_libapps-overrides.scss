@@ -1,0 +1,688 @@
+// LibApps platform-specific overrides shared across mockups.
+
+// =============================================================================
+// GLOBAL TOKEN OVERRIDES
+// =============================================================================
+
+// Override Bootstrap runtime CSS variables from LibApps with UChicago brand tokens.
+:root {
+  --bs-primary: #{$primary};
+  --bs-primary-rgb: #{to-rgb($primary)};
+  --bs-secondary: #{$secondary};
+  --bs-secondary-rgb: #{to-rgb($secondary)};
+  --bs-success: #{$success};
+  --bs-success-rgb: #{to-rgb($success)};
+  --bs-info: #{$info};
+  --bs-info-rgb: #{to-rgb($info)};
+  --bs-warning: #{$warning};
+  --bs-warning-rgb: #{to-rgb($warning)};
+  --bs-danger: #{$danger};
+  --bs-danger-rgb: #{to-rgb($danger)};
+  --bs-light: #{$light};
+  --bs-light-rgb: #{to-rgb($light)};
+  --bs-dark: #{$dark};
+  --bs-dark-rgb: #{to-rgb($dark)};
+}
+
+$theme-color-overrides: (
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark,
+);
+
+@each $name, $color in $theme-color-overrides {
+  .btn-#{$name} {
+    --bs-btn-bg: var(--bs-#{$name});
+    --bs-btn-border-color: var(--bs-#{$name});
+    --bs-btn-hover-bg: #{shade-color($color, 15%)};
+    --bs-btn-hover-border-color: #{shade-color($color, 20%)};
+    --bs-btn-active-bg: #{shade-color($color, 20%)};
+    --bs-btn-active-border-color: #{shade-color($color, 25%)};
+    --bs-btn-disabled-bg: var(--bs-#{$name});
+    --bs-btn-disabled-border-color: var(--bs-#{$name});
+  }
+}
+
+:root,
+body {
+  --bs-body-font-family: #{$font-family-sans-serif};
+  --bs-body-font-size: 1rem;
+
+  font-family: var(--bs-body-font-family) !important;
+}
+
+// Force UChicago Sans Serif across LibApps text-bearing elements.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+li,
+dt,
+dd,
+small,
+strong,
+em,
+blockquote,
+cite,
+figcaption,
+label,
+legend,
+caption,
+th,
+td,
+input,
+textarea,
+select,
+button {
+  font-family: var(--bs-body-font-family) !important;
+}
+// do not override font-awesome stuff
+.fa {
+  // stylelint-disable-next-line font-family-no-missing-generic-family-keyword -- icon font; a generic fallback would draw the wrong glyphs
+  font-family: FontAwesome !important;
+}
+
+// =============================================================================
+// GLOBAL LAYOUT & COMPONENTS
+// =============================================================================
+
+// Override the increased container limit established by Springshare.
+.container {
+  max-width: 1320px !important;
+}
+
+// Override all dashed borders
+.az-item,
+.az-icon-legend-row,
+.az-helpful-links-row,
+.az-subject-guides-row,
+.az-landing-bottom,
+.blog-public-custom-sidebar .custom-border-bottom:not(:last-of-type),
+.ck-content .page-break::after {
+  border-bottom-style: var(--bs-border-style);
+  border-bottom-color: var(--bs-border-color);
+}
+
+.az-landing-info,
+.alert-border-dashed,
+.az-landing-page-alert,
+.az-page-alert,
+.az-entry-collapsible-box,
+.toast-success-background {
+  border-style: var(--bs-border-style);
+  border-color: var(--bs-border-color);
+}
+
+// Embedded LibChat blocks
+.lci_chat_load {
+  border-radius: $border-radius-sm;
+  padding: 4px;
+  background-color: var(--bs-body-bg) !important;
+}
+
+// Footer
+#s-lib-footer-public {
+  max-width: unset !important;
+  padding: 1rem;
+  color: $light;
+}
+
+h2.footer-heading {
+  color: $light;
+}
+
+.footer {
+  font-size: 0.9rem;
+
+  a {
+    color: $white !important;
+  }
+}
+
+// Scroll to top
+#s-lib-scroll-top {
+  span.fa-stack.fa-lg {
+    font-size: 1.1rem;
+  }
+
+  .fa.fa-angle-double-up.fa-stack-1x {
+    color: $white;
+    bottom: unset !important;
+  }
+}
+
+// Box styles (shared across all page types)
+.s-lib-box {
+  border: none;
+  box-shadow: none;
+}
+
+// Profile on subjects page
+.s-lib-profile-image img {
+  background-color: var(--bs-body-bg);
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  max-width: 160px;
+  border-radius: 8px;
+}
+
+// *Restore standard gutter on guides/profiles pages
+@media (max-width: 991.98px) {
+  // works on /search /subject /profiles
+  #s-lib-public-main,
+  #s-lib-public-header {
+    padding-right: calc(var(--bs-gutter-x) * 1);
+    padding-left: calc(var(--bs-gutter-x) * 1);
+  }
+}
+
+@media (max-width: 576px) {
+  // works on /search /subject /profiles
+  #s-lib-public-main,
+  #s-lib-public-header {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+  }
+}
+
+// Force search bar in search page to be visible even in small screens
+#s-lg-srch-local {
+  nav.navbar {
+    background-color: transparent !important;
+    border: none !important;
+  }
+  .navbar div#s-lg-srch-nav-1.navbar-collapse {
+    display: block !important;
+    form#s-lg-srch-form input {
+      border-top-left-radius: 50rem !important;
+      border-bottom-left-radius: 50rem !important;
+    }
+  }
+  .navbar-expand-md button.navbar-toggler.pad-right-med.navbar-toggler {
+    display: none !important;
+  }
+}
+
+// rounded corners on the prevailing search form
+form#s-lg-guide-search-form {
+  input#s-lg-guide-search-terms {
+    border-top-left-radius: 50rem !important;
+    border-bottom-left-radius: 50rem !important;
+  }
+  button {
+    border-top-right-radius: 50rem !important;
+    border-bottom-right-radius: 50rem !important;
+  }
+}
+
+// =============================================================================
+// DATABASE FINDER
+// =============================================================================
+
+// Header spacing
+#s-lib-public-header {
+  margin-top: 0.4rem;
+}
+
+// Search bar background (also used by guides search via #s-lg-srch-local)
+#s-lg-srch-local,
+#az-search-col-1 {
+  nav.navbar {
+    background-color: var(--bs-body-bg);
+  }
+}
+
+// Beta badge on the page title
+#database-finder-body {
+  h1#s-lib-public-header-title {
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: 'beta';
+      display: block;
+      position: absolute;
+      top: 0.5rem;
+      right: -52px;
+      width: 50px;
+      height: 24px;
+      color: $primary;
+      font-size: 0.8rem;
+      border: 2px dashed $primary;
+      border-radius: 8px;
+      text-align: center;
+      padding: 2px;
+      transform: rotate(12deg);
+    }
+  }
+}
+
+// Search inputs — normalize font size and padding from LibApps defaults
+// .select2-container--bootstrap5 .select2-selection--multiple:not(.form-select-sm):not(.form-select-lg),
+.select2-container--bootstrap5
+  .select2-search.select2-search--inline
+  .select2-search__field,
+#col-search input,
+.col-subjects input,
+.col-types input,
+.col-vendors input {
+  font-size: 1rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+// Magnifying glass icon via Font Awesome ::before on parent wrappers (desktop + mobile)
+#col-search .d-flex.justify-content-start,
+.az-public-mobile-filters .form-group {
+  position: relative;
+
+  &::before {
+    content: '\f002';
+    // stylelint-disable-next-line font-family-no-missing-generic-family-keyword -- icon font; a generic fallback would draw the wrong glyphs
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $input-placeholder-color;
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  input.s-lg-az-search {
+    padding-left: 2rem !important;
+  }
+}
+i.fa.fa-angle-down.me-2.fs-4::before {
+  font-size: 1.1rem;
+}
+
+// Remove "Recommended Databases" link (desktop and mobile)
+#s-lg-az-filter-cols > div:nth-child(3),
+div#s-lib-public-main-searchbar > section > div:nth-child(3) {
+  display: none !important;
+}
+
+// Filter bar layout and brand colors
+#az-search-col-1 {
+  padding: 0;
+  #s-lg-az-filters {
+    padding: 1rem;
+    background-color: var(--bs-body-bg);
+
+    #az-search-form {
+      #s-lg-az-filter-cols {
+        div.row {
+          padding: 0;
+          border-radius: 100px;
+          border: 1px solid var(--bs-border-color);
+
+          & > div:not(:last-child) {
+            border-right: 1px solid var(--bs-border-color);
+          }
+
+          i.fa.fa-angle-down.me-2.fs-4 {
+            color: $body-secondary-color;
+          }
+        }
+      }
+    }
+  }
+
+  // A-Z index active letter
+  #s-lg-az-index .active-alpha {
+    color: $primary;
+    border: 1px solid $primary;
+  }
+
+  // Smaller collapsible icons on result cards
+  .az-item .az-toggle {
+    .az-collapsible {
+      background: var(--bs-body-bg);
+
+      & > img {
+        width: 1rem;
+      }
+    }
+  }
+
+  .az-item button.az-toggle,
+  .az-item h4.az-toggle {
+    margin: 0.5rem 1rem 0.5rem 0;
+
+    .az-collapsible {
+      & > img,
+      & > svg {
+        width: 1.1rem;
+        height: 1.1rem;
+      }
+    }
+  }
+}
+
+// Mobile filter bar
+#s-lib-public-main-searchbar {
+  #az-public-mobile-filters-default {
+    background-color: var(--bs-body-bg);
+    border: none !important;
+    padding: 0;
+
+    input.s-lg-az-search {
+      border-radius: 100px !important;
+    }
+  }
+}
+
+// Search buttons
+#s-lg-az-filter-cols button,
+button.btn.btn-default.s-lg-az-reset {
+  padding: $btn-padding-y $btn-padding-x !important;
+  background: var(--bs-body-bg) !important;
+}
+
+.az-landing .btn.btn-primary,
+#s-lib-public-main-searchbar button.btn.btn-primary,
+#sb-search-col-1 button.btn.btn-primary {
+  padding: $btn-padding-y $btn-padding-x !important;
+  background: var(--bs-primary) !important;
+
+  &:hover {
+    background: #{shade-color($primary, 15%)} !important;
+  }
+}
+
+// Fix flex direction on button group
+.d-flex.flex-row.justify-content-around.flex-grow-1 {
+  flex-direction: column !important;
+}
+
+// Recommended Databases link
+// stylelint-disable-next-line no-duplicate-selectors -- grouped by feature; merging with the mobile filter bar block would reorder the cascade
+#s-lib-public-main-searchbar {
+  a.recommended-list {
+    font-size: 0.9rem !important;
+    font-weight: 400 !important;
+  }
+}
+
+// Reduce gap between header and search bar on the A-Z landing page
+#s-lg-guide-header {
+  margin-top: 0.5rem;
+}
+
+// Reduce gap between item name and additional info
+.az-item > .mt-3 {
+  margin-top: 0 !important;
+}
+
+// Collapsible detail boxes (border set globally above)
+.az-entry-collapsible-box {
+  background: transparent;
+  padding: 1rem;
+}
+
+.az-title {
+  color: black;
+  text-decoration: none;
+  i.fa.fa-external-link {
+    margin-left: 0.5rem;
+  }
+  &.az-title:hover {
+    color: #800000;
+    text-decoration: underline;
+  }
+}
+
+.sidebar-boxes .accordion .accordion-item {
+  border-style: solid;
+  border-color: var(--bs-border-color);
+}
+
+// Mobile layout adjustments for database finder
+@media (max-width: 991.98px) {
+  // Widen gutters for sidebar columns
+  #s-lg-az-cols > .col-lg-12,
+  #s-lg-az-cols > .col-lg-8,
+  #s-lg-az-cols > .col-lg-4 {
+    --bs-gutter-x: 3rem;
+  }
+
+  // Remove extra margins from sidebar content blocks
+  #s-lg-az-helpful-links,
+  #s-lg-az-icon-legend,
+  #s-lg-az-subject-resources,
+  div[id^='s-lg-az-custom-box-'] {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+// =============================================================================
+// GUIDES
+// =============================================================================
+
+h1 {
+  font-weight: 500 !important;
+}
+/* separate home page tabs from title and description */
+#s-lg-tabs-container {
+  margin-top: 1rem !important;
+}
+
+/* add space between lists of links */
+div#s-lg-guide-main li {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Style collapsible boxes heading */
+button.s-lib-box-collapse-toggle {
+  background-color: white !important;
+}
+
+/* Style manual guides lists' details line */
+.s-lg-guide-list-info {
+  opacity: 0.8 !important;
+  font-size: 0.7rem !important;
+}
+
+/* stop author links from exceeding limits */
+.s-lg-guide-list-info a {
+  white-space: break-spaces;
+}
+
+// Profile email badge
+.s-lib-profile-email {
+  .label-info {
+    background-color: var(--bs-secondary);
+    font-size: var(--bs-btn-font-size);
+  }
+}
+
+// Schedule button
+.s-lib-profile-widget button#mysched_63613 {
+  // LibGuides renders this button, so its markup cannot take Bootstrap
+  // classes; extending the real classes is the point.
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder -- see above
+  @extend .btn;
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder -- see above
+  @extend .btn-outline-secondary;
+
+  font-size: var(--bs-btn-font-size);
+}
+
+// Guide home: hide box titles and prev/next pagination
+#home-guide-body {
+  h2.s-lib-box-title {
+    // stylelint-disable-next-line scss/at-extend-no-missing-placeholder -- LibGuides markup cannot take the class
+    @extend .visually-hidden;
+  }
+
+  #s-lg-page-prevnext {
+    display: none;
+  }
+
+  #s-lg-guide-tabs a.nav-link {
+    --bs-nav-link-font-size: 1.1rem;
+  }
+}
+
+// Guide box titles
+h2.s-lib-box-title {
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  font-size: 1.8rem !important;
+
+  #s-lg-box-profile & {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    padding: 0;
+  }
+}
+
+/* Style Home page tabs */
+#s-lg-side-nav-content {
+  & > #s-lg-tabs-container {
+    #s-lg-guide-tabs a.nav-link {
+      border-radius: 100px !important;
+    }
+    #s-lg-guide-tabs a.nav-link.active {
+      border: 1px solid var(--bs-border-color);
+      border: 1px solid #737373;
+    }
+  }
+}
+
+// Guide tabs
+// div#s-lg-guide-main div.s-lib-box-container  div.s-lib-box.s-lib-box-std div.s-lib-box-content div.s-lib-jqtabs ul.nav-tabs li.nav-item a.nav-link
+div#s-lg-guide-main,
+#s-lg-guide-tabs {
+  // any tabs default
+  li.nav-item:not(.active) {
+    a.nav-link:not(.active),
+    a.s-lg-tab-drop.dropdown-toggle {
+      color: var(--bs-secondary) !important;
+      background-color: var(--bs-light) !important;
+      border: none;
+    }
+  }
+  // any tabs active
+  li.nav-item a.nav-link.active,
+  li.nav-item.active a.nav-link,
+  a.s-lg-tab-drop.dropdown-toggle:hover {
+    color: var(--bs-primary) !important;
+    background-color: var(--bs-body-bg) !important;
+    border: none;
+    border-bottom: 4px solid var(--bs-primary);
+  }
+  ul.s-lg-subtab-ul.dropdown-menu {
+    border-top-left-radius: 0;
+    border: none;
+    box-shadow: 3px 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+// Vertical left guide tabs
+#s-lg-guide-tabs {
+  // Active tab indicator
+  li.nav-item.active {
+    border-left: 4px solid var(--bs-primary) !important;
+
+    a.nav-link,
+    a.s-lg-tab-drop.dropdown-toggle {
+      border-bottom: none !important;
+    }
+  }
+
+  // vertical sub-item tabs
+  li.list-group-item {
+    border: none;
+    background-color: transparent;
+    margin: 0;
+
+    a {
+      color: var(--bs-body-color);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Prev/next page navigation
+#s-lg-page-prevnext .page-link {
+  color: var(--bs-secondary-color);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+// Profile nav sidebar
+#sb-search-col-1 nav,
+#s-lg-profile-nav {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0;
+
+  .nav-item,
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .nav-item:first-child {
+    padding-top: 0.375rem;
+  }
+
+  .nav-link {
+    --bs-btn-padding-x: 0.75rem;
+    --bs-btn-padding-y: 0.375rem;
+
+    padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+  }
+}
+
+// =============================================================================
+// PROFILES
+// =============================================================================
+
+.s-lib-featured-profile-image img,
+.s-lib-profile-image img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: top;
+  background-color: var(--bs-body-bg);
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  max-width: 160px;
+  border-radius: 8px;
+}
+
+.s-lib-featured-profile-container a {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// =============================================================================
+// SUBJECTS
+// =============================================================================
+
+#s-lg-sb-label {
+  font-size: 1rem;
+}

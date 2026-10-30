@@ -1,0 +1,52 @@
+@use 'sass:meta';
+@use 'sass:string';
+@use '../variables' as tokens;
+
+// Global element overrides
+// Use this file for non-typography element overrides that can't be controlled via Bootstrap variables
+
+// Brand token exposure
+// Every $ucl-* color in _variables.scss is published as --ucl-<name> so that
+// consumers of the compiled CSS — external platforms, LibApps, one-off pages —
+// can reach the brand palette without access to the Sass sources.
+//
+// This loads _variables.scss as a module so the compiler can enumerate it;
+// nothing here needs updating when a brand color is added or removed. See the
+// Auto-Exposure Constraint note in _variables.scss before adding !default to,
+// or reassigning, any $ucl-* token.
+:root {
+  @each $name, $value in meta.module-variables('tokens') {
+    @if string.index($name, 'ucl-') == 1 and meta.type-of($value) == color {
+      --#{$name}: #{$value};
+    }
+  }
+}
+
+:root,
+body {
+  --bs-font-sans-serif: #{$font-family-sans-serif};
+  --bs-body-font-family: var(--bs-font-sans-serif);
+
+  font-family: var(--bs-body-font-family);
+}
+
+// Keyboard focus, as a solid outline. See the Focus Ring section of
+// _variables.scss for the colours and why they are what they are.
+//
+// !important is deliberate. Bootstrap hardcodes `outline: 0` on focus in its
+// component partials — buttons, form controls, nav links, the accordion —
+// at a higher specificity than this selector, and none of it is driven by a
+// variable. This is the only single-rule way past those resets; the
+// alternative is one override per component.
+:focus-visible {
+  outline: 2px solid var(--bs-focus-ring-color) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+
+// Dark surfaces reset the colour only; the rule above does the drawing.
+.global-navbar,
+.navbar-dark,
+.footer {
+  --bs-focus-ring-color: var(--ucl-focus-ring-color-on-dark);
+}
