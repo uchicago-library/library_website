@@ -72,7 +72,6 @@ INSTALLED_APPS = [
     "cgimail_editor",
     "conferences",
     "dirbrowse",
-    "events",
     "findingaids",
     "group",
     "home",
@@ -448,13 +447,6 @@ DRF_NEWS_FEED = "/api/v2/pages/?format=json&treat_as_webpage=false&order=-publis
 # Cache time for news site categories is 3 hours
 NEWS_CACHE_TTL = 60 * 180
 
-# University Events Feed
-UC_EVENTS_BASE = ""
-UC_EVENTS_FEED = "https://events.uchicago.edu/widgets/rss.php?key=47866f880d62a4f4517a44381f4a990d&id=48"
-
-# Tiny Tiny RSS Feed
-TTRSS_FEED = "https://wicket.lib.uchicago.edu/tt-rss/public.php?op=rss&id=-3&key=8idjnk57e2a0063541d"
-
 # Authorization key for LibCal admin interface
 LIBCAL_TOKEN_ENDPOINT = ""
 LIBCAL_ENDPOINT = ""
@@ -618,7 +610,6 @@ SESSION_COOKIE_AGE = 1209600
 
 # Exclude admin, static files, etc. from Turnstile protection
 TURNSTILE_EXCLUDED_PATHS = [
-    r"^/json-events/.*$",
     r"^/chat-status/.*$",
     r"^/json-hours/.*$",
     r"^/item-servlet/.*$",
