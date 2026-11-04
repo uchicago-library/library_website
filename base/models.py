@@ -1734,7 +1734,9 @@ class PublicBasePage(BasePage):
 
     # Workshops and Events
     events_feed_url = models.URLField(
-        blank=True, help_text="Link to a Tiny Tiny RSS Feed"
+        blank=True,
+        help_text="LiveWhale JSON feed URL, e.g. "
+        "https://events.uchicago.edu/live/json/events/group/Library/tag/science",
     )
 
     # Banner

@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "type": "events",
+    "total_results": 0,
+    "per_page": 100,
+    "page": 1,
+    "total_pages": 1,
+    "response_fields": [],
+    "supported_fields": [
+      "event_types",
+      "location",
+      "tags",
+      "image",
+      "summary",
+      "description",
+      "contact_info",
+      "registration",
+      "last_modified",
+      "group_title",
+      "status",
+      "related_content",
+      "custom_legacy_recurring",
+      "custom_legacy_related",
+      "custom_legacy_status",
+      "custom_facebook_url",
+      "custom_registration_link",
+      "custom_registration_link_label",
+      "custom_twitter_url",
+      "custom_twitter_hashtag",
+      "custom_lock_editing",
+      "custom_notes",
+      "custom_remote_image_caption",
+      "custom_fields"
+    ],
+    "response_time": 0.02
+  },
+  "links": {
+    "self": "https://events.uchicago.edu/live/json/events/group/Library/tag/no-such-tag-for-fixture",
+    "first": null,
+    "prev": null,
+    "next": null,
+    "last": null
+  },
+  "data": []
+}

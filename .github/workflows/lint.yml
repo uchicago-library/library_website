@@ -59,6 +59,10 @@ jobs:
       run: |
         npx prettier --check "**/*.js"
 
+    - name: Run JavaScript tests
+      run: |
+        npm test
+
   scss-lint:
     runs-on: ubuntu-latest
 
