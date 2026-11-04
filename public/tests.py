@@ -14,8 +14,10 @@ from wagtailcache.cache import clear_cache
 
 from base.tests import add_generic_request_meta_fields, boiler_plate
 from library_website.settings import IDRESOLVE_URL
+from public.models import StandardPageSidebarReusableContent
 from public.utils import articles_search_url, doi_lookup, doi_lookup_base_url, mk_url
 from results.views import main_search_query, pages_to_exclude
+from reusable_content.models import ReusableContent
 
 example_doi1 = "10.1007/s11050-007-9022-y"
 example_doi2 = "10.1017/S0960129518000324"
@@ -214,3 +216,31 @@ class TestStandardPageSitemapExcludeFieldTrue(TestCase):
         sitemap_url = self.page.get_sitemap_urls(response)
         # Verify the page is excluded from sitemap
         self.assertEqual(sitemap_url, [])
+
+
+class TestStandardPageReusableSidebarContent(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        boiler_plate(cls)
+        cls.reusable = ReusableContent.objects.create(
+            title="Sidebar notice", content="<p>Notice</p>"
+        )
+
+    def test_page_without_items_has_no_reusable_sidebar_content(self):
+        self.assertFalse(self.page.has_reusable_sidebar_content())
+
+    def test_page_with_saved_item_has_reusable_sidebar_content(self):
+        StandardPageSidebarReusableContent.objects.create(
+            page=self.page, content=self.reusable
+        )
+        self.assertTrue(self.page.has_reusable_sidebar_content())
+
+    def test_preview_with_unsaved_item_has_reusable_sidebar_content(self):
+        # Previews hold inline panel items in memory, not in the database.
+        self.page.reusable_content = [
+            StandardPageSidebarReusableContent(content=self.reusable)
+        ]
+        self.assertFalse(
+            StandardPageSidebarReusableContent.objects.filter(page=self.page).exists()
+        )
+        self.assertTrue(self.page.has_reusable_sidebar_content())
