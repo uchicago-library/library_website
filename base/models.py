@@ -2077,8 +2077,7 @@ Either it is set to the ID of a non-existing page or it has an incorrect value."
             boolean
         """
         try:
-            if self.reusable_content:
-                return True
+            return self.reusable_content.exists()
         except AttributeError:
             return False
 
