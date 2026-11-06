@@ -1,0 +1,13 @@
+{% comment %}
+  Generated index of a folder: each page with its description, each subfolder
+  nesting its own pages beneath its landing page. Nothing here is maintained
+  by hand. Expects `pages` from views.children().
+{% endcomment %}
+<ul>
+  {% for item in pages %}
+    <li>
+      <a href="{{ item.url }}">{{ item.title }}</a>{% if item.description %} — {{ item.description }}{% endif %}
+      {% if item.children %}{% include "design_system/includes/page-list.html" with pages=item.children %}{% endif %}
+    </li>
+  {% endfor %}
+</ul>

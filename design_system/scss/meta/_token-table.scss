@@ -1,0 +1,83 @@
+// Token tables — documentation-only component.
+// Renders the generated design-token reference on /design/tokens/.
+// Lives in scss/meta/ and is imported by meta.scss, never by main.scss.
+
+// Level 3 tokens
+$token-table-swatch-size: 2.5rem;
+$token-table-swatch-radius: $border-radius;
+$token-table-copy-feedback-bg: $success-bg-subtle;
+$token-table-code-font-size: 0.8125rem;
+
+.token-table {
+  font-size: $font-size-sm;
+
+  // Keep the identifying columns from wrapping mid-token while still letting
+  // the notes column take the slack.
+  &__name {
+    white-space: nowrap;
+  }
+
+  &__notes {
+    min-width: 14rem;
+  }
+}
+
+// Color chip. The literal value arrives as an inline --token-swatch custom
+// property, since it differs per row and cannot live in a stylesheet.
+// The border keeps near-white tokens legible against the page.
+.token-table__swatch {
+  display: block;
+  background-color: var(--token-swatch);
+  width: $token-table-swatch-size;
+  height: $token-table-swatch-size;
+  border: $border-width solid $border-color;
+  border-radius: $token-table-swatch-radius;
+}
+
+// Click-to-copy affordance wrapping a token name or value.
+.token-table__copy {
+  padding: 0;
+  font-family: $font-family-code;
+  font-size: $token-table-code-font-size;
+  color: $code-color;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+  cursor: copy;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+
+  &--copied {
+    background-color: $token-table-copy-feedback-bg;
+    text-decoration: none;
+  }
+}
+
+// Provenance and empty-cell markers.
+.token-table__empty {
+  color: $body-secondary-color;
+}
+
+// Rows hidden by the live search filter.
+.token-table__row--filtered {
+  display: none;
+}
+
+.token-search {
+  max-width: 22rem;
+}
+
+.token-search__count {
+  color: $body-secondary-color;
+  font-size: $font-size-sm;
+}
+
+// A tab whose rows are all filtered out. Muted rather than hidden, so the tab
+// still reads as "no matches here" instead of looking broken.
+.token-badge--empty {
+  opacity: 0.5;
+}

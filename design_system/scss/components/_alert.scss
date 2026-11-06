@@ -1,0 +1,9 @@
+// Alert overrides.
+
+/// A link inside an alert takes the alert's own link colour, as `.alert-link`
+/// does, without needing the class. The default link colour falls below 4.5:1
+/// on most alert backgrounds; the alert's own is at least 5.4:1 on every
+/// variant. Colour only: add `.alert-link` for its bold weight as well.
+.alert a:not(.btn) {
+  color: var(--bs-alert-link-color);
+}

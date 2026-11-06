@@ -1,0 +1,17 @@
+// Panel — bordered surface for grouping related content.
+
+/// Bordered container for grouping related content. Equivalent to
+/// `.card.rounded-3.p-3`, as a single class. Use for a group that needs a
+/// visible boundary; use spacing alone when the grouping is already obvious.
+.panel {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  padding: $spacer;
+  background-color: var(--bs-body-bg);
+}
+
+/// Modifier for `.panel` that draws the border in maroon, marking the one
+/// group on a page that matters most. Do not use more than once per view.
+.panel-primary {
+  border-color: var(--bs-primary);
+}

@@ -1,0 +1,95 @@
+// System button aliases and constrained variants.
+
+/// Bootstrap's button, restyled system-wide to a pill radius. Every button
+/// variant inherits this, so there is no square-cornered button in the system.
+.btn {
+  --bs-btn-border-radius: var(--bs-border-radius-pill);
+}
+
+/// The large button, carrying semibold weight. A button at this size is a
+/// page's main call to action, and the heavier weight is what makes it read
+/// as one at a glance. The default and small sizes keep the body weight.
+.btn-lg {
+  --bs-btn-font-weight: #{$font-weight-semibold};
+}
+
+/// The standard action. Use for every button on a view except the one primary
+/// action, which is `.btn-primary`. Reads as an outlined secondary button.
+.btn-default {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-hover-border-color: var(--bs-secondary);
+  --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--bs-secondary);
+  --bs-btn-active-border-color: var(--bs-secondary);
+  --bs-btn-disabled-color: var(--bs-secondary);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--bs-secondary);
+  --bs-gradient: none;
+}
+
+/// Outlined button for use on a dark or image background, where the standard
+/// variants would have too little contrast.
+.btn-outline-white {
+  --bs-btn-color: #fff;
+  --bs-btn-border-color: #fff;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: #fff;
+  --bs-btn-hover-border-color: #fff;
+  --bs-btn-focus-shadow-rgb: 255, 255, 255;
+  --bs-btn-active-color: #000;
+  --bs-btn-active-bg: #fff;
+  --bs-btn-active-border-color: #fff;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: #fff;
+  --bs-gradient: none;
+}
+
+/// Destructive action, outlined with a heavier border so it reads as needing
+/// deliberate intent. Reserve for actions that lose data.
+.btn-danger-x {
+  --bs-btn-color: var(--bs-danger);
+  --bs-btn-border-color: var(--bs-danger);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--bs-danger);
+  --bs-btn-hover-border-color: var(--bs-danger);
+  --bs-btn-focus-shadow-rgb: var(--bs-danger-rgb);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--bs-danger);
+  --bs-btn-active-border-color: var(--bs-danger);
+  --bs-btn-disabled-color: var(--bs-danger);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--bs-danger);
+  --bs-border-width: 2px;
+  --bs-gradient: none;
+}
+// Mysched button overrides
+// button[id^="mysched"] {
+//     background: var(--bs-success) !important;
+//     background: $ucl-ivy !important;
+//     border: 0px !important;
+//     color: #fff !important;
+//     padding: $btn-padding-y $btn-padding-x !important;
+//     font-size: var(--bs-btn-font-size) !important;
+//     border-radius: var(--bs-border-radius-pill) !important;
+// }
+// Override to match the main website for now.
+.s-lib-profile-div a.label.label-info[title='Schedule Appointment'],
+button[id^='mysched'] {
+  font-weight: 600 !important;
+  background: white !important;
+  color: #404040 !important;
+  color: var(--bs-dark) !important;
+  border: 1.5px solid #404040 !important;
+  border: 1.5px solid var(--bs-dark) !important;
+  border-radius: 4px !important;
+  padding: $btn-padding-y $btn-padding-x !important;
+}
+.s-lib-profile-div a.label.label-info[title='Schedule Appointment']:hover,
+button[id^='mysched']:hover {
+  background: #f2f2f2 !important;
+}
