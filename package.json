@@ -8,7 +8,8 @@
   "scripts": {
     "build": "npm run vendor-mermaid && webpack --config webpack.config.js --progress --mode production",
     "watch": "webpack --config webpack.config.js --watch --mode production",
-    "vendor-mermaid": "mkdir -p base/static/base/js/vendor && cp node_modules/mermaid/dist/mermaid.min.js base/static/base/js/vendor/mermaid.min.js"
+    "vendor-mermaid": "mkdir -p base/static/base/js/vendor && cp node_modules/mermaid/dist/mermaid.min.js base/static/base/js/vendor/mermaid.min.js",
+    "test": "node --test base/static/base/js/tests/*.test.js"
   },
   "repository": {
     "type": "git",
