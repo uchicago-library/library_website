@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "base",
     "cgimail_editor",
     "conferences",
+    "design_system",
     "dirbrowse",
     "events",
     "findingaids",
@@ -631,6 +632,10 @@ TURNSTILE_EXCLUDED_PATHS = [
     r"^/_util/.*$",
     r"^/api/.*$",
     r"^/rss/.*$",
+    # Design system files read by agents; the HTML pages stay protected
+    r"^/design/llms\.txt$",
+    r"^/design/tokens\.json$",
+    r"^/design/.+\.md$",
 ]
 
 # article galaxy spreadsheet constants

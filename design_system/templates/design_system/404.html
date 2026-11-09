@@ -1,0 +1,28 @@
+{% extends "design_system/base.html" %}
+{% comment %}
+  Any missing page under /design/ (views.not_found). Deliberately bare: the
+  header, breadcrumbs and footer all lead somewhere, and a reader who has hit a
+  dead end needs one way out, not a menu.
+{% endcomment %}
+
+{% block title %}Page Not Found | UChicago Library Design System{% endblock %}
+
+{% block header %}
+  <header role="banner">
+    <div class="global-navbar py-2">
+      <div class="container-md">
+        <img src="https://www.lib.uchicago.edu/web-resources/img/white-logo.png" alt="University of Chicago Library" height="35">
+      </div>
+    </div>
+  </header>
+{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block main %}
+  <h1>Page Not Found</h1>
+  <p class="lead">There is no design system page at this address. It may have moved, or the address may be mistyped.</p>
+  <p><a href="{% url 'design_system:page' %}">Go to the design system home page</a></p>
+{% endblock %}
+
+{% block footer %}{% endblock %}

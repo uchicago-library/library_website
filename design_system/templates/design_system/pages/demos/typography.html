@@ -1,0 +1,290 @@
+{% extends "design_system/page.html" %}
+{% comment %}
+  Purpose: document styling in a realistic setting. Every typography element is
+  set in continuous prose, as a reader meets it, rather than in isolation. The
+  rules for using them are on the Typography guidelines page. The subject, the history of the book, is only there to
+  give the text a real shape; it is not research and is not a mockup.
+{% endcomment %}
+
+{% block body %}
+  <style>
+  /* Typography Element Labels - Custom page styling */
+    .element-with-label {
+      position: relative;
+    }
+
+    .element-label {
+      position: absolute;
+      top: -8px;
+      right: 0;
+      display: inline-block;
+      padding: 0.35em 0.65em;
+      font-size: 0.75rem;
+      font-weight: 500;
+      font-family: monospace;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.375rem;
+      background-color: var(--bs-info-bg-subtle);
+      color: red;
+      opacity: 0.6;
+    }
+  </style>
+
+  <hr class="my-5">
+
+<!-- Ancient Origins -->
+  <section class="mb-5">
+    <div class="element-with-label">
+      <h2>Ancient Origins: From Clay to Papyrus</h2>
+      <span class="element-label badge">h2</span>
+    </div>
+
+    <p>The history of the book stretches back thousands of years, long before the invention of paper or the printing press. In ancient <mark>Mesopotamia and Egypt</mark>, people developed early writing systems and methods for recording information that would define their civilizations.</p>
+
+    <div class="element-with-label mb-3">
+      <p class="text-muted">The earliest "books" were not bound pages, but rather clay tablets inscribed with cuneiform scripts. The Sumerians around 3200 BCE created these durable records, which served as <strong>the first permanent storage of knowledge</strong>. These tablets documented everything from <em>business transactions to epic poetry</em>.</p>
+      <span class="element-label badge">p.text-muted</span>
+    </div>
+
+    <h3>The Rise of Papyrus</h3>
+
+    <div class="element-with-label mb-3">
+      <p>By 3000 BCE, the ancient Egyptians discovered papyrus, a lightweight material made from the papyrus plant. This innovation represented a <s>temporary setback for clay tablets</s> breakthrough in convenience and portability. Papyrus scrolls became the standard for recording sacred texts, historical records, and literary works throughout the Egyptian world.</p>
+      <span class="element-label badge">p</span>
+    </div>
+
+    <p>Key characteristics of papyrus documents included:</p>
+    <div class="element-with-label mb-3">
+      <ul>
+        <li>Lightweight and portable compared to clay tablets</li>
+        <li>Rolled into scrolls for storage and transport</li>
+        <li>Vulnerable to moisture and decay</li>
+        <li>Required specialized knowledge to produce</li>
+      </ul>
+      <span class="element-label badge">ul > li</span>
+    </div>
+
+    <div class="element-with-label">
+      <blockquote class="blockquote">
+        <p>The papyrus scroll was the book of the ancient world, carrying the voices of pharaohs and philosophers across the centuries.</p>
+        <footer class="blockquote-footer">Unknown Egyptologist</footer>
+      </blockquote>
+      <span class="element-label badge">blockquote.blockquote</span>
+    </div>
+  </section>
+
+  <hr class="my-5">
+
+<!-- Medieval Manuscripts -->
+  <section class="mb-5">
+    <div class="element-with-label">
+      <h2>The Medieval Manuscript Era</h2>
+      <span class="element-label badge">h2</span>
+    </div>
+
+    <div class="element-with-label mb-3">
+      <p class="lead">From the 1st to the 15th centuries, the codex—a bound collection of pages—gradually replaced the scroll as the primary book format.</p>
+      <span class="element-label badge">p.lead</span>
+    </div>
+
+    <h3>The Codex Revolution</h3>
+
+    <div class="element-with-label mb-3">
+      <p>The Romans adapted an earlier concept into what we recognize today as a book: pages bound together on one side. This <u>revolutionary format</u> offered numerous advantages over scrolls, including easier navigation, better preservation, and the ability to write on both sides of the page. Religious communities, particularly monasteries, became the custodians of knowledge during the Middle Ages.</p>
+      <span class="element-label badge">p</span>
+    </div>
+
+    <p>Medieval manuscripts were characterized by:</p>
+    <div class="element-with-label mb-3">
+      <ol>
+        <li>Hand illumination and artistic decoration</li>
+        <li>Painstaking handwritten copying by monks</li>
+        <li>Use of parchment (animal skin) instead of papyrus</li>
+        <li>Binding in leather and precious materials</li>
+        <li>Extreme scarcity—a single book could take months to copy</li>
+      </ol>
+      <span class="element-label badge">ol > li</span>
+    </div>
+
+    <div class="element-with-label mb-3">
+      <p><small>The production of a single medieval manuscript required tremendous resources. A large Bible might require the skins of 300 sheep and years of labor to complete.</small></p>
+      <span class="element-label badge">small</span>
+    </div>
+
+    <div class="element-with-label">
+      <h3>Monastic Scriptoriums</h3>
+      <span class="element-label badge">h3</span>
+    </div>
+
+    <div class="element-with-label mb-3">
+      <p class="text-muted">Monasteries served as the primary centers of literacy and book production. The monks who worked in scriptoriums followed strict rules of conduct while copying texts. Their meticulous work preserved ancient knowledge that might otherwise have been lost to history.</p>
+      <span class="element-label badge">p.text-muted</span>
+    </div>
+  </section>
+
+  <hr class="my-5">
+
+<!-- Printing Press -->
+  <section class="mb-5">
+    <div class="element-with-label">
+      <h2>The Printing Revolution: 1450 and Beyond</h2>
+      <span class="element-label badge">h2</span>
+    </div>
+
+    <p>In 1440, <strong>Johannes Gutenberg</strong> invented the movable type printing press, an innovation that fundamentally transformed the world. This technology made books affordable, accessible, and reproducible on an unprecedented scale.</p>
+
+    <div class="element-with-label">
+      <h3>Impact and Consequences</h3>
+      <span class="element-label badge">h3</span>
+    </div>
+
+    <p>The printing press had effects that rippled through every aspect of human society. Consider the impact:</p>
+
+    <div class="element-with-label mb-3">
+      <dl class="row">
+        <dt class="col-sm-4">Knowledge Democratization</dt>
+        <dd class="col-sm-8">Literacy rates increased dramatically as books became cheaper and more available to common people.</dd>
+
+        <dt class="col-sm-4">Scientific Revolution</dt>
+        <dd class="col-sm-8">Scientists could share findings widely, building on each other's work in ways previously impossible.</dd>
+
+        <dt class="col-sm-4">Social Change</dt>
+        <dd class="col-sm-8">The ability to read and distribute information gave rise to new political movements and ideas.</dd>
+      </dl>
+      <span class="element-label badge">dl.row > dt, dd</span>
+    </div>
+
+    <div class="element-with-label">
+      <h4>The Gutenberg Bible</h4>
+      <span class="element-label badge">h4</span>
+    </div>
+
+    <p>The first major work printed using movable type was <em>the Gutenberg Bible</em>, produced around 1455. Though still incorporating some hand illumination, it demonstrated the viability of mass production. Each page required <code>about 4,000 individual metal letters</code>, arranged and rearranged for each page.</p>
+
+    <p>The first printed books, or <strong>incunabula</strong>, were produced between 1450-1500. A remarkable table showing the growth of printing during this period:</p>
+
+    <div class="element-with-label mb-3">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>Estimated Books Printed</th>
+            <th>Primary Locations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1450-1460</td>
+            <td>~100</td>
+            <td>Mainz, Germany</td>
+          </tr>
+          <tr>
+            <td>1460-1470</td>
+            <td>~800</td>
+            <td>Germany, Italy</td>
+          </tr>
+          <tr>
+            <td>1470-1480</td>
+            <td>~6,000</td>
+            <td>Italy, France, Germany</td>
+          </tr>
+          <tr>
+            <td>1480-1490</td>
+            <td>~40,000</td>
+            <td>Across Europe</td>
+          </tr>
+          <tr>
+            <td>1490-1500</td>
+            <td>~30,000</td>
+            <td>Entire European continent</td>
+          </tr>
+        </tbody>
+      </table>
+      <span class="element-label badge">table.table.table-striped.table-bordered</span>
+    </div>
+
+    <div class="element-with-label mb-3">
+      <p><small>These estimates are based on surviving copies and documented records, so actual numbers may have been higher.</small></p>
+      <span class="element-label badge">small</span>
+    </div>
+  </section>
+
+  <hr class="my-5">
+
+<!-- Modern Era -->
+  <section class="mb-5">
+    <div class="element-with-label">
+      <h2>The Modern Book: 1500 to Present</h2>
+      <span class="element-label badge">h2</span>
+    </div>
+
+    <p>From the 16th century onward, book production became an established industry. Printing presses spread throughout Europe, creating an information economy that would last for 500 years.</p>
+
+    <h3>Evolution of Publishing</h3>
+
+    <p>The business of books evolved considerably. What began as a craft of monks and monks evolved into a sophisticated industry with publishers, editors, and booksellers. Consider these developments:</p>
+
+    <div class="element-with-label mb-3">
+      <ul>
+        <li>Standardized book sizes and formats
+          <ul>
+            <li>Folio—large format for important texts</li>
+            <li>Quarto—medium, practical size</li>
+            <li>Octavo—smaller, more portable</li>
+          </ul>
+        </li>
+        <li>Copyright and intellectual property laws emerged</li>
+        <li>Public libraries began collecting and distributing books</li>
+        <li>Mass market paperbacks made reading even more affordable</li>
+      </ul>
+
+      <p>In the 19th century, steam-powered printing presses accelerated production further. By the 20th century, <a href="#" class="link-info">digital technologies began to challenge traditional book publishing</a>, though printed books remain central to culture and learning.</p>
+
+      <div class="element-with-label">
+        <h3>The Book Today</h3>
+        <span class="element-label badge">h3</span>
+      </div>
+
+      <div class="element-with-label mb-3">
+        <p class="text-muted">Today, we exist in a hybrid age where printed books remain beloved objects while <a href="#">digital books and audiobooks</a> offer new possibilities. The fundamental purpose of the book—to preserve and transmit knowledge—endures regardless of format.</p>
+        <span class="element-label badge">p.text-muted</span>
+      </div>
+
+      <div class="element-with-label">
+        <blockquote class="blockquote text-center">
+          <p>Books are the quietest and most constant of friends; they are the most accessible and wisest of counselors, and the most patient of teachers.</p>
+          <footer class="blockquote-footer">Charles W. Eliot</footer>
+        </blockquote>
+      </section>
+
+      <hr class="my-5">
+
+<!-- Typography Elements Reference -->
+      <section class="mb-5">
+        <div class="element-with-label">
+          <h2>Additional Text Elements</h2>
+          <span class="element-label badge">h2</span>
+        </div>
+
+        <h3>Code and Technical References</h3>
+        <div class="element-with-label mb-3">
+          <p>When discussing technical aspects, we use <code>&lt;code&gt;</code> tags, like when describing the <code>ISBN-13</code> system used to identify books, or the HTML <kbd>Ctrl</kbd> + <kbd>F</kbd> shortcut for searching in digital books.</p>
+          <span class="element-label badge">code, kbd</span>
+        </div>
+
+        <h3>Emphasis and Styling</h3>
+        <div class="element-with-label mb-3">
+          <p>Inline formatting helps convey meaning: <strong>bold for emphasis</strong>, <em>italics for terms</em>, <mark>highlighted text</mark> to draw attention, and <del>struck text</del> to show revisions. <u>Underlined text</u> can indicate links or important points.</p>
+          <span class="element-label badge">strong, em, mark, del, u</span>
+        </div>
+
+        <h3>Small Print</h3>
+        <div class="element-with-label">
+          <p><small>Disclaimers and fine print use the small tag, just as it appears in scholarly footnotes and copyright information on the back of book covers.</small></p>
+          <span class="element-label badge">small</span>
+        </div>
+      </section>
+{% endblock %}

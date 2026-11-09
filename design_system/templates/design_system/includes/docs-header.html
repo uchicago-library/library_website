@@ -1,0 +1,85 @@
+{% comment %}
+  Header for the /design/ documentation pages.
+
+  Structure and styling mirror the production Library header so the two read as
+  one site: a white logo bar above a maroon navigation bar. Styles live in
+  design_system/scss/meta/_docs-header.scss.
+
+  The links are written out rather than generated: they change about once a
+  year, and a section added to design_system/content/ should be added here by
+  choice. `section` is the first segment of the page's path. Ids are prefixed
+  docs- so they cannot collide with the production header, which claims
+  #global-navbar and #navbar-shortcuts.
+{% endcomment %}
+<header id="docs-header" role="banner">
+  <div class="logo-bar bg-white">
+    <div class="container-md">
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'design_system:page' %}">
+          <img src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
+          <span class="docs-header-wordmark">Design System</span>
+        </a>
+
+        <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#docs-header-nav" aria-controls="docs-header-nav"
+                aria-expanded="false" aria-label="Toggle documentation navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-md navbar-dark global-navbar p-0" aria-label="Documentation">
+    <div class="container-md">
+      <div class="collapse navbar-collapse" id="docs-header-nav">
+        <ul class="navbar-nav" role="list">
+          {% url 'design_system:page' slug='foundations' as foundations_url %}
+          {% url 'design_system:page' slug='guidelines' as guidelines_url %}
+          {% url 'design_system:page' slug='implementation' as implementation_url %}
+          {% url 'design_system:demos' as demos_url %}
+          {% url 'design_system:page' slug='contributing' as contributing_url %}
+          {% url 'design_system:tokens' as tokens_url %}
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle text-white{% if section == 'foundations' or section == 'guidelines' or section == 'implementation' %} active{% endif %}" type="button" id="docs-header-design-system" data-bs-toggle="dropdown" aria-expanded="false">Design System</button>
+            {% comment %} Same structure as the production header's dropdowns, so the links line up with the navigation bar. {% endcomment %}
+            <ul class="dropdown-menu" aria-labelledby="docs-header-design-system">
+              <li class="dropdown-layout container-md mx-auto">
+                <a class="dropdown-item text-white" href="{{ foundations_url }}"{% if page.url == foundations_url %} aria-current="page"{% endif %}>Foundations</a>
+                <a class="dropdown-item text-white" href="{{ guidelines_url }}"{% if page.url == guidelines_url %} aria-current="page"{% endif %}>Guidelines</a>
+                <a class="dropdown-item text-white" href="{{ implementation_url }}"{% if page.url == implementation_url %} aria-current="page"{% endif %}>Implementation</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if section == 'demos' %} active{% endif %}" href="{{ demos_url }}"{% if page.url == demos_url %} aria-current="page"{% endif %}>Demos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if section == 'contributing' %} active{% endif %}" href="{{ contributing_url }}"{% if page.url == contributing_url %} aria-current="page"{% endif %}>Contributing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link{% if section == 'tokens' %} active{% endif %}" href="{{ tokens_url }}"{% if page.url == tokens_url %} aria-current="page"{% endif %}>Tokens</a>
+          </li>
+        </ul>
+
+        {% comment %}
+          Developers return to the tokens far more than to any other page, so
+          every page can search them. It is a plain GET to the tokens page, which
+          reads ?q= and opens filtered. Left off that page, whose own search
+          box does the same job. Uses the production header's
+          .global-navbar-search, so restyling that component restyles this one.
+        {% endcomment %}
+        {% if section != 'tokens' %}
+          <form class="global-navbar-search ms-md-auto mt-3 mt-md-0" role="search" action="{{ tokens_url }}" method="get">
+            <label class="visually-hidden" for="docs-header-search">Search tokens and classes</label>
+            <div class="global-navbar-search-field">
+              <input class="form-control form-control-sm" type="search" id="docs-header-search" name="q" placeholder="Tokens">
+              <button class="global-navbar-search-button" type="submit" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,81 @@
+// This is the main entry point to compile a LibApps override CSS file.
+// Pages consuming this output are expected to already load Bootstrap 5 from LibApps.
+//
+// The commented-out imports below are load-bearing documentation: the design
+// system page "Styling Springshare Pages" tells authors which components are
+// unavailable here, and that list is this list. If you enable or disable an
+// import, update design_system/content/implementation/springshare.md to match.
+
+// Include only Sass foundations needed for tokens and component partial compilation.
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import 'pkg:bootstrap/scss/functions';
+
+// 2. Include any default variable overrides here
+@import 'variables';
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import 'pkg:bootstrap/scss/variables';
+// @import "pkg:bootstrap/scss/variables-dark";
+
+// 4. Include remainder of Sass foundations used by custom partials.
+@import 'pkg:bootstrap/scss/maps';
+@import 'pkg:bootstrap/scss/mixins';
+@import 'pkg:bootstrap/scss/root';
+
+// 5. Bootstrap component CSS is provided by LibApps runtime; keep optional imports commented.
+// @import "pkg:bootstrap/scss/utilities";
+// @import "pkg:bootstrap/scss/reboot";
+// @import "pkg:bootstrap/scss/type";
+// @import "pkg:bootstrap/scss/images";
+// @import "pkg:bootstrap/scss/containers";
+// @import "pkg:bootstrap/scss/grid";
+
+@import 'pkg:bootstrap/scss/tables'; // *
+@import 'pkg:bootstrap/scss/forms'; // *
+@import 'pkg:bootstrap/scss/buttons';
+// @import "pkg:bootstrap/scss/transitions";
+@import 'pkg:bootstrap/scss/dropdown';
+// @import "pkg:bootstrap/scss/button-group";
+@import 'pkg:bootstrap/scss/nav';
+@import 'pkg:bootstrap/scss/navbar';
+@import 'pkg:bootstrap/scss/card';
+@import 'pkg:bootstrap/scss/accordion';
+@import 'pkg:bootstrap/scss/breadcrumb'; // *
+@import 'pkg:bootstrap/scss/pagination';
+// @import "pkg:bootstrap/scss/badge";
+@import 'pkg:bootstrap/scss/alert'; // *
+// @import "pkg:bootstrap/scss/list-group";
+// @import "pkg:bootstrap/scss/close";
+// @import "pkg:bootstrap/scss/modal";
+// @import "pkg:bootstrap/scss/progress";
+// @import "pkg:bootstrap/scss/toasts";
+// @import "pkg:bootstrap/scss/tooltip";
+// @import "pkg:bootstrap/scss/popover";
+// @import "pkg:bootstrap/scss/carousel";
+// @import "pkg:bootstrap/scss/spinners";
+// @import "pkg:bootstrap/scss/offcanvas";
+// @import "pkg:bootstrap/scss/placeholders";
+
+@import 'pkg:bootstrap/scss/helpers';
+
+// 6. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+// @import "pkg:bootstrap/scss/utilities/api";
+
+// 7. Add additional custom code here
+
+// Import base styles (after Bootstrap)
+@import 'base/fonts';
+@import 'base/global';
+// @import "base/typography";
+// @import "base/layout";
+
+// Import component styles
+@import 'components/breadcrumb';
+@import 'components/buttons';
+@import 'components/alert';
+@import 'components/header';
+@import 'components/footer';
+@import 'components/libapps-overrides';
+// @import "components/accordion";
+// @import "components/panel";

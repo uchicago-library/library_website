@@ -1,0 +1,40 @@
+// Brand typeface.
+//
+// UCLD declares the "UChicago Sans Serif" family itself rather than relying on
+// either published font stylesheet, because neither can serve it as a weighted
+// family:
+// - lib.uchicago.edu/web-resources/css/uchicagoSansSerif.css registers all
+//   eight faces under one family with no font-weight. Every face therefore
+//   counts as 400, the last one declared wins, and that is Bold.
+// - The brand bucket's UChicagoSansSerif.css gives each weight its own family
+//   ("UChicagoSansSerif-Regular", "-Bold" ...), each declared as weight normal,
+//   so font-weight cannot select between them and bold text is synthesised.
+//
+// Declared here with real weights, Bootstrap's font-weight values select real
+// faces, and a project needs nothing beyond main.css to get the typeface. The
+// files stay on the brand bucket, which allows cross-origin use.
+
+$brand-font-path: 'https://uchicago-brand-fonts.s3.us-east-2.amazonaws.com/fonts/uchicago-sans-serif/UChicagoSansSerif';
+
+// File-name weight => CSS weight. A weight with no face here, such as 500,
+// falls back to the nearest one by the browser's normal matching (400).
+$brand-font-weights: (
+  'Light': 300,
+  'Regular': 400,
+  'SemiBold': 600,
+  'Bold': 700,
+);
+
+@each $name, $weight in $brand-font-weights {
+  @each $style, $suffix in (normal: '', italic: 'Italic') {
+    @font-face {
+      font-family: 'UChicago Sans Serif';
+      font-style: $style;
+      font-weight: $weight;
+      font-display: swap;
+      src:
+        url('#{$brand-font-path}-#{$name}#{$suffix}.woff2') format('woff2'),
+        url('#{$brand-font-path}-#{$name}#{$suffix}.woff') format('woff');
+    }
+  }
+}

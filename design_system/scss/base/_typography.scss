@@ -1,0 +1,76 @@
+// Typography element styles
+// Use this file for typographic element defaults and hierarchy
+
+// Preformatted text
+pre {
+  background-color: $body-tertiary-bg;
+  color: $body-secondary-color;
+  padding: $spacer * 0.5;
+}
+
+code {
+  background-color: $body-tertiary-bg;
+  border-radius: 0.2rem;
+  padding: 0.1em 0.3em;
+}
+
+.bg-dark code,
+.bg-primary code {
+  background: rgba(255, 255, 255, 0.3);
+  color: #92e6ff;
+}
+
+// Heading styles
+// Consistent typography across all heading levels with proper hierarchy and spacing
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: $spacer * 2;
+  margin-bottom: $spacer * 1;
+  color: $primary;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: $spacer * 2;
+  margin-bottom: $spacer * 0.75;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: $spacer * 1.5;
+  margin-bottom: $spacer * 0.5;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: $spacer * 1.25;
+  margin-bottom: $spacer * 0.5;
+}
+
+h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: $spacer * 1;
+  margin-bottom: $spacer * 0.375;
+}
+
+h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: $spacer * 1;
+  margin-bottom: $spacer * 0.375;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $body-secondary-color;
+}
