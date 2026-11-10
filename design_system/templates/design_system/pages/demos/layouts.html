@@ -38,6 +38,63 @@
     <hr>
 
     <section class="py-5">
+      <div class="container-lg">
+        <div class="row g-4">
+          <div class="col-lg-3">
+            <button class="btn btn-default d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo-section-nav" aria-controls="demo-section-nav">
+              <i class="fa-solid fa-bars me-2" aria-hidden="true"></i>In this section
+            </button>
+            <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="demo-section-nav" aria-labelledby="demo-section-nav-title">
+              <div class="offcanvas-header">
+                <p class="h5 offcanvas-title" id="demo-section-nav-title">In this section</p>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#demo-section-nav" aria-label="Close"></button>
+              </div>
+              <div class="offcanvas-body flex-column">
+                <nav aria-label="Section (example)">
+                  <p class="h5">Section title</p>
+                  <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link px-0" href="#">First page</a></li>
+                    <li class="nav-item">
+                      <a class="nav-link px-0 active fw-bold" href="#" aria-current="page">Current page</a>
+                      <ul class="nav flex-column ms-3">
+                        <li class="nav-item"><a class="nav-link px-0 py-1" href="#">Child page</a></li>
+                        <li class="nav-item"><a class="nav-link px-0 py-1" href="#">Another child page</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link px-0" href="#">Third page</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="row g-4">
+              <div class="col-xl-8">
+                <h2>Section navigation with right sidebar</h2>
+                <p>The section's pages sit in a <code>col-lg-3</code> column on the left, the current page marked with <code>aria-current</code>. Below <code>lg</code> they move into an offcanvas panel, opened by the "In this section" button, so the content starts near the top of a phone screen.</p>
+                <p>The rest of the row is <code>col-lg-9</code>, split again into the main column and the sidebar. The sidebar stays below the content until <code>xl</code>, then the page splits 3/6/3. Splitting at <code>lg</code> would leave each side column too narrow for tables and lists.</p>
+                <p>Without a right sidebar, the main column takes the whole <code>col-lg-9</code>.</p>
+              </div>
+              <div class="col-xl-4">
+                <div class="sidebar p-4 rounded">
+                  <h3>Sidebar</h3>
+                  <p class="small">The sidebar uses <code>col-xl-4</code> inside the <code>col-lg-9</code>.</p>
+                  <ul class="small mb-0">
+                    <li>Quick links</li>
+                    <li>Hours today</li>
+                    <li>Related content</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="py-5">
       <div class="container-md">
         <div class="row">
           <div class="col-lg-10 mx-auto">

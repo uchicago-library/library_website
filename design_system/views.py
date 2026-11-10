@@ -47,7 +47,7 @@ DEMOS = {
     ),
     "layouts": (
         "Page Layouts",
-        "The three standard page layouts, rendered at full page width.",
+        "The four standard page layouts, rendered at full page width.",
     ),
     "database-finder": (
         "Database Finder",
