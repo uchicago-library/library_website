@@ -46,12 +46,12 @@ A header without navigation: a maroon band with the white logo. It reuses `.glob
 ```html
 <footer role="contentinfo" class="footer">
   <div class="container-md">
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-2 mb-4">
+    <div class="row justify-content-xl-between">
+      <div class="col-12 col-md-6 col-lg-3 col-xl-auto mb-4">
         <h2 class="footer-heading">Column heading</h2>
         <!-- list of links -->
       </div>
-      <div class="col-12 col-lg-4 order-2 order-lg-3 mb-4 text-lg-center">
+      <div class="col-12 col-xl-auto order-2 order-xl-3 mb-4 text-xl-center">
         <!-- logo, address and closing text -->
       </div>
     </div>
@@ -59,5 +59,5 @@ A header without navigation: a maroon band with the white logo. It reuses `.glob
 </footer>
 ```
 
-`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. The logo and address column is laid out with utilities alone: left-aligned while the columns wrap, and centred with `text-lg-center` once all five share a row.
+`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. The grid has four link columns and a logo and address column. The four link columns share a row from `lg`. From `xl`, the logo and address column joins them, centred with `text-xl-center`; every column is sized to its content (`col-xl-auto`) and the row spreads them evenly (`justify-content-xl-between`), so no heading or link wraps. Fixed widths such as `col-xl-2` are too narrow for the longer labels. Below `xl` the logo and address sit under the links, left-aligned. Give icons in the lists `fa-fw`, so the labels line up.
 
