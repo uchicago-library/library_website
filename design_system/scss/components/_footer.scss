@@ -33,18 +33,4 @@
       margin-bottom: 0.5rem;
     }
   }
-
-  /// Centred block inside `.footer`, used for the logo and closing text.
-  /// Legacy name kept for compatibility with existing footer markup.
-  .centerdiv {
-    text-align: center;
-
-    img {
-      margin-bottom: 1.5rem;
-    }
-
-    p {
-      margin-bottom: 1rem;
-    }
-  }
 }

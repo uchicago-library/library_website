@@ -3,6 +3,8 @@ title: "Site Chrome"
 description: "The header and footer that frame every Library page, and the markup to reuse them."
 ---
 
+On the Library website itself, the header and footer are `base/templates/base/includes/bs5/header.html` and `footer.html`, included by the public base template `base/templates/base/public_base_bs5.html`.
+
 ## Header
 
 Two bands. `.logo-bar` carries the logo, the shortcut links and the mobile toggle; `.global-navbar` carries the dropdown menus and the search field. The header at the top of these pages is an instance of it, carrying the documentation's links in place of the Library's; the [Database Finder demo](/design/demos/database-finder/) shows it with the Library's.
@@ -44,11 +46,18 @@ A header without navigation: a maroon band with the white logo. It reuses `.glob
 ```html
 <footer role="contentinfo" class="footer">
   <div class="container-md">
-    <h2 class="footer-heading">Column heading</h2>
-    <div class="centerdiv"><!-- logo and closing text --></div>
+    <div class="row justify-content-xl-between">
+      <div class="col-12 col-md-6 col-lg-3 col-xl-auto mb-4">
+        <h2 class="footer-heading">Column heading</h2>
+        <!-- list of links -->
+      </div>
+      <div class="col-12 col-xl-auto order-2 order-xl-3 mb-4 text-xl-center">
+        <!-- logo, address and closing text -->
+      </div>
+    </div>
   </div>
 </footer>
 ```
 
-`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. `.centerdiv` is the centred block at the foot holding the logo and closing text; the block is current, only its name predates the naming convention.
+`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. The grid has four link columns and a logo and address column. The four link columns share a row from `lg`. From `xl`, the logo and address column joins them, centred with `text-xl-center`; every column is sized to its content (`col-xl-auto`) and the row spreads them evenly (`justify-content-xl-between`), so no heading or link wraps. Fixed widths such as `col-xl-2` are too narrow for the longer labels. Below `xl` the logo and address sit under the links, left-aligned. Give icons in the lists `fa-fw`, so the labels line up.
 
