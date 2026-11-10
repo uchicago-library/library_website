@@ -9,7 +9,7 @@
 <footer id="footer" role="contentinfo" class="footer" data-ga-category="Footer">
   <div class="container-md">
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-2 col-footer mb-4" data-ga-subcategory="Contact">
+      <div class="col-12 col-md-6 col-lg-2 mb-4" data-ga-subcategory="Contact">
         <h2 class="footer-heading" id="contact_label">Contact</h2>
         <ul aria-labelledby="contact_label">
           <li><a href="/research/help/ask-librarian/ask-contact/" data-ga-label="Contact Us">Contact Us</a></li>
@@ -18,7 +18,7 @@
         </ul>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-2 col-footer mb-4" data-ga-subcategory="Information">
+      <div class="col-12 col-md-6 col-lg-2 mb-4" data-ga-subcategory="Information">
         <h2 class="footer-heading" id="information_for_label">Information for</h2>
         <ul aria-labelledby="information_for_label">
           {% if is_law %}
@@ -37,10 +37,10 @@
         </ul>
       </div>
 
-      <div class="col-12 col-md-12 col-lg-4 col-footer order-lg-3 order-2 mb-4" data-ga-subcategory="Address">
-        <div class="centerdiv">
+      <div class="col-12 col-md-12 col-lg-4 order-lg-3 order-2 mb-4" data-ga-subcategory="Address">
+        <div class="text-lg-center">
           <a href="https://www.uchicago.edu/" data-ga-label="The University of Chicago">
-            <img alt="The University of Chicago" src="{% static "base/images/unvlogo-white.png" %}" width="150">
+            <img alt="The University of Chicago" class="mb-4" src="{% static "base/images/unvlogo-white.png" %}" width="150">
           </a>
           <p>
             <span>{{ page_location }}</span>
@@ -50,12 +50,12 @@
           <small>
             &copy; <span>The University of Chicago</span>
             <br>
-            <span class="staff-login"><a href="/admin" data-ga-label="Staff Login">Staff Login</a></span>
+            <a href="/admin" data-ga-label="Staff Login">Staff Login</a>
           </small>
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-2 col-footer order-lg-4 order-1 mb-4" data-ga-subcategory="Libraries">
+      <div class="col-12 col-md-6 col-lg-2 order-lg-4 order-1 mb-4" data-ga-subcategory="Libraries">
         <h2 class="footer-heading" id="library_list_label">Libraries</h2>
         <ul aria-labelledby="library_list_label">
           <li><a href="/crerar/" data-ga-label="Crerar">Crerar</a></li>
@@ -68,7 +68,7 @@
         </ul>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-2 col-footer order-lg-5 order-1 mb-4" data-ga-subcategory="Social Media">
+      <div class="col-12 col-md-6 col-lg-2 order-lg-5 order-1 mb-4" data-ga-subcategory="Social Media">
         <h2 class="footer-heading" id="social_media_label">Library Social Media</h2>
         <ul aria-labelledby="social_media_label">
           {% if is_law %}

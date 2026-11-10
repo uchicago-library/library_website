@@ -46,11 +46,18 @@ A header without navigation: a maroon band with the white logo. It reuses `.glob
 ```html
 <footer role="contentinfo" class="footer">
   <div class="container-md">
-    <h2 class="footer-heading">Column heading</h2>
-    <div class="centerdiv"><!-- logo and closing text --></div>
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-2 mb-4">
+        <h2 class="footer-heading">Column heading</h2>
+        <!-- list of links -->
+      </div>
+      <div class="col-12 col-lg-4 order-2 order-lg-3 mb-4 text-lg-center">
+        <!-- logo, address and closing text -->
+      </div>
+    </div>
   </div>
 </footer>
 ```
 
-`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. `.centerdiv` is the centred block at the foot holding the logo and closing text; the block is current, only its name predates the naming convention.
+`.footer` supplies the dark surface, white links and unstyled lists — Bootstrap has no footer component, so this one is ours. `.footer-heading` styles a column heading. The logo and address column is laid out with utilities alone: left-aligned while the columns wrap, and centred with `text-lg-center` once all five share a row.
 
