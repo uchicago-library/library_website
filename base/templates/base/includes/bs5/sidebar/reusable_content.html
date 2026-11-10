@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Reusable content snippets chosen for the page's sidebar. "Informative" and
+  "Alert" styling are subtle info and danger backgrounds.
+
+  Context: items (page relations to ReusableContent, via .content).
+{% endcomment %}
+{% for item in items %}
+  <section{% if item.content.style_type == "info-box" %} class="bg-info-subtle p-3 rounded"{% elif item.content.style_type == "alert-box" %} class="bg-danger-subtle p-3 rounded"{% endif %} data-ga-subcategory="Sidebar Reusable Content">
+    {% if item.content.sidebar_heading %}
+      <h2 class="h5">{{ item.content.sidebar_heading }}</h2>
+    {% endif %}
+    {{ item.content.content|richtext }}
+  </section>
+{% endfor %}

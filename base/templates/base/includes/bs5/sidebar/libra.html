@@ -1,0 +1,10 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Link to the current issue of the Libra newsletter (news pages).
+
+  Context: libra (a page).
+{% endcomment %}
+<section data-ga-subcategory="Libra Widget">
+  <h2 class="h5">Print</h2>
+  <p class="mb-0"><a href="{% pageurl libra %}" data-ga-label="{{ libra }}">{{ libra }}</a></p>
+</section>

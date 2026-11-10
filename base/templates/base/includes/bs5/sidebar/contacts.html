@@ -1,0 +1,11 @@
+{% comment %}
+  Media contacts for news pages. Each contact renders itself.
+
+  Context: contacts, title (made plural when there is more than one).
+{% endcomment %}
+<section data-ga-subcategory="Contacts">
+  <h2 class="h5">{{ title }}{% if contacts|length > 1 %}s{% endif %}</h2>
+  {% for contact in contacts %}
+    {{ contact }}
+  {% endfor %}
+</section>

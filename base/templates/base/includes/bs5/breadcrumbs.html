@@ -1,0 +1,26 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Breadcrumbs from the page's ancestors, without the root and the home page
+  (the logo links home). Collection pages add their own trail and final crumb
+  (collection_breadcrumb, collection_final_breadcrumb). The trail ends on the
+  current page, unlinked.
+
+  Context: page, collection_breadcrumb, collection_final_breadcrumb.
+{% endcomment %}
+<nav aria-label="Breadcrumb" data-ga-category="Navigation" data-ga-subcategory="Breadcrumbs">
+  <ol class="breadcrumb">
+    {% for ancestor in page.get_ancestors %}
+      {% if not ancestor.is_root and not ancestor.get_parent.is_root %}
+        <li class="breadcrumb-item"><a href="{% pageurl ancestor %}" data-ga-label="{{ ancestor.title }}">{{ ancestor.title }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if collection_breadcrumb %}
+      {% for name, link in collection_breadcrumb.items %}
+        <li class="breadcrumb-item"><a href="{{ link }}" data-ga-label="{{ name }}">{{ name }}</a></li>
+      {% endfor %}
+      <li class="breadcrumb-item active" aria-current="page">{{ collection_final_breadcrumb }}</li>
+    {% else %}
+      <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
+    {% endif %}
+  </ol>
+</nav>

@@ -1,0 +1,16 @@
+{% comment %}
+  Links into the study spaces browse, filtered by the page's building.
+
+  Context: quiet_url, collaborative_url, book_url, all_url, friendly_name.
+{% endcomment %}
+<section data-ga-subcategory="Find Spaces Widget">
+  <h2 class="h5">Find Spaces</h2>
+  <ul class="list-unstyled">
+    <li><a href="{{ quiet_url }}" data-ga-label="Quiet Study"><i class="fa-solid fa-book-open-reader fa-fw me-2" aria-hidden="true"></i>Quiet study spaces</a></li>
+    <li><a href="{{ collaborative_url }}" data-ga-label="Collaboration"><i class="fa-solid fa-people-group fa-fw me-2" aria-hidden="true"></i>Collaboration spaces</a></li>
+    {% if book_url %}
+      <li><a href="{{ book_url }}" data-ga-label="Reserve"><i class="fa-solid fa-calendar-plus fa-fw me-2" aria-hidden="true"></i>Reserve a space</a></li>
+    {% endif %}
+  </ul>
+  <p class="mb-0"><a href="{{ all_url }}" data-ga-label="View all study spaces">View all {{ friendly_name }} study spaces</a></p>
+</section>

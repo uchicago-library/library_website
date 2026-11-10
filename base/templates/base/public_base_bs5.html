@@ -6,7 +6,8 @@
   Base template for public pages on the design system (Bootstrap 5). Page
   templates move here from base/public_base.html one page type at a time
   (#1109); the two can't share a page, so this loads no Bootstrap 3 CSS or JS.
-  Breadcrumbs, sidebars and banners arrive with the shared partials (#1113).
+  It only arranges the partials in base/includes/bs5/, each included with
+  `only` and its context listed at its top.
 {% endcomment %}
 <!DOCTYPE html>
 <html lang="en">
@@ -81,43 +82,166 @@
     {% wagtailuserbar %}
 
     {% if has_alert %}
-      <div class="alert {% if alert_level == "alert-high" %}alert-danger{% elif alert_level == "alert-low" %}alert-warning{% else %}alert-info{% endif %} rounded-0 mb-0" role="alert" data-ga-category="Floating" data-ga-subcategory="Alert Banner">
-        <div class="container-lg">
-          {{ alert_message|richtext }}
-          {% if alert_more_info|striptags %}
-            <a class="alert-link" href="{{ alert_link }}" data-ga-label="More Info...">More info...</a>
-          {% endif %}
-        </div>
-      </div>
+      {% include "base/includes/bs5/alert.html" with message=alert_message level=alert_level more_info=alert_more_info link=alert_link only %}
     {% endif %}
 
     {% include "base/includes/bs5/header.html" %}
 
-    <main id="content" tabindex="-1" class="container-md py-5" data-ga-category="Main">
-      <div class="row">
-        <div class="col-lg-10 mx-auto">
-          {% block page_heading %}
-            <h1>{% if object_title %}{{ object_title }}{% else %}{{ self.title }}{% endif %}</h1>
-          {% endblock %}
-          {% block under_h1 %}{% endblock %}
+    {% block banner %}
+      {% if has_banner %}
+        {% include "base/includes/bs5/banner.html" with image=banner feature=banner_feature title=banner_title subtitle=banner_subtitle url=banner_url exhibit_open_date=exhibit_open_date exhibit_close_date=exhibit_close_date exhibit_location=exhibit_location only %}
+      {% endif %}
+    {% endblock %}
 
-          {% block content %}
-            {% for block in self.body %}
-              {% include_block block %}
-            {% endfor %}
-          {% endblock %}
-
-          {% autoescape off %}
-            {{ index_pages_html }}
-          {% endautoescape %}
-
-          {% if self.cgi_mail_form %}
-            <div id="cgi-mail-form" data-json="{{ self.cgi_mail_form }}" data-thank-you="{{ self.cgi_mail_form_thank_you_text }}" data-cgi-mail="{{ cgi_mail }}" data-item-servlet="{{ item_servlet }}" data-springshare-pp="{{ springshare_pp }}"></div>
-            {% render_bundle 'CGIMailForm' %}
+    {% comment %}
+      The layout picks the columns from what the page has:
+      - neither sidebar: one column at reading width (container-md, col-lg-10);
+      - right sidebar: 8/4 from lg;
+      - left section navigation: 3/9 from lg, the navigation an offcanvas
+        panel below lg;
+      - both: 3/9 from lg, the right sidebar below the content until xl, then
+        3/6/3.
+      The home page and full-width pages override this block.
+    {% endcomment %}
+    {% block layout %}
+      <div class="{% if has_left_sidebar or self.has_right_sidebar %}container-lg{% else %}container-md{% endif %} py-4">
+        <div class="row g-4">
+          {% if has_left_sidebar %}
+            <div class="col-lg-3">
+              <button class="btn btn-default d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#section-nav" aria-controls="section-nav">
+                <i class="fa-solid fa-bars me-2" aria-hidden="true"></i>In this section
+              </button>
+              <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="section-nav" aria-labelledby="section-nav-title">
+                <div class="offcanvas-header">
+                  <p class="h5 offcanvas-title" id="section-nav-title">In this section</p>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#section-nav" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body flex-column">
+                  {% include "base/includes/bs5/section_nav.html" with title=sidebartitle title_url=sidebartitleurl items=sidebar current_url=request.path only %}
+                  {% block left_sidebar_extras %}{% endblock %}
+                </div>
+              </div>
+            </div>
           {% endif %}
+
+          <div class="{% if has_left_sidebar %}col-lg-9{% elif self.has_right_sidebar %}col-12{% else %}col-lg-10 mx-auto{% endif %}">
+            {% block breadcrumbs %}
+              {% if page_type|slugify != "libnewspage" and page_type|slugify != "libnewsindexpage" %}
+                {% include "base/includes/bs5/breadcrumbs.html" with page=self collection_breadcrumb=collection_breadcrumb collection_final_breadcrumb=collection_final_breadcrumb only %}
+              {% endif %}
+            {% endblock %}
+            {% block above_main_content %}{% endblock %}
+
+            <div class="row g-4">
+              <main id="content" tabindex="-1" class="{% if not self.has_right_sidebar %}col-12{% elif has_left_sidebar %}col-xl-8{% else %}col-lg-8{% endif %}" data-ga-category="Main">
+                {% block page_heading %}
+                  <h1>{% if object_title %}{{ object_title }}{% else %}{{ self.title }}{% endif %}</h1>
+                {% endblock %}
+                {% block under_h1 %}{% endblock %}
+
+                {% if carousel_items %}
+                  {% include "base/includes/bs5/carousel.html" with items=carousel_items only %}
+                {% endif %}
+
+                {% block content %}
+                  {% for block in self.body %}
+                    {% include_block block %}
+                  {% endfor %}
+                {% endblock %}
+
+                {% autoescape off %}
+                  {{ index_pages_html }}
+                {% endautoescape %}
+
+                {% if self.cgi_mail_form %}
+                  <div id="cgi-mail-form" data-json="{{ self.cgi_mail_form }}" data-thank-you="{{ self.cgi_mail_form_thank_you_text }}" data-cgi-mail="{{ cgi_mail }}" data-item-servlet="{{ item_servlet }}" data-springshare-pp="{{ springshare_pp }}"></div>
+                  {% render_bundle 'CGIMailForm' %}
+                {% endif %}
+
+                {% if self.has_richtext_widget or has_featured_lib_expert %}
+                  <div class="row g-4 mt-2">
+                    {% if self.has_richtext_widget %}
+                      <div class="col-md">
+                        {% include "base/includes/bs5/below_content/rich_text.html" with heading=self.rich_text_heading link_url=self.rt_link link_text=self.rich_text_link_text link_queue=link_queue rich_text=self.rich_text only %}
+                      </div>
+                    {% endif %}
+                    {% if has_featured_lib_expert %}
+                      <div class="col-md">
+                        {% include "base/includes/bs5/below_content/featured_expert.html" with name=featured_lib_expert_name image=featured_lib_expert_image profile_url=featured_lib_expert_profile links=featured_lib_expert_links experts_url=self.expert_link friendly_name=self.friendly_name chat_url=chat_url has_libcal_schedule=has_libcal_schedule staff_page=staff_page email=email only %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if self.news_feed_source and news_feed %}
+                  <div class="mt-4">
+                    {% include "base/includes/bs5/below_content/news.html" with stories=news_feed more_url=news_page only %}
+                  </div>
+                {% endif %}
+              </main>
+
+              {% if self.has_right_sidebar %}
+                <aside class="{% if has_left_sidebar %}col-xl-4{% else %}col-lg-4{% endif %}" aria-label="Related" data-ga-category="Sidebar">
+                  <div class="sidebar p-4 rounded d-flex flex-column gap-4">
+                    {% if reusable_content %}
+                      {% include "base/includes/bs5/sidebar/reusable_content.html" with items=reusable_content only %}
+                    {% endif %}
+
+                    {% block right_sidebar %}{% endblock %}
+
+                    {% if self.quicklinks and self.specific.content_type.model != "libnewspage" %}
+                      {% include "base/includes/bs5/sidebar/quicklinks.html" with title=self.quicklinks_title body=self.quicklinks more_url=self.view_more_link more_label=self.view_more_link_label callout=self.change_to_callout only %}
+                    {% endif %}
+
+                    {% if self.has_granular_hours %}
+                      {% include "base/includes/bs5/sidebar/hours_today.html" with iid=libcaliid lid=granular_libcalid only %}
+                    {% endif %}
+
+                    {% if self.has_icon_link_items %}
+                      {% include "base/includes/bs5/sidebar/icon_links.html" with title=self.widget_title items=self.icon_link_items.all more_url=self.more_icons_link more_label=self.more_icons_link_label only %}
+                    {% endif %}
+
+                    {% if self.has_find_spaces %}
+                      {% include "base/includes/bs5/sidebar/find_spaces.html" with quiet_url=quiet_spaces_link collaborative_url=collaborative_spaces_link book_url=self.book_a_room_link all_url=all_spaces_link friendly_name=self.friendly_name only %}
+                    {% endif %}
+
+                    {% if self.events_feed_url %}
+                      {% include "base/includes/bs5/sidebar/events.html" only %}
+                    {% endif %}
+
+                    {% if self.collection_page %}
+                      {% include "base/includes/bs5/sidebar/featured_collection.html" with collection=self.collection_page only %}
+                    {% endif %}
+
+                    {% if self.has_social_media %}
+                      {% include "base/includes/bs5/sidebar/social_media.html" with page=self friendly_name=self.friendly_name only %}
+                    {% endif %}
+
+                    {% if libra %}
+                      {% include "base/includes/bs5/sidebar/libra.html" with libra=libra only %}
+                    {% endif %}
+
+                    {% if contacts %}
+                      {% include "base/includes/bs5/sidebar/contacts.html" with contacts=contacts title="Media Contact" only %}
+                    {% endif %}
+
+                    {% if self.category %}
+                      {% include "base/includes/bs5/sidebar/rss.html" with title=self.category url="/rss/"|add:self.slug|add:"/" only %}
+                    {% elif self.news_feed_api %}
+                      {% include "base/includes/bs5/sidebar/rss.html" with title="all Library news" url="/rss/news/" only %}
+                    {% endif %}
+                  </div>
+                </aside>
+              {% endif %}
+            </div>
+
+            {# Ask a Librarian pages put their contact options here. #}
+            {% block btm_content %}{% endblock %}
+          </div>
         </div>
       </div>
-    </main>
+    {% endblock %}
+    {% block optional_footer %}{% endblock %}
 
     {% include "base/includes/bs5/footer.html" %}
 

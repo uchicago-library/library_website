@@ -49,6 +49,7 @@ Every component is Bootstrap 5.3's, styled by the system's tokens, and [Bootstra
 
 - Each variant keeps its Bootstrap meaning.
 - A link inside an alert takes the alert's own colour, so it stays legible on every variant. Add `.alert-link` only if you also want it bold.
+- **A site-wide alert banner** sits above the header, full width: `.alert.rounded-0.mb-0` with `role="alert"`, its text inside the site's container. Map its severity to a variant: high to `.alert-danger`, low to `.alert-warning`, and anything else, informational, to `.alert-info`.
 
 ## Badges
 

@@ -1,0 +1,47 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Image carousel above the content of standard pages (StandardPageCarouselItem).
+  It never advances by itself; controls appear only with more than one item.
+  The id ties the controls to the carousel.
+
+  Context: items (image, image_title, image_subtitle, link).
+{% endcomment %}
+<div id="page-carousel" class="carousel slide mb-4" data-ga-category="Main" data-ga-subcategory="Carousel">
+  {% if items|length > 1 %}
+    <div class="carousel-indicators">
+      {% for item in items %}
+        <button type="button" data-bs-target="#page-carousel" data-bs-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <div class="carousel-inner rounded">
+    {% for item in items %}
+      <div class="carousel-item{% if forloop.first %} active{% endif %}">
+        {% if item.link %}<a href="{{ item.link }}" data-ga-label="{{ item.image_title|default:"Carousel image" }}">{% endif %}
+        {# The caption names a linked slide; without one, the image's alt text does. #}
+        {% if item.image_title %}
+          {% picture item.image format-{avif,jpeg} fill-{960x250,1920x500} sizes="(min-width: 992px) 66vw, 100vw" alt="" class="d-block w-100 h-auto" %}
+        {% else %}
+          {% picture item.image format-{avif,jpeg} fill-{960x250,1920x500} sizes="(min-width: 992px) 66vw, 100vw" class="d-block w-100 h-auto" %}
+        {% endif %}
+        {% if item.image_title or item.image_subtitle %}
+          <div class="carousel-caption">
+            {% if item.image_title %}<p class="h3">{{ item.image_title }}</p>{% endif %}
+            {% if item.image_subtitle %}<p>{{ item.image_subtitle }}</p>{% endif %}
+          </div>
+        {% endif %}
+        {% if item.link %}</a>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% if items|length > 1 %}
+    <button class="carousel-control-prev" type="button" data-bs-target="#page-carousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#page-carousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  {% endif %}
+</div>

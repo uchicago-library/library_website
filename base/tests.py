@@ -4,11 +4,12 @@ from datetime import datetime, timedelta
 from io import StringIO
 
 import pandas as pd
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import AnonymousUser, Group, User
 from django.core import management
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
+from django.template.loader import render_to_string
 from django.test import Client, TestCase
 from django.urls import clear_url_caches
 from file_parsing import is_json
@@ -17,6 +18,7 @@ from wagtail.documents.models import Document
 from wagtail.models import Page, Site
 from wagtailcache.cache import clear_cache
 
+from alerts.models import AlertPage
 from ask_a_librarian.models import AskPage
 from base.models import (
     PAGE_LISTING_MAX_DEPTH,
@@ -30,6 +32,7 @@ from base.models import (
 from base.utils import get_hours_by_id, get_json_for_library
 from news.models import NewsPage
 from public.models import LocationPage, StandardPage
+from site_settings.models import EmergencyHours
 from staff.models import StaffIndexPage, StaffPage
 from units.models import UnitPage
 
@@ -1168,3 +1171,164 @@ class PageListingBlockTestCase(TestCase):
         # Documenting part of the public site on Loop is fine.
         listing = self.listing_for(self.loop_section, root_page=self.section)
         self.assertEqual(self.titles(listing), [self.child.title])
+
+
+class TestDesignSystemBase(TestCase):
+    """
+    The Bootstrap 5 base (base/public_base_bs5.html) and its partials in
+    base/includes/bs5/: what pages on it rely on, and each branch that
+    depends on page data.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        boiler_plate(cls)
+        cls.alert = AlertPage(
+            title="Red Alert",
+            banner_message="<p>Shields up.</p>",
+            more_info="<p>All hands to battle stations.</p>",
+            page_maintainer=cls.staff,
+            editor=cls.staff,
+            content_specialist=cls.staff,
+            unit=cls.unit,
+        )
+        cls.homepage.add_child(instance=cls.alert)
+        cls.child = StandardPage(
+            title="Ten Forward",
+            page_maintainer=cls.staff,
+            editor=cls.staff,
+            content_specialist=cls.staff,
+            unit=cls.unit,
+        )
+        cls.page.add_child(instance=cls.child)
+
+    def tearDown(self):
+        clear_url_caches()
+        cache.clear()
+        clear_cache()
+
+    def request(self, path="/"):
+        request = HttpRequest()
+        add_generic_request_meta_fields(request)
+        request.path = path
+        request.user = AnonymousUser()
+        return request
+
+    def render_base(self, page, path="/", **overrides):
+        request = self.request(path)
+        context = page.get_context(request)
+        context.update(overrides)
+        return render_to_string("base/public_base_bs5.html", context, request)
+
+    # Assets and hooks
+
+    def test_loads_no_bootstrap_3(self):
+        request = self.request()
+        html = self.alert.serve(request).rendered_content
+        self.assertNotIn("base/css/bootstrap.min.css", html)
+        self.assertNotIn("base/js/bootstrap.min.js", html)
+        self.assertNotIn("font-awesome-4.6.3", html)
+
+    def test_has_the_hooks_scripts_rely_on(self):
+        response = self.alert.serve(self.request())
+        self.assertContains(response, 'href="#content"')
+        self.assertContains(response, '<main id="content"', count=1)
+        self.assertContains(response, 'id="global-navbar"', count=1)
+        # voc-button.js adds its feedback link to this list
+        self.assertContains(response, 'aria-labelledby="contact_label"', count=1)
+
+    # Layout
+
+    def test_a_page_without_sidebars_has_one_column(self):
+        html = self.render_base(self.page)
+        self.assertNotIn('id="section-nav"', html)
+        self.assertNotIn("<aside", html)
+
+    def test_section_navigation_marks_the_current_page(self):
+        sidebar = [
+            {"title": "The Great Link", "url": "/the-great-link-test/", "children": []},
+            {"title": "Ten Forward", "url": "/ten-forward/", "children": []},
+        ]
+        html = self.render_base(
+            self.page,
+            path="/the-great-link-test/",
+            has_left_sidebar=True,
+            sidebar=sidebar,
+        )
+        self.assertIn('id="section-nav"', html)
+        self.assertInHTML(
+            '<a class="nav-link px-0 active fw-bold" href="/the-great-link-test/" '
+            'aria-current="page" data-ga-label="The Great Link">The Great Link</a>',
+            html,
+        )
+        self.assertInHTML(
+            '<a class="nav-link px-0" href="/ten-forward/" '
+            'data-ga-label="Ten Forward">Ten Forward</a>',
+            html,
+        )
+
+    def test_right_sidebar_holds_the_page_widgets(self):
+        self.page.quicklinks = "<p>Hailing frequencies</p>"
+        html = self.render_base(self.page)
+        self.assertIn("<aside", html)
+        aside = html[html.index("<aside") : html.index("</aside>")]
+        self.assertIn("Hailing frequencies", aside)
+
+    # Partials
+
+    def test_breadcrumbs_link_ancestors_and_end_on_the_current_page(self):
+        html = render_to_string(
+            "base/includes/bs5/breadcrumbs.html", {"page": self.child}
+        )
+        self.assertIn('href="/the-great-link-test/"', html)
+        self.assertNotIn("Welcome to Starfleet Academy", html)
+        self.assertInHTML(
+            '<li class="breadcrumb-item active" aria-current="page">Ten Forward</li>',
+            html,
+        )
+
+    def test_collection_breadcrumbs_replace_the_current_page(self):
+        html = render_to_string(
+            "base/includes/bs5/breadcrumbs.html",
+            {
+                "page": self.child,
+                "collection_breadcrumb": {"Exhibits": "/collex/?view=exhibits"},
+                "collection_final_breadcrumb": "Shuttlecraft",
+            },
+        )
+        self.assertIn('href="/collex/?view=exhibits"', html)
+        self.assertInHTML(
+            '<li class="breadcrumb-item active" aria-current="page">Shuttlecraft</li>',
+            html,
+        )
+        self.assertNotIn(">Ten Forward</li>", html)
+
+    def test_alert_levels_map_to_bootstrap_variants(self):
+        for level, variant in [
+            ("alert-high", "alert-danger"),
+            ("alert-low", "alert-warning"),
+            ("alert-medium", "alert-info"),
+        ]:
+            with self.subTest(level=level):
+                html = render_to_string(
+                    "base/includes/bs5/alert.html",
+                    {"message": "<p>Shields up.</p>", "level": level},
+                )
+                self.assertIn(f'class="alert {variant} ', html)
+
+    def test_emergency_hours_replace_the_hours_link_in_both_headers(self):
+        EmergencyHours.objects.create(
+            site=self.site, enable=True, link_text="Closed: warp core breach"
+        )
+        for template in [
+            "base/includes/bs5/header.html",
+            "base/includes/header.html",
+        ]:
+            with self.subTest(template=template):
+                html = render_to_string(template, {}, self.request())
+                self.assertIn("Closed: warp core breach", html)
+
+    def test_law_pages_get_the_law_footer_links(self):
+        template = "base/includes/bs5/footer.html"
+        self.assertIn("Law Faculty", render_to_string(template, {"is_law": True}))
+        self.assertNotIn("Law Faculty", render_to_string(template, {"is_law": False}))

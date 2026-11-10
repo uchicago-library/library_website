@@ -1,0 +1,34 @@
+{% comment %}
+  The page's own social media accounts.
+
+  Context: page (with the social media fields), friendly_name.
+{% endcomment %}
+<section data-ga-subcategory="Social Media Widget">
+  <h2 class="h5">{% if friendly_name %}{{ friendly_name }} {% endif %}Social Media</h2>
+  <ul class="list-unstyled mb-0">
+    {% if page.twitter_page %}
+      <li><a href="{{ page.twitter_page }}"><i class="fa-brands fa-x-twitter fa-fw me-1" aria-hidden="true"></i>X (Twitter)</a></li>
+    {% endif %}
+    {% if page.facebook_page %}
+      <li><a href="{{ page.facebook_page }}"><i class="fa-brands fa-facebook fa-fw me-1" aria-hidden="true"></i>Facebook</a></li>
+    {% endif %}
+    {% if page.hashtag_page and page.hashtag %}
+      <li><a href="{{ page.hashtag_page }}" class="fw-bold">{{ page.hashtag }}</a></li>
+    {% endif %}
+    {% if page.instagram_page %}
+      <li><a href="{{ page.instagram_page }}"><i class="fa-brands fa-instagram fa-fw me-1" aria-hidden="true"></i>Instagram</a></li>
+    {% endif %}
+    {% if page.youtube_page %}
+      <li><a href="{{ page.youtube_page }}"><i class="fa-brands fa-youtube fa-fw me-1" aria-hidden="true"></i>YouTube</a></li>
+    {% endif %}
+    {% if page.blog_page %}
+      <li><a href="{{ page.blog_page }}"><i class="fa-solid fa-rss fa-fw me-1" aria-hidden="true"></i>Blog</a></li>
+    {% endif %}
+    {% if page.tumblr_page %}
+      <li><a href="{{ page.tumblr_page }}"><i class="fa-brands fa-tumblr fa-fw me-1" aria-hidden="true"></i>Tumblr</a></li>
+    {% endif %}
+    {% if page.snapchat_page %}
+      <li><a href="{{ page.snapchat_page }}"><i class="fa-brands fa-snapchat fa-fw me-1" aria-hidden="true"></i>Snapchat</a></li>
+    {% endif %}
+  </ul>
+</section>

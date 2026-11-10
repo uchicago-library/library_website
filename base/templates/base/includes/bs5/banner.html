@@ -1,0 +1,36 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  Section banner: the nearest ancestor's banner image behind its title, which
+  links to that section. Exhibits add their dates and location.
+
+  Context: image, feature, title, subtitle, url, exhibit_open_date,
+  exhibit_close_date, exhibit_location.
+{% endcomment %}
+<div class="position-relative overflow-hidden bg-dark" data-ga-category="Banner">
+  {% picture image format-{avif,jpeg} fill-{960x200,1920x400} sizes="100vw" alt="" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" %}
+  <div class="container-lg position-relative py-5">
+    <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
+      {% if feature %}
+        {% picture feature format-{avif,png} fill-{200x200,400x400} sizes="200px" class="d-none d-md-block flex-shrink-0 rounded" %}
+      {% endif %}
+      <div class="bg-white bg-opacity-75 rounded p-4">
+        <a href="{{ url }}" class="link-body-emphasis text-decoration-none" data-ga-label="{{ title }}">
+          <p class="h2 mb-0">{{ title }}</p>
+          {% if subtitle %}
+            <p class="lead mb-0 mt-2">{{ subtitle }}</p>
+          {% endif %}
+        </a>
+        {% if exhibit_open_date or exhibit_close_date %}
+          <p class="mb-0 mt-2">Exhibition on view from
+            {% if exhibit_open_date %}{{ exhibit_open_date }}{% endif %}
+            {% if exhibit_open_date and exhibit_close_date %}&ndash;{% endif %}
+            {% if exhibit_close_date %}{{ exhibit_close_date }}{% endif %}
+          </p>
+        {% endif %}
+        {% if exhibit_location %}
+          <p class="mb-0 mt-2"><a href="{{ exhibit_location.url }}">{{ exhibit_location.title }}</a></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

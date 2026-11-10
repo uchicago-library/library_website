@@ -1,0 +1,12 @@
+{% comment %}
+  Today's hours for the page's most specific LibCal location. LibCal's script
+  fills the div; the id is the one that script looks for.
+
+  Context: iid (LibCal institution), lid (LibCal location).
+{% endcomment %}
+<section data-ga-subcategory="Granular Hours Widget">
+  <h2 class="h5">Hours Today</h2>
+  <div id="api_hours_today_iid{{ iid }}_lid{{ lid }}"></div>
+  <script src="https://api3.libcal.com/api_hours_today.php?iid={{ iid }}&lid={{ lid }}&format=js&context=object"></script>
+  <p class="mb-0"><a href="/libraries/libraries-hours/" data-ga-label="View all library hours">View all library hours</a></p>
+</section>

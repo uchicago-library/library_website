@@ -1,0 +1,9 @@
+{% comment %}
+  RSS subscription link for a news category, or for all Library news.
+
+  Context: title, url.
+{% endcomment %}
+<section data-ga-subcategory="RSS">
+  <h2 class="h5">Subscribe to {{ title }}</h2>
+  <p class="mb-0"><a href="{{ url }}" data-ga-label="RSS feed"><i class="fa-solid fa-square-rss me-1" aria-hidden="true"></i>RSS feed</a></p>
+</section>

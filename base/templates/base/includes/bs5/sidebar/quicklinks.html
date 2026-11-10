@@ -1,0 +1,16 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Quick links (the sidebar's rich text widget). "Change to callout" draws it
+  as the page's one maroon panel.
+
+  Context: title, body (rich text), more_url, more_label, callout.
+{% endcomment %}
+<section{% if callout %} class="panel panel-primary"{% endif %} data-ga-subcategory="Quicklinks Widget">
+  {% if title %}
+    <h2 class="h5">{{ title }}</h2>
+  {% endif %}
+  {{ body|richtext }}
+  {% if more_url and more_label %}
+    <p class="mb-0"><a href="{{ more_url }}" data-ga-label="{{ more_label }}">{{ more_label }}</a></p>
+  {% endif %}
+</section>

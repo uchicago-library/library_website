@@ -1,0 +1,41 @@
+{% load wagtailimages_tags staff_tags %}
+{% comment %}
+  The section's featured library expert, with their topics and a LibCal
+  appointment button when they have a schedule.
+
+  Context: name, image, profile_url, links (HTML strings built in
+  public.models), experts_url, friendly_name, chat_url, has_libcal_schedule,
+  staff_page, email.
+{% endcomment %}
+<section data-ga-subcategory="Expert Widget">
+  <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2">
+    <h2>Contact Your Library Expert</h2>
+    <a href="{{ experts_url }}" data-ga-label="View All Experts">View all {{ friendly_name }} experts</a>
+  </div>
+  <div class="d-flex flex-column flex-sm-row gap-4">
+    <div class="flex-shrink-0">
+      {% if image %}
+        {% picture image format-{avif,jpeg} fill-{150x150,300x300} sizes="150px" alt="" class="d-block rounded mb-2 h-auto" %}
+      {% endif %}
+      {% if has_libcal_schedule %}
+        {% libcal_button staff_page email %}
+      {% endif %}
+    </div>
+    <div>
+      {% if profile_url %}
+        <h3 class="h5">Ask <a href="{{ profile_url }}" data-ga-label="Expert Name">{{ name }}</a> about:</h3>
+      {% else %}
+        <h3 class="h5">Ask {{ name }} about:</h3>
+      {% endif %}
+      <ul>
+        {% for link in links %}
+          <li>{{ link|safe }}</li>
+        {% endfor %}
+      </ul>
+      <h3 class="h5">Not sure where to start?</h3>
+      <ul class="mb-0">
+        <li><a href="{{ chat_url }}" data-ga-label="Ask a Librarian">Ask a {{ friendly_name }} Librarian</a></li>
+      </ul>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,28 @@
+{% comment %}
+  Left section navigation: the pages in the current section, two levels deep.
+  The base puts it in an offcanvas-lg panel, so pages can add extras below it
+  (left_sidebar_extras).
+
+  Context: title, title_url, items (title, url, children), current_url.
+{% endcomment %}
+<nav aria-label="Section" data-ga-category="Navigation" data-ga-subcategory="Left Sidebar">
+  {% if title %}
+    <h2 class="h5"><a href="{{ title_url }}" class="link-body-emphasis text-decoration-none" data-ga-label="{{ title }}">{{ title }}</a></h2>
+  {% endif %}
+  <ul class="nav flex-column">
+    {% for item in items %}
+      <li class="nav-item">
+        <a class="nav-link px-0{% if item.url == current_url %} active fw-bold{% endif %}" href="{{ item.url }}"{% if item.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ item.title }}">{{ item.title }}</a>
+        {% if item.children %}
+          <ul class="nav flex-column ms-3">
+            {% for child in item.children %}
+              <li class="nav-item">
+                <a class="nav-link px-0 py-1{% if child.url == current_url %} active fw-bold{% endif %}" href="{{ child.url }}"{% if child.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ child.title }}">{{ child.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

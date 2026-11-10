@@ -1,0 +1,30 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Rich text widget below the content (often "Explore Research Guides"). The
+  link queue's current links replace the rich text while any are live.
+
+  Context: heading, link_url, link_text, link_queue ({heading: [(url, text)]}),
+  rich_text.
+{% endcomment %}
+<section data-ga-subcategory="Guides Widget">
+  <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2">
+    <h2>{{ heading }}</h2>
+    {% if link_url and link_text %}
+      <a href="{{ link_url }}" data-ga-label="{{ link_text }}">{{ link_text }}</a>
+    {% endif %}
+  </div>
+  {% if link_queue %}
+    {% for queue_heading, links in link_queue.items %}
+      <h3 class="h5">{{ queue_heading }}</h3>
+      {% if links %}
+        <ul>
+          {% for url, text in links %}
+            <li><a href="{{ url }}" data-ga-label="{{ queue_heading }}">{{ text }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endfor %}
+  {% elif rich_text %}
+    {{ rich_text|richtext }}
+  {% endif %}
+</section>

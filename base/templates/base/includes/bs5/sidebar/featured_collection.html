@@ -1,0 +1,14 @@
+{% load wagtailimages_tags %}
+{% comment %}
+  One collection page, with its thumbnail.
+
+  Context: collection (a collection page).
+{% endcomment %}
+<section data-ga-subcategory="Featured Collection">
+  <h2 class="h5">Featured Collection</h2>
+  {% if collection.thumbnail %}
+    {% picture collection.thumbnail format-{avif,jpeg} fill-{200x200,400x400}-c100 sizes="200px" alt="" class="d-block rounded mb-2 h-auto" %}
+  {% endif %}
+  <p><a href="{{ collection.url }}" class="fw-bold" data-ga-label="{{ collection.title }}">{{ collection.title }}</a></p>
+  <p class="mb-0"><a href="/collex/?view=collections" data-ga-label="View all collections">View all collections</a></p>
+</section>

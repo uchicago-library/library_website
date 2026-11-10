@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+{% comment %}
+  Site-wide alert banner. Levels map to Bootstrap's variants: alert-high is
+  alert-danger, alert-low is alert-warning, anything else alert-info.
+
+  Context: message (rich text), level, more_info, link.
+{% endcomment %}
+<div class="alert {% if level == "alert-high" %}alert-danger{% elif level == "alert-low" %}alert-warning{% else %}alert-info{% endif %} rounded-0 mb-0" role="alert" data-ga-category="Floating" data-ga-subcategory="Alert Banner">
+  <div class="container-lg">
+    {{ message|richtext }}
+    {% if more_info|striptags %}
+      <a class="alert-link" href="{{ link }}" data-ga-label="More Info...">More info...</a>
+    {% endif %}
+  </div>
+</div>

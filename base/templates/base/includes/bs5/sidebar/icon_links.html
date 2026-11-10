@@ -1,0 +1,23 @@
+{% comment %}
+  Up to three links, each with a Font Awesome icon that editors name by its
+  class (such as fa-book).
+
+  Context: title, items (icon, link, link_label), more_url, more_label.
+{% endcomment %}
+<section data-ga-subcategory="{{ title }} Widget">
+  {% if title %}
+    <h2 class="h5">{{ title }}</h2>
+  {% endif %}
+  <ul class="list-unstyled{% if not more_url or not more_label %} mb-0{% endif %}">
+    {% for item in items %}
+      <li>
+        {% if item.link %}<a href="{{ item.link }}" data-ga-label="{{ item.link_label }}">{% endif %}
+        <i class="fa-solid {{ item.icon }} fa-fw me-2" aria-hidden="true"></i>{{ item.link_label }}
+        {% if item.link %}</a>{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% if more_url and more_label %}
+    <p class="mb-0"><a href="{{ more_url }}" data-ga-label="{{ more_label }}">{{ more_label }}</a></p>
+  {% endif %}
+</section>
