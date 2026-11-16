@@ -1332,3 +1332,33 @@ class TestDesignSystemBase(TestCase):
         template = "base/includes/bs5/footer.html"
         self.assertIn("Law Faculty", render_to_string(template, {"is_law": True}))
         self.assertNotIn("Law Faculty", render_to_string(template, {"is_law": False}))
+
+
+class TestMakeTemplateTestPage(TestCase):
+    """The command must never publish: it runs against production data."""
+
+    @classmethod
+    def setUpTestData(cls):
+        boiler_plate(cls)
+
+    def run_command(self):
+        management.call_command("make_template_test_page", stdout=StringIO())
+        return StandardPage.objects.get(slug="template-test-page")
+
+    def test_saves_a_draft_hidden_from_menus(self):
+        page = self.run_command()
+        self.assertFalse(page.live)
+        self.assertFalse(page.show_in_menus)
+        self.assertEqual(page.get_parent().id, self.homepage.id)
+
+    def test_running_again_updates_the_same_draft(self):
+        first = self.run_command()
+        second = self.run_command()
+        self.assertEqual(first.id, second.id)
+        self.assertEqual(second.revisions.count(), 2)
+        self.assertFalse(second.live)
+
+    def test_refuses_to_touch_a_published_page(self):
+        self.run_command().save_revision().publish()
+        with self.assertRaises(management.CommandError):
+            self.run_command()
