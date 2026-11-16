@@ -1,6 +1,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 {% comment %}
-  The four latest stories for the page's news kiosk, as cards.
+  The four latest stories for the page's news kiosk, as cards, two across at
+  most: the main column can be as narrow as half the page.
 
   Context: stories (LibNewsPage), more_url.
 {% endcomment %}
@@ -11,12 +12,12 @@
       <a href="{{ more_url }}" data-ga-label="View all">View all news</a>
     {% endif %}
   </div>
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+  <div class="row row-cols-1 row-cols-sm-2 g-4">
     {% for story in stories %}
       {% with category=story.get_categories|first %}
         <div class="col">
           <article class="card h-100">
-            {% picture story.thumbnail format-{avif,jpeg} fill-{273x125,546x250} sizes="(min-width: 1200px) 273px, (min-width: 576px) 50vw, 100vw" alt="" class="card-img-top h-auto" %}
+            {% picture story.thumbnail format-{avif,jpeg} fill-{273x125,546x250} sizes="(min-width: 576px) 50vw, 100vw" alt="" class="card-img-top h-auto" %}
             <div class="card-body">
               {% if category %}<p class="small text-body-secondary mb-1">{{ category }}</p>{% endif %}
               <h3 class="h6 card-title"><a href="{% pageurl story %}" class="stretched-link" data-ga-position="{{ forloop.counter }}" data-ga-label="{{ category }}">{{ story.title }}</a></h3>
