@@ -142,6 +142,18 @@ class DesignSystemTest(TestCase):
             with self.subTest(url=url):
                 self.assertRedirects(self.client.get(url), target, status_code=301)
 
+    def test_breadcrumb_switches_to_every_other_section(self):
+        # Demos and Tokens are HTML pages, not content folders, so they are
+        # added to the switcher separately.
+        html = self.get(views.entry("foundations")["url"])
+        for url in [
+            views.entry("guidelines")["url"],
+            reverse("design_system:demos"),
+            reverse("design_system:tokens"),
+        ]:
+            with self.subTest(url=url):
+                self.assertIn(f'<a class="dropdown-item" href="{url}">', html)
+
     def test_tokens_json(self):
         data = json.loads(self.get("/design/tokens.json"))
         self.assertTrue(data["tokens"])

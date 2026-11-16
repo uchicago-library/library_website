@@ -138,9 +138,19 @@ def listing_order(item):
 
 
 def sections():
-    """The top-level folders, without walking the pages inside them."""
+    """The top-level sections, in the docs header's order, for the breadcrumb.
+
+    The content folders, without walking the pages inside them, plus Demos and
+    Tokens, which are HTML pages with their own routes rather than folders.
+    As in the header, Demos follows Implementation and Tokens comes last.
+    """
     folders = [entry(child.name) for child in CONTENT_DIR.iterdir() if child.is_dir()]
-    return sorted(folders, key=listing_order)
+    items = sorted(folders, key=listing_order)
+    slugs = [item["slug"] for item in items]
+    after = slugs.index("implementation") + 1 if "implementation" in slugs else 0
+    items.insert(after, demos_page())
+    items.append(tokens_page())
+    return items
 
 
 def breadcrumbs(slug):
@@ -271,15 +281,19 @@ def html_page(slug, url, title, description):
     return {"slug": slug, "url": url, "title": title, "description": description}
 
 
-@design_view
-def tokens(request):
-    page = html_page(
+def tokens_page():
+    return html_page(
         "tokens",
         reverse("design_system:tokens"),
         "Tokens and Classes",
         "Every design token and documented class, with its CSS variable, SCSS "
         "variable and value. Generated from the stylesheets.",
     )
+
+
+@design_view
+def tokens(request):
+    page = tokens_page()
     context = {"page": page, "breadcrumbs": [page], "tokens": load_tokens()}
     return render_page(request, f"{PAGES}/tokens.html", "tokens", context)
 

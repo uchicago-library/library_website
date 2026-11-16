@@ -102,7 +102,7 @@ description: "Renders as the lead paragraph and the meta description."
 ---
 ```
 
-One optional key, `order`, a number, sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set their order in listings and in the breadcrumb menu.
+One optional key, `order`, a number, sorts a page or a folder ahead of its siblings, which otherwise sort by title. The top-level folders use it to set their order in listings and in the breadcrumb menu. That menu also lists Demos and Tokens, which are HTML pages rather than folders: `sections()` in `views.py` places them as the header does, Demos after Implementation and Tokens last.
 
 The body is plain Markdown, with no template syntax run in it, so the Markdown an agent reads is exactly the file.
 
