@@ -64,7 +64,9 @@ Until #1128 removes the old base.
    in Python.
 3. Look at the page in the browser at 390, 1024 and 1280 px, after
    `./manage.py clear_wagtail_cache`. Open what opens, and walk it with the
-   keyboard.
+   keyboard. For widgets and StreamField blocks, `./manage.py
+   make_template_test_page` makes a draft standard page with every one of
+   them; open it in the admin with "View draft".
 
 ## Tests
 
