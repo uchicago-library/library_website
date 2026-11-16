@@ -15,10 +15,13 @@
   <div class="logo-bar bg-white">
     <div class="container-md">
       <div class="d-flex justify-content-between align-items-center py-2">
-        <a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'design_system:page' %}">
-          <img src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
-          <span class="docs-header-wordmark">Design System</span>
-        </a>
+        {# Two links: the logo to the Library's site, the wordmark home to the documentation. #}
+        <div class="navbar-brand m-0 d-flex align-items-center">
+          <a href="https://www.lib.uchicago.edu/">
+            <img src="https://www.lib.uchicago.edu/web-resources/img/color-logo.png" alt="University of Chicago Library">
+          </a>
+          <a class="docs-header-wordmark" href="{% url 'design_system:page' %}">Design System</a>
+        </div>
 
         <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#docs-header-nav" aria-controls="docs-header-nav"

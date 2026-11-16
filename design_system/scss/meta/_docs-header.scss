@@ -8,12 +8,20 @@
 // Only the wordmark below is specific to this project.
 
 // Wordmark distinguishing this documentation site from the production site it
-// documents. Sits beside the logo, which keeps its production sizing.
+// documents. Sits beside the logo, which keeps its production sizing and
+// links to the Library's site; the wordmark links to the documentation's home.
 .docs-header-wordmark {
   color: $primary;
   font-weight: 600;
   line-height: 1.1;
+  text-decoration: none;
   border-left: 1px solid $light;
   padding-left: 0.75rem;
   margin-left: 0.75rem;
+
+  &:hover,
+  &:focus-visible {
+    color: $primary;
+    text-decoration: underline;
+  }
 }
