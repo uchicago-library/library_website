@@ -5,6 +5,10 @@ description: "The standard page layouts, when each applies, and the markup for t
 
 Four layouts cover nearly every page. See them rendered at full width in the [layouts demo](/design/demos/layouts/).
 
+## Main column width
+
+Never let the main column get narrower than 540px beside a sidebar: below that, collapse a sidebar instead. At the 16px body size, 540px holds about 65 characters a line. That is within the 45 to 75 characters typographers recommend for reading, and close to the 56 to 66 that large news sites set for their articles. The layouts below follow the rule; the narrowest main column is 546px, with both sidebars at `xl`.
+
 ## Main column with right sidebar
 
 Primary content with a supplementary sidebar for navigation, related links or metadata.
