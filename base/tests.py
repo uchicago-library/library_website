@@ -1287,6 +1287,13 @@ class TestDesignSystemBase(TestCase):
             html,
         )
 
+    def test_no_breadcrumbs_when_the_trail_is_only_the_current_page(self):
+        for page in [self.homepage, self.page]:
+            html = render_to_string(
+                "base/includes/bs5/breadcrumbs.html", {"page": page}
+            )
+            self.assertNotIn("breadcrumb", html, page.title)
+
     def test_collection_breadcrumbs_replace_the_current_page(self):
         html = render_to_string(
             "base/includes/bs5/breadcrumbs.html",
@@ -1335,14 +1342,22 @@ class TestDesignSystemBase(TestCase):
 
 
 class TestMakeTemplateTestPage(TestCase):
-    """The command must never publish: it runs against production data."""
+    """
+    The command must never publish, nor put the page in someone else's name:
+    it may run against production data. Tests run with DEBUG off, as
+    production does.
+    """
 
     @classmethod
     def setUpTestData(cls):
         boiler_plate(cls)
+        cls.other_staff = StaffPage(title="William Riker", cnetid="riker")
+        cls.homepage.add_child(instance=cls.other_staff)
 
-    def run_command(self):
-        management.call_command("make_template_test_page", stdout=StringIO())
+    def run_command(self, owner="riker"):
+        management.call_command(
+            "make_template_test_page", owner=owner, stdout=StringIO()
+        )
         return StandardPage.objects.get(slug="template-test-page")
 
     def test_saves_a_draft_hidden_from_menus(self):
@@ -1350,6 +1365,21 @@ class TestMakeTemplateTestPage(TestCase):
         self.assertFalse(page.live)
         self.assertFalse(page.show_in_menus)
         self.assertEqual(page.get_parent().id, self.homepage.id)
+
+    def test_belongs_to_the_owner_given(self):
+        page = self.run_command(owner="riker")
+        self.assertEqual(page.page_maintainer, self.other_staff)
+        self.assertEqual(page.editor, self.other_staff)
+        self.assertEqual(page.content_specialist, self.other_staff)
+
+    def test_requires_an_owner_outside_development(self):
+        with self.assertRaises(management.CommandError):
+            self.run_command(owner=None)
+        self.assertFalse(StandardPage.objects.filter(slug="template-test-page"))
+
+    def test_rejects_an_unknown_owner(self):
+        with self.assertRaises(management.CommandError):
+            self.run_command(owner="q")
 
     def test_running_again_updates_the_same_draft(self):
         first = self.run_command()

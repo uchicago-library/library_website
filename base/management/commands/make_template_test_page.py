@@ -8,13 +8,20 @@ engines, so running this against a production database publishes nothing.
 Open it from the Wagtail admin with "View draft" (preview). Running the
 command again updates the same page with a new draft revision.
 
-Widgets and blocks that need an image, a staff page, a collection page or a
-reusable content snippet use the first one in the database, and are left out
-when there is none.
+The page belongs to the staff member given by --owner: they are its page
+maintainer, editor and content specialist, and stand in for the featured
+library expert and the staff listing. Outside development (DEBUG off) the
+option is required, so the page never lands in someone else's name in the
+Page Owners report. In development it defaults to the first staff page.
 
-    ./manage.py make_template_test_page [--parent PAGE_ID]
+Widgets and blocks that need an image, a collection page or a reusable
+content snippet use the first one in the database, and are left out when
+there is none.
+
+    ./manage.py make_template_test_page [--owner CNETID] [--parent PAGE_ID]
 """
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from wagtail.images import get_image_model
 from wagtail.models import Page, Site
@@ -199,19 +206,16 @@ def body(image, staff, snippet):
         {"type": "markdown", "value": "A **Markdown** block with a [link](/)."},
         {"type": "html", "value": "<p>A raw HTML block.</p>"},
         {"type": "anchor_target", "value": {"anchor_id_name": "anchor-target"}},
+        {
+            "type": "staff_listing",
+            "value": {
+                "staff_listing": [staff.id],
+                "show_photos": True,
+                "show_contact_info": True,
+                "show_subject_specialties": True,
+            },
+        },
     ]
-    if staff:
-        blocks.append(
-            {
-                "type": "staff_listing",
-                "value": {
-                    "staff_listing": [staff.id],
-                    "show_photos": True,
-                    "show_contact_info": True,
-                    "show_subject_specialties": True,
-                },
-            }
-        )
     if snippet:
         blocks.append({"type": "reusable_content", "value": {"content": snippet.id}})
     return blocks
@@ -229,11 +233,18 @@ class Command(BaseCommand):
             type=int,
             help="Id of the parent page. Defaults to the default site's root page.",
         )
+        parser.add_argument(
+            "--owner",
+            help=(
+                "CNetID of the staff member the page belongs to. Required "
+                "outside development; defaults there to the first staff page."
+            ),
+        )
 
     def handle(self, *args, **options):
+        staff = self.get_owner(options["owner"])
         parent = self.get_parent(options["parent"])
         image = get_image_model().objects.first()
-        staff = first_live(StaffPage)
         snippet = ReusableContent.objects.first()
 
         page = StandardPage.objects.child_of(parent).filter(
@@ -255,15 +266,31 @@ class Command(BaseCommand):
             f"{'Created' if created else 'Updated'} draft page {page.id}: "
             f"preview it at /admin/pages/{page.id}/view_draft/"
         )
+        self.stdout.write(f"Owner: {staff.title} ({staff.cnetid}).")
         for name, found in [
             ("image", image),
-            ("staff page", staff),
             ("reusable content", snippet),
         ]:
             if not found:
                 self.stdout.write(
                     f"No {name} in the database: its blocks are left out."
                 )
+
+    def get_owner(self, cnetid):
+        if cnetid:
+            owner = StaffPage.objects.live().filter(cnetid=cnetid).first()
+            if not owner:
+                raise CommandError(f"No live staff page with the CNetID {cnetid}.")
+            return owner
+        if not settings.DEBUG:
+            raise CommandError(
+                "Pass --owner CNETID: outside development the page must belong "
+                "to whoever runs this, not to the first staff member found."
+            )
+        owner = first_live(StaffPage)
+        if not owner:
+            raise CommandError("No live staff page to own the page. Pass --owner.")
+        return owner
 
     def get_parent(self, parent_id):
         if parent_id:
@@ -349,22 +376,18 @@ class Command(BaseCommand):
         page.expert_link = (
             "/about/directory/?view=staff&subject=All+Subject+Specialists"
         )
-        page.featured_library_expert_fallback = (
-            [
-                {
-                    "type": "person",
-                    "value": {
-                        "library_expert": staff.id,
-                        "libguides": [
-                            {
-                                "link_text": "A research guide",
-                                "link_external": "https://guides.lib.uchicago.edu/",
-                                "link_page": None,
-                            }
-                        ],
-                    },
-                }
-            ]
-            if staff
-            else []
-        )
+        page.featured_library_expert_fallback = [
+            {
+                "type": "person",
+                "value": {
+                    "library_expert": staff.id,
+                    "libguides": [
+                        {
+                            "link_text": "A research guide",
+                            "link_external": "https://guides.lib.uchicago.edu/",
+                            "link_page": None,
+                        }
+                    ],
+                },
+            }
+        ]
