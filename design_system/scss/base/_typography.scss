@@ -76,18 +76,18 @@ h6 {
 }
 
 // Line length
-// Running text in <main> stops at $ucl-measure, whatever the column width;
+// Running text in <main> stops at $ucl-text-max-width, whatever the column width;
 // tables, images, cards and components keep the full column. Lists and
 // description lists count only when they carry no class, so .nav, .list-group,
 // .pagination and the like are untouched. :where() keeps the specificity at
 // zero, so any class overrides it. Centred text centres its block too.
 :root {
-  --ucl-measure: #{$ucl-measure};
+  --ucl-text-max-width: #{$ucl-text-max-width};
 }
 
 :where(main)
   :where(p, blockquote, ul:not([class]), ol:not([class]), dl:not([class])) {
-  max-width: var(--ucl-measure);
+  max-width: var(--ucl-text-max-width);
 }
 
 :where(main) :where(.text-center p, p.text-center, .text-center blockquote) {

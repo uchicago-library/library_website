@@ -292,9 +292,9 @@ $font-family-sans-serif:
 
 /// Longest line for running text: paragraphs, block quotes and plain lists in
 /// `<main>`. About 75 characters in the body font, where one `ch` is wider than
-/// an average letter. Published as `--ucl-measure`. See
+/// an average letter. Published as `--ucl-text-max-width`. See
 /// [Line Length](/design/guidelines/typography/#line-length).
-$ucl-measure: 58ch;
+$ucl-text-max-width: 58ch;
 
 // == Breadcrumb Overrides ==
 //! Level 3 component tokens. They live here because Bootstrap reads them while
