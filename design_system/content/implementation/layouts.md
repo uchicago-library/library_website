@@ -31,7 +31,7 @@ Put the page title above the row, so it spans the main column and the sidebar in
 
 ## Section navigation
 
-A column of links to the other pages in the current section, on the left. From `lg` it is a column of three; below `lg` it moves into an offcanvas panel opened by an "In this section" button, so the content starts near the top of a phone screen. Mark the current page with `aria-current="page"` as well as `.active`.
+A column of links to the other pages in the current section, on the left. From `lg` it is a column of three; below `lg` it moves into an offcanvas panel opened by an "In this section" button, so the content starts near the top of a phone screen. With a right sidebar too, it collapses at `xl` instead (see below). Mark the current page with `aria-current="page"` as well as `.active`.
 
 ```html
 <div class="container-lg">
@@ -56,15 +56,14 @@ A column of links to the other pages in the current section, on the left. From `
     <div class="col-lg-9" id="content" tabindex="-1">
       <h1>Page title</h1>
       <div class="row g-4">
-        <main class="col-xl-8"><!-- Main content --></main>
-        <aside class="col-xl-4" aria-label="Related"><!-- Sidebar, if any --></aside>
+        <main class="col-12"><!-- Main content --></main>
       </div>
     </div>
   </div>
 </div>
 ```
 
-With a right sidebar too, the sidebar stays below the content until `xl`, then the page splits 3/6/3. Splitting at `lg` would leave each side column too narrow for tables and lists.
+With a right sidebar too, the page splits 3/6/3 from `xl`. Narrower, the section navigation collapses first: swap each `lg` above for `xl` (`col-xl-3`, `d-xl-none`, `offcanvas-xl`, `col-xl-9`) and split the inner row `col-lg-8` / `col-lg-4`, so at `lg` the main column and the sidebar share the row 8/4. Below `lg` the sidebar stacks under the content. Three columns at `lg` would leave each side column too narrow for tables and lists.
 
 ## Single column
 
@@ -96,4 +95,4 @@ Each band spans the viewport while its content stays in the standard container, 
 </section>
 ```
 
-Use a surface token such as `bg-body-secondary` or `bg-primary` rather than a literal colour.
+Use a surface token such as `bg-body-secondary` or `bg-primary` rather than a literal colour. For a dark band, use `text-bg-dark`: the footer's surface, with white text and the focus ring for dark surfaces. Buttons on it take `.btn-outline-white`.

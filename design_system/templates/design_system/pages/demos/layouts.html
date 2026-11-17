@@ -40,11 +40,11 @@
     <section class="py-5">
       <div class="container-lg">
         <div class="row g-4">
-          <div class="col-lg-3">
-            <button class="btn btn-default d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo-section-nav" aria-controls="demo-section-nav">
+          <div class="col-xl-3">
+            <button class="btn btn-default d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo-section-nav" aria-controls="demo-section-nav">
               <i class="fa-solid fa-bars me-2" aria-hidden="true"></i>In this section
             </button>
-            <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="demo-section-nav" aria-labelledby="demo-section-nav-title">
+            <div class="offcanvas-xl offcanvas-start" tabindex="-1" id="demo-section-nav" aria-labelledby="demo-section-nav-title">
               <div class="offcanvas-header">
                 <p class="h5 offcanvas-title" id="demo-section-nav-title">In this section</p>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#demo-section-nav" aria-label="Close"></button>
@@ -67,18 +67,18 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-9">
+          <div class="col-xl-9">
             <h2>Section navigation with right sidebar</h2>
             <div class="row g-4">
-              <div class="col-xl-8">
-                <p>The section's pages sit in a <code>col-lg-3</code> column on the left, the current page marked with <code>aria-current</code>. Below <code>lg</code> they move into an offcanvas panel, opened by the "In this section" button, so the content starts near the top of a phone screen.</p>
-                <p>The rest of the row is <code>col-lg-9</code>, split again into the main column and the sidebar. The sidebar stays below the content until <code>xl</code>, then the page splits 3/6/3. Splitting at <code>lg</code> would leave each side column too narrow for tables and lists.</p>
-                <p>Without a right sidebar, the main column takes the whole <code>col-lg-9</code>.</p>
+              <div class="col-lg-8">
+                <p>The section's pages sit in a column of three on the left, the current page marked with <code>aria-current</code>. Below the breakpoint they move into an offcanvas panel, opened by the "In this section" button, so the content starts near the top of a phone screen.</p>
+                <p>With a right sidebar too, the page splits 3/6/3 from <code>xl</code>. Narrower, the section navigation collapses first, at <code>xl</code>, leaving the main column and the sidebar 8/4; below <code>lg</code> the sidebar stacks under the content. Three columns at <code>lg</code> would leave each side column too narrow for tables and lists.</p>
+                <p>Without a right sidebar, the section navigation collapses at <code>lg</code> instead, and the main column takes the whole <code>col-lg-9</code>.</p>
               </div>
               <div class="col-xl-4">
                 <div class="sidebar p-4 rounded">
                   <h3>Sidebar</h3>
-                  <p class="small">The sidebar uses <code>col-xl-4</code> inside the <code>col-lg-9</code>.</p>
+                  <p class="small">The sidebar uses <code>col-lg-4</code> inside the <code>col-xl-9</code>.</p>
                   <ul class="small mb-0">
                     <li>Quick links</li>
                     <li>Hours today</li>
@@ -125,6 +125,18 @@
           <div class="col-lg-10 mx-auto">
             <h3>Band with a secondary surface</h3>
             <p>Different bands can carry different backgrounds while content width and alignment stay constant.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 text-bg-dark">
+      <div class="container-md">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h3>Band with a dark surface</h3>
+            <p>The same surface as the footer, for a band that should stand apart from the page around it. Buttons on it use <code>.btn-outline-white</code>.</p>
+            <a class="btn btn-outline-white" href="#">A button on a dark band</a>
           </div>
         </div>
       </div>

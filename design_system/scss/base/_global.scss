@@ -47,6 +47,7 @@ body {
 // Dark surfaces reset the colour only; the rule above does the drawing.
 .global-navbar,
 .navbar-dark,
-.footer {
+.footer,
+.text-bg-dark {
   --bs-focus-ring-color: var(--ucl-focus-ring-color-on-dark);
 }
