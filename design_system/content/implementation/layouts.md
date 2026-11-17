@@ -10,19 +10,24 @@ Four layouts cover nearly every page. See them rendered at full width in the [la
 Primary content with a supplementary sidebar for navigation, related links or metadata.
 
 ```html
-<main class="container-lg">
-  <div class="row g-4">
-    <div class="col-lg-8"><!-- Main content --></div>
-    <div class="col-lg-4">
-      <div class="sidebar p-4 rounded"><!-- Supporting content --></div>
+<div class="container-lg">
+  <div id="content" tabindex="-1">
+    <h1>Page title</h1>
+    <div class="row g-4">
+      <main class="col-lg-8"><!-- Main content --></main>
+      <aside class="col-lg-4" aria-label="Related">
+        <div class="sidebar p-4 rounded"><!-- Supporting content --></div>
+      </aside>
     </div>
   </div>
-</main>
+</div>
 ```
 
 The sidebar stacks below the main column under the `lg` breakpoint, so write the two columns in the order they should be read on a phone.
 
 Put the sidebar in an `<aside>` beside the `<main>`, not inside it, and give it an `aria-label`. When it holds several groups, give each one an `<h2>`: the sidebar sits beside the page's own sections, not under them. Style the heading smaller with a class such as `.h5`, so the main column's headings stay the most prominent.
+
+Put the page title above the row, so it spans the main column and the sidebar instead of wrapping in the narrower main column. That puts the title outside `<main>`, so point the skip link at a wrapper around the title and the row (`id="content"` above).
 
 ## Section navigation
 
@@ -48,7 +53,8 @@ A column of links to the other pages in the current section, on the left. From `
         </div>
       </div>
     </div>
-    <div class="col-lg-9">
+    <div class="col-lg-9" id="content" tabindex="-1">
+      <h1>Page title</h1>
       <div class="row g-4">
         <main class="col-xl-8"><!-- Main content --></main>
         <aside class="col-xl-4" aria-label="Related"><!-- Sidebar, if any --></aside>

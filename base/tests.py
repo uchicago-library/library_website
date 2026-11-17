@@ -1232,7 +1232,8 @@ class TestDesignSystemBase(TestCase):
     def test_has_the_hooks_scripts_rely_on(self):
         response = self.alert.serve(self.request())
         self.assertContains(response, 'href="#content"')
-        self.assertContains(response, '<main id="content"', count=1)
+        self.assertContains(response, 'id="content"', count=1)
+        self.assertContains(response, "<main", count=1)
         self.assertContains(response, 'id="global-navbar"', count=1)
         # voc-button.js adds its feedback link to this list
         self.assertContains(response, 'aria-labelledby="contact_label"', count=1)

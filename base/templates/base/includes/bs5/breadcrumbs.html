@@ -5,22 +5,27 @@
   (collection_breadcrumb, collection_final_breadcrumb). The trail ends on the
   current page, unlinked.
 
+  Nothing renders when the trail would be the current page alone: the home
+  page (depth 2) and the pages directly below it (depth 3).
+
   Context: page, collection_breadcrumb, collection_final_breadcrumb.
 {% endcomment %}
-<nav aria-label="Breadcrumb" data-ga-category="Navigation" data-ga-subcategory="Breadcrumbs">
-  <ol class="breadcrumb">
-    {% for ancestor in page.get_ancestors %}
-      {% if not ancestor.is_root and not ancestor.get_parent.is_root %}
-        <li class="breadcrumb-item"><a href="{% pageurl ancestor %}" data-ga-label="{{ ancestor.title }}">{{ ancestor.title }}</a></li>
-      {% endif %}
-    {% endfor %}
-    {% if collection_breadcrumb %}
-      {% for name, link in collection_breadcrumb.items %}
-        <li class="breadcrumb-item"><a href="{{ link }}" data-ga-label="{{ name }}">{{ name }}</a></li>
+{% if collection_breadcrumb or page.depth > 3 %}
+  <nav aria-label="Breadcrumb" data-ga-category="Navigation" data-ga-subcategory="Breadcrumbs">
+    <ol class="breadcrumb">
+      {% for ancestor in page.get_ancestors %}
+        {% if not ancestor.is_root and not ancestor.get_parent.is_root %}
+          <li class="breadcrumb-item"><a href="{% pageurl ancestor %}" data-ga-label="{{ ancestor.title }}">{{ ancestor.title }}</a></li>
+        {% endif %}
       {% endfor %}
-      <li class="breadcrumb-item active" aria-current="page">{{ collection_final_breadcrumb }}</li>
-    {% else %}
-      <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
-    {% endif %}
-  </ol>
-</nav>
+      {% if collection_breadcrumb %}
+        {% for name, link in collection_breadcrumb.items %}
+          <li class="breadcrumb-item"><a href="{{ link }}" data-ga-label="{{ name }}">{{ name }}</a></li>
+        {% endfor %}
+        <li class="breadcrumb-item active" aria-current="page">{{ collection_final_breadcrumb }}</li>
+      {% else %}
+        <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
+      {% endif %}
+    </ol>
+  </nav>
+{% endif %}
