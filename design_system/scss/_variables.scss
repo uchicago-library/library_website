@@ -290,6 +290,12 @@ $font-family-sans-serif:
   Arial,
   sans-serif;
 
+/// Longest line for running text: paragraphs, block quotes and plain lists in
+/// `<main>`. About 75 characters in the body font, where one `ch` is wider than
+/// an average letter. Published as `--ucl-measure`. See
+/// [Line Length](/design/guidelines/typography/#line-length).
+$ucl-measure: 58ch;
+
 // == Breadcrumb Overrides ==
 //! Level 3 component tokens. They live here because Bootstrap reads them while
 //! building its component styles, which happens after this file is imported.

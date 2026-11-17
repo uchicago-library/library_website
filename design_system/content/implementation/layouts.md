@@ -71,7 +71,7 @@ With a right sidebar too, the page splits 3/6/3 from `xl`. Narrower, the section
 
 ## Single column
 
-The default. `col-lg-10 mx-auto` holds the line length near a comfortable reading measure, which is why every documentation page here uses it. Best for articles, documentation and forms.
+The default, for articles, documentation and forms. `col-lg-10 mx-auto` keeps the column in line with the header and footer; running text inside it stops at about 75 characters (see [Line Length](/design/guidelines/typography/#line-length)), while tables and images use the whole column.
 
 ```html
 <main class="container-md">
