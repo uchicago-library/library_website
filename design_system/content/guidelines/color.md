@@ -31,6 +31,15 @@ Avoid placing multiple accent families in the same component unless they represe
 - Do not rely on color alone to convey meaning; pair color with text labels or icons.
 - Test color combinations in context on desktop and mobile breakpoints.
 
+## Dark Surfaces
+
+Two near-black greys, one step apart, each with one job:
+
+- **Greystone Darkest** (`$ucl-greystone-darkest`) is the body text and the footer. Nothing else uses it as a surface.
+- **Greystone Black** (`$ucl-greystone-black`, Bootstrap's `$dark`) is for dark bands and dark callouts: content that should stand apart from the page around it. Use `.text-bg-dark`, which sets white text and the focus outline for dark surfaces. Buttons on it take `.btn-outline-white`.
+
+Use dark surfaces sparingly, and the Bootstrap components built on `$dark` (`.btn-dark`, `.table-dark`, `.bg-dark`) too: a page with several dark blocks loses the contrast that makes one stand out. Never set long text on a dark surface; keep it to a heading, a sentence or two and an action.
+
 ## CSS Classes (Quick Reference)
 
 Use semantic utility classes tied to the design tokens:
@@ -38,7 +47,8 @@ Use semantic utility classes tied to the design tokens:
 - `.btn-primary` and `.bg-primary` for call-to-action emphasis only.
 - `.text-info`, `.link-info`, and `.bg-info` for active states and interactive emphasis.
 - `.bg-secondary`, `.text-secondary`, `.border-secondary` for supporting neutral structure.
-- `.bg-light` and `.text-dark` for baseline readability and page foundation.
+- `.bg-light` for baseline page foundation. Body text needs no class.
+- `.text-bg-dark` for the occasional dark band or callout (see [Dark Surfaces](#dark-surfaces)).
 - `.text-muted` for low-emphasis metadata and helper text.
 - `.bg-success`, `.bg-warning`, `.bg-danger`, `.bg-info` only for semantic states.
 
@@ -51,4 +61,7 @@ Use the same role across Sass, CSS variables, and utility classes:
 - **CTA:** `$primary` | `--bs-primary` | `.btn-primary`, `.bg-primary`
 - **Active/Interactive:** `$info`, `$link-color` | `--bs-info`, `--bs-link-color-rgb` | `.btn-info`, `.text-info`, `.link-info`
 - **Extra-subtle Active Surface:** `$ucl-info-bg-extra-subtle` | `--ucl-info-bg-extra-subtle` | `.accordion-button` active state token
-- **Structure:** `$secondary`, `$light`, `$dark` | `--bs-secondary`, `--bs-light`, `--bs-dark` | `.bg-secondary`, `.bg-light`, `.text-dark`
+- **Structure:** `$secondary`, `$light` | `--bs-secondary`, `--bs-light` | `.bg-secondary`, `.bg-light`
+- **Body text:** `$body-color` | `--bs-body-color` | no class needed
+- **Dark surface:** `$dark` | `--bs-dark` | `.text-bg-dark`
+- **Footer surface:** `$ucl-footer-bg` | `--ucl-footer-bg` | `.footer`

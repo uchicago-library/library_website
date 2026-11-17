@@ -142,6 +142,7 @@ $ucl-greystone: #a2a9b4;
 $ucl-greystone-dark: #585f6b;
 $ucl-greystone-darker: #474f5b;
 $ucl-greystone-darkest: #2f3640;
+$ucl-greystone-black: #1b1f25;
 
 // == Secondary Brand Colors - Goldenrod Family ==
 //! Warnings, highlights and attention-grabbing elements.
@@ -209,7 +210,10 @@ $info: $ucl-lake; // Lake
 $warning: $ucl-goldenrod; // Goldenrod
 // $danger: #dc3545; // Bootstrap default
 $light: $ucl-greystone-light; // Light Greystone
-$dark: $ucl-greystone-darkest; // Black
+/// Greystone Black: dark bands and callouts, with white text. Use it, and
+/// what Bootstrap builds on it (`.text-bg-dark`, `.btn-dark`, `.table-dark`),
+/// sparingly. See [Dark surfaces](/design/guidelines/color/#dark-surfaces).
+$dark: $ucl-greystone-black;
 
 // == Semantic Surfaces and Text ==
 //! Low-contrast surfaces and de-emphasised text. These override Bootstrap's
@@ -246,7 +250,13 @@ $component-active-color: #fff;
 // == Body ==
 
 $body-bg: #fff;
-$body-color: $dark;
+/// Body text. Greystone Darkest, set apart from `$dark` so dark surfaces can
+/// change without changing the text.
+$body-color: $ucl-greystone-darkest;
+
+/// Footer surface. Greystone Darkest, a step lighter than `$dark`, so a dark
+/// band above the footer stays distinct from it.
+$ucl-footer-bg: $ucl-greystone-darkest;
 
 // == Focus Ring ==
 //! Keyboard focus is a solid outline drawn by `base/_global.scss`, not

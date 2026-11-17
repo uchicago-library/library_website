@@ -99,4 +99,4 @@ Each band spans the viewport while its content stays in the standard container, 
 </section>
 ```
 
-Use a surface token such as `bg-body-secondary` or `bg-primary` rather than a literal colour. For a dark band, use `text-bg-dark`: the footer's surface, with white text and the focus ring for dark surfaces. Buttons on it take `.btn-outline-white`.
+Use a surface token such as `bg-body-secondary` or `bg-primary` rather than a literal colour. For a dark band, use `text-bg-dark`, sparingly: see [Dark Surfaces](/design/guidelines/color/#dark-surfaces).
