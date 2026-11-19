@@ -19,11 +19,12 @@ header[role='banner'] {
     }
   }
 
-  /// Shortcut links: Bootstrap's nav, in maroon rather than the link colour,
-  /// with each icon beside its label.
+  /// Shortcut links: Bootstrap's nav in Dark Greystone, darkening to the body
+  /// text colour on hover, so maroon stays for the main navigation bar and calls
+  /// to action. Each icon sits beside its label.
   .nav {
-    --bs-nav-link-color: #{$primary};
-    --bs-nav-link-hover-color: #{darken($primary, 10%)};
+    --bs-nav-link-color: var(--bs-secondary-color);
+    --bs-nav-link-hover-color: var(--bs-body-color);
     --bs-nav-link-font-size: 0.9rem;
 
     .nav-link {

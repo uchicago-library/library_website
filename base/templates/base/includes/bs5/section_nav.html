@@ -1,28 +1,41 @@
 {% comment %}
   Left section navigation: the pages in the current section, two levels deep.
-  The base puts it in an offcanvas-lg panel, so pages can add extras below it
-  (left_sidebar_extras).
+  From the breakpoint up it is a column; below it, an offcanvas panel opened
+  by an "In this section" button. The base picks the breakpoint: lg, or xl
+  when the page also has a right sidebar.
 
-  Context: title, title_url, items (title, url, children), current_url.
+  Context: breakpoint (lg or xl), title, title_url, items (title, url,
+  children), current_url.
 {% endcomment %}
-<nav aria-label="Section" data-ga-category="Navigation" data-ga-subcategory="Left Sidebar">
-  {% if title %}
-    <h2 class="h5"><a href="{{ title_url }}" class="link-body-emphasis text-decoration-none" data-ga-label="{{ title }}">{{ title }}</a></h2>
-  {% endif %}
-  <ul class="nav flex-column">
-    {% for item in items %}
-      <li class="nav-item">
-        <a class="nav-link px-0{% if item.url == current_url %} active fw-bold{% endif %}" href="{{ item.url }}"{% if item.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ item.title }}">{{ item.title }}</a>
-        {% if item.children %}
-          <ul class="nav flex-column ms-3">
-            {% for child in item.children %}
-              <li class="nav-item">
-                <a class="nav-link px-0 py-1{% if child.url == current_url %} active fw-bold{% endif %}" href="{{ child.url }}"{% if child.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ child.title }}">{{ child.title }}</a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-</nav>
+<button class="btn btn-default d-{{ breakpoint }}-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#section-nav" aria-controls="section-nav">
+  <i class="fa-solid fa-bars me-2" aria-hidden="true"></i>In this section
+</button>
+<div class="offcanvas-{{ breakpoint }} offcanvas-start" tabindex="-1" id="section-nav" aria-labelledby="section-nav-title">
+  <div class="offcanvas-header">
+    <p class="h5 offcanvas-title" id="section-nav-title">In this section</p>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#section-nav" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body flex-column">
+    <nav aria-label="Section" data-ga-category="Navigation" data-ga-subcategory="Left Sidebar">
+      {% if title %}
+        <h2 class="h5"><a href="{{ title_url }}" class="link-body-emphasis text-decoration-none" data-ga-label="{{ title }}">{{ title }}</a></h2>
+      {% endif %}
+      <ul class="nav flex-column">
+        {% for item in items %}
+          <li class="nav-item">
+            <a class="nav-link px-0{% if item.url == current_url %} active fw-bold{% endif %}" href="{{ item.url }}"{% if item.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ item.title }}">{{ item.title }}</a>
+            {% if item.children %}
+              <ul class="nav flex-column ms-3">
+                {% for child in item.children %}
+                  <li class="nav-item">
+                    <a class="nav-link px-0 py-1{% if child.url == current_url %} active fw-bold{% endif %}" href="{{ child.url }}"{% if child.url == current_url %} aria-current="page"{% endif %} data-ga-label="{{ child.title }}">{{ child.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>

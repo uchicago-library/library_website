@@ -1275,6 +1275,17 @@ class TestDesignSystemBase(TestCase):
         aside = html[html.index("<aside") : html.index("</aside>")]
         self.assertIn("Hailing frequencies", aside)
 
+    def test_search_widget_and_its_script_only_where_enabled(self):
+        for enabled in [True, False]:
+            self.child.enable_search_widget = enabled
+            response = self.child.serve(self.request("/ten-forward/"))
+            with self.subTest(enabled=enabled):
+                html = response.rendered_content
+                self.assertEqual('id="search-widget"' in html, enabled)
+                self.assertEqual("base/js/search-widget.js" in html, enabled)
+                if enabled:
+                    self.assertIn('name="csrfmiddlewaretoken"', html)
+
     # Partials
 
     def test_breadcrumbs_link_ancestors_and_end_on_the_current_page(self):

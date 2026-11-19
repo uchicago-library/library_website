@@ -10,7 +10,7 @@ Everything else is Bootstrap 5.3's typography, except where this page says so. [
 ## Headings
 
 - Use `<h1>` to `<h6>` in order: one `<h1>` per page, and no level skipped to get a smaller size.
-- The system sets their sizes and weights. `<h1>` is maroon, and `<h6>` is uppercase and muted.
+- The system sets their sizes and weights. Headings are in the body text colour, and `<h6>` is uppercase and muted.
 - Display headings, `.display-1` to `.display-4`, are for a hero only, and still go on the heading level the outline needs.
 
 ## Body Text
@@ -23,7 +23,7 @@ Everything else is Bootstrap 5.3's typography, except where this page says so. [
 
 Running text stops at about 75 characters a line, whatever the width of its column: lines much longer than that are hard to follow back to the next line. Typographers recommend 45 to 75 characters, and large news sites set their articles at 56 to 66.
 
-The system applies this to paragraphs, block quotes and lists without a class inside `<main>`, through `$ucl-measure` (`58ch`; one `ch` is wider than an average letter). Headings, tables, images, cards and components keep the full width of the column, so a page's grid still lines up. Centred text stays centred. To let a paragraph run the full width, give it `.mw-100`.
+The system applies this to paragraphs, block quotes and lists without a class inside `<main>`, through `$ucl-text-max-width` (`58ch`; one `ch` is wider than an average letter). Headings, tables, images, cards and components keep the full width of the column, so a page's grid still lines up. Centred text stays centred. To let a paragraph run the full width, give it `.mw-100`.
 
 ## Inline Elements
 

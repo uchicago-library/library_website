@@ -18,6 +18,7 @@ Every component is Bootstrap 5.3's, styled by the system's tokens, and [Bootstra
 
 - Every control has a `<label>` tied to it by `for` and `id`. A placeholder is not a label.
 - A group of radio buttons or checkboxes sits in a `<fieldset>` with a `<legend>`.
+- A select beside a text input in an `.input-group`, such as a search box's field picker, takes `.input-group-select`, so the text input keeps most of the row on a phone.
 
 ## Cards
 
