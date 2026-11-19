@@ -44,7 +44,7 @@ Read first:
   full-width pages override the block; other pages fill `content`.
 - **Other blocks:** `title`, `meta`, `styles`, `banner`, `breadcrumbs`,
   `above_main_content`, `page_heading`, `under_h1`, `content`,
-  `left_sidebar_extras`, `right_sidebar`, `btm_content`, `optional_footer`,
+  `right_sidebar`, `btm_content`, `optional_footer`,
   `extra_scripts`, `js`.
 - **Containers:** the site's chrome and sidebar layouts use `container-lg`;
   a single column uses `container-md` with `col-lg-10 mx-auto`.

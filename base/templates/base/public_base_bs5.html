@@ -110,19 +110,7 @@
         <div class="row g-4">
           {% if has_left_sidebar %}
             <div class="col-{{ nav_bp }}-3">
-              <button class="btn btn-default d-{{ nav_bp }}-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#section-nav" aria-controls="section-nav">
-                <i class="fa-solid fa-bars me-2" aria-hidden="true"></i>In this section
-              </button>
-              <div class="offcanvas-{{ nav_bp }} offcanvas-start" tabindex="-1" id="section-nav" aria-labelledby="section-nav-title">
-                <div class="offcanvas-header">
-                  <p class="h5 offcanvas-title" id="section-nav-title">In this section</p>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#section-nav" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body flex-column">
-                  {% include "base/includes/bs5/section_nav.html" with title=sidebartitle title_url=sidebartitleurl items=sidebar current_url=request.path only %}
-                  {% block left_sidebar_extras %}{% endblock %}
-                </div>
-              </div>
+              {% include "base/includes/bs5/section_nav.html" with breakpoint=nav_bp title=sidebartitle title_url=sidebartitleurl items=sidebar current_url=request.path only %}
             </div>
           {% endif %}
 
