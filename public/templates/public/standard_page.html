@@ -1,9 +1,16 @@
 {% extends "base/public_base_bs5.html" %}
-{% load wagtailcore_tags %}
+{% load static wagtailcore_tags %}
 
 {% block content %}
   {% if has_search_widget %}
-    {% include "public/blocks/search_widget.html" %}
+    {% include "base/includes/bs5/search_widget.html" with csrf_token=csrf_token only %}
   {% endif %}
   {% include_block self.body %}
+{% endblock %}
+
+{% block extra_scripts %}
+  {{ block.super }}
+  {% if has_search_widget %}
+    <script src="{% static "base/js/search-widget.js" %}" defer></script>
+  {% endif %}
 {% endblock %}

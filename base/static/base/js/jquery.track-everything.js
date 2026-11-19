@@ -576,7 +576,7 @@
         helpers.addOptionToSearchButton.checkbox(target, searchWidget);
       } else if (target.matches('input[type="radio"]')) {
         helpers.addOptionToSearchButton.radio(target, searchWidget);
-      } else if (target.matches('[role="tabpanel"][data-ga-subcategory="tab-catalog"] select.selectpicker.btn-searchtype')) {
+      } else if (target.matches('[role="tabpanel"] select.btn-searchtype')) {
         helpers.addOptionToSearchButton.select(target, searchWidget);
       }
     },

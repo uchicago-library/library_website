@@ -1,0 +1,13 @@
+// Forms — additions to Bootstrap's form controls.
+
+/// A `.form-select` inside an `.input-group`, beside a text input, such as a
+/// search box's field picker. Bootstrap shares the row between the two by
+/// content, and a select never shrinks below its longest option, so on a
+/// phone it squeezes the text input to nothing. This one takes its content's
+/// width up to 40% of the row and shrinks first.
+.input-group > .input-group-select {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 40%;
+  min-width: 0;
+}
