@@ -10,7 +10,7 @@ Everything else is Bootstrap 5.3's typography, except where this page says so. [
 ## Headings
 
 - Use `<h1>` to `<h6>` in order: one `<h1>` per page, and no level skipped to get a smaller size.
-- The system sets their sizes and weights. `<h1>` is maroon, and `<h6>` is uppercase and muted.
+- The system sets their sizes and weights. Headings are in the body text colour, and `<h6>` is uppercase and muted.
 - Display headings, `.display-1` to `.display-4`, are for a hero only, and still go on the heading level the outline needs.
 
 ## Body Text
